@@ -229,7 +229,7 @@
                 requestsResults = zoteroRoam.handlers.extractCitekeys(requestsResults);
                 // Collections data
                 let collectionsResults = await Promise.all(collectionsCalls);
-                collectionsResults = await Promise.all(collectionsCalls.map(cl => { return cl.json() }));
+                collectionsResults = await Promise.all(collectionsResults.map(cl => cl.json()));
                 collectionsResults = collectionsResults.flat(1);
                 
                 return {

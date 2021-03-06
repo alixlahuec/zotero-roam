@@ -5,6 +5,7 @@
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             let requestReturns = await zoteroRoam.handlers.requestData(zoteroRoam.config.requests);
             if (!requestReturns.success) {
+                zoteroRoam.interface.icon.style = `background-color:#f9a3a3 !important`;
                 throw new Error("The API request encountered a problem. Please check your request specification, and the console for any registered errors.");
             } else {
                 zoteroRoam.data.items = requestReturns.data.items;
