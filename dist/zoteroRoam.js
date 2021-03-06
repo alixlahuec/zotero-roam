@@ -1491,14 +1491,15 @@
             Object.keys(zoteroRoam.shortcuts.actions).forEach(action => {
                 defaultTemplates[action] = zoteroRoam.shortcuts.actions[action].defaultShortcut;
             });
-            let userTemplates = {};
+
+            let templates = {};
             if(zoteroRoam.config.userSettings.shortcuts){
                 Object.keys(zoteroRoam.shortcuts.actions).forEach(action => {
                     let { [action] : temp = defaultTemplates[action] } = zoteroRoam.config.userSettings.shortcuts;
-                    userTemplates[action] = temp;
+                    templates[action] = temp;
                 });
             };
-            
+
             let shortcutObjects = [];
             for(k in templates){
                 if(templates[k].constructor === Object){ 
