@@ -72,17 +72,17 @@
             let metadata = [];
     
             if (item.data.title) { metadata.push(`Title:: ${item.data.title}`) }; // Title, if available
-            if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${getCreators(item)}`) }; // Creators list, if available
+            if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${zoteroRoam.formatting.getCreators(item)}`) }; // Creators list, if available
             if (item.data.abstractNote) { metadata.push(`Abstract:: ${item.data.abstractNote}`) }; // Abstract, if available
-            if (item.data.itemType) { metadata.push(`Type:: [[${getItemType(item)}]]`) }; // Item type, from typemap or zoteroRoam.typemap (fall back on the raw value)
+            if (item.data.itemType) { metadata.push(`Type:: [[${zoteroRoam.formatting.getItemType(item)}]]`) }; // Item type, from typemap or zoteroRoam.typemap (fall back on the raw value)
             metadata.push(`Publication:: ${ item.data.publicationTitle || item.data.bookTitle || "" }`)
             if (item.data.url) { metadata.push(`URL : ${item.data.url}`) };
-            if (item.data.dateAdded) { metadata.push(`Date Added:: [[${makeDNP(item.data.dateAdded)}]]`) }; // Date added, as Daily Notes Page reference
-            metadata.push(`Zotero links:: ${getLocalLink(item)}, ${getWebLink(item)}`); // Local + Web links to the item
-            if (item.data.tags.length > 0) { metadata.push(`Tags:: ${getTags(item)}`) }; // Tags, if any
+            if (item.data.dateAdded) { metadata.push(`Date Added:: [[${zoteroRoam.utils.makeDNP(item.data.dateAdded)}]]`) }; // Date added, as Daily Notes Page reference
+            metadata.push(`Zotero links:: ${zoteroRoam.formatting.getLocalLink(item)}, ${zoteroRoam.formatting.getWebLink(item)}`); // Local + Web links to the item
+            if (item.data.tags.length > 0) { metadata.push(`Tags:: ${zoteroRoam.formatting.getTags(item)}`) }; // Tags, if any
         
             return metadata; 
-        },
+        }
 
     }
 })();

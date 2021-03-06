@@ -81,8 +81,9 @@
                     if(pageUID != null){
                         await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                         let checkSuccess = zoteroRoam.utils.lookForPage(title);
-                        if(checkSuccess.present){
-                            let nbChildren = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", checkSuccess.uid)[0][0];
+                        if(checkSuccess.present == true){
+                            let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", checkSuccess.uid) || [];
+                            let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
                             alert(`Page was successfully added to the graph.
                             It currently has ${nbChildren} child blocks.`);
                         } else {
@@ -350,7 +351,7 @@
             let found = false;
             let tries = 0;
             do {
-                let pageInfo = lookForPage(title);
+                let pageInfo = zoteroRoam.utils.lookForPage(title);
                 if(pageInfo.present == true){
                     found = true;
                     return pageInfo.uid;

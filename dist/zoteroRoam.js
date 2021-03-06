@@ -291,9 +291,9 @@
         },
 
         makeDNP(date){
-            if(date.constructor !== Date){ date = new Date(item.data.dateAdded); };
+            if(date.constructor !== Date){ date = new Date(date); };
             let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            return `${months[date.getMonth()]} ${makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
+            return `${months[date.getMonth()]} ${zoteroRoam.utils.makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
         },
 
         makeOrdinal(i) {
@@ -488,8 +488,9 @@
                     if(pageUID != null){
                         await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                         let checkSuccess = zoteroRoam.utils.lookForPage(title);
-                        if(checkSuccess.present){
-                            let nbChildren = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", checkSuccess.uid)[0][0];
+                        if(checkSuccess.present == true){
+                            let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", checkSuccess.uid) || [];
+                            let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
                             alert(`Page was successfully added to the graph.
                             It currently has ${nbChildren} child blocks.`);
                         } else {
@@ -757,7 +758,7 @@
             let found = false;
             let tries = 0;
             do {
-                let pageInfo = lookForPage(title);
+                let pageInfo = zoteroRoam.utils.lookForPage(title);
                 if(pageInfo.present == true){
                     found = true;
                     return pageInfo.uid;
@@ -784,8 +785,8 @@
             visible: false,
             targetElement: null,
             position({top, left}){
-                zoteroRoam.interface.contextMenu.style.left = `${left}px`;
-                zoteroRoam.interface.contextMenu.style.top = `${top}px`;
+                zoteroRoam.interface.contextMenu.div.style.left = `${left}px`;
+                zoteroRoam.interface.contextMenu.div.style.top = `${top}px`;
                 zoteroRoam.interface.toggleContextOverlay("contextMenu", "show");
             }
         },
@@ -796,8 +797,8 @@
             options: {list: [], class: "zotero-icon-context-menu-option", labels: ["Update Zotero data", "Search in dataset..."]},
             visible: false,
             position({top, left}){
-                zoteroRoam.interface.iconContextMenu.style.left = (left >= 0.9*window.innerWidth) ? `calc(${left}px - 7%)` : `${left}px`;
-                zoteroRoam.interface.iconContextMenu.style.top = `calc(${top}px + 3%)`;
+                zoteroRoam.interface.iconContextMenu.div.style.left = (left >= 0.9*window.innerWidth) ? `calc(${left}px - 10%)` : `${left}px`;
+                zoteroRoam.interface.iconContextMenu.div.style.top = `calc(${top}px + 3%)`;
                 zoteroRoam.interface.toggleContextOverlay("iconContextMenu", "show");
             }
         },
@@ -1031,11 +1032,11 @@
         },
 
         popContextMenu(e){
-            popContextOverlay(e, "contextMenu");
+            zoteroRoam.interface.popContextOverlay(e, "contextMenu");
         },
 
         popIconContextMenu(e){
-            popContextOverlay(e, "iconContextMenu");
+            zoteroRoam.interface.popContextOverlay(e, "iconContextMenu");
         },
 
         renderNbResults(e){
@@ -1439,17 +1440,17 @@
             let metadata = [];
     
             if (item.data.title) { metadata.push(`Title:: ${item.data.title}`) }; // Title, if available
-            if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${getCreators(item)}`) }; // Creators list, if available
+            if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${zoteroRoam.formatting.getCreators(item)}`) }; // Creators list, if available
             if (item.data.abstractNote) { metadata.push(`Abstract:: ${item.data.abstractNote}`) }; // Abstract, if available
-            if (item.data.itemType) { metadata.push(`Type:: [[${getItemType(item)}]]`) }; // Item type, from typemap or zoteroRoam.typemap (fall back on the raw value)
+            if (item.data.itemType) { metadata.push(`Type:: [[${zoteroRoam.formatting.getItemType(item)}]]`) }; // Item type, from typemap or zoteroRoam.typemap (fall back on the raw value)
             metadata.push(`Publication:: ${ item.data.publicationTitle || item.data.bookTitle || "" }`)
             if (item.data.url) { metadata.push(`URL : ${item.data.url}`) };
-            if (item.data.dateAdded) { metadata.push(`Date Added:: [[${makeDNP(item.data.dateAdded)}]]`) }; // Date added, as Daily Notes Page reference
-            metadata.push(`Zotero links:: ${getLocalLink(item)}, ${getWebLink(item)}`); // Local + Web links to the item
-            if (item.data.tags.length > 0) { metadata.push(`Tags:: ${getTags(item)}`) }; // Tags, if any
+            if (item.data.dateAdded) { metadata.push(`Date Added:: [[${zoteroRoam.utils.makeDNP(item.data.dateAdded)}]]`) }; // Date added, as Daily Notes Page reference
+            metadata.push(`Zotero links:: ${zoteroRoam.formatting.getLocalLink(item)}, ${zoteroRoam.formatting.getWebLink(item)}`); // Local + Web links to the item
+            if (item.data.tags.length > 0) { metadata.push(`Tags:: ${zoteroRoam.formatting.getTags(item)}`) }; // Tags, if any
         
             return metadata; 
-        },
+        }
 
     }
 })();

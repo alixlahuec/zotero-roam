@@ -83,9 +83,9 @@
         },
 
         makeDNP(date){
-            if(date.constructor !== Date){ date = new Date(item.data.dateAdded); };
+            if(date.constructor !== Date){ date = new Date(date); };
             let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            return `${months[date.getMonth()]} ${makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
+            return `${months[date.getMonth()]} ${zoteroRoam.utils.makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
         },
 
         makeOrdinal(i) {

@@ -10,8 +10,8 @@
             visible: false,
             targetElement: null,
             position({top, left}){
-                zoteroRoam.interface.contextMenu.style.left = `${left}px`;
-                zoteroRoam.interface.contextMenu.style.top = `${top}px`;
+                zoteroRoam.interface.contextMenu.div.style.left = `${left}px`;
+                zoteroRoam.interface.contextMenu.div.style.top = `${top}px`;
                 zoteroRoam.interface.toggleContextOverlay("contextMenu", "show");
             }
         },
@@ -22,8 +22,8 @@
             options: {list: [], class: "zotero-icon-context-menu-option", labels: ["Update Zotero data", "Search in dataset..."]},
             visible: false,
             position({top, left}){
-                zoteroRoam.interface.iconContextMenu.style.left = (left >= 0.9*window.innerWidth) ? `calc(${left}px - 7%)` : `${left}px`;
-                zoteroRoam.interface.iconContextMenu.style.top = `calc(${top}px + 3%)`;
+                zoteroRoam.interface.iconContextMenu.div.style.left = (left >= 0.9*window.innerWidth) ? `calc(${left}px - 10%)` : `${left}px`;
+                zoteroRoam.interface.iconContextMenu.div.style.top = `calc(${top}px + 3%)`;
                 zoteroRoam.interface.toggleContextOverlay("iconContextMenu", "show");
             }
         },
@@ -257,11 +257,11 @@
         },
 
         popContextMenu(e){
-            popContextOverlay(e, "contextMenu");
+            zoteroRoam.interface.popContextOverlay(e, "contextMenu");
         },
 
         popIconContextMenu(e){
-            popContextOverlay(e, "iconContextMenu");
+            zoteroRoam.interface.popContextOverlay(e, "iconContextMenu");
         },
 
         renderNbResults(e){
