@@ -8,7 +8,7 @@
         zoteroRoam.addAutoCompleteCSS();
 
         zoteroRoam.config.userSettings = window.zoteroRoam_settings;
-
+        
         zoteroRoam.shortcuts.setup();
         zoteroRoam.handlers.setupUserRequests();
 

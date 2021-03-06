@@ -1487,13 +1487,18 @@
         },
 
         setup(){
-            // This will first check user input & generate a list of templates based on that + defaults
-            // Then create new Shortcut objects as needed, and store them in config.shortcuts
-            let templates = {};
-            for(action in zoteroRoam.shortcuts.actions){
-                let { [action] : temp = action.defaultShortcut } = zoteroRoam.config.userSettings.shortcuts;
-                templates[action] = temp;
-            }
+            let defaultTemplates = {};
+            Object.keys(zoteroRoam.shortcuts.actions).forEach(action => {
+                defaultTemplates[action] = zoteroRoam.shortcuts.actions[action].defaultShortcut;
+            });
+            let userTemplates = {};
+            if(zoteroRoam.config.userSettings.shortcuts){
+                Object.keys(zoteroRoam.shortcuts.actions).forEach(action => {
+                    let { [action] : temp = defaultTemplates[action] } = zoteroRoam.config.userSettings.shortcuts;
+                    userTemplates[action] = temp;
+                });
+            };
+            
             let shortcutObjects = [];
             for(k in templates){
                 if(templates[k].constructor === Object){ 
@@ -1540,7 +1545,7 @@
         zoteroRoam.addAutoCompleteCSS();
 
         zoteroRoam.config.userSettings = window.zoteroRoam_settings;
-
+        
         zoteroRoam.shortcuts.setup();
         zoteroRoam.handlers.setupUserRequests();
 
