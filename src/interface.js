@@ -30,7 +30,7 @@
         search: {overlay: null, input: null, selectedItemDiv: null, quickCopyToggle: null, closeButton: null, updateButton: null, visible: false},
 
         create(){
-            zoteroRoam.interface.icon = zoteroRoam.interface.createIcon(id = "zotero-data-icon");
+            zoteroRoam.interface.createIcon(id = "zotero-data-icon");
             zoteroRoam.interface.portal.div = zoteroRoam.interface.createPortal(id = zoteroRoam.interface.portal.id);
             zoteroRoam.interface.createContextMenu(elementKey = "contextMenu");
             zoteroRoam.interface.createContextMenu(elementKey = "iconContextMenu");
@@ -49,14 +49,14 @@
         },
 
         createIcon(id) {
-            try{ document.getElementById(id).remove() } catch(e){};
+            try{ document.getElementById(id).closest(".bp3-popover-wrapper").remove() } catch(e){};
             var button = document.createElement('span');
             button.classList.add('bp3-popover-wrapper');
             button.setAttribute("style", "margin-left: 4px;");
             button.innerHTML = `<span class="bp3-popover-target"><span id="${id}" status="off" class="bp3-button bp3-icon-manual bp3-minimal bp3-small"></span>`
             document.querySelector(".rm-topbar").appendChild(button);
         
-            return button;
+            zoteroRoam.interface.icon = document.getElementById(id);
         },
 
         createPortal(id){
