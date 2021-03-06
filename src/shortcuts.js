@@ -46,7 +46,9 @@
                     let { [action] : temp = defaultTemplates[action] } = zoteroRoam.config.userSettings.shortcuts;
                     templates[action] = temp;
                 });
-            };
+            } else{
+                templates = defaultTemplates;
+            }
 
             let shortcutObjects = [];
             for(k in templates){
