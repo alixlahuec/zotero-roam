@@ -1,4 +1,4 @@
-(()=>{
+;(()=>{
     zoteroRoam.interface = {
         icon: null,
         portal: {div: null, id: "zotero-data-importer-portal"},
@@ -22,7 +22,7 @@
             options: {list: [], class: "zotero-icon-context-menu-option", labels: ["Update Zotero data", "Search in dataset..."]},
             visible: false,
             position({top, left}){
-                zoteroRoam.interface.iconContextMenu.style.left = (left >= 0.9*window*innerWidth) ? `calc(${left}px - 7%)` : `${left}px`;
+                zoteroRoam.interface.iconContextMenu.style.left = (left >= 0.9*window.innerWidth) ? `calc(${left}px - 7%)` : `${left}px`;
                 zoteroRoam.interface.iconContextMenu.style.top = `calc(${top}px + 3%)`;
                 zoteroRoam.interface.toggleContextOverlay("iconContextMenu", "show");
             }
@@ -348,4 +348,4 @@
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
         }
     }
-})
+});

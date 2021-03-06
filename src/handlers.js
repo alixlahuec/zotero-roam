@@ -1,5 +1,4 @@
-
-(()=>{
+;(()=>{
     zoteroRoam.handlers = {
 
         async addBlockObject(parent_uid, object) {
@@ -358,4 +357,4 @@
             throw new Error(`The page with title "${title}" couldn\'t be found`);
         }
     };
-})
+});

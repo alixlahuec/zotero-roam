@@ -1,5 +1,5 @@
 
-(()=>{
+;(()=>{
     
     window.zoteroRoam = {
 

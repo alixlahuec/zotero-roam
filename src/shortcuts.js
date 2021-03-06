@@ -1,4 +1,4 @@
-(()=>{
+;(()=>{
     zoteroRoam.shortcuts = {
         actions: {
             closeSearchPanel: {
@@ -77,4 +77,4 @@
             });
         }
     }
-})
+});

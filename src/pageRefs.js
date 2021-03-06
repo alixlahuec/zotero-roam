@@ -1,4 +1,4 @@
-(()=>{
+;(()=>{
     zoteroRoam.pageRefs = {
 
         addContextMenuListener() {
@@ -100,4 +100,4 @@
         }
 
     }
-})
+});

@@ -1,4 +1,4 @@
-(()=>{
+;(()=>{
     zoteroRoam.formatting = {
 
         getCreators(item){
@@ -85,4 +85,4 @@
         },
 
     }
-})
+});

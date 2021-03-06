@@ -1,7 +1,7 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.3.0",
-    "description": "Connect to your Zotero items directly from Roam Research",
+    "version": "0.3.2",
+    "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
         "name": "Alix Lahuec",

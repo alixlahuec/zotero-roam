@@ -1,4 +1,4 @@
-(()=>{
+;(()=>{
     zoteroRoam.extension = {
 
         async load(){
@@ -123,4 +123,4 @@
             }
         }
     };
-})
+});

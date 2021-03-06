@@ -1,4 +1,4 @@
-(()=>{
+;(()=>{
     zoteroRoam.utils = {
 
         addBlock(uid, blockString, order = 0) {
@@ -195,4 +195,4 @@
         }
 
     };
-})
+});

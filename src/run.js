@@ -1,5 +1,4 @@
-
-(()=>{
+;(()=>{
     // This code will run on re/load
     // It contains the interactive portion of the setup (reading user specifications, and setting up certain objects accordingly)
     if (typeof(window.zoteroRoam) === 'undefined' && typeof(window.zoteroRoam_settings) !== 'undefined') {
@@ -16,7 +15,7 @@
     } else {
         throw new Error("A zoteroRoam_settings object must be defined in order to use the extension. Read through the docs for basic setup examples.");
     }
-})
+});
 
 // Example of a settings object
 /* window.zoteroRoam_settings = {
