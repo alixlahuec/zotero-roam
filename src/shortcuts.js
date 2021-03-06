@@ -56,9 +56,9 @@
 
         generateSequences(){
             for(action in zoteroRoam.shortcuts.actions){
-                let shortcutSequences = getSequences(action);
+                let shortcutSequences = zoteroRoam.shortcuts.getSequences(action);
                 if(shortcutSequences){
-                    zoteroRoam.shortcuts.sequences[action] = actionSequences;
+                    zoteroRoam.shortcuts.sequences[action] = shortcutSequences;
                 }
             }
         },
@@ -98,7 +98,7 @@
             });
 
             zoteroRoam.shortcuts.generateSequences();
-            
+
             // Search Panel : toggle, close
             let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle with") : "";
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
