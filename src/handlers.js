@@ -79,13 +79,25 @@
                     window.roamAlphaAPI.createPage({'page': {'title': title}});
                     let pageUID = await zoteroRoam.handlers.waitForPageUID(title);
                     if(pageUID != null){
-                        await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                        try {
+                            if(itemData.length > 0){
+                                await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                                await zoteroRoam.utils.sleep(100);
+                                let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", pageUID);
+                                let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
+                                alert(`Page was successfully added to the graph.
+                                It currently has ${nbChildren} child blocks.`);
+                            } else {
+                                alert('Page was created, but its metadata array was empty.');
+                            }
+                            
+                        } catch(e) {
+                            console.error(e);
+                            alert('Something went wrong when creating the page & adding the metadata')
+                        }
                         let checkSuccess = zoteroRoam.utils.lookForPage(title);
                         if(checkSuccess.present == true){
-                            let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", checkSuccess.uid) || [];
-                            let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
-                            alert(`Page was successfully added to the graph.
-                            It currently has ${nbChildren} child blocks.`);
+                            
                         } else {
                             alert(`Something went wrong in creating the page`);
                         }
@@ -299,18 +311,18 @@
                 // Build metadata string
                 let pubInfo = [item.data.publicationTitle, item.data.university, item.data.bookTitle].filter(Boolean);
                 if(pubInfo.length > 0){
-                    simplifiedItem.meta = simplifiedItem.meta + `, ${pubInfo[0]}`;
+                    simplifiedItem.meta += `, ${pubInfo[0]}`;
                 }
                 if(item.data.publisher){
-                    simplifiedItem.meta = simplifiedItem.meta + `, ${item.data.publisher}`;
+                    simplifiedItem.meta += `, ${item.data.publisher}`;
                     if(item.data.place){
-                        simplifiedItem.meta = simplifiedItem.meta + `: ${item.data.place}`;
+                        simplifiedItem.meta += `: ${item.data.place}`;
                     }
                 };
                 if(item.data.volume){
-                    simplifiedItem.meta = simplifiedItem.meta + `, ${item.data.volume}`;
+                    simplifiedItem.meta += `, ${item.data.volume}`;
                     if(item.data.issue){
-                        simplifiedItem.meta = simplifiedItem.meta + `(${item.data.issue})`;
+                        simplifiedItem.meta += `(${item.data.issue})`;
                     }
                 }
                 simplifiedItem.meta = (item.data.pages) ? (simplifiedItem.meta + `, ${item.data.pages}.`) : ".";

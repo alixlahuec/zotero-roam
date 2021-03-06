@@ -141,9 +141,8 @@
             // Add header elements
             searchDialogHeader.innerHTML = `<label class="bp3-control bp3-switch" style="margin-bottom:0px;flex: 1 1 auto;">
                                             <input id="zotero-quick-copy-mode" type="checkbox"><span class="bp3-control-indicator"></span>Quick Copy</label>
-                                            <span style="font-style:italic;">Press Esc or Alt-Q to exit</span>
                                             <button type="button" aria-label="Close" class="zotero-search-close bp3-button bp3-minimal bp3-dialog-close-button">
-                                            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"><svg data-icon="small-cross" width="20" height="20" viewBox="0 0 20 20"><desc>small-cross</desc><path d="M11.41 10l3.29-3.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71L10 8.59l-3.29-3.3a1.003 1.003 0 00-1.42 1.42L8.59 10 5.3 13.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l3.29-3.3 3.29 3.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L11.41 10z" fill-rule="evenodd"></path></svg></span></button>`
+                                            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>`
         
             // Add body elements
             let parText = document.createElement("p");
@@ -328,6 +327,8 @@
             let iconIntent = (pageInGraph.present == true) ? "success" : "danger";
             let itemInfo = (pageInGraph.present == true) ? (`Page already exists in the graph`) : "Page doesn't exist in the graph";
         
+            let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
+            
             bodyDiv.innerHTML = `<div class="item-additional-metadata">
                                     <p class="item-abstract">${feedback.selection.value.abstract}</p>
                                     <p class="item-tags">${divTags}</p>
@@ -338,6 +339,7 @@
                                     <button type="button" class="bp3-button item-add-metadata">
                                         <span icon="add" class="bp3-icon bp3-icon-add bp3-intent-primary"></span>
                                         <span class="bp3-button-text">Import metadata</span>
+                                        ${importSeq}
                                     </button>
                                     </div>
                                 </div>`;

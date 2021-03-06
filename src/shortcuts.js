@@ -34,6 +34,39 @@
             }
         },
 
+        sequences: {},
+
+        getSequences(action){
+            let shortcuts = zoteroRoam.config.shortcuts.filter(sh => sh.action == action);
+            if(shortcuts.length == 0){
+                return false;
+            } else {
+                let arraySequences = shortcuts.map(sh => {
+                    let activeKeys = []; 
+                    for(key in sh.template){
+                        if(sh.template[key] == true){
+                            activeKeys.push(key);
+                        };
+                    } 
+                    return activeKeys;
+                });
+                return arraySequences.map(seq => seq.join("+")).join(" or ");
+            }
+        },
+
+        generateSequences(){
+            for(action in zoteroRoam.shortcuts.actions){
+                let shortcutSequences = getSequences(action);
+                if(shortcutSequences){
+                    zoteroRoam.shortcuts.sequences[action] = actionSequences;
+                }
+            }
+        },
+
+        makeSequenceText(action, pre = "", post = ""){
+            return `${pre}<span class="zotero-roam-sequence">${zoteroRoam.shortcuts.sequences[action]}</span>`;
+        },
+
         setup(){
             let defaultTemplates = {};
             Object.keys(zoteroRoam.shortcuts.actions).forEach(action => {
@@ -62,7 +95,27 @@
             }
             shortcutObjects.forEach(obj => {
                 zoteroRoam.config.shortcuts.push(new zoteroRoam.Shortcut(obj));
-            })
+            });
+
+            zoteroRoam.shortcuts.generateSequences();
+            
+            // Search Panel : toggle, close
+            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle with") : "";
+            let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
+            if(toggleSeqText.length > 0 | closeSeqText.length > 0){
+                let spanSeqs = document.createElement('span');
+                spanSeqs.style = `font-style:italic;`;
+                spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}`;
+                let searchHeader = document.querySelector('.zotero-search-overlay .bp3-dialog-header');
+                searchHeader.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
+            };
+            // Quick Copy : toggle
+            let qcText = (zoteroRoam.shortcuts.sequences["toggleQuickCopy"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleQuickCopy", pre = " ") : "";
+            if(qcText.length > 0){
+                let searchHeader = document.querySelector('.zotero-search-overlay .bp3-dialog-header');
+                searchHeader.querySelector(".bp3-control.bp3-switch").innerHTML += qcText;
+            };
+            // Import metadata => in rendering of selected item
         },
 
         verify(e){

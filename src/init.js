@@ -191,7 +191,8 @@
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-citekey, .item-actions{flex:0 1 30%;}
                                             .item-citekey{margin:10px 0px;}
-                                            .item-citekey input.bp3-input[readonly]{box-shadow:none;font-weight:bold;}`;
+                                            .item-citekey input.bp3-input[readonly]{box-shadow:none;font-weight:bold;}
+                                            span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}`;
             document.head.append(autoCompleteCSS);
         }
 

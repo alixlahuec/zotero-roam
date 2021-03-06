@@ -191,7 +191,8 @@
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-citekey, .item-actions{flex:0 1 30%;}
                                             .item-citekey{margin:10px 0px;}
-                                            .item-citekey input.bp3-input[readonly]{box-shadow:none;font-weight:bold;}`;
+                                            .item-citekey input.bp3-input[readonly]{box-shadow:none;font-weight:bold;}
+                                            span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}`;
             document.head.append(autoCompleteCSS);
         }
 
@@ -486,13 +487,25 @@
                     window.roamAlphaAPI.createPage({'page': {'title': title}});
                     let pageUID = await zoteroRoam.handlers.waitForPageUID(title);
                     if(pageUID != null){
-                        await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                        try {
+                            if(itemData.length > 0){
+                                await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                                await zoteroRoam.utils.sleep(100);
+                                let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", pageUID);
+                                let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
+                                alert(`Page was successfully added to the graph.
+                                It currently has ${nbChildren} child blocks.`);
+                            } else {
+                                alert('Page was created, but its metadata array was empty.');
+                            }
+                            
+                        } catch(e) {
+                            console.error(e);
+                            alert('Something went wrong when creating the page & adding the metadata')
+                        }
                         let checkSuccess = zoteroRoam.utils.lookForPage(title);
                         if(checkSuccess.present == true){
-                            let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", checkSuccess.uid) || [];
-                            let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
-                            alert(`Page was successfully added to the graph.
-                            It currently has ${nbChildren} child blocks.`);
+                            
                         } else {
                             alert(`Something went wrong in creating the page`);
                         }
@@ -706,18 +719,18 @@
                 // Build metadata string
                 let pubInfo = [item.data.publicationTitle, item.data.university, item.data.bookTitle].filter(Boolean);
                 if(pubInfo.length > 0){
-                    simplifiedItem.meta = simplifiedItem.meta + `, ${pubInfo[0]}`;
+                    simplifiedItem.meta += `, ${pubInfo[0]}`;
                 }
                 if(item.data.publisher){
-                    simplifiedItem.meta = simplifiedItem.meta + `, ${item.data.publisher}`;
+                    simplifiedItem.meta += `, ${item.data.publisher}`;
                     if(item.data.place){
-                        simplifiedItem.meta = simplifiedItem.meta + `: ${item.data.place}`;
+                        simplifiedItem.meta += `: ${item.data.place}`;
                     }
                 };
                 if(item.data.volume){
-                    simplifiedItem.meta = simplifiedItem.meta + `, ${item.data.volume}`;
+                    simplifiedItem.meta += `, ${item.data.volume}`;
                     if(item.data.issue){
-                        simplifiedItem.meta = simplifiedItem.meta + `(${item.data.issue})`;
+                        simplifiedItem.meta += `(${item.data.issue})`;
                     }
                 }
                 simplifiedItem.meta = (item.data.pages) ? (simplifiedItem.meta + `, ${item.data.pages}.`) : ".";
@@ -916,9 +929,8 @@
             // Add header elements
             searchDialogHeader.innerHTML = `<label class="bp3-control bp3-switch" style="margin-bottom:0px;flex: 1 1 auto;">
                                             <input id="zotero-quick-copy-mode" type="checkbox"><span class="bp3-control-indicator"></span>Quick Copy</label>
-                                            <span style="font-style:italic;">Press Esc or Alt-Q to exit</span>
                                             <button type="button" aria-label="Close" class="zotero-search-close bp3-button bp3-minimal bp3-dialog-close-button">
-                                            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"><svg data-icon="small-cross" width="20" height="20" viewBox="0 0 20 20"><desc>small-cross</desc><path d="M11.41 10l3.29-3.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71L10 8.59l-3.29-3.3a1.003 1.003 0 00-1.42 1.42L8.59 10 5.3 13.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l3.29-3.3 3.29 3.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L11.41 10z" fill-rule="evenodd"></path></svg></span></button>`
+                                            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>`
         
             // Add body elements
             let parText = document.createElement("p");
@@ -1103,6 +1115,8 @@
             let iconIntent = (pageInGraph.present == true) ? "success" : "danger";
             let itemInfo = (pageInGraph.present == true) ? (`Page already exists in the graph`) : "Page doesn't exist in the graph";
         
+            let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
+            
             bodyDiv.innerHTML = `<div class="item-additional-metadata">
                                     <p class="item-abstract">${feedback.selection.value.abstract}</p>
                                     <p class="item-tags">${divTags}</p>
@@ -1113,6 +1127,7 @@
                                     <button type="button" class="bp3-button item-add-metadata">
                                         <span icon="add" class="bp3-icon bp3-icon-add bp3-intent-primary"></span>
                                         <span class="bp3-button-text">Import metadata</span>
+                                        ${importSeq}
                                     </button>
                                     </div>
                                 </div>`;
@@ -1491,6 +1506,39 @@
             }
         },
 
+        sequences: {},
+
+        getSequences(action){
+            let shortcuts = zoteroRoam.config.shortcuts.filter(sh => sh.action == action);
+            if(shortcuts.length == 0){
+                return false;
+            } else {
+                let arraySequences = shortcuts.map(sh => {
+                    let activeKeys = []; 
+                    for(key in sh.template){
+                        if(sh.template[key] == true){
+                            activeKeys.push(key);
+                        };
+                    } 
+                    return activeKeys;
+                });
+                return arraySequences.map(seq => seq.join("+")).join(" or ");
+            }
+        },
+
+        generateSequences(){
+            for(action in zoteroRoam.shortcuts.actions){
+                let shortcutSequences = getSequences(action);
+                if(shortcutSequences){
+                    zoteroRoam.shortcuts.sequences[action] = actionSequences;
+                }
+            }
+        },
+
+        makeSequenceText(action, pre = "", post = ""){
+            return `${pre}<span class="zotero-roam-sequence">${zoteroRoam.shortcuts.sequences[action]}</span>`;
+        },
+
         setup(){
             let defaultTemplates = {};
             Object.keys(zoteroRoam.shortcuts.actions).forEach(action => {
@@ -1519,7 +1567,27 @@
             }
             shortcutObjects.forEach(obj => {
                 zoteroRoam.config.shortcuts.push(new zoteroRoam.Shortcut(obj));
-            })
+            });
+
+            zoteroRoam.shortcuts.generateSequences();
+            
+            // Search Panel : toggle, close
+            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle with") : "";
+            let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
+            if(toggleSeqText.length > 0 | closeSeqText.length > 0){
+                let spanSeqs = document.createElement('span');
+                spanSeqs.style = `font-style:italic;`;
+                spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}`;
+                let searchHeader = document.querySelector('.zotero-search-overlay .bp3-dialog-header');
+                searchHeader.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
+            };
+            // Quick Copy : toggle
+            let qcText = (zoteroRoam.shortcuts.sequences["toggleQuickCopy"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleQuickCopy", pre = " ") : "";
+            if(qcText.length > 0){
+                let searchHeader = document.querySelector('.zotero-search-overlay .bp3-dialog-header');
+                searchHeader.querySelector(".bp3-control.bp3-switch").innerHTML += qcText;
+            };
+            // Import metadata => in rendering of selected item
         },
 
         verify(e){
@@ -1543,6 +1611,7 @@
         }
     }
 })();
+
 ;(()=>{
     // This code will run on re/load
     // It contains the interactive portion of the setup (reading user specifications, and setting up certain objects accordingly)
