@@ -114,6 +114,7 @@
         // TODO: Add handling of non-200 response codes from the API
         async fetchData(apiKey, dataURI, params){
             let requestURL = `https://api.zotero.org/${dataURI}?${params}`;
+            let results = [];
             // Make initial call to API, to know total number of results
             try{
                 let response = await fetch(requestURL, {
@@ -123,13 +124,13 @@
                         'Zotero-API-Key': apiKey
                     }
                 });
-                if(response.status == "ok"){
+                if(response.ok == true){
                     let totalResults = response.headers.get('Total-Results');
                     let paramsQuery = new URLSearchParams(params);
                     let startIndex = (paramsQuery.has('start')) ? (Number(paramsQuery.get('start'))) : 0;
                     let limitParam = (paramsQuery.has('limit')) ? (Number(paramsQuery.get('limit'))) : 100;
 
-                    let results = await response.json();
+                    results = await response.json();
 
                     let traversed = startIndex + results.length;
                     if(traversed < totalResults){
@@ -157,6 +158,8 @@
                         processedResults = processedResults.flat(1);
                         results.push(...processedResults);
                     }
+                } else {
+                    console.log(`The request for ${response.url} returned a code of ${response.status}`);
                 }
             } catch(e) {
                 console.error(e);
