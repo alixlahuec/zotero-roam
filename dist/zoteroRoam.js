@@ -1225,7 +1225,7 @@
             // For each request, get the latest version of any item that belongs to it
             let updateRequests = zoteroRoam.config.requests.map(rq => {
                 let items = zoteroRoam.data.items.filter(i => i.requestLabel == rq.name);
-                let latest = items.reduce( (f,s) => {return (f.version < s.version) ? s : f});
+                let latest = items.reduce( (f,s) => {return (f.version < s.version) ? s : f}).version;
                 let paramsQuery = new URLSearchParams(rq.params);
                 paramsQuery.set('since', latest);
                 rq.params = paramsQuery.toString();
@@ -1233,43 +1233,30 @@
             });
             let updateResults = await zoteroRoam.handlers.requestData(updateRequests);
             if(updateResults.success == true){
-                zoteroRoam.data.collections = updateResults.map(res => res.data.collections).flat(1); // Collections are fetched without a 'since' parameter, so simply replacing the whole Object is fine
+                zoteroRoam.data.collections = updateResults.data.collections; // Collections are fetched without a 'since' parameter, so simply replacing the whole Object is fine
                 
-                let updatedItems = updateResults.map(res => res.data.items);
-                let notEmpty = updatedItems.find(res => res.length > 0);
-                if(!notEmpty){
+                let updatedItems = updateResults.data.items;
+                if(updatedItems.length == 0){
                     alert("No new items were found since the data was last loaded. Data on collections was refreshed.");
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 } else {
-                    let resultsMessage = zoteroRoam.config.requests.map( (rq, rq_index) => {
-                        newItems = zoteroRoam.handlers.extractCitekeys(updatedItems[i]);
-                        let nbNewItems = newItems.length;
-                        let nbModifiedItems = 0;
-    
-                        newItems.forEach(item => {
-                            item.requestLabel = rq.name;
-                            item.requestIndex = rq_index;
-                            let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => {return libItem.key == item.key});
-                            if(duplicateIndex == -1){
-                                zoteroRoam.data.items.push(item);
-                            } else {
-                                zoteroRoam.data.items[duplicateIndex] = item;
-                                nbModifiedItems += 1;
-                                nbNewItems -= 1;
-                            }
-                        });
-    
-                        zoteroRoam.pageRefs.checkCitekeys(update = true);
-    
-                        if(newItems.length == 0){
-                            return `${rq.name} : no new items`;
+                    let newItems = zoteroRoam.handlers.extractCitekeys(updatedItems);
+                    let nbNewItems = newItems.length;
+                    let nbModifiedItems = 0;
+
+                    updatedItems.forEach(item => {
+                        let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => {return libItem.key == item.key & libItem.requestLabel == item.requestLabel});
+                        if(duplicateIndex == -1){
+                            zoteroRoam.data.items.push(item);
+                        } else {
+                            zoteroRoam.data.items[duplicateIndex] = item;
+                            nbModifiedItems += 1;
+                            nbNewItems -= 1;
                         }
-                        return `${rq.name} : ${nbNewItems} new items, ${nbModifiedItems} modified items`;
-    
                     });
-    
-                    resultsMessage.join(" \n ");
-                    alert(`${resultsMessage}`);
+
+                    zoteroRoam.pageRefs.checkCitekeys(update = true);
+                    alert(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`)
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 }
 
