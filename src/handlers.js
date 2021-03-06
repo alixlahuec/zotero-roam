@@ -212,13 +212,13 @@
                 requests.forEach( rq => {
                     let userOrGroupPrefix = rq.dataURI.match(/(users|groups)\/(.+)\//g)[0].slice(0,-1);
                     dataCalls.push(zoteroRoam.handlers.fetchData(apiKey = rq.apikey, dataURI = rq.dataURI, params = rq.params));
-                    collectionsCalls.push(fetch(`https://api.zotero.org/${userOrGroupPrefix}/collections`), {
+                    collectionsCalls.push(fetch(`https://api.zotero.org/${userOrGroupPrefix}/collections`, {
                         method: 'GET',
                         headers: {
                             'Zotero-API-Version': 3,
                             'Zotero-API-Key': rq.apikey
                         }
-                    });
+                    }));
                 });
                 // Items data
                 let requestsResults = await Promise.all(dataCalls);

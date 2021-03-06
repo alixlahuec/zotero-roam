@@ -27,7 +27,7 @@
                 zoteroRoam.interface.toggleContextOverlay("iconContextMenu", "show");
             }
         },
-        search: {div: null, overlay: null, input: null, selectedItemDiv: null, quickCopyToggle: null, closeButton: null, updateButton: null, visible: false},
+        search: {overlay: null, input: null, selectedItemDiv: null, quickCopyToggle: null, closeButton: null, updateButton: null, visible: false},
 
         create(){
             zoteroRoam.interface.icon = zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -38,7 +38,7 @@
         },
 
         setup(){
-            zoteroRoam.interface.icon.onclick = zoteroRoam.extension.toggle();
+            zoteroRoam.interface.icon.addEventListener("click", zoteroRoam.extension.toggle);
 
             zoteroRoam.interface.setupContextMenus(["contextMenu", "iconContextMenu"]);
 

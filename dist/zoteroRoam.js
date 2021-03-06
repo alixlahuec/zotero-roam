@@ -619,13 +619,13 @@
                 requests.forEach( rq => {
                     let userOrGroupPrefix = rq.dataURI.match(/(users|groups)\/(.+)\//g)[0].slice(0,-1);
                     dataCalls.push(zoteroRoam.handlers.fetchData(apiKey = rq.apikey, dataURI = rq.dataURI, params = rq.params));
-                    collectionsCalls.push(fetch(`https://api.zotero.org/${userOrGroupPrefix}/collections`), {
+                    collectionsCalls.push(fetch(`https://api.zotero.org/${userOrGroupPrefix}/collections`, {
                         method: 'GET',
                         headers: {
                             'Zotero-API-Version': 3,
                             'Zotero-API-Key': rq.apikey
                         }
-                    });
+                    }));
                 });
                 // Items data
                 let requestsResults = await Promise.all(dataCalls);
@@ -798,7 +798,7 @@
                 zoteroRoam.interface.toggleContextOverlay("iconContextMenu", "show");
             }
         },
-        search: {div: null, overlay: null, input: null, selectedItemDiv: null, quickCopyToggle: null, closeButton: null, updateButton: null, visible: false},
+        search: {overlay: null, input: null, selectedItemDiv: null, quickCopyToggle: null, closeButton: null, updateButton: null, visible: false},
 
         create(){
             zoteroRoam.interface.icon = zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -809,7 +809,7 @@
         },
 
         setup(){
-            zoteroRoam.interface.icon.onclick = zoteroRoam.extension.toggle();
+            zoteroRoam.interface.icon.addEventListener("click", zoteroRoam.extension.toggle);
 
             zoteroRoam.interface.setupContextMenus(["contextMenu", "iconContextMenu"]);
 
