@@ -1,7 +1,10 @@
 ;(()=>{
     // This code will run on re/load
     // It contains the interactive portion of the setup (reading user specifications, and setting up certain objects accordingly)
-    if (typeof(window.zoteroRoam) === 'undefined' && typeof(window.zoteroRoam_settings) !== 'undefined') {
+    if (typeof(window.zoteroRoam_settings) !== 'undefined') {
+        if(typeof(window.zoteroRoam) !== 'undefined'){
+            window.zoteroRoam.remove();
+        }
         // Add DOM interface elements + set them up
         zoteroRoam.interface.create();
         zoteroRoam.interface.setup();

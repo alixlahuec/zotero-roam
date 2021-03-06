@@ -57,14 +57,14 @@
         },
         
         toggle(){
-            if(zoteroRoam.interface.icon.status == "off"){
+            if(zoteroRoam.interface.icon.getAttribute('status') == "off"){
                 zoteroRoam.extension.load();
             } else {
                 zoteroRoam.extension.unload();
             }
         },
 
-        update(){
+        async update(){
             // Turn the icon background to orange while we're updating the data
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it

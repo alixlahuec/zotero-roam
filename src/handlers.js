@@ -207,7 +207,7 @@
                 let dataCalls = [];
                 let collectionsCalls = [];
                 requests.forEach( rq => {
-                    let userOrGroupPrefix = rq.dataURI.match(/(users|groups)\/(.+)\//g);
+                    let userOrGroupPrefix = rq.dataURI.match(/(users|groups)\/(.+)\//g)[0].slice(0,-1);
                     dataCalls.push(zoteroRoam.handlers.fetchData(apiKey = rq.apikey, dataURI = rq.dataURI, params = rq.params));
                     collectionsCalls.push(fetch(`https://api.zotero.org/${userOrGroupPrefix}/collections`), {
                         method: 'GET',
