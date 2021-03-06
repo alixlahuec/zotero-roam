@@ -41,7 +41,6 @@
             zoteroRoam.interface.icon.onclick = zoteroRoam.extension.toggle();
 
             zoteroRoam.interface.setupContextMenus(["contextMenu", "iconContextMenu"]);
-            zoteroRoam.interface.icon.addEventListener("contextmenu", addListenerToZoteroIcon);
 
             zoteroRoam.interface.search.updateButton.addEventListener("click", zoteroRoam.extension.update);
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});

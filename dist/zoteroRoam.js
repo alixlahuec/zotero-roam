@@ -610,6 +610,9 @@
         },
 
         async requestData(requests) {
+            if(zoteroRoam.config.requests.length == 0){
+                throw new Error("No data requests were added to the config object - check for upstream problems");
+            }
             try{
                 let dataCalls = [];
                 let collectionsCalls = [];
@@ -809,7 +812,6 @@
             zoteroRoam.interface.icon.onclick = zoteroRoam.extension.toggle();
 
             zoteroRoam.interface.setupContextMenus(["contextMenu", "iconContextMenu"]);
-            zoteroRoam.interface.icon.addEventListener("contextmenu", addListenerToZoteroIcon);
 
             zoteroRoam.interface.search.updateButton.addEventListener("click", zoteroRoam.extension.update);
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
@@ -1158,7 +1160,9 @@
         unload(){
             zoteroRoam.interface.icon.setAttribute("status", "off");
             zoteroRoam.data = {items: [], collections: []};
-            zoteroRoam.autoComplete.unInit();
+            if(zoteroRoam.autoComplete !== null){
+                zoteroRoam.autoComplete.unInit();
+            }
 
             // Remove request results
             let refCitekeys = document.querySelectorAll("ref-citekey");

@@ -38,7 +38,9 @@
         unload(){
             zoteroRoam.interface.icon.setAttribute("status", "off");
             zoteroRoam.data = {items: [], collections: []};
-            zoteroRoam.autoComplete.unInit();
+            if(zoteroRoam.autoComplete !== null){
+                zoteroRoam.autoComplete.unInit();
+            }
 
             // Remove request results
             let refCitekeys = document.querySelectorAll("ref-citekey");
