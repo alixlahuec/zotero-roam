@@ -24,7 +24,7 @@
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
                 // Setup contextmenu event for the extension's icon
-                zoteroRoam.interface.icon.addEventListener("contextmenu", handlerIcon = function(e){ zoteroRoam.interface.popContextOverlay(e, elementKey = "iconContextMenu") });
+                zoteroRoam.interface.icon.addEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
                 // Setup keypress listeners to detect shortcuts
                 window.addEventListener("keyup", zoteroRoam.shortcuts.verify);
                 window.addEventListener("keydown", zoteroRoam.shortcuts.verify);
@@ -46,8 +46,8 @@
             let refCitekeys = document.querySelectorAll("ref-citekey");
             refCitekeys.forEach(ck => { 
                 ck.removeAttribute("data-zotero-bib"); 
-                ck.querySelector(".rm-page-ref").removeEventListener("contextmenu", handler)});
-            zoteroRoam.interface.icon.removeEventListener("contextmenu", handlerIcon);
+                ck.querySelector(".rm-page-ref").removeEventListener("contextmenu", zoteroRoam.interface.popContextMenu)});
+            zoteroRoam.interface.icon.removeEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
 
             document.removeEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
             window.removeEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);

@@ -1027,6 +1027,14 @@
             return false;
         },
 
+        popContextMenu(e){
+            popContextOverlay(e, "contextMenu");
+        },
+
+        popIconContextMenu(e){
+            popContextOverlay(e, "iconContextMenu");
+        },
+
         renderNbResults(e){
             let resultsText = "";
             if(e.detail.results.length > 0){
@@ -1146,7 +1154,7 @@
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
                 // Setup contextmenu event for the extension's icon
-                zoteroRoam.interface.icon.addEventListener("contextmenu", handlerIcon = function(e){ zoteroRoam.interface.popContextOverlay(e, elementKey = "iconContextMenu") });
+                zoteroRoam.interface.icon.addEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
                 // Setup keypress listeners to detect shortcuts
                 window.addEventListener("keyup", zoteroRoam.shortcuts.verify);
                 window.addEventListener("keydown", zoteroRoam.shortcuts.verify);
@@ -1168,8 +1176,8 @@
             let refCitekeys = document.querySelectorAll("ref-citekey");
             refCitekeys.forEach(ck => { 
                 ck.removeAttribute("data-zotero-bib"); 
-                ck.querySelector(".rm-page-ref").removeEventListener("contextmenu", handler)});
-            zoteroRoam.interface.icon.removeEventListener("contextmenu", handlerIcon);
+                ck.querySelector(".rm-page-ref").removeEventListener("contextmenu", zoteroRoam.interface.popContextMenu)});
+            zoteroRoam.interface.icon.removeEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
 
             document.removeEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
             window.removeEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
@@ -1269,7 +1277,7 @@
                 // Only add a listener for context menu if the item has been found in the library
                 if (ref.dataset.zoteroBib == "inLibrary") {
                     // Robust regardless of brackets
-                        ref.querySelector('.rm-page-ref').addEventListener("contextmenu", handler = function(e){ zoteroRoam.interface.popContextOverlay(e, elementKey = "contextMenu") });
+                        ref.querySelector('.rm-page-ref').addEventListener("contextmenu", zoteroRoam.interface.popContextMenu);
                 } else if (ref.dataset.zoteroBib == "notFound") {
                     console.log('This citekey was checked against the contents of ZoteroData but didn\'t match any item. Make sure your citekeys are pinned.');
                 }

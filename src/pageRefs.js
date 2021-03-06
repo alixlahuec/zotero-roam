@@ -18,7 +18,7 @@
                 // Only add a listener for context menu if the item has been found in the library
                 if (ref.dataset.zoteroBib == "inLibrary") {
                     // Robust regardless of brackets
-                        ref.querySelector('.rm-page-ref').addEventListener("contextmenu", handler = function(e){ zoteroRoam.interface.popContextOverlay(e, elementKey = "contextMenu") });
+                        ref.querySelector('.rm-page-ref').addEventListener("contextmenu", zoteroRoam.interface.popContextMenu);
                 } else if (ref.dataset.zoteroBib == "notFound") {
                     console.log('This citekey was checked against the contents of ZoteroData but didn\'t match any item. Make sure your citekeys are pinned.');
                 }

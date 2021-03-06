@@ -256,6 +256,14 @@
             return false;
         },
 
+        popContextMenu(e){
+            popContextOverlay(e, "contextMenu");
+        },
+
+        popIconContextMenu(e){
+            popContextOverlay(e, "iconContextMenu");
+        },
+
         renderNbResults(e){
             let resultsText = "";
             if(e.detail.results.length > 0){
