@@ -8,6 +8,20 @@
         zoteroRoam.addAutoCompleteCSS();
 
         zoteroRoam.config.userSettings = window.zoteroRoam_settings;
+        let qc_override_key = zoteroRoam.config.userSettings['override_quickcopy'] || false;
+        if(qc_override_key){
+            zoteroRoam.config.params.override_quickcopy.key = qc_override_key;
+            window.addEventListener("keydown", (e) => {
+                if(e.key == zoteroRoam.config.params.override_quickcopy.key | e[zoteroRoam.config.params.override_quickcopy.key] == true){
+                    zoteroRoam.config.params.override_quickcopy.overridden = true;
+                }
+            });
+            window.addEventListener("keyup", (e) => {
+                if(e.key == zoteroRoam.config.params.override_quickcopy.key | e[zoteroRoam.config.params.override_quickcopy.key] == false){
+                    zoteroRoam.config.params.override_quickcopy.overridden = false;
+                }
+            })
+        }
         
         zoteroRoam.shortcuts.setup();
         zoteroRoam.handlers.setupUserRequests();

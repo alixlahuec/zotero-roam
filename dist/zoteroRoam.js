@@ -125,7 +125,7 @@
                         .appendChild(result);
                 },
                 onSelection: (feedback) => {
-                    if(zoteroRoam.interface.search.quickCopyToggle.checked){
+                    if(zoteroRoam.interface.search.quickCopyToggle.checked && !zoteroRoam.config.params.override_quickcopy.overridden){
                         zoteroRoam.interface.search.input.blur();
                         zoteroRoam.interface.search.input.value = '@' + feedback.selection.value.key;
                         zoteroRoam.interface.search.input.select();
@@ -136,6 +136,9 @@
                         zoteroRoam.interface.renderSelectedItem(feedback);
                     }
                 }
+            },
+            params: {
+                override_quickcopy: {overridden: false}
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
@@ -1491,8 +1494,7 @@
             toggleQuickCopy: {
                 defaultShortcut: [],
                 execute(){
-                    let newState = (zoteroRoam.interface.search.quickCopyToggle.checked) ? false : true;
-                    zoteroRoam.interface.search.quickCopyToggle.checked = newState;
+                    document.getElementById("zotero-quick-copy-mode").click();
                 }
             },
             importMetadata: {
@@ -1572,12 +1574,12 @@
             zoteroRoam.shortcuts.generateSequences();
 
             // Search Panel : toggle, close
-            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle with") : "";
+            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle with ") : "";
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
                 let spanSeqs = document.createElement('span');
                 spanSeqs.style = `font-style:italic;`;
-                spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}`;
+                spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}  `;
                 let searchHeader = document.querySelector('.zotero-search-overlay .bp3-dialog-header');
                 searchHeader.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
             };
@@ -1622,6 +1624,20 @@
         zoteroRoam.addAutoCompleteCSS();
 
         zoteroRoam.config.userSettings = window.zoteroRoam_settings;
+        let qc_override_key = zoteroRoam.config.userSettings['override_quickcopy'] || false;
+        if(qc_override_key){
+            zoteroRoam.config.params.override_quickcopy.key = qc_override_key;
+            window.addEventListener("keydown", (e) => {
+                if(e.key == zoteroRoam.config.params.override_quickcopy.key | e[zoteroRoam.config.params.override_quickcopy.key] == true){
+                    zoteroRoam.config.params.override_quickcopy.overridden = true;
+                }
+            });
+            window.addEventListener("keyup", (e) => {
+                if(e.key == zoteroRoam.config.params.override_quickcopy.key | e[zoteroRoam.config.params.override_quickcopy.key] == false){
+                    zoteroRoam.config.params.override_quickcopy.overridden = false;
+                }
+            })
+        }
         
         zoteroRoam.shortcuts.setup();
         zoteroRoam.handlers.setupUserRequests();

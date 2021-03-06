@@ -19,8 +19,7 @@
             toggleQuickCopy: {
                 defaultShortcut: [],
                 execute(){
-                    let newState = (zoteroRoam.interface.search.quickCopyToggle.checked) ? false : true;
-                    zoteroRoam.interface.search.quickCopyToggle.checked = newState;
+                    document.getElementById("zotero-quick-copy-mode").click();
                 }
             },
             importMetadata: {
@@ -100,12 +99,12 @@
             zoteroRoam.shortcuts.generateSequences();
 
             // Search Panel : toggle, close
-            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle with") : "";
+            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle with ") : "";
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
                 let spanSeqs = document.createElement('span');
                 spanSeqs.style = `font-style:italic;`;
-                spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}`;
+                spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}  `;
                 let searchHeader = document.querySelector('.zotero-search-overlay .bp3-dialog-header');
                 searchHeader.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
             };

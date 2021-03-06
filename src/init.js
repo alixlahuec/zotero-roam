@@ -125,7 +125,7 @@
                         .appendChild(result);
                 },
                 onSelection: (feedback) => {
-                    if(zoteroRoam.interface.search.quickCopyToggle.checked){
+                    if(zoteroRoam.interface.search.quickCopyToggle.checked && !zoteroRoam.config.params.override_quickcopy.overridden){
                         zoteroRoam.interface.search.input.blur();
                         zoteroRoam.interface.search.input.value = '@' + feedback.selection.value.key;
                         zoteroRoam.interface.search.input.select();
@@ -136,6 +136,9 @@
                         zoteroRoam.interface.renderSelectedItem(feedback);
                     }
                 }
+            },
+            params: {
+                override_quickcopy: {overridden: false}
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
