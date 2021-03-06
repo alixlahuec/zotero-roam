@@ -1,5 +1,4 @@
-
-(()=>{
+;(()=>{
     
     window.zoteroRoam = {
 
@@ -205,8 +204,7 @@
     document.getElementsByTagName("head")[0].appendChild(ac);
 
 })();
-
-(()=>{
+;(()=>{
     zoteroRoam.utils = {
 
         addBlock(uid, blockString, order = 0) {
@@ -403,10 +401,9 @@
         }
 
     };
-})
+});
 
-
-(()=>{
+;(()=>{
     zoteroRoam.handlers = {
 
         async addBlockObject(parent_uid, object) {
@@ -765,9 +762,9 @@
             throw new Error(`The page with title "${title}" couldn\'t be found`);
         }
     };
-})
+});
 
-(()=>{
+;(()=>{
     zoteroRoam.interface = {
         icon: null,
         portal: {div: null, id: "zotero-data-importer-portal"},
@@ -791,7 +788,7 @@
             options: {list: [], class: "zotero-icon-context-menu-option", labels: ["Update Zotero data", "Search in dataset..."]},
             visible: false,
             position({top, left}){
-                zoteroRoam.interface.iconContextMenu.style.left = (left >= 0.9*window*innerWidth) ? `calc(${left}px - 7%)` : `${left}px`;
+                zoteroRoam.interface.iconContextMenu.style.left = (left >= 0.9*window.innerWidth) ? `calc(${left}px - 7%)` : `${left}px`;
                 zoteroRoam.interface.iconContextMenu.style.top = `calc(${top}px + 3%)`;
                 zoteroRoam.interface.toggleContextOverlay("iconContextMenu", "show");
             }
@@ -1117,9 +1114,9 @@
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
         }
     }
-})
+});
 
-(()=>{
+;(()=>{
     zoteroRoam.pageRefs = {
 
         addContextMenuListener() {
@@ -1221,9 +1218,9 @@
         }
 
     }
-})
+});
 
-(()=>{
+;(()=>{
     zoteroRoam.formatting = {
 
         getCreators(item){
@@ -1310,9 +1307,9 @@
         },
 
     }
-})
+});
 
-(()=>{
+;(()=>{
     zoteroRoam.shortcuts = {
         actions: {
             closeSearchPanel: {
@@ -1391,9 +1388,8 @@
             });
         }
     }
-})
-
-(()=>{
+});
+;(()=>{
     // This code will run on re/load
     // It contains the interactive portion of the setup (reading user specifications, and setting up certain objects accordingly)
     if (typeof(window.zoteroRoam) === 'undefined' && typeof(window.zoteroRoam_settings) !== 'undefined') {
@@ -1410,7 +1406,7 @@
     } else {
         throw new Error("A zoteroRoam_settings object must be defined in order to use the extension. Read through the docs for basic setup examples.");
     }
-})
+});
 
 // Example of a settings object
 /* window.zoteroRoam_settings = {
