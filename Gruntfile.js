@@ -3,7 +3,7 @@ module.exports = function(grunt){
         pkg: grunt.file.readJSON("package.json"),
         concat: {
             options: {
-                separator: ";\n"
+                separator: "\n"
             },
             dist: {
                 src: ["src/init.js", 

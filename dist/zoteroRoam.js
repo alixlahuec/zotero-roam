@@ -205,7 +205,7 @@
     document.getElementsByTagName("head")[0].appendChild(ac);
 
 })();
-;
+
 (()=>{
     zoteroRoam.utils = {
 
@@ -404,7 +404,7 @@
 
     };
 })
-;
+
 
 (()=>{
     zoteroRoam.handlers = {
@@ -766,7 +766,7 @@
         }
     };
 })
-;
+
 (()=>{
     zoteroRoam.interface = {
         icon: null,
@@ -1118,7 +1118,7 @@
         }
     }
 })
-;
+
 (()=>{
     zoteroRoam.pageRefs = {
 
@@ -1222,7 +1222,7 @@
 
     }
 })
-;
+
 (()=>{
     zoteroRoam.formatting = {
 
@@ -1311,7 +1311,7 @@
 
     }
 })
-;
+
 (()=>{
     zoteroRoam.shortcuts = {
         actions: {
@@ -1391,7 +1391,7 @@
             });
         }
     }
-});
+})
 
 (()=>{
     // This code will run on re/load
