@@ -357,4 +357,4 @@
             throw new Error(`The page with title "${title}" couldn\'t be found`);
         }
     };
-});
+})();

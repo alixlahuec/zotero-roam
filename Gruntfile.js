@@ -17,8 +17,7 @@ module.exports = function(grunt){
         },
         uglify: {
             options: {
-                banner: '/* <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
-                compress: false
+                banner: '/* <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             min: {
                 src: "dist/zoteroRoam.js",

@@ -1,3 +1,4 @@
+
 ;(()=>{
     
     window.zoteroRoam = {
@@ -204,6 +205,7 @@
     document.getElementsByTagName("head")[0].appendChild(ac);
 
 })();
+
 ;(()=>{
     zoteroRoam.utils = {
 
@@ -401,7 +403,7 @@
         }
 
     };
-});
+})();
 
 ;(()=>{
     zoteroRoam.handlers = {
@@ -762,7 +764,7 @@
             throw new Error(`The page with title "${title}" couldn\'t be found`);
         }
     };
-});
+})();
 
 ;(()=>{
     zoteroRoam.interface = {
@@ -1114,7 +1116,7 @@
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
         }
     }
-});
+})();
 
 ;(()=>{
     zoteroRoam.pageRefs = {
@@ -1218,7 +1220,7 @@
         }
 
     }
-});
+})();
 
 ;(()=>{
     zoteroRoam.formatting = {
@@ -1307,7 +1309,7 @@
         },
 
     }
-});
+})();
 
 ;(()=>{
     zoteroRoam.shortcuts = {
@@ -1388,7 +1390,7 @@
             });
         }
     }
-});
+})();
 ;(()=>{
     // This code will run on re/load
     // It contains the interactive portion of the setup (reading user specifications, and setting up certain objects accordingly)
@@ -1406,7 +1408,7 @@
     } else {
         throw new Error("A zoteroRoam_settings object must be defined in order to use the extension. Read through the docs for basic setup examples.");
     }
-});
+})();
 
 // Example of a settings object
 /* window.zoteroRoam_settings = {

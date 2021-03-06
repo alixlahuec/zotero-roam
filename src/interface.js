@@ -348,4 +348,4 @@
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
         }
     }
-});
+})();
