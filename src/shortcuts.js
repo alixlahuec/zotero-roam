@@ -146,7 +146,7 @@
                 // Update status of special keys
                 specialKeys.forEach(k => { sh.watcher[k] = e[k] });
                 // If the key is part of the shortcut template, update its real-time status (true = pressed, false = not pressed)
-                if(sh.template.hasOwnProperty(keyName)){ sh.watcher[`${keyName}`] = keyPressed };
+                if(sh.template.hasOwnProperty(keyName) | sh.template.hasOwnProperty(keyName.toLowerCase())){ sh.watcher[`${keyName}`] = keyPressed };
                 return sh;
             });
             // Once all the watchers have been updated, compare the watchers against the templates & decide whether an action should be triggered
