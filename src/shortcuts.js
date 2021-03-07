@@ -142,11 +142,12 @@
             let keyPressed = (e.type == "keydown") ? true : false;
             let specialKeys = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'];
             // Update all the watchers
-            zoteroRoam.config.shortcuts.forEach(s => {
+            zoteroRoam.config.shortcuts = zoteroRoam.config.shortcuts.map(sh => {
                 // Update status of special keys
-                specialKeys.forEach(k => { s.watcher[`${k}`] = e[`${k}`] });
+                specialKeys.forEach(k => { sh.watcher[k] = e[k] });
                 // If the key is part of the shortcut template, update its real-time status (true = pressed, false = not pressed)
-                if(s.template.hasOwnProperty(keyName)){ s.watcher[`${keyName}`] = keyPressed };
+                if(sh.template.hasOwnProperty(keyName)){ sh.watcher[`${keyName}`] = keyPressed };
+                return sh;
             });
             // Once all the watchers have been updated, compare the watchers against the templates & decide whether an action should be triggered
             // Note that if two shortcuts are somehow triggered in the same combination of keys, they'll be processed in order of declaration
