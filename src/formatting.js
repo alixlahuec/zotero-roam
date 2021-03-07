@@ -17,25 +17,51 @@
             return zoteroRoam.utils.formatBib(bibHTML);
         },
 
+        getChildrenInDataset(item){
+            let childn = zoteroRoam.data.items.filter(i => i.data.parentItem == item.data.key & i.library.id == item.library.id);
+            if(childn.length > 0){
+                return childn;
+            } else {
+                return false;
+            }
+        },
+
         // For a given item, returns an object with two properties :
         // - pdfItems : an Array of Markdown-style links to the local copy of each PDF file attached to the item
         // - notes : an Array of Arrays, where each child Array corresponds to a single note attached to the item (with each element being the note's contents, as delimited by newline)
         // If either is non-existent/unavailable, it takes the value `false`
-        async getItemChildren(item){
+        // If the item has children that were not returned by the API call, the object will have a property `remoteChildren` set to `true`.
+        // User can check if that's the case, and decide to call zoteroRoam.handlers.requestItemChildren to obtain those children ; if any, they will be returned raw (user will have to format)
+        getItemChildren(item, { pdf_as = "links", notes_as = "formatted" } = {}){
             let childrenObject = {pdfItems: false, notes: false};
             let itemChildren = [];
 
             if(item.meta.numChildren > 0){
-                let childrenInDataset = zoteroRoam.data.items.filter(i => i.data.parentItem == item.data.key & i.library.id == item.library.id);
-                if(childrenInDataset.length == 0){
-                    let remoteChildren = await zoteroRoam.handlers.requestItemChildren(item);
-                    itemChildren = remoteChildren || [];
+                let childrenInDataset = zoteroRoam.formatting.getChildrenInDataset(item);
+                if(!childrenInDataset){
+                    childrenObject.remoteChildren = true;
                 } else {
                     itemChildren = childrenInDataset;
                 }
             }
-            childrenObject.pdfItems = zoteroRoam.utils.makePDFLinks(itemChildren.filter(c => c.data.contentType == "application/pdf"));
-            childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"));
+            switch(pdf_as){
+                case "raw":
+                    childrenObject.pdfItems = itemChildren.filter(c => c.data.contentType == "application/pdf");
+                    break;
+                case "links":
+                    childrenObject.pdfItems = zoteroRoam.utils.makePDFLinks(itemChildren.filter(c => c.data.contentType == "application/pdf"));
+                    break;
+            };
+
+            switch(notes_as){
+                case "raw":
+                    childrenObject.notes = itemChildren.filter(c => c.data.itemType == "note");
+                    break;
+                case "formatted":
+                    childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"));
+                    break;
+            }
+
             return childrenObject;
         },
 

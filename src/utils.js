@@ -136,9 +136,22 @@
         
             return cleanBlock;
         },
+
+        renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = ""} = {}){
+            return `<div class="bp3-button-group bp3-minimal bp3-vertical bp3-align-left">
+                    <button type="button" class="bp3-button ${buttonClass}">
+                        <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
+                            <span class="bp3-button-text">${string}</span>
+                    </button>
+                    </div>`;
+        },
         
-        renderBP3Tag(string, modifier = ""){
-            return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}</span>`;
+        renderBP3Tag(string, {modifier = "", icon = ""} = {}){
+            if(icon.length > 0){
+                return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">Theology &amp; Personal Study</span></span>`;
+            } else {
+                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}</span>`;
+            }
         },
 
         renderHTMLBlockObject(object){

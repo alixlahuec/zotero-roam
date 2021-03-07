@@ -348,9 +348,22 @@
         
             return cleanBlock;
         },
+
+        renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = ""} = {}){
+            return `<div class="bp3-button-group bp3-minimal bp3-vertical bp3-align-left">
+                    <button type="button" class="bp3-button ${buttonClass}">
+                        <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
+                            <span class="bp3-button-text">${string}</span>
+                    </button>
+                    </div>`;
+        },
         
-        renderBP3Tag(string, modifier = ""){
-            return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}</span>`;
+        renderBP3Tag(string, {modifier = "", icon = ""} = {}){
+            if(icon.length > 0){
+                return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">Theology &amp; Personal Study</span></span>`;
+            } else {
+                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}</span>`;
+            }
         },
 
         renderHTMLBlockObject(object){
@@ -1071,6 +1084,7 @@
 
         renderSelectedItem(feedback){
 
+            let selectedItem = zoteroRoam.data.items.find(it => it.key == feedback.selection.value.key);
             let citekey = '@' + feedback.selection.value.key;
             let itemYear = (feedback.selection.value.year) ? (" (" + feedback.selection.value.year + ")") : "";
         
@@ -1081,7 +1095,7 @@
             if(infoAuthors.length > 0){
                 for(i=0; i < infoAuthors.length; i++){
                     let authorInGraph = zoteroRoam.utils.lookForPage(title = infoAuthors[i]);
-                    let authorElem = (authorInGraph.present == true) ? zoteroRoam.utils.renderPageReference(title = infoAuthors[i], uid = authorInGraph.uid) : zoteroRoam.utils.renderBP3Tag(string = infoAuthors[i], modifier = "bp3-intent-primary bp3-round");
+                    let authorElem = (authorInGraph.present == true) ? zoteroRoam.utils.renderPageReference(title = infoAuthors[i], uid = authorInGraph.uid) : zoteroRoam.utils.renderBP3Tag(string = infoAuthors[i], {modifier: "bp3-intent-primary bp3-round"});
                     let authorRole = (infoRolesAuthors[i] && infoRolesAuthors[i] != "author") ? (` (${infoRolesAuthors[i]})`) : "";
                     divAuthors = divAuthors + authorElem + authorRole;
                     if(i < infoAuthors.length - 2){
@@ -1101,7 +1115,14 @@
                     divTags = divTags + tagElem + " ";
                 }
             }
-        
+
+            // Generate list of collections (names) as bp3 tags
+            let infoCollections = zoteroRoam.formatting.getItemCollections(selectedItem);
+            let divCollections = "";
+            if(infoCollections){
+                divCollections = infoCollections.map(collec => zoteroRoam.utils.renderBP3Tag(string = collec.data.name, { modifier: "bp3-intent-success bp3-round", icon: "projects" })).join(" ");
+            };
+
             // Information about the item
             let pageInGraph = zoteroRoam.utils.lookForPage(citekey);
             
@@ -1126,26 +1147,44 @@
             let itemInfo = (pageInGraph.present == true) ? (`Page already exists in the graph`) : "Page doesn't exist in the graph";
         
             let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
+            let importText = `Import metadata  ${importSeq}`;
+            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", icon: "add", modifier: "bp3-intent-primary" });
+
+            // Check for children items
+            let infoChildren = zoteroRoam.formatting.getItemChildren(selectedItem);
+            let childrenDiv = "";
+            if(infoChildren.remoteChildren){
+                childrenDiv += `<p>This item has children, but they were not returned by the API data request. This might be due to a request for 'items/top' rather than 'items'.</p>`;
+            } else {
+                let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
+                    let pdfHref = (item.data.linkMode == "linked_file") ? `zotero://open-pdf/library/items/${i.data.key}` : i.data.url;
+                    let pdfLink = `<a href="${pdfHref}">${item.data.title}</a>`;
+                    return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "document-open" });
+                });
+                childrenDiv += pdfDiv;
+                let notesDiv = (!infoChildren.notes) ? `No notes` : zoteroRoam.utils.renderBP3ButtonGroup(string = "See notes", { buttonClass: "item-see-notes", icon: "comment" });
+                childrenDiv += notesDiv;
+            }
             
             bodyDiv.innerHTML = `<div class="item-additional-metadata">
                                     <p class="item-abstract">${feedback.selection.value.abstract}</p>
                                     <p class="item-tags">${divTags}</p>
+                                    <p class="item-collections">${divCollections}</p>
                                 </div>
                                 <div class="item-actions">
                                     <div style="padding:5px 10px;font-style:italic;"><span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span><span> ${itemInfo}</span></div>
-                                    <div class="bp3-button-group bp3-minimal bp3-vertical bp3-align-left">
-                                    <button type="button" class="bp3-button item-add-metadata">
-                                        <span icon="add" class="bp3-icon bp3-icon-add bp3-intent-primary"></span>
-                                        <span class="bp3-button-text">Import metadata</span>
-                                        ${importSeq}
-                                    </button>
+                                    ${importButtonGroup}
+                                    <div class="item-pdf-notes" style="margin-top: 25px;">
+                                        <h5>PDFs & Notes</h5>
+                                        ${childrenDiv}
                                     </div>
                                 </div>`;
             
             // Add event listeners to action buttons
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){zoteroRoam.handlers.addSearchResult(citekey, pageUID)});
             document.querySelector("button.item-copy-citekey").addEventListener("click", function(){document.querySelector(".item-citekey input").select(); document.execCommand("copy");document.querySelector(".item-citekey input").blur();})
-        
+            // TODO: add listener if the button with class .item-see-notes exists
+
             // Finally, make the div visible
             zoteroRoam.interface.search.selectedItemDiv.style.display = "block";
         },
@@ -1397,25 +1436,51 @@
             return zoteroRoam.utils.formatBib(bibHTML);
         },
 
+        getChildrenInDataset(item){
+            let childn = zoteroRoam.data.items.filter(i => i.data.parentItem == item.data.key & i.library.id == item.library.id);
+            if(childn.length > 0){
+                return childn;
+            } else {
+                return false;
+            }
+        },
+
         // For a given item, returns an object with two properties :
         // - pdfItems : an Array of Markdown-style links to the local copy of each PDF file attached to the item
         // - notes : an Array of Arrays, where each child Array corresponds to a single note attached to the item (with each element being the note's contents, as delimited by newline)
         // If either is non-existent/unavailable, it takes the value `false`
-        async getItemChildren(item){
+        // If the item has children that were not returned by the API call, the object will have a property `remoteChildren` set to `true`.
+        // User can check if that's the case, and decide to call zoteroRoam.handlers.requestItemChildren to obtain those children ; if any, they will be returned raw (user will have to format)
+        getItemChildren(item, { pdf_as = "links", notes_as = "formatted" } = {}){
             let childrenObject = {pdfItems: false, notes: false};
             let itemChildren = [];
 
             if(item.meta.numChildren > 0){
-                let childrenInDataset = zoteroRoam.data.items.filter(i => i.data.parentItem == item.data.key & i.library.id == item.library.id);
-                if(childrenInDataset.length == 0){
-                    let remoteChildren = await zoteroRoam.handlers.requestItemChildren(item);
-                    itemChildren = remoteChildren || [];
+                let childrenInDataset = zoteroRoam.formatting.getChildrenInDataset(item);
+                if(!childrenInDataset){
+                    childrenObject.remoteChildren = true;
                 } else {
                     itemChildren = childrenInDataset;
                 }
             }
-            childrenObject.pdfItems = zoteroRoam.utils.makePDFLinks(itemChildren.filter(c => c.data.contentType == "application/pdf"));
-            childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"));
+            switch(pdf_as){
+                case "raw":
+                    childrenObject.pdfItems = itemChildren.filter(c => c.data.contentType == "application/pdf");
+                    break;
+                case "links":
+                    childrenObject.pdfItems = zoteroRoam.utils.makePDFLinks(itemChildren.filter(c => c.data.contentType == "application/pdf"));
+                    break;
+            };
+
+            switch(notes_as){
+                case "raw":
+                    childrenObject.notes = itemChildren.filter(c => c.data.itemType == "note");
+                    break;
+                case "formatted":
+                    childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"));
+                    break;
+            }
+
             return childrenObject;
         },
 
