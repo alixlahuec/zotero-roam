@@ -149,6 +149,9 @@
             parText.innerHTML = `<strong>Enter text below to look for items* in your loaded Zotero dataset.</strong>
                             <br>(* searchable fields are : title, year, authors, tags. A more fully-featured search will be available down the road)`
             searchDialogBody.appendChild(parText);
+
+            let inputGroup = document.createElement('div');
+            inputGroup.classList.add("bp3-input-group");
         
             let searchBar = document.createElement('input');
             searchBar.id = "zotero-search-autocomplete";
@@ -157,7 +160,8 @@
             searchBar.classList.add("bp3-input");
             searchBar.classList.add("bp3-fill");
             searchBar.style = "margin-bottom:20px;"
-            searchDialogBody.appendChild(searchBar);
+            inputGroup.appendChild(searchBar);
+            searchDialogBody.appendChild(inputGroup);
         
             let selectedItemDiv = document.createElement('div');
             selectedItemDiv.id = "zotero-search-selected-item";

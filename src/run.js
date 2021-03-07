@@ -24,6 +24,7 @@
         }
         
         zoteroRoam.shortcuts.setup();
+        zoteroRoam.shortcuts.setupSequences();
         zoteroRoam.handlers.setupUserRequests();
 
     } else {

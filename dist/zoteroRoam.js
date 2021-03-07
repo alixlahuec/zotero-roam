@@ -940,6 +940,9 @@
             parText.innerHTML = `<strong>Enter text below to look for items* in your loaded Zotero dataset.</strong>
                             <br>(* searchable fields are : title, year, authors, tags. A more fully-featured search will be available down the road)`
             searchDialogBody.appendChild(parText);
+
+            let inputGroup = document.createElement('div');
+            inputGroup.classList.add("bp3-input-group");
         
             let searchBar = document.createElement('input');
             searchBar.id = "zotero-search-autocomplete";
@@ -948,7 +951,8 @@
             searchBar.classList.add("bp3-input");
             searchBar.classList.add("bp3-fill");
             searchBar.style = "margin-bottom:20px;"
-            searchDialogBody.appendChild(searchBar);
+            inputGroup.appendChild(searchBar);
+            searchDialogBody.appendChild(inputGroup);
         
             let selectedItemDiv = document.createElement('div');
             selectedItemDiv.id = "zotero-search-selected-item";
@@ -1492,6 +1496,14 @@
                         addItemMetadataButton.click();
                     }
                 }
+            },
+            focusSearchBar: {
+                defaultShortcut: [],
+                execute(){
+                    if(zoteroRoam.interface.search.visible){
+                        zoteroRoam.interface.search.input.focus();
+                    }
+                }
             }
         },
 
@@ -1506,12 +1518,13 @@
                     let activeKeys = []; 
                     for(key in sh.template){
                         if(sh.template[key] == true){
-                            activeKeys.push(key);
+                            let cleanKey = (key.endsWith("Key")) ? key.slice(0,-3) : key;
+                            activeKeys.push(cleanKey);
                         };
                     } 
                     return activeKeys;
                 });
-                return arraySequences.map(seq => seq.join("+")).join(" or ");
+                return arraySequences.map(seq => seq.join("-")).join(" or ");
             }
         },
 
@@ -1557,7 +1570,9 @@
             shortcutObjects.forEach(obj => {
                 zoteroRoam.config.shortcuts.push(new zoteroRoam.Shortcut(obj));
             });
+        },
 
+        setupSequences(){
             zoteroRoam.shortcuts.generateSequences();
 
             // Search Panel : toggle, close
@@ -1577,6 +1592,15 @@
                 searchHeader.querySelector(".bp3-control.bp3-switch").innerHTML += qcText;
             };
             // Import metadata => in rendering of selected item
+            // Focus searchbar
+            let focusSearchBarText = (zoteroRoam.shortcuts.sequences["focusSearchBar"]) ? zoteroRoam.shortcuts.makeSequenceText("focusSearchBar") : "";
+            if(focusSearchBarText.length > 0){
+                let spanSeq = document.createElement('span');
+                spanSeq.classList.add("bp3-input-action");
+                spanSeq.style = `height:30px;padding:5px;`;
+                spanSeq.innerHTML = `${focusSearchBarText}`;
+                zoteroRoam.interface.search.input.closest('.bp3-input-group').appendChild(spanSeq);
+            }
         },
 
         verify(e){
@@ -1627,6 +1651,7 @@
         }
         
         zoteroRoam.shortcuts.setup();
+        zoteroRoam.shortcuts.setupSequences();
         zoteroRoam.handlers.setupUserRequests();
 
     } else {
