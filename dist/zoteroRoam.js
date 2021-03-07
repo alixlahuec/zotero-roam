@@ -248,11 +248,15 @@
         },
 
         formatItemNotes(arr){
-            return arr.map(n => {
-                // Split into blocks on newline
-                let noteBlocks = n.data.note.split("\n");
-                return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
-            })
+            if(arr.length == 0){
+                return false;
+            } else {
+                return arr.map(n => {
+                    // Split into blocks on newline
+                    let noteBlocks = n.data.note.split("\n");
+                    return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
+                });
+            }
         },
 
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
@@ -360,7 +364,7 @@
         
         renderBP3Tag(string, {modifier = "", icon = ""} = {}){
             if(icon.length > 0){
-                return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">Theology &amp; Personal Study</span></span>`;
+                return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">${string}</span></span>`;
             } else {
                 return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}</span>`;
             }
@@ -1157,7 +1161,7 @@
                 childrenDiv += `<p>This item has children, but they were not returned by the API data request. This might be due to a request for 'items/top' rather than 'items'.</p>`;
             } else {
                 let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
-                    let pdfHref = (item.data.linkMode == "linked_file") ? `zotero://open-pdf/library/items/${i.data.key}` : i.data.url;
+                    let pdfHref = (item.data.linkMode == "linked_file") ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
                     let pdfLink = `<a href="${pdfHref}">${item.data.title}</a>`;
                     return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "document-open" });
                 });
@@ -1465,7 +1469,8 @@
             }
             switch(pdf_as){
                 case "raw":
-                    childrenObject.pdfItems = itemChildren.filter(c => c.data.contentType == "application/pdf");
+                    let pdfResults = itemChildren.filter(c => c.data.contentType == "application/pdf");
+                    childrenObject.pdfItems = (pdfResults.length == 0) ? false : pdfResults;
                     break;
                 case "links":
                     childrenObject.pdfItems = zoteroRoam.utils.makePDFLinks(itemChildren.filter(c => c.data.contentType == "application/pdf"));
@@ -1474,7 +1479,8 @@
 
             switch(notes_as){
                 case "raw":
-                    childrenObject.notes = itemChildren.filter(c => c.data.itemType == "note");
+                    let notesResults = itemChildren.filter(c => c.data.itemType == "note");
+                    childrenObject.notes = (notesResults.length == 0) ? false : notesResults;
                     break;
                 case "formatted":
                     childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"));

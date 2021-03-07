@@ -350,7 +350,7 @@
                 childrenDiv += `<p>This item has children, but they were not returned by the API data request. This might be due to a request for 'items/top' rather than 'items'.</p>`;
             } else {
                 let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
-                    let pdfHref = (item.data.linkMode == "linked_file") ? `zotero://open-pdf/library/items/${i.data.key}` : i.data.url;
+                    let pdfHref = (item.data.linkMode == "linked_file") ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
                     let pdfLink = `<a href="${pdfHref}">${item.data.title}</a>`;
                     return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "document-open" });
                 });

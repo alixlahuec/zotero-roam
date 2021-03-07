@@ -46,7 +46,8 @@
             }
             switch(pdf_as){
                 case "raw":
-                    childrenObject.pdfItems = itemChildren.filter(c => c.data.contentType == "application/pdf");
+                    let pdfResults = itemChildren.filter(c => c.data.contentType == "application/pdf");
+                    childrenObject.pdfItems = (pdfResults.length == 0) ? false : pdfResults;
                     break;
                 case "links":
                     childrenObject.pdfItems = zoteroRoam.utils.makePDFLinks(itemChildren.filter(c => c.data.contentType == "application/pdf"));
@@ -55,7 +56,8 @@
 
             switch(notes_as){
                 case "raw":
-                    childrenObject.notes = itemChildren.filter(c => c.data.itemType == "note");
+                    let notesResults = itemChildren.filter(c => c.data.itemType == "note");
+                    childrenObject.notes = (notesResults.length == 0) ? false : notesResults;
                     break;
                 case "formatted":
                     childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"));

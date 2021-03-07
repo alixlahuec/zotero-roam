@@ -36,11 +36,15 @@
         },
 
         formatItemNotes(arr){
-            return arr.map(n => {
-                // Split into blocks on newline
-                let noteBlocks = n.data.note.split("\n");
-                return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
-            })
+            if(arr.length == 0){
+                return false;
+            } else {
+                return arr.map(n => {
+                    // Split into blocks on newline
+                    let noteBlocks = n.data.note.split("\n");
+                    return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
+                });
+            }
         },
 
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
@@ -148,7 +152,7 @@
         
         renderBP3Tag(string, {modifier = "", icon = ""} = {}){
             if(icon.length > 0){
-                return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">Theology &amp; Personal Study</span></span>`;
+                return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">${string}</span></span>`;
             } else {
                 return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}</span>`;
             }
