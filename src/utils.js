@@ -28,6 +28,9 @@
             let formattedBib = formatter.innerText;
             // Convert italics
             formattedBib = formattedBib.replaceAll(/<\/?i>/g, "__");
+            // Convert links
+            let linkRegex = /<a href="(.+)">(.+)<\/a>/g;
+            formattedBib = formattedBib.replaceAll(linkRegex, `[$2]($1)`);
         
             return formattedBib;
         },

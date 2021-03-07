@@ -240,6 +240,9 @@
             let formattedBib = formatter.innerText;
             // Convert italics
             formattedBib = formattedBib.replaceAll(/<\/?i>/g, "__");
+            // Convert links
+            let linkRegex = /<a href="(.+)">(.+)<\/a>/g;
+            formattedBib = formattedBib.replaceAll(linkRegex, `[$2]($1)`);
         
             return formattedBib;
         },
@@ -671,10 +674,10 @@
             }
         },
 
-        async requestItemBib(item, style){
+        async requestItemBib(item, style, linkwrap, locale){
             let userOrGroup = (item.library.type == "user") ? "users" : "groups";
             let rq_apikey = zoteroRoam.config.requests[`${item.requestIndex}`].apikey;
-            let bibRequest = await fetch(`${userOrGroup}/${item.library.id}/items/${item.data.key}?include=bib&style=${style}`, {
+            let bibRequest = await fetch(`https://api.zotero.org/${userOrGroup}/${item.library.id}/items/${item.data.key}?include=bib&style=${style}&linkwrap=${linkwrap}&locale=${locale}`, {
                 method: 'GET',
                 headers: {
                     'Zotero-API-Version': 3,
@@ -1388,9 +1391,9 @@
             }).join(", ");
         },
 
-        async getItemBib(item, style = "apa"){
+        async getItemBib(item, {style = "apa", linkwrap = 0, locale = "en-US"} = {}){
             // If the user included bib in their request, no need to call the API
-            let bibHTML = (item.bib) ? item.bib : (await zoteroRoam.handlers.requestItemBib(item, style));
+            let bibHTML = (item.bib) ? item.bib : (await zoteroRoam.handlers.requestItemBib(item, style, linkwrap, locale));
             return zoteroRoam.utils.formatBib(bibHTML);
         },
 

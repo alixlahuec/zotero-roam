@@ -11,9 +11,9 @@
             }).join(", ");
         },
 
-        async getItemBib(item, style = "apa"){
+        async getItemBib(item, {style = "apa", linkwrap = 0, locale = "en-US"} = {}){
             // If the user included bib in their request, no need to call the API
-            let bibHTML = (item.bib) ? item.bib : (await zoteroRoam.handlers.requestItemBib(item, style));
+            let bibHTML = (item.bib) ? item.bib : (await zoteroRoam.handlers.requestItemBib(item, style, linkwrap, locale));
             return zoteroRoam.utils.formatBib(bibHTML);
         },
 

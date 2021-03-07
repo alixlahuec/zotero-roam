@@ -260,10 +260,10 @@
             }
         },
 
-        async requestItemBib(item, style){
+        async requestItemBib(item, style, linkwrap, locale){
             let userOrGroup = (item.library.type == "user") ? "users" : "groups";
             let rq_apikey = zoteroRoam.config.requests[`${item.requestIndex}`].apikey;
-            let bibRequest = await fetch(`${userOrGroup}/${item.library.id}/items/${item.data.key}?include=bib&style=${style}`, {
+            let bibRequest = await fetch(`https://api.zotero.org/${userOrGroup}/${item.library.id}/items/${item.data.key}?include=bib&style=${style}&linkwrap=${linkwrap}&locale=${locale}`, {
                 method: 'GET',
                 headers: {
                     'Zotero-API-Version': 3,
