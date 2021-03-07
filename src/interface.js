@@ -355,7 +355,7 @@
                     return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "document-open" });
                 });
                 childrenDiv += pdfDiv;
-                let notesDiv = (!infoChildren.notes) ? `No notes` : zoteroRoam.utils.renderBP3ButtonGroup(string = "See notes", { buttonClass: "item-see-notes", icon: "comment" });
+                let notesDiv = (!infoChildren.notes) ? "" : zoteroRoam.utils.renderBP3ButtonGroup(string = "Show notes below", { buttonClass: "item-see-notes", icon: "comment" });
                 childrenDiv += notesDiv;
             }
             
@@ -371,12 +371,18 @@
                                         <h5>PDFs & Notes</h5>
                                         ${childrenDiv}
                                     </div>
+                                </div>
+                                <div class="item-rendered-notes">
                                 </div>`;
             
             // Add event listeners to action buttons
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){zoteroRoam.handlers.addSearchResult(citekey, pageUID)});
             document.querySelector("button.item-copy-citekey").addEventListener("click", function(){document.querySelector(".item-citekey input").select(); document.execCommand("copy");document.querySelector(".item-citekey input").blur();})
-            // TODO: add listener if the button with class .item-see-notes exists
+            try{
+                document.querySelector("button.item-see-notes").addEventListener("click", function(){
+                    document.querySelector("div.item-rendered-notes").innerHTML = `<hr><h4>Notes</h4><br>${ infoChildren.notes.map(n => n.data.note).join("<br>") }`;
+                })
+            } catch(e){};
 
             // Finally, make the div visible
             zoteroRoam.interface.search.selectedItemDiv.style.display = "block";
