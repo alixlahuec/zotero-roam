@@ -344,7 +344,7 @@
             let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", icon: "add", modifier: "bp3-intent-primary" });
 
             // Check for children items
-            let infoChildren = zoteroRoam.formatting.getItemChildren(selectedItem);
+            let infoChildren = zoteroRoam.formatting.getItemChildren(selectedItem, { pdf_as: "raw", notes_as: "raw" });
             let childrenDiv = "";
             if(infoChildren.remoteChildren){
                 childrenDiv += `<p>This item has children, but they were not returned by the API data request. This might be due to a request for 'items/top' rather than 'items'.</p>`;
