@@ -35,13 +35,13 @@
             return formattedBib;
         },
 
-        formatItemNotes(arr){
+        formatItemNotes(arr, {split_char = "\n"} = {}){
             if(arr.length == 0){
                 return false;
             } else {
                 return arr.map(n => {
                     // Split into blocks on newline
-                    let noteBlocks = n.data.note.split("\n");
+                    let noteBlocks = n.data.note.split(split_char);
                     return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
                 });
             }
@@ -140,7 +140,7 @@
             for(prop in formattingSpecs){
                 cleanBlock = cleanBlock.replaceAll(`${prop}`, `${formattingSpecs[prop]}`);
             }
-            let linkRegex = /<a href="(.+)">(.+)<\/a>/g;
+            let linkRegex = /<a href="(.+?)">(.+?)<\/a>/g;
             cleanBlock = cleanBlock.replaceAll(linkRegex, `[$2]($1)`);
         
             return cleanBlock;

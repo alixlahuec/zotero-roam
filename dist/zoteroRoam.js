@@ -249,13 +249,13 @@
             return formattedBib;
         },
 
-        formatItemNotes(arr){
+        formatItemNotes(arr, {split_char = "\n"} = {}){
             if(arr.length == 0){
                 return false;
             } else {
                 return arr.map(n => {
                     // Split into blocks on newline
-                    let noteBlocks = n.data.note.split("\n");
+                    let noteBlocks = n.data.note.split(split_char);
                     return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
                 });
             }
@@ -354,7 +354,7 @@
             for(prop in formattingSpecs){
                 cleanBlock = cleanBlock.replaceAll(`${prop}`, `${formattingSpecs[prop]}`);
             }
-            let linkRegex = /<a href="(.+)">(.+)<\/a>/g;
+            let linkRegex = /<a href="(.+?)">(.+?)<\/a>/g;
             cleanBlock = cleanBlock.replaceAll(linkRegex, `[$2]($1)`);
         
             return cleanBlock;
@@ -1482,7 +1482,7 @@
         // If either is non-existent/unavailable, it takes the value `false`
         // If the item has children that were not returned by the API call, the object will have a property `remoteChildren` set to `true`.
         // User can check if that's the case, and decide to call zoteroRoam.handlers.requestItemChildren to obtain those children ; if any, they will be returned raw (user will have to format)
-        getItemChildren(item, { pdf_as = "links", notes_as = "formatted" } = {}){
+        getItemChildren(item, { pdf_as = "links", notes_as = "formatted", split_char = "\n" } = {}){
             let childrenObject = {pdfItems: false, notes: false};
             let itemChildren = [];
 
@@ -1510,7 +1510,7 @@
                     childrenObject.notes = (notesResults.length == 0) ? false : notesResults;
                     break;
                 case "formatted":
-                    childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"));
+                    childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"), {split_char: split_char});
                     break;
             }
 
