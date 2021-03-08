@@ -609,6 +609,7 @@
                 }
             } catch(e) {
                 console.error(e);
+                alert("The extension encountered at least one error during the data request process. Please check the console for details on the problem.");
             } finally {
                 return{
                     data: results
@@ -1757,14 +1758,3 @@
         throw new Error("A zoteroRoam_settings object must be defined in order to use the extension. Read through the docs for basic setup examples.");
     }
 })();
-
-// Example of a settings object
-/* window.zoteroRoam_settings = {
-    dataRequests: [{name: "Personal library", apikey: "", dataURI: "", params: ""}],
-    funcmap: {journalArticle: "customPaperFormat", book: "customBookFormat"},
-    shortcuts: {
-        toggleSearch: {altKey: true, 'p': true},
-        toggleQuickCopy: {ctrlKey: true, 'm': true},
-        importMetadata: {metaKey: true, 'a': true}
-    }
-} */

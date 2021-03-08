@@ -176,6 +176,7 @@
                 }
             } catch(e) {
                 console.error(e);
+                alert("The extension encountered at least one error during the data request process. Please check the console for details on the problem.");
             } finally {
                 return{
                     data: results
