@@ -89,10 +89,15 @@
             return pageInfo;
         },
 
-        makeDNP(date){
+        makeDNP(date, {brackets = true} = {}){
             if(date.constructor !== Date){ date = new Date(date); };
             let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            return `${months[date.getMonth()]} ${zoteroRoam.utils.makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
+            let dateString = `${months[date.getMonth()]} ${zoteroRoam.utils.makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
+            if(brackets){
+                return `[[${dateString}]]`;
+            } else{
+                return dateString;
+            }
         },
 
         makeOrdinal(i) {

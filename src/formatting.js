@@ -83,11 +83,11 @@
             return mapping;
         },
 
-        getLocalLink(item, text = "Local library"){
+        getLocalLink(item, {text = "Local library"} = {}){
             return `[${text}](zotero://select/library/items/${item.data.key})`
         },
 
-        getWebLink(item, text = "Web library"){
+        getWebLink(item, {text = "Web library"} = {}){
             let webURI = (item.library.type = "user") ? "users" : "groups";
             return `[${text}](https://www.zotero.org/${webURI}/${item.library.id}/items/${item.data.key})`;
         },

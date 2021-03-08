@@ -303,10 +303,15 @@
             return pageInfo;
         },
 
-        makeDNP(date){
+        makeDNP(date, {brackets = true} = {}){
             if(date.constructor !== Date){ date = new Date(date); };
             let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            return `${months[date.getMonth()]} ${zoteroRoam.utils.makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
+            let dateString = `${months[date.getMonth()]} ${zoteroRoam.utils.makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
+            if(brackets){
+                return `[[${dateString}]]`;
+            } else{
+                return dateString;
+            }
         },
 
         makeOrdinal(i) {
@@ -1207,7 +1212,11 @@
         },
 
         clearSelectedItem(){
-            zoteroRoam.interface.search.selectedItemDiv.children.forEach(c => {c.innerHTML = ``})
+            try {
+                zoteroRoam.interface.search.selectedItemDiv.children.forEach(c => {c.innerHTML = ``});
+            } catch(e){
+                Array.from(zoteroRoam.interface.search.selectedItemDiv.children).forEach(c => {c.innerHTML = ``});
+            }
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
         }
     }
@@ -1524,11 +1533,11 @@
             return mapping;
         },
 
-        getLocalLink(item, text = "Local library"){
+        getLocalLink(item, {text = "Local library"} = {}){
             return `[${text}](zotero://select/library/items/${item.data.key})`
         },
 
-        getWebLink(item, text = "Web library"){
+        getWebLink(item, {text = "Web library"} = {}){
             let webURI = (item.library.type = "user") ? "users" : "groups";
             return `[${text}](https://www.zotero.org/${webURI}/${item.library.id}/items/${item.data.key})`;
         },

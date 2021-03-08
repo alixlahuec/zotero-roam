@@ -389,7 +389,11 @@
         },
 
         clearSelectedItem(){
-            zoteroRoam.interface.search.selectedItemDiv.children.forEach(c => {c.innerHTML = ``})
+            try {
+                zoteroRoam.interface.search.selectedItemDiv.children.forEach(c => {c.innerHTML = ``});
+            } catch(e){
+                Array.from(zoteroRoam.interface.search.selectedItemDiv.children).forEach(c => {c.innerHTML = ``});
+            }
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
         }
     }
