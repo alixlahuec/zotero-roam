@@ -494,9 +494,15 @@
                         console.log(arr[k]);
                         throw new Error('All array items should be of type String or Object');
                     }
+                };
+                return {
+                    success: true
                 }
             } else {
                 console.log("The metadata array was empty ; nothing was done.")
+                return {
+                    success: false
+                }
             }
         },
 
@@ -504,45 +510,39 @@
             let citekey = title.replace("@", "");
             let item = zoteroRoam.data.items.find(function (i) { return i.key == citekey });
             let itemData = await zoteroRoam.handlers.formatData(item);
+            let outcome = {};
         
             if(item && itemData.length > 0){
                 if(uid) {
-                    await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
+                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
                 } else {
                     window.roamAlphaAPI.createPage({'page': {'title': title}});
                     let pageUID = await zoteroRoam.handlers.waitForPageUID(title);
                     if(pageUID != null){
                         try {
-                            if(itemData.length > 0){
-                                await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
-                                await zoteroRoam.utils.sleep(100);
-                                let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", pageUID);
-                                let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
-                                alert(`Page was successfully added to the graph.
-                                It currently has ${nbChildren} child blocks.`);
-                            } else {
-                                alert('Page was created, but its metadata array was empty.');
-                            }
-                            
+                            outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                            await zoteroRoam.utils.sleep(75);
                         } catch(e) {
                             console.error(e);
                             alert('Something went wrong when creating the page & adding the metadata')
-                        }
-                        let checkSuccess = zoteroRoam.utils.lookForPage(title);
-                        if(checkSuccess.present == true){
-                            
-                        } else {
-                            alert(`Something went wrong in creating the page`);
                         }
                     } else {
                         console.log(pageUID);
                         throw new Error("There was a problem in obtaining the page's UID.");
                     }
                 }
+                if(outcome.success){
+                    let actualUID = uid || pageUID;
+                    let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", actualUID);
+                    let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
+                    alert(`This Roam page now has ${nbChildren} child blocks.`);
+                } else {
+                    alert("The metadata array couldn't be properly processed.")
+                }
             } else {
                 console.log(item);
                 console.log(itemData);
-                throw new Error("Something went wrong when attempting to format the item's data.");
+                throw new Error("Something went wrong when formatting or importing the item's data.");
             }
         },
 
