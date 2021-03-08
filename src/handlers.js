@@ -88,7 +88,7 @@
                     if(pageUID != null){
                         try {
                             outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
-                            await zoteroRoam.utils.sleep(75);
+                            await zoteroRoam.utils.sleep(125);
                         } catch(e) {
                             console.error(e);
                             alert('Something went wrong when creating the page & adding the metadata')
@@ -209,11 +209,15 @@
                 requests = (requests.constructor === Array) ? requests : [requests];
                 let fallbackAPIKey = requests.find(rq => rq.apikey !== undefined)['apikey'];
                 let fallbackParams = requests.find(rq => rq.params !== undefined)['params'];
-                requests = requests.map( (rq, i) => { 
-                    rq.name = rq.name || `${i}`; 
-                    rq.apikey = rq.apikey || fallbackAPIKey; 
-                    rq.params = rq.params || fallbackParams; 
-                    return rq; });
+                requests = requests.map( (rq, i) => {
+                    let {name = `${i}`, apikey = fallbackAPIKey, dataURI, params = fallbackParams} = rq; 
+                    return {
+                        apikey: apikey,
+                        dataURI: dataURI,
+                        params: params,
+                        name: name
+                    }; 
+                });
                 zoteroRoam.config.requests = requests;
             }
         },

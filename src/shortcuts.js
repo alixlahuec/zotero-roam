@@ -143,19 +143,24 @@
             let specialKeys = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'];
             // Update all the watchers
             zoteroRoam.config.shortcuts = zoteroRoam.config.shortcuts.map(sh => {
+                let {action, template, watcher} = sh;
                 // Update status of special keys
-                specialKeys.forEach(k => { sh.watcher[k] = e[k] });
+                specialKeys.forEach(k => { watcher[k] = e[k] });
                 // If the key is part of the shortcut template, update its real-time status (true = pressed, false = not pressed)
-                if(sh.template.hasOwnProperty(keyName) | sh.template.hasOwnProperty(keyName.toLowerCase())){
-                    let watchedName = (sh.template.hasOwnProperty(keyName)) ? keyName : keyName.toLowerCase();
-                    sh.watcher[watchedName] = keyPressed };
-                return sh;
+                if(template.hasOwnProperty(keyName) | template.hasOwnProperty(keyName.toLowerCase())){
+                    let watchedName = (template.hasOwnProperty(keyName)) ? keyName : keyName.toLowerCase();
+                    watcher[watchedName] = keyPressed };
+                return {
+                    action: action,
+                    template: template,
+                    watcher: watcher
+                };
             });
             // Once all the watchers have been updated, compare the watchers against the templates & decide whether an action should be triggered
             // Note that if two shortcuts are somehow triggered in the same combination of keys, they'll be processed in order of declaration
-            zoteroRoam.config.shortcuts.forEach(s => {
-                if(JSON.stringify(s.watcher) === JSON.stringify(s.template)){
-                    zoteroRoam.shortcuts.actions[`${s.action}`].execute();
+            zoteroRoam.config.shortcuts.forEach(sh => {
+                if(JSON.stringify(sh.watcher) === JSON.stringify(sh.template)){
+                    zoteroRoam.shortcuts.actions[`${sh.action}`].execute();
                 }
             });
         }

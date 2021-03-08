@@ -521,7 +521,7 @@
                     if(pageUID != null){
                         try {
                             outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
-                            await zoteroRoam.utils.sleep(75);
+                            await zoteroRoam.utils.sleep(125);
                         } catch(e) {
                             console.error(e);
                             alert('Something went wrong when creating the page & adding the metadata')
@@ -642,11 +642,15 @@
                 requests = (requests.constructor === Array) ? requests : [requests];
                 let fallbackAPIKey = requests.find(rq => rq.apikey !== undefined)['apikey'];
                 let fallbackParams = requests.find(rq => rq.params !== undefined)['params'];
-                requests = requests.map( (rq, i) => { 
-                    rq.name = rq.name || `${i}`; 
-                    rq.apikey = rq.apikey || fallbackAPIKey; 
-                    rq.params = rq.params || fallbackParams; 
-                    return rq; });
+                requests = requests.map( (rq, i) => {
+                    let {name = `${i}`, apikey = fallbackAPIKey, dataURI, params = fallbackParams} = rq; 
+                    return {
+                        apikey: apikey,
+                        dataURI: dataURI,
+                        params: params,
+                        name: name
+                    }; 
+                });
                 zoteroRoam.config.requests = requests;
             }
         },
@@ -1284,10 +1288,15 @@
             let updateRequests = zoteroRoam.config.requests.map(rq => {
                 let items = zoteroRoam.data.items.filter(i => i.requestLabel == rq.name);
                 let latest = items.reduce( (f,s) => {return (f.version < s.version) ? s : f}).version;
-                let paramsQuery = new URLSearchParams(rq.params);
+                let {apikey, dataURI, params: setParams} = rq;
+                let paramsQuery = new URLSearchParams(setParams);
                 paramsQuery.set('since', latest);
-                rq.params = paramsQuery.toString();
-                return rq;
+                setParams = paramsQuery.toString();
+                return {
+                    apikey: apikey,
+                    dataURI: dataURI,
+                    params: setParams
+                };
             });
             let updateResults = await zoteroRoam.handlers.requestData(updateRequests);
             if(updateResults.success == true){
@@ -1691,19 +1700,24 @@
             let specialKeys = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'];
             // Update all the watchers
             zoteroRoam.config.shortcuts = zoteroRoam.config.shortcuts.map(sh => {
+                let {action, template, watcher} = sh;
                 // Update status of special keys
-                specialKeys.forEach(k => { sh.watcher[k] = e[k] });
+                specialKeys.forEach(k => { watcher[k] = e[k] });
                 // If the key is part of the shortcut template, update its real-time status (true = pressed, false = not pressed)
-                if(sh.template.hasOwnProperty(keyName) | sh.template.hasOwnProperty(keyName.toLowerCase())){
-                    let watchedName = (sh.template.hasOwnProperty(keyName)) ? keyName : keyName.toLowerCase();
-                    sh.watcher[watchedName] = keyPressed };
-                return sh;
+                if(template.hasOwnProperty(keyName) | template.hasOwnProperty(keyName.toLowerCase())){
+                    let watchedName = (template.hasOwnProperty(keyName)) ? keyName : keyName.toLowerCase();
+                    watcher[watchedName] = keyPressed };
+                return {
+                    action: action,
+                    template: template,
+                    watcher: watcher
+                };
             });
             // Once all the watchers have been updated, compare the watchers against the templates & decide whether an action should be triggered
             // Note that if two shortcuts are somehow triggered in the same combination of keys, they'll be processed in order of declaration
-            zoteroRoam.config.shortcuts.forEach(s => {
-                if(JSON.stringify(s.watcher) === JSON.stringify(s.template)){
-                    zoteroRoam.shortcuts.actions[`${s.action}`].execute();
+            zoteroRoam.config.shortcuts.forEach(sh => {
+                if(JSON.stringify(sh.watcher) === JSON.stringify(sh.template)){
+                    zoteroRoam.shortcuts.actions[`${sh.action}`].execute();
                 }
             });
         }
