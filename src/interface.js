@@ -140,7 +140,7 @@
         
             // Add header elements
             searchDialogHeader.innerHTML = `<label class="bp3-control bp3-switch" style="margin-bottom:0px;flex: 1 1 auto;">
-                                            <input id="zotero-quick-copy-mode" type="checkbox"><span class="bp3-control-indicator"></span>Quick Copy</label>
+                                            <input id="zotero-quick-copy-mode" type="checkbox" checked="checked"><span class="bp3-control-indicator"></span>Quick Copy</label>
                                             <button type="button" aria-label="Close" class="zotero-search-close bp3-button bp3-minimal bp3-dialog-close-button">
                                             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>`
         
@@ -239,10 +239,12 @@
         toggleSearchOverlay(command) {
             zoteroRoam.interface.search.overlay.style.display = command === "show" ? "block" : "none";
             if (command == "show") {
+                console.log("Opening the Search Panel")
                 zoteroRoam.interface.search.input.focus();
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.visible = true
             } else {
+                console.log("Closing the Search Panel")
                 zoteroRoam.interface.clearSelectedItem();
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.visible = false
@@ -280,7 +282,7 @@
 
             let selectedItem = zoteroRoam.data.items.find(it => it.key == feedback.selection.value.key);
             let citekey = '@' + feedback.selection.value.key;
-            let itemYear = (feedback.selection.value.year) ? (" (" + feedback.selection.value.year + ")") : "";
+            let itemYear = feedback.selection.value.year ? `(${feedback.selection.value.year})` : "";
         
             // Generate list of authors as bp3 tags or Roam page references
             let infoAuthors = feedback.selection.value.authorsFull;
