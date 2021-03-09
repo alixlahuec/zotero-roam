@@ -1736,4 +1736,4 @@ var zoteroRoam = {};
     }
 })();
 
-module.exports = zoteroRoam;
+export {zoteroRoam};

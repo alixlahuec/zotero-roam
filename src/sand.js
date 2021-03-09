@@ -1,1 +1,1 @@
-module.exports = zoteroRoam;
+export {zoteroRoam};
