@@ -852,7 +852,7 @@ var zoteroRoam = {};
                 zoteroRoam.interface.toggleContextOverlay("iconContextMenu", "show");
             }
         },
-        search: {overlay: null, input: null, selectedItemDiv: null, quickCopyToggle: null, closeButton: null, updateButton: null, visible: false},
+        search: {overlay: null, input: null, selectedItemDiv: null, quickCopyToggle: null, quickCopyEnabled: false, closeButton: null, updateButton: null, visible: false},
 
         create(){
             zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -870,6 +870,12 @@ var zoteroRoam = {};
             zoteroRoam.interface.search.updateButton.addEventListener("click", zoteroRoam.extension.update);
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
             zoteroRoam.interface.search.input.addEventListener("rendered", zoteroRoam.interface.renderNbResults);
+
+            document.querySelector("#zotero-quick-copy-mode").addEventListener("change", (e) => {
+                let toggle = e.target;
+                zoteroRoam.interface.search.quickCopyToggle = toggle;
+                zoteroRoam.interface.search.quickCopyEnabled = toggle.checked;
+            })
 
         },
 
