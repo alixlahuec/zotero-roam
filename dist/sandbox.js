@@ -1557,7 +1557,7 @@ var zoteroRoam = {};
             if (item.data.itemType) { metadata.push(`Type:: [[${zoteroRoam.formatting.getItemType(item)}]]`) }; // Item type, from typemap or zoteroRoam.typemap (fall back on the raw value)
             metadata.push(`Publication:: ${ item.data.publicationTitle || item.data.bookTitle || "" }`)
             if (item.data.url) { metadata.push(`URL : ${item.data.url}`) };
-            if (item.data.dateAdded) { metadata.push(`Date Added:: [[${zoteroRoam.utils.makeDNP(item.data.dateAdded)}]]`) }; // Date added, as Daily Notes Page reference
+            if (item.data.dateAdded) { metadata.push(`Date Added:: ${zoteroRoam.utils.makeDNP(item.data.dateAdded, {brackets: true})}`) }; // Date added, as Daily Notes Page reference
             metadata.push(`Zotero links:: ${zoteroRoam.formatting.getLocalLink(item)}, ${zoteroRoam.formatting.getWebLink(item)}`); // Local + Web links to the item
             if (item.data.tags.length > 0) { metadata.push(`Tags:: ${zoteroRoam.formatting.getTags(item)}`) }; // Tags, if any
         
