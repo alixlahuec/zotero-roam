@@ -108,6 +108,16 @@
             if (item.data.dateAdded) { metadata.push(`Date Added:: ${zoteroRoam.utils.makeDNP(item.data.dateAdded, {brackets: true})}`) }; // Date added, as Daily Notes Page reference
             metadata.push(`Zotero links:: ${zoteroRoam.formatting.getLocalLink(item)}, ${zoteroRoam.formatting.getWebLink(item)}`); // Local + Web links to the item
             if (item.data.tags.length > 0) { metadata.push(`Tags:: ${zoteroRoam.formatting.getTags(item)}`) }; // Tags, if any
+            
+            let children = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "links", notes_as: "formatted", split_char: "\n"});
+            if(children.pdfItems){
+                metadata.push(`PDF links : ${children.pdfItems.join(", ")}`);
+            }
+            if(children.notes){
+                let notesBlock = {string: `[[Notes]]`, children: []};
+                notesBlock.children.push(...children.notes.flat(1));
+                metadata.push(notesBlock);
+            }
         
             return metadata; 
         }

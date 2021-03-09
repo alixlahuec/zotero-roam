@@ -240,6 +240,7 @@
             zoteroRoam.interface.search.overlay.style.display = command === "show" ? "block" : "none";
             if (command == "show") {
                 zoteroRoam.interface.search.input.focus();
+                zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.visible = true
             } else {
                 zoteroRoam.interface.clearSelectedItem();
