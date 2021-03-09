@@ -1,7 +1,9 @@
 
+var zoteroRoam = {};
+
 ;(()=>{
     
-    window.zoteroRoam = {
+    zoteroRoam = {
 
         Shortcut: function(obj) {
             this.action = obj.action;

@@ -5,7 +5,7 @@ module.exports = function(grunt){
             options: {
                 separator: "\n"
             },
-            dist: {
+            browser: {
                 src: ["src/init.js", 
                 "src/utils.js", "src/handlers.js", 
                 "src/interface.js", "src/extension.js", 
@@ -13,15 +13,28 @@ module.exports = function(grunt){
                 "src/formatting.js", "src/shortcuts.js",
                 "src/run.js"],
                 dest: "dist/zoteroRoam.js"
+            },
+            sandbox: {
+                src: ["src/init.js", 
+                "src/utils.js", "src/handlers.js", 
+                "src/interface.js", "src/extension.js", 
+                "src/pageRefs.js",
+                "src/formatting.js", "src/shortcuts.js",
+                "src/sand.js"],
+                dest: "dist/sandbox.js"
             }
         },
         uglify: {
             options: {
-                banner: '/* <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+                banner: '/* <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
             },
-            min: {
+            browser: {
                 src: "dist/zoteroRoam.js",
                 dest: "dist/zoteroRoam.min.js"
+            },
+            sandbox: {
+                src: "dist/sandbox.js",
+                dest: "dist/sandbox.min.js"
             }
         }
     });
