@@ -46,10 +46,9 @@
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
             zoteroRoam.interface.search.input.addEventListener("rendered", zoteroRoam.interface.renderNbResults);
 
-            document.querySelector("#zotero-quick-copy-mode").addEventListener("change", (e) => {
-                let toggle = e.target;
-                zoteroRoam.interface.search.quickCopyToggle = toggle;
-                zoteroRoam.interface.search.quickCopyEnabled = toggle.checked;
+            document.querySelector("#zotero-quick-copy-mode").addEventListener("click", (e) => {
+                zoteroRoam.interface.search.quickCopyToggle = document.querySelector("#zotero-quick-copy-mode");
+                zoteroRoam.interface.search.quickCopyEnabled = document.querySelector("#zotero-quick-copy-mode").checked;
             })
 
         },
@@ -146,7 +145,7 @@
         
             // Add header elements
             searchDialogHeader.innerHTML = `<label class="bp3-control bp3-switch" style="margin-bottom:0px;flex: 1 1 auto;">
-                                            <input id="zotero-quick-copy-mode" type="checkbox" checked="checked"><span class="bp3-control-indicator"></span>Quick Copy</label>
+                                            <input id="zotero-quick-copy-mode" type="checkbox"><span class="bp3-control-indicator"></span>Quick Copy</label>
                                             <button type="button" aria-label="Close" class="zotero-search-close bp3-button bp3-minimal bp3-dialog-close-button">
                                             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>`
         
