@@ -297,7 +297,7 @@
 
         simplifyDataArray(arr){
             // Filter out attachments & notes
-            let itemsArray = arr.filter(el => { return el.data.itemType != "attachment" && el.data.itemType != "note" });
+            let itemsArray = arr.filter(el => !(["attachment", "note", "annotation"].includes(el.data.itemType)));
             // Simplify data structure
             itemsArray = itemsArray.map(item => {
                 let simplifiedItem = {
