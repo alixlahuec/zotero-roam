@@ -27,7 +27,7 @@
                 zoteroRoam.interface.toggleContextOverlay("iconContextMenu", "show");
             }
         },
-        search: {overlay: null, input: null, selectedItemDiv: null, quickCopyToggle: null, quickCopyEnabled: false, closeButton: null, updateButton: null, visible: false},
+        search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, visible: false},
 
         create(){
             zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -45,11 +45,6 @@
             zoteroRoam.interface.search.updateButton.addEventListener("click", zoteroRoam.extension.update);
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
             zoteroRoam.interface.search.input.addEventListener("rendered", zoteroRoam.interface.renderNbResults);
-
-            document.querySelector("#zotero-quick-copy-mode").addEventListener("click", (e) => {
-                zoteroRoam.interface.search.quickCopyToggle = document.querySelector("#zotero-quick-copy-mode");
-                zoteroRoam.interface.search.quickCopyEnabled = document.querySelector("#zotero-quick-copy-mode").checked;
-            })
 
         },
 
@@ -206,7 +201,6 @@
 
             zoteroRoam.interface.search.input = document.querySelector("#zotero-search-autocomplete");
             zoteroRoam.interface.search.selectedItemDiv = document.querySelector("#zotero-search-selected-item");
-            zoteroRoam.interface.search.quickCopyToggle = document.querySelector("#zotero-quick-copy-mode");
             zoteroRoam.interface.search.closeButton = document.querySelector("button.zotero-search-close");
             zoteroRoam.interface.search.updateButton = document.querySelector("button.zotero-update-data");
         },

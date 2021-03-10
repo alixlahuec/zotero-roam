@@ -127,7 +127,8 @@ var zoteroRoam = {};
                         .appendChild(result);
                 },
                 onSelection: (feedback) => {
-                    if(zoteroRoam.interface.search.quickCopyToggle.checked && !zoteroRoam.config.params.override_quickcopy.overridden){
+                    let quickCopyEnabled = document.querySelector("#zotero-quick-copy-mode").checked;
+                    if(quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden){
                         zoteroRoam.interface.search.input.blur();
                         zoteroRoam.interface.search.input.value = '@' + feedback.selection.value.key;
                         zoteroRoam.interface.search.input.select();
