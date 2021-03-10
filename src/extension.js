@@ -15,6 +15,7 @@
                 zoteroRoam.pageRefs.checkReferences();
                 document.addEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
                 window.addEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
+                var periodicReferenceChecking = setInterval(zoteroRoam.pageRefs.checkReferences, 1000);
                 // Setup the search autoComplete object
                 if(zoteroRoam.autoComplete == null){
                     zoteroRoam.autoComplete = new autoComplete(zoteroRoam.config.autoComplete);
@@ -52,6 +53,7 @@
 
             document.removeEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
             window.removeEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
+            try { clearInterval(periodicReferenceChecking) } catch(e){};
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
 

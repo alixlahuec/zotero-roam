@@ -25,7 +25,6 @@
             }
         },
 
-        // Previously runZoteroDataGetter
         checkReferences(){
             let refCitekeyFound = false;
             setTimeout(function(){
@@ -38,7 +37,6 @@
             zoteroRoam.pageRefs.addContextMenuListener();
         },
 
-        // Previously findRefCitekeys
         identifyCitekeys(refs){
             let matched = false;
             for (i = 0; i < refs.length; i++) {

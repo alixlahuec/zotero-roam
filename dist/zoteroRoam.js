@@ -1244,6 +1244,7 @@ var zoteroRoam = {};
                 zoteroRoam.pageRefs.checkReferences();
                 document.addEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
                 window.addEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
+                var periodicReferenceChecking = setInterval(zoteroRoam.pageRefs.checkReferences, 1000);
                 // Setup the search autoComplete object
                 if(zoteroRoam.autoComplete == null){
                     zoteroRoam.autoComplete = new autoComplete(zoteroRoam.config.autoComplete);
@@ -1281,6 +1282,7 @@ var zoteroRoam = {};
 
             document.removeEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
             window.removeEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
+            try { clearInterval(periodicReferenceChecking) } catch(e){};
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
 
@@ -1376,7 +1378,6 @@ var zoteroRoam = {};
             }
         },
 
-        // Previously runZoteroDataGetter
         checkReferences(){
             let refCitekeyFound = false;
             setTimeout(function(){
@@ -1389,7 +1390,6 @@ var zoteroRoam = {};
             zoteroRoam.pageRefs.addContextMenuListener();
         },
 
-        // Previously findRefCitekeys
         identifyCitekeys(refs){
             let matched = false;
             for (i = 0; i < refs.length; i++) {

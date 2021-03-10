@@ -1,6 +1,6 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.5.45",
+    "version": "0.5.5",
     "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
@@ -10,7 +10,7 @@
     },
     "repository": "greenmeen/zotero-roam",
     "bugs": {
-        "url": "https://github.com/greenmeen/issues",
+        "url": "https://github.com/greenmeen/zotero-roam/issues",
         "email": "alix.lahuec@mail.mcgill.ca"
     },
     "files": [
