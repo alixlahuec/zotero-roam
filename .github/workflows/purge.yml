@@ -18,4 +18,4 @@ jobs:
     - name: curl purging
       uses: wei/curl@v1.1.1
       with:
-        args: -X POST http://purge.jsdelivr.net-H 'cache-control:no-cache' -H 'content-type:application/json' -d '{"path":["/npm/@alixlahuec/zotero-roam@${{ github.event.inputs.version }}"]}'
+        args: -X POST http://purge.jsdelivr.net -H 'cache-control:no-cache' -H 'content-type:application/json' -d '{"path":["/npm/@alixlahuec/zotero-roam@${{ github.event.inputs.version }}"]}'
