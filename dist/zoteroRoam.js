@@ -330,10 +330,10 @@ var zoteroRoam = {};
             }
         },
 
-        // Given an Array of PDF items, returns an Array of Markdown-style links. If a PDF is a `linked_file`, make a local Zotero open link / else, make a link to the URL
+        // Given an Array of PDF items, returns an Array of Markdown-style links. If a PDF is a `linked_file` or `imported_file`, make a local Zotero open link / else, make a link to the URL
         makePDFLinks(arr){
             if(arr.length > 0){
-                return arr.map(i => (i.data.linkMode == "linked_file") ? `[${i.data.title}](zotero://open-pdf/library/items/${i.data.key})` : `[${i.data.title}](${i.data.url})`);
+                return arr.map(i => (["linked_file", "imported_file"].includes(i.data.linkMode)) ? `[${i.data.title}](zotero://open-pdf/library/items/${i.data.key})` : `[${i.data.title}](${i.data.url})`);
             } else {
                 return false;
             }
@@ -665,7 +665,7 @@ var zoteroRoam = {};
         },
 
         async requestData(requests) {
-            if(zoteroRoam.config.requests.length == 0){
+            if(requests.length == 0){
                 throw new Error("No data requests were added to the config object - check for upstream problems");
             }
             try{

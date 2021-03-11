@@ -224,7 +224,7 @@
         },
 
         async requestData(requests) {
-            if(zoteroRoam.config.requests.length == 0){
+            if(requests.length == 0){
                 throw new Error("No data requests were added to the config object - check for upstream problems");
             }
             try{
