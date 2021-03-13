@@ -1246,8 +1246,9 @@ var zoteroRoam = {};
                     }
                 } catch(e){};
             });
-            document.querySelector("button.item-go-to-page").addEventListener("click", e => {
-                window.location.hash = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.target.dataset.uid}`;
+            document.querySelector("button.item-go-to-page").addEventListener("click", function(){
+                window.location.hash = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${document.querySelector("button.item-go-to-page").dataset.uid}`;
+                zoteroRoam.interface.toggleSearchOverlay("hide");
             });
             document.querySelector("button.item-copy-citekey").addEventListener("click", function(){document.querySelector(".item-citekey input").select(); document.execCommand("copy");document.querySelector(".item-citekey input").blur();})
             try{
