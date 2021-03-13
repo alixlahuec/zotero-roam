@@ -93,7 +93,7 @@
                             if(inGraphDiv != null){
                                 inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
                             }
-                            let goToPageButton = document.querySelector("item-go-to-page");
+                            let goToPageButton = document.querySelector(".item-go-to-page");
                             if(goToPageButton != null){
                                 goToPageButton.setAttribute("data-uid", pageUID);
                                 goToPageButton.disabled = false;
