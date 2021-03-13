@@ -56,7 +56,7 @@ var zoteroRoam = {};
                     event: ["input", "focus"]
                 },
                 highlight: true,
-                maxResults: 20,
+                maxResults: 100,
                 sort: (a, b) => { // Sort by author, alphabetically
                     if(a.value.authors.toLowerCase() < b.value.authors.toLowerCase()) return -1;
                     if(a.value.authors.toLowerCase() > b.value.authors.toLowerCase()) return 1;
@@ -363,9 +363,9 @@ var zoteroRoam = {};
             return cleanBlock;
         },
 
-        renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = ""} = {}){
-            return `<div class="bp3-button-group bp3-minimal bp3-vertical bp3-align-left">
-                    <button type="button" class="bp3-button ${buttonClass}">
+        renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = "", buttonModifier = ""} = {}){
+            return `<div class="bp3-button-group bp3-minimal bp3-fill bp3-align-left">
+                    <button type="button" ${buttonModifier} class="bp3-button ${buttonClass}">
                         <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
                             <span class="bp3-button-text">${string}</span>
                     </button>
@@ -536,7 +536,7 @@ var zoteroRoam = {};
                         }
                     } else {
                         console.log(pageUID);
-                        throw new Error("There was a problem in obtaining the page's UID.");
+                        alert("There was a problem in obtaining the page's UID.");
                     }
                 }
                 if(outcome.success){
@@ -550,7 +550,7 @@ var zoteroRoam = {};
             } else {
                 console.log(item);
                 console.log(itemData);
-                throw new Error("Something went wrong when formatting or importing the item's data.");
+                alert("Something went wrong when formatting or importing the item's data.");
             }
         },
 
@@ -1152,6 +1152,10 @@ var zoteroRoam = {};
 
             // Information about the item
             let pageInGraph = zoteroRoam.utils.lookForPage(citekey);
+            let iconName = (pageInGraph.present == true) ? "tick" : "cross";
+            let iconIntent = (pageInGraph.present == true) ? "success" : "danger";
+            let itemInfo = (pageInGraph.present == true) ? `In the graph` : "Not in the graph";
+            let itemInGraph = `<div style="padding:0 10px;font-style:italic;" class="item-in-graph"><span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span><span> ${itemInfo}</span></div>`;
             
             // Render the header section
             let headerDiv = document.querySelector(".selected-item-header");
@@ -1164,15 +1168,15 @@ var zoteroRoam = {};
                                             <div class="bp3-input-group bp3-fill"><input type="text" class="bp3-input" value="${citekey}" readonly></div>
                                             <button type="button" class="bp3-button item-copy-citekey"><span icon="clipboard" class="bp3-icon bp3-icon-clipboard"></span></button>
                                         </div>
+                                        ${itemInGraph}
                                     </div>`;
         
             // Render the graph info section
             let bodyDiv = document.querySelector(".selected-item-body");
-            let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
-            let iconName = (pageInGraph.present == true) ? "tick" : "cross";
-            let iconIntent = (pageInGraph.present == true) ? "success" : "danger";
-            let itemInfo = (pageInGraph.present == true) ? (`Page already exists in the graph`) : "Page doesn't exist in the graph";
-        
+            
+            let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
+            let goToPage = zoteroRoam.utils.renderBP3ButtonGroup(string = "Go to Roam page", { buttonClass: "item-go-to-page", icon: "arrow-right", modifier: "bp3-intent-primary", buttonModifier: `${goToPageModifier}` });
+            
             let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
             let importText = `Import metadata  ${importSeq}`;
             let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", icon: "add", modifier: "bp3-intent-primary" });
@@ -1206,7 +1210,7 @@ var zoteroRoam = {};
                                     <p class="item-collections">${divCollections}</p>
                                 </div>
                                 <div class="item-actions">
-                                    <div style="padding:5px 10px;font-style:italic;"><span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span><span> ${itemInfo}</span></div>
+                                    ${goToPage}
                                     ${importButtonGroup}
                                     <div class="item-pdf-notes" style="margin-top: 25px;">
                                         <h5>PDFs & Notes</h5>
@@ -1217,7 +1221,34 @@ var zoteroRoam = {};
                                 </div>`;
             
             // Add event listeners to action buttons
-            document.querySelector("button.item-add-metadata").addEventListener("click", function(){zoteroRoam.handlers.addSearchResult(citekey, pageUID)});
+            let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
+            document.querySelector("button.item-add-metadata").addEventListener("click", function(){
+                zoteroRoam.handlers.addSearchResult(citekey, pageUID);
+                // TODO: Have addSearchResult return something, then use that value to selectively re-render the item's info
+                // Alternatively, simply run checks for two elements : in graph/not in graph, + goToPage
+                // Because the rest doesn't need to be re-rendered...
+                // So simply, if the page didn't exist previously,
+                // look for the page's existence, then if it's found => update both DOM elements
+                try{
+                    if(!pageInGraph.present){
+                        let newPage = zoteroRoam.utils.lookForPage(citekey);
+                        if(newPage.present == true){
+                            let inGraphDiv = document.querySelector(".item-in-graph");
+                            if(inGraphDiv != null){
+                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
+                            }
+                            let goToPageButton = document.querySelector("item-go-to-page");
+                            if(goToPageButton != null){
+                                goToPageButton.setAttribute("data-uid", newPage.uid);
+                                goToPageButton.disabled = false;
+                            }
+                        }
+                    }
+                } catch(e){};
+            });
+            document.querySelector("button.item-go-to-page").addEventListener("click", e => {
+                window.location.hash = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.target.dataset.uid}`;
+            });
             document.querySelector("button.item-copy-citekey").addEventListener("click", function(){document.querySelector(".item-citekey input").select(); document.execCommand("copy");document.querySelector(".item-citekey input").blur();})
             try{
                 document.querySelector("button.item-see-notes").addEventListener("click", function(){
