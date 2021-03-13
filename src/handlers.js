@@ -95,7 +95,7 @@
                         }
                     } else {
                         console.log(pageUID);
-                        throw new Error("There was a problem in obtaining the page's UID.");
+                        alert("There was a problem in obtaining the page's UID.");
                     }
                 }
                 if(outcome.success){
@@ -109,7 +109,7 @@
             } else {
                 console.log(item);
                 console.log(itemData);
-                throw new Error("Something went wrong when formatting or importing the item's data.");
+                alert("Something went wrong when formatting or importing the item's data.");
             }
         },
 

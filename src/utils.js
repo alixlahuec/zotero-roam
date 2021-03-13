@@ -146,9 +146,9 @@
             return cleanBlock;
         },
 
-        renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = ""} = {}){
-            return `<div class="bp3-button-group bp3-minimal bp3-vertical bp3-align-left">
-                    <button type="button" class="bp3-button ${buttonClass}">
+        renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = "", buttonModifier = ""} = {}){
+            return `<div class="bp3-button-group bp3-minimal bp3-fill bp3-align-left">
+                    <button type="button" ${buttonModifier} class="bp3-button ${buttonClass}">
                         <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
                             <span class="bp3-button-text">${string}</span>
                     </button>

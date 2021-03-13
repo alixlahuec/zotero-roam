@@ -56,7 +56,7 @@ var zoteroRoam = {};
                     event: ["input", "focus"]
                 },
                 highlight: true,
-                maxResults: 20,
+                maxResults: 100,
                 sort: (a, b) => { // Sort by author, alphabetically
                     if(a.value.authors.toLowerCase() < b.value.authors.toLowerCase()) return -1;
                     if(a.value.authors.toLowerCase() > b.value.authors.toLowerCase()) return 1;
