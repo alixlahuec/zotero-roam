@@ -399,28 +399,8 @@
             // Add event listeners to action buttons
             let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){
+                console.log("Importing metadata...");
                 zoteroRoam.handlers.addSearchResult(citekey, pageUID);
-                // TODO: Have addSearchResult return something, then use that value to selectively re-render the item's info
-                // Alternatively, simply run checks for two elements : in graph/not in graph, + goToPage
-                // Because the rest doesn't need to be re-rendered...
-                // So simply, if the page didn't exist previously,
-                // look for the page's existence, then if it's found => update both DOM elements
-                try{
-                    if(!pageInGraph.present){
-                        let newPage = zoteroRoam.utils.lookForPage(citekey);
-                        if(newPage.present == true){
-                            let inGraphDiv = document.querySelector(".item-in-graph");
-                            if(inGraphDiv != null){
-                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
-                            }
-                            let goToPageButton = document.querySelector("item-go-to-page");
-                            if(goToPageButton != null){
-                                goToPageButton.setAttribute("data-uid", newPage.uid);
-                                goToPageButton.disabled = false;
-                            }
-                        }
-                    }
-                } catch(e){};
             });
             document.querySelector("button.item-go-to-page").addEventListener("click", function(){
                 window.location.hash = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${document.querySelector("button.item-go-to-page").dataset.uid}`;

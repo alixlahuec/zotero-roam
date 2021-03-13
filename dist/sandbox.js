@@ -521,26 +521,33 @@ var zoteroRoam = {};
             let outcome = {};
         
             if(item && itemData.length > 0){
+                let pageUID = uid || "";
                 if(uid) {
                     outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
                 } else {
                     window.roamAlphaAPI.createPage({'page': {'title': title}});
                     let pageUID = await zoteroRoam.handlers.waitForPageUID(title);
                     if(pageUID != null){
+                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                         try {
-                            outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
-                            await zoteroRoam.utils.sleep(125);
-                        } catch(e) {
-                            console.error(e);
-                            alert('Something went wrong when creating the page & adding the metadata')
-                        }
+                            let inGraphDiv = document.querySelector(".item-in-graph");
+                            if(inGraphDiv != null){
+                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
+                            }
+                            let goToPageButton = document.querySelector("item-go-to-page");
+                            if(goToPageButton != null){
+                                goToPageButton.setAttribute("data-uid", pageUID);
+                                goToPageButton.disabled = false;
+                            }
+                        } catch(e){};
+                        await zoteroRoam.utils.sleep(125);
                     } else {
                         console.log(pageUID);
                         alert("There was a problem in obtaining the page's UID.");
                     }
                 }
                 if(outcome.success){
-                    let actualUID = uid || pageUID;
+                    let actualUID = pageUID;
                     let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", actualUID);
                     let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
                     alert(`This Roam page now has ${nbChildren} child blocks.`);
@@ -1225,28 +1232,8 @@ var zoteroRoam = {};
             // Add event listeners to action buttons
             let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){
+                console.log("Importing metadata...");
                 zoteroRoam.handlers.addSearchResult(citekey, pageUID);
-                // TODO: Have addSearchResult return something, then use that value to selectively re-render the item's info
-                // Alternatively, simply run checks for two elements : in graph/not in graph, + goToPage
-                // Because the rest doesn't need to be re-rendered...
-                // So simply, if the page didn't exist previously,
-                // look for the page's existence, then if it's found => update both DOM elements
-                try{
-                    if(!pageInGraph.present){
-                        let newPage = zoteroRoam.utils.lookForPage(citekey);
-                        if(newPage.present == true){
-                            let inGraphDiv = document.querySelector(".item-in-graph");
-                            if(inGraphDiv != null){
-                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
-                            }
-                            let goToPageButton = document.querySelector("item-go-to-page");
-                            if(goToPageButton != null){
-                                goToPageButton.setAttribute("data-uid", newPage.uid);
-                                goToPageButton.disabled = false;
-                            }
-                        }
-                    }
-                } catch(e){};
             });
             document.querySelector("button.item-go-to-page").addEventListener("click", function(){
                 window.location.hash = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${document.querySelector("button.item-go-to-page").dataset.uid}`;

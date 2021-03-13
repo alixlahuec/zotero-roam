@@ -80,26 +80,33 @@
             let outcome = {};
         
             if(item && itemData.length > 0){
+                let pageUID = uid || "";
                 if(uid) {
                     outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
                 } else {
                     window.roamAlphaAPI.createPage({'page': {'title': title}});
                     let pageUID = await zoteroRoam.handlers.waitForPageUID(title);
                     if(pageUID != null){
+                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                         try {
-                            outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
-                            await zoteroRoam.utils.sleep(125);
-                        } catch(e) {
-                            console.error(e);
-                            alert('Something went wrong when creating the page & adding the metadata')
-                        }
+                            let inGraphDiv = document.querySelector(".item-in-graph");
+                            if(inGraphDiv != null){
+                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
+                            }
+                            let goToPageButton = document.querySelector("item-go-to-page");
+                            if(goToPageButton != null){
+                                goToPageButton.setAttribute("data-uid", pageUID);
+                                goToPageButton.disabled = false;
+                            }
+                        } catch(e){};
+                        await zoteroRoam.utils.sleep(125);
                     } else {
                         console.log(pageUID);
                         alert("There was a problem in obtaining the page's UID.");
                     }
                 }
                 if(outcome.success){
-                    let actualUID = uid || pageUID;
+                    let actualUID = pageUID;
                     let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", actualUID);
                     let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
                     alert(`This Roam page now has ${nbChildren} child blocks.`);
