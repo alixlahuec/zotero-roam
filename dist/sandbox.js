@@ -547,10 +547,7 @@ var zoteroRoam = {};
                     }
                 }
                 if(outcome.success){
-                    let actualUID = pageUID;
-                    let childrenQ = window.roamAlphaAPI.q("[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]", actualUID);
-                    let nbChildren = (childrenQ.length > 0) ? childrenQ.toString() : "__";
-                    alert(`This Roam page now has ${nbChildren} child blocks.`);
+                    alert(`Metadata was successfully added. You can check the page's contents to verify if you'd like.`);
                 } else {
                     alert("The metadata array couldn't be properly processed.")
                 }
