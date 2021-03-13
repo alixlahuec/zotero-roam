@@ -38,6 +38,15 @@
                         zoteroRoam.interface.search.input.focus();
                     }
                 }
+            },
+            goToItemPage: {
+                defaultShortcut: [],
+                execute(){
+                    let goToPageButton = document.querySelector("button.item-go-to-page");
+                    if(goToPageButton !== null && goToPageButton.disabled == false){
+                        goToPageButton.click();
+                    }
+                }
             }
         },
 
@@ -135,6 +144,7 @@
                 spanSeq.innerHTML = `${focusSearchBarText}`;
                 zoteroRoam.interface.search.input.closest('.bp3-input-group').appendChild(spanSeq);
             }
+            // Go to item page => in rendering of selected item
         },
 
         verify(e){
