@@ -16,7 +16,7 @@
                     let top_uid = await zoteroRoam.handlers.waitForBlockUID(parent_uid, object.string);
                     // Once the UID of the parent block has been obtained, go through each child element 1-by-1
                     // If a child has children itself, the recursion should ensure everything gets added where it should
-                    for(j = object.children.length - 1; j >= 0; j--){
+                    for(let j = object.children.length - 1; j >= 0; j--){
                         if(object.children[j].constructor === Object){
                             await zoteroRoam.handlers.addBlockObject(top_uid, object.children[j]);
                         } else if(object.children[j].constructor === String){

@@ -125,8 +125,8 @@
         parseNoteBlock(block){
             let cleanBlock = block;
             let formattingSpecs = {
-                "<p>": "",
                 "</p>": "",
+                "</div>": "",
                 "<blockquote>": "> ",
                 "</blockquote>": "",
                 "<strong>": "**",
@@ -140,6 +140,14 @@
             for(prop in formattingSpecs){
                 cleanBlock = cleanBlock.replaceAll(`${prop}`, `${formattingSpecs[prop]}`);
             }
+
+            // HTML tags that might have attributes : p, div
+            let richTags = ["p", "div"];
+            richTags.forEach(tag => {
+                let tagRegex = new RegExp(`<${tag} .+?>`, "g");
+                cleanBlock = cleanBlock.replaceAll(tagRegex, "");
+            })
+
             let linkRegex = /<a href="(.+?)">(.+?)<\/a>/g;
             cleanBlock = cleanBlock.replaceAll(linkRegex, `[$2]($1)`);
         

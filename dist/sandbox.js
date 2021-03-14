@@ -342,8 +342,8 @@ var zoteroRoam = {};
         parseNoteBlock(block){
             let cleanBlock = block;
             let formattingSpecs = {
-                "<p>": "",
                 "</p>": "",
+                "</div>": "",
                 "<blockquote>": "> ",
                 "</blockquote>": "",
                 "<strong>": "**",
@@ -357,6 +357,14 @@ var zoteroRoam = {};
             for(prop in formattingSpecs){
                 cleanBlock = cleanBlock.replaceAll(`${prop}`, `${formattingSpecs[prop]}`);
             }
+
+            // HTML tags that might have attributes : p, div
+            let richTags = ["p", "div"];
+            richTags.forEach(tag => {
+                let tagRegex = new RegExp(`<${tag} .+?>`, "g");
+                cleanBlock = cleanBlock.replaceAll(tagRegex, "");
+            })
+
             let linkRegex = /<a href="(.+?)">(.+?)<\/a>/g;
             cleanBlock = cleanBlock.replaceAll(linkRegex, `[$2]($1)`);
         
@@ -457,7 +465,7 @@ var zoteroRoam = {};
                     let top_uid = await zoteroRoam.handlers.waitForBlockUID(parent_uid, object.string);
                     // Once the UID of the parent block has been obtained, go through each child element 1-by-1
                     // If a child has children itself, the recursion should ensure everything gets added where it should
-                    for(j = object.children.length - 1; j >= 0; j--){
+                    for(let j = object.children.length - 1; j >= 0; j--){
                         if(object.children[j].constructor === Object){
                             await zoteroRoam.handlers.addBlockObject(top_uid, object.children[j]);
                         } else if(object.children[j].constructor === String){
