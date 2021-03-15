@@ -1253,7 +1253,7 @@ var zoteroRoam = {};
                 zoteroRoam.handlers.addSearchResult(citekey, pageUID);
             });
             document.querySelector("button.item-go-to-page").addEventListener("click", function(){
-                window.location.hash = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${document.querySelector("button.item-go-to-page").dataset.uid}`;
+                window.location.href = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${document.querySelector("button.item-go-to-page").dataset.uid}`;
                 zoteroRoam.interface.toggleSearchOverlay("hide");
             });
             document.querySelector("button.item-copy-citekey").addEventListener("click", function(){
