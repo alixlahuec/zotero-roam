@@ -340,13 +340,13 @@
             // Render the header section
             let headerDiv = document.querySelector(".selected-item-header");
             headerDiv.innerHTML = `<div class="item-basic-metadata">
-                                        <h4 class="item-title">${feedback.selection.value.title}${itemYear}</h4>
+                                        <h4 class="item-title" tabindex="0">${feedback.selection.value.title}${itemYear}</h4>
                                         <p class="item-metadata-string">${divAuthors}${feedback.selection.value.meta}</p>
                                         </div>
                                     <div class="item-citekey">
                                         <div class="bp3-control-group">
-                                            <div class="bp3-input-group bp3-fill" style="background-color:unset;"><input type="text" class="bp3-input" value="${citekey}" readonly></div>
-                                            <button type="button" class="bp3-button item-copy-citekey"><span icon="clipboard" class="bp3-icon bp3-icon-clipboard item-copy-citekey-icon"></span></button>
+                                            <div class="bp3-input-group bp3-fill"><input type="text" class="bp3-input" value="${citekey}" readonly></div>
+                                            <button type="button" class="bp3-button item-copy-citekey" style="background-color:unset;"><span icon="clipboard" class="bp3-icon bp3-icon-clipboard item-copy-citekey-icon"></span></button>
                                         </div>
                                         ${itemInGraph}
                                     </div>`;
@@ -415,17 +415,18 @@
             document.querySelector("button.item-copy-citekey").addEventListener("click", function(){
                 document.querySelector(".item-citekey input").select();
                 document.execCommand("copy");
-                document.querySelector(".item-citekey input").blur();
                 document.querySelector("span.item-copy-citekey-icon").classList.add("bp3-intent-success");
+                document.querySelector('h4.item-title').focus();
             });
             try{
                 document.querySelector("button.item-see-notes").addEventListener("click", function(){
                     document.querySelector("div.item-rendered-notes").innerHTML = `<hr><h4>Notes</h4><br>${ infoChildren.notes.map(n => n.data.note).join("<br>") }`;
-                })
+                });
             } catch(e){};
 
             // Finally, make the div visible
             zoteroRoam.interface.search.selectedItemDiv.style.display = "block";
+            document.querySelector('h4.item-title').focus();
         },
 
         clearSelectedItem(){
