@@ -119,7 +119,7 @@
             zoteroRoam.shortcuts.generateSequences();
 
             // Search Panel : toggle, close
-            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle with ") : "";
+            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle search panel with ") : "";
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
                 let spanSeqs = document.createElement('span');

@@ -147,7 +147,7 @@
             // Add body elements
             let parText = document.createElement("p");
             parText.innerHTML = `<strong>Enter text below to look for items* in your loaded Zotero dataset.</strong>
-                            <br>(* searchable fields are : title, year, authors, tags. A more fully-featured search will be available down the road)`
+                            <br>(* searchable fields are : title, year, authors, tags, citekey. A more fully-featured search will be available down the road)`
             searchDialogBody.appendChild(parText);
 
             let inputGroup = document.createElement('div');

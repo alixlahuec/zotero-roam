@@ -42,7 +42,7 @@ var zoteroRoam = {};
                             return zoteroRoam.handlers.simplifyDataArray(zoteroRoam.data.items);
                         }
                     },
-                    key: ['title', 'authorsLastNames', 'year', 'tagsString'],
+                    key: ['title', 'authorsLastNames', 'year', 'tagsString', 'key'],
                     cache: false,
                     results: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
@@ -74,11 +74,13 @@ var zoteroRoam = {};
                     className: "zotero-search_result",
                     idName: "zotero-search_result",
                     content: (data, element) => {
-                        let itemCitekey = `<span class="bp3-menu-item-label zotero-search-item-key">${data.value.key}</span>`;
                         let itemMetadata = `<span class="zotero-search-item-metadata"> ${data.value.meta}</span>`;
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
                         let itemTitle = `<span class="zotero-search-item-title" style="font-weight:bold;color:black;display:block;">${itemTitleContent}</span>`;
-            
+                        
+                        let itemCitekeyContent = (data.key == "key") ? data.match : data.value.key;
+                        let itemCitekey = `<span class="bp3-menu-item-label zotero-search-item-key">${itemCitekeyContent}</span>`;
+
                         let itemYear = "";
                         if(data.value.year){
                             let itemYearContent = (data.key == "year") ? data.match : data.value.year;
@@ -136,12 +138,18 @@ var zoteroRoam = {};
                         zoteroRoam.interface.toggleSearchOverlay("hide");
                     } else {
                         zoteroRoam.interface.search.input.blur();
+                        if(zoteroRoam.config.params.always_copy_citekey == true){
+                            zoteroRoam.interface.search.input.value = '@' + feedback.selection.value.key;
+                            zoteroRoam.interface.search.input.select();
+                            document.execCommand("copy");
+                        }
                         zoteroRoam.interface.renderSelectedItem(feedback);
                     }
                 }
             },
             params: {
-                override_quickcopy: {overridden: false}
+                override_quickcopy: {overridden: false},
+                always_copy_citekey: false
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)

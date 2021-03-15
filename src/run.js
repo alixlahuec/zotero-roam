@@ -8,6 +8,9 @@
         zoteroRoam.addAutoCompleteCSS();
 
         zoteroRoam.config.userSettings = window.zoteroRoam_settings;
+
+        // Check for additional settings
+        // override_quickcopy
         let qc_override_key = zoteroRoam.config.userSettings['override_quickcopy'] || false;
         if(qc_override_key){
             zoteroRoam.config.params.override_quickcopy.key = qc_override_key;
@@ -21,6 +24,11 @@
                     zoteroRoam.config.params.override_quickcopy.overridden = false;
                 }
             })
+        };
+        // always_copy_citekey
+        let ac_setting = zoteroRoam.config.userSettings['always_copy_citekey'] || false;
+        if(ac_setting == true){
+            zoteroRoam.config.params.always_copy_citekey = ac_setting;
         }
         
         zoteroRoam.shortcuts.setup();
