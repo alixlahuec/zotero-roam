@@ -138,12 +138,10 @@ var zoteroRoam = {};
                         zoteroRoam.interface.toggleSearchOverlay("hide");
                     } else {
                         zoteroRoam.interface.search.input.blur();
-                        if(zoteroRoam.config.params.always_copy_citekey == true){
-                            zoteroRoam.interface.search.input.value = '@' + feedback.selection.value.key;
-                            zoteroRoam.interface.search.input.select();
-                            document.execCommand("copy");
-                        }
                         zoteroRoam.interface.renderSelectedItem(feedback);
+                        if(zoteroRoam.config.params.always_copy_citekey == true){
+                            document.querySelector("button.item-copy-citekey").click();
+                        }
                     }
                 }
             },

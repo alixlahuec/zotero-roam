@@ -138,12 +138,10 @@ var zoteroRoam = {};
                         zoteroRoam.interface.toggleSearchOverlay("hide");
                     } else {
                         zoteroRoam.interface.search.input.blur();
-                        if(zoteroRoam.config.params.always_copy_citekey == true){
-                            zoteroRoam.interface.search.input.value = '@' + feedback.selection.value.key;
-                            zoteroRoam.interface.search.input.select();
-                            document.execCommand("copy");
-                        }
                         zoteroRoam.interface.renderSelectedItem(feedback);
+                        if(zoteroRoam.config.params.always_copy_citekey == true){
+                            document.querySelector("button.item-copy-citekey").click();
+                        }
                     }
                 }
             },
@@ -1191,8 +1189,8 @@ var zoteroRoam = {};
                                         </div>
                                     <div class="item-citekey">
                                         <div class="bp3-control-group">
-                                            <div class="bp3-input-group bp3-fill"><input type="text" class="bp3-input" value="${citekey}" readonly></div>
-                                            <button type="button" class="bp3-button item-copy-citekey"><span icon="clipboard" class="bp3-icon bp3-icon-clipboard"></span></button>
+                                            <div class="bp3-input-group bp3-fill" style="background-color:unset;"><input type="text" class="bp3-input" value="${citekey}" readonly></div>
+                                            <button type="button" class="bp3-button item-copy-citekey"><span icon="clipboard" class="bp3-icon bp3-icon-clipboard item-copy-citekey-icon"></span></button>
                                         </div>
                                         ${itemInGraph}
                                     </div>`;
@@ -1258,7 +1256,12 @@ var zoteroRoam = {};
                 window.location.hash = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${document.querySelector("button.item-go-to-page").dataset.uid}`;
                 zoteroRoam.interface.toggleSearchOverlay("hide");
             });
-            document.querySelector("button.item-copy-citekey").addEventListener("click", function(){document.querySelector(".item-citekey input").select(); document.execCommand("copy");document.querySelector(".item-citekey input").blur();})
+            document.querySelector("button.item-copy-citekey").addEventListener("click", function(){
+                document.querySelector(".item-citekey input").select();
+                document.execCommand("copy");
+                document.querySelector(".item-citekey input").blur();
+                document.querySelector("span.item-copy-citekey-icon").classList.add("bp3-intent-success");
+            });
             try{
                 document.querySelector("button.item-see-notes").addEventListener("click", function(){
                     document.querySelector("div.item-rendered-notes").innerHTML = `<hr><h4>Notes</h4><br>${ infoChildren.notes.map(n => n.data.note).join("<br>") }`;
