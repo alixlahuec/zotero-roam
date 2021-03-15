@@ -329,6 +329,12 @@
             let iconName = (pageInGraph.present == true) ? "tick" : "cross";
             let iconIntent = (pageInGraph.present == true) ? "success" : "danger";
             let itemInfo = (pageInGraph.present == true) ? `In the graph` : "Not in the graph";
+            if(pageInGraph.present == true){
+                try{
+                    let nbChildren = window.roamAlphaAPI.q('[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]', pageInGraph.uid)[0][0];
+                    itemInfo = itemInfo + ` (has <b>${nbChildren}</b> direct children)`;
+                } catch(e){};
+            }
             let itemInGraph = `<div style="padding:0 10px;font-style:italic;" class="item-in-graph"><span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span><span> ${itemInfo}</span></div>`;
             
             // Render the header section
