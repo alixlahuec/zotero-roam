@@ -367,7 +367,7 @@ var zoteroRoam = {};
             // HTML tags that might have attributes : p, div
             let richTags = ["p", "div"];
             richTags.forEach(tag => {
-                let tagRegex = new RegExp(`<${tag} .+?>`, "g");
+                let tagRegex = new RegExp(`<${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag>, and the case with modifiers : <tag :modifier>
                 cleanBlock = cleanBlock.replaceAll(tagRegex, "");
             })
 
