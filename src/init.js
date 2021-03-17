@@ -135,7 +135,8 @@ var zoteroRoam = {};
                         let clipboard = document.querySelector("input.clipboard-copy-utility");
                         switch(zoteroRoam.config.params.quick_copy_format){
                             case "citation":
-                                let citationText = ``;
+                                let citationText = `${feedback.selection.value.authors}`;
+                                if(feedback.selection.value.year){ citationText += ` (${feedback.selection.value.year})` };
                                 clipboard.value = `[${citationText}]([[@${feedback.selection.value.key}]])`;
                                 break;
                             case "tag":
@@ -220,7 +221,7 @@ var zoteroRoam = {};
                                             .item-citekey, .item-actions{flex:0 1 30%;}
                                             .item-citekey{margin:10px 0px;}
                                             .item-citekey input.bp3-input[readonly]{box-shadow:none;font-weight:bold;}
-                                            .item-citekey .copy-buttons .bp3-button{font-size:0.75em;flex-wrap:wrap;};
+                                            .item-citekey .copy-buttons .bp3-button{font-size:0.75em;flex-wrap:wrap;}
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}`;
             document.head.append(autoCompleteCSS);
         }

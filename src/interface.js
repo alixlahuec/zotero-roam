@@ -434,8 +434,10 @@
                             break;
                         case 'citation':
                             document.querySelector('input.clipboard-copy-utility').value = `[${feedback.selection.value.authors}]([[${citekey}]])`;
+                            break;
                         case 'tag':
                             document.querySelector('input.clipboard-copy-utility').value = `#[[${citekey}]]`;
+                            break;
                         case 'page-reference':
                             document.querySelector('input.clipboard-copy-utility').value = `[[${citekey}]]`;
                     };
