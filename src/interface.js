@@ -348,13 +348,12 @@
                                     <div class="item-citekey">
                                         <div class="bp3-control-group">
                                             <div class="bp3-input-group bp3-fill"><input type="text" class="bp3-input" value="${citekey}" readonly></div>
-                                            <button type="button" class="bp3-button item-copy-citekey" style="background-color:unset;"><span icon="clipboard" class="bp3-icon bp3-icon-clipboard item-copy-citekey-icon"></span></button>
                                         </div>
                                         <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
-                                            <a class="bp3-button" format="citekey">Copy @citekey</a>
-                                            <a class="bp3-button" format="citation">[Citation]([[@]])</a>
-                                            <a class="bp3-button" format="tag">#@</a>
-                                            <a class="bp3-button" format="page-reference">[[@]]</a>
+                                            <a class="bp3-button" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
+                                            <a class="bp3-button" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
+                                            <a class="bp3-button" format="tag">#@ ${(zoteroRoam.shortcuts.sequences["copyTag"]) ? zoteroRoam.shortcuts.makeSequenceText("copyTag") : ""}</a>
+                                            <a class="bp3-button" format="page-reference">[[@]] ${(zoteroRoam.shortcuts.sequences["copyPageRef"]) ? zoteroRoam.shortcuts.makeSequenceText("copyPageRef") : ""}</a>
                                         </div>
                                         ${itemInGraph}
                                     </div>`;
@@ -420,12 +419,7 @@
                 window.location.href = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${document.querySelector("button.item-go-to-page").dataset.uid}`;
                 zoteroRoam.interface.toggleSearchOverlay("hide");
             });
-            document.querySelector("button.item-copy-citekey").addEventListener("click", function(){
-                document.querySelector(".item-citekey input").select();
-                document.execCommand("copy");
-                document.querySelector("span.item-copy-citekey-icon").classList.add("bp3-intent-success");
-                document.querySelector('h4.item-title').focus();
-            });
+
             Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", e => {
                     switch(btn.getAttribute('format')){
@@ -433,7 +427,9 @@
                             document.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
                             break;
                         case 'citation':
-                            document.querySelector('input.clipboard-copy-utility').value = `[${feedback.selection.value.authors}]([[${citekey}]])`;
+                            let citationText = `${feedback.selection.value.authors}`;
+                            if(feedback.selection.value.year){ citationText += ` (${feedback.selection.value.year})`; }
+                            document.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${citekey}]])`;
                             break;
                         case 'tag':
                             document.querySelector('input.clipboard-copy-utility').value = `#[[${citekey}]]`;

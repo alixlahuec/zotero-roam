@@ -48,6 +48,42 @@
                         zoteroRoam.interface.toggleSearchOverlay("hide");
                     }
                 }
+            },
+            copyCitekey: {
+                defaultShortcut: [],
+                execute(){
+                    let copyButton = document.querySelector('.item-citekey .copy-buttons a.bp3-button[format="citekey"]');
+                    if(copyButton !== null){
+                        copyButton.click();
+                    }
+                }
+            },
+            copyCitation: {
+                defaultShortcut: [],
+                execute(){
+                    let copyButton = document.querySelector('.item-citekey .copy-buttons a.bp3-button[format="citation"]');
+                    if(copyButton !== null){
+                        copyButton.click();
+                    }
+                }
+            },
+            copyTag: {
+                defaultShortcut: [],
+                execute(){
+                    let copyButton = document.querySelector('.item-citekey .copy-buttons a.bp3-button[format="tag"]');
+                    if(copyButton !== null){
+                        copyButton.click();
+                    }
+                }
+            },
+            copyPageRef: {
+                defaultShortcut: [],
+                execute(){
+                    let copyButton = document.querySelector('.item-citekey .copy-buttons a.bp3-button[format="page-reference"]');
+                    if(copyButton !== null){
+                        copyButton.click();
+                    }
+                }
             }
         },
 
