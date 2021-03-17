@@ -129,25 +129,38 @@ var zoteroRoam = {};
                         .appendChild(result);
                 },
                 onSelection: (feedback) => {
+                    zoteroRoam.interface.search.input.blur();
                     let quickCopyEnabled = document.querySelector("#zotero-quick-copy-mode").checked;
-                    if(quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden){
-                        zoteroRoam.interface.search.input.blur();
-                        zoteroRoam.interface.search.input.value = '@' + feedback.selection.value.key;
-                        zoteroRoam.interface.search.input.select();
+                    if(zoteroRoam.config.params.always_copy == true || (quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden)){
+                        let clipboard = document.querySelector("input.clipboard-copy-utility");
+                        switch(zoteroRoam.config.params.quick_copy_format){
+                            case "citation":
+                                let citationText = ``;
+                                clipboard.value = `[${citationText}]([[@${feedback.selection.value.key}]])`;
+                                break;
+                            case "tag":
+                                clipboard.value = `#[[@${feedback.selection.value.key}]]`;
+                                break;
+                            case "pageref":
+                                clipboard.value = `[[@${feedback.selection.value.key}]]`;
+                            case "citekey":
+                            default:
+                                clipboard.value = `@${feedback.selection.value.key}`;
+                        };
+                        clipboard.select();
                         document.execCommand("copy");
-                        zoteroRoam.interface.toggleSearchOverlay("hide");
-                    } else {
-                        zoteroRoam.interface.search.input.blur();
-                        zoteroRoam.interface.renderSelectedItem(feedback);
-                        if(zoteroRoam.config.params.always_copy_citekey == true){
-                            document.querySelector("button.item-copy-citekey").click();
+                        if(quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden){
+                            zoteroRoam.interface.toggleSearchOverlay("hide");
+                        } else {
+                            zoteroRoam.interface.renderSelectedItem(feedback);
                         }
                     }
                 }
             },
             params: {
                 override_quickcopy: {overridden: false},
-                always_copy_citekey: false
+                always_copy: false,
+                quick_copy_format: 'citekey'
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
@@ -200,12 +213,14 @@ var zoteroRoam = {};
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
+                                            .selected-item-header{margin-bottom:20px;};
                                             .selected-item-body{flex-wrap:wrap;}
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
                                             .item-citekey, .item-actions{flex:0 1 30%;}
                                             .item-citekey{margin:10px 0px;}
                                             .item-citekey input.bp3-input[readonly]{box-shadow:none;font-weight:bold;}
+                                            .item-citekey .copy-buttons .bp3-button{font-size:0.75em;flex-wrap:wrap;};
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}`;
             document.head.append(autoCompleteCSS);
         }

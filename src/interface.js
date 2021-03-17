@@ -180,8 +180,9 @@
         
             // Add footer elements
             searchDialogFooter.innerHTML = `<div class="bp3-dialog-footer-actions">
+                                            <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
                                             <span class="bp3-popover2-target" tabindex="0">
-                                            <button type="button" class="zotero-update-data bp3-button">
+                                                <button type="button" class="zotero-update-data bp3-button">
                                             <span class="bp3-button-text">Update Zotero data</span>
                                             </button></span></div>`
         
@@ -246,6 +247,7 @@
                 console.log("Closing the Search Panel")
                 zoteroRoam.interface.clearSelectedItem();
                 zoteroRoam.interface.search.input.value = "";
+                document.querySelector('input.clipboard-copy-utility').value = "";
                 zoteroRoam.interface.search.visible = false
             }
         },
@@ -348,6 +350,12 @@
                                             <div class="bp3-input-group bp3-fill"><input type="text" class="bp3-input" value="${citekey}" readonly></div>
                                             <button type="button" class="bp3-button item-copy-citekey" style="background-color:unset;"><span icon="clipboard" class="bp3-icon bp3-icon-clipboard item-copy-citekey-icon"></span></button>
                                         </div>
+                                        <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
+                                            <a class="bp3-button" format="citekey">Copy @citekey</a>
+                                            <a class="bp3-button" format="citation">[Citation]([[@]])</a>
+                                            <a class="bp3-button" format="tag">#@</a>
+                                            <a class="bp3-button" format="page-reference">[[@]]</a>
+                                        </div>
                                         ${itemInGraph}
                                     </div>`;
         
@@ -417,6 +425,23 @@
                 document.execCommand("copy");
                 document.querySelector("span.item-copy-citekey-icon").classList.add("bp3-intent-success");
                 document.querySelector('h4.item-title').focus();
+            });
+            Array.from(document.querySelector('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
+                btn.addEventListener("click", e => {
+                    switch(btn.getAttribute('format')){
+                        case 'citekey':
+                            document.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
+                            break;
+                        case 'citation':
+                            document.querySelector('input.clipboard-copy-utility').value = `[${feedback.selection.value.authors}]([[${citekey}]])`;
+                        case 'tag':
+                            document.querySelector('input.clipboard-copy-utility').value = `#[[${citekey}]]`;
+                        case 'page-reference':
+                            document.querySelector('input.clipboard-copy-utility').value = `[[${citekey}]]`;
+                    };
+                    document.querySelector('input.clipboard-copy-utility').select();
+                    document.execCommand("copy");
+                })
             });
             try{
                 document.querySelector("button.item-see-notes").addEventListener("click", function(){

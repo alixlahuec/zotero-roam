@@ -44,7 +44,8 @@
                 execute(){
                     let goToPageButton = document.querySelector("button.item-go-to-page");
                     if(goToPageButton !== null && goToPageButton.disabled == false){
-                        goToPageButton.click();
+                        window.location.href = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${goToPageButton.dataset.uid}`;
+                        zoteroRoam.interface.toggleSearchOverlay("hide");
                     }
                 }
             }

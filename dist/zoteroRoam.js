@@ -129,25 +129,38 @@ var zoteroRoam = {};
                         .appendChild(result);
                 },
                 onSelection: (feedback) => {
+                    zoteroRoam.interface.search.input.blur();
                     let quickCopyEnabled = document.querySelector("#zotero-quick-copy-mode").checked;
-                    if(quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden){
-                        zoteroRoam.interface.search.input.blur();
-                        zoteroRoam.interface.search.input.value = '@' + feedback.selection.value.key;
-                        zoteroRoam.interface.search.input.select();
+                    if(zoteroRoam.config.params.always_copy == true || (quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden)){
+                        let clipboard = document.querySelector("input.clipboard-copy-utility");
+                        switch(zoteroRoam.config.params.quick_copy_format){
+                            case "citation":
+                                let citationText = ``;
+                                clipboard.value = `[${citationText}]([[@${feedback.selection.value.key}]])`;
+                                break;
+                            case "tag":
+                                clipboard.value = `#[[@${feedback.selection.value.key}]]`;
+                                break;
+                            case "pageref":
+                                clipboard.value = `[[@${feedback.selection.value.key}]]`;
+                            case "citekey":
+                            default:
+                                clipboard.value = `@${feedback.selection.value.key}`;
+                        };
+                        clipboard.select();
                         document.execCommand("copy");
-                        zoteroRoam.interface.toggleSearchOverlay("hide");
-                    } else {
-                        zoteroRoam.interface.search.input.blur();
-                        zoteroRoam.interface.renderSelectedItem(feedback);
-                        if(zoteroRoam.config.params.always_copy_citekey == true){
-                            document.querySelector("button.item-copy-citekey").click();
+                        if(quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden){
+                            zoteroRoam.interface.toggleSearchOverlay("hide");
+                        } else {
+                            zoteroRoam.interface.renderSelectedItem(feedback);
                         }
                     }
                 }
             },
             params: {
                 override_quickcopy: {overridden: false},
-                always_copy_citekey: false
+                always_copy: false,
+                quick_copy_format: 'citekey'
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
@@ -200,12 +213,14 @@ var zoteroRoam = {};
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
+                                            .selected-item-header{margin-bottom:20px;};
                                             .selected-item-body{flex-wrap:wrap;}
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
                                             .item-citekey, .item-actions{flex:0 1 30%;}
                                             .item-citekey{margin:10px 0px;}
                                             .item-citekey input.bp3-input[readonly]{box-shadow:none;font-weight:bold;}
+                                            .item-citekey .copy-buttons .bp3-button{font-size:0.75em;flex-wrap:wrap;};
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}`;
             document.head.append(autoCompleteCSS);
         }
@@ -1024,8 +1039,9 @@ var zoteroRoam = {};
         
             // Add footer elements
             searchDialogFooter.innerHTML = `<div class="bp3-dialog-footer-actions">
+                                            <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
                                             <span class="bp3-popover2-target" tabindex="0">
-                                            <button type="button" class="zotero-update-data bp3-button">
+                                                <button type="button" class="zotero-update-data bp3-button">
                                             <span class="bp3-button-text">Update Zotero data</span>
                                             </button></span></div>`
         
@@ -1090,6 +1106,7 @@ var zoteroRoam = {};
                 console.log("Closing the Search Panel")
                 zoteroRoam.interface.clearSelectedItem();
                 zoteroRoam.interface.search.input.value = "";
+                document.querySelector('input.clipboard-copy-utility').value = "";
                 zoteroRoam.interface.search.visible = false
             }
         },
@@ -1192,6 +1209,12 @@ var zoteroRoam = {};
                                             <div class="bp3-input-group bp3-fill"><input type="text" class="bp3-input" value="${citekey}" readonly></div>
                                             <button type="button" class="bp3-button item-copy-citekey" style="background-color:unset;"><span icon="clipboard" class="bp3-icon bp3-icon-clipboard item-copy-citekey-icon"></span></button>
                                         </div>
+                                        <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
+                                            <a class="bp3-button" format="citekey">Copy @citekey</a>
+                                            <a class="bp3-button" format="citation">[Citation]([[@]])</a>
+                                            <a class="bp3-button" format="tag">#@</a>
+                                            <a class="bp3-button" format="page-reference">[[@]]</a>
+                                        </div>
                                         ${itemInGraph}
                                     </div>`;
         
@@ -1261,6 +1284,23 @@ var zoteroRoam = {};
                 document.execCommand("copy");
                 document.querySelector("span.item-copy-citekey-icon").classList.add("bp3-intent-success");
                 document.querySelector('h4.item-title').focus();
+            });
+            Array.from(document.querySelector('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
+                btn.addEventListener("click", e => {
+                    switch(btn.getAttribute('format')){
+                        case 'citekey':
+                            document.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
+                            break;
+                        case 'citation':
+                            document.querySelector('input.clipboard-copy-utility').value = `[${feedback.selection.value.authors}]([[${citekey}]])`;
+                        case 'tag':
+                            document.querySelector('input.clipboard-copy-utility').value = `#[[${citekey}]]`;
+                        case 'page-reference':
+                            document.querySelector('input.clipboard-copy-utility').value = `[[${citekey}]]`;
+                    };
+                    document.querySelector('input.clipboard-copy-utility').select();
+                    document.execCommand("copy");
+                })
             });
             try{
                 document.querySelector("button.item-see-notes").addEventListener("click", function(){
@@ -1683,7 +1723,8 @@ var zoteroRoam = {};
                 execute(){
                     let goToPageButton = document.querySelector("button.item-go-to-page");
                     if(goToPageButton !== null && goToPageButton.disabled == false){
-                        goToPageButton.click();
+                        window.location.href = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${goToPageButton.dataset.uid}`;
+                        zoteroRoam.interface.toggleSearchOverlay("hide");
                     }
                 }
             }
@@ -1843,10 +1884,13 @@ var zoteroRoam = {};
                 }
             })
         };
-        // always_copy_citekey
-        let ac_setting = zoteroRoam.config.userSettings['always_copy_citekey'] || false;
-        if(ac_setting == true){
-            zoteroRoam.config.params.always_copy_citekey = ac_setting;
+        // always_copy | quick_copy_format
+        let {always_copy = false, quick_copy_format = false} = zoteroRoam.config.userSettings;
+        if(always_copy == true){
+            zoteroRoam.config.params.always_copy = always_copy;
+        };
+        if(quick_copy_format == true){
+            zoteroRoam.config.params.quick_copy_format = quick_copy_format;
         }
         
         zoteroRoam.shortcuts.setup();

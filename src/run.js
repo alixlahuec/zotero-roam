@@ -25,10 +25,13 @@
                 }
             })
         };
-        // always_copy_citekey
-        let ac_setting = zoteroRoam.config.userSettings['always_copy_citekey'] || false;
-        if(ac_setting == true){
-            zoteroRoam.config.params.always_copy_citekey = ac_setting;
+        // always_copy | quick_copy_format
+        let {always_copy = false, quick_copy_format = false} = zoteroRoam.config.userSettings;
+        if(always_copy == true){
+            zoteroRoam.config.params.always_copy = always_copy;
+        };
+        if(quick_copy_format == true){
+            zoteroRoam.config.params.quick_copy_format = quick_copy_format;
         }
         
         zoteroRoam.shortcuts.setup();
