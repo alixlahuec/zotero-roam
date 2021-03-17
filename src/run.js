@@ -30,7 +30,7 @@
         if(always_copy == true){
             zoteroRoam.config.params.always_copy = always_copy;
         };
-        if(quick_copy_format == true){
+        if(quick_copy_format != false){
             zoteroRoam.config.params.quick_copy_format = quick_copy_format;
         }
         

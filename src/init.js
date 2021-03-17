@@ -213,7 +213,7 @@ var zoteroRoam = {};
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
-                                            .selected-item-header{margin-bottom:20px;};
+                                            .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}

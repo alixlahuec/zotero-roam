@@ -213,7 +213,7 @@ var zoteroRoam = {};
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
-                                            .selected-item-header{margin-bottom:20px;};
+                                            .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
@@ -1285,7 +1285,7 @@ var zoteroRoam = {};
                 document.querySelector("span.item-copy-citekey-icon").classList.add("bp3-intent-success");
                 document.querySelector('h4.item-title').focus();
             });
-            Array.from(document.querySelector('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
+            Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", e => {
                     switch(btn.getAttribute('format')){
                         case 'citekey':

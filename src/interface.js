@@ -426,7 +426,7 @@
                 document.querySelector("span.item-copy-citekey-icon").classList.add("bp3-intent-success");
                 document.querySelector('h4.item-title').focus();
             });
-            Array.from(document.querySelector('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
+            Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", e => {
                     switch(btn.getAttribute('format')){
                         case 'citekey':
