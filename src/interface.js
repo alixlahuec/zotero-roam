@@ -334,10 +334,10 @@
             if(pageInGraph.present == true){
                 try{
                     let nbChildren = window.roamAlphaAPI.q('[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]', pageInGraph.uid)[0][0];
-                    itemInfo = itemInfo + ` (has <b>${nbChildren}</b> direct children)`;
+                    itemInfo = itemInfo + ` (<b>${nbChildren}</b> direct children)`;
                 } catch(e){};
             }
-            let itemInGraph = `<div style="padding:0 10px;font-style:italic;" class="item-in-graph"><span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span><span> ${itemInfo}</span></div>`;
+            let itemInGraph = `<div style="padding:0 10px;" class="item-in-graph"><span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span><span> ${itemInfo}</span></div>`;
             
             // Render the header section
             let headerDiv = document.querySelector(".selected-item-header");
@@ -346,9 +346,7 @@
                                         <p class="item-metadata-string">${divAuthors}${feedback.selection.value.meta}</p>
                                         </div>
                                     <div class="item-citekey">
-                                        <div class="bp3-control-group">
-                                            <div class="bp3-input-group bp3-fill"><input type="text" class="bp3-input" value="${citekey}" readonly></div>
-                                        </div>
+                                        <div class="bp3-fill" style="font-weight:bold;padding:0 10px;">${citekey}</div>
                                         <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
                                             <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
                                             <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
