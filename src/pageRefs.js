@@ -19,8 +19,6 @@
                 if (ref.dataset.zoteroBib == "inLibrary") {
                     // Robust regardless of brackets
                         ref.querySelector('.rm-page-ref').addEventListener("contextmenu", zoteroRoam.interface.popContextMenu);
-                } else if (ref.dataset.zoteroBib == "notFound") {
-                    console.log('This citekey was checked against the contents of ZoteroData but didn\'t match any item. Make sure your citekeys are pinned.');
                 }
             }
         },

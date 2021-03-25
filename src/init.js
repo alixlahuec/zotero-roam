@@ -167,7 +167,8 @@ var zoteroRoam = {};
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
-            userSettings: {} // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
+            userSettings: {}, // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
+            ref_checking: null
         },
 
         data: {items: [], collections: []},

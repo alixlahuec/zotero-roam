@@ -269,10 +269,10 @@
             }
         },
 
-        async requestItemBib(item, style, linkwrap, locale){
+        async requestItemBib(item, {include = "bib", style, linkwrap, locale} = {}){
             let userOrGroup = (item.library.type == "user") ? "users" : "groups";
             let rq_apikey = zoteroRoam.config.requests[`${item.requestIndex}`].apikey;
-            let bibRequest = await fetch(`https://api.zotero.org/${userOrGroup}/${item.library.id}/items/${item.data.key}?include=bib&style=${style}&linkwrap=${linkwrap}&locale=${locale}`, {
+            let bibRequest = await fetch(`https://api.zotero.org/${userOrGroup}/${item.library.id}/items/${item.data.key}?include=${include}&style=${style}&linkwrap=${linkwrap}&locale=${locale}`, {
                 method: 'GET',
                 headers: {
                     'Zotero-API-Version': 3,
@@ -281,7 +281,7 @@
             });
 
             let bibOutput = await bibRequest.json();
-            let bibHTML = bibOutput.bib;
+            let bibHTML = bibOutput[`${include}`];
 
             return bibHTML;
         },
