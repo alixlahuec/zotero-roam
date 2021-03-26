@@ -1472,7 +1472,7 @@ var zoteroRoam = {};
             }
         },
 
-        checkReferences(){
+        checkReferences(update = false){
             let refCitekeyFound = false;
             setTimeout(function(){
                 do {
@@ -1480,7 +1480,7 @@ var zoteroRoam = {};
                     refCitekeyFound = zoteroRoam.pageRefs.identifyCitekeys(refs);
                 } while (refCitekeyFound == true);
             }, 300);
-            zoteroRoam.pageRefs.checkCitekeys(update = true);
+            zoteroRoam.pageRefs.checkCitekeys(update = update);
             zoteroRoam.pageRefs.addContextMenuListener();
         },
 
@@ -1505,7 +1505,7 @@ var zoteroRoam = {};
             return matched;
         },
 
-        checkCitekeys(update = "false"){
+        checkCitekeys(update = false){
             let refCitekeys = document.querySelectorAll('.ref-citekey');
             let newMatches = 0;
             let newUnmatches = 0;
