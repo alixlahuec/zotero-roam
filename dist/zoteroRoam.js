@@ -167,7 +167,8 @@ var zoteroRoam = {};
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
-            userSettings: {} // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
+            userSettings: {}, // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
+            ref_checking: null
         },
 
         data: {items: [], collections: []},
@@ -741,10 +742,10 @@ var zoteroRoam = {};
             }
         },
 
-        async requestItemBib(item, style, linkwrap, locale){
+        async requestItemBib(item, {include = "bib", style, linkwrap, locale} = {}){
             let userOrGroup = (item.library.type == "user") ? "users" : "groups";
             let rq_apikey = zoteroRoam.config.requests[`${item.requestIndex}`].apikey;
-            let bibRequest = await fetch(`https://api.zotero.org/${userOrGroup}/${item.library.id}/items/${item.data.key}?include=bib&style=${style}&linkwrap=${linkwrap}&locale=${locale}`, {
+            let bibRequest = await fetch(`https://api.zotero.org/${userOrGroup}/${item.library.id}/items/${item.data.key}?include=${include}&style=${style}&linkwrap=${linkwrap}&locale=${locale}`, {
                 method: 'GET',
                 headers: {
                     'Zotero-API-Version': 3,
@@ -753,7 +754,7 @@ var zoteroRoam = {};
             });
 
             let bibOutput = await bibRequest.json();
-            let bibHTML = bibOutput.bib;
+            let bibHTML = bibOutput[`${include}`];
 
             return bibHTML;
         },
@@ -1339,7 +1340,7 @@ var zoteroRoam = {};
                 zoteroRoam.pageRefs.checkReferences();
                 document.addEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
                 window.addEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
-                var periodicReferenceChecking = setInterval(zoteroRoam.pageRefs.checkReferences, 1000);
+                zoteroRoam.config.ref_checking = setInterval(zoteroRoam.pageRefs.checkReferences, 1000);
                 // Setup the search autoComplete object
                 if(zoteroRoam.autoComplete == null){
                     zoteroRoam.autoComplete = new autoComplete(zoteroRoam.config.autoComplete);
@@ -1377,7 +1378,7 @@ var zoteroRoam = {};
 
             document.removeEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
             window.removeEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
-            try { clearInterval(periodicReferenceChecking) } catch(e){};
+            try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
 
@@ -1467,8 +1468,6 @@ var zoteroRoam = {};
                 if (ref.dataset.zoteroBib == "inLibrary") {
                     // Robust regardless of brackets
                         ref.querySelector('.rm-page-ref').addEventListener("contextmenu", zoteroRoam.interface.popContextMenu);
-                } else if (ref.dataset.zoteroBib == "notFound") {
-                    console.log('This citekey was checked against the contents of ZoteroData but didn\'t match any item. Make sure your citekeys are pinned.');
                 }
             }
         },
@@ -1561,9 +1560,9 @@ var zoteroRoam = {};
             }).join(", ");
         },
 
-        async getItemBib(item, {style = "apa", linkwrap = 0, locale = "en-US"} = {}){
+        async getItemBib(item, {include = "bib", style = "apa", linkwrap = 0, locale = "en-US"} = {}){
             // If the user included bib in their request, no need to call the API
-            let bibHTML = (item.bib) ? item.bib : (await zoteroRoam.handlers.requestItemBib(item, style, linkwrap, locale));
+            let bibHTML = (item.bib) ? item.bib : (await zoteroRoam.handlers.requestItemBib(item, {include: include, style: style, linkwrap: linkwrap, locale: locale}));
             return zoteroRoam.utils.formatBib(bibHTML);
         },
 
