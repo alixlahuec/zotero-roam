@@ -76,7 +76,7 @@ var zoteroRoam = {};
                     content: (data, element) => {
                         let itemMetadata = `<span class="zotero-search-item-metadata"> ${data.value.meta}</span>`;
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
-                        let itemTitle = `<span class="zotero-search-item-title" style="font-weight:bold;color:black;display:block;">${itemTitleContent}</span>`;
+                        let itemTitle = `<span class="zotero-search-item-title" style="font-weight:bold;display:block;">${itemTitleContent}</span>`;
                         
                         let itemCitekeyContent = (data.key == "key") ? data.match : data.value.key;
                         let itemCitekey = `<span class="bp3-menu-item-label zotero-search-item-key">${itemCitekeyContent}</span>`;
