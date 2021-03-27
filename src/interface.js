@@ -47,6 +47,8 @@
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
             zoteroRoam.interface.search.input.addEventListener("rendered", zoteroRoam.interface.renderNbResults);
 
+            zoteroRoam.tribute = new Tribute(zoteroRoam.config.tribute);
+
         },
 
         createIcon(id) {
@@ -463,22 +465,14 @@
         // Detect if a block is currently being edited
         checkEditingMode(){
             let textArea = document.querySelector('textarea.rm-block-input');
-            if(textArea != null & textArea !== zoteroRoam.interface.currentBlock){
+            if(textArea != null && !textArea.hasAttribute('data-tribute')){
                 zoteroRoam.interface.currentBlock = textArea;
                 if(zoteroRoam.data.items.length > 0){
-                    zoteroRoam.interface.setupTribute();
+                    zoteroRoam.tribute.attach(textArea);
                 }
             } else{
                 zoteroRoam.interface.currentBlock = null;
-                zoteroRoam.tribute = null;
             }
-        },
-
-        setupTribute(){
-            if(zoteroRoam.tribute == null){
-                zoteroRoam.tribute = new Tribute(zoteroRoam.config.tribute);
-            }
-            zoteroRoam.tribute.attach(zoteroRoam.interface.currentBlock);
         }
     }
 })();
