@@ -499,6 +499,19 @@ var zoteroRoam = {};
             return `<span tabindex="-1" data-tag="${title}" class="rm-page-ref rm-page-ref--tag">#${title}</span>`;
         },
 
+        // From @aweary : https://github.com/facebook/react/issues/11095
+        setNativeValue(element, value) {
+            const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set;
+            const prototype = Object.getPrototypeOf(element);
+            const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value').set;
+            
+            if (valueSetter && valueSetter !== prototypeValueSetter) {
+                valueSetter.call(element, value);
+            } else {
+                prototypeValueSetter.call(element, value);
+            }
+        },
+
         // From James Hibbard : https://www.sitepoint.com/delay-sleep-pause-wait/
         // This is the basis for the async/await structure, which is needed to make sure processing is sequential and never parallel
         sleep(ms){
@@ -1384,14 +1397,13 @@ var zoteroRoam = {};
                 let textArea = document.querySelector('textarea.rm-block-input');
                 zoteroRoam.interface.tributeTrigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
                 zoteroRoam.interface.tributeBlockTrigger = textArea;
-                // Adapting from SB code
-                var setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
-                setValue.call(textArea, textArea.value);
-                var e = new Event('input', { bubbles: true });
-                textArea.dispatchEvent(e);
+
+                var ev = new Event('input', { bubbles: true });
+                zoteroRoam.utils.setNativeValue(textArea, textArea.value);
+                textArea.dispatchEvent(ev);
             });
 
-        }
+        },
     }
 })();
 
@@ -1995,10 +2007,11 @@ var zoteroRoam = {};
             })
         };
         // always_copy | quick_copy_format
-        let {always_copy = false, quick_copy_format = 'citekey', autocomplete_format = 'citekey'} = zoteroRoam.config.userSettings;
+        let {always_copy = false, quick_copy_format = 'citekey', autocomplete_format = 'citekey', autocomplete_trigger = '@@'} = zoteroRoam.config.userSettings;
         zoteroRoam.config.params.always_copy = always_copy;
         zoteroRoam.config.params.quick_copy_format = quick_copy_format;
         zoteroRoam.config.params.autocomplete_format = autocomplete_format;
+        zoteroRoam.config.tribute.trigger = autocomplete_trigger;
         
         
         zoteroRoam.shortcuts.setup();
