@@ -163,7 +163,7 @@ var zoteroRoam = {};
                 selectClass: 'zotero-roam-tribute-selected',
                 containerClass: 'zotero-roam-tribute',
                 lookup: 'key',
-                menuItemLimit: 20,
+                menuItemLimit: 15,
                 menuItemTemplate: (item) => {
                     return item.original.key;
                 },
@@ -236,7 +236,9 @@ var zoteroRoam = {};
                                             .item-citekey, .item-actions{flex:0 1 30%;}
                                             .item-citekey{margin:10px 0px;}
                                             .item-citekey .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
-                                            span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}`;
+                                            span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}
+                                            .zotero-roam-tribute ul {list-style-type:none;padding:5px 10px;background-color: #f3f3f3;}
+                                            .zotero-roam-tribute-selected {background-color: #d7edff;}`;
             document.head.append(autoCompleteCSS);
         }
 
