@@ -30,6 +30,8 @@ var zoteroRoam = {};
             }
         },
 
+        data: {items: [], collections: []},
+
         autoComplete: null,
 
         config: {
@@ -167,7 +169,13 @@ var zoteroRoam = {};
                     selectTemplate: (item) => {
                         return item.value;
                     },
-                    values: zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format)
+                    values: () => {
+                        if(zoteroRoam.data.items.length == 0){
+                            return [];
+                        } else {
+                            return zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
+                        }
+                    }
                 }]
             },
             params: {
@@ -182,8 +190,6 @@ var zoteroRoam = {};
             ref_checking: null,
             editingObserver: null
         },
-
-        data: {items: [], collections: []},
 
         funcmap: {DEFAULT: "zoteroRoam.formatting.getItemMetadata"},
 
