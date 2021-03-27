@@ -957,9 +957,6 @@ var zoteroRoam = {};
             zoteroRoam.interface.search.updateButton.addEventListener("click", zoteroRoam.extension.update);
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
             zoteroRoam.interface.search.input.addEventListener("rendered", zoteroRoam.interface.renderNbResults);
-
-            zoteroRoam.tribute = new Tribute(zoteroRoam.config.tribute);
-
         },
 
         createIcon(id) {
@@ -1415,7 +1412,8 @@ var zoteroRoam = {};
                 zoteroRoam.config.autoComplete.trigger.event.forEach(ev => {
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
-                // Setup the observer for autocompletion tribute
+                // Setup the autocompletion tribute + the observer
+                zoteroRoam.tribute = new Tribute(zoteroRoam.config.tribute);
                 zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
                 zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
                 // Setup contextmenu event for the extension's icon

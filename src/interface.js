@@ -46,9 +46,6 @@
             zoteroRoam.interface.search.updateButton.addEventListener("click", zoteroRoam.extension.update);
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
             zoteroRoam.interface.search.input.addEventListener("rendered", zoteroRoam.interface.renderNbResults);
-
-            zoteroRoam.tribute = new Tribute(zoteroRoam.config.tribute);
-
         },
 
         createIcon(id) {
