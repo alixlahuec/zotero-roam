@@ -47,6 +47,23 @@
             }
         },
 
+        formatItemReference(item, format){
+            switch(format){
+                case 'tag':
+                    return `#[[@${item.key}]]`;
+                case 'pageref':
+                    return `[[@${item.key}]]`;
+                case 'citation':
+                    let citeText = item.meta.creatorSummary || ``;
+                    citeText = item.meta.parsedDate ? `${citeText} (${new Date(item.meta.parsedDate).getFullYear()})` : citeText;
+                    citeText = `[${(citeText.length > 0) ? citeText : item.key}]([[@${item.key}]])`
+                    return citeText;
+                case 'citekey':
+                default:
+                    return item.key;
+            }
+        },
+
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
         // Note: The case where the parent doesn't have children isn't handled here. It shouldn't be a problem because the context in which it is called is that of looking to add grandchildren blocks, essentially
         // I.e this only gets called if the block with UID equal to parent_uid has a child that also has a child/children

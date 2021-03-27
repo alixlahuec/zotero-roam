@@ -342,6 +342,13 @@
         
             return itemsArray;
         },
+        
+        getLibItems(format = "citekey"){
+            return zoteroRoam.data.items.filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType)).map(item => {
+                return {key: item.key, 
+                        value: zoteroRoam.utils.formatItemReference(item = item, format = format) || item.key};
+            });
+        },
 
         async waitForBlockUID(parent_uid, string) {
             let top_block = null;

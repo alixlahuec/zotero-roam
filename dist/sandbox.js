@@ -133,21 +133,17 @@ var zoteroRoam = {};
                     let quickCopyEnabled = document.querySelector("#zotero-quick-copy-mode").checked;
                     if(zoteroRoam.config.params.always_copy == true || (quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden)){
                         let clipboard = document.querySelector("input.clipboard-copy-utility");
+                        let toCopy = ``;
                         switch(zoteroRoam.config.params.quick_copy_format){
                             case "citation":
-                                let citationText = `${feedback.selection.value.authors}`;
+                                let citationText = `${feedback.selection.value.authors || ""}`;
                                 if(feedback.selection.value.year){ citationText += ` (${feedback.selection.value.year})` };
-                                clipboard.value = `[${citationText}]([[@${feedback.selection.value.key}]])`;
+                                toCopy = `[${citationText}]([[@${feedback.selection.value.key}]])`;
                                 break;
-                            case "tag":
-                                clipboard.value = `#[[@${feedback.selection.value.key}]]`;
-                                break;
-                            case "pageref":
-                                clipboard.value = `[[@${feedback.selection.value.key}]]`;
-                            case "citekey":
                             default:
-                                clipboard.value = `@${feedback.selection.value.key}`;
+                                toCopy = zoteroRoam.utils.formatItemReference(item = feedback.selection.value, format = zoteroRoam.config.params.quick_copy_format);
                         };
+                        clipboard.value = toCopy;
                         clipboard.select();
                         document.execCommand("copy");
                         if(quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden){
@@ -160,15 +156,31 @@ var zoteroRoam = {};
                     }
                 }
             },
+            tribute: {
+                collection: [{
+                    trigger: '@',
+                    selectClass: 'zotero-roam-tribute-selected',
+                    containerClass: 'zotero-roam-tribute',
+                    lookup: 'key',
+                    requireLeadingSpace: true,
+                    autocompleteMode: true,
+                    selectTemplate: (item) => {
+                        return item.value;
+                    },
+                    values: zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format)
+                }]
+            },
             params: {
                 override_quickcopy: {overridden: false},
                 always_copy: false,
-                quick_copy_format: 'citekey'
+                quick_copy_format: 'citekey',
+                autocomplete_format : 'citekey'
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
             userSettings: {}, // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
-            ref_checking: null
+            ref_checking: null,
+            editingObserver: null
         },
 
         data: {items: [], collections: []},
@@ -237,6 +249,12 @@ var zoteroRoam = {};
     ac.type = "text/javascript";
     document.getElementsByTagName("head")[0].appendChild(ac);
 
+    // Load the tribute JS
+    var trib = document.createElement('script');
+    trib.src = "https://cdn.jsdelivr.net/npm/tributejs@5.1.3";
+    trib.type = "text/javascript";
+    document.getElementsByTagName("head")[0].appendChild(trib);
+
 })();
 
 ;(()=>{
@@ -285,6 +303,23 @@ var zoteroRoam = {};
                     let noteBlocks = n.data.note.split(split_char);
                     return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
                 });
+            }
+        },
+
+        formatItemReference(item, format){
+            switch(format){
+                case 'tag':
+                    return `#[[@${item.key}]]`;
+                case 'pageref':
+                    return `[[@${item.key}]]`;
+                case 'citation':
+                    let citeText = item.meta.creatorSummary || ``;
+                    citeText = item.meta.parsedDate ? `${citeText} (${new Date(item.meta.parsedDate).getFullYear()})` : citeText;
+                    citeText = `[${(citeText.length > 0) ? citeText : item.key}]([[@${item.key}]])`
+                    return citeText;
+                case 'citekey':
+                default:
+                    return item.key;
             }
         },
 
@@ -815,6 +850,13 @@ var zoteroRoam = {};
         
             return itemsArray;
         },
+        
+        getLibItems(format = "citekey"){
+            return zoteroRoam.data.items.filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType)).map(item => {
+                return {key: item.key, 
+                        value: zoteroRoam.utils.formatItemReference(item = item, format = format) || item.key};
+            });
+        },
 
         async waitForBlockUID(parent_uid, string) {
             let top_block = null;
@@ -890,6 +932,7 @@ var zoteroRoam = {};
             }
         },
         search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, visible: false},
+        currentBlock: null,
 
         create(){
             zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -1319,6 +1362,24 @@ var zoteroRoam = {};
                 Array.from(zoteroRoam.interface.search.selectedItemDiv.children).forEach(c => {c.innerHTML = ``});
             }
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
+        },
+
+        // Detect if a block is currently being edited
+        checkEditingMode(){
+            let textArea = document.querySelector('textarea.rm-block-input');
+            if(textArea != null & textArea !== zoteroRoam.interface.currentBlock){
+                zoteroRoam.interface.currentBlock = textArea;
+                if(zoteroRoam.data.items.length > 0){
+                    zoteroRoam.interface.setupTribute();
+                }
+            } else{
+                zoteroRoam.interface.currentBlock = null;
+            }
+        },
+
+        setupTribute(){
+            var tribute = new Tribute(zoteroRoam.config.tribute);
+            tribute.attach(zoteroRoam.interface.currentBlock);
         }
     }
 })();
@@ -1350,6 +1411,9 @@ var zoteroRoam = {};
                 zoteroRoam.config.autoComplete.trigger.event.forEach(ev => {
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
+                // Setup the observer for autocompletion tribute
+                zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
+                zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
                 // Setup contextmenu event for the extension's icon
                 zoteroRoam.interface.icon.addEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
                 // Setup keypress listeners to detect shortcuts
