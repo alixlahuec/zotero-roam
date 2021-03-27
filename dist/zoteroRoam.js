@@ -1443,6 +1443,7 @@ var zoteroRoam = {};
             document.removeEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
             window.removeEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
             try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
+            zoteroRoam.config.editingObserver.disconnect();
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
 
