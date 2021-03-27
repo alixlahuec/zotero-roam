@@ -169,11 +169,7 @@ var zoteroRoam = {};
                 },
                 requireLeadingSpace: true,
                 selectTemplate: (item) => {
-                    let currentText = document.getElementById(zoteroRoam.interface.currentBlockID).value;
-                    let newText = currentText.replace(zoteroRoam.interface.tributeTrigger, item.original.value);
-                    zoteroRoam.interface.tributeBlockTrigger.value = newText;
-                    var e = new Event('input', { bubbles: true });
-                    zoteroRoam.interface.tributeBlockTrigger.dispatchEvent(e);
+                    return item.original.value;
                 }
             },
             params: {
@@ -1383,9 +1379,15 @@ var zoteroRoam = {};
             tribute.attach(textArea);
 
             textArea.addEventListener('tribute-replaced', (e) => {
+                let textArea = document.querySelector('textarea.rm-block-input');
                 zoteroRoam.interface.tributeTrigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
                 zoteroRoam.interface.tributeBlockTrigger = textArea;
-            })
+                // Adapting from SB code
+                var setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+                setValue.call(textArea, textArea.value);
+                var e = new Event('input', { bubbles: true });
+                textArea.dispatchEvent(e);
+            });
 
         }
     }

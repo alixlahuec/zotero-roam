@@ -169,11 +169,7 @@ var zoteroRoam = {};
                 },
                 requireLeadingSpace: true,
                 selectTemplate: (item) => {
-                    let currentText = document.getElementById(zoteroRoam.interface.currentBlockID).value;
-                    let newText = currentText.replace(zoteroRoam.interface.tributeTrigger, item.original.value);
-                    zoteroRoam.interface.tributeBlockTrigger.value = newText;
-                    var e = new Event('input', { bubbles: true });
-                    zoteroRoam.interface.tributeBlockTrigger.dispatchEvent(e);
+                    return item.original.value;
                 }
             },
             params: {
