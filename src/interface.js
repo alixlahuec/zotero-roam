@@ -28,7 +28,8 @@
             }
         },
         search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, visible: false},
-        currentBlockID: null,
+        tributeTrigger: ``,
+        tributeBlockTrigger: null,
 
         create(){
             zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -472,7 +473,11 @@
             config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
             var tribute = new Tribute(config);
             tribute.attach(textArea);
-            zoteroRoam.interface.currentBlockID = textArea.id;
+
+            textArea.addEventListener('tribute-replaced', (e) => {
+                zoteroRoam.interface.tributeTrigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
+                zoteroRoam.interface.tributeBlockTrigger = textArea;
+            })
 
         }
     }

@@ -159,7 +159,7 @@ var zoteroRoam = {};
                 }
             },
             tribute: {
-                trigger: '@',
+                trigger: '@@',
                 selectClass: 'zotero-roam-tribute-selected',
                 containerClass: 'zotero-roam-tribute',
                 lookup: 'key',
@@ -169,7 +169,11 @@ var zoteroRoam = {};
                 },
                 requireLeadingSpace: true,
                 selectTemplate: (item) => {
-                    return item.original.value;
+                    let currentText = document.getElementById(zoteroRoam.interface.currentBlockID).value;
+                    let newText = currentText.replace(zoteroRoam.interface.tributeTrigger, item.original.value);
+                    zoteroRoam.interface.tributeBlockTrigger.value = newText;
+                    var e = new Event('input', { bubbles: true });
+                    zoteroRoam.interface.tributeBlockTrigger.dispatchEvent(e);
                 }
             },
             params: {

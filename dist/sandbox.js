@@ -159,7 +159,7 @@ var zoteroRoam = {};
                 }
             },
             tribute: {
-                trigger: '@',
+                trigger: '@@',
                 selectClass: 'zotero-roam-tribute-selected',
                 containerClass: 'zotero-roam-tribute',
                 lookup: 'key',
@@ -169,7 +169,11 @@ var zoteroRoam = {};
                 },
                 requireLeadingSpace: true,
                 selectTemplate: (item) => {
-                    return item.original.value;
+                    let currentText = document.getElementById(zoteroRoam.interface.currentBlockID).value;
+                    let newText = currentText.replace(zoteroRoam.interface.tributeTrigger, item.original.value);
+                    zoteroRoam.interface.tributeBlockTrigger.value = newText;
+                    var e = new Event('input', { bubbles: true });
+                    zoteroRoam.interface.tributeBlockTrigger.dispatchEvent(e);
                 }
             },
             params: {
@@ -932,7 +936,8 @@ var zoteroRoam = {};
             }
         },
         search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, visible: false},
-        currentBlockID: null,
+        tributeTrigger: ``,
+        tributeBlockTrigger: null,
 
         create(){
             zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -1376,7 +1381,11 @@ var zoteroRoam = {};
             config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
             var tribute = new Tribute(config);
             tribute.attach(textArea);
-            zoteroRoam.interface.currentBlockID = textArea.id;
+
+            textArea.addEventListener('tribute-replaced', (e) => {
+                zoteroRoam.interface.tributeTrigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
+                zoteroRoam.interface.tributeBlockTrigger = textArea;
+            })
 
         }
     }
