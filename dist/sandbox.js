@@ -160,24 +160,22 @@ var zoteroRoam = {};
                 }
             },
             tribute: {
-                collection: [{
-                    trigger: '@',
-                    selectClass: 'zotero-roam-tribute-selected',
-                    containerClass: 'zotero-roam-tribute',
-                    lookup: 'key',
-                    requireLeadingSpace: true,
-                    autocompleteMode: true,
-                    selectTemplate: (item) => {
-                        return item.value;
-                    },
-                    values: () => {
-                        if(zoteroRoam.data.items.length == 0){
-                            return [];
-                        } else {
-                            return zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
-                        }
+                trigger: '@',
+                selectClass: 'zotero-roam-tribute-selected',
+                containerClass: 'zotero-roam-tribute',
+                lookup: 'key',
+                requireLeadingSpace: true,
+                autocompleteMode: true,
+                selectTemplate: (item) => {
+                    return item.value;
+                },
+                values: () => {
+                    if(zoteroRoam.data.items.length == 0){
+                        return [];
+                    } else {
+                        return zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
                     }
-                }]
+                }
             },
             params: {
                 override_quickcopy: {overridden: false},
@@ -939,7 +937,7 @@ var zoteroRoam = {};
             }
         },
         search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, visible: false},
-        currentBlock: null,
+        currentBlockID: null,
 
         create(){
             zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -1372,15 +1370,17 @@ var zoteroRoam = {};
 
         // Detect if a block is currently being edited
         checkEditingMode(){
-            let textArea = document.querySelector('textarea.rm-block-input');
-            if(textArea != null && !textArea.hasAttribute('data-tribute')){
-                zoteroRoam.interface.currentBlock = textArea;
-                if(zoteroRoam.data.items.length > 0){
-                    zoteroRoam.tribute.attach(textArea);
-                }
-            } else{
-                zoteroRoam.interface.currentBlock = null;
-            }
+            let textArea = document.querySelector("textarea.rm-block-input");
+            if (!textArea || textArea.getAttribute("zotero-tribute") != null) return;
+
+            document.querySelectorAll('.tribute-container').forEach(d=>d.remove());
+
+            textArea.setAttribute("zotero-tribute", "active");
+
+            var tribute = new Tribute(zoteroRoam.config.tribute);
+            tribute.attach(textArea);
+            zoteroRoam.interface.currentBlockID = textArea.id;
+
         }
     }
 })();
@@ -1412,8 +1412,7 @@ var zoteroRoam = {};
                 zoteroRoam.config.autoComplete.trigger.event.forEach(ev => {
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
-                // Setup the autocompletion tribute + the observer
-                zoteroRoam.tribute = new Tribute(zoteroRoam.config.tribute);
+                // Setup observer for autocompletion tribute
                 zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
                 zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
                 // Setup contextmenu event for the extension's icon

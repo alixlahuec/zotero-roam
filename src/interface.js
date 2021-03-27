@@ -28,7 +28,7 @@
             }
         },
         search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, visible: false},
-        currentBlock: null,
+        currentBlockID: null,
 
         create(){
             zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -461,15 +461,17 @@
 
         // Detect if a block is currently being edited
         checkEditingMode(){
-            let textArea = document.querySelector('textarea.rm-block-input');
-            if(textArea != null && !textArea.hasAttribute('data-tribute')){
-                zoteroRoam.interface.currentBlock = textArea;
-                if(zoteroRoam.data.items.length > 0){
-                    zoteroRoam.tribute.attach(textArea);
-                }
-            } else{
-                zoteroRoam.interface.currentBlock = null;
-            }
+            let textArea = document.querySelector("textarea.rm-block-input");
+            if (!textArea || textArea.getAttribute("zotero-tribute") != null) return;
+
+            document.querySelectorAll('.tribute-container').forEach(d=>d.remove());
+
+            textArea.setAttribute("zotero-tribute", "active");
+
+            var tribute = new Tribute(zoteroRoam.config.tribute);
+            tribute.attach(textArea);
+            zoteroRoam.interface.currentBlockID = textArea.id;
+
         }
     }
 })();

@@ -160,24 +160,22 @@ var zoteroRoam = {};
                 }
             },
             tribute: {
-                collection: [{
-                    trigger: '@',
-                    selectClass: 'zotero-roam-tribute-selected',
-                    containerClass: 'zotero-roam-tribute',
-                    lookup: 'key',
-                    requireLeadingSpace: true,
-                    autocompleteMode: true,
-                    selectTemplate: (item) => {
-                        return item.value;
-                    },
-                    values: () => {
-                        if(zoteroRoam.data.items.length == 0){
-                            return [];
-                        } else {
-                            return zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
-                        }
+                trigger: '@',
+                selectClass: 'zotero-roam-tribute-selected',
+                containerClass: 'zotero-roam-tribute',
+                lookup: 'key',
+                requireLeadingSpace: true,
+                autocompleteMode: true,
+                selectTemplate: (item) => {
+                    return item.value;
+                },
+                values: () => {
+                    if(zoteroRoam.data.items.length == 0){
+                        return [];
+                    } else {
+                        return zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
                     }
-                }]
+                }
             },
             params: {
                 override_quickcopy: {overridden: false},

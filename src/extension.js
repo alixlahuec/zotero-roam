@@ -25,8 +25,7 @@
                 zoteroRoam.config.autoComplete.trigger.event.forEach(ev => {
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
-                // Setup the autocompletion tribute + the observer
-                zoteroRoam.tribute = new Tribute(zoteroRoam.config.tribute);
+                // Setup observer for autocompletion tribute
                 zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
                 zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
                 // Setup contextmenu event for the extension's icon
