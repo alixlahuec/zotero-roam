@@ -33,6 +33,7 @@ var zoteroRoam = {};
         data: {items: [], collections: []},
 
         autoComplete: null,
+        tribute: null,
 
         config: {
             autoComplete: {

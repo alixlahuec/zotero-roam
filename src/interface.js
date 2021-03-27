@@ -470,12 +470,15 @@
                 }
             } else{
                 zoteroRoam.interface.currentBlock = null;
+                zoteroRoam.tribute = null;
             }
         },
 
         setupTribute(){
-            var tribute = new Tribute(zoteroRoam.config.tribute);
-            tribute.attach(zoteroRoam.interface.currentBlock);
+            if(zoteroRoam.tribute == null){
+                zoteroRoam.tribute = new Tribute(zoteroRoam.config.tribute);
+            }
+            zoteroRoam.tribute.attach(zoteroRoam.interface.currentBlock);
         }
     }
 })();
