@@ -33,7 +33,6 @@ var zoteroRoam = {};
         data: {items: [], collections: []},
 
         autoComplete: null,
-        tribute: null,
 
         config: {
             autoComplete: {
@@ -164,17 +163,13 @@ var zoteroRoam = {};
                 selectClass: 'zotero-roam-tribute-selected',
                 containerClass: 'zotero-roam-tribute',
                 lookup: 'key',
-                requireLeadingSpace: true,
-                autocompleteMode: true,
-                selectTemplate: (item) => {
-                    return item.value;
+                menuItemLimit: 20,
+                menuItemTemplate: (item) => {
+                    return item.original.key;
                 },
-                values: () => {
-                    if(zoteroRoam.data.items.length == 0){
-                        return [];
-                    } else {
-                        return zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
-                    }
+                requireLeadingSpace: true,
+                selectTemplate: (item) => {
+                    return item.original.value;
                 }
             },
             params: {

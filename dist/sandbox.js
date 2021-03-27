@@ -33,7 +33,6 @@ var zoteroRoam = {};
         data: {items: [], collections: []},
 
         autoComplete: null,
-        tribute: null,
 
         config: {
             autoComplete: {
@@ -164,17 +163,13 @@ var zoteroRoam = {};
                 selectClass: 'zotero-roam-tribute-selected',
                 containerClass: 'zotero-roam-tribute',
                 lookup: 'key',
-                requireLeadingSpace: true,
-                autocompleteMode: true,
-                selectTemplate: (item) => {
-                    return item.value;
+                menuItemLimit: 20,
+                menuItemTemplate: (item) => {
+                    return item.original.key;
                 },
-                values: () => {
-                    if(zoteroRoam.data.items.length == 0){
-                        return [];
-                    } else {
-                        return zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
-                    }
+                requireLeadingSpace: true,
+                selectTemplate: (item) => {
+                    return item.original.value;
                 }
             },
             params: {
@@ -1373,11 +1368,13 @@ var zoteroRoam = {};
             let textArea = document.querySelector("textarea.rm-block-input");
             if (!textArea || textArea.getAttribute("zotero-tribute") != null) return;
 
-            document.querySelectorAll('.tribute-container').forEach(d=>d.remove());
+            document.querySelectorAll('.zotero-roam-tribute').forEach(d=>d.remove());
 
             textArea.setAttribute("zotero-tribute", "active");
 
-            var tribute = new Tribute(zoteroRoam.config.tribute);
+            let config = zoteroRoam.config.tribute;
+            config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
+            var tribute = new Tribute(config);
             tribute.attach(textArea);
             zoteroRoam.interface.currentBlockID = textArea.id;
 

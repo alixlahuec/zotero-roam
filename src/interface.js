@@ -464,11 +464,13 @@
             let textArea = document.querySelector("textarea.rm-block-input");
             if (!textArea || textArea.getAttribute("zotero-tribute") != null) return;
 
-            document.querySelectorAll('.tribute-container').forEach(d=>d.remove());
+            document.querySelectorAll('.zotero-roam-tribute').forEach(d=>d.remove());
 
             textArea.setAttribute("zotero-tribute", "active");
 
-            var tribute = new Tribute(zoteroRoam.config.tribute);
+            let config = zoteroRoam.config.tribute;
+            config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
+            var tribute = new Tribute(config);
             tribute.attach(textArea);
             zoteroRoam.interface.currentBlockID = textArea.id;
 
