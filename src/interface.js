@@ -6,7 +6,7 @@
             div: null,
             class: "zotero-context-menu",
             overlay: {div: null, class: "zotero-context-overlay"},
-            options: {list: [], class: "zotero-context-menu-option", labels: ["Import Zotero data to page"]},
+            options: {list: [], class: "zotero-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation"]},
             visible: false,
             targetElement: null,
             position({top, left}){
@@ -220,7 +220,10 @@
                 zoteroRoam.interface[`${key}`].options.list.forEach( (op, index) => {
                     switch(zoteroRoam.interface[`${key}`].options.labels[index]){
                         case "Import Zotero data to page":
-                            op.addEventListener("click", function(){zoteroRoam.handlers.addItemData(zoteroRoam.interface.contextMenu.targetElement)})
+                            op.addEventListener("click", () => { zoteroRoam.handlers.addItemData(zoteroRoam.interface.contextMenu.targetElement) })
+                            break;
+                        case "Convert to citation":
+                            op.addEventListener("click", () => { zoteroRoam.pageRefs.convertToCitekey(zoteroRoam.interface.contextMenu.targetElement) });
                             break;
                         case "Update Zotero data":
                             op.addEventListener("click", zoteroRoam.extension.update)

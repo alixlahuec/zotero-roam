@@ -925,7 +925,7 @@ var zoteroRoam = {};
             div: null,
             class: "zotero-context-menu",
             overlay: {div: null, class: "zotero-context-overlay"},
-            options: {list: [], class: "zotero-context-menu-option", labels: ["Import Zotero data to page"]},
+            options: {list: [], class: "zotero-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation"]},
             visible: false,
             targetElement: null,
             position({top, left}){
@@ -1139,7 +1139,10 @@ var zoteroRoam = {};
                 zoteroRoam.interface[`${key}`].options.list.forEach( (op, index) => {
                     switch(zoteroRoam.interface[`${key}`].options.labels[index]){
                         case "Import Zotero data to page":
-                            op.addEventListener("click", function(){zoteroRoam.handlers.addItemData(zoteroRoam.interface.contextMenu.targetElement)})
+                            op.addEventListener("click", () => { zoteroRoam.handlers.addItemData(zoteroRoam.interface.contextMenu.targetElement) })
+                            break;
+                        case "Convert to citation":
+                            op.addEventListener("click", () => { zoteroRoam.pageRefs.convertToCitekey(zoteroRoam.interface.contextMenu.targetElement) });
                             break;
                         case "Update Zotero data":
                             op.addEventListener("click", zoteroRoam.extension.update)
@@ -1630,6 +1633,24 @@ var zoteroRoam = {};
             if(newMatches > 0 | newUnmatches > 0){
                 console.log(`New matched citekeys: ${newMatches}, New unmatched citekeys: ${newUnmatches}`);
             }
+        },
+
+        convertToCitekey(el){
+            let libItem = zoteroRoam.data.items.find(item => item.key == el.innerText.slice(1));
+            let currentBlock = el.closest('.roam-block');
+            // Find the UID of the ref-citekey's block
+            let blockUID = currentBlock.id.slice(-9);
+            // Find the index of the ref-citekey within the block
+            let refIndex = Array.from(currentBlock.querySelectorAll('.ref-citekey')).findIndex(ref => ref == el.parentNode);
+
+            let blockQuery = window.roamAlphaAPI.q('[:find ?text :in $ ?uid :where[?b :block/uid ?uid][?b :block/string ?text]]', blockUID)[0];
+            if(blockQuery.length > 0){
+                let contents = blockQuery[0];
+                let replacementRegex = new RegExp(`(.*?(?:\\[\\[@.+?\\]\\].*?){${refIndex}})(\\[\\[@.+?\\]\\])(.*)`, 'g');
+                let newContents = contents.replace(replacementRegex, (match, pre, refcitekey, post) => `${pre}${zoteroRoam.utils.formatItemReference(libItem, 'citation')}${post}`);
+                window.roamAlphaAPI.updateBlock({'block': {'uid': blockUID, 'string': newContents}})
+            }
+
         }
 
     }

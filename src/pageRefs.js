@@ -93,6 +93,24 @@
             if(newMatches > 0 | newUnmatches > 0){
                 console.log(`New matched citekeys: ${newMatches}, New unmatched citekeys: ${newUnmatches}`);
             }
+        },
+
+        convertToCitekey(el){
+            let libItem = zoteroRoam.data.items.find(item => item.key == el.innerText.slice(1));
+            let currentBlock = el.closest('.roam-block');
+            // Find the UID of the ref-citekey's block
+            let blockUID = currentBlock.id.slice(-9);
+            // Find the index of the ref-citekey within the block
+            let refIndex = Array.from(currentBlock.querySelectorAll('.ref-citekey')).findIndex(ref => ref == el.parentNode);
+
+            let blockQuery = window.roamAlphaAPI.q('[:find ?text :in $ ?uid :where[?b :block/uid ?uid][?b :block/string ?text]]', blockUID)[0];
+            if(blockQuery.length > 0){
+                let contents = blockQuery[0];
+                let replacementRegex = new RegExp(`(.*?(?:\\[\\[@.+?\\]\\].*?){${refIndex}})(\\[\\[@.+?\\]\\])(.*)`, 'g');
+                let newContents = contents.replace(replacementRegex, (match, pre, refcitekey, post) => `${pre}${zoteroRoam.utils.formatItemReference(libItem, 'citation')}${post}`);
+                window.roamAlphaAPI.updateBlock({'block': {'uid': blockUID, 'string': newContents}})
+            }
+
         }
 
     }
