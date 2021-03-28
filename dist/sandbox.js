@@ -1187,6 +1187,8 @@ var zoteroRoam = {};
         },
 
         popContextMenu(e){
+            // Hide default Roam context menu
+            document.querySelector('body > .bp3-context-menu+.bp3-portal').style = `display:none;`;
             zoteroRoam.interface.popContextOverlay(e, "contextMenu");
         },
 
