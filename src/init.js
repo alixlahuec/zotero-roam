@@ -159,7 +159,7 @@ var zoteroRoam = {};
                 }
             },
             tribute: {
-                trigger: '@@',
+                trigger: '',
                 selectClass: 'zotero-roam-tribute-selected',
                 containerClass: 'zotero-roam-tribute',
                 lookup: 'key',
@@ -176,7 +176,8 @@ var zoteroRoam = {};
                 override_quickcopy: {overridden: false},
                 always_copy: false,
                 quick_copy_format: 'citekey',
-                autocomplete_format : 'citekey'
+                autocomplete_format: 'citekey',
+                autocomplete_enabled: false
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)

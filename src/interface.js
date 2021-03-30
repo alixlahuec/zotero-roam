@@ -489,6 +489,6 @@
                 textArea.dispatchEvent(ev);
             });
 
-        },
+        }
     }
 })();

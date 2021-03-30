@@ -159,7 +159,7 @@ var zoteroRoam = {};
                 }
             },
             tribute: {
-                trigger: '@@',
+                trigger: '',
                 selectClass: 'zotero-roam-tribute-selected',
                 containerClass: 'zotero-roam-tribute',
                 lookup: 'key',
@@ -176,7 +176,8 @@ var zoteroRoam = {};
                 override_quickcopy: {overridden: false},
                 always_copy: false,
                 quick_copy_format: 'citekey',
-                autocomplete_format : 'citekey'
+                autocomplete_format: 'citekey',
+                autocomplete_enabled: false
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
@@ -413,14 +414,17 @@ var zoteroRoam = {};
                 "</em>": "__",
                 "<b>": "**",
                 "</b>": "**",
-                "<br />": "\n"
+                "<br />": "\n",
+                "<br>": "\n",
+                "<u>": "",
+                "</u>": ""
             }
             for(prop in formattingSpecs){
                 cleanBlock = cleanBlock.replaceAll(`${prop}`, `${formattingSpecs[prop]}`);
             }
 
             // HTML tags that might have attributes : p, div
-            let richTags = ["p", "div"];
+            let richTags = ["p", "div", "span"];
             richTags.forEach(tag => {
                 let tagRegex = new RegExp(`<${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag>, and the case with modifiers : <tag :modifier>
                 cleanBlock = cleanBlock.replaceAll(tagRegex, "");
@@ -1408,7 +1412,7 @@ var zoteroRoam = {};
                 textArea.dispatchEvent(ev);
             });
 
-        },
+        }
     }
 })();
 
@@ -1440,8 +1444,10 @@ var zoteroRoam = {};
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
                 // Setup observer for autocompletion tribute
-                zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
-                zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
+                if(zoteroRoam.config.params.autocomplete_enabled == true){
+                    zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
+                    zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
+                }
                 // Setup contextmenu event for the extension's icon
                 zoteroRoam.interface.icon.addEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
                 // Setup keypress listeners to detect shortcuts
@@ -2030,12 +2036,14 @@ var zoteroRoam = {};
             })
         };
         // always_copy | quick_copy_format
-        let {always_copy = false, quick_copy_format = 'citekey', autocomplete_format = 'citekey', autocomplete_trigger = '@@'} = zoteroRoam.config.userSettings;
+        let {always_copy = false, quick_copy_format = 'citekey', autocomplete_format = 'citekey', autocomplete_trigger = ''} = zoteroRoam.config.userSettings;
         zoteroRoam.config.params.always_copy = always_copy;
         zoteroRoam.config.params.quick_copy_format = quick_copy_format;
         zoteroRoam.config.params.autocomplete_format = autocomplete_format;
-        zoteroRoam.config.tribute.trigger = autocomplete_trigger;
-        
+        if(autocomplete_trigger.length > 0){
+            zoteroRoam.config.tribute.trigger = autocomplete_trigger;
+            zoteroRoam.config.params.autocomplete_enabled = true;
+        }
         
         zoteroRoam.shortcuts.setup();
         zoteroRoam.shortcuts.setupSequences();

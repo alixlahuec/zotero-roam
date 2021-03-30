@@ -26,8 +26,10 @@
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
                 // Setup observer for autocompletion tribute
-                zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
-                zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
+                if(zoteroRoam.config.params.autocomplete_enabled == true){
+                    zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
+                    zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
+                }
                 // Setup contextmenu event for the extension's icon
                 zoteroRoam.interface.icon.addEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
                 // Setup keypress listeners to detect shortcuts

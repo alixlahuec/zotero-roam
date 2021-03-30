@@ -26,12 +26,14 @@
             })
         };
         // always_copy | quick_copy_format
-        let {always_copy = false, quick_copy_format = 'citekey', autocomplete_format = 'citekey', autocomplete_trigger = '@@'} = zoteroRoam.config.userSettings;
+        let {always_copy = false, quick_copy_format = 'citekey', autocomplete_format = 'citekey', autocomplete_trigger = ''} = zoteroRoam.config.userSettings;
         zoteroRoam.config.params.always_copy = always_copy;
         zoteroRoam.config.params.quick_copy_format = quick_copy_format;
         zoteroRoam.config.params.autocomplete_format = autocomplete_format;
-        zoteroRoam.config.tribute.trigger = autocomplete_trigger;
-        
+        if(autocomplete_trigger.length > 0){
+            zoteroRoam.config.tribute.trigger = autocomplete_trigger;
+            zoteroRoam.config.params.autocomplete_enabled = true;
+        }
         
         zoteroRoam.shortcuts.setup();
         zoteroRoam.shortcuts.setupSequences();
