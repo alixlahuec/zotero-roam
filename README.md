@@ -7,7 +7,7 @@
 ![GitHub](https://img.shields.io/github/license/greenmeen/zotero-roam)
 ![Maintenance](https://img.shields.io/maintenance/yes/2021?style=flat-square)
 
-Read the extension documentation [on GitBook](https://app.gitbook.com/@alix-lahuec/s/roam-zotero-data-importer/). 
+Read the extension documentation [on GitBook](https://app.gitbook.com/@alix-lahuec/s/zotero-roam/). 
 
 Metadata templates shared by the community are available on the [Roam graph of Academia Roamana](https://roamresearch.com/#/app/AcademiaRoamana/page/pJvpz2sln). 
 
