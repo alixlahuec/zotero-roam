@@ -158,6 +158,9 @@ var zoteroRoam = {};
                     }
                 }
             },
+            // The tribute's `values` property is set when the tribute is attached to the textarea
+            // This is to reflect the most up-to-date version of the dataset
+            // Otherwise it could be done here, using cb(), but results were piling up when using that instead of being replaced (function was called at every keystroke I think)
             tribute: {
                 trigger: '',
                 selectClass: 'zotero-roam-tribute-selected',
@@ -176,8 +179,10 @@ var zoteroRoam = {};
                 override_quickcopy: {overridden: false},
                 always_copy: false,
                 quick_copy_format: 'citekey',
-                autocomplete_format: 'citekey',
-                autocomplete_enabled: false
+                autocomplete: {
+                    enabled: false,
+                    format: 'citekey'
+                }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
@@ -1398,7 +1403,7 @@ var zoteroRoam = {};
             textArea.setAttribute("zotero-tribute", "active");
 
             let config = zoteroRoam.config.tribute;
-            config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
+            config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete.format);
             var tribute = new Tribute(config);
             tribute.attach(textArea);
 
@@ -1444,7 +1449,7 @@ var zoteroRoam = {};
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
                 // Setup observer for autocompletion tribute
-                if(zoteroRoam.config.params.autocomplete_enabled == true){
+                if(zoteroRoam.config.params.autocomplete.enabled == true){
                     zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
                     zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
                 }
@@ -2036,13 +2041,17 @@ var zoteroRoam = {};
             })
         };
         // always_copy | quick_copy_format
-        let {always_copy = false, quick_copy_format = 'citekey', autocomplete_format = 'citekey', autocomplete_trigger = ''} = zoteroRoam.config.userSettings;
+        let {always_copy = false, quick_copy_format = 'citekey'} = zoteroRoam.config.userSettings;
         zoteroRoam.config.params.always_copy = always_copy;
         zoteroRoam.config.params.quick_copy_format = quick_copy_format;
-        zoteroRoam.config.params.autocomplete_format = autocomplete_format;
-        if(autocomplete_trigger.length > 0){
-            zoteroRoam.config.tribute.trigger = autocomplete_trigger;
-            zoteroRoam.config.params.autocomplete_enabled = true;
+
+        if(zoteroRoam.config.userSettings.autocomplete){
+            let {autocomplete_format = 'citation', autocomplete_trigger = ''} = zoteroRoam.config.userSettings.autocomplete;
+            zoteroRoam.config.params.autocomplete.format = autocomplete_format;
+            if(autocomplete_trigger.length > 0){
+                zoteroRoam.config.tribute.trigger = autocomplete_trigger;
+                zoteroRoam.config.params.autocomplete.enabled = true;
+            }
         }
         
         zoteroRoam.shortcuts.setup();

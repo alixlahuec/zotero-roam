@@ -26,7 +26,7 @@
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
                 // Setup observer for autocompletion tribute
-                if(zoteroRoam.config.params.autocomplete_enabled == true){
+                if(zoteroRoam.config.params.autocomplete.enabled == true){
                     zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
                     zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
                 }

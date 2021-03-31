@@ -158,6 +158,9 @@ var zoteroRoam = {};
                     }
                 }
             },
+            // The tribute's `values` property is set when the tribute is attached to the textarea
+            // This is to reflect the most up-to-date version of the dataset
+            // Otherwise it could be done here, using cb(), but results were piling up when using that instead of being replaced (function was called at every keystroke I think)
             tribute: {
                 trigger: '',
                 selectClass: 'zotero-roam-tribute-selected',
@@ -176,8 +179,10 @@ var zoteroRoam = {};
                 override_quickcopy: {overridden: false},
                 always_copy: false,
                 quick_copy_format: 'citekey',
-                autocomplete_format: 'citekey',
-                autocomplete_enabled: false
+                autocomplete: {
+                    enabled: false,
+                    format: 'citekey'
+                }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)

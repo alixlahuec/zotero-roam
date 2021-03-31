@@ -475,7 +475,7 @@
             textArea.setAttribute("zotero-tribute", "active");
 
             let config = zoteroRoam.config.tribute;
-            config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete_format);
+            config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete.format);
             var tribute = new Tribute(config);
             tribute.attach(textArea);
 
