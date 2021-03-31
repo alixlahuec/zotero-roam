@@ -31,10 +31,10 @@
         zoteroRoam.config.params.quick_copy_format = quick_copy_format;
 
         if(zoteroRoam.config.userSettings.autocomplete){
-            let {autocomplete_format = 'citation', autocomplete_trigger = ''} = zoteroRoam.config.userSettings.autocomplete;
-            zoteroRoam.config.params.autocomplete.format = autocomplete_format;
-            if(autocomplete_trigger.length > 0){
-                zoteroRoam.config.tribute.trigger = autocomplete_trigger;
+            let {format = 'citation', trigger = ''} = zoteroRoam.config.userSettings.autocomplete;
+            zoteroRoam.config.params.autocomplete.format = format;
+            if(trigger.length > 0){
+                zoteroRoam.config.tribute.trigger = trigger;
                 zoteroRoam.config.params.autocomplete.enabled = true;
             }
         }
