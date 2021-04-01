@@ -258,9 +258,11 @@ var zoteroRoam = {};
     document.getElementsByTagName("head")[0].appendChild(ac);
 
     // Load the tribute JS
-    var trib = document.createElement('script');
-    trib.src = "https://cdn.jsdelivr.net/npm/tributejs@5.1.3";
-    trib.type = "text/javascript";
-    document.getElementsByTagName("head")[0].appendChild(trib);
+    if(typeof(window.Tribute) == 'undefined'){
+        var trib = document.createElement('script');
+        trib.src = "https://cdn.jsdelivr.net/npm/tributejs@5.1.3";
+        trib.type = "text/javascript";
+        document.getElementsByTagName("head")[0].appendChild(trib);
+    }
 
 })();
