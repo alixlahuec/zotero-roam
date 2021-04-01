@@ -30,6 +30,7 @@
         search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, visible: false},
         tributeTrigger: ``,
         tributeBlockTrigger: null,
+        tributeNewText: ``,
 
         create(){
             zoteroRoam.interface.createIcon(id = "zotero-data-icon");
@@ -481,11 +482,21 @@
 
             textArea.addEventListener('tribute-replaced', (e) => {
                 let textArea = document.querySelector('textarea.rm-block-input');
-                zoteroRoam.interface.tributeTrigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
+                let triggerPos = e.detail.context.mentionPosition;
+                let triggerRegex = new RegExp(e.detail.context.mentionTriggerChar + e.detail.context.mentionText, 'g');
+                
+                let replacement = e.detail.item.original.value;
+                let blockContents = e.target.defaultValue;
+
+                let newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
+
+                // Store info about the replacement, to help debug
+                zoteroRoam.interface.tributeTrigger = userInput;
                 zoteroRoam.interface.tributeBlockTrigger = textArea;
+                zoteroRoam.interface.tributeNewText = newText;
 
                 var setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
-                setValue.call(textArea, textArea.value );
+                setValue.call(textArea, newText);
 
                 var ev = new Event('input', { bubbles: true });
                 textArea.dispatchEvent(ev);
