@@ -1412,8 +1412,10 @@ var zoteroRoam = {};
                 zoteroRoam.interface.tributeTrigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
                 zoteroRoam.interface.tributeBlockTrigger = textArea;
 
+                var setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+                setValue.call(textArea, textArea.value );
+
                 var ev = new Event('input', { bubbles: true });
-                zoteroRoam.utils.setNativeValue(textArea, textArea.value);
                 textArea.dispatchEvent(ev);
             });
 
