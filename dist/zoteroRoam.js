@@ -1410,16 +1410,17 @@ var zoteroRoam = {};
 
             textArea.addEventListener('tribute-replaced', (e) => {
                 let textArea = document.querySelector('textarea.rm-block-input');
+                let trigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
                 let triggerPos = e.detail.context.mentionPosition;
-                let triggerRegex = new RegExp(e.detail.context.mentionTriggerChar + e.detail.context.mentionText, 'g');
-                
+
                 let replacement = e.detail.item.original.value;
                 let blockContents = e.target.defaultValue;
 
+                let triggerRegex = new RegExp(trigger, 'g');
                 let newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
 
                 // Store info about the replacement, to help debug
-                zoteroRoam.interface.tributeTrigger = userInput;
+                zoteroRoam.interface.tributeTrigger = trigger;
                 zoteroRoam.interface.tributeBlockTrigger = textArea;
                 zoteroRoam.interface.tributeNewText = newText;
 
