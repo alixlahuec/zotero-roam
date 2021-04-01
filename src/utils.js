@@ -60,7 +60,7 @@
                     return citeText;
                 case 'citekey':
                 default:
-                    return item.key;
+                    return `@${item.key}`;
             }
         },
 
@@ -242,6 +242,7 @@
         },
 
         // From @aweary : https://github.com/facebook/react/issues/11095
+        // Leaving in case I want to use it at some point in the future, but currently not in use
         setNativeValue(element, value) {
             const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set;
             const prototype = Object.getPrototypeOf(element);
