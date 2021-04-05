@@ -244,7 +244,8 @@ var zoteroRoam = {};
                                             .item-citekey{margin:10px 0px;}
                                             .item-citekey .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}
-                                            .zotero-roam-tribute ul {list-style-type:none;padding:5px 10px;background-color: #f3f3f3;}
+                                            .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}
+                                            .zotero-roam-tribute ul li {padding: 2px 5px;font-weight:300;}
                                             .zotero-roam-tribute-selected {background-color: #d7edff;}`;
             document.head.append(autoCompleteCSS);
         }
@@ -884,8 +885,8 @@ var zoteroRoam = {};
         getLibItems(format = "citekey", display = "citekey"){
             return zoteroRoam.data.items.filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType)).map(item => {
                 return {key: item.key, 
-                        value: zoteroRoam.utils.formatItemReference(item = item, format = format) || item.key,
-                        display: zoteroRoam.utils.formatItemReference(item = item, format = display)};
+                        value: zoteroRoam.utils.formatItemReference(item, format) || item.key,
+                        display: zoteroRoam.utils.formatItemReference(item, display)};
             });
         },
 
