@@ -165,10 +165,10 @@ var zoteroRoam = {};
                 trigger: '',
                 selectClass: 'zotero-roam-tribute-selected',
                 containerClass: 'zotero-roam-tribute',
-                lookup: 'key',
+                lookup: 'display',
                 menuItemLimit: 15,
                 menuItemTemplate: (item) => {
-                    return item.original.key;
+                    return item.original.display;
                 },
                 requireLeadingSpace: true,
                 selectTemplate: (item) => {
@@ -181,7 +181,8 @@ var zoteroRoam = {};
                 quick_copy_format: 'citekey',
                 autocomplete: {
                     enabled: false,
-                    format: 'citekey'
+                    format: 'citation',
+                    display: 'citekey'
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)

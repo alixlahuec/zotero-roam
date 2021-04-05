@@ -343,10 +343,11 @@
             return itemsArray;
         },
         
-        getLibItems(format = "citekey"){
+        getLibItems(format = "citekey", display = "citekey"){
             return zoteroRoam.data.items.filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType)).map(item => {
                 return {key: item.key, 
-                        value: zoteroRoam.utils.formatItemReference(item = item, format = format) || item.key};
+                        value: zoteroRoam.utils.formatItemReference(item = item, format = format) || item.key,
+                        display: zoteroRoam.utils.formatItemReference(item = item, format = display)};
             });
         },
 

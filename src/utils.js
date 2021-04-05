@@ -58,6 +58,8 @@
                     citeText = item.meta.parsedDate ? `${citeText} (${new Date(item.meta.parsedDate).getFullYear()})` : citeText;
                     citeText = `[${(citeText.length > 0) ? citeText : item.key}]([[@${item.key}]])`
                     return citeText;
+                case 'zettlr':
+                    return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getFullYear()})` : ``) + ` : ` + item.data.title;
                 case 'citekey':
                 default:
                     return `@${item.key}`;

@@ -101,3 +101,9 @@ typings/
 
 # TernJS port file
 .tern-port
+
+# Draft files
+draft_*
+
+# User templates
+templates/

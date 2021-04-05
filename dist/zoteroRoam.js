@@ -165,10 +165,10 @@ var zoteroRoam = {};
                 trigger: '',
                 selectClass: 'zotero-roam-tribute-selected',
                 containerClass: 'zotero-roam-tribute',
-                lookup: 'key',
+                lookup: 'display',
                 menuItemLimit: 15,
                 menuItemTemplate: (item) => {
-                    return item.original.key;
+                    return item.original.display;
                 },
                 requireLeadingSpace: true,
                 selectTemplate: (item) => {
@@ -181,7 +181,8 @@ var zoteroRoam = {};
                 quick_copy_format: 'citekey',
                 autocomplete: {
                     enabled: false,
-                    format: 'citekey'
+                    format: 'citation',
+                    display: 'citekey'
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -327,6 +328,8 @@ var zoteroRoam = {};
                     citeText = item.meta.parsedDate ? `${citeText} (${new Date(item.meta.parsedDate).getFullYear()})` : citeText;
                     citeText = `[${(citeText.length > 0) ? citeText : item.key}]([[@${item.key}]])`
                     return citeText;
+                case 'zettlr':
+                    return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getFullYear()})` : ``) + ` : ` + item.data.title;
                 case 'citekey':
                 default:
                     return `@${item.key}`;
@@ -878,10 +881,11 @@ var zoteroRoam = {};
             return itemsArray;
         },
         
-        getLibItems(format = "citekey"){
+        getLibItems(format = "citekey", display = "citekey"){
             return zoteroRoam.data.items.filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType)).map(item => {
                 return {key: item.key, 
-                        value: zoteroRoam.utils.formatItemReference(item = item, format = format) || item.key};
+                        value: zoteroRoam.utils.formatItemReference(item = item, format = format) || item.key,
+                        display: zoteroRoam.utils.formatItemReference(item = item, format = display)};
             });
         },
 
@@ -1407,7 +1411,7 @@ var zoteroRoam = {};
             textArea.setAttribute("zotero-tribute", "active");
 
             let config = zoteroRoam.config.tribute;
-            config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete.format);
+            config.values = zoteroRoam.handlers.getLibItems(format = zoteroRoam.config.params.autocomplete.format, display = zoteroRoam.config.params.autocomplete.display);
             var tribute = new Tribute(config);
             tribute.attach(textArea);
 
@@ -2063,8 +2067,9 @@ var zoteroRoam = {};
         zoteroRoam.config.params.quick_copy_format = quick_copy_format;
 
         if(zoteroRoam.config.userSettings.autocomplete){
-            let {format = 'citation', trigger = ''} = zoteroRoam.config.userSettings.autocomplete;
+            let {format = 'citation', trigger = '', display = 'citekey'} = zoteroRoam.config.userSettings.autocomplete;
             zoteroRoam.config.params.autocomplete.format = format;
+            zoteroRoam.config.params.autocomplete.display = display;
             if(trigger.length > 0){
                 zoteroRoam.config.tribute.trigger = trigger;
                 zoteroRoam.config.params.autocomplete.enabled = true;
