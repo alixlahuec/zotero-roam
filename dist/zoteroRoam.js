@@ -244,9 +244,10 @@ var zoteroRoam = {};
                                             .item-citekey{margin:10px 0px;}
                                             .item-citekey .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}
+                                            .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;}
                                             .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}
                                             .zotero-roam-tribute ul li {padding: 2px 5px;font-weight:300;}
-                                            .zotero-roam-tribute-selected {background-color: #d7edff;}`;
+                                            .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}`;
             document.head.append(autoCompleteCSS);
         }
 
