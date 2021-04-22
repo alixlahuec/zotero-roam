@@ -135,7 +135,7 @@
         // Given an Array of PDF items, returns an Array of Markdown-style links. If a PDF is a `linked_file` or `imported_file`, make a local Zotero open link / else, make a link to the URL
         makePDFLinks(arr){
             if(arr.length > 0){
-                return arr.map(i => (["linked_file", "imported_file"].includes(i.data.linkMode)) ? `[${i.data.title}](zotero://open-pdf/library/items/${i.data.key})` : `[${i.data.title}](${i.data.url})`);
+                return arr.map(i => (["linked_file", "imported_file", "imported_url"].includes(i.data.linkMode)) ? `[${i.data.filename || i.data.title}](zotero://open-pdf/library/items/${i.data.key})` : `[${i.data.title}](${i.data.url})`);
             } else {
                 return false;
             }
