@@ -141,6 +141,12 @@
             }
         },
 
+        parseDOI(doi){
+            // Clean up the DOI format if needed, to extract prefix + suffix only
+            let cleanDOI = (doi.startsWith("10")) ? doi : doi.match(/10\.([0-9]+?)\/(.+)/g)[0];
+            return cleanDOI;
+        },
+
         parseNoteBlock(block){
             let cleanBlock = block;
             let formattingSpecs = {
@@ -174,6 +180,15 @@
             cleanBlock = cleanBlock.replaceAll(linkRegex, `[$2]($1)`);
         
             return cleanBlock;
+        },
+
+        renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = ""} = {}){
+            return `
+            <button type="button" class="bp3-button ${buttonClass}">
+            <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
+            <span class="bp3-button-text">${string}</span>
+            </button>
+            `;
         },
 
         renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = "", buttonModifier = ""} = {}){

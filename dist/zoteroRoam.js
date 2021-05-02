@@ -196,6 +196,7 @@ var zoteroRoam = {};
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
             userSettings: {}, // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
             ref_checking: null,
+            page_checking: null,
             editingObserver: null
         },
 
@@ -274,6 +275,13 @@ var zoteroRoam = {};
         trib.type = "text/javascript";
         document.getElementsByTagName("head")[0].appendChild(trib);
     }
+
+    // Load JS for scite.ai badge
+    var sct = document.createElement("script");
+    sct.src = "https://cdn.scite.ai/badge/scite-badge-latest.min.js";
+    sct.type = "application/javascript";
+    sct.async = true;
+    document.getElementsByTagName("head")[0].appendChild(sct);
 
 })();
 
@@ -420,6 +428,12 @@ var zoteroRoam = {};
             }
         },
 
+        parseDOI(doi){
+            // Clean up the DOI format if needed, to extract prefix + suffix only
+            let cleanDOI = (doi.startsWith("10")) ? doi : doi.match(/10\.([0-9]+?)\/(.+)/g)[0];
+            return cleanDOI;
+        },
+
         parseNoteBlock(block){
             let cleanBlock = block;
             let formattingSpecs = {
@@ -453,6 +467,15 @@ var zoteroRoam = {};
             cleanBlock = cleanBlock.replaceAll(linkRegex, `[$2]($1)`);
         
             return cleanBlock;
+        },
+
+        renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = ""} = {}){
+            return `
+            <button type="button" class="bp3-button ${buttonClass}">
+            <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
+            <span class="bp3-button-text">${string}</span>
+            </button>
+            `;
         },
 
         renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = "", buttonModifier = ""} = {}){
@@ -1168,7 +1191,7 @@ var zoteroRoam = {};
                             op.addEventListener("click", () => { zoteroRoam.handlers.addItemData(zoteroRoam.interface.contextMenu.targetElement) })
                             break;
                         case "Convert to citation":
-                            op.addEventListener("click", () => { zoteroRoam.pageRefs.convertToCitekey(zoteroRoam.interface.contextMenu.targetElement) });
+                            op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(zoteroRoam.interface.contextMenu.targetElement) });
                             break;
                         case "Update Zotero data":
                             op.addEventListener("click", zoteroRoam.extension.update)
@@ -1327,8 +1350,8 @@ var zoteroRoam = {};
             } else {
                 try {
                     let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
-                        let pdfHref = (item.data.linkMode == "linked_file") ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
-                        let pdfLink = `<a href="${pdfHref}">${item.data.title}</a>`;
+                        let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
+                        let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
                         return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "document-open" });
                     });
                     childrenDiv += pdfDiv;
@@ -1462,11 +1485,18 @@ var zoteroRoam = {};
                 zoteroRoam.data.items = requestReturns.data.items;
                 zoteroRoam.data.collections = requestReturns.data.collections;
                 zoteroRoam.interface.icon.setAttribute("status", "on");
-                // Setup the checking of citekey page references : initial, on blur, on page change
-                zoteroRoam.pageRefs.checkReferences();
-                document.addEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
-                window.addEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
-                zoteroRoam.config.ref_checking = setInterval(zoteroRoam.pageRefs.checkReferences, 1000);
+
+                // Setup the checking of citekey page references :
+                zoteroRoam.inPage.checkReferences(); // initial
+                document.addEventListener('blur', zoteroRoam.inPage.checkReferences, true); // on blur
+                window.addEventListener('locationchange', zoteroRoam.inPage.checkReferences, true); // URL change
+                zoteroRoam.config.ref_checking = setInterval(zoteroRoam.inPage.checkReferences, 1000); // continuous
+
+                // Setup page menus :
+                zoteroRoam.inPage.addPageMenus(); // initial
+                window.addEventListener('locationchange', zoteroRoam.inPage.addPageMenus, true); // URL change
+                zoteroRoam.config.page_checking = setInterval(zoteroRoam.inPage.addPageMenus, 1000); // continuous
+
                 // Setup the search autoComplete object
                 if(zoteroRoam.autoComplete == null){
                     zoteroRoam.autoComplete = new autoComplete(zoteroRoam.config.autoComplete);
@@ -1507,9 +1537,10 @@ var zoteroRoam = {};
                 ck.querySelector(".rm-page-ref").removeEventListener("contextmenu", zoteroRoam.interface.popContextMenu)});
             zoteroRoam.interface.icon.removeEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
 
-            document.removeEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
-            window.removeEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
+            document.removeEventListener('blur', zoteroRoam.inPage.checkReferences, true);
+            window.removeEventListener('locationchange', zoteroRoam.inPage.checkReferences, true);
             try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
+            try { clearInterval(zoteroRoam.config.page_checking) } catch(e){};
             zoteroRoam.config.editingObserver.disconnect();
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
@@ -1567,7 +1598,7 @@ var zoteroRoam = {};
                         }
                     });
 
-                    zoteroRoam.pageRefs.checkCitekeys(update = true);
+                    zoteroRoam.inPage.checkCitekeys(update = true);
                     alert(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`)
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 }
@@ -1580,7 +1611,7 @@ var zoteroRoam = {};
 })();
 
 ;(()=>{
-    zoteroRoam.pageRefs = {
+    zoteroRoam.inPage = {
 
         addContextMenuListener() {
             var refCitekeys = document.querySelectorAll(".ref-citekey");
@@ -1609,11 +1640,11 @@ var zoteroRoam = {};
             setTimeout(function(){
                 do {
                     let refs = document.getElementsByClassName("rm-page-ref");
-                    refCitekeyFound = zoteroRoam.pageRefs.identifyCitekeys(refs);
+                    refCitekeyFound = zoteroRoam.inPage.identifyCitekeys(refs);
                 } while (refCitekeyFound == true);
             }, 300);
-            zoteroRoam.pageRefs.checkCitekeys(update = update);
-            zoteroRoam.pageRefs.addContextMenuListener();
+            zoteroRoam.inPage.checkCitekeys(update = update);
+            zoteroRoam.inPage.addContextMenuListener();
         },
 
         identifyCitekeys(refs){
@@ -1692,6 +1723,52 @@ var zoteroRoam = {};
                 window.roamAlphaAPI.updateBlock({'block': {'uid': blockUID, 'string': newContents}})
             }
 
+        },
+
+        addPageMenus(){
+            let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
+            openPages.forEach(page => {
+                if(page.querySelector("span").innerText.startsWith("@")){
+                    let itemInLib = zoteroRoam.data.items.find(it => it.key == page.querySelector("span").innerText.slice(1));
+                    // If the item is in the library
+                    if(typeof(itemInLib) !== 'undefined'){
+                        // Page menu
+                        if(page.parentElement.querySelector(".zotero-roam-page-menu") == null){
+                            let menuDiv = document.createElement("div");
+                            menuDiv.classList.add("zotero-roam-page-menu");
+                            menuDiv.classList.add("bp3-button-group");
+
+                            let itemChildren = zoteroRoam.formatting.getItemChildren(itemInLib, { pdf_as: "raw", notes_as: "raw" });
+                            let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "📝 Import notes", {buttonClass: "bp3-outlined zotero-roam-page-menu-import-notes"});
+                            let pdfButtons = !itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
+                                let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
+                                    let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
+                                    return zoteroRoam.utils.renderBP3Button_group(string = pdfLink, { icon: "document-open" });
+                            });
+
+                            menuDiv.innerHTML = `
+                            ${zoteroRoam.utils.renderBP3Button_group(string = "📚 Add metadata", {buttonClass: "bp3-outlined zotero-roam-page-menu-add-metadata"})}
+                            ${notesButton}
+                            ${pdfButtons}
+                            `;
+
+                            page.parentElement.insertBefore(menuDiv, page.nextSibling);
+                        }
+
+                        // Badge from scite.ai
+                        if(itemInLib.data.DOI & page.parentElement.querySelector(".scite-badge") == null){
+                            let itemDOI = zoteroRoam.utils.parseDOI(itemInLib.data.DOI);
+                            let sciteBadge = document.createElement("div");
+                            sciteBadge.classList.add("scite-badge");
+                            sciteBadge.setAttribute("data-doi", itemDOI);
+                            sciteBadge.setAttribute("data-layout", "horizontal");
+                            sciteBadge.setAttribute("data-show-zero", "true");
+                            sciteBadge.setAttribute("data-show-labels", "false");
+                            page.parentElement.insertBefore(sciteBadge, page.nextSibling);
+                        }
+                    }
+                }
+            });
         }
 
     }
@@ -2086,6 +2163,10 @@ var zoteroRoam = {};
         zoteroRoam.shortcuts.setup();
         zoteroRoam.shortcuts.setupSequences();
         zoteroRoam.handlers.setupUserRequests();
+
+        if(zoteroRoam.config.userSettings.autoload == true){
+            zoteroRoam.extension.load();
+        }
 
     } else {
         throw new Error("A zoteroRoam_settings object must be defined in order to use the extension. Read through the docs for basic setup examples.");

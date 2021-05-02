@@ -11,11 +11,18 @@
                 zoteroRoam.data.items = requestReturns.data.items;
                 zoteroRoam.data.collections = requestReturns.data.collections;
                 zoteroRoam.interface.icon.setAttribute("status", "on");
-                // Setup the checking of citekey page references : initial, on blur, on page change
-                zoteroRoam.pageRefs.checkReferences();
-                document.addEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
-                window.addEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
-                zoteroRoam.config.ref_checking = setInterval(zoteroRoam.pageRefs.checkReferences, 1000);
+
+                // Setup the checking of citekey page references :
+                zoteroRoam.inPage.checkReferences(); // initial
+                document.addEventListener('blur', zoteroRoam.inPage.checkReferences, true); // on blur
+                window.addEventListener('locationchange', zoteroRoam.inPage.checkReferences, true); // URL change
+                zoteroRoam.config.ref_checking = setInterval(zoteroRoam.inPage.checkReferences, 1000); // continuous
+
+                // Setup page menus :
+                zoteroRoam.inPage.addPageMenus(); // initial
+                window.addEventListener('locationchange', zoteroRoam.inPage.addPageMenus, true); // URL change
+                zoteroRoam.config.page_checking = setInterval(zoteroRoam.inPage.addPageMenus, 1000); // continuous
+
                 // Setup the search autoComplete object
                 if(zoteroRoam.autoComplete == null){
                     zoteroRoam.autoComplete = new autoComplete(zoteroRoam.config.autoComplete);
@@ -56,9 +63,10 @@
                 ck.querySelector(".rm-page-ref").removeEventListener("contextmenu", zoteroRoam.interface.popContextMenu)});
             zoteroRoam.interface.icon.removeEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
 
-            document.removeEventListener('blur', zoteroRoam.pageRefs.checkReferences, true);
-            window.removeEventListener('locationchange', zoteroRoam.pageRefs.checkReferences, true);
+            document.removeEventListener('blur', zoteroRoam.inPage.checkReferences, true);
+            window.removeEventListener('locationchange', zoteroRoam.inPage.checkReferences, true);
             try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
+            try { clearInterval(zoteroRoam.config.page_checking) } catch(e){};
             zoteroRoam.config.editingObserver.disconnect();
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
@@ -116,7 +124,7 @@
                         }
                     });
 
-                    zoteroRoam.pageRefs.checkCitekeys(update = true);
+                    zoteroRoam.inPage.checkCitekeys(update = true);
                     alert(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`)
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 }

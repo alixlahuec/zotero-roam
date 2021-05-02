@@ -196,6 +196,7 @@ var zoteroRoam = {};
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
             userSettings: {}, // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
             ref_checking: null,
+            page_checking: null,
             editingObserver: null
         },
 
@@ -274,5 +275,12 @@ var zoteroRoam = {};
         trib.type = "text/javascript";
         document.getElementsByTagName("head")[0].appendChild(trib);
     }
+
+    // Load JS for scite.ai badge
+    var sct = document.createElement("script");
+    sct.src = "https://cdn.scite.ai/badge/scite-badge-latest.min.js";
+    sct.type = "application/javascript";
+    sct.async = true;
+    document.getElementsByTagName("head")[0].appendChild(sct);
 
 })();

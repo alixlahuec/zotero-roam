@@ -44,6 +44,10 @@
         zoteroRoam.shortcuts.setupSequences();
         zoteroRoam.handlers.setupUserRequests();
 
+        if(zoteroRoam.config.userSettings.autoload == true){
+            zoteroRoam.extension.load();
+        }
+
     } else {
         throw new Error("A zoteroRoam_settings object must be defined in order to use the extension. Read through the docs for basic setup examples.");
     }

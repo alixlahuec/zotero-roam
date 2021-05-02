@@ -1,5 +1,5 @@
 ;(()=>{
-    zoteroRoam.pageRefs = {
+    zoteroRoam.inPage = {
 
         addContextMenuListener() {
             var refCitekeys = document.querySelectorAll(".ref-citekey");
@@ -28,11 +28,11 @@
             setTimeout(function(){
                 do {
                     let refs = document.getElementsByClassName("rm-page-ref");
-                    refCitekeyFound = zoteroRoam.pageRefs.identifyCitekeys(refs);
+                    refCitekeyFound = zoteroRoam.inPage.identifyCitekeys(refs);
                 } while (refCitekeyFound == true);
             }, 300);
-            zoteroRoam.pageRefs.checkCitekeys(update = update);
-            zoteroRoam.pageRefs.addContextMenuListener();
+            zoteroRoam.inPage.checkCitekeys(update = update);
+            zoteroRoam.inPage.addContextMenuListener();
         },
 
         identifyCitekeys(refs){
@@ -111,6 +111,52 @@
                 window.roamAlphaAPI.updateBlock({'block': {'uid': blockUID, 'string': newContents}})
             }
 
+        },
+
+        addPageMenus(){
+            let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
+            openPages.forEach(page => {
+                if(page.querySelector("span").innerText.startsWith("@")){
+                    let itemInLib = zoteroRoam.data.items.find(it => it.key == page.querySelector("span").innerText.slice(1));
+                    // If the item is in the library
+                    if(typeof(itemInLib) !== 'undefined'){
+                        // Page menu
+                        if(page.parentElement.querySelector(".zotero-roam-page-menu") == null){
+                            let menuDiv = document.createElement("div");
+                            menuDiv.classList.add("zotero-roam-page-menu");
+                            menuDiv.classList.add("bp3-button-group");
+
+                            let itemChildren = zoteroRoam.formatting.getItemChildren(itemInLib, { pdf_as: "raw", notes_as: "raw" });
+                            let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "📝 Import notes", {buttonClass: "bp3-outlined zotero-roam-page-menu-import-notes"});
+                            let pdfButtons = !itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
+                                let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
+                                    let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
+                                    return zoteroRoam.utils.renderBP3Button_group(string = pdfLink, { icon: "document-open" });
+                            });
+
+                            menuDiv.innerHTML = `
+                            ${zoteroRoam.utils.renderBP3Button_group(string = "📚 Add metadata", {buttonClass: "bp3-outlined zotero-roam-page-menu-add-metadata"})}
+                            ${notesButton}
+                            ${pdfButtons}
+                            `;
+
+                            page.parentElement.insertBefore(menuDiv, page.nextSibling);
+                        }
+
+                        // Badge from scite.ai
+                        if(itemInLib.data.DOI & page.parentElement.querySelector(".scite-badge") == null){
+                            let itemDOI = zoteroRoam.utils.parseDOI(itemInLib.data.DOI);
+                            let sciteBadge = document.createElement("div");
+                            sciteBadge.classList.add("scite-badge");
+                            sciteBadge.setAttribute("data-doi", itemDOI);
+                            sciteBadge.setAttribute("data-layout", "horizontal");
+                            sciteBadge.setAttribute("data-show-zero", "true");
+                            sciteBadge.setAttribute("data-show-labels", "false");
+                            page.parentElement.insertBefore(sciteBadge, page.nextSibling);
+                        }
+                    }
+                }
+            });
         }
 
     }

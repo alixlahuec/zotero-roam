@@ -224,7 +224,7 @@
                             op.addEventListener("click", () => { zoteroRoam.handlers.addItemData(zoteroRoam.interface.contextMenu.targetElement) })
                             break;
                         case "Convert to citation":
-                            op.addEventListener("click", () => { zoteroRoam.pageRefs.convertToCitekey(zoteroRoam.interface.contextMenu.targetElement) });
+                            op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(zoteroRoam.interface.contextMenu.targetElement) });
                             break;
                         case "Update Zotero data":
                             op.addEventListener("click", zoteroRoam.extension.update)
@@ -383,8 +383,8 @@
             } else {
                 try {
                     let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
-                        let pdfHref = (item.data.linkMode == "linked_file") ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
-                        let pdfLink = `<a href="${pdfHref}">${item.data.title}</a>`;
+                        let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
+                        let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
                         return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "document-open" });
                     });
                     childrenDiv += pdfDiv;
