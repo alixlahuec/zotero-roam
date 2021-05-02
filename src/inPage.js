@@ -165,7 +165,8 @@
                     }
                 }
             });
+            // Manual trigger to insert badges
+            window.__SCITE.insertBadges();
         }
-
     }
 })();
