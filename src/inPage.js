@@ -135,7 +135,7 @@
                             menuDiv.classList.add("bp3-button-group");
 
                             let itemChildren = zoteroRoam.formatting.getItemChildren(itemInLib, { pdf_as: "raw", notes_as: "raw" });
-                            let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "📝 Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes"});
+                            let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
                             let pdfButtons = !itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
                                 let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
                                     let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
@@ -143,7 +143,7 @@
                             });
 
                             menuDiv.innerHTML = `
-                            ${zoteroRoam.utils.renderBP3Button_group(string = "📚 Add metadata", {buttonClass: "bp3-outlined zotero-roam-page-menu-add-metadata"})}
+                            ${zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"})}
                             ${notesButton}
                             ${pdfButtons}
                             `;
