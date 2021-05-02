@@ -1735,7 +1735,6 @@ var zoteroRoam = {};
                     // If the item is in the library
                     if(typeof(itemInLib) !== 'undefined'){
                         // Page menu
-                        console.log("Setting page menus")
                         if(page.parentElement.querySelector(".zotero-roam-page-menu") == null){
                             let menuDiv = document.createElement("div");
                             menuDiv.classList.add("zotero-roam-page-menu");
@@ -1759,9 +1758,7 @@ var zoteroRoam = {};
                         }
 
                         // Badge from scite.ai
-                        console.log("Setting scite.ai badge");
-                        if(itemInLib.data.DOI & page.parentElement.querySelector(".scite-badge") == null){
-                            console.log("Parsing item DOI");
+                        if(itemInLib.data.DOI && page.parentElement.querySelector(".scite-badge") == null){
                             let itemDOI = zoteroRoam.utils.parseDOI(itemInLib.data.DOI);
                             let sciteBadge = document.createElement("div");
                             sciteBadge.classList.add("scite-badge");
