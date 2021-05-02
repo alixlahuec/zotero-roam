@@ -255,7 +255,8 @@ var zoteroRoam = {};
                                             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}
                                             .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}
                                             .zotero-roam-tribute ul li {padding: 2px 5px;font-weight:300;}
-                                            .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}`;
+                                            .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}
+                                            .zotero-roam-page-menu{padding:10px 0px;}`;
             document.head.append(autoCompleteCSS);
         }
 

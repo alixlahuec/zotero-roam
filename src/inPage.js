@@ -116,11 +116,13 @@
         addPageMenus(){
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
             openPages.forEach(page => {
-                if(page.querySelector("span").innerText.startsWith("@")){
-                    let itemInLib = zoteroRoam.data.items.find(it => it.key == page.querySelector("span").innerText.slice(1));
+                let title = page.querySelector("span") ? page.querySelector("span").innerText : ""; 
+                if(title.startsWith("@")){
+                    let itemInLib = zoteroRoam.data.items.find(it => it.key == title.slice(1));
                     // If the item is in the library
                     if(typeof(itemInLib) !== 'undefined'){
                         // Page menu
+                        console.log("Setting page menus")
                         if(page.parentElement.querySelector(".zotero-roam-page-menu") == null){
                             let menuDiv = document.createElement("div");
                             menuDiv.classList.add("zotero-roam-page-menu");
@@ -144,7 +146,9 @@
                         }
 
                         // Badge from scite.ai
+                        console.log("Setting scite.ai badge");
                         if(itemInLib.data.DOI & page.parentElement.querySelector(".scite-badge") == null){
+                            console.log("Parsing item DOI");
                             let itemDOI = zoteroRoam.utils.parseDOI(itemInLib.data.DOI);
                             let sciteBadge = document.createElement("div");
                             sciteBadge.classList.add("scite-badge");
