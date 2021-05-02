@@ -121,6 +121,13 @@
                     let itemInLib = zoteroRoam.data.items.find(it => it.key == title.slice(1));
                     // If the item is in the library
                     if(typeof(itemInLib) !== 'undefined'){
+                        // Check if div wrapper already exists, creates it otherwise
+                        if(page.parentElement.querySelector(".zotero-roam-page-div") == null){
+                            let pageDiv = document.createElement("div");
+                            pageDiv.classList.add("zotero-roam-page-div");
+                            page.parentElement.appendChild(pageDiv);
+                        }
+
                         // Page menu
                         if(page.parentElement.querySelector(".zotero-roam-page-menu") == null){
                             let menuDiv = document.createElement("div");
@@ -128,11 +135,11 @@
                             menuDiv.classList.add("bp3-button-group");
 
                             let itemChildren = zoteroRoam.formatting.getItemChildren(itemInLib, { pdf_as: "raw", notes_as: "raw" });
-                            let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "📝 Import notes", {buttonClass: "bp3-outlined zotero-roam-page-menu-import-notes"});
+                            let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "📝 Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes"});
                             let pdfButtons = !itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
                                 let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
                                     let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
-                                    return zoteroRoam.utils.renderBP3Button_group(string = pdfLink, { icon: "document-open" });
+                                    return zoteroRoam.utils.renderBP3Button_group(string = pdfLink, {buttonClass: "bp3-minimal", icon: "paperclip" });
                             });
 
                             menuDiv.innerHTML = `
@@ -141,7 +148,7 @@
                             ${pdfButtons}
                             `;
 
-                            page.parentElement.insertBefore(menuDiv, page.nextSibling);
+                            page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
                         }
 
                         // Badge from scite.ai
@@ -153,7 +160,7 @@
                             sciteBadge.setAttribute("data-layout", "horizontal");
                             sciteBadge.setAttribute("data-show-zero", "true");
                             sciteBadge.setAttribute("data-show-labels", "false");
-                            page.parentElement.insertBefore(sciteBadge, page.nextSibling);
+                            page.parentElement.querySelector(".zotero-roam-page-div").appendChild(sciteBadge);
                         }
                     }
                 }

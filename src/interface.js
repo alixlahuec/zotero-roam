@@ -385,7 +385,7 @@
                     let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
                         let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
                         let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
-                        return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "document-open" });
+                        return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "paperclip" });
                     });
                     childrenDiv += pdfDiv;
                     let notesDiv = (!infoChildren.notes) ? "" : zoteroRoam.utils.renderBP3ButtonGroup(string = "Show notes below", { buttonClass: "item-see-notes", icon: "comment" });

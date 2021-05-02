@@ -256,7 +256,10 @@ var zoteroRoam = {};
                                             .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}
                                             .zotero-roam-tribute ul li {padding: 2px 5px;font-weight:300;}
                                             .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}
-                                            .zotero-roam-page-menu{padding:10px 0px;}`;
+                                            .zotero-roam-page-div{display:flex;justify-content:space-between;}
+                                            .zotero-roam-page-menu{padding-bottom:15px;flex: 0 1 75%;display:block;}
+                                            .scite-badge{padding-top:5px;}
+                                            .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}`;
             document.head.append(autoCompleteCSS);
         }
 
