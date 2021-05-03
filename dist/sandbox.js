@@ -51,7 +51,7 @@ var zoteroRoam = {};
                         // Records are sorted alphabetically (by key name) => _multiField should come last
                         const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
                             return list.filter(item => item.index === index).sort((a,b) => {
-                                if(a.key == "_multiField"){ return 2} else{ return (a.key < b.key ? 0 : 1) };
+                                return zoteroRoam.config.autoComplete.data.key.findIndex(key => key == a.key) < zoteroRoam.config.autoComplete.data.key.findIndex(key => b.key) ? -1 : 1;
                             })[0];
                         });
                         return filteredMatches;
