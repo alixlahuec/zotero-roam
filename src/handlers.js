@@ -336,7 +336,7 @@
                 }
                 simplifiedItem.meta = (item.data.pages) ? (simplifiedItem.meta + `, ${item.data.pages}.`) : ".";
 
-                simplifiedItem.multiField = simplifiedItem.authorsLastNames + simplifiedItem.year + simplifiedItem.title + simplifiedItem.tagsString;
+                simplifiedItem["_multiField"] = simplifiedItem.authorsLastNames + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
         
                 return simplifiedItem;
         

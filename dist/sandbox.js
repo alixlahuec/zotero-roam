@@ -44,7 +44,7 @@ var zoteroRoam = {};
                             return zoteroRoam.handlers.simplifyDataArray(zoteroRoam.data.items);
                         }
                     },
-                    key: ['title', 'authorsLastNames', 'year', 'tagsString', 'key', 'multiField'],
+                    key: ['title', 'authorsLastNames', 'year', 'tagsString', 'key', '_multiField'],
                     cache: false,
                     results: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
@@ -258,7 +258,7 @@ var zoteroRoam = {};
                                             .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}
                                             .zotero-roam-tribute ul li {padding: 2px 5px;font-weight:300;}
                                             .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}
-                                            .zotero-roam-page-div{display:flex;justify-content:space-between;}
+                                            .zotero-roam-page-div{display:flex;justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #eaf4ff;}
                                             .zotero-roam-page-menu{padding-bottom:15px;flex: 0 1 75%;display:block;}
                                             .scite-badge{padding-top:5px;}
                                             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}`;
@@ -931,7 +931,7 @@ var zoteroRoam = {};
                 }
                 simplifiedItem.meta = (item.data.pages) ? (simplifiedItem.meta + `, ${item.data.pages}.`) : ".";
 
-                simplifiedItem.multiField = simplifiedItem.authorsLastNames + simplifiedItem.year + simplifiedItem.title + simplifiedItem.tagsString;
+                simplifiedItem["_multiField"] = simplifiedItem.authorsLastNames + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
         
                 return simplifiedItem;
         
