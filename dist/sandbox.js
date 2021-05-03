@@ -50,9 +50,9 @@ var zoteroRoam = {};
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         // Records are sorted alphabetically (by key name) => _multiField should come last
                         const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
-                            return list.sort((a,b) => {
+                            return list.filter(item => item.index === index).sort((a,b) => {
                                 if(a.key == "_multiField"){ return -100} else{ return (a.key < b.key ? -1 : 1) };
-                            }).find(item => item.index === index);
+                            })[0];
                         });
                         return filteredMatches;
                     }
