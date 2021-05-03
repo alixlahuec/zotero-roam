@@ -141,6 +141,25 @@
             }
         },
 
+        multiwordMatch(query, string){
+            let terms = query.toLowerCase().split(" ");
+            let target = string.toLowerCase();
+        
+            let match = false;
+            for(let i = 0; i < terms.length; i++){
+                if(target.includes(terms[i])){
+                    match = true;
+                    target = target.replace(terms[i], "");
+                } else{
+                    match = false;
+                    break;
+                }
+            }
+        
+            if(match){ return string };
+        
+        },        
+
         parseDOI(doi){
             // Clean up the DOI format if needed, to extract prefix + suffix only
             let cleanDOI = (doi.startsWith("10")) ? doi : doi.match(/10\.([0-9]+?)\/(.+)/g)[0];

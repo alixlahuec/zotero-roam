@@ -44,7 +44,7 @@ var zoteroRoam = {};
                             return zoteroRoam.handlers.simplifyDataArray(zoteroRoam.data.items);
                         }
                     },
-                    key: ['title', 'authorsLastNames', 'year', 'tagsString', 'key'],
+                    key: ['title', 'authorsLastNames', 'year', 'tagsString', 'key', 'multiField'],
                     cache: false,
                     results: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
@@ -53,7 +53,9 @@ var zoteroRoam = {};
                     }
                 },
                 selector: '#zotero-search-autocomplete',
-                searchEngine: 'strict',
+                searchEngine: (query, record) => {
+                    return zoteroRoam.utils.multiwordMatch(query, record);
+                },
                 trigger: {
                     event: ["input", "focus"]
                 },

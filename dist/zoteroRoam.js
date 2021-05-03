@@ -44,7 +44,7 @@ var zoteroRoam = {};
                             return zoteroRoam.handlers.simplifyDataArray(zoteroRoam.data.items);
                         }
                     },
-                    key: ['title', 'authorsLastNames', 'year', 'tagsString', 'key'],
+                    key: ['title', 'authorsLastNames', 'year', 'tagsString', 'key', 'multiField'],
                     cache: false,
                     results: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
@@ -53,7 +53,9 @@ var zoteroRoam = {};
                     }
                 },
                 selector: '#zotero-search-autocomplete',
-                searchEngine: 'strict',
+                searchEngine: (query, record) => {
+                    return zoteroRoam.utils.multiwordMatch(query, record);
+                },
                 trigger: {
                     event: ["input", "focus"]
                 },
@@ -431,6 +433,25 @@ var zoteroRoam = {};
                 return false;
             }
         },
+
+        multiwordMatch(query, string){
+            let terms = query.toLowerCase().split(" ");
+            let target = string.toLowerCase();
+        
+            let match = false;
+            for(let i = 0; i < terms.length; i++){
+                if(target.includes(terms[i])){
+                    match = true;
+                    target = target.replace(terms[i], "");
+                } else{
+                    match = false;
+                    break;
+                }
+            }
+        
+            if(match){ return string };
+        
+        },        
 
         parseDOI(doi){
             // Clean up the DOI format if needed, to extract prefix + suffix only
@@ -909,6 +930,8 @@ var zoteroRoam = {};
                     }
                 }
                 simplifiedItem.meta = (item.data.pages) ? (simplifiedItem.meta + `, ${item.data.pages}.`) : ".";
+
+                simplifiedItem.multiField = simplifiedItem.authorsLastNames + simplifiedItem.year + simplifiedItem.title + simplifiedItem.tagsString;
         
                 return simplifiedItem;
         
