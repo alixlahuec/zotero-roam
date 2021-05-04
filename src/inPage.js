@@ -116,9 +116,10 @@
         addPageMenus(){
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
             openPages.forEach(page => {
-                let title = page.querySelector("span") ? page.querySelector("span").innerText : ""; 
+                let title = page.querySelector("span") ? page.querySelector("span").innerText : "";
                 if(title.startsWith("@")){
                     let itemInLib = zoteroRoam.data.items.find(it => it.key == title.slice(1));
+                    let pageInGraph = zoteroRoam.utils.lookForPage(title);
                     // If the item is in the library
                     if(typeof(itemInLib) !== 'undefined'){
                         // Check if div wrapper already exists, creates it otherwise
@@ -149,6 +150,17 @@
                             `;
 
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
+
+                            menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", (e) => function(){
+                                console.log("Importing metadata...");
+                                zoteroRoam.handlers.addSearchResult(title, pageInGraph.uid);
+                            });
+                            try{
+                                menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", (e) => function(){
+                                    console.log("Adding notes...");
+                                    zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
+                                });
+                            } catch(e){};
                         }
 
                         // Badge from scite.ai

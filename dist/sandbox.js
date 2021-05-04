@@ -675,7 +675,7 @@ var zoteroRoam = {};
 
         async addSearchResult(title, uid){
             let citekey = title.replace("@", "");
-            let item = zoteroRoam.data.items.find(function (i) { return i.key == citekey });
+            let item = zoteroRoam.data.items.find(i => i.key == citekey);
             let itemData = await zoteroRoam.handlers.formatData(item);
             let outcome = {};
         
@@ -685,7 +685,7 @@ var zoteroRoam = {};
                     outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
                 } else {
                     window.roamAlphaAPI.createPage({'page': {'title': title}});
-                    let pageUID = await zoteroRoam.handlers.waitForPageUID(title);
+                    pageUID = await zoteroRoam.handlers.waitForPageUID(title);
                     if(pageUID != null){
                         outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                         try {
@@ -714,6 +714,48 @@ var zoteroRoam = {};
                 console.log(item);
                 console.log(itemData);
                 alert("Something went wrong when formatting or importing the item's data.");
+            }
+        },
+
+        async addItemNotes(title, uid){
+            let citekey = title.startsWith("@") ? title.slice(1) : title;
+            let item = zoteroRoam.data.items.find(i => i.key == citekey);
+
+            try {
+                let itemChildren = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted", split_char: "\n"});
+                let itemNotes = itemChildren.notes.flat(1);
+                let outcome = {};
+
+                let pageUID = uid || "";
+                if(uid){
+                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemNotes);
+                } else {
+                    window.roamAlphaAPI.createPage({'page': {'title': title}});
+                    pageUID = await zoteroRoam.handlers.waitForPageUID(title);
+
+                    if(pageUID != null){
+                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemNotes);
+                        try {
+                            let inGraphDiv = document.querySelector(".item-in-graph");
+                            if(inGraphDiv != null){
+                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
+                            }
+                            let goToPageButton = document.querySelector(".item-go-to-page");
+                            if(goToPageButton != null){
+                                goToPageButton.setAttribute("data-uid", pageUID);
+                                goToPageButton.disabled = false;
+                            }
+                        } catch(e){};
+                        await zoteroRoam.utils.sleep(125);
+                    } else {
+                        console.log(pageUID);
+                        alert("There was a problem in obtaining the page's UID.");
+                    }
+                }
+            } catch(e){
+                console.error(e);
+                console.log(item);
+                console.log(itemChildren);
             }
         },
 
@@ -1760,9 +1802,10 @@ var zoteroRoam = {};
         addPageMenus(){
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
             openPages.forEach(page => {
-                let title = page.querySelector("span") ? page.querySelector("span").innerText : ""; 
+                let title = page.querySelector("span") ? page.querySelector("span").innerText : "";
                 if(title.startsWith("@")){
                     let itemInLib = zoteroRoam.data.items.find(it => it.key == title.slice(1));
+                    let pageInGraph = zoteroRoam.utils.lookForPage(title);
                     // If the item is in the library
                     if(typeof(itemInLib) !== 'undefined'){
                         // Check if div wrapper already exists, creates it otherwise
@@ -1793,6 +1836,17 @@ var zoteroRoam = {};
                             `;
 
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
+
+                            menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", (e) => function(){
+                                console.log("Importing metadata...");
+                                zoteroRoam.handlers.addSearchResult(title, pageInGraph.uid);
+                            });
+                            try{
+                                menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", (e) => function(){
+                                    console.log("Adding notes...");
+                                    zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
+                                });
+                            } catch(e){};
                         }
 
                         // Badge from scite.ai
