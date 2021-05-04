@@ -151,12 +151,12 @@
 
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
 
-                            menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", (e) => function(){
+                            menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
                                 console.log("Importing metadata...");
                                 zoteroRoam.handlers.addSearchResult(title, pageInGraph.uid);
                             });
                             try{
-                                menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", (e) => function(){
+                                menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", function(){
                                     console.log("Adding notes...");
                                     zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
                                 });
