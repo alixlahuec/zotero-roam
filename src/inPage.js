@@ -145,7 +145,7 @@
                             });
 
                             let recordsButtons = [zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://www.connectedpapers.com/search?q=${encodeURIComponent(itemInLib.data.title)}" target="_blank">Connected Papers</a>`, {buttonClass: "bp3-minimal zotero-roam-page-menu-connected-papers", icon: "layout"}),
-                                                (!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://api.semanticscholar.org/${itemDOI}" target="_blank">Semantic Scholar</a>`, {buttonClass: "bp3-minimal wotero-roam-page-menu-semantic-scholar", icon: "bookmark"}),
+                                                (!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://api.semanticscholar.org/${itemDOI}" target="_blank">Semantic Scholar</a>`, {buttonClass: "bp3-minimal zotero-roam-page-menu-semantic-scholar", icon: "bookmark"}),
                                                 zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}" target="_blank">Google Scholar</a>`, {buttonClass: "bp3-minimal zotero-roam-page-menu-google-scholar", icon: "learning"})];
 
                             menuDiv.innerHTML = `
