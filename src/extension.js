@@ -134,12 +134,20 @@
                     });
 
                     zoteroRoam.inPage.checkCitekeys(update = true);
-                    if(popup) {alert(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`)};
+                    if(popup) {
+                        alert(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`);
+                    } else{
+                        console.log(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`);
+                    };
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 }
 
             } else {
-                if(popup) {alert("Something went wrong when updating the data. Check the console for any errors.")};
+                if(popup){
+                    alert("Something went wrong when updating the data. Check the console for any errors.");
+                } else{
+                    console.log(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`);
+                };
             }
         }
     };
