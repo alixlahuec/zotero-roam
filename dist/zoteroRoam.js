@@ -1652,14 +1652,15 @@ var zoteroRoam = {};
             let updateRequests = zoteroRoam.config.requests.map(rq => {
                 let items = zoteroRoam.data.items.filter(i => i.requestLabel == rq.name);
                 let latest = items.reduce( (f,s) => {return (f.version < s.version) ? s : f}).version;
-                let {apikey, dataURI, params: setParams} = rq;
+                let {apikey, dataURI, params: setParams, name} = rq;
                 let paramsQuery = new URLSearchParams(setParams);
                 paramsQuery.set('since', latest);
                 setParams = paramsQuery.toString();
                 return {
                     apikey: apikey,
                     dataURI: dataURI,
-                    params: setParams
+                    params: setParams,
+                    name: name
                 };
             });
             let updateResults = await zoteroRoam.handlers.requestData(updateRequests);
