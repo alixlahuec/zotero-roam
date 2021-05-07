@@ -158,7 +158,11 @@
         
             if(match){ return string };
         
-        },        
+        },
+        
+        addToSidebar(uid, type = "outline"){
+            window.roamAlphaAPI.ui.rightSidebar.addWindow({window:{'type': type, 'block-uid': uid}});
+        },
 
         parseDOI(doi){
             // Clean up the DOI format if needed, to extract prefix + suffix only

@@ -122,6 +122,7 @@
                     let pageInGraph = zoteroRoam.utils.lookForPage(title);
                     // If the item is in the library
                     if(typeof(itemInLib) !== 'undefined'){
+                        let itemDOI = !itemInLib.data.DOI ? "" : zoteroRoam.utils.parseDOI(itemInLib.data.DOI);
                         // Check if div wrapper already exists, creates it otherwise
                         if(page.parentElement.querySelector(".zotero-roam-page-div") == null){
                             let pageDiv = document.createElement("div");
@@ -143,10 +144,15 @@
                                     return zoteroRoam.utils.renderBP3Button_group(string = pdfLink, {buttonClass: "bp3-minimal", icon: "paperclip" });
                             });
 
+                            let recordsButtons = [zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://www.connectedpapers.com/search?q=${encodeURIComponent(itemInLib.data.title)}">Connected Papers</a>`, {buttonClass: "bp3-minimal", icon: "layout"}),
+                                                (!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://api.semanticscholar.org/${itemDOI}">Semantic Scholar</a>`, {buttonClass: "bp3-minimal"}),
+                                                zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}">Google Scholar</a>`, {buttonClass: "bp3-minimal", icon: "learning"})];
+
                             menuDiv.innerHTML = `
                             ${zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"})}
                             ${notesButton}
                             ${pdfButtons}
+                            ${recordsButtons}
                             `;
 
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
@@ -165,7 +171,6 @@
 
                         // Badge from scite.ai
                         if(itemInLib.data.DOI && page.parentElement.querySelector(".scite-badge") == null){
-                            let itemDOI = zoteroRoam.utils.parseDOI(itemInLib.data.DOI);
                             let sciteBadge = document.createElement("div");
                             sciteBadge.classList.add("scite-badge");
                             sciteBadge.setAttribute("data-doi", itemDOI);
