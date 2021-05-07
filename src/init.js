@@ -204,6 +204,7 @@ var zoteroRoam = {};
             userSettings: {}, // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
             ref_checking: null,
             page_checking: null,
+            auto_update: null,
             editingObserver: null
         },
 

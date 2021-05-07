@@ -23,6 +23,11 @@
                 window.addEventListener('locationchange', zoteroRoam.inPage.addPageMenus, true); // URL change
                 zoteroRoam.config.page_checking = setInterval(zoteroRoam.inPage.addPageMenus, 1000); // continuous
 
+                // Auto-update ?
+                if(zoteroRoam.config.userSettings.autoupdate){
+                    zoteroRoam.config.auto_update = setInterval(function(){zoteroRoam.extension.update(popup = false)}, 60000); // Update every 60s
+                }
+
                 // Setup the search autoComplete object
                 if(zoteroRoam.autoComplete == null){
                     zoteroRoam.autoComplete = new autoComplete(zoteroRoam.config.autoComplete);
@@ -56,6 +61,9 @@
                 zoteroRoam.autoComplete.unInit();
             }
 
+            // Remove in-page menus
+            Array.from(document.querySelectorAll(".zotero-roam-page-div")).forEach(div => div.remove());
+
             // Remove request results
             let refCitekeys = document.querySelectorAll("ref-citekey");
             refCitekeys.forEach(ck => { 
@@ -67,6 +75,7 @@
             window.removeEventListener('locationchange', zoteroRoam.inPage.checkReferences, true);
             try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.page_checking) } catch(e){};
+            try { clearInterval(zoteroRoam.config.auto_update) } catch(e){};
             zoteroRoam.config.editingObserver.disconnect();
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
@@ -83,7 +92,7 @@
             }
         },
 
-        async update(){
+        async update(popup = true){
             // Turn the icon background to orange while we're updating the data
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
@@ -106,7 +115,7 @@
                 
                 let updatedItems = updateResults.data.items;
                 if(updatedItems.length == 0){
-                    alert("No new items were found since the data was last loaded. Data on collections was refreshed.");
+                    if(popup) {alert("No new items were found since the data was last loaded. Data on collections was refreshed.")};
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 } else {
                     let newItems = zoteroRoam.handlers.extractCitekeys(updatedItems);
@@ -125,12 +134,12 @@
                     });
 
                     zoteroRoam.inPage.checkCitekeys(update = true);
-                    alert(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`)
+                    if(popup) {alert(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`)};
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 }
 
             } else {
-                alert("Something went wrong when updating the data. Check the console for any errors.");
+                if(popup) {alert("Something went wrong when updating the data. Check the console for any errors.")};
             }
         }
     };
