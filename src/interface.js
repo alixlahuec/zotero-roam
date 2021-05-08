@@ -420,6 +420,9 @@
                 console.log("Importing metadata...");
                 zoteroRoam.handlers.addSearchResult(citekey, pageUID);
             });
+            document.querySelector("button.item-go-to-page a").addEventListener("click", function(){
+                zoteroRoam.interface.toggleSearchOverlay("hide");
+            });
 
             Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", e => {
