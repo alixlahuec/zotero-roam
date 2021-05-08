@@ -43,10 +43,8 @@
                 defaultShortcut: [],
                 execute(){
                     let goToPageButton = document.querySelector("button.item-go-to-page");
-                    let pageURL = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${goToPageButton.dataset.uid}`;
                     if(goToPageButton !== null && goToPageButton.disabled == false){
-                        window.location.href = pageURL;
-                        zoteroRoam.interface.toggleSearchOverlay("hide");
+                        goToPageButton.querySelector("a").click();
                     }
                 }
             },
