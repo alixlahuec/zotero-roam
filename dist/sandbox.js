@@ -1821,9 +1821,9 @@ var zoteroRoam = {};
 
         },
 
-        addPageMenus(){
+        async addPageMenus(){
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
-            openPages.forEach(page => {
+            for(const page of openPages) {
                 let title = page.querySelector("span") ? page.querySelector("span").innerText : "";
                 if(title.startsWith("@")){
                     let itemInLib = zoteroRoam.data.items.find(it => it.key == title.slice(1));
@@ -1856,11 +1856,24 @@ var zoteroRoam = {};
                                                 (!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://api.semanticscholar.org/${itemDOI}" target="_blank">Semantic Scholar</a>`, {buttonClass: "bp3-minimal zotero-roam-page-menu-semantic-scholar", icon: "bookmark"}),
                                                 zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}" target="_blank">Google Scholar</a>`, {buttonClass: "bp3-minimal zotero-roam-page-menu-google-scholar", icon: "learning"})];
 
+                            let backlinksLib = "";
+                            if(itemInLib.data.DOI){
+                                let scitations = await fetch(`https://api.scite.ai/papers/sources/${itemDOI}`);
+                                let scitingPapers = await scitations.json();
+                                let scitingDOIs = Object.keys(scitingPapers.papers);
+                                
+                                if(scitingDOIs.length > 0){
+                                    let papersInLib = zoteroRoam.data.items.filter(it => scitingDOIs.includes(it.data.DOI));
+                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `Show Backlinks (${papersInLib.length}/${scitingDOIs.length} citations in library)`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks"});
+                                }
+                            }
+
                             menuDiv.innerHTML = `
                             ${zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"})}
                             ${notesButton}
                             ${pdfButtons}
                             ${recordsButtons.join("")}
+                            ${backlinksLib}
                             `;
 
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
@@ -1886,12 +1899,12 @@ var zoteroRoam = {};
                             sciteBadge.setAttribute("data-show-zero", "true");
                             sciteBadge.setAttribute("data-show-labels", "false");
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(sciteBadge);
+                            // Manual trigger to insert badges
+                            window.__SCITE.insertBadges();
                         }
                     }
                 }
-            });
-            // Manual trigger to insert badges
-            window.__SCITE.insertBadges();
+            };
         }
     }
 })();
