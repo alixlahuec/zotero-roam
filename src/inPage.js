@@ -156,14 +156,14 @@
                                 
                                 if(scitingDOIs.length > 0){
                                     let papersInLib = zoteroRoam.data.items.filter(it => scitingDOIs.includes(it.data.DOI));
-                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `Show Backlinks (${papersInLib.length}/${scitingDOIs.length} citations in library)`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `Show Backlinks (${papersInLib.length}/${scitingDOIs.length} citations in library)`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
 
                                     if(papersInLib.length > 0){
                                         backlinksLib += `
-                                        <ul>
+                                        <ul class="zotero-roam-page-menu-backlinks-list" style="display:none;">
                                         ${papersInLib.map(paper => {
                                             let pageInGraph = zoteroRoam.utils.lookForPage("@" + paper.key);
-                                            return "<li>" + zoteroRoam.utils.formatItemReference(paper, "zettlr") + (pageInGraph.present == true ? "(" + zoteroRoam.utils.renderPageReference("@" + paper.key, pageInGraph.uid) + ")" : "") + "</li>"
+                                            return `<li class="zotero-roam-page-menu-backlinks-item">` + zoteroRoam.utils.formatItemReference(paper, "zettlr") + (pageInGraph.present == true ? "(" + zoteroRoam.utils.renderPageReference("@" + paper.key, pageInGraph.uid) + ")" : "") + "</li>"
                                         }).join("")}
                                         </ul>
                                         `
@@ -190,6 +190,22 @@
                                     console.log("Adding notes...");
                                     zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
                                 });
+                            } catch(e){};
+                            try{
+                                let backlinksButton = menuDiv.querySelector(".zotero-roam-page-menu-backlinks-button");
+                                backlinksButton.addEventListener("click", function(){
+                                    // Change caret class & show the backlinks list
+                                    let caretEl = backlinksButton.querySelector(".bp3-icon-caret-down");
+                                    let backlinksList = backlinksButton.parentElement.querySelector(".zotero-roam-page-menu-backlinks-list");
+
+                                    if(caretEl.classList.includes("rm-caret-closed") && backlinksList){
+                                        caretEl.classList.replace("rm-caret-closed", "rm-caret-open");
+                                        backlinksList.style.display = "block";
+                                    } else if(caretEl.classList.includes("rm-caret-open")){
+                                        caretEl.classList.replace("rm-caret-open", "rm-caret-closed");
+                                        backlinksList.style.display = "none";
+                                    }
+                                })
                             } catch(e){};
                         }
 
