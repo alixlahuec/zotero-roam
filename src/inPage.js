@@ -198,10 +198,10 @@
                                     let caretEl = backlinksButton.querySelector(".bp3-icon-caret-down");
                                     let backlinksList = backlinksButton.parentElement.querySelector(".zotero-roam-page-menu-backlinks-list");
 
-                                    if(caretEl.classList.includes("rm-caret-closed") && backlinksList){
+                                    if(Array.from(caretEl.classList).includes("rm-caret-closed") && backlinksList){
                                         caretEl.classList.replace("rm-caret-closed", "rm-caret-open");
                                         backlinksList.style.display = "block";
-                                    } else if(caretEl.classList.includes("rm-caret-open")){
+                                    } else if(Array.from(caretEl.classList).includes("rm-caret-open")){
                                         caretEl.classList.replace("rm-caret-open", "rm-caret-closed");
                                         backlinksList.style.display = "none";
                                     }
