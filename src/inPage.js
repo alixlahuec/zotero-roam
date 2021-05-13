@@ -136,6 +136,8 @@
                             menuDiv.classList.add("zotero-roam-page-menu");
                             menuDiv.classList.add("bp3-button-group");
 
+                            page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
+
                             let itemChildren = zoteroRoam.formatting.getItemChildren(itemInLib, { pdf_as: "raw", notes_as: "raw" });
                             let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
                             let pdfButtons = !itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
@@ -156,14 +158,14 @@
                                 
                                 if(scitingDOIs.length > 0){
                                     let papersInLib = zoteroRoam.data.items.filter(it => scitingDOIs.includes(it.data.DOI));
-                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `Show Backlinks (${papersInLib.length}/${scitingDOIs.length} citations in library)`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? "Show" : "No"} Backlinks (${papersInLib.length}/${scitingDOIs.length} citations in library)`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
 
                                     if(papersInLib.length > 0){
                                         backlinksLib += `
                                         <ul class="zotero-roam-page-menu-backlinks-list" style="display:none;">
                                         ${papersInLib.map(paper => {
                                             let pageInGraph = zoteroRoam.utils.lookForPage("@" + paper.key);
-                                            return `<li class="zotero-roam-page-menu-backlinks-item">` + zoteroRoam.utils.formatItemReference(paper, "zettlr") + (pageInGraph.present == true ? "(" + zoteroRoam.utils.renderPageReference("@" + paper.key, pageInGraph.uid) + ")" : "") + "</li>"
+                                            return `<li class="zotero-roam-page-menu-backlinks-item"><a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a></li>`;
                                         }).join("")}
                                         </ul>
                                         `
@@ -178,8 +180,6 @@
                             ${recordsButtons.join("")}
                             ${backlinksLib}
                             `;
-
-                            page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
 
                             menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
                                 console.log("Importing metadata...");
@@ -211,12 +211,7 @@
 
                         // Badge from scite.ai
                         if(itemInLib.data.DOI && page.parentElement.querySelector(".scite-badge") == null){
-                            let sciteBadge = document.createElement("div");
-                            sciteBadge.classList.add("scite-badge");
-                            sciteBadge.setAttribute("data-doi", itemDOI);
-                            sciteBadge.setAttribute("data-layout", "horizontal");
-                            sciteBadge.setAttribute("data-show-zero", "true");
-                            sciteBadge.setAttribute("data-show-labels", "false");
+                            let sciteBadge = zoteroRoam.inPage.makeSciteBadge(doi = itemDOI);
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(sciteBadge);
                             // Manual trigger to insert badges
                             window.__SCITE.insertBadges();
@@ -224,6 +219,17 @@
                     }
                 }
             };
+        },
+
+        makeSciteBadge(doi, {layout = "horizontal", showZero = "true", showLabels = "false"} = {}){
+            let sciteBadge = document.createElement("div");
+            sciteBadge.classList.add("scite-badge");
+            sciteBadge.setAttribute("data-doi", doi);
+            sciteBadge.setAttribute("data-layout", layout);
+            sciteBadge.setAttribute("data-show-zero", showZero);
+            sciteBadge.setAttribute("data-show-labels", showLabels);
+
+            return makeSciteBadge;
         }
     }
 })();
