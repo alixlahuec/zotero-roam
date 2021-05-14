@@ -205,9 +205,9 @@
             return cleanBlock;
         },
 
-        renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = ""} = {}){
+        renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = "", buttonAttribute = ""} = {}){
             return `
-            <button type="button" class="bp3-button ${buttonClass}">
+            <button type="button" class="bp3-button ${buttonClass}" ${buttonAttribute}>
             <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
             <span class="bp3-button-text">${string}</span>
             </button>

@@ -504,9 +504,9 @@ var zoteroRoam = {};
             return cleanBlock;
         },
 
-        renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = ""} = {}){
+        renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = "", buttonAttribute = ""} = {}){
             return `
-            <button type="button" class="bp3-button ${buttonClass}">
+            <button type="button" class="bp3-button ${buttonClass}" ${buttonAttribute}>
             <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
             <span class="bp3-button-text">${string}</span>
             </button>
@@ -1878,7 +1878,7 @@ var zoteroRoam = {};
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
                                                     <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a>
-                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", modifier: `data-uid=${paperInGraph.uid}`})}
+                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid=${paperInGraph.uid}`})}
                                                     </li>`;
                                                 default:
                                                     return `<li class="zotero-roam-page-menu-backlinks-item">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</li>`

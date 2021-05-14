@@ -169,7 +169,7 @@
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
                                                     <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a>
-                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", modifier: `data-uid=${paperInGraph.uid}`})}
+                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid=${paperInGraph.uid}`})}
                                                     </li>`;
                                                 default:
                                                     return `<li class="zotero-roam-page-menu-backlinks-item">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</li>`
