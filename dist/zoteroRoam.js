@@ -678,7 +678,7 @@ var zoteroRoam = {};
             }
         },
 
-        async addSearchResult(title, uid){
+        async addSearchResult(title, uid, {popup = true} = {}){
             let citekey = title.replace("@", "");
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
             let itemData = await zoteroRoam.handlers.formatData(item);
@@ -710,10 +710,11 @@ var zoteroRoam = {};
                         alert("There was a problem in obtaining the page's UID.");
                     }
                 }
-                if(outcome.success){
-                    alert(`Metadata was successfully added. You can check the page's contents to verify if you'd like.`);
+                let msg = outcome.success ? `Metadata was successfully added. You can check the page's contents to verify if you'd like.` : "The metadata array couldn't be properly processed.";
+                if(popup == true){
+                    alert(msg);
                 } else {
-                    alert("The metadata array couldn't be properly processed.")
+                    console.log(msg);
                 }
             } else {
                 console.log(item);
@@ -1872,7 +1873,12 @@ var zoteroRoam = {};
                                         <ul class="zotero-roam-page-menu-backlinks-list" style="display:none;">
                                         ${papersInLib.map(paper => {
                                             let paperInGraph = zoteroRoam.utils.lookForPage("@" + paper.key);
-                                            return `<li class="zotero-roam-page-menu-backlinks-item"><a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a></li>`;
+                                            switch(paperInGraph.present){
+                                                case true:
+                                                    return `<li class="zotero-roam-page-menu-backlinks-item"><a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a></li>`;
+                                                default:
+                                                    return `<li class="zotero-roam-page-menu-backlinks-item">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</li>`
+                                            }
                                         }).join("")}
                                         </ul>
                                         `
@@ -1891,7 +1897,7 @@ var zoteroRoam = {};
                             menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
                                 let pageInGraph = zoteroRoam.utils.lookForPage(title);
                                 console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
-                                zoteroRoam.handlers.addSearchResult(title, pageInGraph.uid);
+                                zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: false});
                             });
                             try{
                                 menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", function(){

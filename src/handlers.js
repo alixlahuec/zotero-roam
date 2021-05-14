@@ -73,7 +73,7 @@
             }
         },
 
-        async addSearchResult(title, uid){
+        async addSearchResult(title, uid, {popup = true} = {}){
             let citekey = title.replace("@", "");
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
             let itemData = await zoteroRoam.handlers.formatData(item);
@@ -105,10 +105,11 @@
                         alert("There was a problem in obtaining the page's UID.");
                     }
                 }
-                if(outcome.success){
-                    alert(`Metadata was successfully added. You can check the page's contents to verify if you'd like.`);
+                let msg = outcome.success ? `Metadata was successfully added. You can check the page's contents to verify if you'd like.` : "The metadata array couldn't be properly processed.";
+                if(popup == true){
+                    alert(msg);
                 } else {
-                    alert("The metadata array couldn't be properly processed.")
+                    console.log(msg);
                 }
             } else {
                 console.log(item);
