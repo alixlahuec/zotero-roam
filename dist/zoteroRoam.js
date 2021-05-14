@@ -1875,7 +1875,11 @@ var zoteroRoam = {};
                                             let paperInGraph = zoteroRoam.utils.lookForPage("@" + paper.key);
                                             switch(paperInGraph.present){
                                                 case true:
-                                                    return `<li class="zotero-roam-page-menu-backlinks-item"><a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a></li>`;
+                                                    return `
+                                                    <li class="zotero-roam-page-menu-backlinks-item">
+                                                    <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a>
+                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", modifier: `data-uid=${paperInGraph.uid}`})}
+                                                    </li>`;
                                                 default:
                                                     return `<li class="zotero-roam-page-menu-backlinks-item">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</li>`
                                             }
@@ -1919,6 +1923,15 @@ var zoteroRoam = {};
                                     } else if(Array.from(caretEl.classList).includes("rm-caret-open")){
                                         caretEl.classList.replace("rm-caret-open", "rm-caret-closed");
                                         backlinksList.style.display = "none";
+                                    }
+
+                                    let backlinksElems = Array.from(backlinksList.querySelectorAll(".zotero-roam-page-menu-backlink-open-sidebar"));
+                                    if(backlinksElems.length > 0){
+                                        for(el of backlinksElems){
+                                            el.addEventListener("click", function(){
+                                                zoteroRoam.utils.addToSidebar(uid = el.dataset.uid)
+                                            })
+                                        }
                                     }
                                 })
                             } catch(e){};
