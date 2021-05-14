@@ -1872,8 +1872,8 @@ var zoteroRoam = {};
                                         backlinksLib += `
                                         <ul class="zotero-roam-page-menu-backlinks-list" style="display:none;">
                                         ${papersInLib.map(paper => {
-                                            let pageInGraph = zoteroRoam.utils.lookForPage("@" + paper.key);
-                                            return `<li class="zotero-roam-page-menu-backlinks-item"><a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a></li>`;
+                                            let paperInGraph = zoteroRoam.utils.lookForPage("@" + paper.key);
+                                            return `<li class="zotero-roam-page-menu-backlinks-item"><a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a></li>`;
                                         }).join("")}
                                         </ul>
                                         `
@@ -1890,7 +1890,7 @@ var zoteroRoam = {};
                             `;
 
                             menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
-                                console.log("Importing metadata...");
+                                console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
                                 zoteroRoam.handlers.addSearchResult(title, pageInGraph.uid);
                             });
                             try{
@@ -1924,6 +1924,10 @@ var zoteroRoam = {};
                             // Manual trigger to insert badges
                             window.__SCITE.insertBadges();
                         }
+                    } else {
+                        try{
+                            page.parentElement.querySelector(".zotero-roam-page-div").remove();
+                        } catch(e){};
                     }
                 }
             };
