@@ -119,7 +119,6 @@
                 let title = page.querySelector("span") ? page.querySelector("span").innerText : "";
                 if(title.startsWith("@")){
                     let itemInLib = zoteroRoam.data.items.find(it => it.key == title.slice(1));
-                    let pageInGraph = zoteroRoam.utils.lookForPage(title);
                     // If the item is in the library
                     if(typeof(itemInLib) !== 'undefined'){
                         let itemDOI = !itemInLib.data.DOI ? "" : zoteroRoam.utils.parseDOI(itemInLib.data.DOI);
@@ -182,12 +181,14 @@
                             `;
 
                             menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
+                                let pageInGraph = zoteroRoam.utils.lookForPage(title);
                                 console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
                                 zoteroRoam.handlers.addSearchResult(title, pageInGraph.uid);
                             });
                             try{
                                 menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", function(){
-                                    console.log("Adding notes...");
+                                    let pageInGraph = zoteroRoam.utils.lookForPage(title);
+                                    console.log(`Adding notes to ${title} (${pageInGraph.uid})...`);
                                     zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
                                 });
                             } catch(e){};
