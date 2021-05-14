@@ -172,7 +172,11 @@
                                                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid=${paperInGraph.uid}`})}
                                                     </li>`;
                                                 default:
-                                                    return `<li class="zotero-roam-page-menu-backlinks-item">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</li>`
+                                                    return `
+                                                    <li class="zotero-roam-page-menu-backlinks-item">
+                                                    ${zoteroRoam.utils.formatItemReference(paper, "zettlr")}
+                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add-column-right", buttonAttribute: `data-title=@${paper.key}`})}
+                                                    </li>`
                                             }
                                         }).join("")}
                                         </ul>
@@ -216,11 +220,22 @@
                                         backlinksList.style.display = "none";
                                     }
 
-                                    let backlinksElems = Array.from(backlinksList.querySelectorAll(".zotero-roam-page-menu-backlink-open-sidebar"));
-                                    if(backlinksElems.length > 0){
-                                        for(el of backlinksElems){
+                                    let backlinksInGraph = Array.from(backlinksList.querySelectorAll(".zotero-roam-page-menu-backlink-open-sidebar"));
+                                    if(backlinksInGraph.length > 0){
+                                        for(const el of backlinksInGraph){
                                             el.addEventListener("click", function(){
                                                 zoteroRoam.utils.addToSidebar(uid = el.dataset.uid)
+                                            })
+                                        }
+                                    }
+                                    let backlinksLibOnly = Array.from(backlinksList.querySelectorAll(".zotero-roam-page-menu-backlink-add-sidebar"));
+                                    if(backlinksLibOnly.length > 0){
+                                        for(const el of backlinksLibOnly){
+                                            el.addEventListener("click", async function(){
+                                                let elUID = roamAlphaAPI.util.generateUID();
+                                                roamAlphaAPI.createPage({'page': {'title': el.dataset.title, 'uid': elUID}});
+                                                await zoteroRoam.handlers.addSearchResult(title = el.dataset.title, uid = elUID, {popup: false});
+                                                zoteroRoam.utils.addToSidebar(uid = elUID);
                                             })
                                         }
                                     }
