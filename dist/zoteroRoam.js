@@ -1316,9 +1316,9 @@ var zoteroRoam = {};
         },
 
         popContextMenu(e){
-            // Hide default Roam context menu
-            document.querySelector('body > .bp3-context-menu+.bp3-portal').style = `display:none;`;
             zoteroRoam.interface.popContextOverlay(e, "contextMenu");
+            // Hide default Roam context menu
+            document.querySelector('body > .bp3-context-menu+.bp3-portal').style.display = "none";
         },
 
         popIconContextMenu(e){
@@ -1700,7 +1700,7 @@ var zoteroRoam = {};
                 if(popup){
                     alert("Something went wrong when updating the data. Check the console for any errors.");
                 } else{
-                    console.log(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`);
+                    console.log("Something went wrong when updating the data. Check the console for any errors.");
                 };
             }
         }

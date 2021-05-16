@@ -147,7 +147,7 @@
                 if(popup){
                     alert("Something went wrong when updating the data. Check the console for any errors.");
                 } else{
-                    console.log(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`);
+                    console.log("Something went wrong when updating the data. Check the console for any errors.");
                 };
             }
         }
