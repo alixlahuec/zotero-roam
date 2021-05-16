@@ -268,10 +268,13 @@
             return false;
         },
 
-        popContextMenu(e){
+        async popContextMenu(e){
             zoteroRoam.interface.popContextOverlay(e, "contextMenu");
-            // Hide default Roam context menu
-            document.querySelector('body > .bp3-context-menu+.bp3-portal').style.display = "none";
+            await zoteroRoam.utils.sleep(200);
+            try{
+                // Hide default Roam context menu
+                document.querySelector('body > .bp3-context-menu+.bp3-portal').style.display = "none";
+            } catch(e){};
         },
 
         popIconContextMenu(e){
