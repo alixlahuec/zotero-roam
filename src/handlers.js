@@ -387,6 +387,66 @@
         
             return itemsArray;
         },
+
+        simplifyCitationsObject(results){
+            let citations = Object.values(results.papers)
+            if(citations.length > 0){
+                return citations.map(cit => {
+                    let simplifiedCitation = {
+                        abstract: cit.abstract || "",
+                        doi: cit.doi || "",
+                        keywords: cit.keywords || [],
+                        links: {
+                            scite: `https://scite.ai/reports/${cit.slug}`
+                        },
+                        metadata: ""
+                    };
+                    let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
+                    if(authors.length > 0){
+                        authors = authors.map((auth, i) => {
+                            if(i == 0){
+                                return auth;
+                            } else if(i < authors.length - 1){
+                                return `, ${auth}`;                        
+                            } else {
+                                return ` and ${auth}`;
+                            }
+                        });
+                    };
+                    // Create metadata string
+                    simplifiedCitation.metadata = `${authors.join("")}${cit.year ? " (" + cit.year + ")" : ""} : ${cit.title}`;
+                    // Create links :
+                    // Connected Papers
+                    simplifiedCitation.links.connectedPapers = `https://www.connectedpapers.com/${(!cit.doi) ? "search?q=" + encodeURIComponent(cit.title) : "api/redirect/doi/" + cit.doi}`;
+                    // Semantic Scholar
+                    if(cit.doi){
+                        simplifiedCitation.links.semanticScholar = `https://api.semanticscholar.org/${cit.doi}`;
+                    }
+                    // Google Scholar
+                    simplifiedCitation.links.googleScholar = `https://scholar.google.com/scholar?q=${(!cit.doi) ? encodeURIComponent(cit.title) : cit.doi}`;
+        
+                    return simplifiedCitation;
+                })
+            } else {
+                return [];
+            }
+        },
+
+        getCitationsKeywordsCounts(results){
+            let citations = Object.values(results.papers)
+            if(citations.length > 0){
+                let keywords = citations.map(cit => cit.keywords ? cit.keywords.map(w => w.toLowerCase()) : []).flat(1);
+                let counts = [];
+                for(var i = 0; i < keywords.length; i++){
+                    let word = keywords[i];
+                    counts.push({keyword: word, count: keywords.filter(w => w == word).length});
+                    keywords = keywords.filter(w => w != word);
+                }
+                return counts.sort((a,b) => a.count < b.count ? 1 : -1);
+            } else{
+                return [];
+            }
+        },
         
         getLibItems(format = "citekey", display = "citekey"){
             return zoteroRoam.data.items.filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType)).map(item => {

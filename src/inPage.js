@@ -157,7 +157,9 @@
                                 
                                 if(scitingDOIs.length > 0){
                                     let papersInLib = zoteroRoam.data.items.filter(it => scitingDOIs.includes(it.data.DOI));
-                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? "Show" : "No"} Backlinks (${papersInLib.length}/${scitingDOIs.length} citations in library)`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} citations in library`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+
+                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `(${scitingDOIs.length} total)`, {buttonClass: "bp3-minimal zotero-roam-page-menu-backlinks-total"});
 
                                     if(papersInLib.length > 0){
                                         backlinksLib += `
@@ -168,14 +170,14 @@
                                                 case true:
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
-                                                    <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a>
                                                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid=${paperInGraph.uid}`})}
+                                                    <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a>
                                                     </li>`;
                                                 default:
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
-                                                    ${zoteroRoam.utils.formatItemReference(paper, "zettlr")}
                                                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add-column-right", buttonAttribute: `data-title=@${paper.key}`})}
+                                                    ${zoteroRoam.utils.formatItemReference(paper, "zettlr")}
                                                     </li>`
                                             }
                                         }).join("")}

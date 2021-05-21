@@ -5,7 +5,7 @@
         // Add DOM interface elements + set them up
         zoteroRoam.interface.create();
         zoteroRoam.interface.setup();
-        zoteroRoam.addAutoCompleteCSS();
+        zoteroRoam.addExtensionCSS();
 
         zoteroRoam.config.userSettings = window.zoteroRoam_settings;
 

@@ -30,6 +30,29 @@ var zoteroRoam = {};
             }
         },
 
+        Pagination: function(obj){
+            this.data = obj.data;
+            this.itemsPerPage = obj.itemsPerPage;
+            this.currentPage = 1;
+            this.nbPages = Math.ceil(obj.data.length / obj.itemsPerPage);
+
+            this.getPage = function(n){
+                return this.data.slice(start = this.itemsPerPage*(n - 1), end = this.itemsPerPage*n);
+            }
+
+            this.previousPage = function(){
+                this.currentPage -= 1;
+                if(this.currentPage < 1){ this.currentPage = 1};
+                return this.getPage(this.currentPage);
+            }
+
+            this.nextPage = function(){
+                this.currentPage += 1;
+                if(this.currentPage > this.nbPages){ this.currentPage = this.nbPages};
+                return this.getPage(this.currentPage);
+            }
+        },
+
         data: {items: [], collections: []},
 
         autoComplete: null,
@@ -246,7 +269,7 @@ var zoteroRoam = {};
             webpage: "Webpage"
         },
 
-        addAutoCompleteCSS(){
+        addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
             autoCompleteCSS.textContent = `ul#zotero-search-results-list::before{content:attr(aria-label);}
                                             li.autoComplete_selected{background-color:#e7f3f7;}
@@ -267,7 +290,8 @@ var zoteroRoam = {};
                                             .zotero-roam-page-div{display:flex;justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #eaf4ff;}
                                             .zotero-roam-page-menu{padding-bottom:15px;flex: 0 1 75%;display:block;}
                                             .scite-badge{padding-top:5px;}
-                                            .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}`;
+                                            .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
+                                            .zotero-roam-page-menu-backlinks-list{list-style-type:none;}`;
             document.head.append(autoCompleteCSS);
         }
 
@@ -991,6 +1015,66 @@ var zoteroRoam = {};
             });
         
             return itemsArray;
+        },
+
+        simplifyCitationsObject(results){
+            let citations = Object.values(results.papers)
+            if(citations.length > 0){
+                return citations.map(cit => {
+                    let simplifiedCitation = {
+                        abstract: cit.abstract || "",
+                        doi: cit.doi || "",
+                        keywords: cit.keywords || [],
+                        links: {
+                            scite: `https://scite.ai/reports/${cit.slug}`
+                        },
+                        metadata: ""
+                    };
+                    let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
+                    if(authors.length > 0){
+                        authors = authors.map((auth, i) => {
+                            if(i == 0){
+                                return auth;
+                            } else if(i < authors.length - 1){
+                                return `, ${auth}`;                        
+                            } else {
+                                return ` and ${auth}`;
+                            }
+                        });
+                    };
+                    // Create metadata string
+                    simplifiedCitation.metadata = `${authors.join("")}${cit.year ? " (" + cit.year + ")" : ""} : ${cit.title}`;
+                    // Create links :
+                    // Connected Papers
+                    simplifiedCitation.links.connectedPapers = `https://www.connectedpapers.com/${(!cit.doi) ? "search?q=" + encodeURIComponent(cit.title) : "api/redirect/doi/" + cit.doi}`;
+                    // Semantic Scholar
+                    if(cit.doi){
+                        simplifiedCitation.links.semanticScholar = `https://api.semanticscholar.org/${cit.doi}`;
+                    }
+                    // Google Scholar
+                    simplifiedCitation.links.googleScholar = `https://scholar.google.com/scholar?q=${(!cit.doi) ? encodeURIComponent(cit.title) : cit.doi}`;
+        
+                    return simplifiedCitation;
+                })
+            } else {
+                return [];
+            }
+        },
+
+        getCitationsKeywordsCounts(results){
+            let citations = Object.values(results.papers)
+            if(citations.length > 0){
+                let keywords = citations.map(cit => cit.keywords ? cit.keywords.map(w => w.toLowerCase()) : []).flat(1);
+                let counts = [];
+                for(var i = 0; i < keywords.length; i++){
+                    let word = keywords[i];
+                    counts.push({keyword: word, count: keywords.filter(w => w == word).length});
+                    keywords = keywords.filter(w => w != word);
+                }
+                return counts.sort((a,b) => a.count < b.count ? 1 : -1);
+            } else{
+                return [];
+            }
         },
         
         getLibItems(format = "citekey", display = "citekey"){
@@ -1869,7 +1953,9 @@ var zoteroRoam = {};
                                 
                                 if(scitingDOIs.length > 0){
                                     let papersInLib = zoteroRoam.data.items.filter(it => scitingDOIs.includes(it.data.DOI));
-                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? "Show" : "No"} Backlinks (${papersInLib.length}/${scitingDOIs.length} citations in library)`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} citations in library`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+
+                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `(${scitingDOIs.length} total)`, {buttonClass: "bp3-minimal zotero-roam-page-menu-backlinks-total"});
 
                                     if(papersInLib.length > 0){
                                         backlinksLib += `
@@ -1880,14 +1966,14 @@ var zoteroRoam = {};
                                                 case true:
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
-                                                    <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a>
                                                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid=${paperInGraph.uid}`})}
+                                                    <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a>
                                                     </li>`;
                                                 default:
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
-                                                    ${zoteroRoam.utils.formatItemReference(paper, "zettlr")}
                                                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add-column-right", buttonAttribute: `data-title=@${paper.key}`})}
+                                                    ${zoteroRoam.utils.formatItemReference(paper, "zettlr")}
                                                     </li>`
                                             }
                                         }).join("")}

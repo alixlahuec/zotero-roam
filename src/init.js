@@ -30,6 +30,29 @@ var zoteroRoam = {};
             }
         },
 
+        Pagination: function(obj){
+            this.data = obj.data;
+            this.itemsPerPage = obj.itemsPerPage;
+            this.currentPage = 1;
+            this.nbPages = Math.ceil(obj.data.length / obj.itemsPerPage);
+
+            this.getPage = function(n){
+                return this.data.slice(start = this.itemsPerPage*(n - 1), end = this.itemsPerPage*n);
+            }
+
+            this.previousPage = function(){
+                this.currentPage -= 1;
+                if(this.currentPage < 1){ this.currentPage = 1};
+                return this.getPage(this.currentPage);
+            }
+
+            this.nextPage = function(){
+                this.currentPage += 1;
+                if(this.currentPage > this.nbPages){ this.currentPage = this.nbPages};
+                return this.getPage(this.currentPage);
+            }
+        },
+
         data: {items: [], collections: []},
 
         autoComplete: null,
@@ -246,7 +269,7 @@ var zoteroRoam = {};
             webpage: "Webpage"
         },
 
-        addAutoCompleteCSS(){
+        addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
             autoCompleteCSS.textContent = `ul#zotero-search-results-list::before{content:attr(aria-label);}
                                             li.autoComplete_selected{background-color:#e7f3f7;}
@@ -267,7 +290,8 @@ var zoteroRoam = {};
                                             .zotero-roam-page-div{display:flex;justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #eaf4ff;}
                                             .zotero-roam-page-menu{padding-bottom:15px;flex: 0 1 75%;display:block;}
                                             .scite-badge{padding-top:5px;}
-                                            .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}`;
+                                            .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
+                                            .zotero-roam-page-menu-backlinks-list{list-style-type:none;}`;
             document.head.append(autoCompleteCSS);
         }
 
