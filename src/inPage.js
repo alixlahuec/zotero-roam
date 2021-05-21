@@ -151,15 +151,14 @@
 
                             let backlinksLib = "";
                             if(itemInLib.data.DOI){
-                                let scitations = await fetch(`https://api.scite.ai/papers/sources/${itemDOI}`);
-                                let scitingPapers = await scitations.json();
-                                let scitingDOIs = Object.keys(scitingPapers.papers);
+                                let citeObject = await zoteroRoam.handlers.requestScitations(itemDOI);
+                                let scitingDOIs = citeObject.citations.map(cit => cit.doi);
                                 
                                 if(scitingDOIs.length > 0){
-                                    let papersInLib = zoteroRoam.data.items.filter(it => scitingDOIs.includes(it.data.DOI));
+                                    let papersInLib = zoteroRoam.data.items.filter(it => scitingDOIs.includes(zoteroRoam.utils.parseDOI(it.data.DOI)));
                                     backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} citations in library`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
 
-                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `(${scitingDOIs.length} total)`, {buttonClass: "bp3-minimal zotero-roam-page-menu-backlinks-total"});
+                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `(${scitingDOIs.length} total)`, {buttonClass: "bp3-minimal zotero-roam-page-menu-backlinks-total", buttonAttribute: `data-doi=${itemDOI}`});
 
                                     if(papersInLib.length > 0){
                                         backlinksLib += `
@@ -192,6 +191,7 @@
                             ${notesButton}
                             ${pdfButtons}
                             ${recordsButtons.join("")}
+                            <hr>
                             ${backlinksLib}
                             `;
 

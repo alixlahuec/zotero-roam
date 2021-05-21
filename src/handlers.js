@@ -270,6 +270,26 @@
             }
         },
 
+        async requestScitations(doi){
+            let sciteListIndex = zoteroRoam.data.scite.findIndex(res => res.doi == doi);
+            if(sciteListIndex == -1){
+                let scitations = await fetch(`https://api.scite.ai/papers/sources/${doi}`);
+                let scitingPapers = await scitations.json();
+                let citeList = Object.values(scitingPapers.papers);
+                let citeObject = {
+                    doi: doi,
+                    citations: citeList || []
+                };
+                citeObject.simplified = zoteroRoam.handlers.simplifyCitationsObject(citeObject.citations);
+                citeObject.keywords = zoteroRoam.handlers.getCitationsKeywordsCounts(citeObject.citations);
+
+                zoteroRoam.data.scite.push(citeObject);
+                return citeObject;
+            } else{
+                return zoteroRoam.data.scite[sciteListIndex];
+            }
+        },
+
         async requestData(requests) {
             if(requests.length == 0){
                 throw new Error("No data requests were added to the config object - check for upstream problems");
@@ -388,8 +408,7 @@
             return itemsArray;
         },
 
-        simplifyCitationsObject(results){
-            let citations = Object.values(results.papers)
+        simplifyCitationsObject(citations){
             if(citations.length > 0){
                 return citations.map(cit => {
                     let simplifiedCitation = {
@@ -432,8 +451,7 @@
             }
         },
 
-        getCitationsKeywordsCounts(results){
-            let citations = Object.values(results.papers)
+        getCitationsKeywordsCounts(citations){
             if(citations.length > 0){
                 let keywords = citations.map(cit => cit.keywords ? cit.keywords.map(w => w.toLowerCase()) : []).flat(1);
                 let counts = [];

@@ -36,26 +36,28 @@ var zoteroRoam = {};
             this.currentPage = 1;
             this.nbPages = Math.ceil(obj.data.length / obj.itemsPerPage);
 
-            this.getPage = function(n){
+            this.getPageData = function(n){
                 return this.data.slice(start = this.itemsPerPage*(n - 1), end = this.itemsPerPage*n);
             }
 
             this.previousPage = function(){
                 this.currentPage -= 1;
                 if(this.currentPage < 1){ this.currentPage = 1};
-                return this.getPage(this.currentPage);
+                return this.getPageData(this.currentPage);
             }
 
             this.nextPage = function(){
                 this.currentPage += 1;
                 if(this.currentPage > this.nbPages){ this.currentPage = this.nbPages};
-                return this.getPage(this.currentPage);
+                return this.getPageData(this.currentPage);
             }
         },
 
-        data: {items: [], collections: []},
+        data: {items: [], collections: [], scite: []},
 
         autoComplete: null,
+
+        citationSearch: null,
 
         config: {
             autoComplete: {
@@ -289,6 +291,7 @@ var zoteroRoam = {};
                                             .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}
                                             .zotero-roam-page-div{display:flex;justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #eaf4ff;}
                                             .zotero-roam-page-menu{padding-bottom:15px;flex: 0 1 75%;display:block;}
+                                            .zotero-roam-page-menu hr{margin:2px 0;}
                                             .scite-badge{padding-top:5px;}
                                             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;}`;
@@ -899,6 +902,26 @@ var zoteroRoam = {};
             }
         },
 
+        async requestScitations(doi){
+            let sciteListIndex = zoteroRoam.data.scite.findIndex(res => res.doi == doi);
+            if(sciteListIndex == -1){
+                let scitations = await fetch(`https://api.scite.ai/papers/sources/${doi}`);
+                let scitingPapers = await scitations.json();
+                let citeList = Object.values(scitingPapers.papers);
+                let citeObject = {
+                    doi: doi,
+                    citations: citeList || []
+                };
+                citeObject.simplified = zoteroRoam.handlers.simplifyCitationsObject(citeObject.citations);
+                citeObject.keywords = zoteroRoam.handlers.getCitationsKeywordsCounts(citeObject.citations);
+
+                zoteroRoam.data.scite.push(citeObject);
+                return citeObject;
+            } else{
+                return zoteroRoam.data.scite[sciteListIndex];
+            }
+        },
+
         async requestData(requests) {
             if(requests.length == 0){
                 throw new Error("No data requests were added to the config object - check for upstream problems");
@@ -1017,8 +1040,7 @@ var zoteroRoam = {};
             return itemsArray;
         },
 
-        simplifyCitationsObject(results){
-            let citations = Object.values(results.papers)
+        simplifyCitationsObject(citations){
             if(citations.length > 0){
                 return citations.map(cit => {
                     let simplifiedCitation = {
@@ -1061,8 +1083,7 @@ var zoteroRoam = {};
             }
         },
 
-        getCitationsKeywordsCounts(results){
-            let citations = Object.values(results.papers)
+        getCitationsKeywordsCounts(citations){
             if(citations.length > 0){
                 let keywords = citations.map(cit => cit.keywords ? cit.keywords.map(w => w.toLowerCase()) : []).flat(1);
                 let counts = [];
@@ -1947,15 +1968,14 @@ var zoteroRoam = {};
 
                             let backlinksLib = "";
                             if(itemInLib.data.DOI){
-                                let scitations = await fetch(`https://api.scite.ai/papers/sources/${itemDOI}`);
-                                let scitingPapers = await scitations.json();
-                                let scitingDOIs = Object.keys(scitingPapers.papers);
+                                let citeObject = await zoteroRoam.handlers.requestScitations(itemDOI);
+                                let scitingDOIs = citeObject.citations.map(cit => cit.doi);
                                 
                                 if(scitingDOIs.length > 0){
-                                    let papersInLib = zoteroRoam.data.items.filter(it => scitingDOIs.includes(it.data.DOI));
+                                    let papersInLib = zoteroRoam.data.items.filter(it => scitingDOIs.includes(zoteroRoam.utils.parseDOI(it.data.DOI)));
                                     backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} citations in library`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
 
-                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `(${scitingDOIs.length} total)`, {buttonClass: "bp3-minimal zotero-roam-page-menu-backlinks-total"});
+                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `(${scitingDOIs.length} total)`, {buttonClass: "bp3-minimal zotero-roam-page-menu-backlinks-total", buttonAttribute: `data-doi=${itemDOI}`});
 
                                     if(papersInLib.length > 0){
                                         backlinksLib += `
@@ -1988,6 +2008,7 @@ var zoteroRoam = {};
                             ${notesButton}
                             ${pdfButtons}
                             ${recordsButtons.join("")}
+                            <hr>
                             ${backlinksLib}
                             `;
 
