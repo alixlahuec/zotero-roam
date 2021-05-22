@@ -284,6 +284,7 @@ var zoteroRoam = {};
             autoCompleteCSS.textContent = `ul.zotero-search-results-list::before{content:attr(aria-label);}
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
+                                            .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
                                             .zotero-search-item-title{font-weight:bold;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}

@@ -284,6 +284,7 @@ var zoteroRoam = {};
             autoCompleteCSS.textContent = `ul.zotero-search-results-list::before{content:attr(aria-label);}
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
+                                            .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
                                             .zotero-search-item-title{font-weight:bold;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
@@ -1060,6 +1061,8 @@ var zoteroRoam = {};
                         links: {
                             scite: `https://scite.ai/reports/${cit.slug}`
                         },
+                        title: cit.title,
+                        year: cit.year || "",
                         metadata: ""
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
@@ -1074,6 +1077,7 @@ var zoteroRoam = {};
                             }
                         });
                     };
+                    simplifiedCitation.authors = authors.join("");
                     // Create metadata string
                     simplifiedCitation.metadata = `${authors.join("")}${cit.year ? " (" + cit.year + ")" : ""} : ${cit.title}`;
                     // Create links :
@@ -1434,42 +1438,44 @@ var zoteroRoam = {};
         },
 
         renderCitationsPagination(){
-            let paginatedList = document.querySelector("#zotero-roam-citations-pagination");
+            let paginatedList = document.querySelector("#zotero-roam-citations-pagination ul");
             let page = zoteroRoam.citations.pagination.getCurrentPageData();
             // Set aria-label of paginatedList to indicate results shown
             paginatedList.setAttribute("aria-label", `${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1} out of ${zoteroRoam.citations.pagination.data.length} results`);
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let metadataEl = `<span class="zotero-search-item-title" style="display:block;">${cit.metadata}</span>`;
+                let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title}${cit.year ? " (" + cit.year + ")" : ""}</span>`;
                 let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let linksEl = "";
-                if(cit.links.length > 0){
-                    for(var service of Object.keys(cit.links)){
-                        switch(service){
-                            case "scite":
-                                linksEl += `<span class="zotero-roam-citation-link-scite"><a href="${cit.links[service]}" target="_blank">Scite</a></span>`;
-                                break;
-                            case "connectedPapers":
-                                linksEl += `<span class="zotero-roam-citation-link-connected-papers"><a href="${cit.links[service]}" target="_blank">Connected Papers</a></span>`;
-                                break;
-                            case "semanticScholar":
-                                linksEl += `<span class="zotero-roam-citation-link-semantic-scholar"><a href="${cit.links[service]}" target="_blank">Semantic Scholar</a></span>`;
-                                break;
-                            case "googleScholar":
-                                linksEl += `<span class="zotero-roam-citation-link-google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`;
-                                break;
-                        }
+                for(var service of Object.keys(cit.links)){
+                    switch(service){
+                        case "scite":
+                            linksEl += `<span class="zotero-roam-citation-link-scite"><a href="${cit.links[service]}" target="_blank">Scite</a></span>`;
+                            break;
+                        case "connectedPapers":
+                            linksEl += `<span class="zotero-roam-citation-link-connected-papers"><a href="${cit.links[service]}" target="_blank">Connected Papers</a></span>`;
+                            break;
+                        case "semanticScholar":
+                            linksEl += `<span class="zotero-roam-citation-link-semantic-scholar"><a href="${cit.links[service]}" target="_blank">Semantic Scholar</a></span>`;
+                            break;
+                        case "googleScholar":
+                            linksEl += `<span class="zotero-roam-citation-link-google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`;
+                            break;
                     }
                 }
 
+                let authorsEl = `<span class="bp3-menu-item-label zotero-search-item-key">${cit.authors}</span>`
+
                 return `
                 <li class="zotero-roam-citations-search_result">
-                <a class="bp3-menu-item">
+                <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citations-search-item-contents">
-                ${metadataEl}
+                ${titleEl}
                 ${keywordsEl}
                 ${linksEl}
-                </div></a></li>
+                </div>
+                ${authorsEl}
+                </div></li>
                 `
             }).join("");
         },

@@ -418,6 +418,8 @@
                         links: {
                             scite: `https://scite.ai/reports/${cit.slug}`
                         },
+                        title: cit.title,
+                        year: cit.year || "",
                         metadata: ""
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
@@ -432,6 +434,7 @@
                             }
                         });
                     };
+                    simplifiedCitation.authors = authors.join("");
                     // Create metadata string
                     simplifiedCitation.metadata = `${authors.join("")}${cit.year ? " (" + cit.year + ")" : ""} : ${cit.title}`;
                     // Create links :
