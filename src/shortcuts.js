@@ -17,8 +17,12 @@
             toggleSearchPanel: {
                 defaultShortcut: {altKey: true, 'q': true},
                 execute(){
-                    let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
-                    zoteroRoam.interface.toggleSearchOverlay(cmd);
+                    if(zoteroRoam.interface.citations.overlay.getAttribute("overlay-visible") == "true"){
+                        zoteroRoam.interface.closeCitationsOverlay();
+                    } else{
+                        let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
+                        zoteroRoam.interface.toggleSearchOverlay(cmd);
+                    }
                 }
             },
             toggleQuickCopy: {
@@ -170,11 +174,11 @@
                 let searchHeader = zoteroRoam.interface.search.overlay.querySelector(`.bp3-dialog-header`);
                 searchHeader.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
 
-                if(toggleSeqText.length > 0){
+                if(closeSeqText.length > 0){
                     let citationsSearchHeader = zoteroRoam.interface.citations.overlay.querySelector(`.bp3-dialog-header`);
                     let spanSeq = document.createElement('span');
                     spanSeq.style = `font-style:italic;`;
-                    spanSeq.innerHTML = `${toggleSeqText}`;
+                    spanSeq.innerHTML = `${closeSeqText}`;
                     citationsSearchHeader.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
                 }
             };

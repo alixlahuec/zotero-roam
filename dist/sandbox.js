@@ -34,7 +34,7 @@ var zoteroRoam = {};
             this.data = obj.data;
             this.itemsPerPage = obj.itemsPerPage || zoteroRoam.config.params.citations.itemsPerPage;
             this.currentPage = 1;
-            this.nbPages = Math.ceil(obj.data.length / obj.itemsPerPage);
+            this.nbPages = Math.ceil(this.data.length / this.itemsPerPage);
             this.startIndex = (this.currentPage - 1)*this.itemsPerPage + 1;
 
             this.getCurrentPageData = function(){
@@ -48,13 +48,13 @@ var zoteroRoam = {};
             this.previousPage = function(){
                 this.currentPage -= 1;
                 if(this.currentPage < 1){ this.currentPage = 1};
-                return this.getCurrentPageData();
+                zoteroRoam.interface.renderCitationsPagination();
             }
 
             this.nextPage = function(){
                 this.currentPage += 1;
                 if(this.currentPage > this.nbPages){ this.currentPage = this.nbPages};
-                return this.getCurrentPageData();
+                zoteroRoam.interface.renderCitationsPagination();
             }
         },
 
@@ -115,7 +115,7 @@ var zoteroRoam = {};
                     content: (data, element) => {
                         let itemMetadata = `<span class="zotero-search-item-metadata"> ${data.value.meta}</span>`;
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
-                        let itemTitle = `<span class="zotero-search-item-title" style="font-weight:bold;display:block;">${itemTitleContent}</span>`;
+                        let itemTitle = `<span class="zotero-search-item-title" style="display:block;">${itemTitleContent}</span>`;
                         
                         let itemCitekeyContent = (data.key == "key") ? data.match : data.value.key;
                         let itemCitekey = `<span class="bp3-menu-item-label zotero-search-item-key">${itemCitekeyContent}</span>`;
@@ -140,7 +140,7 @@ var zoteroRoam = {};
                         let itemTags = "";
                         if(data.value.tagsString){
                             let itemTagsContent = (data.key == "tagsString") ? data.match : data.value.tagsString;
-                            itemTags = `<span class="zotero-search-item-tags" style="font-style:italic;color:#c1c0c0;display:block;">${itemTagsContent}</span>`;
+                            itemTags = `<span class="zotero-search-item-tags" style="display:block;">${itemTagsContent}</span>`;
                         }
             
                         // Render the element's template
@@ -284,6 +284,8 @@ var zoteroRoam = {};
             autoCompleteCSS.textContent = `ul.zotero-search-results-list::before{content:attr(aria-label);}
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
+                                            .zotero-search-item-title{font-weight:bold;}
+                                            .zotero-search-item-tags{font-style:italic;color:#c1c0c0;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
                                             .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
@@ -1401,13 +1403,27 @@ var zoteroRoam = {};
             searchBar.style = "margin-bottom:20px;"
             inputGroup.appendChild(searchBar);
 
+            let pagination = document.createElement('div');
+            pagination.id = "zotero-roam-citations-pagination";
+            
+            let pageControls = document.createElement('div');
+            pageControls.classList.add("bp3-button-group");
+            pageControls.innerHTML = `
+            ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
+            ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", button: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
+            `
+            pagination.appendChild(pageControls);
+
             let paginatedList = document.createElement('ul');
             paginatedList.id = "zotero-roam-citations-pagination";
             paginatedList.classList.add("zotero-search-results-list");
             paginatedList.classList.add("bp3-menu");
             paginatedList.tabIndex = "-1";
             paginatedList.setAttribute("role", "listbox");
-            inputGroup.appendChild(paginatedList);
+            paginatedList.innerText = "Loading";
+            pagination.appendChild(paginatedList)
+
+            inputGroup.appendChild(pagination);
 
             citationsDialogBody.appendChild(inputGroup);
             
@@ -1421,15 +1437,41 @@ var zoteroRoam = {};
             let paginatedList = document.querySelector("#zotero-roam-citations-pagination");
             let page = zoteroRoam.citations.pagination.getCurrentPageData();
             // Set aria-label of paginatedList to indicate results shown
-            paginatedList.setAttribute("aria-label", `Showing results ${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length} out of ${zoteroRoam.citations.pagination.data.length}`);
+            paginatedList.setAttribute("aria-label", `${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1} out of ${zoteroRoam.citations.pagination.data.length} results`);
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
+                let metadataEl = `<span class="zotero-search-item-title" style="display:block;">${cit.metadata}</span>`;
+                let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
+                let linksEl = "";
+                if(cit.links.length > 0){
+                    for(var service of Object.keys(cit.links)){
+                        switch(service){
+                            case "scite":
+                                linksEl += `<span class="zotero-roam-citation-link-scite"><a href="${cit.links[service]}" target="_blank">Scite</a></span>`;
+                                break;
+                            case "connectedPapers":
+                                linksEl += `<span class="zotero-roam-citation-link-connected-papers"><a href="${cit.links[service]}" target="_blank">Connected Papers</a></span>`;
+                                break;
+                            case "semanticScholar":
+                                linksEl += `<span class="zotero-roam-citation-link-semantic-scholar"><a href="${cit.links[service]}" target="_blank">Semantic Scholar</a></span>`;
+                                break;
+                            case "googleScholar":
+                                linksEl += `<span class="zotero-roam-citation-link-google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`;
+                                break;
+                        }
+                    }
+                }
+
                 return `
-                <li>${cit.metadata}</li>
+                <li class="zotero-roam-citations-search_result">
+                <a class="bp3-menu-item">
+                <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citations-search-item-contents">
+                ${metadataEl}
+                ${keywordsEl}
+                ${linksEl}
+                </div></a></li>
                 `
-            });
-            
-            // Check: are page controls rigged with an event listener already ?
+            }).join("");
         },
 
         setupContextMenus(elementsKeys){
@@ -1482,9 +1524,22 @@ var zoteroRoam = {};
         },
 
         popCitationsOverlay(doi){
+            let isFirstCall = zoteroRoam.citations.pagination == null;
             // All citations -- paginated
             let fullData = zoteroRoam.data.scite.find(item => item.doi == doi).simplified;
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
+            // If first call, rig page controls
+            if(isFirstCall){
+                Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(".zotero-roam-page-control")).forEach(control => {
+                    switch(control.getAttribute("goto")){
+                        case "previous":
+                            control.addEventListener("click", zoteroRoam.citations.pagination.previousPage);
+                            break;
+                        case "next":
+                            control.addEventListener("click", zoteroRoam.citations.pagination.nextPage);
+                    }
+                })
+            }
             // Render HTML for pagination
             zoteroRoam.interface.renderCitationsPagination();
             // Setup autocomplete
@@ -2337,8 +2392,12 @@ var zoteroRoam = {};
             toggleSearchPanel: {
                 defaultShortcut: {altKey: true, 'q': true},
                 execute(){
-                    let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
-                    zoteroRoam.interface.toggleSearchOverlay(cmd);
+                    if(zoteroRoam.interface.citations.overlay.getAttribute("overlay-visible") == "true"){
+                        zoteroRoam.interface.closeCitationsOverlay();
+                    } else{
+                        let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
+                        zoteroRoam.interface.toggleSearchOverlay(cmd);
+                    }
                 }
             },
             toggleQuickCopy: {
@@ -2490,11 +2549,11 @@ var zoteroRoam = {};
                 let searchHeader = zoteroRoam.interface.search.overlay.querySelector(`.bp3-dialog-header`);
                 searchHeader.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
 
-                if(toggleSeqText.length > 0){
+                if(closeSeqText.length > 0){
                     let citationsSearchHeader = zoteroRoam.interface.citations.overlay.querySelector(`.bp3-dialog-header`);
                     let spanSeq = document.createElement('span');
                     spanSeq.style = `font-style:italic;`;
-                    spanSeq.innerHTML = `${toggleSeqText}`;
+                    spanSeq.innerHTML = `${closeSeqText}`;
                     citationsSearchHeader.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
                 }
             };

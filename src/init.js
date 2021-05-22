@@ -34,7 +34,7 @@ var zoteroRoam = {};
             this.data = obj.data;
             this.itemsPerPage = obj.itemsPerPage || zoteroRoam.config.params.citations.itemsPerPage;
             this.currentPage = 1;
-            this.nbPages = Math.ceil(obj.data.length / obj.itemsPerPage);
+            this.nbPages = Math.ceil(this.data.length / this.itemsPerPage);
             this.startIndex = (this.currentPage - 1)*this.itemsPerPage + 1;
 
             this.getCurrentPageData = function(){
@@ -48,13 +48,13 @@ var zoteroRoam = {};
             this.previousPage = function(){
                 this.currentPage -= 1;
                 if(this.currentPage < 1){ this.currentPage = 1};
-                return this.getCurrentPageData();
+                zoteroRoam.interface.renderCitationsPagination();
             }
 
             this.nextPage = function(){
                 this.currentPage += 1;
                 if(this.currentPage > this.nbPages){ this.currentPage = this.nbPages};
-                return this.getCurrentPageData();
+                zoteroRoam.interface.renderCitationsPagination();
             }
         },
 
@@ -115,7 +115,7 @@ var zoteroRoam = {};
                     content: (data, element) => {
                         let itemMetadata = `<span class="zotero-search-item-metadata"> ${data.value.meta}</span>`;
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
-                        let itemTitle = `<span class="zotero-search-item-title" style="font-weight:bold;display:block;">${itemTitleContent}</span>`;
+                        let itemTitle = `<span class="zotero-search-item-title" style="display:block;">${itemTitleContent}</span>`;
                         
                         let itemCitekeyContent = (data.key == "key") ? data.match : data.value.key;
                         let itemCitekey = `<span class="bp3-menu-item-label zotero-search-item-key">${itemCitekeyContent}</span>`;
@@ -140,7 +140,7 @@ var zoteroRoam = {};
                         let itemTags = "";
                         if(data.value.tagsString){
                             let itemTagsContent = (data.key == "tagsString") ? data.match : data.value.tagsString;
-                            itemTags = `<span class="zotero-search-item-tags" style="font-style:italic;color:#c1c0c0;display:block;">${itemTagsContent}</span>`;
+                            itemTags = `<span class="zotero-search-item-tags" style="display:block;">${itemTagsContent}</span>`;
                         }
             
                         // Render the element's template
@@ -284,6 +284,8 @@ var zoteroRoam = {};
             autoCompleteCSS.textContent = `ul.zotero-search-results-list::before{content:attr(aria-label);}
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
+                                            .zotero-search-item-title{font-weight:bold;}
+                                            .zotero-search-item-tags{font-style:italic;color:#c1c0c0;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
                                             .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
