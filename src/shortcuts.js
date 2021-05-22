@@ -4,15 +4,20 @@
             closeSearchPanel: {
                 defaultShortcut: {'Escape': true},
                 execute(){
-                    if (zoteroRoam.interface.search.visible){
-                        zoteroRoam.interface.toggleSearchOverlay("hide");
+                    let openOverlay = document.querySelector(`.bp3-overlay[overlay-visible="true"]`) || false;
+                    if(openOverlay){
+                        if(Array.from(openOverlay.classList).includes(`${zoteroRoam.interface.search.overlayClass}-overlay`)){
+                            zoteroRoam.interface.toggleSearchOverlay("hide");
+                        } else if(Array.from(openOverlay.classList).includes(`${zoteroRoam.interface.citations.overlayClass}-overlay`)){
+                            zoteroRoam.interface.closeCitationsOverlay();
+                        }
                     }
                 }
             },
             toggleSearchPanel: {
                 defaultShortcut: {altKey: true, 'q': true},
                 execute(){
-                    let cmd = zoteroRoam.interface.search.visible ? "hide" : "show";
+                    let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
                     zoteroRoam.interface.toggleSearchOverlay(cmd);
                 }
             },
@@ -34,8 +39,9 @@
             focusSearchBar: {
                 defaultShortcut: [],
                 execute(){
-                    if(zoteroRoam.interface.search.visible){
-                        zoteroRoam.interface.search.input.focus();
+                    let openOverlay = document.querySelector(`.bp3-overlay[overlay-visible="true"]`) || false;
+                    if(openOverlay){
+                        openOverlay.querySelector(`input.bp3-input[type="text"]`).focus()
                     }
                 }
             },
@@ -161,8 +167,16 @@
                 let spanSeqs = document.createElement('span');
                 spanSeqs.style = `font-style:italic;`;
                 spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}  `;
-                let searchHeader = document.querySelector('.zotero-search-overlay .bp3-dialog-header');
+                let searchHeader = zoteroRoam.interface.search.overlay.querySelector(`.bp3-dialog-header`);
                 searchHeader.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
+
+                if(toggleSeqText.length > 0){
+                    let citationsSearchHeader = zoteroRoam.interface.citations.overlay.querySelector(`.bp3-dialog-header`);
+                    let spanSeq = document.createElement('span');
+                    spanSeq.style = `font-style:italic;`;
+                    spanSeq.innerHTML = `${toggleSeqText}`;
+                    citationsSearchHeader.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
+                }
             };
             // Quick Copy : toggle
             let qcText = (zoteroRoam.shortcuts.sequences["toggleQuickCopy"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleQuickCopy", pre = " ") : "";
@@ -178,7 +192,7 @@
                 spanSeq.classList.add("bp3-input-action");
                 spanSeq.style = `height:30px;padding:5px;`;
                 spanSeq.innerHTML = `${focusSearchBarText}`;
-                zoteroRoam.interface.search.input.closest('.bp3-input-group').appendChild(spanSeq);
+                Array.from(document.querySelectorAll(`#${zoteroRoam.interface.portal.id} input.bp3-input[type="text"]`)).forEach(bar => bar.closest('.bp3-input-group').appendChild(spanSeq.cloneNode(true)));
             }
             // Go to item page => in rendering of selected item
         },

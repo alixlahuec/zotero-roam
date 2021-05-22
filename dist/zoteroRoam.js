@@ -32,9 +32,14 @@ var zoteroRoam = {};
 
         Pagination: function(obj){
             this.data = obj.data;
-            this.itemsPerPage = obj.itemsPerPage;
+            this.itemsPerPage = obj.itemsPerPage || zoteroRoam.config.params.citations.itemsPerPage;
             this.currentPage = 1;
             this.nbPages = Math.ceil(obj.data.length / obj.itemsPerPage);
+            this.startIndex = (this.currentPage - 1)*this.itemsPerPage + 1;
+
+            this.getCurrentPageData = function(){
+                return this.getPageData(this.currentPage);
+            }
 
             this.getPageData = function(n){
                 return this.data.slice(start = this.itemsPerPage*(n - 1), end = this.itemsPerPage*n);
@@ -43,13 +48,13 @@ var zoteroRoam = {};
             this.previousPage = function(){
                 this.currentPage -= 1;
                 if(this.currentPage < 1){ this.currentPage = 1};
-                return this.getPageData(this.currentPage);
+                return this.getCurrentPageData();
             }
 
             this.nextPage = function(){
                 this.currentPage += 1;
                 if(this.currentPage > this.nbPages){ this.currentPage = this.nbPages};
-                return this.getPageData(this.currentPage);
+                return this.getCurrentPageData();
             }
         },
 
@@ -57,7 +62,7 @@ var zoteroRoam = {};
 
         autoComplete: null,
 
-        citationSearch: null,
+        citations: {pagination: null, autocomplete: null},
 
         config: {
             autoComplete: {
@@ -222,6 +227,9 @@ var zoteroRoam = {};
                     enabled: false,
                     format: 'citation',
                     display: 'citekey'
+                },
+                citations: {
+                    itemsPerPage: 20
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -273,7 +281,7 @@ var zoteroRoam = {};
 
         addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
-            autoCompleteCSS.textContent = `ul#zotero-search-results-list::before{content:attr(aria-label);}
+            autoCompleteCSS.textContent = `ul.zotero-search-results-list::before{content:attr(aria-label);}
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
@@ -1179,7 +1187,8 @@ var zoteroRoam = {};
                 zoteroRoam.interface.toggleContextOverlay("iconContextMenu", "show");
             }
         },
-        search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, visible: false},
+        citations: {overlay: null, input: null, closeButton: null, overlayClass: "zotero-roam-citations-search"},
+        search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, overlayClass: "zotero-search"},
         tributeTrigger: ``,
         tributeBlockTrigger: null,
         tributeNewText: ``,
@@ -1189,7 +1198,12 @@ var zoteroRoam = {};
             zoteroRoam.interface.portal.div = zoteroRoam.interface.createPortal(id = zoteroRoam.interface.portal.id);
             zoteroRoam.interface.createContextMenu(elementKey = "contextMenu");
             zoteroRoam.interface.createContextMenu(elementKey = "iconContextMenu");
-            zoteroRoam.interface.createSearchOverlay();
+            // Create search overlay
+            zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.search.overlayClass);
+            zoteroRoam.interface.fillSearchOverlay();
+            // Create citations search overlay
+            zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.citations.overlayClass);
+            zoteroRoam.interface.fillCitationsOverlay();
         },
 
         setup(){
@@ -1254,50 +1268,73 @@ var zoteroRoam = {};
             zoteroRoam.interface[`${elementKey}`].div = document.querySelector(`.${zoteroRoam.interface[`${elementKey}`].class}`);
             zoteroRoam.interface[`${elementKey}`].options.list = document.querySelectorAll(`.${zoteroRoam.interface[`${elementKey}`].options.class}`);
         },
-        // Works but ugly/long ; also, should probably move the IDs/classes in the Object above/the params at some point
-        createSearchOverlay(){
-            try{ document.querySelector(".zotero-search-overlay").remove() } catch(e){};
 
-            let searchOverlay = document.createElement("div");
-            searchOverlay.classList.add("bp3-overlay");
-            searchOverlay.classList.add("bp3-overlay-open");
-            searchOverlay.classList.add("bp3-overlay-scroll-container");
-            searchOverlay.classList.add("zotero-search-overlay");
-            searchOverlay.style = "display:none;"
+        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;"){
+            try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
+
+            let overlay = document.createElement("div");
+            overlay.classList.add("bp3-overlay");
+            overlay.classList.add("bp3-overlay-open");
+            overlay.classList.add("bp3-overlay-scroll-container");
+            overlay.classList.add(`${divClass}-overlay`);
+            overlay.setAttribute("overlay-visible", "false");
+            overlay.style = "display:none;"
         
-            let searchOverlayBackdrop = document.createElement("div");
-            searchOverlayBackdrop.classList.add("bp3-overlay-backdrop");
-            searchOverlayBackdrop.classList.add("bp3-overlay-appear-done");
-            searchOverlayBackdrop.classList.add("bp3-overlay-enter-done");
-            searchOverlayBackdrop.classList.add("zotero-search-backdrop");
-            searchOverlayBackdrop.tabIndex = "0";
+            let overlayBackdrop = document.createElement("div");
+            overlayBackdrop.classList.add("bp3-overlay-backdrop");
+            overlayBackdrop.classList.add("bp3-overlay-appear-done");
+            overlayBackdrop.classList.add("bp3-overlay-enter-done");
+            overlayBackdrop.classList.add(`${divClass}-backdrop`);
+            overlayBackdrop.tabIndex = "0";
         
-            let searchDialogContainer = document.createElement("div");
-            searchDialogContainer.classList.add("bp3-dialog-container");
-            searchDialogContainer.classList.add("bp3-overlay-content");
-            searchDialogContainer.classList.add("bp3-overlay-appear-done");
-            searchDialogContainer.classList.add("bp3-overlay-enter-done");
-            searchDialogContainer.tabIndex = "0";
+            let dialogContainer = document.createElement("div");
+            dialogContainer.classList.add("bp3-dialog-container");
+            dialogContainer.classList.add("bp3-overlay-content");
+            dialogContainer.classList.add("bp3-overlay-appear-done");
+            dialogContainer.classList.add("bp3-overlay-enter-done");
+            dialogContainer.tabIndex = "0";
         
-            let searchDialogDiv = document.createElement("div");
-            searchDialogDiv.classList.add("bp3-dialog");
-            searchDialogDiv.style = "width:60%;align-self:baseline;";
+            let dialogDiv = document.createElement("div");
+            dialogDiv.classList.add("bp3-dialog");
+            dialogDiv.style = dialogCSS;
         
-            let searchDialogHeader = document.createElement("div");
-            searchDialogHeader.classList.add("bp3-dialog-header");
+            let dialogHeader = document.createElement("div");
+            dialogHeader.classList.add("bp3-dialog-header");
             
-            let searchDialogBody = document.createElement("div");
-            searchDialogBody.classList.add("bp3-dialog-body");
+            let dialogBody = document.createElement("div");
+            dialogBody.classList.add("bp3-dialog-body");
         
-            let searchDialogFooter = document.createElement("div");
-            searchDialogFooter.classList.add("bp3-dialog-footer");
+            let dialogFooter = document.createElement("div");
+            dialogFooter.classList.add("bp3-dialog-footer");
         
-            // Add header elements
-            searchDialogHeader.innerHTML = `<label class="bp3-control bp3-switch" style="margin-bottom:0px;flex: 1 1 auto;">
-                                            <input id="zotero-quick-copy-mode" type="checkbox"><span class="bp3-control-indicator"></span>Quick Copy</label>
-                                            <button type="button" aria-label="Close" class="zotero-search-close bp3-button bp3-minimal bp3-dialog-close-button">
+            // Set close button
+            dialogHeader.innerHTML = `<button type="button" aria-label="Close" class="zotero-search-close bp3-button bp3-minimal bp3-dialog-close-button">
                                             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>`
         
+            // Chain up all the DOM elements
+        
+            dialogDiv.appendChild(dialogHeader);
+            dialogDiv.appendChild(dialogBody);
+            dialogDiv.appendChild(dialogFooter);
+        
+            dialogContainer.appendChild(dialogDiv);
+        
+            overlay.appendChild(overlayBackdrop);
+            overlay.appendChild(dialogContainer);
+        
+            zoteroRoam.interface.portal.div.appendChild(overlay);
+
+        },
+
+        fillSearchOverlay(divClass = zoteroRoam.interface.search.overlayClass){
+            let searchDialogHeader = document.querySelector(`.${divClass}-overlay .bp3-dialog-header`);
+            let searchDialogBody = document.querySelector(`.${divClass}-overlay .bp3-dialog-body`);
+            let searchDialogFooter = document.querySelector(`.${divClass}-overlay .bp3-dialog-footer`);
+
+            // Add header elements
+            searchDialogHeader.innerHTML = `<label class="bp3-control bp3-switch" style="margin-bottom:0px;flex: 1 1 auto;">
+            <input id="zotero-quick-copy-mode" type="checkbox"><span class="bp3-control-indicator"></span>Quick Copy</label>` + searchDialogHeader.innerHTML;
+
             // Add body elements
             let parText = document.createElement("p");
             parText.innerHTML = `<strong>Enter text below to look for items* in your loaded Zotero dataset.</strong>
@@ -1331,7 +1368,7 @@ var zoteroRoam = {};
             selectedItemDiv.appendChild(selectedItemGraphInfo);
         
             searchDialogBody.appendChild(selectedItemDiv);
-        
+
             // Add footer elements
             searchDialogFooter.innerHTML = `<div class="bp3-dialog-footer-actions">
                                             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
@@ -1339,25 +1376,60 @@ var zoteroRoam = {};
                                                 <button type="button" class="zotero-update-data bp3-button">
                                             <span class="bp3-button-text">Update Zotero data</span>
                                             </button></span></div>`
-        
-            // Chain up all the DOM elements
-        
-            searchDialogDiv.appendChild(searchDialogHeader);
-            searchDialogDiv.appendChild(searchDialogBody);
-            searchDialogDiv.appendChild(searchDialogFooter);
-        
-            searchDialogContainer.appendChild(searchDialogDiv);
-        
-            searchOverlay.appendChild(searchOverlayBackdrop);
-            searchOverlay.appendChild(searchDialogContainer);
-        
-            zoteroRoam.interface.portal.div.appendChild(searchOverlay);
-            zoteroRoam.interface.search.overlay = document.querySelector(".zotero-search-overlay");
 
+            // Storing info in variables
+            zoteroRoam.interface.search.overlay = document.querySelector(`.${divClass}-overlay`);
             zoteroRoam.interface.search.input = document.querySelector("#zotero-search-autocomplete");
             zoteroRoam.interface.search.selectedItemDiv = document.querySelector("#zotero-search-selected-item");
-            zoteroRoam.interface.search.closeButton = document.querySelector("button.zotero-search-close");
-            zoteroRoam.interface.search.updateButton = document.querySelector("button.zotero-update-data");
+            zoteroRoam.interface.search.closeButton = document.querySelector(`.${divClass}-overlay button.zotero-search-close`);
+            zoteroRoam.interface.search.updateButton = document.querySelector(`.${divClass}-overlay button.zotero-update-data`);
+        },
+
+        fillCitationsOverlay(divClass = zoteroRoam.interface.citations.overlayClass){
+            let citationsDialogBody = document.querySelector(`.${divClass}-overlay .bp3-dialog-body`);
+
+            // Add body elements
+            let inputGroup = document.createElement('div');
+            inputGroup.classList.add("bp3-input-group");
+        
+            let searchBar = document.createElement('input');
+            searchBar.id = "zotero-roam-citations-autocomplete";
+            searchBar.tabIndex = "1";
+            searchBar.type = "text";
+            searchBar.classList.add("bp3-input");
+            searchBar.classList.add("bp3-fill");
+            searchBar.style = "margin-bottom:20px;"
+            inputGroup.appendChild(searchBar);
+
+            let paginatedList = document.createElement('ul');
+            paginatedList.id = "zotero-roam-citations-pagination";
+            paginatedList.classList.add("zotero-search-results-list");
+            paginatedList.classList.add("bp3-menu");
+            paginatedList.tabIndex = "-1";
+            paginatedList.setAttribute("role", "listbox");
+            inputGroup.appendChild(paginatedList);
+
+            citationsDialogBody.appendChild(inputGroup);
+            
+            // Storing info in variables
+            zoteroRoam.interface.citations.overlay = document.querySelector(`.${divClass}-overlay`);
+            zoteroRoam.interface.citations.input = document.querySelector("#zotero-roam-citations-autocomplete");
+            zoteroRoam.interface.citations.closeButton = document.querySelector(`.${divClass}-overlay button.zotero-search-close`);
+        },
+
+        renderCitationsPagination(){
+            let paginatedList = document.querySelector("#zotero-roam-citations-pagination");
+            let page = zoteroRoam.citations.pagination.getCurrentPageData();
+            // Set aria-label of paginatedList to indicate results shown
+            paginatedList.setAttribute("aria-label", `Showing results ${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length} out of ${zoteroRoam.citations.pagination.data.length}`);
+            // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
+            paginatedList.innerHTML = page.map(cit => {
+                return `
+                <li>${cit.metadata}</li>
+                `
+            });
+            
+            // Check: are page controls rigged with an event listener already ?
         },
 
         setupContextMenus(elementsKeys){
@@ -1399,14 +1471,34 @@ var zoteroRoam = {};
                 console.log("Opening the Search Panel")
                 zoteroRoam.interface.search.input.focus();
                 zoteroRoam.interface.search.input.value = "";
-                zoteroRoam.interface.search.visible = true
+                zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");
             } else {
                 console.log("Closing the Search Panel")
                 zoteroRoam.interface.clearSelectedItem();
                 zoteroRoam.interface.search.input.value = "";
                 document.querySelector('input.clipboard-copy-utility').value = "";
-                zoteroRoam.interface.search.visible = false
+                zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "false");
             }
+        },
+
+        popCitationsOverlay(doi){
+            // All citations -- paginated
+            let fullData = zoteroRoam.data.scite.find(item => item.doi == doi).simplified;
+            zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
+            // Render HTML for pagination
+            zoteroRoam.interface.renderCitationsPagination();
+            // Setup autocomplete
+            // Make overlay visible
+            zoteroRoam.interface.citations.overlay.style.display = "block";
+            zoteroRoam.interface.citations.input.value = "";
+            zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "true");
+            zoteroRoam.interface.citations.input.focus();
+        },
+
+        closeCitationsOverlay(){
+            zoteroRoam.interface.citations.overlay.style.display = "none";
+            zoteroRoam.interface.citations.input.value = "";
+            zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "false");
         },
 
         popContextOverlay(e, elementKey){
@@ -2061,6 +2153,13 @@ var zoteroRoam = {};
                                     }
                                 })
                             } catch(e){};
+                            try{
+                                let citationsButton = menuDiv.querySelector(".zotero-roam-page-menu-backlinks-total");
+                                citationsButton.addEventListener("click", function(){
+                                    let doi = citationsButton.getAttribute("data-doi");
+                                    zoteroRoam.interface.popCitationsOverlay(doi);
+                                });
+                            } catch(e){};
                         }
 
                         // Badge from scite.ai
@@ -2225,15 +2324,20 @@ var zoteroRoam = {};
             closeSearchPanel: {
                 defaultShortcut: {'Escape': true},
                 execute(){
-                    if (zoteroRoam.interface.search.visible){
-                        zoteroRoam.interface.toggleSearchOverlay("hide");
+                    let openOverlay = document.querySelector(`.bp3-overlay[overlay-visible="true"]`) || false;
+                    if(openOverlay){
+                        if(Array.from(openOverlay.classList).includes(`${zoteroRoam.interface.search.overlayClass}-overlay`)){
+                            zoteroRoam.interface.toggleSearchOverlay("hide");
+                        } else if(Array.from(openOverlay.classList).includes(`${zoteroRoam.interface.citations.overlayClass}-overlay`)){
+                            zoteroRoam.interface.closeCitationsOverlay();
+                        }
                     }
                 }
             },
             toggleSearchPanel: {
                 defaultShortcut: {altKey: true, 'q': true},
                 execute(){
-                    let cmd = zoteroRoam.interface.search.visible ? "hide" : "show";
+                    let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
                     zoteroRoam.interface.toggleSearchOverlay(cmd);
                 }
             },
@@ -2255,8 +2359,9 @@ var zoteroRoam = {};
             focusSearchBar: {
                 defaultShortcut: [],
                 execute(){
-                    if(zoteroRoam.interface.search.visible){
-                        zoteroRoam.interface.search.input.focus();
+                    let openOverlay = document.querySelector(`.bp3-overlay[overlay-visible="true"]`) || false;
+                    if(openOverlay){
+                        openOverlay.querySelector(`input.bp3-input[type="text"]`).focus()
                     }
                 }
             },
@@ -2382,8 +2487,16 @@ var zoteroRoam = {};
                 let spanSeqs = document.createElement('span');
                 spanSeqs.style = `font-style:italic;`;
                 spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}  `;
-                let searchHeader = document.querySelector('.zotero-search-overlay .bp3-dialog-header');
+                let searchHeader = zoteroRoam.interface.search.overlay.querySelector(`.bp3-dialog-header`);
                 searchHeader.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
+
+                if(toggleSeqText.length > 0){
+                    let citationsSearchHeader = zoteroRoam.interface.citations.overlay.querySelector(`.bp3-dialog-header`);
+                    let spanSeq = document.createElement('span');
+                    spanSeq.style = `font-style:italic;`;
+                    spanSeq.innerHTML = `${toggleSeqText}`;
+                    citationsSearchHeader.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
+                }
             };
             // Quick Copy : toggle
             let qcText = (zoteroRoam.shortcuts.sequences["toggleQuickCopy"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleQuickCopy", pre = " ") : "";
@@ -2399,7 +2512,7 @@ var zoteroRoam = {};
                 spanSeq.classList.add("bp3-input-action");
                 spanSeq.style = `height:30px;padding:5px;`;
                 spanSeq.innerHTML = `${focusSearchBarText}`;
-                zoteroRoam.interface.search.input.closest('.bp3-input-group').appendChild(spanSeq);
+                Array.from(document.querySelectorAll(`#${zoteroRoam.interface.portal.id} input.bp3-input[type="text"]`)).forEach(bar => bar.closest('.bp3-input-group').appendChild(spanSeq.cloneNode(true)));
             }
             // Go to item page => in rendering of selected item
         },

@@ -32,9 +32,14 @@ var zoteroRoam = {};
 
         Pagination: function(obj){
             this.data = obj.data;
-            this.itemsPerPage = obj.itemsPerPage;
+            this.itemsPerPage = obj.itemsPerPage || zoteroRoam.config.params.citations.itemsPerPage;
             this.currentPage = 1;
             this.nbPages = Math.ceil(obj.data.length / obj.itemsPerPage);
+            this.startIndex = (this.currentPage - 1)*this.itemsPerPage + 1;
+
+            this.getCurrentPageData = function(){
+                return this.getPageData(this.currentPage);
+            }
 
             this.getPageData = function(n){
                 return this.data.slice(start = this.itemsPerPage*(n - 1), end = this.itemsPerPage*n);
@@ -43,13 +48,13 @@ var zoteroRoam = {};
             this.previousPage = function(){
                 this.currentPage -= 1;
                 if(this.currentPage < 1){ this.currentPage = 1};
-                return this.getPageData(this.currentPage);
+                return this.getCurrentPageData();
             }
 
             this.nextPage = function(){
                 this.currentPage += 1;
                 if(this.currentPage > this.nbPages){ this.currentPage = this.nbPages};
-                return this.getPageData(this.currentPage);
+                return this.getCurrentPageData();
             }
         },
 
@@ -57,7 +62,7 @@ var zoteroRoam = {};
 
         autoComplete: null,
 
-        citationSearch: null,
+        citations: {pagination: null, autocomplete: null},
 
         config: {
             autoComplete: {
@@ -222,6 +227,9 @@ var zoteroRoam = {};
                     enabled: false,
                     format: 'citation',
                     display: 'citekey'
+                },
+                citations: {
+                    itemsPerPage: 20
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -273,7 +281,7 @@ var zoteroRoam = {};
 
         addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
-            autoCompleteCSS.textContent = `ul#zotero-search-results-list::before{content:attr(aria-label);}
+            autoCompleteCSS.textContent = `ul.zotero-search-results-list::before{content:attr(aria-label);}
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}

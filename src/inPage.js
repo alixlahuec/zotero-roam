@@ -244,6 +244,13 @@
                                     }
                                 })
                             } catch(e){};
+                            try{
+                                let citationsButton = menuDiv.querySelector(".zotero-roam-page-menu-backlinks-total");
+                                citationsButton.addEventListener("click", function(){
+                                    let doi = citationsButton.getAttribute("data-doi");
+                                    zoteroRoam.interface.popCitationsOverlay(doi);
+                                });
+                            } catch(e){};
                         }
 
                         // Badge from scite.ai
