@@ -1462,6 +1462,9 @@ var zoteroRoam = {};
                 control.addEventListener("click", (e) => { zoteroRoam.interface.changePage(goto = control.getAttribute("goto")) });
             })
 
+            // Rigging close overlay button
+            zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
+
         },
 
         renderCitationsPagination(){
