@@ -210,9 +210,18 @@ var zoteroRoam = {};
                             return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
                         }
                     },
-                    key: ['year', 'title', 'keywords', 'authors', 'metadata']
+                    key: ['year', 'title', 'keywords', 'authors', 'metadata'],
+                    results: (list) => {
+                        // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
+                        const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
+                            return list.filter(item => item.index === index).sort((a,b) => {
+                                return zoteroRoam.config.citationsSearch.data.key.findIndex(key => key == a.key) < zoteroRoam.config.citationsSearch.data.key.findIndex(key => b.key) ? -1 : 1;
+                            })[0];
+                        });
+                        return filteredMatches;
+                    }
                 },
-                selector: '#zotero-roam-search-citations',
+                selector: '#zotero-roam-citations-autocomplete',
                 searchEngine: (query, record) => {
                     return zoteroRoam.utils.multiwordMatch(query, record)
                 },
