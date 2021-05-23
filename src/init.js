@@ -294,6 +294,7 @@ var zoteroRoam = {};
                                             .zotero-search-item-title{font-weight:bold;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;font-weight:300;}
+                                            .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
                                             .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}

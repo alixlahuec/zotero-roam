@@ -294,6 +294,7 @@ var zoteroRoam = {};
                                             .zotero-search-item-title{font-weight:bold;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;font-weight:300;}
+                                            .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
                                             .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
@@ -1476,7 +1477,7 @@ var zoteroRoam = {};
             paginatedList.setAttribute("aria-label", `${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1} out of ${zoteroRoam.citations.pagination.data.length} results`);
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let titleEl = `<span class="zotero-search-item-title" style="display:block;" ${cit.inLibrary ? 'in-library="true"' : ""}>${cit.title}${cit.year ? " (" + cit.year + ")" : ""}${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
+                let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title}${cit.year ? " (" + cit.year + ")" : ""}${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
                 let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
@@ -1495,13 +1496,13 @@ var zoteroRoam = {};
                             linksArray.push(`<span class="zotero-roam-citation-link" service="google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`);
                             break;
                     }
-                    linksEl += linksArray.join(" • ");
+                    linksEl += linksArray.join(" &#8226; ");
                 }
 
                 let authorsEl = `<span class="bp3-menu-item-label zotero-search-item-key">${cit.authors}</span>`
 
                 return `
-                <li class="zotero-roam-citations-search_result">
+                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citations-search-item-contents">
                 ${titleEl}
