@@ -269,6 +269,12 @@
             // Rigging close overlay button
             zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
 
+            // Rigging display of search results
+            zoteroRoam.interface.citations.input.addEventListener("results", (e) => {
+                zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: e.detail.results.map(res => res.value)});
+                zoteroRoam.interface.renderCitationsPagination();
+            })
+
         },
 
         renderCitationsPagination(){

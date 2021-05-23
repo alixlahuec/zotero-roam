@@ -37,6 +37,12 @@
                 zoteroRoam.config.autoComplete.trigger.event.forEach(ev => {
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
+                // Setup the citations search object
+                if(zoteroRoam.pagination.autocomplete == null){
+                    zoteroRoam.pagination.autocomplete = new autoComplete(zoteroRoam.config.citationsSearch);
+                } else {
+                    zoteroRoam.pagination.autocomplete.init();
+                }
                 // Setup observer for autocompletion tribute
                 if(zoteroRoam.config.params.autocomplete.enabled == true){
                     zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
@@ -56,9 +62,12 @@
 
         unload(){
             zoteroRoam.interface.icon.setAttribute("status", "off");
-            zoteroRoam.data = {items: [], collections: []};
+            zoteroRoam.data = {items: [], collections: [], scite: []};
             if(zoteroRoam.autoComplete !== null){
                 zoteroRoam.autoComplete.unInit();
+            }
+            if(zoteroRoam.citations.autocomplete !== null){
+                zoteroRoam.citations.autocomplete.unInit();
             }
 
             // Remove in-page menus

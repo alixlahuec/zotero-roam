@@ -68,7 +68,7 @@ var zoteroRoam = {};
 
         autoComplete: null,
 
-        citations: {pagination: null, autocomplete: null},
+        citations: {pagination: null, autocomplete: null, currentDOI: ""},
 
         config: {
             autoComplete: {
@@ -201,6 +201,30 @@ var zoteroRoam = {};
                     }
                 }
             },
+            citationsSearch: {
+                data: {
+                    src: async function(){
+                        if(zoteroRoam.citations.currentDOI.length == 0){
+                            return [];
+                        } else {
+                            return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
+                        }
+                    },
+                    key: ['year', 'title', 'keywords', 'authors', 'metadata']
+                },
+                selector: '#zotero-roam-search-citations',
+                searchEngine: (query, record) => {
+                    return zoteroRoam.utils.multiwordMatch(query, record)
+                },
+                trigger: {
+                    event: ['input']
+                },
+                highlight: true,
+                maxResults: zoteroRoam.data.items.length,
+                resultsList: {
+                    render: false
+                }
+            },
             // The tribute's `values` property is set when the tribute is attached to the textarea
             // This is to reflect the most up-to-date version of the dataset
             // Otherwise it could be done here, using cb(), but results were piling up when using that instead of being replaced (function was called at every keystroke I think)
@@ -293,7 +317,8 @@ var zoteroRoam = {};
                                             .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
                                             .zotero-search-item-title{font-weight:bold;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
-                                            .zotero-roam-citation-link{padding: 0 5px;font-weight:300;}
+                                            .zotero-roam-citation-link{padding: 0 5px;}
+                                            .zotero-roam-citation-link a{font-weight: 200; color: lightblue;}
                                             .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
                                             .selected-item-header{margin-bottom:20px;}
@@ -1459,6 +1484,12 @@ var zoteroRoam = {};
             // Rigging close overlay button
             zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
 
+            // Rigging display of search results
+            zoteroRoam.interface.citations.input.addEventListener("results", (e) => {
+                zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: e.detail.results.map(res => res.value)});
+                zoteroRoam.interface.renderCitationsPagination();
+            })
+
         },
 
         renderCitationsPagination(){
@@ -1889,6 +1920,12 @@ var zoteroRoam = {};
                 zoteroRoam.config.autoComplete.trigger.event.forEach(ev => {
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
+                // Setup the citations search object
+                if(zoteroRoam.pagination.autocomplete == null){
+                    zoteroRoam.pagination.autocomplete = new autoComplete(zoteroRoam.config.citationsSearch);
+                } else {
+                    zoteroRoam.pagination.autocomplete.init();
+                }
                 // Setup observer for autocompletion tribute
                 if(zoteroRoam.config.params.autocomplete.enabled == true){
                     zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
@@ -1908,9 +1945,12 @@ var zoteroRoam = {};
 
         unload(){
             zoteroRoam.interface.icon.setAttribute("status", "off");
-            zoteroRoam.data = {items: [], collections: []};
+            zoteroRoam.data = {items: [], collections: [], scite: []};
             if(zoteroRoam.autoComplete !== null){
                 zoteroRoam.autoComplete.unInit();
+            }
+            if(zoteroRoam.citations.autocomplete !== null){
+                zoteroRoam.citations.autocomplete.unInit();
             }
 
             // Remove in-page menus
