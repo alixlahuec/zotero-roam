@@ -931,7 +931,7 @@ var zoteroRoam = {};
                     citations: citeList || []
                 };
                 citeObject.citations.forEach((cit, index) => {
-                    let libDOIs = zoteroRoam.data.items.find(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                    let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
                     if(libDOIs.includes(cit.doi)){
                         citeObject.citations[index].inLibrary = true;
                     }            
