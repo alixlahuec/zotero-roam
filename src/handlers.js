@@ -441,12 +441,14 @@
                                 } else {
                                     return ` and ${auth}`;
                                 }
-                            });
+                            }).join("");
                         }
-                    };
-                    simplifiedCitation.authors = authors.join("");
+                    } else {
+                        authors = "";
+                    }
+                    simplifiedCitation.authors = authors;
                     // Create metadata string
-                    simplifiedCitation.metadata = `${authors.join("")}${cit.year ? " (" + cit.year + ")" : ""} : ${cit.title}`;
+                    simplifiedCitation.metadata = `${authors}${cit.year ? " (" + cit.year + ")" : ""} : ${cit.title}`;
                     // Mark items that are in library
                     if(cit.inLibrary){
                         simplifiedCitation.inLibrary = true;
