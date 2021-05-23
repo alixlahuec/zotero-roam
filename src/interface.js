@@ -248,7 +248,7 @@
             pageControls.classList.add("bp3-button-group");
             pageControls.innerHTML = `
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
-            ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", button: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
+            ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
             `
             pagination.appendChild(pageControls);
 
@@ -269,6 +269,12 @@
             zoteroRoam.interface.citations.overlay = document.querySelector(`.${divClass}-overlay`);
             zoteroRoam.interface.citations.input = document.querySelector("#zotero-roam-citations-autocomplete");
             zoteroRoam.interface.citations.closeButton = document.querySelector(`.${divClass}-overlay button.zotero-search-close`);
+
+            // Rigging page controls
+            Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(".zotero-roam-page-control")).forEach(control => {
+                control.addEventListener("click", (e) => { zoteroRoam.interface.changePage(goto = control.getAttribute("goto")) });
+            })
+
         },
 
         renderCitationsPagination(){
@@ -278,24 +284,26 @@
             paginatedList.setAttribute("aria-label", `${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1} out of ${zoteroRoam.citations.pagination.data.length} results`);
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title}${cit.year ? " (" + cit.year + ")" : ""}</span>`;
+                let titleEl = `<span class="zotero-search-item-title" style="display:block;" ${cit.inLibrary ? 'in-library="true"' : ""}>${cit.title}${cit.year ? " (" + cit.year + ")" : ""}${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
                 let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
+                    let linksArray = [];
                     switch(service){
                         case "scite":
-                            linksEl += `<span class="zotero-roam-citation-link-scite"><a href="${cit.links[service]}" target="_blank">Scite</a></span>`;
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="scite"><a href="${cit.links[service]}" target="_blank">Scite</a></span>`);
                             break;
                         case "connectedPapers":
-                            linksEl += `<span class="zotero-roam-citation-link-connected-papers"><a href="${cit.links[service]}" target="_blank">Connected Papers</a></span>`;
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="connected-papers"><a href="${cit.links[service]}" target="_blank">Connected Papers</a></span>`);
                             break;
                         case "semanticScholar":
-                            linksEl += `<span class="zotero-roam-citation-link-semantic-scholar"><a href="${cit.links[service]}" target="_blank">Semantic Scholar</a></span>`;
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="semantic-scholar"><a href="${cit.links[service]}" target="_blank">Semantic Scholar</a></span>`);
                             break;
                         case "googleScholar":
-                            linksEl += `<span class="zotero-roam-citation-link-google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`;
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`);
                             break;
                     }
+                    linksEl += linksArray.join(" • ");
                 }
 
                 let authorsEl = `<span class="bp3-menu-item-label zotero-search-item-key">${cit.authors}</span>`
@@ -363,23 +371,23 @@
             }
         },
 
+        changePage(goto){
+            if(zoteroRoam.citations.pagination !== null){
+                switch(goto){
+                    case "previous":
+                        zoteroRoam.citations.pagination.previousPage();
+                        break;
+                    case "next":
+                        zoteroRoam.citations.pagination.nextPage();
+                        break;
+                }
+            }
+        },
+
         popCitationsOverlay(doi){
-            let isFirstCall = zoteroRoam.citations.pagination == null;
             // All citations -- paginated
             let fullData = zoteroRoam.data.scite.find(item => item.doi == doi).simplified;
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
-            // If first call, rig page controls
-            if(isFirstCall){
-                Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(".zotero-roam-page-control")).forEach(control => {
-                    switch(control.getAttribute("goto")){
-                        case "previous":
-                            control.addEventListener("click", zoteroRoam.citations.pagination.previousPage);
-                            break;
-                        case "next":
-                            control.addEventListener("click", zoteroRoam.citations.pagination.nextPage);
-                    }
-                })
-            }
             // Render HTML for pagination
             zoteroRoam.interface.renderCitationsPagination();
             // Setup autocomplete

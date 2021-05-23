@@ -280,6 +280,12 @@
                     doi: doi,
                     citations: citeList || []
                 };
+                citeObject.citations.forEach((cit, index) => {
+                    let libDOIs = zoteroRoam.data.items.find(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                    if(libDOIs.includes(cit.doi)){
+                        citeObject.citations[index].inLibrary = true;
+                    }            
+                });
                 citeObject.simplified = zoteroRoam.handlers.simplifyCitationsObject(citeObject.citations);
                 citeObject.keywords = zoteroRoam.handlers.getCitationsKeywordsCounts(citeObject.citations);
 
@@ -424,19 +430,27 @@
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
                     if(authors.length > 0){
-                        authors = authors.map((auth, i) => {
-                            if(i == 0){
-                                return auth;
-                            } else if(i < authors.length - 1){
-                                return `, ${auth}`;                        
-                            } else {
-                                return ` and ${auth}`;
-                            }
-                        });
+                        if(authors.length > 4){
+                            authors = authors.slice(0, 3).join(", ") + " et al.";
+                        } else{
+                            authors = authors.map((auth, i) => {
+                                if(i == 0){
+                                    return auth;
+                                } else if(i < authors.length - 1){
+                                    return `, ${auth}`;                        
+                                } else {
+                                    return ` and ${auth}`;
+                                }
+                            });
+                        }
                     };
                     simplifiedCitation.authors = authors.join("");
                     // Create metadata string
                     simplifiedCitation.metadata = `${authors.join("")}${cit.year ? " (" + cit.year + ")" : ""} : ${cit.title}`;
+                    // Mark items that are in library
+                    if(cit.inLibrary){
+                        simplifiedCitation.inLibrary = true;
+                    }
                     // Create links :
                     // Connected Papers
                     simplifiedCitation.links.connectedPapers = `https://www.connectedpapers.com/${(!cit.doi) ? "search?q=" + encodeURIComponent(cit.title) : "api/redirect/doi/" + cit.doi}`;

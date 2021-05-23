@@ -37,6 +37,10 @@ var zoteroRoam = {};
             this.nbPages = Math.ceil(this.data.length / this.itemsPerPage);
             this.startIndex = (this.currentPage - 1)*this.itemsPerPage + 1;
 
+            this.updateStartIndex = function(){
+                this.startIndex = (this.currentPage - 1)*this.itemsPerPage + 1;
+            }
+
             this.getCurrentPageData = function(){
                 return this.getPageData(this.currentPage);
             }
@@ -48,12 +52,14 @@ var zoteroRoam = {};
             this.previousPage = function(){
                 this.currentPage -= 1;
                 if(this.currentPage < 1){ this.currentPage = 1};
+                this.updateStartIndex();
                 zoteroRoam.interface.renderCitationsPagination();
             }
 
             this.nextPage = function(){
                 this.currentPage += 1;
                 if(this.currentPage > this.nbPages){ this.currentPage = this.nbPages};
+                this.updateStartIndex();
                 zoteroRoam.interface.renderCitationsPagination();
             }
         },
@@ -286,7 +292,8 @@ var zoteroRoam = {};
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
                                             .zotero-search-item-title{font-weight:bold;}
-                                            .zotero-search-item-tags{font-style:italic;color:#c1c0c0;}
+                                            .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
+                                            .zotero-roam-citation-link{padding: 0 5px;font-weight:300;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
                                             .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
