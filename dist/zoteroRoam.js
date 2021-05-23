@@ -1442,15 +1442,6 @@ var zoteroRoam = {};
             `
             pagination.appendChild(pageControls);
 
-            let paginatedList = document.createElement('ul');
-            paginatedList.id = "zotero-roam-citations-pagination";
-            paginatedList.classList.add("zotero-search-results-list");
-            paginatedList.classList.add("bp3-menu");
-            paginatedList.tabIndex = "-1";
-            paginatedList.setAttribute("role", "listbox");
-            paginatedList.innerText = "Loading";
-            pagination.appendChild(paginatedList)
-
             inputGroup.appendChild(pagination);
 
             citationsDialogBody.appendChild(inputGroup);
@@ -1471,7 +1462,18 @@ var zoteroRoam = {};
         },
 
         renderCitationsPagination(){
-            let paginatedList = document.querySelector("#zotero-roam-citations-pagination ul");
+            let paginationDiv = document.querySelector("#zotero-roam-citations-pagination");
+
+            let paginatedList = paginationDiv.querySelector("ul");
+            if(paginatedList == null){
+                paginatedList = document.createElement('ul');
+                paginatedList.classList.add("zotero-search-results-list");
+                paginatedList.classList.add("bp3-menu");
+                paginatedList.tabIndex = "-1";
+                paginatedList.setAttribute("role", "listbox");
+                paginationDiv.appendChild(paginatedList);
+            }
+
             let page = zoteroRoam.citations.pagination.getCurrentPageData();
             // Set aria-label of paginatedList to indicate results shown
             paginatedList.setAttribute("aria-label", `${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1} out of ${zoteroRoam.citations.pagination.data.length} results`);
@@ -1513,6 +1515,7 @@ var zoteroRoam = {};
                 </div></li>
                 `
             }).join("");
+
         },
 
         setupContextMenus(elementsKeys){
