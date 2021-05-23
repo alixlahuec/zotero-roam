@@ -37,13 +37,6 @@
                 zoteroRoam.config.autoComplete.trigger.event.forEach(ev => {
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
                 })
-                // Setup the citations search object
-                if(zoteroRoam.pagination.autocomplete == null){
-                    zoteroRoam.config.citationsSearch.maxResults = zoteroRoam.data.items.length;
-                    zoteroRoam.pagination.autocomplete = new autoComplete(zoteroRoam.config.citationsSearch);
-                } else {
-                    zoteroRoam.pagination.autocomplete.init();
-                }
                 // Setup observer for autocompletion tribute
                 if(zoteroRoam.config.params.autocomplete.enabled == true){
                     zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);

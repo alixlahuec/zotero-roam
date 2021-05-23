@@ -397,12 +397,19 @@
         },
 
         popCitationsOverlay(doi){
+            zoteroRoam.citations.currentDOI = doi;
             // All citations -- paginated
             let fullData = zoteroRoam.data.scite.find(item => item.doi == doi).simplified;
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
             // Render HTML for pagination
             zoteroRoam.interface.renderCitationsPagination();
             // Setup autocomplete
+            if(zoteroRoam.citations.autocomplete == null){
+                zoteroRoam.config.citationsSearch.maxResults = zoteroRoam.data.items.length;
+                zoteroRoam.citations.autocomplete = new autoComplete(zoteroRoam.config.citationsSearch);
+            } else {
+                zoteroRoam.citations.autocomplete.init();
+            }
             // Make overlay visible
             zoteroRoam.interface.citations.overlay.style.display = "block";
             zoteroRoam.interface.citations.input.value = "";
