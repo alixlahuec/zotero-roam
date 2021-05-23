@@ -220,7 +220,7 @@ var zoteroRoam = {};
                     event: ['input']
                 },
                 highlight: true,
-                maxResults: zoteroRoam.data.items.length,
+                maxResults: 100,
                 resultsList: {
                     render: false
                 }
@@ -1922,6 +1922,7 @@ var zoteroRoam = {};
                 })
                 // Setup the citations search object
                 if(zoteroRoam.pagination.autocomplete == null){
+                    zoteroRoam.config.citationsSearch.maxResults = zoteroRoam.data.items.length;
                     zoteroRoam.pagination.autocomplete = new autoComplete(zoteroRoam.config.citationsSearch);
                 } else {
                     zoteroRoam.pagination.autocomplete.init();

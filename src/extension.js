@@ -39,6 +39,7 @@
                 })
                 // Setup the citations search object
                 if(zoteroRoam.pagination.autocomplete == null){
+                    zoteroRoam.config.citationsSearch.maxResults = zoteroRoam.data.items.length;
                     zoteroRoam.pagination.autocomplete = new autoComplete(zoteroRoam.config.citationsSearch);
                 } else {
                     zoteroRoam.pagination.autocomplete.init();

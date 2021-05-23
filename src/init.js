@@ -220,7 +220,7 @@ var zoteroRoam = {};
                     event: ['input']
                 },
                 highlight: true,
-                maxResults: zoteroRoam.data.items.length,
+                maxResults: 100,
                 resultsList: {
                     render: false
                 }
