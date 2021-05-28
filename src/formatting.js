@@ -50,8 +50,8 @@
                     childrenObject.pdfItems = (pdfResults.length == 0) ? false : pdfResults;
                     break;
                 case "identity":
-                    let pdfResults = itemChildren.filter(c => c.data.contentType == "application/pdf");
-                    childrenObject.pdfItems = (pdfResults.length == 0) ? false : pdfResults.map(file => {return {title: file.data.title, key: file.key, link: zoteroRoam.utils.makePDFLinks(file)}});
+                    let pdfIdentity = itemChildren.filter(c => c.data.contentType == "application/pdf");
+                    childrenObject.pdfItems = (pdfIdentity.length == 0) ? false : pdfIdentity.map(file => {return {title: file.data.title, key: file.key, link: zoteroRoam.utils.makePDFLinks(file)}});
                     break;
                 case "links":
                     childrenObject.pdfItems = zoteroRoam.utils.makePDFLinks(itemChildren.filter(c => c.data.contentType == "application/pdf"));
