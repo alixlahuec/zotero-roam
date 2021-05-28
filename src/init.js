@@ -232,6 +232,10 @@ var zoteroRoam = {};
                 maxResults: 100,
                 resultsList: {
                     render: false
+                },
+                feedback: (data) => {
+                    zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: data.results.map(res => res.value)});
+                    zoteroRoam.interface.renderCitationsPagination();
                 }
             },
             // The tribute's `values` property is set when the tribute is attached to the textarea
@@ -328,6 +332,7 @@ var zoteroRoam = {};
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;}
                                             .zotero-roam-citation-link a{font-weight: 200; color: lightblue;}
+                                            .zotero-roam-citations-results-count{padding: 6px 10px;}
                                             .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
                                             .selected-item-header{margin-bottom:20px;}

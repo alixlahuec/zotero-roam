@@ -45,7 +45,7 @@
         zoteroRoam.handlers.setupUserRequests();
 
         if(zoteroRoam.config.userSettings.autoload == true){
-            zoteroRoam.extension.load();
+            setTimeout(function(){zoteroRoam.extension.load()}, 1000);
         }
 
     } else {

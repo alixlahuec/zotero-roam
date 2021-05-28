@@ -55,11 +55,11 @@
                     return `[[@${item.key}]]`;
                 case 'citation':
                     let citeText = item.meta.creatorSummary || ``;
-                    citeText = item.meta.parsedDate ? `${citeText} (${new Date(item.meta.parsedDate).getFullYear()})` : citeText;
+                    citeText = item.meta.parsedDate ? `${citeText} (${new Date(item.meta.parsedDate).getUTCFullYear()})` : citeText;
                     citeText = `[${(citeText.length > 0) ? citeText : item.key}]([[@${item.key}]])`
                     return citeText;
                 case 'zettlr':
-                    return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getFullYear()})` : ``) + ` : ` + item.data.title;
+                    return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + ` : ` + item.data.title;
                 case 'citekey':
                 default:
                     return `@${item.key}`;
@@ -132,11 +132,17 @@
             }
         },
 
+        makeLinkToPDF(item){
+            return (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode) ? `[${item.data.filename || item.data.title}](zotero://open-pdf/library/items/${item.data.key})` : `[${item.data.title}](${item.data.url})`);
+        },
+
         // Given an Array of PDF items, returns an Array of Markdown-style links. If a PDF is a `linked_file` or `imported_file`, make a local Zotero open link / else, make a link to the URL
-        makePDFLinks(arr){
-            if(arr.length > 0){
-                return arr.map(i => (["linked_file", "imported_file", "imported_url"].includes(i.data.linkMode)) ? `[${i.data.filename || i.data.title}](zotero://open-pdf/library/items/${i.data.key})` : `[${i.data.title}](${i.data.url})`);
-            } else {
+        makePDFLinks(elem){
+            if(elem.constructor === Array && elem.length > 0){
+                return elem.map(it => {return zoteroRoam.utils.makeLinkToPDF(it)});
+            } else if(elem.constructor === Object){
+                return zoteroRoam.utils.makeLinkToPDF(elem);    
+            } else{
                 return false;
             }
         },

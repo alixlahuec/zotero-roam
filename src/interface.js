@@ -249,6 +249,7 @@
             pageControls.innerHTML = `
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
+            <span class="zotero-roam-citations-results-count"></span>
             `
             pagination.appendChild(pageControls);
 
@@ -269,12 +270,6 @@
             // Rigging close overlay button
             zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
 
-            // Rigging display of search results
-            zoteroRoam.interface.citations.input.addEventListener("results", (e) => {
-                zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: e.detail.results.map(res => res.value)});
-                zoteroRoam.interface.renderCitationsPagination();
-            })
-
         },
 
         renderCitationsPagination(){
@@ -291,8 +286,10 @@
             }
 
             let page = zoteroRoam.citations.pagination.getCurrentPageData();
-            // Set aria-label of paginatedList to indicate results shown
-            paginatedList.setAttribute("aria-label", `${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1} out of ${zoteroRoam.citations.pagination.data.length} results`);
+            // Indicate results shown
+            paginationDiv.querySelector(".zotero-roam-citations-results-count").innerHTML = `
+            <strong>${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1}</strong> / ${zoteroRoam.citations.pagination.data.length} citations
+            `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
                 let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title}${cit.year ? " (" + cit.year + ")" : ""}${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;

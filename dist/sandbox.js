@@ -232,6 +232,10 @@ var zoteroRoam = {};
                 maxResults: 100,
                 resultsList: {
                     render: false
+                },
+                feedback: (data) => {
+                    zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: data.results.map(res => res.value)});
+                    zoteroRoam.interface.renderCitationsPagination();
                 }
             },
             // The tribute's `values` property is set when the tribute is attached to the textarea
@@ -328,6 +332,7 @@ var zoteroRoam = {};
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;}
                                             .zotero-roam-citation-link a{font-weight: 200; color: lightblue;}
+                                            .zotero-roam-citations-results-count{padding: 6px 10px;}
                                             .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
                                             .selected-item-header{margin-bottom:20px;}
@@ -434,11 +439,11 @@ var zoteroRoam = {};
                     return `[[@${item.key}]]`;
                 case 'citation':
                     let citeText = item.meta.creatorSummary || ``;
-                    citeText = item.meta.parsedDate ? `${citeText} (${new Date(item.meta.parsedDate).getFullYear()})` : citeText;
+                    citeText = item.meta.parsedDate ? `${citeText} (${new Date(item.meta.parsedDate).getUTCFullYear()})` : citeText;
                     citeText = `[${(citeText.length > 0) ? citeText : item.key}]([[@${item.key}]])`
                     return citeText;
                 case 'zettlr':
-                    return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getFullYear()})` : ``) + ` : ` + item.data.title;
+                    return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + ` : ` + item.data.title;
                 case 'citekey':
                 default:
                     return `@${item.key}`;
@@ -511,11 +516,17 @@ var zoteroRoam = {};
             }
         },
 
+        makeLinkToPDF(item){
+            return (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode) ? `[${item.data.filename || item.data.title}](zotero://open-pdf/library/items/${item.data.key})` : `[${item.data.title}](${item.data.url})`);
+        },
+
         // Given an Array of PDF items, returns an Array of Markdown-style links. If a PDF is a `linked_file` or `imported_file`, make a local Zotero open link / else, make a link to the URL
-        makePDFLinks(arr){
-            if(arr.length > 0){
-                return arr.map(i => (["linked_file", "imported_file", "imported_url"].includes(i.data.linkMode)) ? `[${i.data.filename || i.data.title}](zotero://open-pdf/library/items/${i.data.key})` : `[${i.data.title}](${i.data.url})`);
-            } else {
+        makePDFLinks(elem){
+            if(elem.constructor === Array && elem.length > 0){
+                return elem.map(it => {return zoteroRoam.utils.makeLinkToPDF(it)});
+            } else if(elem.constructor === Object){
+                return zoteroRoam.utils.makeLinkToPDF(elem);    
+            } else{
                 return false;
             }
         },
@@ -1473,6 +1484,7 @@ var zoteroRoam = {};
             pageControls.innerHTML = `
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
+            <span class="zotero-roam-citations-results-count"></span>
             `
             pagination.appendChild(pageControls);
 
@@ -1493,12 +1505,6 @@ var zoteroRoam = {};
             // Rigging close overlay button
             zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
 
-            // Rigging display of search results
-            zoteroRoam.interface.citations.input.addEventListener("results", (e) => {
-                zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: e.detail.results.map(res => res.value)});
-                zoteroRoam.interface.renderCitationsPagination();
-            })
-
         },
 
         renderCitationsPagination(){
@@ -1515,8 +1521,10 @@ var zoteroRoam = {};
             }
 
             let page = zoteroRoam.citations.pagination.getCurrentPageData();
-            // Set aria-label of paginatedList to indicate results shown
-            paginatedList.setAttribute("aria-label", `${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1} out of ${zoteroRoam.citations.pagination.data.length} results`);
+            // Indicate results shown
+            paginationDiv.querySelector(".zotero-roam-citations-results-count").innerHTML = `
+            <strong>${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1}</strong> / ${zoteroRoam.citations.pagination.data.length} citations
+            `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
                 let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title}${cit.year ? " (" + cit.year + ")" : ""}${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
@@ -2391,6 +2399,10 @@ var zoteroRoam = {};
                     let pdfResults = itemChildren.filter(c => c.data.contentType == "application/pdf");
                     childrenObject.pdfItems = (pdfResults.length == 0) ? false : pdfResults;
                     break;
+                case "identity":
+                    let pdfResults = itemChildren.filter(c => c.data.contentType == "application/pdf");
+                    childrenObject.pdfItems = (pdfResults.length == 0) ? false : pdfResults.map(file => {return {title: file.data.title, key: file.key, link: zoteroRoam.utils.makePDFLinks(file)}});
+                    break;
                 case "links":
                     childrenObject.pdfItems = zoteroRoam.utils.makePDFLinks(itemChildren.filter(c => c.data.contentType == "application/pdf"));
                     break;
@@ -2414,6 +2426,28 @@ var zoteroRoam = {};
                 return item.data.collections.map(collecID => zoteroRoam.data.collections.find(collec => collec.key == collecID && collec.library.id == item.library.id));
             } else {
                 return false;
+            }
+        },
+
+        getItemRelated(item, return_as = "citekeys"){
+            if(item.data.relations){
+                let relatedItems = [];
+                for(rel of Object.values(item.data.relations)){
+                    for(match of rel.matchAll(/http:\/\/zotero.org\/(.*)\/items\/(.+)/g)){
+                        relatedItems.push({lib: match[1], key: match[2]});
+                    }
+                }
+                let itemsData = relatedItems.map((it) => {
+                    return zoteroRoam.data.items.find(el => el.data.key == it.key && `${el.library.type}s/${el.library.id}` == it.lib) || false;
+                }).filter(Boolean);
+                switch(return_as){
+                    case "raw":
+                        return itemsData;
+                    case "citekeys":
+                        return itemsData.map(el => "[[@" + el.key + "]]");
+                }
+            } else{
+                return [];
             }
         },
 

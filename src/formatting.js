@@ -49,6 +49,10 @@
                     let pdfResults = itemChildren.filter(c => c.data.contentType == "application/pdf");
                     childrenObject.pdfItems = (pdfResults.length == 0) ? false : pdfResults;
                     break;
+                case "identity":
+                    let pdfResults = itemChildren.filter(c => c.data.contentType == "application/pdf");
+                    childrenObject.pdfItems = (pdfResults.length == 0) ? false : pdfResults.map(file => {return {title: file.data.title, key: file.key, link: zoteroRoam.utils.makePDFLinks(file)}});
+                    break;
                 case "links":
                     childrenObject.pdfItems = zoteroRoam.utils.makePDFLinks(itemChildren.filter(c => c.data.contentType == "application/pdf"));
                     break;
@@ -72,6 +76,28 @@
                 return item.data.collections.map(collecID => zoteroRoam.data.collections.find(collec => collec.key == collecID && collec.library.id == item.library.id));
             } else {
                 return false;
+            }
+        },
+
+        getItemRelated(item, return_as = "citekeys"){
+            if(item.data.relations){
+                let relatedItems = [];
+                for(rel of Object.values(item.data.relations)){
+                    for(match of rel.matchAll(/http:\/\/zotero.org\/(.*)\/items\/(.+)/g)){
+                        relatedItems.push({lib: match[1], key: match[2]});
+                    }
+                }
+                let itemsData = relatedItems.map((it) => {
+                    return zoteroRoam.data.items.find(el => el.data.key == it.key && `${el.library.type}s/${el.library.id}` == it.lib) || false;
+                }).filter(Boolean);
+                switch(return_as){
+                    case "raw":
+                        return itemsData;
+                    case "citekeys":
+                        return itemsData.map(el => "[[@" + el.key + "]]");
+                }
+            } else{
+                return [];
             }
         },
 
