@@ -210,7 +210,7 @@ var zoteroRoam = {};
                             return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
                         }
                     },
-                    key: ['year', 'title', 'keywords', 'authors', 'meta'],
+                    key: ['year', 'title', 'keywords', 'authorsLastNames', 'meta'],
                     results: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
@@ -332,12 +332,14 @@ var zoteroRoam = {};
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
+                                            .zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
                                             .zotero-search-item-title{font-weight:600;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;}
-                                            .zotero-roam-citation-link a{font-size:0.85em;}
+                                            .zotero-roam-citation-link a, .zotero-search-item-citation-metadata{font-size:0.85em;}
                                             .zotero-roam-citations-results-count{padding: 6px 10px;}
                                             .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
+                                            .zotero-roam-page-control > span[icon]{margin-right:0px;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
                                             .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
@@ -1129,9 +1131,10 @@ var zoteroRoam = {};
                         meta: ""
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
+                    simplifiedCitation.authorsLastNames = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
                     if(authors.length > 0){
-                        if(authors.length > 4){
-                            authors = authors.slice(0, 3).join(", ") + " et al.";
+                        if(authors.length > 2){
+                            authors = authors.slice(0, 1).join(", ") + " et al.";
                         } else{
                             authors = authors.map((auth, i) => {
                                 if(i == 0){
@@ -1477,7 +1480,6 @@ var zoteroRoam = {};
             searchBar.type = "text";
             searchBar.classList.add("bp3-input");
             searchBar.classList.add("bp3-fill");
-            searchBar.style = "margin-bottom:20px;"
             inputGroup.appendChild(searchBar);
 
             let pagination = document.createElement('div');
@@ -1485,6 +1487,7 @@ var zoteroRoam = {};
             
             let pageControls = document.createElement('div');
             pageControls.classList.add("bp3-button-group");
+            pageControls.classList.add("bp3-minimal");
             pageControls.innerHTML = `
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
@@ -1533,7 +1536,8 @@ var zoteroRoam = {};
             paginatedList.innerHTML = page.map(cit => {
                 let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
                 // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
-                let metaEl = `<span class="zotero-search-item-metadata" style="display:block;">${cit.meta}</span>`;
+                let origin = cit.authors + (cit.year ? " (" + cit.year + ")" : "");
+                let metaEl = `<span class="zotero-search-item-citation-metadata">${zoteroRoam.utils.renderBP3Tag(origin, {modifier: "bp3-intent-warning"})} ${cit.meta}</span>`;
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
                     let linksArray = [];

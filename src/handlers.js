@@ -429,9 +429,10 @@
                         meta: ""
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
+                    simplifiedCitation.authorsLastNames = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
                     if(authors.length > 0){
-                        if(authors.length > 4){
-                            authors = authors.slice(0, 3).join(", ") + " et al.";
+                        if(authors.length > 2){
+                            authors = authors.slice(0, 1).join(", ") + " et al.";
                         } else{
                             authors = authors.map((auth, i) => {
                                 if(i == 0){

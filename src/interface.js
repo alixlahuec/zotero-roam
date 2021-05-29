@@ -238,7 +238,6 @@
             searchBar.type = "text";
             searchBar.classList.add("bp3-input");
             searchBar.classList.add("bp3-fill");
-            searchBar.style = "margin-bottom:20px;"
             inputGroup.appendChild(searchBar);
 
             let pagination = document.createElement('div');
@@ -246,6 +245,7 @@
             
             let pageControls = document.createElement('div');
             pageControls.classList.add("bp3-button-group");
+            pageControls.classList.add("bp3-minimal");
             pageControls.innerHTML = `
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
@@ -294,7 +294,8 @@
             paginatedList.innerHTML = page.map(cit => {
                 let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
                 // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
-                let metaEl = `<span class="zotero-search-item-metadata" style="display:block;">${cit.meta}</span>`;
+                let origin = cit.authors + (cit.year ? " (" + cit.year + ")" : "");
+                let metaEl = `<span class="zotero-search-item-citation-metadata">${zoteroRoam.utils.renderBP3Tag(origin, {modifier: "bp3-intent-warning"})} ${cit.meta}</span>`;
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
                     let linksArray = [];
