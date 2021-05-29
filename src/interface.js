@@ -292,8 +292,9 @@
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title}${cit.year ? " (" + cit.year + ")" : ""}${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
-                let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
+                let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
+                // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
+                let metaEl = `<span class="zotero-search-item-metadata" style="display:block;">${cit.meta}</span>`;
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
                     let linksArray = [];
@@ -314,14 +315,14 @@
                     linksEl += linksArray.join(" &#8226; ");
                 }
 
-                let authorsEl = `<span class="bp3-menu-item-label zotero-search-item-key">${cit.authors}</span>`
+                let authorsEl = `<span class="bp3-menu-item-label zotero-search-item-key">${cit.authors}${cit.year ? " (" + cit.year + ")" : ""}</span>`
 
                 return `
                 <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citations-search-item-contents">
                 ${titleEl}
-                ${keywordsEl}
+                ${metaEl}
                 ${linksEl}
                 </div>
                 ${authorsEl}

@@ -426,7 +426,7 @@
                         },
                         title: cit.title,
                         year: cit.year || "",
-                        metadata: ""
+                        meta: ""
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
                     if(authors.length > 0){
@@ -448,7 +448,7 @@
                     }
                     simplifiedCitation.authors = authors;
                     // Create metadata string
-                    simplifiedCitation.metadata = `${authors}${cit.year ? " (" + cit.year + ")" : ""} : ${cit.title}`;
+                    simplifiedCitation.meta = `${cit.journal || cit.publisher}${cit.volume ? ", " + cit.volume + "(" + cit.issue + ")" : ""}${cit.page ? ", " + cit.page + "." : "."}`;
                     // Mark items that are in library
                     if(cit.inLibrary){
                         simplifiedCitation.inLibrary = true;

@@ -210,7 +210,7 @@ var zoteroRoam = {};
                             return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
                         }
                     },
-                    key: ['year', 'title', 'keywords', 'authors', 'metadata'],
+                    key: ['year', 'title', 'keywords', 'authors', 'meta'],
                     results: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
@@ -234,8 +234,12 @@ var zoteroRoam = {};
                     render: false
                 },
                 feedback: (data) => {
-                    zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: data.results.map(res => res.value)});
-                    zoteroRoam.interface.renderCitationsPagination();
+                    if(data.results && data.results.length > 0){
+                        zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: data.results.map(res => res.value)});
+                        zoteroRoam.interface.renderCitationsPagination();
+                    } else{
+                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI);
+                    }
                 }
             },
             // The tribute's `values` property is set when the tribute is attached to the textarea
@@ -328,10 +332,10 @@ var zoteroRoam = {};
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
-                                            .zotero-search-item-title{font-weight:bold;}
+                                            .zotero-search-item-title{font-weight:600;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;}
-                                            .zotero-roam-citation-link a{font-weight: 200; color: lightblue;}
+                                            .zotero-roam-citation-link a{font-size:0.85em;}
                                             .zotero-roam-citations-results-count{padding: 6px 10px;}
                                             .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
                                             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
@@ -1122,7 +1126,7 @@ var zoteroRoam = {};
                         },
                         title: cit.title,
                         year: cit.year || "",
-                        metadata: ""
+                        meta: ""
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
                     if(authors.length > 0){
@@ -1144,7 +1148,7 @@ var zoteroRoam = {};
                     }
                     simplifiedCitation.authors = authors;
                     // Create metadata string
-                    simplifiedCitation.metadata = `${authors}${cit.year ? " (" + cit.year + ")" : ""} : ${cit.title}`;
+                    simplifiedCitation.meta = `${cit.journal || cit.publisher}${cit.volume ? ", " + cit.volume + "(" + cit.issue + ")" : ""}${cit.page ? ", " + cit.page + "." : "."}`;
                     // Mark items that are in library
                     if(cit.inLibrary){
                         simplifiedCitation.inLibrary = true;
@@ -1527,8 +1531,9 @@ var zoteroRoam = {};
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title}${cit.year ? " (" + cit.year + ")" : ""}${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
-                let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
+                let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
+                // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
+                let metaEl = `<span class="zotero-search-item-metadata" style="display:block;">${cit.meta}</span>`;
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
                     let linksArray = [];
@@ -1549,14 +1554,14 @@ var zoteroRoam = {};
                     linksEl += linksArray.join(" &#8226; ");
                 }
 
-                let authorsEl = `<span class="bp3-menu-item-label zotero-search-item-key">${cit.authors}</span>`
+                let authorsEl = `<span class="bp3-menu-item-label zotero-search-item-key">${cit.authors}${cit.year ? " (" + cit.year + ")" : ""}</span>`
 
                 return `
                 <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citations-search-item-contents">
                 ${titleEl}
-                ${keywordsEl}
+                ${metaEl}
                 ${linksEl}
                 </div>
                 ${authorsEl}
