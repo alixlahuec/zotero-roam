@@ -278,7 +278,7 @@
             let paginatedList = paginationDiv.querySelector("ul");
             if(paginatedList == null){
                 paginatedList = document.createElement('ul');
-                paginatedList.classList.add("zotero-search-results-list");
+                paginatedList.classList.add("zotero-roam-citations-search-results-list");
                 paginatedList.classList.add("bp3-menu");
                 paginatedList.tabIndex = "-1";
                 paginatedList.setAttribute("role", "listbox");
@@ -316,7 +316,7 @@
                     linksEl += linksArray.join(" &#8226; ");
                 }
 
-                let authorsEl = `<span class="bp3-menu-item-label zotero-search-item-key">${cit.authors}${cit.year ? " (" + cit.year + ")" : ""}</span>`
+                let keyEl = `<span class="bp3-menu-item-label zotero-search-item-key"></span>`
 
                 return `
                 <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""}>
@@ -326,7 +326,7 @@
                 ${metaEl}
                 ${linksEl}
                 </div>
-                ${authorsEl}
+                ${keyEl}
                 </div></li>
                 `
             }).join("");

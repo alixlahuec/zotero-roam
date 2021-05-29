@@ -332,7 +332,7 @@ var zoteroRoam = {};
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
-                                            .zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
+                                            #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
                                             .zotero-search-item-title{font-weight:600;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;}

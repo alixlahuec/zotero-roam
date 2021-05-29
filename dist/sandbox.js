@@ -332,7 +332,7 @@ var zoteroRoam = {};
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
-                                            .zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
+                                            #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
                                             .zotero-search-item-title{font-weight:600;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;}
@@ -1520,7 +1520,7 @@ var zoteroRoam = {};
             let paginatedList = paginationDiv.querySelector("ul");
             if(paginatedList == null){
                 paginatedList = document.createElement('ul');
-                paginatedList.classList.add("zotero-search-results-list");
+                paginatedList.classList.add("zotero-roam-citations-search-results-list");
                 paginatedList.classList.add("bp3-menu");
                 paginatedList.tabIndex = "-1";
                 paginatedList.setAttribute("role", "listbox");
@@ -1558,7 +1558,7 @@ var zoteroRoam = {};
                     linksEl += linksArray.join(" &#8226; ");
                 }
 
-                let authorsEl = `<span class="bp3-menu-item-label zotero-search-item-key">${cit.authors}${cit.year ? " (" + cit.year + ")" : ""}</span>`
+                let keyEl = `<span class="bp3-menu-item-label zotero-search-item-key"></span>`
 
                 return `
                 <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""}>
@@ -1568,7 +1568,7 @@ var zoteroRoam = {};
                 ${metaEl}
                 ${linksEl}
                 </div>
-                ${authorsEl}
+                ${keyEl}
                 </div></li>
                 `
             }).join("");
