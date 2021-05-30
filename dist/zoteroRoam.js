@@ -2311,7 +2311,9 @@ var zoteroRoam = {};
                                         caretEl.classList.replace("rm-caret-open", "rm-caret-closed");
                                         backlinksList.style.display = "none";
                                     }
-
+                                });
+                                let backlinksList = menuDiv.querySelector(".zotero-roam-page-menu-backlinks-list");
+                                if(backlinksList){
                                     let backlinksInGraph = Array.from(backlinksList.querySelectorAll(".zotero-roam-page-menu-backlink-open-sidebar"));
                                     if(backlinksInGraph.length > 0){
                                         for(const el of backlinksInGraph){
@@ -2331,7 +2333,7 @@ var zoteroRoam = {};
                                             })
                                         }
                                     }
-                                })
+                                }
                             } catch(e){};
                             try{
                                 let citationsButton = menuDiv.querySelector(".zotero-roam-page-menu-backlinks-total");
