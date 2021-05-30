@@ -365,12 +365,15 @@ var zoteroRoam = {};
                                             .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}
                                             .zotero-roam-tribute ul li {padding: 2px 5px;font-weight:300;}
                                             .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}
-                                            .zotero-roam-page-div{display:flex;justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #eaf4ff;}
+                                            .zotero-roam-page-div{display:flex;justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #f8f8f9;}
                                             .zotero-roam-page-menu{padding-bottom:15px;flex: 0 1 75%;display:block;}
                                             .zotero-roam-page-menu hr{margin:2px 0;}
                                             .scite-badge{padding-top:5px;}
                                             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
-                                            .zotero-roam-page-menu-backlinks-list{list-style-type:none;}`;
+                                            .zotero-roam-page-menu-pdf-link a {color:black;font-weight:600;}
+                                            .zotero-roam-page-menu-backlinks-list{list-style-type:none;}
+                                            .zotero-roam-page-menu-backlinks-item button{padding:0px;min-height:10px;}
+                                            .zotero-roam-page-menu-backlinks-total {font-weight: 700;}`;
             document.head.append(autoCompleteCSS);
         }
 
@@ -462,6 +465,9 @@ var zoteroRoam = {};
                     return citeText;
                 case 'zettlr':
                     return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + ` : ` + item.data.title;
+                case 'zettlr_accent':
+                    let accented = `<strong>` + (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + `</strong>`;
+                    return accented + ` : ` + item.data.title;
                 case 'citekey':
                 default:
                     return `@${item.key}`;
@@ -2231,7 +2237,7 @@ var zoteroRoam = {};
                             let pdfButtons = !itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
                                 let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
                                     let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
-                                    return zoteroRoam.utils.renderBP3Button_group(string = pdfLink, {buttonClass: "bp3-minimal", icon: "paperclip" });
+                                    return zoteroRoam.utils.renderBP3Button_group(string = pdfLink, {buttonClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip" });
                             }).join("");
 
                             let recordsButtons = [zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://www.connectedpapers.com/${(!itemInLib.data.DOI) ? "search?q=" + encodeURIComponent(itemInLib.data.title) : "api/redirect/doi/" + itemDOI}" target="_blank">Connected Papers</a>`, {buttonClass: "bp3-minimal zotero-roam-page-menu-connected-papers", icon: "layout"}),
@@ -2248,7 +2254,7 @@ var zoteroRoam = {};
                                     let papersInLib = doiPapers.filter(it => scitingDOIs.includes(zoteroRoam.utils.parseDOI(it.data.DOI)));
                                     backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} citations in library`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
 
-                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `(${scitingDOIs.length} total)`, {buttonClass: "bp3-minimal zotero-roam-page-menu-backlinks-total", buttonAttribute: `data-doi=${itemDOI}`});
+                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${scitingDOIs.length} citations available`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "citation", buttonAttribute: `data-doi=${itemDOI}`});
 
                                     if(papersInLib.length > 0){
                                         backlinksLib += `
@@ -2260,13 +2266,13 @@ var zoteroRoam = {};
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
                                                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid=${paperInGraph.uid}`})}
-                                                    <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr")}</a>
+                                                    <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
                                                     </li>`;
                                                 default:
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
                                                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add-column-right", buttonAttribute: `data-title=@${paper.key}`})}
-                                                    ${zoteroRoam.utils.formatItemReference(paper, "zettlr")}
+                                                    ${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}
                                                     </li>`
                                             }
                                         }).join("")}
@@ -2284,6 +2290,8 @@ var zoteroRoam = {};
                             <hr>
                             ${backlinksLib}
                             `;
+
+                            // Adding event listeners for action buttons
 
                             menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
                                 let pageInGraph = zoteroRoam.utils.lookForPage(title);

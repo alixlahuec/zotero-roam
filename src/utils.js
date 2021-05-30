@@ -60,6 +60,9 @@
                     return citeText;
                 case 'zettlr':
                     return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + ` : ` + item.data.title;
+                case 'zettlr_accent':
+                    let accented = `<strong>` + (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + `</strong>`;
+                    return accented + ` : ` + item.data.title;
                 case 'citekey':
                 default:
                     return `@${item.key}`;
