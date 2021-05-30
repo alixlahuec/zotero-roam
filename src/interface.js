@@ -384,13 +384,15 @@
 
         changePage(goto){
             if(zoteroRoam.citations.pagination !== null){
-                switch(goto){
+                if(zoteroRoam.citations.pagination.nbPages > 0){
+                    switch(goto){
                     case "previous":
                         zoteroRoam.citations.pagination.previousPage();
                         break;
                     case "next":
                         zoteroRoam.citations.pagination.nextPage();
                         break;
+                    }
                 }
             }
         },

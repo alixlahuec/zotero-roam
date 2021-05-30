@@ -226,7 +226,10 @@ var zoteroRoam = {};
                     return zoteroRoam.utils.multiwordMatch(query, record)
                 },
                 trigger: {
-                    event: ['input']
+                    event: ['input'],
+                    condition: (event, queryValue) => {
+                        return true;
+                    }
                 },
                 highlight: true,
                 maxResults: 100,
@@ -1635,13 +1638,15 @@ var zoteroRoam = {};
 
         changePage(goto){
             if(zoteroRoam.citations.pagination !== null){
-                switch(goto){
+                if(zoteroRoam.citations.pagination.nbPages > 0){
+                    switch(goto){
                     case "previous":
                         zoteroRoam.citations.pagination.previousPage();
                         break;
                     case "next":
                         zoteroRoam.citations.pagination.nextPage();
                         break;
+                    }
                 }
             }
         },

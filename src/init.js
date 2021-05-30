@@ -226,7 +226,10 @@ var zoteroRoam = {};
                     return zoteroRoam.utils.multiwordMatch(query, record)
                 },
                 trigger: {
-                    event: ['input']
+                    event: ['input'],
+                    condition: (event, queryValue) => {
+                        return true;
+                    }
                 },
                 highlight: true,
                 maxResults: 100,
