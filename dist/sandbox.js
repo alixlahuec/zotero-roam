@@ -168,7 +168,7 @@ var zoteroRoam = {};
                     const result = document.createElement("li");
                     result.setAttribute("class", "no_result");
                     result.setAttribute("tabindex", "1");
-                    result.innerHTML = `<span style="display: flex; align-items: center; font-weight: 100; color: rgba(0,0,0,.2);">Found No Results for "${dataFeedback.query}"</span>`;
+                    result.innerHTML = `<span style="display: flex; align-items: center; color: rgba(0,0,0,.2);">Found No Results for "${dataFeedback.query}"</span>`;
                     document
                         .querySelector(`#${zoteroRoam.autoComplete.resultsList.idName}`)
                         .appendChild(result);
@@ -232,6 +232,15 @@ var zoteroRoam = {};
                 maxResults: 100,
                 resultsList: {
                     render: false
+                },
+                noResults: (dataFeedback, generateList) => {
+                    let paginationDiv = document.querySelector("#zotero-roam-citations-pagination");
+                    paginationDiv.querySelector(".zotero-roam-citations-results-count").innerHTML = `
+                    <strong>No results</strong> for ${dataFeedback.query}
+                    `;
+                    zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: []});
+                    let paginatedList = paginationDiv.querySelector("ul");
+                    paginatedList.innerHTML = ``;
                 },
                 feedback: (data) => {
                     if(data.results && data.results.length > 0){
