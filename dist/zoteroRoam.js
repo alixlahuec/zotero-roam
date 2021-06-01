@@ -177,7 +177,7 @@ var zoteroRoam = {};
                     zoteroRoam.interface.search.input.blur();
                     let quickCopyEnabled = document.querySelector("#zotero-quick-copy-mode").checked;
                     if(zoteroRoam.config.params.always_copy == true || (quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden)){
-                        let clipboard = document.querySelector("input.clipboard-copy-utility");
+                        let clipboard = zoteroRoam.interface.search.overlay.querySelector("input.clipboard-copy-utility");
                         let toCopy = ``;
                         switch(zoteroRoam.config.params.quick_copy_format){
                             case "citation":
@@ -210,7 +210,7 @@ var zoteroRoam = {};
                             return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
                         }
                     },
-                    key: ['year', 'title', 'keywords', 'authorsLastNames', 'meta'],
+                    key: ['year', 'title', 'keywords', 'authorsLastNames', 'abstract', 'meta'],
                     results: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
@@ -373,7 +373,11 @@ var zoteroRoam = {};
                                             .zotero-roam-page-menu-pdf-link a {color:black;font-weight:600;}
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;}
                                             .zotero-roam-page-menu-backlinks-item button{padding:0px;min-height:10px;}
-                                            .zotero-roam-page-menu-backlinks-total {font-weight: 700;}`;
+                                            .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
+                                            .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;}
+                                            .zotero-search-item-key .zotero-roam-citation-doi-link {display:block;}
+                                            a.zotero-roam-citation-doi-link{font-weight:700;}
+                                            .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}`;
             document.head.append(autoCompleteCSS);
         }
 
@@ -637,11 +641,12 @@ var zoteroRoam = {};
                     </div>`;
         },
         
-        renderBP3Tag(string, {modifier = "", icon = ""} = {}){
+        renderBP3Tag(string, {modifier = "", icon = "", tagRemove = false} = {}){
+            let tagRem = tagRemove ? `<button class="bp3-tag-remove"></button>` : "";
             if(icon.length > 0){
-                return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">${string}</span></span>`;
+                return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">${string}</span>${tagRem}</span>`;
             } else {
-                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}</span>`;
+                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}${tagRem}</span>`;
             }
         },
 
@@ -1475,7 +1480,7 @@ var zoteroRoam = {};
                                             <span class="bp3-popover2-target" tabindex="0">
                                                 <button type="button" class="zotero-update-data bp3-button">
                                             <span class="bp3-button-text">Update Zotero data</span>
-                                            </button></span></div>`
+                                            </button></span></div>`;
 
             // Storing info in variables
             zoteroRoam.interface.search.overlay = document.querySelector(`.${divClass}-overlay`);
@@ -1487,6 +1492,7 @@ var zoteroRoam = {};
 
         fillCitationsOverlay(divClass = zoteroRoam.interface.citations.overlayClass){
             let citationsDialogBody = document.querySelector(`.${divClass}-overlay .bp3-dialog-body`);
+            let citationsDialogFooter = document.querySelector(`.${divClass}-overlay .bp3-dialog-footer`);
 
             // Add body elements
             let inputGroup = document.createElement('div');
@@ -1516,6 +1522,13 @@ var zoteroRoam = {};
             inputGroup.appendChild(pagination);
 
             citationsDialogBody.appendChild(inputGroup);
+
+            // Add footer elements
+            citationsDialogFooter.innerHTML = `
+            <div class="bp3-dialog-footer-actions">
+            <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
+            </div>
+            `;
             
             // Storing info in variables
             zoteroRoam.interface.citations.overlay = document.querySelector(`.${divClass}-overlay`);
@@ -1576,20 +1589,62 @@ var zoteroRoam = {};
                     linksEl += linksArray.join(" &#8226; ");
                 }
 
-                let keyEl = `<span class="bp3-menu-item-label zotero-search-item-key"></span>`
+                let keyEl = `
+                <span class="bp3-menu-item-label zotero-search-item-key">
+                <a href="https://doi.org/${cit.doi}" class="zotero-roam-citation-doi-link">${cit.doi}</a>
+                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-intent-primary", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
+                ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
+                </span>
+                `;
 
                 return `
                 <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""}>
                 <div class="bp3-menu-item">
-                <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citations-search-item-contents">
+                <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
                 ${metaEl}
                 ${linksEl}
                 </div>
                 ${keyEl}
+                <span class="zotero-roam-citation-abstract" style="display:none;">${cit.abstract}</span>
                 </div></li>
                 `
             }).join("");
+
+            // Adding interaction
+            // Copy-to-clipboard buttons for DOIs
+            try{
+                let copyDOIBtns = Array.from(paginationDiv.querySelectorAll('button.zotero-roam-citation-copy-doi'));
+                if(copyDOIBtns.length > 0){
+                    for(const btn of copyDOIBtns){
+                        btn.addEventListener("click", function(){
+                            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = btn.dataset.doi;
+                            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').select();
+                            document.execCommand("copy");
+                        })
+                    }
+                }
+            }catch(e){};
+            // Toggles for abstracts
+            try{
+                let abstractToggles = Array.from(paginationDiv.querySelectorAll("button.zotero-roam-citation-toggle-abstract"));
+                if(abstractToggles.length > 0){
+                    for(const togg of abstractToggles){
+                        togg.addEventListener("click", function(){
+                            let toggleText = togg.querySelector('.bp3-button-text');
+                            let abstractSpan = togg.closest('.zotero-roam-citations-search_result').querySelector('.zotero-roam-citation-abstract');
+                            if(abstractSpan.style.display == "none"){
+                                abstractSpan.style.display = "block";
+                                toggleText.innerHTML = `Hide Abstract`;
+                            } else{
+                                abstractSpan.style.display = "none";
+                                toggleText.innerHTML = `Show Abstract`;
+                            }
+                        });
+                        
+                    }
+                }
+            }catch(e){};
 
         },
 
@@ -1637,7 +1692,7 @@ var zoteroRoam = {};
                 console.log("Closing the Search Panel")
                 zoteroRoam.interface.clearSelectedItem();
                 zoteroRoam.interface.search.input.value = "";
-                document.querySelector('input.clipboard-copy-utility').value = "";
+                zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = "";
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "false");
             }
         },
@@ -1674,6 +1729,7 @@ var zoteroRoam = {};
             // Make overlay visible
             zoteroRoam.interface.citations.overlay.style.display = "block";
             zoteroRoam.interface.citations.input.value = "";
+            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = "";
             zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "true");
             zoteroRoam.interface.citations.input.focus();
         },
@@ -1681,6 +1737,7 @@ var zoteroRoam = {};
         closeCitationsOverlay(){
             zoteroRoam.interface.citations.overlay.style.display = "none";
             zoteroRoam.interface.citations.input.value = "";
+            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = "";
             zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "false");
         },
 
@@ -1858,20 +1915,20 @@ var zoteroRoam = {};
                 btn.addEventListener("click", e => {
                     switch(btn.getAttribute('format')){
                         case 'citekey':
-                            document.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
                             break;
                         case 'citation':
                             let citationText = `${feedback.selection.value.authors}`;
                             if(feedback.selection.value.year){ citationText += ` (${feedback.selection.value.year})`; }
-                            document.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${citekey}]])`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${citekey}]])`;
                             break;
                         case 'tag':
-                            document.querySelector('input.clipboard-copy-utility').value = `#[[${citekey}]]`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `#[[${citekey}]]`;
                             break;
                         case 'page-reference':
-                            document.querySelector('input.clipboard-copy-utility').value = `[[${citekey}]]`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[[${citekey}]]`;
                     };
-                    document.querySelector('input.clipboard-copy-utility').select();
+                    zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').select();
                     document.execCommand("copy");
                 })
             });

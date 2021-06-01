@@ -177,7 +177,7 @@ var zoteroRoam = {};
                     zoteroRoam.interface.search.input.blur();
                     let quickCopyEnabled = document.querySelector("#zotero-quick-copy-mode").checked;
                     if(zoteroRoam.config.params.always_copy == true || (quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden)){
-                        let clipboard = document.querySelector("input.clipboard-copy-utility");
+                        let clipboard = zoteroRoam.interface.search.overlay.querySelector("input.clipboard-copy-utility");
                         let toCopy = ``;
                         switch(zoteroRoam.config.params.quick_copy_format){
                             case "citation":
@@ -210,7 +210,7 @@ var zoteroRoam = {};
                             return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
                         }
                     },
-                    key: ['year', 'title', 'keywords', 'authorsLastNames', 'meta'],
+                    key: ['year', 'title', 'keywords', 'authorsLastNames', 'abstract', 'meta'],
                     results: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
@@ -373,7 +373,11 @@ var zoteroRoam = {};
                                             .zotero-roam-page-menu-pdf-link a {color:black;font-weight:600;}
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;}
                                             .zotero-roam-page-menu-backlinks-item button{padding:0px;min-height:10px;}
-                                            .zotero-roam-page-menu-backlinks-total {font-weight: 700;}`;
+                                            .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
+                                            .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;}
+                                            .zotero-search-item-key .zotero-roam-citation-doi-link {display:block;}
+                                            a.zotero-roam-citation-doi-link{font-weight:700;}
+                                            .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}`;
             document.head.append(autoCompleteCSS);
         }
 

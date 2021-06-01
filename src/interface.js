@@ -215,7 +215,7 @@
                                             <span class="bp3-popover2-target" tabindex="0">
                                                 <button type="button" class="zotero-update-data bp3-button">
                                             <span class="bp3-button-text">Update Zotero data</span>
-                                            </button></span></div>`
+                                            </button></span></div>`;
 
             // Storing info in variables
             zoteroRoam.interface.search.overlay = document.querySelector(`.${divClass}-overlay`);
@@ -227,6 +227,7 @@
 
         fillCitationsOverlay(divClass = zoteroRoam.interface.citations.overlayClass){
             let citationsDialogBody = document.querySelector(`.${divClass}-overlay .bp3-dialog-body`);
+            let citationsDialogFooter = document.querySelector(`.${divClass}-overlay .bp3-dialog-footer`);
 
             // Add body elements
             let inputGroup = document.createElement('div');
@@ -256,6 +257,13 @@
             inputGroup.appendChild(pagination);
 
             citationsDialogBody.appendChild(inputGroup);
+
+            // Add footer elements
+            citationsDialogFooter.innerHTML = `
+            <div class="bp3-dialog-footer-actions">
+            <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
+            </div>
+            `;
             
             // Storing info in variables
             zoteroRoam.interface.citations.overlay = document.querySelector(`.${divClass}-overlay`);
@@ -316,20 +324,62 @@
                     linksEl += linksArray.join(" &#8226; ");
                 }
 
-                let keyEl = `<span class="bp3-menu-item-label zotero-search-item-key"></span>`
+                let keyEl = `
+                <span class="bp3-menu-item-label zotero-search-item-key">
+                <a href="https://doi.org/${cit.doi}" class="zotero-roam-citation-doi-link">${cit.doi}</a>
+                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-intent-primary", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
+                ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
+                </span>
+                `;
 
                 return `
                 <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""}>
                 <div class="bp3-menu-item">
-                <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citations-search-item-contents">
+                <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
                 ${metaEl}
                 ${linksEl}
                 </div>
                 ${keyEl}
+                <span class="zotero-roam-citation-abstract" style="display:none;">${cit.abstract}</span>
                 </div></li>
                 `
             }).join("");
+
+            // Adding interaction
+            // Copy-to-clipboard buttons for DOIs
+            try{
+                let copyDOIBtns = Array.from(paginationDiv.querySelectorAll('button.zotero-roam-citation-copy-doi'));
+                if(copyDOIBtns.length > 0){
+                    for(const btn of copyDOIBtns){
+                        btn.addEventListener("click", function(){
+                            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = btn.dataset.doi;
+                            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').select();
+                            document.execCommand("copy");
+                        })
+                    }
+                }
+            }catch(e){};
+            // Toggles for abstracts
+            try{
+                let abstractToggles = Array.from(paginationDiv.querySelectorAll("button.zotero-roam-citation-toggle-abstract"));
+                if(abstractToggles.length > 0){
+                    for(const togg of abstractToggles){
+                        togg.addEventListener("click", function(){
+                            let toggleText = togg.querySelector('.bp3-button-text');
+                            let abstractSpan = togg.closest('.zotero-roam-citations-search_result').querySelector('.zotero-roam-citation-abstract');
+                            if(abstractSpan.style.display == "none"){
+                                abstractSpan.style.display = "block";
+                                toggleText.innerHTML = `Hide Abstract`;
+                            } else{
+                                abstractSpan.style.display = "none";
+                                toggleText.innerHTML = `Show Abstract`;
+                            }
+                        });
+                        
+                    }
+                }
+            }catch(e){};
 
         },
 
@@ -377,7 +427,7 @@
                 console.log("Closing the Search Panel")
                 zoteroRoam.interface.clearSelectedItem();
                 zoteroRoam.interface.search.input.value = "";
-                document.querySelector('input.clipboard-copy-utility').value = "";
+                zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = "";
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "false");
             }
         },
@@ -414,6 +464,7 @@
             // Make overlay visible
             zoteroRoam.interface.citations.overlay.style.display = "block";
             zoteroRoam.interface.citations.input.value = "";
+            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = "";
             zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "true");
             zoteroRoam.interface.citations.input.focus();
         },
@@ -421,6 +472,7 @@
         closeCitationsOverlay(){
             zoteroRoam.interface.citations.overlay.style.display = "none";
             zoteroRoam.interface.citations.input.value = "";
+            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = "";
             zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "false");
         },
 
@@ -598,20 +650,20 @@
                 btn.addEventListener("click", e => {
                     switch(btn.getAttribute('format')){
                         case 'citekey':
-                            document.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
                             break;
                         case 'citation':
                             let citationText = `${feedback.selection.value.authors}`;
                             if(feedback.selection.value.year){ citationText += ` (${feedback.selection.value.year})`; }
-                            document.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${citekey}]])`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${citekey}]])`;
                             break;
                         case 'tag':
-                            document.querySelector('input.clipboard-copy-utility').value = `#[[${citekey}]]`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `#[[${citekey}]]`;
                             break;
                         case 'page-reference':
-                            document.querySelector('input.clipboard-copy-utility').value = `[[${citekey}]]`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[[${citekey}]]`;
                     };
-                    document.querySelector('input.clipboard-copy-utility').select();
+                    zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').select();
                     document.execCommand("copy");
                 })
             });
