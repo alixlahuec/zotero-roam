@@ -376,7 +376,8 @@ var zoteroRoam = {};
                                             .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
                                             .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
                                             .zotero-roam-citations-search_result > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
-                                            .zotero-roam-citation-metadata{flex: 0 2 77%;}
+                                            .zotero-roam-citation-metadata{flex: 0 2 77%;white-space:normal;}
+                                            .zotero-roam-citation-links-list{display:block;}
                                             .zotero-search-item-key{flex: 0 1 20%;text-align:right;}
                                             .zotero-search-item-key .zotero-roam-citation-doi-link {display:block;font-weight:500;}
                                             .zotero-search-item-key a, .zotero-search-item-key button{font-size:0.8em;}
@@ -1607,7 +1608,9 @@ var zoteroRoam = {};
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
                 ${metaEl}
+                <span class="zotero-roam-citation-links-list">
                 ${linksEl}
+                </span>
                 </div>
                 ${keyEl}
                 <span class="zotero-roam-citation-abstract" style="display:none;">${cit.abstract}</span>

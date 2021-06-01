@@ -338,7 +338,9 @@
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
                 ${metaEl}
+                <span class="zotero-roam-citation-links-list">
                 ${linksEl}
+                </span>
                 </div>
                 ${keyEl}
                 <span class="zotero-roam-citation-abstract" style="display:none;">${cit.abstract}</span>
