@@ -215,9 +215,10 @@
         },
 
         renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = "", buttonAttribute = ""} = {}){
+            let iconEl = icon ? `<span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>` : "";
             return `
             <button type="button" class="bp3-button ${buttonClass}" ${buttonAttribute}>
-            <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
+            ${iconEl}
             <span class="bp3-button-text">${string}</span>
             </button>
             `;

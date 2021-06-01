@@ -374,9 +374,12 @@ var zoteroRoam = {};
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;}
                                             .zotero-roam-page-menu-backlinks-item button{padding:0px;min-height:10px;}
                                             .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
-                                            .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;}
-                                            .zotero-search-item-key .zotero-roam-citation-doi-link {display:block;}
-                                            a.zotero-roam-citation-doi-link{font-weight:700;}
+                                            .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
+                                            .zotero-roam-citations-search_result > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
+                                            .zotero-roam-citation-metadata{flex: 0 2 77%;}
+                                            .zotero-search-item-key{flex: 0 1 20%;text-align:right;}
+                                            .zotero-search-item-key .zotero-roam-citation-doi-link {display:block;font-weight:500;}
+                                            .zotero-search-item-key a, .zotero-search-item-key button{font-size:0.8em;}
                                             .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}`;
             document.head.append(autoCompleteCSS);
         }
@@ -624,9 +627,10 @@ var zoteroRoam = {};
         },
 
         renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = "", buttonAttribute = ""} = {}){
+            let iconEl = icon ? `<span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>` : "";
             return `
             <button type="button" class="bp3-button ${buttonClass}" ${buttonAttribute}>
-            <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
+            ${iconEl}
             <span class="bp3-button-text">${string}</span>
             </button>
             `;
@@ -1592,8 +1596,8 @@ var zoteroRoam = {};
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-search-item-key">
                 <a href="https://doi.org/${cit.doi}" class="zotero-roam-citation-doi-link">${cit.doi}</a>
-                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-intent-primary", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
+                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-intent-primary bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 </span>
                 `;
 

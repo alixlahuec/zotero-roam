@@ -327,8 +327,8 @@
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-search-item-key">
                 <a href="https://doi.org/${cit.doi}" class="zotero-roam-citation-doi-link">${cit.doi}</a>
-                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-intent-primary", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
+                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-intent-primary bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 </span>
                 `;
 
