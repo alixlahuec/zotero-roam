@@ -133,7 +133,6 @@
                         if(page.parentElement.querySelector(".zotero-roam-page-menu") == null){
                             let menuDiv = document.createElement("div");
                             menuDiv.classList.add("zotero-roam-page-menu");
-                            menuDiv.classList.add("bp3-button-group");
 
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
 
@@ -170,13 +169,13 @@
                                                 case true:
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
-                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid=${paperInGraph.uid}`})}
+                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar"`})}
                                                     <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
                                                     </li>`;
                                                 default:
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
-                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add-column-right", buttonAttribute: `data-title=@${paper.key}`})}
+                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-add-sidebar", icon: "add-column-right", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
                                                     ${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}
                                                     </li>`
                                             }
@@ -188,12 +187,18 @@
                             }
 
                             menuDiv.innerHTML = `
+                            <div class="zotero-roam-page-menu-header">
+                            <div class="zotero-roam-page-menu-actions">
                             ${zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"})}
                             ${notesButton}
                             ${pdfButtons}
                             ${recordsButtons.join("")}
+                            </div>
+                            </div>
                             <hr>
+                            <div class="zotero-roam-page-menu-citations">
                             ${backlinksLib}
+                            </div>
                             `;
 
                             // Adding event listeners for action buttons
@@ -260,7 +265,7 @@
                         // Badge from scite.ai
                         if(itemInLib.data.DOI && page.parentElement.querySelector(".scite-badge") == null){
                             let sciteBadge = zoteroRoam.inPage.makeSciteBadge(doi = itemDOI);
-                            page.parentElement.querySelector(".zotero-roam-page-div").appendChild(sciteBadge);
+                            page.parentElement.querySelector(".zotero-roam-page-menu-header").appendChild(sciteBadge);
                             // Manual trigger to insert badges
                             window.__SCITE.insertBadges();
                         }

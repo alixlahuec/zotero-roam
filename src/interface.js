@@ -128,7 +128,7 @@
             toasterOverlay.innerHTML = zoteroRoam.utils.renderBP3Toast(string = message, {toastClass: `bp3-intent-${intent}`});
 
             toasterOverlay.querySelector('.bp3-toast').style.opacity = "1";
-            await zoteroRoam.utils.sleep(500);
+            await zoteroRoam.utils.sleep(700);
             toasterOverlay.querySelector('.bp3-toast').style.top = "-100px";
 
         },
