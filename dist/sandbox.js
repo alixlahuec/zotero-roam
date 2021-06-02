@@ -659,7 +659,6 @@ var zoteroRoam = {};
             return `
             <div class="bp3-toast ${toastClass} bp3-overlay-content" tabindex="0" style="${style}">
             <span class="bp3-toast-message">${string}</span>
-            ${zoteroRoam.utils.renderBP3ButtonGroup(string = string, {divClass: "bp3-minimal", buttonClass: "zotero-roam-toast-close bp3-button bp3-minimal", icon: "small-cross"})}
             </div>
             `
         },
@@ -847,14 +846,14 @@ var zoteroRoam = {};
                 let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
                 let intent = outcome.success ? "success" : "danger";
                 if(popup == true){
-                    zoteroRoam.interface.popToaster(message = msg, intent = intent);
+                    zoteroRoam.interface.popToast(message = msg, intent = intent);
                 } else {
                     console.log(msg);
                 }
             } else {
                 console.log(item);
                 console.log(itemData);
-                zoteroRoam.interface.popToaster(message = "Something went wrong when formatting or importing the item's data.", intent = "danger");
+                zoteroRoam.interface.popToast(message = "Something went wrong when formatting or importing the item's data.", intent = "danger");
             }
         },
 
@@ -1399,18 +1398,18 @@ var zoteroRoam = {};
             overlay.classList.add("bp3-toast-container");
             overlay.classList.add("bp3-toast-container-top");
             overlay.classList.add("bp3-toast-container-in-portal");
-            overlay.classList.add("zotero-roam-toaster-overlay");
+            overlay.classList.add("zotero-roam-toast-overlay");
             
             zoteroRoam.interface.portal.div.appendChild(overlay);
         },
 
-        async popToaster(message, intent = "primary"){
-            let toasterOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toaster-overlay');
+        async popToast(message, intent = "primary"){
+            let toasterOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toast-overlay');
             toasterOverlay.innerHTML = zoteroRoam.utils.renderBP3Toast(string = message, {toastClass: `bp3-intent-${intent}`});
 
             toasterOverlay.querySelector('.bp3-toast').style.opacity = "1";
             await zoteroRoam.utils.sleep(500);
-            toasterOverlay.querySelector('.bp3-toaster').style.opacity = "0";
+            toasterOverlay.querySelector('.bp3-toast').style.opacity = "0";
 
         },
 
@@ -2045,7 +2044,7 @@ var zoteroRoam = {};
             let requestReturns = await zoteroRoam.handlers.requestData(zoteroRoam.config.requests);
             if (!requestReturns.success) {
                 zoteroRoam.interface.icon.style = `background-color:#f9a3a3 !important`;
-                zoteroRoam.interface.popToaster(message = "There was a problem with the Zotero data request. Please check your specification !", intent = "danger");
+                zoteroRoam.interface.popToast(message = "There was a problem with the Zotero data request. Please check your specification !", intent = "danger");
                 throw new Error("The API request encountered a problem. Please check your request specification, and the console for any registered errors.");
             } else {
                 zoteroRoam.data.items = requestReturns.data.items;
@@ -2089,7 +2088,7 @@ var zoteroRoam = {};
                 window.addEventListener("keydown", zoteroRoam.shortcuts.verify);
 
                 zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
-                zoteroRoam.interface.popToaster(message = "Zotero data successfully loaded !", intent = "success");
+                zoteroRoam.interface.popToast(message = "Zotero data successfully loaded !", intent = "success");
                 console.log('The results of the API request have been received ; you can check them by inspecting the value of the zoteroRoam.data object. Data import context menu should now be available.');
 
             }
@@ -2125,7 +2124,7 @@ var zoteroRoam = {};
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
 
             zoteroRoam.interface.icon.removeAttribute("style");
-            zoteroRoam.interface.popToaster(message = "All Zotero data was cleared. Bye for now !", intent = "success");
+            zoteroRoam.interface.popToast(message = "All Zotero data was cleared. Bye for now !", intent = "success");
             console.log('Data and request outputs have been removed');
         },
         

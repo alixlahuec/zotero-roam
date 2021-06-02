@@ -118,18 +118,18 @@
             overlay.classList.add("bp3-toast-container");
             overlay.classList.add("bp3-toast-container-top");
             overlay.classList.add("bp3-toast-container-in-portal");
-            overlay.classList.add("zotero-roam-toaster-overlay");
+            overlay.classList.add("zotero-roam-toast-overlay");
             
             zoteroRoam.interface.portal.div.appendChild(overlay);
         },
 
-        async popToaster(message, intent = "primary"){
-            let toasterOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toaster-overlay');
+        async popToast(message, intent = "primary"){
+            let toasterOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toast-overlay');
             toasterOverlay.innerHTML = zoteroRoam.utils.renderBP3Toast(string = message, {toastClass: `bp3-intent-${intent}`});
 
             toasterOverlay.querySelector('.bp3-toast').style.opacity = "1";
             await zoteroRoam.utils.sleep(500);
-            toasterOverlay.querySelector('.bp3-toaster').style.opacity = "0";
+            toasterOverlay.querySelector('.bp3-toast').style.opacity = "0";
 
         },
 

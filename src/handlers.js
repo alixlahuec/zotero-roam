@@ -108,14 +108,14 @@
                 let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
                 let intent = outcome.success ? "success" : "danger";
                 if(popup == true){
-                    zoteroRoam.interface.popToaster(message = msg, intent = intent);
+                    zoteroRoam.interface.popToast(message = msg, intent = intent);
                 } else {
                     console.log(msg);
                 }
             } else {
                 console.log(item);
                 console.log(itemData);
-                zoteroRoam.interface.popToaster(message = "Something went wrong when formatting or importing the item's data.", intent = "danger");
+                zoteroRoam.interface.popToast(message = "Something went wrong when formatting or importing the item's data.", intent = "danger");
             }
         },
 

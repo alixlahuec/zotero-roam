@@ -243,7 +243,6 @@
             return `
             <div class="bp3-toast ${toastClass} bp3-overlay-content" tabindex="0" style="${style}">
             <span class="bp3-toast-message">${string}</span>
-            ${zoteroRoam.utils.renderBP3ButtonGroup(string = string, {divClass: "bp3-minimal", buttonClass: "zotero-roam-toast-close bp3-button bp3-minimal", icon: "small-cross"})}
             </div>
             `
         },
