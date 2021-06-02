@@ -142,7 +142,7 @@ var zoteroRoam = {};
                             if(data.key == "authorsLastNames"){
                                 itemAuthors = `<span class="zotero-search-item-authors autoComplete_highlighted">${data.value.authors}</span>`;
                             } else {
-                                itemAuthors = `<span class="zotero-search-item-authors">${data.value.authors}</span>`;
+                                itemAuthors = `<span class="zotero-search-item-authors">${zoteroRoam.utils.renderBP3Tag(data.value.authors, {modifier: "bp3-intent-primary"})}</span>`;
                             }
                         }
                         // Prepare tags element, if there are any
@@ -156,8 +156,10 @@ var zoteroRoam = {};
                         element.innerHTML = `<div label="${data.value.key}" class="bp3-menu-item bp3-popover-dismiss">
                                             <div class="bp3-text-overflow-ellipsis bp3-fill zotero-search-item-contents">
                                             ${itemTitle}
+                                            <span class="zotero-roam-citation-metadata-contents">
                                             ${itemAuthors}${itemYear}${itemMetadata}
                                             ${itemTags}
+                                            </span>
                                             </div>
                                             ${keyEl}
                                             </div>`;
@@ -351,7 +353,7 @@ var zoteroRoam = {};
                                             .zotero-search-item-title{font-weight:600;}
                                             .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;}
-                                            .zotero-roam-citation-link a, .zotero-search-item-citation-metadata{font-size:0.85em;}
+                                            .zotero-roam-citation-link a, .zotero-roam-citation-metadata-contents{font-size:0.85em;}
                                             .zotero-roam-citations-results-count{padding: 6px 10px;}
                                             .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
                                             .zotero-roam-page-control > span[icon]{margin-right:0px;}
@@ -655,7 +657,7 @@ var zoteroRoam = {};
             }
         },
 
-        renderBP3Toast(string, {toastClass = "", style = "opacity:0;transition: opacity 0.3s ease-in;"} = {}){
+        renderBP3Toast(string, {toastClass = "", style = "opacity:0;top:20px;transition: opacity 0.3s ease-out, top 0.3s ease-in;"} = {}){
             return `
             <div class="bp3-toast ${toastClass} bp3-overlay-content" tabindex="0" style="${style}">
             <span class="bp3-toast-message">${string}</span>
@@ -1409,7 +1411,7 @@ var zoteroRoam = {};
 
             toasterOverlay.querySelector('.bp3-toast').style.opacity = "1";
             await zoteroRoam.utils.sleep(500);
-            toasterOverlay.querySelector('.bp3-toast').style.opacity = "0";
+            toasterOverlay.querySelector('.bp3-toast').style.top = "-100px";
 
         },
 
@@ -1609,7 +1611,7 @@ var zoteroRoam = {};
                 let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
                 // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let origin = cit.authors + (cit.year ? " (" + cit.year + ")" : "");
-                let metaEl = `<span class="zotero-search-item-citation-metadata">${zoteroRoam.utils.renderBP3Tag(origin, {modifier: "bp3-intent-warning"})} ${cit.meta}</span>`;
+                let metaEl = `<span class="zotero-roam-citation-metadata-contents">${zoteroRoam.utils.renderBP3Tag(origin, {modifier: "bp3-intent-warning"})} ${cit.meta}</span>`;
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
                     let linksArray = [];

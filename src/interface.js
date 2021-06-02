@@ -129,7 +129,7 @@
 
             toasterOverlay.querySelector('.bp3-toast').style.opacity = "1";
             await zoteroRoam.utils.sleep(500);
-            toasterOverlay.querySelector('.bp3-toast').style.opacity = "0";
+            toasterOverlay.querySelector('.bp3-toast').style.top = "-100px";
 
         },
 
@@ -329,7 +329,7 @@
                 let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
                 // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let origin = cit.authors + (cit.year ? " (" + cit.year + ")" : "");
-                let metaEl = `<span class="zotero-search-item-citation-metadata">${zoteroRoam.utils.renderBP3Tag(origin, {modifier: "bp3-intent-warning"})} ${cit.meta}</span>`;
+                let metaEl = `<span class="zotero-roam-citation-metadata-contents">${zoteroRoam.utils.renderBP3Tag(origin, {modifier: "bp3-intent-warning"})} ${cit.meta}</span>`;
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
                     let linksArray = [];

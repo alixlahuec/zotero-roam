@@ -239,7 +239,7 @@
             }
         },
 
-        renderBP3Toast(string, {toastClass = "", style = "opacity:0;transition: opacity 0.3s ease-in;"} = {}){
+        renderBP3Toast(string, {toastClass = "", style = "opacity:0;top:20px;transition: opacity 0.3s ease-out, top 0.3s ease-in;"} = {}){
             return `
             <div class="bp3-toast ${toastClass} bp3-overlay-content" tabindex="0" style="${style}">
             <span class="bp3-toast-message">${string}</span>
