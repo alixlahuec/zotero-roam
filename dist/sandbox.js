@@ -153,14 +153,14 @@ var zoteroRoam = {};
                         }
             
                         // Render the element's template
-                        element.innerHTML = `<a label="${data.value.key}" class="bp3-menu-item bp3-popover-dismiss">
+                        element.innerHTML = `<div label="${data.value.key}" class="bp3-menu-item bp3-popover-dismiss">
                                             <div class="bp3-text-overflow-ellipsis bp3-fill zotero-search-item-contents">
                                             ${itemTitle}
                                             ${itemAuthors}${itemYear}${itemMetadata}
                                             ${itemTags}
                                             </div>
                                             ${keyEl}
-                                            </a>`;
+                                            </div>`;
               
                     }
                 },
