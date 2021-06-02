@@ -224,12 +224,9 @@
             `;
         },
 
-        renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = "", buttonModifier = ""} = {}){
-            return `<div class="bp3-button-group bp3-minimal bp3-fill bp3-align-left">
-                    <button type="button" ${buttonModifier} class="bp3-button ${buttonClass}">
-                        <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
-                            <span class="bp3-button-text">${string}</span>
-                    </button>
+        renderBP3ButtonGroup(string, {divClass = "bp3-minimal bp3-fill bp3-align-left", buttonClass = "", modifier = "", icon = "", buttonModifier = ""} = {}){
+            return `<div class="bp3-button-group ${divClass}">
+                        ${zoteroRoam.utils.renderBP3Button_group(string = string, {buttonClass: buttonClass, icon: icon, modifier: modifier, buttonAttribute: buttonModifier})}
                     </div>`;
         },
         
@@ -240,6 +237,15 @@
             } else {
                 return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}${tagRem}</span>`;
             }
+        },
+
+        renderBP3Toast(string, {toastClass = "", style = "opacity:0;transition: opacity 0.3s ease-in;"} = {}){
+            return `
+            <div class="bp3-toast ${toastClass} bp3-overlay-content" tabindex="0" style="${style}">
+            <span class="bp3-toast-message">${string}</span>
+            ${zoteroRoam.utils.renderBP3ButtonGroup(string = string, {divClass: "bp3-minimal", buttonClass: "zotero-roam-toast-close bp3-button bp3-minimal", icon: "small-cross"})}
+            </div>
+            `
         },
 
         renderHTMLBlockObject(object){

@@ -123,8 +123,11 @@ var zoteroRoam = {};
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
                         let itemTitle = `<span class="zotero-search-item-title" style="display:block;">${itemTitleContent}</span>`;
                         
-                        let itemCitekeyContent = (data.key == "key") ? data.match : data.value.key;
-                        let itemCitekey = `<span class="bp3-menu-item-label zotero-search-item-key">${itemCitekeyContent}</span>`;
+                        let keyEl = `
+                        <span class="bp3-menu-item-label zotero-search-item-key">
+                        <a href="zotero://select/library/items/${data.value.itemKey}" destination="zotero">${data.value.key}</a>
+                        </span>
+                        `;
 
                         let itemYear = "";
                         if(data.value.year){
@@ -156,7 +159,7 @@ var zoteroRoam = {};
                                             ${itemAuthors}${itemYear}${itemMetadata}
                                             ${itemTags}
                                             </div>
-                                            ${itemCitekey}
+                                            ${keyEl}
                                             </a>`;
               
                     }
@@ -374,9 +377,9 @@ var zoteroRoam = {};
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;}
                                             .zotero-roam-page-menu-backlinks-item button{padding:0px;min-height:10px;}
                                             .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
-                                            .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
+                                            .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
                                             .zotero-roam-citations-search_result > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
-                                            .zotero-roam-citation-metadata{flex: 0 2 77%;white-space:normal;}
+                                            .zotero-roam-citation-metadata, .zotero-search-item-contents{flex: 0 2 77%;white-space:normal;}
                                             .zotero-roam-citation-links-list{display:block;}
                                             .zotero-search-item-key{flex: 0 1 20%;text-align:right;}
                                             .zotero-search-item-key .zotero-roam-citation-doi-link {display:block;font-weight:500;}
@@ -637,12 +640,9 @@ var zoteroRoam = {};
             `;
         },
 
-        renderBP3ButtonGroup(string, {buttonClass = "", modifier = "", icon = "", buttonModifier = ""} = {}){
-            return `<div class="bp3-button-group bp3-minimal bp3-fill bp3-align-left">
-                    <button type="button" ${buttonModifier} class="bp3-button ${buttonClass}">
-                        <span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>
-                            <span class="bp3-button-text">${string}</span>
-                    </button>
+        renderBP3ButtonGroup(string, {divClass = "bp3-minimal bp3-fill bp3-align-left", buttonClass = "", modifier = "", icon = "", buttonModifier = ""} = {}){
+            return `<div class="bp3-button-group ${divClass}">
+                        ${zoteroRoam.utils.renderBP3Button_group(string = string, {buttonClass: buttonClass, icon: icon, modifier: modifier, buttonAttribute: buttonModifier})}
                     </div>`;
         },
         
@@ -653,6 +653,15 @@ var zoteroRoam = {};
             } else {
                 return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}${tagRem}</span>`;
             }
+        },
+
+        renderBP3Toast(string, {toastClass = "", style = "opacity:0;transition: opacity 0.3s ease-in;"} = {}){
+            return `
+            <div class="bp3-toast ${toastClass} bp3-overlay-content" tabindex="0" style="${style}">
+            <span class="bp3-toast-message">${string}</span>
+            ${zoteroRoam.utils.renderBP3ButtonGroup(string = string, {divClass: "bp3-minimal", buttonClass: "zotero-roam-toast-close bp3-button bp3-minimal", icon: "small-cross"})}
+            </div>
+            `
         },
 
         renderHTMLBlockObject(object){
@@ -835,16 +844,17 @@ var zoteroRoam = {};
                         alert("There was a problem in obtaining the page's UID.");
                     }
                 }
-                let msg = outcome.success ? `Metadata was successfully added. You can check the page's contents to verify if you'd like.` : "The metadata array couldn't be properly processed.";
+                let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
+                let intent = outcome.success ? "success" : "danger";
                 if(popup == true){
-                    alert(msg);
+                    zoteroRoam.interface.popToaster(message = msg, intent = intent);
                 } else {
                     console.log(msg);
                 }
             } else {
                 console.log(item);
                 console.log(itemData);
-                alert("Something went wrong when formatting or importing the item's data.");
+                zoteroRoam.interface.popToaster(message = "Something went wrong when formatting or importing the item's data.", intent = "danger");
             }
         },
 
@@ -1105,6 +1115,7 @@ var zoteroRoam = {};
             itemsArray = itemsArray.map(item => {
                 let simplifiedItem = {
                     key: item.key,
+                    itemKey: item.data.key,
                     title: `${item.data.title || ""}`,
                     abstract: `${item.data.abstractNote || ""}`,
                     authors: `${item.meta.creatorSummary || ""}`,
@@ -1314,6 +1325,8 @@ var zoteroRoam = {};
             // Create citations search overlay
             zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.citations.overlayClass);
             zoteroRoam.interface.fillCitationsOverlay();
+            // Create toaster overlay
+            zoteroRoam.interface.createToasterOverlay();
         },
 
         setup(){
@@ -1379,7 +1392,29 @@ var zoteroRoam = {};
             zoteroRoam.interface[`${elementKey}`].options.list = document.querySelectorAll(`.${zoteroRoam.interface[`${elementKey}`].options.class}`);
         },
 
-        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;"){
+        createToasterOverlay(){
+            let overlay = document.createElement('div');
+            overlay.classList.add("bp3-overlay");
+            overlay.classList.add("bp3-overlay-open");
+            overlay.classList.add("bp3-toast-container");
+            overlay.classList.add("bp3-toast-container-top");
+            overlay.classList.add("bp3-toast-container-in-portal");
+            overlay.classList.add("zotero-roam-toaster-overlay");
+            
+            zoteroRoam.interface.portal.div.appendChild(overlay);
+        },
+
+        async popToaster(message, intent = "primary"){
+            let toasterOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toaster-overlay');
+            toasterOverlay.innerHTML = zoteroRoam.utils.renderBP3Toaster(string = message, {toastClass: `bp3-intent-${intent}`});
+
+            toasterOverlay.querySelector('.bp3-toast').style.opacity = "1";
+            await zoteroRoam.utils.sleep(500);
+            toasterOverlay.querySelector('.bp3-toaster').style.opacity = "0";
+
+        },
+
+        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;", overlay = true){
             try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
 
             let overlay = document.createElement("div");
@@ -1389,13 +1424,16 @@ var zoteroRoam = {};
             overlay.classList.add(`${divClass}-overlay`);
             overlay.setAttribute("overlay-visible", "false");
             overlay.style = "display:none;"
-        
-            let overlayBackdrop = document.createElement("div");
-            overlayBackdrop.classList.add("bp3-overlay-backdrop");
-            overlayBackdrop.classList.add("bp3-overlay-appear-done");
-            overlayBackdrop.classList.add("bp3-overlay-enter-done");
-            overlayBackdrop.classList.add(`${divClass}-backdrop`);
-            overlayBackdrop.tabIndex = "0";
+            
+            if(overlay){
+                let overlayBackdrop = document.createElement("div");
+                overlayBackdrop.classList.add("bp3-overlay-backdrop");
+                overlayBackdrop.classList.add("bp3-overlay-appear-done");
+                overlayBackdrop.classList.add("bp3-overlay-enter-done");
+                overlayBackdrop.classList.add(`${divClass}-backdrop`);
+                overlayBackdrop.tabIndex = "0";
+                overlay.appendChild(overlayBackdrop);
+            }
         
             let dialogContainer = document.createElement("div");
             dialogContainer.classList.add("bp3-dialog-container");
@@ -1429,7 +1467,6 @@ var zoteroRoam = {};
         
             dialogContainer.appendChild(dialogDiv);
         
-            overlay.appendChild(overlayBackdrop);
             overlay.appendChild(dialogContainer);
         
             zoteroRoam.interface.portal.div.appendChild(overlay);
@@ -1862,12 +1899,13 @@ var zoteroRoam = {};
             
             let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
             let goToPageSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
-            let goToPageText = `<a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}">Go to Roam page</a>  ${goToPageSeq}`;
-            let goToPage = zoteroRoam.utils.renderBP3ButtonGroup(string = goToPageText, { buttonClass: "item-go-to-page", icon: "arrow-right", modifier: "bp3-intent-primary", buttonModifier: `${goToPageModifier}` });
+            let pageURL = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}`;
+            let goToPageText = `<a href="${pageURL}">Go to Roam page</a>  ${goToPageSeq}`;
+            let goToPage = zoteroRoam.utils.renderBP3ButtonGroup(string = goToPageText, { buttonClass: "item-go-to-page", divClass: "bp3-minimal", icon: "arrow-right", modifier: "bp3-intent-primary", buttonModifier: `${goToPageModifier}` });
             
             let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
             let importText = `Import metadata  ${importSeq}`;
-            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", icon: "add", modifier: "bp3-intent-primary" });
+            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal", icon: "add", modifier: "bp3-intent-primary" });
 
             // Check for children items
             let infoChildren = zoteroRoam.formatting.getItemChildren(selectedItem, { pdf_as: "raw", notes_as: "raw" });
@@ -1912,14 +1950,15 @@ var zoteroRoam = {};
             let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){
                 console.log("Importing metadata...");
-                zoteroRoam.handlers.addSearchResult(citekey, pageUID);
+                zoteroRoam.handlers.addSearchResult(citekey, pageUID, {popup: true});
             });
             document.querySelector("button.item-go-to-page a").addEventListener("click", function(){
+                window.location.href = pageURL;
                 zoteroRoam.interface.toggleSearchOverlay("hide");
             });
 
             Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
-                btn.addEventListener("click", e => {
+                btn.addEventListener("click", (e) => {
                     switch(btn.getAttribute('format')){
                         case 'citekey':
                             zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
@@ -2006,6 +2045,7 @@ var zoteroRoam = {};
             let requestReturns = await zoteroRoam.handlers.requestData(zoteroRoam.config.requests);
             if (!requestReturns.success) {
                 zoteroRoam.interface.icon.style = `background-color:#f9a3a3 !important`;
+                zoteroRoam.interface.popToaster(message = "There was a problem with the Zotero data request. Please check your specification !", intent = "danger");
                 throw new Error("The API request encountered a problem. Please check your request specification, and the console for any registered errors.");
             } else {
                 zoteroRoam.data.items = requestReturns.data.items;
@@ -2049,6 +2089,7 @@ var zoteroRoam = {};
                 window.addEventListener("keydown", zoteroRoam.shortcuts.verify);
 
                 zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
+                zoteroRoam.interface.popToaster(message = "Zotero data successfully loaded !", intent = "success");
                 console.log('The results of the API request have been received ; you can check them by inspecting the value of the zoteroRoam.data object. Data import context menu should now be available.');
 
             }
@@ -2084,6 +2125,7 @@ var zoteroRoam = {};
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
 
             zoteroRoam.interface.icon.removeAttribute("style");
+            zoteroRoam.interface.popToaster(message = "All Zotero data was cleared. Bye for now !", intent = "success");
             console.log('Data and request outputs have been removed');
         },
         
@@ -2360,7 +2402,7 @@ var zoteroRoam = {};
                             menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
                                 let pageInGraph = zoteroRoam.utils.lookForPage(title);
                                 console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
-                                zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: false});
+                                zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: true});
                             });
                             try{
                                 menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", function(){

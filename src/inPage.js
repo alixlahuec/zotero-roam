@@ -201,7 +201,7 @@
                             menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
                                 let pageInGraph = zoteroRoam.utils.lookForPage(title);
                                 console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
-                                zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: false});
+                                zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: true});
                             });
                             try{
                                 menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", function(){

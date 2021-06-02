@@ -123,8 +123,11 @@ var zoteroRoam = {};
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
                         let itemTitle = `<span class="zotero-search-item-title" style="display:block;">${itemTitleContent}</span>`;
                         
-                        let itemCitekeyContent = (data.key == "key") ? data.match : data.value.key;
-                        let itemCitekey = `<span class="bp3-menu-item-label zotero-search-item-key">${itemCitekeyContent}</span>`;
+                        let keyEl = `
+                        <span class="bp3-menu-item-label zotero-search-item-key">
+                        <a href="zotero://select/library/items/${data.value.itemKey}" destination="zotero">${data.value.key}</a>
+                        </span>
+                        `;
 
                         let itemYear = "";
                         if(data.value.year){
@@ -156,7 +159,7 @@ var zoteroRoam = {};
                                             ${itemAuthors}${itemYear}${itemMetadata}
                                             ${itemTags}
                                             </div>
-                                            ${itemCitekey}
+                                            ${keyEl}
                                             </a>`;
               
                     }
@@ -374,9 +377,9 @@ var zoteroRoam = {};
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;}
                                             .zotero-roam-page-menu-backlinks-item button{padding:0px;min-height:10px;}
                                             .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
-                                            .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
+                                            .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
                                             .zotero-roam-citations-search_result > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
-                                            .zotero-roam-citation-metadata{flex: 0 2 77%;white-space:normal;}
+                                            .zotero-roam-citation-metadata, .zotero-search-item-contents{flex: 0 2 77%;white-space:normal;}
                                             .zotero-roam-citation-links-list{display:block;}
                                             .zotero-search-item-key{flex: 0 1 20%;text-align:right;}
                                             .zotero-search-item-key .zotero-roam-citation-doi-link {display:block;font-weight:500;}

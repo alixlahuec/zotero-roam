@@ -105,16 +105,17 @@
                         alert("There was a problem in obtaining the page's UID.");
                     }
                 }
-                let msg = outcome.success ? `Metadata was successfully added. You can check the page's contents to verify if you'd like.` : "The metadata array couldn't be properly processed.";
+                let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
+                let intent = outcome.success ? "success" : "danger";
                 if(popup == true){
-                    alert(msg);
+                    zoteroRoam.interface.popToaster(message = msg, intent = intent);
                 } else {
                     console.log(msg);
                 }
             } else {
                 console.log(item);
                 console.log(itemData);
-                alert("Something went wrong when formatting or importing the item's data.");
+                zoteroRoam.interface.popToaster(message = "Something went wrong when formatting or importing the item's data.", intent = "danger");
             }
         },
 
@@ -375,6 +376,7 @@
             itemsArray = itemsArray.map(item => {
                 let simplifiedItem = {
                     key: item.key,
+                    itemKey: item.data.key,
                     title: `${item.data.title || ""}`,
                     abstract: `${item.data.abstractNote || ""}`,
                     authors: `${item.meta.creatorSummary || ""}`,

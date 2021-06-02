@@ -44,6 +44,8 @@
             // Create citations search overlay
             zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.citations.overlayClass);
             zoteroRoam.interface.fillCitationsOverlay();
+            // Create toaster overlay
+            zoteroRoam.interface.createToasterOverlay();
         },
 
         setup(){
@@ -109,7 +111,29 @@
             zoteroRoam.interface[`${elementKey}`].options.list = document.querySelectorAll(`.${zoteroRoam.interface[`${elementKey}`].options.class}`);
         },
 
-        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;"){
+        createToasterOverlay(){
+            let overlay = document.createElement('div');
+            overlay.classList.add("bp3-overlay");
+            overlay.classList.add("bp3-overlay-open");
+            overlay.classList.add("bp3-toast-container");
+            overlay.classList.add("bp3-toast-container-top");
+            overlay.classList.add("bp3-toast-container-in-portal");
+            overlay.classList.add("zotero-roam-toaster-overlay");
+            
+            zoteroRoam.interface.portal.div.appendChild(overlay);
+        },
+
+        async popToaster(message, intent = "primary"){
+            let toasterOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toaster-overlay');
+            toasterOverlay.innerHTML = zoteroRoam.utils.renderBP3Toaster(string = message, {toastClass: `bp3-intent-${intent}`});
+
+            toasterOverlay.querySelector('.bp3-toast').style.opacity = "1";
+            await zoteroRoam.utils.sleep(500);
+            toasterOverlay.querySelector('.bp3-toaster').style.opacity = "0";
+
+        },
+
+        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;", overlay = true){
             try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
 
             let overlay = document.createElement("div");
@@ -119,13 +143,16 @@
             overlay.classList.add(`${divClass}-overlay`);
             overlay.setAttribute("overlay-visible", "false");
             overlay.style = "display:none;"
-        
-            let overlayBackdrop = document.createElement("div");
-            overlayBackdrop.classList.add("bp3-overlay-backdrop");
-            overlayBackdrop.classList.add("bp3-overlay-appear-done");
-            overlayBackdrop.classList.add("bp3-overlay-enter-done");
-            overlayBackdrop.classList.add(`${divClass}-backdrop`);
-            overlayBackdrop.tabIndex = "0";
+            
+            if(overlay){
+                let overlayBackdrop = document.createElement("div");
+                overlayBackdrop.classList.add("bp3-overlay-backdrop");
+                overlayBackdrop.classList.add("bp3-overlay-appear-done");
+                overlayBackdrop.classList.add("bp3-overlay-enter-done");
+                overlayBackdrop.classList.add(`${divClass}-backdrop`);
+                overlayBackdrop.tabIndex = "0";
+                overlay.appendChild(overlayBackdrop);
+            }
         
             let dialogContainer = document.createElement("div");
             dialogContainer.classList.add("bp3-dialog-container");
@@ -159,7 +186,6 @@
         
             dialogContainer.appendChild(dialogDiv);
         
-            overlay.appendChild(overlayBackdrop);
             overlay.appendChild(dialogContainer);
         
             zoteroRoam.interface.portal.div.appendChild(overlay);
@@ -592,12 +618,13 @@
             
             let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
             let goToPageSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
-            let goToPageText = `<a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}">Go to Roam page</a>  ${goToPageSeq}`;
-            let goToPage = zoteroRoam.utils.renderBP3ButtonGroup(string = goToPageText, { buttonClass: "item-go-to-page", icon: "arrow-right", modifier: "bp3-intent-primary", buttonModifier: `${goToPageModifier}` });
+            let pageURL = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}`;
+            let goToPageText = `<a href="${pageURL}">Go to Roam page</a>  ${goToPageSeq}`;
+            let goToPage = zoteroRoam.utils.renderBP3ButtonGroup(string = goToPageText, { buttonClass: "item-go-to-page", divClass: "bp3-minimal", icon: "arrow-right", modifier: "bp3-intent-primary", buttonModifier: `${goToPageModifier}` });
             
             let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
             let importText = `Import metadata  ${importSeq}`;
-            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", icon: "add", modifier: "bp3-intent-primary" });
+            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal", icon: "add", modifier: "bp3-intent-primary" });
 
             // Check for children items
             let infoChildren = zoteroRoam.formatting.getItemChildren(selectedItem, { pdf_as: "raw", notes_as: "raw" });
@@ -642,14 +669,15 @@
             let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){
                 console.log("Importing metadata...");
-                zoteroRoam.handlers.addSearchResult(citekey, pageUID);
+                zoteroRoam.handlers.addSearchResult(citekey, pageUID, {popup: true});
             });
             document.querySelector("button.item-go-to-page a").addEventListener("click", function(){
+                window.location.href = pageURL;
                 zoteroRoam.interface.toggleSearchOverlay("hide");
             });
 
             Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
-                btn.addEventListener("click", e => {
+                btn.addEventListener("click", (e) => {
                     switch(btn.getAttribute('format')){
                         case 'citekey':
                             zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${citekey}`;

@@ -6,6 +6,7 @@
             let requestReturns = await zoteroRoam.handlers.requestData(zoteroRoam.config.requests);
             if (!requestReturns.success) {
                 zoteroRoam.interface.icon.style = `background-color:#f9a3a3 !important`;
+                zoteroRoam.interface.popToaster(message = "There was a problem with the Zotero data request. Please check your specification !", intent = "danger");
                 throw new Error("The API request encountered a problem. Please check your request specification, and the console for any registered errors.");
             } else {
                 zoteroRoam.data.items = requestReturns.data.items;
@@ -49,6 +50,7 @@
                 window.addEventListener("keydown", zoteroRoam.shortcuts.verify);
 
                 zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
+                zoteroRoam.interface.popToaster(message = "Zotero data successfully loaded !", intent = "success");
                 console.log('The results of the API request have been received ; you can check them by inspecting the value of the zoteroRoam.data object. Data import context menu should now be available.');
 
             }
@@ -84,6 +86,7 @@
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
 
             zoteroRoam.interface.icon.removeAttribute("style");
+            zoteroRoam.interface.popToaster(message = "All Zotero data was cleared. Bye for now !", intent = "success");
             console.log('Data and request outputs have been removed');
         },
         
