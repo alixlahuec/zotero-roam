@@ -133,7 +133,7 @@
 
         },
 
-        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;", overlay = true){
+        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;", useOverlay = true){
             try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
 
             let overlay = document.createElement("div");
@@ -144,7 +144,7 @@
             overlay.setAttribute("overlay-visible", "false");
             overlay.style = "display:none;"
             
-            if(overlay){
+            if(useOverlay){
                 let overlayBackdrop = document.createElement("div");
                 overlayBackdrop.classList.add("bp3-overlay-backdrop");
                 overlayBackdrop.classList.add("bp3-overlay-appear-done");
