@@ -101,8 +101,12 @@
                         } catch(e){};
                         await zoteroRoam.utils.sleep(125);
                     } else {
-                        console.log(pageUID);
-                        alert("There was a problem in obtaining the page's UID.");
+                        let errorMsg = `There was a problem in obtaining the page's UID for ${title}.`;
+                        if(popup == true){
+                            zoteroRoam.interface.popToast(errorMsg, "danger");
+                        } else{
+                            console.log(errorMsg);
+                        }
                     }
                 }
                 let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
@@ -119,7 +123,7 @@
             }
         },
 
-        async addItemNotes(title, uid){
+        async addItemNotes(title, uid, {popup = true} = {}){
             let citekey = title.startsWith("@") ? title.slice(1) : title;
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
@@ -150,10 +154,23 @@
                         } catch(e){};
                         await zoteroRoam.utils.sleep(125);
                     } else {
-                        console.log(pageUID);
-                        alert("There was a problem in obtaining the page's UID.");
+                        let errorMsg = `There was a problem in obtaining the page's UID for ${title}.`;
+                        if(popup == true){
+                            zoteroRoam.interface.popToast(errorMsg, "danger");
+                        } else{
+                            console.log(errorMsg);
+                        }
                     }
                 }
+
+                let outcomeMsg = outcome.success ? "Notes successfully imported." : "The notes couldn't be imported.";
+                let outcomeIntent = outcome.success ? "success" : "danger";
+                if(popup == true){
+                    zoteroRoam.interface.popToast(outcomeMsg, outcomeIntent);
+                } else {
+                    console.log(outcomeMsg);
+                }
+
             } catch(e){
                 console.error(e);
                 console.log(item);
@@ -224,7 +241,7 @@
                 }
             } catch(e) {
                 console.error(e);
-                alert("The extension encountered at least one error during the data request process. Please check the console for details on the problem.");
+                zoteroRoam.interface.popToast("The extension encountered an error while requesting Zotero data. Please check the console for details.", "danger");
             } finally {
                 return{
                     data: results
@@ -333,6 +350,10 @@
                 }
             } catch(e) {
                 console.error(e);
+                console.log({
+                    dataCalls: dataCalls,
+                    collectionsCalls: collectionsCalls
+                })
                 return {
                     success: false
                 }

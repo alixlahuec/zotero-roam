@@ -251,7 +251,6 @@
             let objectHTML = "";
             // If the Object doesn't have a string property, throw an error
             if(typeof(object.string) === 'undefined'){
-                alert("Some of the input was passed as an Object but without a string property. See console for more details");
                 console.log(object);
                 throw new Error('All blocks passed as an Object must have a string property');
             } else {
@@ -279,7 +278,6 @@
                     renderedHTML = renderedHTML + `<li>${el} </li>`;
                 } else {
                     // If the element is of any other type, throw an error
-                    alert("Some of the input was of the wrong type. See the console for more details");
                     console.log(el);
                     throw new Error('All array items should be of type String or Object');
                 }

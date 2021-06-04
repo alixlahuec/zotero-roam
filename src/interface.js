@@ -53,7 +53,7 @@
 
             zoteroRoam.interface.setupContextMenus(["contextMenu", "iconContextMenu"]);
 
-            zoteroRoam.interface.search.updateButton.addEventListener("click", zoteroRoam.extension.update);
+            zoteroRoam.interface.search.updateButton.addEventListener("click", function(){zoteroRoam.extension.update(popup = true)});
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
             zoteroRoam.interface.search.input.addEventListener("rendered", zoteroRoam.interface.renderNbResults);
         },

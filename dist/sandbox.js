@@ -665,7 +665,6 @@ var zoteroRoam = {};
             let objectHTML = "";
             // If the Object doesn't have a string property, throw an error
             if(typeof(object.string) === 'undefined'){
-                alert("Some of the input was passed as an Object but without a string property. See console for more details");
                 console.log(object);
                 throw new Error('All blocks passed as an Object must have a string property');
             } else {
@@ -693,7 +692,6 @@ var zoteroRoam = {};
                     renderedHTML = renderedHTML + `<li>${el} </li>`;
                 } else {
                     // If the element is of any other type, throw an error
-                    alert("Some of the input was of the wrong type. See the console for more details");
                     console.log(el);
                     throw new Error('All array items should be of type String or Object');
                 }
@@ -837,8 +835,12 @@ var zoteroRoam = {};
                         } catch(e){};
                         await zoteroRoam.utils.sleep(125);
                     } else {
-                        console.log(pageUID);
-                        alert("There was a problem in obtaining the page's UID.");
+                        let errorMsg = `There was a problem in obtaining the page's UID for ${title}.`;
+                        if(popup == true){
+                            zoteroRoam.interface.popToast(errorMsg, "danger");
+                        } else{
+                            console.log(errorMsg);
+                        }
                     }
                 }
                 let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
@@ -855,7 +857,7 @@ var zoteroRoam = {};
             }
         },
 
-        async addItemNotes(title, uid){
+        async addItemNotes(title, uid, {popup = true} = {}){
             let citekey = title.startsWith("@") ? title.slice(1) : title;
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
@@ -886,10 +888,23 @@ var zoteroRoam = {};
                         } catch(e){};
                         await zoteroRoam.utils.sleep(125);
                     } else {
-                        console.log(pageUID);
-                        alert("There was a problem in obtaining the page's UID.");
+                        let errorMsg = `There was a problem in obtaining the page's UID for ${title}.`;
+                        if(popup == true){
+                            zoteroRoam.interface.popToast(errorMsg, "danger");
+                        } else{
+                            console.log(errorMsg);
+                        }
                     }
                 }
+
+                let outcomeMsg = outcome.success ? "Notes successfully imported." : "The notes couldn't be imported.";
+                let outcomeIntent = outcome.success ? "success" : "danger";
+                if(popup == true){
+                    zoteroRoam.interface.popToast(outcomeMsg, outcomeIntent);
+                } else {
+                    console.log(outcomeMsg);
+                }
+
             } catch(e){
                 console.error(e);
                 console.log(item);
@@ -960,7 +975,7 @@ var zoteroRoam = {};
                 }
             } catch(e) {
                 console.error(e);
-                alert("The extension encountered at least one error during the data request process. Please check the console for details on the problem.");
+                zoteroRoam.interface.popToast("The extension encountered an error while requesting Zotero data. Please check the console for details.", "danger");
             } finally {
                 return{
                     data: results
@@ -1069,6 +1084,10 @@ var zoteroRoam = {};
                 }
             } catch(e) {
                 console.error(e);
+                console.log({
+                    dataCalls: dataCalls,
+                    collectionsCalls: collectionsCalls
+                })
                 return {
                     success: false
                 }
@@ -1331,7 +1350,7 @@ var zoteroRoam = {};
 
             zoteroRoam.interface.setupContextMenus(["contextMenu", "iconContextMenu"]);
 
-            zoteroRoam.interface.search.updateButton.addEventListener("click", zoteroRoam.extension.update);
+            zoteroRoam.interface.search.updateButton.addEventListener("click", function(){zoteroRoam.extension.update(popup = true)});
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
             zoteroRoam.interface.search.input.addEventListener("rendered", zoteroRoam.interface.renderNbResults);
         },
@@ -2134,7 +2153,7 @@ var zoteroRoam = {};
             }
         },
 
-        async update(popup = true){
+        async update(popup){
             // Turn the icon background to orange while we're updating the data
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
@@ -2187,7 +2206,7 @@ var zoteroRoam = {};
 
             } else {
                 if(popup){
-                    alert("Something went wrong when updating the data. Check the console for any errors.");
+                    zoteroRoam.interface.popToast("Something went wrong when updating the data. Check the console for any errors.", "warning");
                 } else{
                     console.log("Something went wrong when updating the data. Check the console for any errors.");
                 };

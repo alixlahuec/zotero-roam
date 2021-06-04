@@ -98,7 +98,7 @@
             }
         },
 
-        async update(popup = true){
+        async update(popup){
             // Turn the icon background to orange while we're updating the data
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
@@ -151,7 +151,7 @@
 
             } else {
                 if(popup){
-                    alert("Something went wrong when updating the data. Check the console for any errors.");
+                    zoteroRoam.interface.popToast("Something went wrong when updating the data. Check the console for any errors.", "warning");
                 } else{
                     console.log("Something went wrong when updating the data. Check the console for any errors.");
                 };
