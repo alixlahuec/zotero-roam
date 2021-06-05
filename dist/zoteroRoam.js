@@ -478,6 +478,11 @@ var zoteroRoam = {};
                     citeText = item.meta.parsedDate ? `${citeText} (${new Date(item.meta.parsedDate).getUTCFullYear()})` : citeText;
                     citeText = `[${(citeText.length > 0) ? citeText : item.key}]([[@${item.key}]])`
                     return citeText;
+                case 'popover':
+                    let popText = item.meta.creatorSummary || ``;
+                    popText = item.meta.parsedDate ? `${popText} (${new Date(item.meta.parsedDate).getUTCFullYear()})` : popText;
+                    popText = `{{=: ${(popText.length > 0) ? popText : item.key} | {{embed: [[@${item.key}]]}} }}`
+                    return popText;
                 case 'zettlr':
                     return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + ` : ` + item.data.title;
                 case 'zettlr_accent':
@@ -2190,7 +2195,7 @@ var zoteroRoam = {};
             }
         },
 
-        async update(popup){
+        async update(popup = "true"){
             // Turn the icon background to orange while we're updating the data
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
@@ -2214,7 +2219,9 @@ var zoteroRoam = {};
                 
                 let updatedItems = updateResults.data.items;
                 if(updatedItems.length == 0){
-                    if(popup) {alert("No new items were found since the data was last loaded. Data on collections was refreshed.")};
+                    if(popup) {
+                        zoteroRoam.interface.popToast("No new items were found since the data was last loaded. Data on collections was refreshed.", "primary");
+                    };
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 } else {
                     let newItems = zoteroRoam.handlers.extractCitekeys(updatedItems);
@@ -2234,9 +2241,9 @@ var zoteroRoam = {};
 
                     zoteroRoam.inPage.checkCitekeys(update = true);
                     if(popup) {
-                        alert(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`);
+                        zoteroRoam.interface.popToast(`${nbNewItems} new items and ${nbModifiedItems} modified items were added.`, "primary");
                     } else{
-                        console.log(`${nbNewItems} new items and ${nbModifiedItems} modified items were added to the dataset. Data on collections was refreshed.`);
+                        console.log(`${nbNewItems} new items and ${nbModifiedItems} modified items were added.`);
                     };
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 }
