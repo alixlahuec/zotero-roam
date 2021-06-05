@@ -315,12 +315,12 @@
         },
 
         async requestData(requests) {
+            let dataCalls = [];
+            let collectionsCalls = [];
             if(requests.length == 0){
                 throw new Error("No data requests were added to the config object - check for upstream problems");
             }
             try{
-                let dataCalls = [];
-                let collectionsCalls = [];
                 requests.forEach( rq => {
                     let userOrGroupPrefix = rq.dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1);
                     dataCalls.push(zoteroRoam.handlers.fetchData(apiKey = rq.apikey, dataURI = rq.dataURI, params = rq.params));

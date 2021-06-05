@@ -1049,12 +1049,12 @@ var zoteroRoam = {};
         },
 
         async requestData(requests) {
+            let dataCalls = [];
+            let collectionsCalls = [];
             if(requests.length == 0){
                 throw new Error("No data requests were added to the config object - check for upstream problems");
             }
             try{
-                let dataCalls = [];
-                let collectionsCalls = [];
                 requests.forEach( rq => {
                     let userOrGroupPrefix = rq.dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1);
                     dataCalls.push(zoteroRoam.handlers.fetchData(apiKey = rq.apikey, dataURI = rq.dataURI, params = rq.params));
@@ -1915,10 +1915,15 @@ var zoteroRoam = {};
             
             let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
             let goToPageSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
-            let pageURL = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}`;
-            let goToPageText = `<a href="${pageURL}">Go to Roam page</a>  ${goToPageSeq}`;
-            let goToPage = zoteroRoam.utils.renderBP3ButtonGroup(string = goToPageText, { buttonClass: "item-go-to-page", divClass: "bp3-minimal", icon: "arrow-right", modifier: "bp3-intent-primary", buttonModifier: `${goToPageModifier}` });
-            
+            let pageURL = (pageInGraph.present == true) ? `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}` : "";
+            let goToPage = `
+            <div class="bp3-button-group bp3-minimal">
+            <a class="bp3-button item-go-to-page" href="${pageURL}" ${goToPageModifier}>
+            <span icon="arrow-right" class="bp3-icon bp3-icon-arrow-right bp3-intent-primary"></span>Go to Roam page  ${goToPageSeq}
+            </a>
+            </div>
+            `;
+
             let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
             let importText = `Import metadata  ${importSeq}`;
             let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal", icon: "add", modifier: "bp3-intent-primary" });
@@ -1968,9 +1973,11 @@ var zoteroRoam = {};
                 console.log("Importing metadata...");
                 zoteroRoam.handlers.addSearchResult(citekey, pageUID, {popup: true});
             });
-            document.querySelector("button.item-go-to-page a").addEventListener("click", function(){
-                window.location.href = pageURL;
-                zoteroRoam.interface.toggleSearchOverlay("hide");
+            document.querySelector("a.item-go-to-page").addEventListener("click", (e) => {
+                if(e.target.dataset.uid){
+                    window.location.href = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${goToPageLink.dataset.uid}`;
+                    zoteroRoam.interface.toggleSearchOverlay("hide");
+                }
             });
 
             Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
