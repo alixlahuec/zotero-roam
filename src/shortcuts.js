@@ -55,7 +55,8 @@
                     let goToPageEl = document.querySelector("a.item-go-to-page");
                     if(goToPageEl){
                         if(goToPageEl.dataset.uid){
-                            window.location.href = goToPageEl.getAttribute("href");
+                            goToPageEl.click();
+                            document.location.href = goToPageEl.getAttribute("href");
                             zoteroRoam.interface.toggleSearchOverlay("hide");
                         }
                     }
