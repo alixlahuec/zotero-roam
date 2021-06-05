@@ -39,14 +39,12 @@
             if(arr.length == 0){
                 return false;
             } else {
-                return arr.map(n => {
-                    let noteBlocks = n.data.note.split(split_char);
-                })
+                return arr.map(n => n.data.note.split(split_char));
             }
         },
 
         formatItemNotes(notes){
-            return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
+            return notes.flat(1).map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
         },
 
         formatItemReference(item, format){

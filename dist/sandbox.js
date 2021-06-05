@@ -459,14 +459,12 @@ var zoteroRoam = {};
             if(arr.length == 0){
                 return false;
             } else {
-                return arr.map(n => {
-                    let noteBlocks = n.data.note.split(split_char);
-                })
+                return arr.map(n => n.data.note.split(split_char));
             }
         },
 
         formatItemNotes(notes){
-            return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
+            return notes.flat(1).map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
         },
 
         formatItemReference(item, format){
@@ -2754,10 +2752,12 @@ var zoteroRoam = {};
             goToItemPage: {
                 defaultShortcut: [],
                 execute(){
-                    try{
-                        document.querySelector("a.item-go-to-page").click();
-                    }catch(e){
-                        console.error(e);
+                    let goToPageEl = document.querySelector("a.item-go-to-page");
+                    if(goToPageEl){
+                        if(goToPageEl.dataset.uid){
+                            window.location.href = goToPageEl.getAttribute("href");
+                            zoteroRoam.interface.toggleSearchOverlay("hide");
+                        }
                     }
                 }
             },

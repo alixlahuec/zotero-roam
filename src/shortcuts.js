@@ -52,10 +52,12 @@
             goToItemPage: {
                 defaultShortcut: [],
                 execute(){
-                    try{
-                        document.querySelector("a.item-go-to-page").click();
-                    }catch(e){
-                        console.error(e);
+                    let goToPageEl = document.querySelector("a.item-go-to-page");
+                    if(goToPageEl){
+                        if(goToPageEl.dataset.uid){
+                            window.location.href = goToPageEl.getAttribute("href");
+                            zoteroRoam.interface.toggleSearchOverlay("hide");
+                        }
                     }
                 }
             },
