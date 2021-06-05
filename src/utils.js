@@ -35,16 +35,18 @@
             return formattedBib;
         },
 
-        formatItemNotes(arr, {split_char = "\n"} = {}){
+        splitNotes(arr, split_char = zoteroRoam.config.params.notes["split_char"]){
             if(arr.length == 0){
                 return false;
             } else {
                 return arr.map(n => {
-                    // Split into blocks on newline
                     let noteBlocks = n.data.note.split(split_char);
-                    return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
-                });
+                })
             }
+        },
+
+        formatItemNotes(notes){
+            return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
         },
 
         formatItemReference(item, format){

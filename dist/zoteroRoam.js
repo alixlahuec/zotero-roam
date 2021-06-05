@@ -290,6 +290,11 @@ var zoteroRoam = {};
                 },
                 citations: {
                     itemsPerPage: 20
+                },
+                notes: {
+                    use: "text",
+                    split_char: "\n",
+                    func: "zoteroRoam.utils.formatItemNotes"
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -361,6 +366,7 @@ var zoteroRoam = {};
                                             .item-citekey, .item-actions{flex:0 1 30%;}
                                             .item-citekey{margin:10px 0px;}
                                             .item-citekey .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
+                                            a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}
                                             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}
                                             .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}
@@ -449,16 +455,18 @@ var zoteroRoam = {};
             return formattedBib;
         },
 
-        formatItemNotes(arr, {split_char = "\n"} = {}){
+        splitNotes(arr, split_char = zoteroRoam.config.params.notes["split_char"]){
             if(arr.length == 0){
                 return false;
             } else {
                 return arr.map(n => {
-                    // Split into blocks on newline
                     let noteBlocks = n.data.note.split(split_char);
-                    return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
-                });
+                })
             }
+        },
+
+        formatItemNotes(notes){
+            return noteBlocks.map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
         },
 
         formatItemReference(item, format){
@@ -830,6 +838,7 @@ var zoteroRoam = {};
                             let goToPageButton = document.querySelector(".item-go-to-page");
                             if(goToPageButton != null){
                                 goToPageButton.setAttribute("data-uid", pageUID);
+                                goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`);
                                 goToPageButton.disabled = false;
                             }
                         } catch(e){};
@@ -862,7 +871,7 @@ var zoteroRoam = {};
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
             try {
-                let itemChildren = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted", split_char: "\n"});
+                let itemChildren = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted"});
                 let itemNotes = itemChildren.notes.flat(1);
                 let outcome = {};
 
@@ -994,6 +1003,29 @@ var zoteroRoam = {};
             try {
                 itemData = await zoteroRoam.utils.executeFunctionByName(funcName, window, item);
                 return itemData;
+            } catch(e) {
+                console.error(e);
+                console.log(`There was a problem when formatting the item with function ${funcName}`);
+                return [];
+            }
+        },
+
+        formatNotes(notes, use = zoteroRoam.config.params.notes.use, split_char = zoteroRoam.config.params.notes["split_char"]){
+            let notesData = [];
+            let funcName = zoteroRoam.config.params.notes.func;
+
+            try{
+                switch(use){
+                    case "raw":
+                        notesData = zoteroRoam.utils.executeFunctionByName(funcName, window, notes);
+                        return notesData;
+                    case "text":
+                        let notesText = zoteroRoam.utils.splitNotes(notes, split_char = split_char);
+                        notesData = zoteroRoam.utils.executeFunctionByName(funcName, window, notesText);
+                        return notesData;
+                    default:
+                        console.log(`Unsupported format : ${use}`);
+                }
             } catch(e) {
                 console.error(e);
                 console.log(`There was a problem when formatting the item with function ${funcName}`);
@@ -1915,7 +1947,7 @@ var zoteroRoam = {};
             
             let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
             let goToPageSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
-            let pageURL = (pageInGraph.present == true) ? `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}` : "";
+            let pageURL = (pageInGraph.present == true) ? `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}` : "javascript:void(0)";
             let goToPage = `
             <div class="bp3-button-group bp3-minimal">
             <a class="bp3-button item-go-to-page" href="${pageURL}" ${goToPageModifier}>
@@ -2143,7 +2175,7 @@ var zoteroRoam = {};
             try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.page_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.auto_update) } catch(e){};
-            zoteroRoam.config.editingObserver.disconnect();
+            try { zoteroRoam.config.editingObserver.disconnect() } catch(e){};
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
 
@@ -2549,7 +2581,7 @@ var zoteroRoam = {};
         // If either is non-existent/unavailable, it takes the value `false`
         // If the item has children that were not returned by the API call, the object will have a property `remoteChildren` set to `true`.
         // User can check if that's the case, and decide to call zoteroRoam.handlers.requestItemChildren to obtain those children ; if any, they will be returned raw (user will have to format)
-        getItemChildren(item, { pdf_as = "links", notes_as = "formatted", split_char = "\n" } = {}){
+        getItemChildren(item, { pdf_as = "links", notes_as = "formatted", split_char = zoteroRoam.config.params.notes["split_char"] } = {}){
             let childrenObject = {pdfItems: false, notes: false};
             let itemChildren = [];
 
@@ -2581,7 +2613,7 @@ var zoteroRoam = {};
                     childrenObject.notes = (notesResults.length == 0) ? false : notesResults;
                     break;
                 case "formatted":
-                    childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"), {split_char: split_char});
+                    childrenObject.notes = zoteroRoam.handlers.formatNotes(itemChildren.filter(c => c.data.itemType == "note"));
                     break;
             }
 
@@ -2652,7 +2684,7 @@ var zoteroRoam = {};
             metadata.push(`Zotero links:: ${zoteroRoam.formatting.getLocalLink(item)}, ${zoteroRoam.formatting.getWebLink(item)}`); // Local + Web links to the item
             if (item.data.tags.length > 0) { metadata.push(`Tags:: ${zoteroRoam.formatting.getTags(item)}`) }; // Tags, if any
             
-            let children = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "links", notes_as: "formatted", split_char: "\n"});
+            let children = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "links", notes_as: "formatted"});
             if(children.pdfItems){
                 metadata.push(`PDF links : ${children.pdfItems.join(", ")}`);
             }
@@ -2942,6 +2974,13 @@ var zoteroRoam = {};
                 zoteroRoam.config.tribute.trigger = trigger;
                 zoteroRoam.config.params.autocomplete.enabled = true;
             }
+        }
+
+        if(zoteroRoam.config.userSettings.notes){
+            let {use = "text", split_char = "\n", func = "zoteroRoam.utils.formatItemNotes"} = zoteroRoam.config.userSettings.notes;
+            zoteroRoam.config.params.notes.use = use;
+            zoteroRoam.config.params.notes["split_char"] = split_char;
+            zoteroRoam.config.params.notes.func = func;
         }
         
         zoteroRoam.shortcuts.setup();

@@ -290,6 +290,11 @@ var zoteroRoam = {};
                 },
                 citations: {
                     itemsPerPage: 20
+                },
+                notes: {
+                    use: "text",
+                    split_char: "\n",
+                    func: "zoteroRoam.utils.formatItemNotes"
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -361,6 +366,7 @@ var zoteroRoam = {};
                                             .item-citekey, .item-actions{flex:0 1 30%;}
                                             .item-citekey{margin:10px 0px;}
                                             .item-citekey .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
+                                            a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}
                                             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}
                                             .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}

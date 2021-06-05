@@ -32,7 +32,7 @@
         // If either is non-existent/unavailable, it takes the value `false`
         // If the item has children that were not returned by the API call, the object will have a property `remoteChildren` set to `true`.
         // User can check if that's the case, and decide to call zoteroRoam.handlers.requestItemChildren to obtain those children ; if any, they will be returned raw (user will have to format)
-        getItemChildren(item, { pdf_as = "links", notes_as = "formatted", split_char = "\n" } = {}){
+        getItemChildren(item, { pdf_as = "links", notes_as = "formatted", split_char = zoteroRoam.config.params.notes["split_char"] } = {}){
             let childrenObject = {pdfItems: false, notes: false};
             let itemChildren = [];
 
@@ -64,7 +64,7 @@
                     childrenObject.notes = (notesResults.length == 0) ? false : notesResults;
                     break;
                 case "formatted":
-                    childrenObject.notes = zoteroRoam.utils.formatItemNotes(itemChildren.filter(c => c.data.itemType == "note"), {split_char: split_char});
+                    childrenObject.notes = zoteroRoam.handlers.formatNotes(itemChildren.filter(c => c.data.itemType == "note"));
                     break;
             }
 
@@ -135,7 +135,7 @@
             metadata.push(`Zotero links:: ${zoteroRoam.formatting.getLocalLink(item)}, ${zoteroRoam.formatting.getWebLink(item)}`); // Local + Web links to the item
             if (item.data.tags.length > 0) { metadata.push(`Tags:: ${zoteroRoam.formatting.getTags(item)}`) }; // Tags, if any
             
-            let children = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "links", notes_as: "formatted", split_char: "\n"});
+            let children = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "links", notes_as: "formatted"});
             if(children.pdfItems){
                 metadata.push(`PDF links : ${children.pdfItems.join(", ")}`);
             }

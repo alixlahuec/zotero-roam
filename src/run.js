@@ -39,6 +39,13 @@
                 zoteroRoam.config.params.autocomplete.enabled = true;
             }
         }
+
+        if(zoteroRoam.config.userSettings.notes){
+            let {use = "text", split_char = "\n", func = "zoteroRoam.utils.formatItemNotes"} = zoteroRoam.config.userSettings.notes;
+            zoteroRoam.config.params.notes.use = use;
+            zoteroRoam.config.params.notes["split_char"] = split_char;
+            zoteroRoam.config.params.notes.func = func;
+        }
         
         zoteroRoam.shortcuts.setup();
         zoteroRoam.shortcuts.setupSequences();

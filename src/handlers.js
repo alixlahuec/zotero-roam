@@ -96,6 +96,7 @@
                             let goToPageButton = document.querySelector(".item-go-to-page");
                             if(goToPageButton != null){
                                 goToPageButton.setAttribute("data-uid", pageUID);
+                                goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`);
                                 goToPageButton.disabled = false;
                             }
                         } catch(e){};
@@ -128,7 +129,7 @@
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
             try {
-                let itemChildren = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted", split_char: "\n"});
+                let itemChildren = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted"});
                 let itemNotes = itemChildren.notes.flat(1);
                 let outcome = {};
 
@@ -260,6 +261,29 @@
             try {
                 itemData = await zoteroRoam.utils.executeFunctionByName(funcName, window, item);
                 return itemData;
+            } catch(e) {
+                console.error(e);
+                console.log(`There was a problem when formatting the item with function ${funcName}`);
+                return [];
+            }
+        },
+
+        formatNotes(notes, use = zoteroRoam.config.params.notes.use, split_char = zoteroRoam.config.params.notes["split_char"]){
+            let notesData = [];
+            let funcName = zoteroRoam.config.params.notes.func;
+
+            try{
+                switch(use){
+                    case "raw":
+                        notesData = zoteroRoam.utils.executeFunctionByName(funcName, window, notes);
+                        return notesData;
+                    case "text":
+                        let notesText = zoteroRoam.utils.splitNotes(notes, split_char = split_char);
+                        notesData = zoteroRoam.utils.executeFunctionByName(funcName, window, notesText);
+                        return notesData;
+                    default:
+                        console.log(`Unsupported format : ${use}`);
+                }
             } catch(e) {
                 console.error(e);
                 console.log(`There was a problem when formatting the item with function ${funcName}`);

@@ -81,7 +81,7 @@
             try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.page_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.auto_update) } catch(e){};
-            zoteroRoam.config.editingObserver.disconnect();
+            try { zoteroRoam.config.editingObserver.disconnect() } catch(e){};
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
 
