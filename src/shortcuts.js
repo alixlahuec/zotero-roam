@@ -52,9 +52,10 @@
             goToItemPage: {
                 defaultShortcut: [],
                 execute(){
-                    let goToPageButton = document.querySelector("button.item-go-to-page");
-                    if(goToPageButton !== null && goToPageButton.disabled == false){
-                        goToPageButton.querySelector("a").click();
+                    try{
+                        document.querySelector("a.item-go-to-page").click();
+                    }catch(e){
+                        console.error(e);
                     }
                 }
             },

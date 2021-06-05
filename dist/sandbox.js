@@ -1975,7 +1975,7 @@ var zoteroRoam = {};
             });
             document.querySelector("a.item-go-to-page").addEventListener("click", (e) => {
                 if(e.target.dataset.uid){
-                    window.location.href = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${goToPageLink.dataset.uid}`;
+                    window.location.href = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.target.dataset.uid}`;
                     zoteroRoam.interface.toggleSearchOverlay("hide");
                 }
             });
@@ -2722,9 +2722,10 @@ var zoteroRoam = {};
             goToItemPage: {
                 defaultShortcut: [],
                 execute(){
-                    let goToPageButton = document.querySelector("button.item-go-to-page");
-                    if(goToPageButton !== null && goToPageButton.disabled == false){
-                        goToPageButton.querySelector("a").click();
+                    try{
+                        document.querySelector("a.item-go-to-page").click();
+                    }catch(e){
+                        console.error(e);
                     }
                 }
             },
