@@ -1,12 +1,12 @@
 ;(()=>{
     zoteroRoam.interface = {
         icon: null,
-        portal: {div: null, id: "zotero-data-importer-portal"},
+        portal: {div: null, id: "zotero-roam-portal"},
         contextMenu: {
             div: null,
-            class: "zotero-context-menu",
-            overlay: {div: null, class: "zotero-context-overlay"},
-            options: {list: [], class: "zotero-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation"]},
+            class: "zotero-roam-context-menu",
+            overlay: {div: null, class: "zotero-roam-context-overlay"},
+            options: {list: [], class: "zotero-roam-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation", "Check for citing papers"]},
             visible: false,
             targetElement: null,
             position({top, left}){
@@ -17,9 +17,9 @@
         },
         iconContextMenu: {
             div: null,
-            class: "zotero-icon-context-menu",
-            overlay: {div: null, class: "zotero-icon-context-overlay"},
-            options: {list: [], class: "zotero-icon-context-menu-option", labels: ["Update Zotero data", "Search in dataset..."]},
+            class: "zotero-roam-icon-context-menu",
+            overlay: {div: null, class: "zotero-roam-icon-context-overlay"},
+            options: {list: [], class: "zotero-roam-icon-context-menu-option", labels: ["Update Zotero data", "Search in dataset..."]},
             visible: false,
             position({top, left}){
                 zoteroRoam.interface.iconContextMenu.div.style.left = (left >= 0.9*window.innerWidth) ? `calc(${left}px - 10%)` : `${left}px`;
@@ -28,13 +28,13 @@
             }
         },
         citations: {overlay: null, input: null, closeButton: null, overlayClass: "zotero-roam-citations-search"},
-        search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, overlayClass: "zotero-search"},
+        search: {overlay: null, input: null, selectedItemDiv: null, closeButton: null, updateButton: null, overlayClass: "zotero-roam-search"},
         tributeTrigger: ``,
         tributeBlockTrigger: null,
         tributeNewText: ``,
 
         create(){
-            zoteroRoam.interface.createIcon(id = "zotero-data-icon");
+            zoteroRoam.interface.createIcon(id = "zotero-roam-icon");
             zoteroRoam.interface.portal.div = zoteroRoam.interface.createPortal(id = zoteroRoam.interface.portal.id);
             zoteroRoam.interface.createContextMenu(elementKey = "contextMenu");
             zoteroRoam.interface.createContextMenu(elementKey = "iconContextMenu");
@@ -44,8 +44,8 @@
             // Create citations search overlay
             zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.citations.overlayClass);
             zoteroRoam.interface.fillCitationsOverlay();
-            // Create toaster overlay
-            zoteroRoam.interface.createToasterOverlay();
+            // Create toast overlay
+            zoteroRoam.interface.createToastOverlay();
         },
 
         setup(){
@@ -111,7 +111,7 @@
             zoteroRoam.interface[`${elementKey}`].options.list = document.querySelectorAll(`.${zoteroRoam.interface[`${elementKey}`].options.class}`);
         },
 
-        createToasterOverlay(){
+        createToastOverlay(){
             let overlay = document.createElement('div');
             overlay.classList.add("bp3-overlay");
             overlay.classList.add("bp3-overlay-open");
@@ -124,16 +124,16 @@
         },
 
         async popToast(message, intent = "primary"){
-            let toasterOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toast-overlay');
-            toasterOverlay.innerHTML = zoteroRoam.utils.renderBP3Toast(string = message, {toastClass: `bp3-intent-${intent}`});
+            let toastOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toast-overlay');
+            toastOverlay.innerHTML = zoteroRoam.utils.renderBP3Toast(string = message, {toastClass: `bp3-intent-${intent}`});
 
-            toasterOverlay.querySelector('.bp3-toast').style.opacity = "1";
+            toastOverlay.querySelector('.bp3-toast').style.opacity = "1";
             await zoteroRoam.utils.sleep(700);
-            toasterOverlay.querySelector('.bp3-toast').style.top = "-100px";
+            toastOverlay.querySelector('.bp3-toast').style.top = "-100px";
 
         },
 
-        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;", useOverlay = true){
+        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;", useBackdrop = true){
             try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
 
             let overlay = document.createElement("div");
@@ -144,7 +144,7 @@
             overlay.setAttribute("overlay-visible", "false");
             overlay.style = "display:none;"
             
-            if(useOverlay){
+            if(useBackdrop){
                 let overlayBackdrop = document.createElement("div");
                 overlayBackdrop.classList.add("bp3-overlay-backdrop");
                 overlayBackdrop.classList.add("bp3-overlay-appear-done");
@@ -175,7 +175,7 @@
             dialogFooter.classList.add("bp3-dialog-footer");
         
             // Set close button
-            dialogHeader.innerHTML = `<button type="button" aria-label="Close" class="zotero-search-close bp3-button bp3-minimal bp3-dialog-close-button">
+            dialogHeader.innerHTML = `<button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
                                             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>`
         
             // Chain up all the DOM elements
@@ -199,7 +199,7 @@
 
             // Add header elements
             searchDialogHeader.innerHTML = `<label class="bp3-control bp3-switch" style="margin-bottom:0px;flex: 1 1 auto;">
-            <input id="zotero-quick-copy-mode" type="checkbox"><span class="bp3-control-indicator"></span>Quick Copy</label>` + searchDialogHeader.innerHTML;
+            <input id="zotero-roam-quick-copy-mode" type="checkbox"><span class="bp3-control-indicator"></span>Quick Copy</label>` + searchDialogHeader.innerHTML;
 
             // Add body elements
             let parText = document.createElement("p");
@@ -211,7 +211,7 @@
             inputGroup.classList.add("bp3-input-group");
         
             let searchBar = document.createElement('input');
-            searchBar.id = "zotero-search-autocomplete";
+            searchBar.id = "zotero-roam-search-autocomplete";
             searchBar.tabIndex = "1";
             searchBar.type = "text";
             searchBar.classList.add("bp3-input");
@@ -221,7 +221,7 @@
             searchDialogBody.appendChild(inputGroup);
         
             let selectedItemDiv = document.createElement('div');
-            selectedItemDiv.id = "zotero-search-selected-item";
+            selectedItemDiv.id = "zotero-roam-search-selected-item";
             selectedItemDiv.classList.add("bp3-card");
             selectedItemDiv.style = "width:95%;margin:0 auto;display:none;";
         
@@ -239,16 +239,16 @@
             searchDialogFooter.innerHTML = `<div class="bp3-dialog-footer-actions">
                                             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
                                             <span class="bp3-popover2-target" tabindex="0">
-                                                <button type="button" class="zotero-update-data bp3-button">
+                                                <button type="button" class="zotero-roam-update-data bp3-button">
                                             <span class="bp3-button-text">Update Zotero data</span>
                                             </button></span></div>`;
 
             // Storing info in variables
             zoteroRoam.interface.search.overlay = document.querySelector(`.${divClass}-overlay`);
-            zoteroRoam.interface.search.input = document.querySelector("#zotero-search-autocomplete");
-            zoteroRoam.interface.search.selectedItemDiv = document.querySelector("#zotero-search-selected-item");
-            zoteroRoam.interface.search.closeButton = document.querySelector(`.${divClass}-overlay button.zotero-search-close`);
-            zoteroRoam.interface.search.updateButton = document.querySelector(`.${divClass}-overlay button.zotero-update-data`);
+            zoteroRoam.interface.search.input = document.querySelector("#zotero-roam-search-autocomplete");
+            zoteroRoam.interface.search.selectedItemDiv = document.querySelector("#zotero-roam-search-selected-item");
+            zoteroRoam.interface.search.closeButton = document.querySelector(`.${divClass}-overlay button.zotero-roam-search-close`);
+            zoteroRoam.interface.search.updateButton = document.querySelector(`.${divClass}-overlay button.zotero-roam-update-data`);
         },
 
         fillCitationsOverlay(divClass = zoteroRoam.interface.citations.overlayClass){
@@ -294,7 +294,7 @@
             // Storing info in variables
             zoteroRoam.interface.citations.overlay = document.querySelector(`.${divClass}-overlay`);
             zoteroRoam.interface.citations.input = document.querySelector("#zotero-roam-citations-autocomplete");
-            zoteroRoam.interface.citations.closeButton = document.querySelector(`.${divClass}-overlay button.zotero-search-close`);
+            zoteroRoam.interface.citations.closeButton = document.querySelector(`.${divClass}-overlay button.zotero-roam-search-close`);
 
             // Rigging page controls
             Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(".zotero-roam-page-control")).forEach(control => {
@@ -326,8 +326,8 @@
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let titleEl = `<span class="zotero-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
-                // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
+                let titleEl = `<span class="zotero-roam-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
+                // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-roam-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let origin = cit.authors + (cit.year ? " (" + cit.year + ")" : "");
                 let metaEl = `<span class="zotero-roam-citation-metadata-contents">${zoteroRoam.utils.renderBP3Tag(origin, {modifier: "bp3-intent-warning"})} ${cit.meta}</span>`;
                 let linksEl = "";
@@ -351,7 +351,7 @@
                 }
 
                 let keyEl = `
-                <span class="bp3-menu-item-label zotero-search-item-key">
+                <span class="bp3-menu-item-label zotero-roam-search-item-key">
                 <a href="https://doi.org/${cit.doi}" class="zotero-roam-citation-doi-link">${cit.doi}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
                 ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-intent-primary bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
@@ -429,11 +429,14 @@
                         case "Convert to citation":
                             op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(zoteroRoam.interface.contextMenu.targetElement) });
                             break;
+                        case "Check for citing papers":
+                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForScitations(zoteroRoam.interface.contextMenu.targetElement) });
+                            break;
                         case "Update Zotero data":
                             op.addEventListener("click", zoteroRoam.extension.update)
                             break;
                         case "Search in dataset...":
-                            op.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("show")});
+                            op.addEventListener("click", () => { zoteroRoam.interface.toggleSearchOverlay("show") });
                     }
                 })
             })
@@ -533,7 +536,7 @@
             if(e.detail.results.length > 0){
                 resultsText = `Showing ${e.detail.results.length} out of ${e.detail.matches.length} results`;
             }
-            document.querySelector("#zotero-search-results-list").setAttribute("aria-label", resultsText);
+            document.querySelector("#zotero-roam-search-results-list").setAttribute("aria-label", resultsText);
         },
 
         renderSelectedItem(feedback){

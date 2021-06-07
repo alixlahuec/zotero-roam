@@ -28,7 +28,7 @@
             toggleQuickCopy: {
                 defaultShortcut: [],
                 execute(){
-                    document.getElementById("zotero-quick-copy-mode").click();
+                    document.getElementById("zotero-roam-quick-copy-mode").click();
                 }
             },
             importMetadata: {
@@ -189,7 +189,7 @@
             // Quick Copy : toggle
             let qcText = (zoteroRoam.shortcuts.sequences["toggleQuickCopy"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleQuickCopy", pre = " ") : "";
             if(qcText.length > 0){
-                let searchHeader = document.querySelector('.zotero-search-overlay .bp3-dialog-header');
+                let searchHeader = document.querySelector('.zotero-roam-search-overlay .bp3-dialog-header');
                 searchHeader.querySelector(".bp3-control.bp3-switch").innerHTML += qcText;
             };
             // Import metadata => in rendering of selected item

@@ -312,6 +312,23 @@
             }
         },
 
+        async checkForScitations(refSpan){
+            try {
+                let citekey = refSpan.parentElement.dataset.linkTitle.replace("@", ""); // I'll deal with tags later, or not at all
+                let item = zoteroRoam.data.items.find(i => { return i.key == citekey });
+                if (item) {
+                    if(item.data.DOI){
+                        await zoteroRoam.handlers.requestScitations(item.data.DOI);
+                        zoteroRoam.interface.popCitationsOverlay(item.data.DOI);
+                    } else{
+                        zoteroRoam.interface.popToast("This item has no DOI (required for citations lookup).", "danger");
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        },
+
         async requestScitations(doi){
             let sciteListIndex = zoteroRoam.data.scite.findIndex(res => res.doi == doi);
             if(sciteListIndex == -1){

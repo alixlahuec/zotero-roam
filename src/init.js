@@ -93,7 +93,7 @@ var zoteroRoam = {};
                         return filteredMatches;
                     }
                 },
-                selector: '#zotero-search-autocomplete',
+                selector: '#zotero-roam-search-autocomplete',
                 searchEngine: (query, record) => {
                     return zoteroRoam.utils.multiwordMatch(query, record);
                 },
@@ -108,23 +108,23 @@ var zoteroRoam = {};
                     return 0;
                 },
                 resultsList: {
-                    className: "zotero-search-results-list",
-                    idName: "zotero-search-results-list",
+                    className: "zotero-roam-search-results-list",
+                    idName: "zotero-roam-search-results-list",
                     container: source => {
                         source.classList.add("bp3-menu");
                     }
                 },
                 resultItem: {
                     element: 'li',
-                    className: "zotero-search_result",
-                    idName: "zotero-search_result",
+                    className: "zotero-roam-search_result",
+                    idName: "zotero-roam-search_result",
                     content: (data, element) => {
-                        let itemMetadata = `<span class="zotero-search-item-metadata"> ${data.value.meta}</span>`;
+                        let itemMetadata = `<span class="zotero-roam-search-item-metadata"> ${data.value.meta}</span>`;
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
-                        let itemTitle = `<span class="zotero-search-item-title" style="display:block;">${itemTitleContent}</span>`;
+                        let itemTitle = `<span class="zotero-roam-search-item-title" style="display:block;">${itemTitleContent}</span>`;
                         
                         let keyEl = `
-                        <span class="bp3-menu-item-label zotero-search-item-key">
+                        <span class="bp3-menu-item-label zotero-roam-search-item-key">
                         <a href="zotero://select/library/items/${data.value.itemKey}" destination="zotero">${data.value.key}</a>
                         </span>
                         `;
@@ -136,21 +136,21 @@ var zoteroRoam = {};
                         if(data.value.authors){
                             // If the match is in the full list of authors, manually add the .autoComplete_highlighted class to the abbreviated authors span
                             if(data.key == "authorsLastNames" || data.key == "year"){
-                                itemAuthors = `<span class="zotero-search-item-authors autoComplete_highlighted">${data.value.authors}${itemYear}</span>`;
+                                itemAuthors = `<span class="zotero-roam-search-item-authors autoComplete_highlighted">${data.value.authors}${itemYear}</span>`;
                             } else {
-                                itemAuthors = `<span class="zotero-search-item-authors">${zoteroRoam.utils.renderBP3Tag(data.value.authors + itemYear, {modifier: "bp3-intent-primary"})}</span>`;
+                                itemAuthors = `<span class="zotero-roam-search-item-authors">${zoteroRoam.utils.renderBP3Tag(data.value.authors + itemYear, {modifier: "bp3-intent-primary"})}</span>`;
                             }
                         }
                         // Prepare tags element, if there are any
                         let itemTags = "";
                         if(data.value.tagsString){
                             let itemTagsContent = (data.key == "tagsString") ? data.match : data.value.tagsString;
-                            itemTags = `<span class="zotero-search-item-tags" style="display:block;">${itemTagsContent}</span>`;
+                            itemTags = `<span class="zotero-roam-search-item-tags" style="display:block;">${itemTagsContent}</span>`;
                         }
             
                         // Render the element's template
                         element.innerHTML = `<div label="${data.value.key}" class="bp3-menu-item bp3-popover-dismiss">
-                                            <div class="bp3-text-overflow-ellipsis bp3-fill zotero-search-item-contents">
+                                            <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-search-item-contents">
                                             ${itemTitle}
                                             <span class="zotero-roam-citation-metadata-contents">
                                             ${itemAuthors}${itemMetadata}
@@ -176,7 +176,7 @@ var zoteroRoam = {};
                 },
                 onSelection: (feedback) => {
                     zoteroRoam.interface.search.input.blur();
-                    let quickCopyEnabled = document.querySelector("#zotero-quick-copy-mode").checked;
+                    let quickCopyEnabled = document.querySelector("#zotero-roam-quick-copy-mode").checked;
                     if(zoteroRoam.config.params.always_copy == true || (quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden)){
                         let clipboard = zoteroRoam.interface.search.overlay.querySelector("input.clipboard-copy-utility");
                         let toCopy = ``;
@@ -346,13 +346,13 @@ var zoteroRoam = {};
 
         addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
-            autoCompleteCSS.textContent = `ul.zotero-search-results-list::before{content:attr(aria-label);}
+            autoCompleteCSS.textContent = `ul.zotero-roam-search-results-list::before{content:attr(aria-label);}
                                             li.autoComplete_selected{background-color:#e7f3f7;}
                                             span.autoComplete_highlighted{color:#146cb7;}
                                             .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
                                             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
-                                            .zotero-search-item-title{font-weight:600;}
-                                            .zotero-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
+                                            .zotero-roam-search-item-title{font-weight:600;}
+                                            .zotero-roam-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
                                             .zotero-roam-citation-link{padding: 0 5px;}
                                             .zotero-roam-citation-link a, .zotero-roam-citation-metadata-contents{font-size:0.85em;}
                                             .zotero-roam-citations-results-count{padding: 6px 10px;}
@@ -381,13 +381,13 @@ var zoteroRoam = {};
                                             .zotero-roam-page-menu-pdf-link a {color:black;font-weight:600;}
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;font-size:0.9em;}
                                             .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
-                                            .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
+                                            .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
                                             .zotero-roam-citations-search_result > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
-                                            .zotero-roam-citation-metadata, .zotero-search-item-contents{flex: 0 2 77%;white-space:normal;}
+                                            .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
                                             .zotero-roam-citation-links-list{display:block;}
-                                            .zotero-search-item-key{flex: 0 1 20%;text-align:right;}
-                                            .zotero-search-item-key .zotero-roam-citation-doi-link {display:block;font-weight:500;}
-                                            .zotero-search-item-key a, .zotero-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
+                                            .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;}
+                                            .zotero-roam-search-item-key .zotero-roam-citation-doi-link {display:block;font-weight:500;}
+                                            .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
                                             .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}`;
             document.head.append(autoCompleteCSS);
         }
