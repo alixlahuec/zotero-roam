@@ -2618,7 +2618,7 @@ var zoteroRoam = {};
                     childrenObject.notes = (notesResults.length == 0) ? false : notesResults;
                     break;
                 case "formatted":
-                    childrenObject.notes = zoteroRoam.handlers.formatNotes(itemChildren.filter(c => c.data.itemType == "note"));
+                    childrenObject.notes = zoteroRoam.handlers.formatNotes(notes = itemChildren.filter(c => c.data.itemType == "note"), use = zoteroRoam.config.params.notes.use, split_char = split_char);
                     break;
             }
 
