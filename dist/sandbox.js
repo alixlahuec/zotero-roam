@@ -1063,8 +1063,12 @@ var zoteroRoam = {};
                 let item = zoteroRoam.data.items.find(i => { return i.key == citekey });
                 if (item) {
                     if(item.data.DOI){
-                        await zoteroRoam.handlers.requestScitations(item.data.DOI);
-                        zoteroRoam.interface.popCitationsOverlay(item.data.DOI);
+                        let scitations = await zoteroRoam.handlers.requestScitations(item.data.DOI);
+                        if(scitations.simplified.length == 0){
+                            zoteroRoam.interface.popToast("This item has no available citing papers");
+                        } else {
+                            zoteroRoam.interface.popCitationsOverlay(item.data.DOI);
+                        }
                     } else{
                         zoteroRoam.interface.popToast("This item has no DOI (required for citations lookup).", "danger");
                     }
