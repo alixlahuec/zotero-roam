@@ -374,11 +374,11 @@ var zoteroRoam = {};
                                             .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}
                                             .zotero-roam-page-div{display:flex;justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #f8f8f9;}
                                             .zotero-roam-page-menu-header{display:flex;}
-                                            .zotero-roam-page-menu-actions{flex: 0 1 75%;}
+                                            .zotero-roam-page-menu-actions{flex: 0 1 75%;flex-wrap:wrap;}
                                             .zotero-roam-page-menu hr{margin:2px 0;}
                                             .scite-badge{padding-top:5px;}
                                             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
-                                            .zotero-roam-page-menu-pdf-link a {color:black;font-weight:600;}
+                                            .zotero-roam-page-menu-pdf-link {color:black;font-weight:600;}
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;font-size:0.9em;}
                                             .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
                                             .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
@@ -637,6 +637,16 @@ var zoteroRoam = {};
             cleanBlock = cleanBlock.replaceAll(linkRegex, `[$2]($1)`);
         
             return cleanBlock;
+        },
+
+        renderBP3Button_link(string, {linkClass = "", icon = "", iconModifier = "", target = "", linkAttribute = ""} = {}){
+            let iconEl = icon ? `<span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${iconModifier}"></span>` : "";
+            return `
+            <a class="bp3-button ${linkClass}" href="${target}" ${linkAttribute}>
+            ${iconEl}
+            <span class="bp3-button-text">${string}</span>
+            </a>
+            `;
         },
 
         renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = "", buttonAttribute = ""} = {}){
@@ -1977,9 +1987,7 @@ var zoteroRoam = {};
             let pageURL = (pageInGraph.present == true) ? `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}` : "javascript:void(0)";
             let goToPage = `
             <div class="bp3-button-group bp3-minimal">
-            <a class="bp3-button item-go-to-page" href="${pageURL}" ${goToPageModifier}>
-            <span icon="arrow-right" class="bp3-icon bp3-icon-arrow-right bp3-intent-primary"></span>Go to Roam page  ${goToPageSeq}
-            </a>
+            ${zoteroRoam.utils.renderBP3Button_link(string = "Go to Roam page" + goToPageSeq, {linkClass: "item-go-to-page", icon: "arrow-right", iconModifier: "bp3-intent-primary", target: pageURL, linkAttribute: goToPageModifier})}
             </div>
             `;
 
@@ -2425,13 +2433,13 @@ var zoteroRoam = {};
                             let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
                             let pdfButtons = !itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
                                 let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
-                                    let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
-                                    return zoteroRoam.utils.renderBP3Button_group(string = pdfLink, {buttonClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip" });
+                                let pdfTitle = item.data.filename || item.data.title;
+                                return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip", target: pdfHref });
                             }).join("");
 
-                            let recordsButtons = [zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://www.connectedpapers.com/${(!itemInLib.data.DOI) ? "search?q=" + encodeURIComponent(itemInLib.data.title) : "api/redirect/doi/" + itemDOI}" target="_blank">Connected Papers</a>`, {buttonClass: "bp3-minimal zotero-roam-page-menu-connected-papers", icon: "layout"}),
-                                                (!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://api.semanticscholar.org/${itemDOI}" target="_blank">Semantic Scholar</a>`, {buttonClass: "bp3-minimal zotero-roam-page-menu-semantic-scholar", icon: "bookmark"}),
-                                                zoteroRoam.utils.renderBP3Button_group(string = `<a href="https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}" target="_blank">Google Scholar</a>`, {buttonClass: "bp3-minimal zotero-roam-page-menu-google-scholar", icon: "learning"})];
+                            let recordsButtons = [zoteroRoam.utils.renderBP3Button_link(string = "Connected Papers", {icon: "layout", linkClass: "bp3-minimal zotero-roam-page-menu-connected-papers", linkAttribute: `target="_blank"`, target: `https://www.connectedpapers.com/${(!itemInLib.data.DOI) ? "search?q=" + encodeURIComponent(itemInLib.data.title) : "api/redirect/doi/" + itemDOI}`}),
+                                                (!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_link(string = "Semantic Scholar", {icon: "bookmark", linkClass: "bp3-minimal zotero-roam-page-menu-semantic-scholar", linkAttribute: `target="_blank"`, target: `https://api.semanticscholar.org/${itemDOI}`}),
+                                                zoteroRoam.utils.renderBP3Button_link(string = "Google Scholar", {icon: "learning", linkClass: "bp3-minimal zotero-roam-page-menu-google-scholar", linkAttribute: `target="_blank"`, target: `https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}`})];
 
                             let backlinksLib = "";
                             if(itemInLib.data.DOI){
@@ -2441,7 +2449,8 @@ var zoteroRoam = {};
                                 if(scitingDOIs.length > 0){
                                     let doiPapers = zoteroRoam.data.items.filter(it => it.data.DOI);
                                     let papersInLib = doiPapers.filter(it => scitingDOIs.includes(zoteroRoam.utils.parseDOI(it.data.DOI)));
-                                    backlinksLib = zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} citations in library`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                    backlinksLib = "<hr>";
+                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} citations in library`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
 
                                     backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${scitingDOIs.length} citations available`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "citation", buttonAttribute: `data-doi=${itemDOI}`});
 
@@ -2473,7 +2482,7 @@ var zoteroRoam = {};
 
                             menuDiv.innerHTML = `
                             <div class="zotero-roam-page-menu-header">
-                            <div class="zotero-roam-page-menu-actions">
+                            <div class="zotero-roam-page-menu-actions bp3-button-group">
                             ${zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"})}
                             ${notesButton}
                             ${pdfButtons}

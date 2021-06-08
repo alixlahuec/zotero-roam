@@ -374,11 +374,11 @@ var zoteroRoam = {};
                                             .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}
                                             .zotero-roam-page-div{display:flex;justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #f8f8f9;}
                                             .zotero-roam-page-menu-header{display:flex;}
-                                            .zotero-roam-page-menu-actions{flex: 0 1 75%;}
+                                            .zotero-roam-page-menu-actions{flex: 0 1 75%;flex-wrap:wrap;}
                                             .zotero-roam-page-menu hr{margin:2px 0;}
                                             .scite-badge{padding-top:5px;}
                                             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
-                                            .zotero-roam-page-menu-pdf-link a {color:black;font-weight:600;}
+                                            .zotero-roam-page-menu-pdf-link {color:black;font-weight:600;}
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;font-size:0.9em;}
                                             .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
                                             .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}

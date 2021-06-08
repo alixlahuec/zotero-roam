@@ -219,6 +219,16 @@
             return cleanBlock;
         },
 
+        renderBP3Button_link(string, {linkClass = "", icon = "", iconModifier = "", target = "", linkAttribute = ""} = {}){
+            let iconEl = icon ? `<span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${iconModifier}"></span>` : "";
+            return `
+            <a class="bp3-button ${linkClass}" href="${target}" ${linkAttribute}>
+            ${iconEl}
+            <span class="bp3-button-text">${string}</span>
+            </a>
+            `;
+        },
+
         renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = "", buttonAttribute = ""} = {}){
             let iconEl = icon ? `<span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>` : "";
             return `
