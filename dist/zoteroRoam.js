@@ -2420,6 +2420,14 @@ var zoteroRoam = {};
                         if(page.parentElement.querySelector(".zotero-roam-page-div") == null){
                             let pageDiv = document.createElement("div");
                             pageDiv.classList.add("zotero-roam-page-div");
+                            if(itemDOI){
+                                pageDiv.innerHTML = `
+                                <span class="zotero-roam-page-doi" data-doi="${itemDOI}">
+                                <a href="https://doi.org/${itemDOI}" target="_blank">${itemDOI}</a>
+                                </span>
+                                `;
+                            }
+                            
                             page.parentElement.appendChild(pageDiv);
                         }
 
@@ -2481,17 +2489,7 @@ var zoteroRoam = {};
                                 }
                             }
 
-                            let doiSpan = ``;
-                            if(itemDOI){
-                                doiSpan = `
-                                <span class="zotero-roam-page-doi" data-doi="${itemDOI}">
-                                <a href="https://doi.org/${itemDOI}" target="_blank">${itemDOI}</a>
-                                </span>
-                                `
-                            }
-
                             menuDiv.innerHTML = `
-                            ${doiSpan}
                             <div class="zotero-roam-page-menu-header">
                             <div class="zotero-roam-page-menu-actions bp3-button-group">
                             ${zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"})}
