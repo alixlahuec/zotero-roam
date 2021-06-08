@@ -745,7 +745,8 @@
                 let replacement = e.detail.item.original.value;
                 let blockContents = e.target.defaultValue;
 
-                let triggerRegex = new RegExp(trigger, 'g');
+                let escapedTrigger = zoteroRoam.utils.escapeRegExp(trigger);
+                let triggerRegex = new RegExp(escapedTrigger, 'g');
                 let newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
 
                 // Store info about the replacement, to help debug

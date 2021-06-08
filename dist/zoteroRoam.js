@@ -427,6 +427,12 @@ var zoteroRoam = {};
             window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': { 'string': blockString } });
         },
 
+        // From Darren Cook on SO : https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+        // Escape special characters in user input so that RegExp can be generated :
+        escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+        },
+
         // From Jason Bunting on SO : https://stackoverflow.com/questions/359788/how-to-execute-a-javascript-function-when-i-have-its-name-as-a-string
         // Execute function by name :
         executeFunctionByName(functionName, context /*, args */) {
@@ -2110,7 +2116,8 @@ var zoteroRoam = {};
                 let replacement = e.detail.item.original.value;
                 let blockContents = e.target.defaultValue;
 
-                let triggerRegex = new RegExp(trigger, 'g');
+                let escapedTrigger = zoteroRoam.utils.escapeRegExp(trigger);
+                let triggerRegex = new RegExp(escapedTrigger, 'g');
                 let newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
 
                 // Store info about the replacement, to help debug
@@ -2660,7 +2667,7 @@ var zoteroRoam = {};
                     childrenObject.notes = (notesResults.length == 0) ? false : notesResults;
                     break;
                 case "formatted":
-                    childrenObject.notes = zoteroRoam.handlers.formatNotes(notes = itemChildren.filter(c => c.data.itemType == "note"), use = zoteroRoam.config.params.notes.use, split_char = split_char);
+                    childrenObject.notes = (notesResults.length == 0) ? false : zoteroRoam.handlers.formatNotes(notes = itemChildren.filter(c => c.data.itemType == "note"), use = zoteroRoam.config.params.notes.use, split_char = split_char);
                     break;
             }
 
