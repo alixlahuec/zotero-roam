@@ -97,7 +97,7 @@
                             if(goToPageButton != null){
                                 goToPageButton.setAttribute("data-uid", pageUID);
                                 goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`);
-                                goToPageButton.disabled = false;
+                                goToPageButton.removeAttribute("disabled");
                             }
                         } catch(e){};
                         await zoteroRoam.utils.sleep(125);
