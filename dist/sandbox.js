@@ -2602,11 +2602,14 @@ var zoteroRoam = {};
 ;(()=>{
     zoteroRoam.formatting = {
 
-        getCreators(item){
+        getCreators(item, {brackets = true} = {}){
             return item.data.creators.map(creator => {
-                let nameTag = (creator.name) ? `[[${creator.name}]]` : `[[${[creator.firstName, creator.lastName].filter(Boolean).join(" ")}]]`;
+                let nameTag = (creator.name) ? `${creator.name}` : `${[creator.firstName, creator.lastName].filter(Boolean).join(" ")}`;
+                if(brackets == true){
+                    nameTag = `[[${nameTag}]]`;
+                }
                 if (creator.creatorType != "author") {
-                    nameTag = nameTag + " (" + creator.creatorType + ")"
+                    nameTag = `${nameTag} (${creator.creatorType})`;
                 }
                 return nameTag;
             }).join(", ");
