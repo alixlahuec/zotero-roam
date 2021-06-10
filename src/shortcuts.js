@@ -56,7 +56,7 @@
                     if(goToPageEl){
                         if(goToPageEl.dataset.uid){
                             let newHash = window.location.hash.replace(/page\/(.+)/g, `page/${goToPageEl.dataset.uid}`);
-                            window.location.replace(newHash);
+                            window.location.assign(newHash);
                             zoteroRoam.interface.toggleSearchOverlay("hide");
                         }
                     }

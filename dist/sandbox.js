@@ -376,9 +376,9 @@ var zoteroRoam = {};
                                             .zotero-roam-page-doi a{color:#c6c6c6;}
                                             .zotero-roam-page-menu{justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #f8f8f9;}
                                             .zotero-roam-page-menu-header{display:flex;}
-                                            .zotero-roam-page-menu-actions{flex: 0 1 75%;flex-wrap:wrap;}
+                                            .zotero-roam-page-menu-actions{flex-wrap:wrap;}
                                             .zotero-roam-page-menu hr{margin:2px 0;}
-                                            .scite-badge{padding-top:5px;}
+                                            .scite-badge{padding-top:5px;min-width:25%;}
                                             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
                                             .zotero-roam-page-menu-pdf-link {font-weight:600;}
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;font-size:0.9em;}
@@ -500,6 +500,10 @@ var zoteroRoam = {};
                 default:
                     return `@${item.key}`;
             }
+        },
+
+        getAllPageUIDs(){
+            return roamAlphaAPI.q('[:find ?pt ?pu :where[?p :block/uid ?pu][?p :node/title ?pt]]');
         },
 
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
@@ -2050,7 +2054,7 @@ var zoteroRoam = {};
             });
             document.querySelector("a.item-go-to-page").addEventListener("click", (e) => {
                 if(e.target.dataset.uid){
-                    window.location.href = `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.target.dataset.uid}`;
+                    window.location.assign(`https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.target.dataset.uid}`);
                     zoteroRoam.interface.toggleSearchOverlay("hide");
                 }
             });
@@ -2813,7 +2817,7 @@ var zoteroRoam = {};
                     if(goToPageEl){
                         if(goToPageEl.dataset.uid){
                             let newHash = window.location.hash.replace(/page\/(.+)/g, `page/${goToPageEl.dataset.uid}`);
-                            window.location.replace(newHash);
+                            window.location.assign(newHash);
                             zoteroRoam.interface.toggleSearchOverlay("hide");
                         }
                     }
