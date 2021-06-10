@@ -53,12 +53,8 @@
                 defaultShortcut: [],
                 execute(){
                     let goToPageEl = document.querySelector("a.item-go-to-page");
-                    if(goToPageEl){
-                        if(goToPageEl.dataset.uid){
-                            let newHash = window.location.hash.replace(/page\/(.+)/g, `page/${goToPageEl.dataset.uid}`);
-                            window.location.assign(newHash);
-                            zoteroRoam.interface.toggleSearchOverlay("hide");
-                        }
+                    if(goToPageEl && zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true"){
+                        goToPageEl.click();
                     }
                 }
             },

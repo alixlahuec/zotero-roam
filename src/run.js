@@ -6,6 +6,7 @@
         zoteroRoam.interface.create();
         zoteroRoam.interface.setup();
         zoteroRoam.addExtensionCSS();
+        window.addEventListener("hashchange", () => { zoteroRoam.interface.toggleSearchOverlay("hide") });
 
         zoteroRoam.config.userSettings = window.zoteroRoam_settings;
 

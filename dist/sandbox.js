@@ -2052,12 +2052,6 @@ var zoteroRoam = {};
                 console.log("Importing metadata...");
                 zoteroRoam.handlers.addSearchResult(citekey, pageUID, {popup: true});
             });
-            document.querySelector("a.item-go-to-page").addEventListener("click", (e) => {
-                if(e.target.dataset.uid){
-                    window.location.assign(`https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.target.dataset.uid}`);
-                    zoteroRoam.interface.toggleSearchOverlay("hide");
-                }
-            });
 
             Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", (e) => {
@@ -2814,12 +2808,8 @@ var zoteroRoam = {};
                 defaultShortcut: [],
                 execute(){
                     let goToPageEl = document.querySelector("a.item-go-to-page");
-                    if(goToPageEl){
-                        if(goToPageEl.dataset.uid){
-                            let newHash = window.location.hash.replace(/page\/(.+)/g, `page/${goToPageEl.dataset.uid}`);
-                            window.location.assign(newHash);
-                            zoteroRoam.interface.toggleSearchOverlay("hide");
-                        }
+                    if(goToPageEl && zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true"){
+                        goToPageEl.click();
                     }
                 }
             },
