@@ -129,7 +129,7 @@
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
             try {
-                let itemNotes = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted", split_char = zoteroRoam.config.params.notes["split_char"] });
+                let itemNotes = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted", split_char = zoteroRoam.config.params.notes["split_char"] }).notes;
                 let outcome = {};
 
                 let pageUID = uid || "";
