@@ -129,8 +129,7 @@
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
             try {
-                let itemChildren = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted"});
-                let itemNotes = itemChildren.notes.flat(1);
+                let itemNotes = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted", split_char = zoteroRoam.config.params.notes["split_char"] });
                 let outcome = {};
 
                 let pageUID = uid || "";
@@ -282,7 +281,7 @@
                         notesData = zoteroRoam.utils.executeFunctionByName(funcName, window, notesText);
                         return notesData;
                     default:
-                        console.log(`Unsupported format : ${use}`);
+                        console.error(`Unsupported format : ${use}`);
                 }
             } catch(e) {
                 console.error(e);

@@ -225,8 +225,23 @@
 
             let linkRegex = /<a href="(.+?)">(.+?)<\/a>/g;
             cleanBlock = cleanBlock.replaceAll(linkRegex, `[$2]($1)`);
+
+            cleanBlock = zoteroRoam.utils.cleanNewlines(cleanBlock);
         
             return cleanBlock;
+        },
+
+        cleanNewlines(text){
+            let cleanText = text;
+            if(cleanText.startsWith("\n")){
+                cleanText = cleanText.slice(1);
+                cleanText = zoteroRoam.utils.cleanNewlines(cleanText);
+            } else if(cleanText.endsWith("\n")){
+                cleanText = cleanText.slice(0, -1);
+                cleanText = zoteroRoam.utils.cleanNewlines(cleanText);
+            }
+
+            return cleanText;
         },
 
         renderBP3Button_link(string, {linkClass = "", icon = "", iconModifier = "", target = "", linkAttribute = ""} = {}){

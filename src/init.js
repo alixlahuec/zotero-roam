@@ -364,7 +364,7 @@ var zoteroRoam = {};
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
                                             .item-citekey, .item-actions{flex:0 1 30%;}
-                                            .item-citekey{margin:10px 0px;}
+                                            .item-citekey{margin:10px 0px; overflow-wrap:break-word;}
                                             .item-citekey .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
                                             a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}

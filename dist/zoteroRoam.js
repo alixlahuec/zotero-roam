@@ -364,7 +364,7 @@ var zoteroRoam = {};
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
                                             .item-citekey, .item-actions{flex:0 1 30%;}
-                                            .item-citekey{margin:10px 0px;}
+                                            .item-citekey{margin:10px 0px; overflow-wrap:break-word;}
                                             .item-citekey .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
                                             a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}
@@ -647,8 +647,23 @@ var zoteroRoam = {};
 
             let linkRegex = /<a href="(.+?)">(.+?)<\/a>/g;
             cleanBlock = cleanBlock.replaceAll(linkRegex, `[$2]($1)`);
+
+            cleanBlock = zoteroRoam.utils.cleanNewlines(cleanBlock);
         
             return cleanBlock;
+        },
+
+        cleanNewlines(text){
+            let cleanText = text;
+            if(cleanText.startsWith("\n")){
+                cleanText = cleanText.slice(1);
+                cleanText = zoteroRoam.utils.cleanNewlines(cleanText);
+            } else if(cleanText.endsWith("\n")){
+                cleanText = cleanText.slice(0, -1);
+                cleanText = zoteroRoam.utils.cleanNewlines(cleanText);
+            }
+
+            return cleanText;
         },
 
         renderBP3Button_link(string, {linkClass = "", icon = "", iconModifier = "", target = "", linkAttribute = ""} = {}){
@@ -896,8 +911,7 @@ var zoteroRoam = {};
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
             try {
-                let itemChildren = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted"});
-                let itemNotes = itemChildren.notes.flat(1);
+                let itemNotes = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "raw", notes_as: "formatted", split_char = zoteroRoam.config.params.notes["split_char"] });
                 let outcome = {};
 
                 let pageUID = uid || "";
@@ -1049,7 +1063,7 @@ var zoteroRoam = {};
                         notesData = zoteroRoam.utils.executeFunctionByName(funcName, window, notesText);
                         return notesData;
                     default:
-                        console.log(`Unsupported format : ${use}`);
+                        console.error(`Unsupported format : ${use}`);
                 }
             } catch(e) {
                 console.error(e);
@@ -1822,10 +1836,11 @@ var zoteroRoam = {};
             zoteroRoam.interface[`${elementKey}`].visible = (command == "show") ? true : false;
         },
 
-        toggleSearchOverlay(command) {
+        async toggleSearchOverlay(command) {
             zoteroRoam.interface.search.overlay.style.display = command === "show" ? "block" : "none";
             if (command == "show") {
                 console.log("Opening the Search Panel")
+                await zoteroRoam.utils.sleep(75);
                 zoteroRoam.interface.search.input.focus();
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");

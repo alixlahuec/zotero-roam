@@ -447,10 +447,11 @@
             zoteroRoam.interface[`${elementKey}`].visible = (command == "show") ? true : false;
         },
 
-        toggleSearchOverlay(command) {
+        async toggleSearchOverlay(command) {
             zoteroRoam.interface.search.overlay.style.display = command === "show" ? "block" : "none";
             if (command == "show") {
                 console.log("Opening the Search Panel")
+                await zoteroRoam.utils.sleep(75);
                 zoteroRoam.interface.search.input.focus();
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");
