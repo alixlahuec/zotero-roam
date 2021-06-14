@@ -446,31 +446,13 @@
                     abstract: `${item.data.abstractNote || ""}`,
                     authors: `${item.meta.creatorSummary || ""}`,
                     year: `${(item.meta.parsedDate) ? (new Date(item.meta.parsedDate)).getUTCFullYear().toString() : ""}`,
-                    meta: "",
+                    meta: `${zoteroRoam.utils.makeMetaString(item)}`,
                     tags: item.data.tags.map(t => t.tag),
                     authorsFull: item.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")}),
                     authorsRoles: item.data.creators.map(c => c.creatorType),
                     authorsLastNames: item.data.creators.map(c => c.lastName),
                     tagsString: item.data.tags.map(i => `#${i.tag}`).join(", ")
                 }
-                // Build metadata string
-                let pubInfo = [item.data.publicationTitle, item.data.university, item.data.bookTitle].filter(Boolean);
-                if(pubInfo.length > 0){
-                    simplifiedItem.meta += `, ${pubInfo[0]}`;
-                }
-                if(item.data.publisher){
-                    simplifiedItem.meta += `, ${item.data.publisher}`;
-                    if(item.data.place){
-                        simplifiedItem.meta += `: ${item.data.place}`;
-                    }
-                };
-                if(item.data.volume){
-                    simplifiedItem.meta += `, ${item.data.volume}`;
-                    if(item.data.issue){
-                        simplifiedItem.meta += `(${item.data.issue})`;
-                    }
-                }
-                simplifiedItem.meta = (item.data.pages) ? (simplifiedItem.meta + `, ${item.data.pages}.`) : ".";
 
                 simplifiedItem["_multiField"] = simplifiedItem.authorsLastNames + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
         

@@ -1,17 +1,33 @@
 ;(()=>{
     zoteroRoam.formatting = {
 
-        getCreators(item, {brackets = true} = {}){
-            return item.data.creators.map(creator => {
+        getCreators(item, {creators_as = "string", brackets = true, use_type = true} = {}){
+            let creatorsInfoList = item.data.creators.map(creator => {
                 let nameTag = (creator.name) ? `${creator.name}` : `${[creator.firstName, creator.lastName].filter(Boolean).join(" ")}`;
-                if(brackets == true){
-                    nameTag = `[[${nameTag}]]`;
+                return {
+                    name: nameTag,
+                    type: creator.creatorType,
+                    inGraph: zoteroRoam.utils.lookForPage(nameTag)
                 }
-                if (creator.creatorType != "author") {
-                    nameTag = `${nameTag} (${creator.creatorType})`;
-                }
-                return nameTag;
-            }).join(", ");
+            });
+            switch(creators_as){
+                case "identity":
+                    return creatorsInfoList;
+                case "array":
+                    return creatorsInfoList.map(c => c.name);
+                case "string":
+                default:
+                    if(use_type == true){
+                        return creatorsInfoList.map(creator => {
+                            let creatorTag = brackets == true ? `[[${creator.name}]]` : creator.name;
+                            return creatorTag + `(${creator.type})`;
+                        }).join(", ");
+                    } else {
+                        return creatorsInfoList.map(creator => {
+                            return (brackets == true ? `[[${creator}]]` : creator);
+                        }).join(", ");
+                    }
+            }
         },
 
         async getItemBib(item, {include = "bib", style = "apa", linkwrap = 0, locale = "en-US"} = {}){
@@ -130,7 +146,7 @@
             let metadata = [];
     
             if (item.data.title) { metadata.push(`Title:: ${item.data.title}`) }; // Title, if available
-            if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${zoteroRoam.formatting.getCreators(item)}`) }; // Creators list, if available
+            if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${zoteroRoam.formatting.getCreators(item, {creators_as: "string", brackets: true, use_type: true})}`) }; // Creators list, if available
             if (item.data.abstractNote) { metadata.push(`Abstract:: ${item.data.abstractNote}`) }; // Abstract, if available
             if (item.data.itemType) { metadata.push(`Type:: [[${zoteroRoam.formatting.getItemType(item)}]]`) }; // Item type, from typemap or zoteroRoam.typemap (fall back on the raw value)
             metadata.push(`Publication:: ${ item.data.publicationTitle || item.data.bookTitle || "" }`)

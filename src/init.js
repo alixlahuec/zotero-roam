@@ -195,10 +195,10 @@ var zoteroRoam = {};
                         if(quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden){
                             zoteroRoam.interface.toggleSearchOverlay("hide");
                         } else {
-                            zoteroRoam.interface.renderSelectedItem(feedback);
+                            zoteroRoam.interface.renderItemInPanel('@' + feedback.selection.value.key);
                         }
                     } else {
-                        zoteroRoam.interface.renderSelectedItem(feedback);
+                        zoteroRoam.interface.renderItemInPanel('@' + feedback.selection.value.key);
                     }
                 }
             },
@@ -295,6 +295,10 @@ var zoteroRoam = {};
                     use: "text",
                     split_char: "\n",
                     func: "zoteroRoam.utils.formatItemNotes"
+                },
+                pageMenu: {
+                    defaults: ["addMetadata", "importNotes", "pdfLinks", "sciteBadge",
+                            "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -363,9 +367,11 @@ var zoteroRoam = {};
                                             .selected-item-body{flex-wrap:wrap;}
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
-                                            .item-citekey, .item-actions{flex:0 1 30%;}
-                                            .item-citekey{margin:10px 0px; overflow-wrap:break-word;}
-                                            .item-citekey .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
+                                            .item-citekey-section, .item-actions{flex:0 1 30%;}
+                                            .item-in-graph{padding: 0 10px;}
+                                            .item-citekey-section{margin:10px 0px; overflow-wrap:break-word;}
+                                            .item-citekey-section .citekey-element{font-weight:bold;padding:0 10px;}
+                                            .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
                                             a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}
                                             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}

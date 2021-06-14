@@ -23,6 +23,41 @@
             return context[func].apply(context, args);
         },
 
+        findCommonTags(item, {exclude_attachments = true, excluded_tags = [], more_than = 0} = {}){
+            let itemTags = item.data.tags.map(t => t.tag.toLowerCase()).filter(t => !excluded_tags.includes(t));
+            let haystack = (exclude_attachments == true) ? zoteroRoam.data.items.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType)) : zoteroRoam.data.items;
+            haystack = haystack.filter(it => it.key != item.key);
+
+            return haystack.map(el => {
+                let elTags = el.data.tags.map(t => t.tag.toLowerCase());
+                let proximity = 0;
+                let commons = [];
+                elTags.forEach(t => {
+                    if(itemTags.includes(t)){
+                        proximity +=1;
+                        commons.push(t);
+                    }
+                });
+
+                return{
+                    item: el,
+                    proximity: proximity,
+                    commons: commons
+                };
+            }).filter(x => x.proximity > more_than);
+        },
+
+        findSameDay(item, {exclude_attachments = true} = {}){
+            let fullArray = zoteroRoam.data.items.filter(it => new Date(it.data.dateAdded).toDateString() == new Date(item.data.dateAdded).toDateString());
+            if(fullArray.length == 0){
+                return [];
+            } else if(exclude_attachments == true){
+                return fullArray.filter(it => it.data.itemType != "attachment");
+            } else {
+                return fullArray;
+            }
+        },
+
         // Process the XHTML bibliography into a Roam format
         // TODO: Explore whether there are other potential tags or styles to convert, besides italics
         formatBib(bib){
@@ -84,6 +119,11 @@
             return roamAlphaAPI.q('[:find ?pt ?pu :where[?p :block/uid ?pu][?p :node/title ?pt]]');
         },
 
+        getItemPrefix(item){
+            let itemRequest = zoteroRoam.config.requests.find(c => c.name == item.requestLabel);
+            return itemRequest.dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1);
+        },
+
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
         // Note: The case where the parent doesn't have children isn't handled here. It shouldn't be a problem because the context in which it is called is that of looking to add grandchildren blocks, essentially
         // I.e this only gets called if the block with UID equal to parent_uid has a child that also has a child/children
@@ -135,6 +175,29 @@
             } else{
                 return dateString;
             }
+        },
+
+        makeMetaString(item){
+            let meta = "";
+            let pubInfo = [item.data.publicationTitle, item.data.university, item.data.bookTitle].filter(Boolean);
+            if(pubInfo.length > 0){
+                meta += `, ${pubInfo[0]}`;
+            }
+            if(item.data.publisher){
+                meta += `, ${item.data.publisher}`;
+                if(item.data.place){
+                    meta += `: ${item.data.place}`;
+                }
+            };
+            if(item.data.volume){
+                meta += `, ${item.data.volume}`;
+                if(item.data.issue){
+                    meta += `(${item.data.issue})`;
+                }
+            }
+            meta = (item.data.pages) ? (meta + `, ${item.data.pages}.`) : ".";
+
+            return meta;
         },
 
         makeOrdinal(i) {

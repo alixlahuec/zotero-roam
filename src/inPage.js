@@ -137,6 +137,9 @@
                             page.parentElement.appendChild(pageDiv);
                         }
 
+                        // List of default elements to include
+                        let menu_defaults = zoteroRoam.config.params.pageMenu.defaults;
+
                         // Page menu
                         if(page.parentElement.querySelector(".zotero-roam-page-menu") == null){
                             let menuDiv = document.createElement("div");
@@ -144,20 +147,47 @@
 
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
 
-                            let itemChildren = zoteroRoam.formatting.getItemChildren(itemInLib, { pdf_as: "raw", notes_as: "raw" });
-                            let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
-                            let pdfButtons = !itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
-                                let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
-                                let pdfTitle = item.data.filename || item.data.title;
-                                return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip", target: pdfHref });
-                            }).join("");
+                            // "Add metadata"
+                            let addMetadata_element = ``;
+                            if(menu_defaults.includes("addMetadata")){
+                                addMetadata_element = zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"});
+                            }
 
-                            let recordsButtons = [zoteroRoam.utils.renderBP3Button_link(string = "Connected Papers", {icon: "layout", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-connected-papers", linkAttribute: `target="_blank"`, target: `https://www.connectedpapers.com/${(!itemInLib.data.DOI) ? "search?q=" + encodeURIComponent(itemInLib.data.title) : "api/redirect/doi/" + itemDOI}`}),
-                                                (!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_link(string = "Semantic Scholar", {icon: "bookmark", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-semantic-scholar", linkAttribute: `target="_blank"`, target: `https://api.semanticscholar.org/${itemDOI}`}),
-                                                zoteroRoam.utils.renderBP3Button_link(string = "Google Scholar", {icon: "learning", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-google-scholar", linkAttribute: `target="_blank"`, target: `https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}`})];
+                            let itemChildren = zoteroRoam.formatting.getItemChildren(itemInLib, { pdf_as: "raw", notes_as: "raw" });
+                            
+                            // "Import notes"
+                            let importNotes_element = ``;
+                            if(menu_defaults.includes("importNotes")){
+                                importNotes_element = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
+                            }
+
+                            // PDF links
+                            let pdfLinks_element = ``;
+                            if(menu_defaults.includes("pdfLinks")){
+                                pdfLinks_element =!itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
+                                    let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
+                                    let pdfTitle = item.data.filename || item.data.title;
+                                    return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip", target: pdfHref });
+                                }).join("");
+                            }
+
+                            // Web records
+                            let records_list = [];
+                            // Connected Papers
+                            if(menu_defaults.includes("connectedPapers")){
+                                records_list.push(zoteroRoam.utils.renderBP3Button_link(string = "Connected Papers", {icon: "layout", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-connected-papers", linkAttribute: `target="_blank"`, target: `https://www.connectedpapers.com/${(!itemInLib.data.DOI) ? "search?q=" + encodeURIComponent(itemInLib.data.title) : "api/redirect/doi/" + itemDOI}`}));
+                            }
+                            // Semantic Scholar
+                            if(menu_defaults.includes("semanticScholar")){
+                                records_list.push((!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_link(string = "Semantic Scholar", {icon: "bookmark", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-semantic-scholar", linkAttribute: `target="_blank"`, target: `https://api.semanticscholar.org/${itemDOI}`}));
+                            }
+                            // Google Scholar
+                            if(menu_defaults.includes("googleScholar")){
+                                records_list.push(zoteroRoam.utils.renderBP3Button_link(string = "Google Scholar", {icon: "learning", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-google-scholar", linkAttribute: `target="_blank"`, target: `https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}`}));
+                            }
 
                             let backlinksLib = "";
-                            if(itemInLib.data.DOI){
+                            if(menu_defaults.includes("citingPapers") && itemInLib.data.DOI){
                                 let citeObject = await zoteroRoam.handlers.requestScitations(itemDOI);
                                 let scitingDOIs = citeObject.citations.map(cit => cit.doi);
                                 
@@ -198,10 +228,10 @@
                             menuDiv.innerHTML = `
                             <div class="zotero-roam-page-menu-header">
                             <div class="zotero-roam-page-menu-actions bp3-button-group">
-                            ${zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"})}
-                            ${notesButton}
-                            ${pdfButtons}
-                            ${recordsButtons.join("")}
+                            ${addMetadata_element}
+                            ${importNotes_element}
+                            ${pdfLinks_element}
+                            ${records_list.length == 0 ? "" : records_list.join("")}
                             </div>
                             </div>
                             <div class="zotero-roam-page-menu-citations">
@@ -211,11 +241,13 @@
 
                             // Adding event listeners for action buttons
 
-                            menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
-                                let pageInGraph = zoteroRoam.utils.lookForPage(title);
-                                console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
-                                zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: true});
-                            });
+                            try{
+                                menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
+                                    let pageInGraph = zoteroRoam.utils.lookForPage(title);
+                                    console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
+                                    zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: true});
+                                });
+                            } catch(e){};
                             try{
                                 menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", function(){
                                     let pageInGraph = zoteroRoam.utils.lookForPage(title);
@@ -271,11 +303,13 @@
                         }
 
                         // Badge from scite.ai
-                        if(itemInLib.data.DOI && page.parentElement.querySelector(".scite-badge") == null){
-                            let sciteBadge = zoteroRoam.inPage.makeSciteBadge(doi = itemDOI);
-                            page.parentElement.querySelector(".zotero-roam-page-menu-header").appendChild(sciteBadge);
-                            // Manual trigger to insert badges
-                            window.__SCITE.insertBadges();
+                        if(menu_defaults.includes("sciteBadge")){
+                            if(itemInLib.data.DOI && page.parentElement.querySelector(".scite-badge") == null){
+                                let sciteBadge = zoteroRoam.inPage.makeSciteBadge(doi = itemDOI);
+                                page.parentElement.querySelector(".zotero-roam-page-menu-header").appendChild(sciteBadge);
+                                // Manual trigger to insert badges
+                                window.__SCITE.insertBadges();
+                            }
                         }
                     } else {
                         try{

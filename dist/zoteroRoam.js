@@ -195,10 +195,10 @@ var zoteroRoam = {};
                         if(quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden){
                             zoteroRoam.interface.toggleSearchOverlay("hide");
                         } else {
-                            zoteroRoam.interface.renderSelectedItem(feedback);
+                            zoteroRoam.interface.renderItemInPanel('@' + feedback.selection.value.key);
                         }
                     } else {
-                        zoteroRoam.interface.renderSelectedItem(feedback);
+                        zoteroRoam.interface.renderItemInPanel('@' + feedback.selection.value.key);
                     }
                 }
             },
@@ -295,6 +295,10 @@ var zoteroRoam = {};
                     use: "text",
                     split_char: "\n",
                     func: "zoteroRoam.utils.formatItemNotes"
+                },
+                pageMenu: {
+                    defaults: ["addMetadata", "importNotes", "pdfLinks", "sciteBadge",
+                            "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -363,9 +367,11 @@ var zoteroRoam = {};
                                             .selected-item-body{flex-wrap:wrap;}
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
                                             .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
-                                            .item-citekey, .item-actions{flex:0 1 30%;}
-                                            .item-citekey{margin:10px 0px; overflow-wrap:break-word;}
-                                            .item-citekey .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
+                                            .item-citekey-section, .item-actions{flex:0 1 30%;}
+                                            .item-in-graph{padding: 0 10px;}
+                                            .item-citekey-section{margin:10px 0px; overflow-wrap:break-word;}
+                                            .item-citekey-section .citekey-element{font-weight:bold;padding:0 10px;}
+                                            .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
                                             a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
                                             span.zotero-roam-sequence{background-color:khaki;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}
                                             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}
@@ -445,6 +451,41 @@ var zoteroRoam = {};
             return context[func].apply(context, args);
         },
 
+        findCommonTags(item, {exclude_attachments = true, excluded_tags = [], more_than = 0} = {}){
+            let itemTags = item.data.tags.map(t => t.tag.toLowerCase()).filter(t => !excluded_tags.includes(t));
+            let haystack = (exclude_attachments == true) ? zoteroRoam.data.items.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType)) : zoteroRoam.data.items;
+            haystack = haystack.filter(it => it.key != item.key);
+
+            return haystack.map(el => {
+                let elTags = el.data.tags.map(t => t.tag.toLowerCase());
+                let proximity = 0;
+                let commons = [];
+                elTags.forEach(t => {
+                    if(itemTags.includes(t)){
+                        proximity +=1;
+                        commons.push(t);
+                    }
+                });
+
+                return{
+                    item: el,
+                    proximity: proximity,
+                    commons: commons
+                };
+            }).filter(x => x.proximity > more_than);
+        },
+
+        findSameDay(item, {exclude_attachments = true} = {}){
+            let fullArray = zoteroRoam.data.items.filter(it => new Date(it.data.dateAdded).toDateString() == new Date(item.data.dateAdded).toDateString());
+            if(fullArray.length == 0){
+                return [];
+            } else if(exclude_attachments == true){
+                return fullArray.filter(it => it.data.itemType != "attachment");
+            } else {
+                return fullArray;
+            }
+        },
+
         // Process the XHTML bibliography into a Roam format
         // TODO: Explore whether there are other potential tags or styles to convert, besides italics
         formatBib(bib){
@@ -506,6 +547,11 @@ var zoteroRoam = {};
             return roamAlphaAPI.q('[:find ?pt ?pu :where[?p :block/uid ?pu][?p :node/title ?pt]]');
         },
 
+        getItemPrefix(item){
+            let itemRequest = zoteroRoam.config.requests.find(c => c.name == item.requestLabel);
+            return itemRequest.dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1);
+        },
+
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
         // Note: The case where the parent doesn't have children isn't handled here. It shouldn't be a problem because the context in which it is called is that of looking to add grandchildren blocks, essentially
         // I.e this only gets called if the block with UID equal to parent_uid has a child that also has a child/children
@@ -557,6 +603,29 @@ var zoteroRoam = {};
             } else{
                 return dateString;
             }
+        },
+
+        makeMetaString(item){
+            let meta = "";
+            let pubInfo = [item.data.publicationTitle, item.data.university, item.data.bookTitle].filter(Boolean);
+            if(pubInfo.length > 0){
+                meta += `, ${pubInfo[0]}`;
+            }
+            if(item.data.publisher){
+                meta += `, ${item.data.publisher}`;
+                if(item.data.place){
+                    meta += `: ${item.data.place}`;
+                }
+            };
+            if(item.data.volume){
+                meta += `, ${item.data.volume}`;
+                if(item.data.issue){
+                    meta += `(${item.data.issue})`;
+                }
+            }
+            meta = (item.data.pages) ? (meta + `, ${item.data.pages}.`) : ".";
+
+            return meta;
         },
 
         makeOrdinal(i) {
@@ -1228,31 +1297,13 @@ var zoteroRoam = {};
                     abstract: `${item.data.abstractNote || ""}`,
                     authors: `${item.meta.creatorSummary || ""}`,
                     year: `${(item.meta.parsedDate) ? (new Date(item.meta.parsedDate)).getUTCFullYear().toString() : ""}`,
-                    meta: "",
+                    meta: `${zoteroRoam.utils.makeMetaString(item)}`,
                     tags: item.data.tags.map(t => t.tag),
                     authorsFull: item.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")}),
                     authorsRoles: item.data.creators.map(c => c.creatorType),
                     authorsLastNames: item.data.creators.map(c => c.lastName),
                     tagsString: item.data.tags.map(i => `#${i.tag}`).join(", ")
                 }
-                // Build metadata string
-                let pubInfo = [item.data.publicationTitle, item.data.university, item.data.bookTitle].filter(Boolean);
-                if(pubInfo.length > 0){
-                    simplifiedItem.meta += `, ${pubInfo[0]}`;
-                }
-                if(item.data.publisher){
-                    simplifiedItem.meta += `, ${item.data.publisher}`;
-                    if(item.data.place){
-                        simplifiedItem.meta += `: ${item.data.place}`;
-                    }
-                };
-                if(item.data.volume){
-                    simplifiedItem.meta += `, ${item.data.volume}`;
-                    if(item.data.issue){
-                        simplifiedItem.meta += `(${item.data.issue})`;
-                    }
-                }
-                simplifiedItem.meta = (item.data.pages) ? (simplifiedItem.meta + `, ${item.data.pages}.`) : ".";
 
                 simplifiedItem["_multiField"] = simplifiedItem.authorsLastNames + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
         
@@ -1836,12 +1887,14 @@ var zoteroRoam = {};
             zoteroRoam.interface[`${elementKey}`].visible = (command == "show") ? true : false;
         },
 
-        async toggleSearchOverlay(command) {
+        async toggleSearchOverlay(command, {focus = true} = {}) {
             zoteroRoam.interface.search.overlay.style.display = command === "show" ? "block" : "none";
             if (command == "show") {
                 console.log("Opening the Search Panel")
-                await zoteroRoam.utils.sleep(75);
-                zoteroRoam.interface.search.input.focus();
+                if(focus == true){
+                    await zoteroRoam.utils.sleep(75);
+                    zoteroRoam.interface.search.input.focus();
+                }
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");
             } else {
@@ -1929,15 +1982,15 @@ var zoteroRoam = {};
             document.querySelector("#zotero-roam-search-results-list").setAttribute("aria-label", resultsText);
         },
 
-        renderSelectedItem(feedback){
+        renderItemInPanel(citekey){
+            let itemKey = citekey.startsWith('@') ? citekey : '@' + citekey;
+            let selectedItem = zoteroRoam.data.items.find(it => it.key == itemKey.slice(1));
 
-            let selectedItem = zoteroRoam.data.items.find(it => it.key == feedback.selection.value.key);
-            let citekey = '@' + feedback.selection.value.key;
-            let itemYear = feedback.selection.value.year ? `(${feedback.selection.value.year})` : "";
-        
+            let itemYear = (item.meta.parsedDate) ? `(${(new Date(item.meta.parsedDate)).getUTCFullYear().toString()})` : "";
+
             // Generate list of authors as bp3 tags or Roam page references
-            let infoAuthors = feedback.selection.value.authorsFull;
-            let infoRolesAuthors = feedback.selection.value.authorsRoles;
+            let infoAuthors = selectedItem.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")});
+            let infoRolesAuthors = selectedItem.data.creators.map(c => c.creatorType);
             let divAuthors = "";
             if(infoAuthors.length > 0){
                 for(i=0; i < infoAuthors.length; i++){
@@ -1951,9 +2004,10 @@ var zoteroRoam = {};
                         divAuthors = divAuthors + " & ";
                     }
                 }
-            } 
+            }
+
             // Generate list of tags as bp3 tags or Roam tags
-            let infoTags = feedback.selection.value.tags;
+            let infoTags = selectedItem.data.tags.map(t => t.tag);
             let divTags = "";
             if(infoTags.length > 0){
                 for(i=0; i < infoTags.length; i++){
@@ -1974,7 +2028,7 @@ var zoteroRoam = {};
                     console.log(e);
                     console.error("Something went wrong while getting the item's collections data");
                 }
-            };
+            }
 
             // Information about the item
             let pageInGraph = zoteroRoam.utils.lookForPage(citekey);
@@ -1987,25 +2041,31 @@ var zoteroRoam = {};
                     itemInfo = itemInfo + ` (<b>${nbChildren}</b> direct children)`;
                 } catch(e){};
             }
-            let itemInGraph = `<div style="padding:0 10px;" class="item-in-graph"><span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span><span> ${itemInfo}</span></div>`;
+            let itemInGraph = `
+            <div class="item-in-graph">
+            <span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span>
+            <span> ${itemInfo}</span></div>
+            `;
             
             // Render the header section
             let headerDiv = document.querySelector(".selected-item-header");
-            headerDiv.innerHTML = `<div class="item-basic-metadata">
-                                        <h4 class="item-title" tabindex="0">${feedback.selection.value.title}${itemYear}</h4>
-                                        <p class="item-metadata-string">${divAuthors}${feedback.selection.value.meta}</p>
-                                        </div>
-                                    <div class="item-citekey">
-                                        <div class="bp3-fill" style="font-weight:bold;padding:0 10px;">${citekey}</div>
-                                        <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
-                                            <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
-                                            <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
-                                            <a class="bp3-button bp3-intent-primary" format="tag">#@ ${(zoteroRoam.shortcuts.sequences["copyTag"]) ? zoteroRoam.shortcuts.makeSequenceText("copyTag") : ""}</a>
-                                            <a class="bp3-button bp3-intent-primary" format="page-reference">[[@]] ${(zoteroRoam.shortcuts.sequences["copyPageRef"]) ? zoteroRoam.shortcuts.makeSequenceText("copyPageRef") : ""}</a>
-                                        </div>
-                                        ${itemInGraph}
-                                    </div>`;
-        
+            headerDiv.innerHTML = `
+            <div class="item-basic-metadata">
+                <h4 class="item-title" tabindex="0">${selectedItem.data.title || ""}${itemYear}</h4>
+                <p class="item-metadata-string">${divAuthors}${zoteroRoam.utils.makeMetaString(selectedItem)}</p>
+                </div>
+            <div class="item-citekey-section">
+                <div class="bp3-fill" class="citekey-element">${citekey}</div>
+                <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
+                    <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
+                    <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
+                    <a class="bp3-button bp3-intent-primary" format="tag">#@ ${(zoteroRoam.shortcuts.sequences["copyTag"]) ? zoteroRoam.shortcuts.makeSequenceText("copyTag") : ""}</a>
+                    <a class="bp3-button bp3-intent-primary" format="page-reference">[[@]] ${(zoteroRoam.shortcuts.sequences["copyPageRef"]) ? zoteroRoam.shortcuts.makeSequenceText("copyPageRef") : ""}</a>
+                </div>
+                ${itemInGraph}
+            </div>
+            `;
+
             // Render the graph info section
             let bodyDiv = document.querySelector(".selected-item-body");
             
@@ -2044,23 +2104,25 @@ var zoteroRoam = {};
                     console.log("Something went wrong while getting the item's children data");
                 }
             }
-            
-            bodyDiv.innerHTML = `<div class="item-additional-metadata">
-                                    <p class="item-abstract">${feedback.selection.value.abstract}</p>
-                                    <p class="item-tags">${divTags}</p>
-                                    <p class="item-collections">${divCollections}</p>
-                                </div>
-                                <div class="item-actions">
-                                    ${goToPage}
-                                    ${importButtonGroup}
-                                    <div class="item-pdf-notes" style="margin-top: 25px;">
-                                        <h5>PDFs & Notes</h5>
-                                        ${childrenDiv}
-                                    </div>
-                                </div>
-                                <div class="item-rendered-notes">
-                                </div>`;
-            
+
+            bodyDiv.innerHTML = `
+            <div class="item-additional-metadata">
+                <p class="item-abstract">${selectedItem.data.abstractNote}</p>
+                <p class="item-tags">${divTags}</p>
+                <p class="item-collections">${divCollections}</p>
+            </div>
+            <div class="item-actions">
+                ${goToPage}
+                ${importButtonGroup}
+                <div class="item-pdf-notes" style="margin-top: 25px;">
+                    <h5>PDFs & Notes</h5>
+                    ${childrenDiv}
+                </div>
+            </div>
+            <div class="item-rendered-notes">
+            </div>
+            `;
+
             // Add event listeners to action buttons
             let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){
@@ -2068,15 +2130,14 @@ var zoteroRoam = {};
                 zoteroRoam.handlers.addSearchResult(citekey, pageUID, {popup: true});
             });
 
-            Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
+            Array.from(document.querySelectorAll('.item-citekey-section .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", (e) => {
                     switch(btn.getAttribute('format')){
                         case 'citekey':
                             zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
                             break;
                         case 'citation':
-                            let citationText = `${feedback.selection.value.authors}`;
-                            if(feedback.selection.value.year){ citationText += ` (${feedback.selection.value.year})`; }
+                            let citationText = `${selectedItem.meta.creatorSummary || ""}${itemYear ? " " + itemYear : ""}`;
                             zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${citekey}]])`;
                             break;
                         case 'tag':
@@ -2097,7 +2158,14 @@ var zoteroRoam = {};
 
             // Finally, make the div visible
             zoteroRoam.interface.search.selectedItemDiv.style.display = "block";
-            document.querySelector('h4.item-title').focus();
+            switch(zoteroRoam.interface.search.overlay.getAttribute("overlay-visible")){
+                case "true":
+                    document.querySelector('h4.item-title').focus();
+                    break;
+                case "false":
+                    zoteroRoam.interface.toggleSearchOverlay("show", {focus: false});
+            }
+
         },
 
         clearSelectedItem(){
@@ -2452,6 +2520,9 @@ var zoteroRoam = {};
                             page.parentElement.appendChild(pageDiv);
                         }
 
+                        // List of default elements to include
+                        let menu_defaults = zoteroRoam.config.params.pageMenu.defaults;
+
                         // Page menu
                         if(page.parentElement.querySelector(".zotero-roam-page-menu") == null){
                             let menuDiv = document.createElement("div");
@@ -2459,20 +2530,47 @@ var zoteroRoam = {};
 
                             page.parentElement.querySelector(".zotero-roam-page-div").appendChild(menuDiv);
 
-                            let itemChildren = zoteroRoam.formatting.getItemChildren(itemInLib, { pdf_as: "raw", notes_as: "raw" });
-                            let notesButton = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
-                            let pdfButtons = !itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
-                                let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
-                                let pdfTitle = item.data.filename || item.data.title;
-                                return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip", target: pdfHref });
-                            }).join("");
+                            // "Add metadata"
+                            let addMetadata_element = ``;
+                            if(menu_defaults.includes("addMetadata")){
+                                addMetadata_element = zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"});
+                            }
 
-                            let recordsButtons = [zoteroRoam.utils.renderBP3Button_link(string = "Connected Papers", {icon: "layout", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-connected-papers", linkAttribute: `target="_blank"`, target: `https://www.connectedpapers.com/${(!itemInLib.data.DOI) ? "search?q=" + encodeURIComponent(itemInLib.data.title) : "api/redirect/doi/" + itemDOI}`}),
-                                                (!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_link(string = "Semantic Scholar", {icon: "bookmark", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-semantic-scholar", linkAttribute: `target="_blank"`, target: `https://api.semanticscholar.org/${itemDOI}`}),
-                                                zoteroRoam.utils.renderBP3Button_link(string = "Google Scholar", {icon: "learning", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-google-scholar", linkAttribute: `target="_blank"`, target: `https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}`})];
+                            let itemChildren = zoteroRoam.formatting.getItemChildren(itemInLib, { pdf_as: "raw", notes_as: "raw" });
+                            
+                            // "Import notes"
+                            let importNotes_element = ``;
+                            if(menu_defaults.includes("importNotes")){
+                                importNotes_element = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
+                            }
+
+                            // PDF links
+                            let pdfLinks_element = ``;
+                            if(menu_defaults.includes("pdfLinks")){
+                                pdfLinks_element =!itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
+                                    let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
+                                    let pdfTitle = item.data.filename || item.data.title;
+                                    return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip", target: pdfHref });
+                                }).join("");
+                            }
+
+                            // Web records
+                            let records_list = [];
+                            // Connected Papers
+                            if(menu_defaults.includes("connectedPapers")){
+                                records_list.push(zoteroRoam.utils.renderBP3Button_link(string = "Connected Papers", {icon: "layout", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-connected-papers", linkAttribute: `target="_blank"`, target: `https://www.connectedpapers.com/${(!itemInLib.data.DOI) ? "search?q=" + encodeURIComponent(itemInLib.data.title) : "api/redirect/doi/" + itemDOI}`}));
+                            }
+                            // Semantic Scholar
+                            if(menu_defaults.includes("semanticScholar")){
+                                records_list.push((!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_link(string = "Semantic Scholar", {icon: "bookmark", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-semantic-scholar", linkAttribute: `target="_blank"`, target: `https://api.semanticscholar.org/${itemDOI}`}));
+                            }
+                            // Google Scholar
+                            if(menu_defaults.includes("googleScholar")){
+                                records_list.push(zoteroRoam.utils.renderBP3Button_link(string = "Google Scholar", {icon: "learning", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-google-scholar", linkAttribute: `target="_blank"`, target: `https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}`}));
+                            }
 
                             let backlinksLib = "";
-                            if(itemInLib.data.DOI){
+                            if(menu_defaults.includes("citingPapers") && itemInLib.data.DOI){
                                 let citeObject = await zoteroRoam.handlers.requestScitations(itemDOI);
                                 let scitingDOIs = citeObject.citations.map(cit => cit.doi);
                                 
@@ -2513,10 +2611,10 @@ var zoteroRoam = {};
                             menuDiv.innerHTML = `
                             <div class="zotero-roam-page-menu-header">
                             <div class="zotero-roam-page-menu-actions bp3-button-group">
-                            ${zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"})}
-                            ${notesButton}
-                            ${pdfButtons}
-                            ${recordsButtons.join("")}
+                            ${addMetadata_element}
+                            ${importNotes_element}
+                            ${pdfLinks_element}
+                            ${records_list.length == 0 ? "" : records_list.join("")}
                             </div>
                             </div>
                             <div class="zotero-roam-page-menu-citations">
@@ -2526,11 +2624,13 @@ var zoteroRoam = {};
 
                             // Adding event listeners for action buttons
 
-                            menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
-                                let pageInGraph = zoteroRoam.utils.lookForPage(title);
-                                console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
-                                zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: true});
-                            });
+                            try{
+                                menuDiv.querySelector(".zotero-roam-page-menu-add-metadata").addEventListener("click", function(){
+                                    let pageInGraph = zoteroRoam.utils.lookForPage(title);
+                                    console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
+                                    zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: true});
+                                });
+                            } catch(e){};
                             try{
                                 menuDiv.querySelector(".zotero-roam-page-menu-import-notes").addEventListener("click", function(){
                                     let pageInGraph = zoteroRoam.utils.lookForPage(title);
@@ -2586,11 +2686,13 @@ var zoteroRoam = {};
                         }
 
                         // Badge from scite.ai
-                        if(itemInLib.data.DOI && page.parentElement.querySelector(".scite-badge") == null){
-                            let sciteBadge = zoteroRoam.inPage.makeSciteBadge(doi = itemDOI);
-                            page.parentElement.querySelector(".zotero-roam-page-menu-header").appendChild(sciteBadge);
-                            // Manual trigger to insert badges
-                            window.__SCITE.insertBadges();
+                        if(menu_defaults.includes("sciteBadge")){
+                            if(itemInLib.data.DOI && page.parentElement.querySelector(".scite-badge") == null){
+                                let sciteBadge = zoteroRoam.inPage.makeSciteBadge(doi = itemDOI);
+                                page.parentElement.querySelector(".zotero-roam-page-menu-header").appendChild(sciteBadge);
+                                // Manual trigger to insert badges
+                                window.__SCITE.insertBadges();
+                            }
                         }
                     } else {
                         try{
@@ -2617,17 +2719,33 @@ var zoteroRoam = {};
 ;(()=>{
     zoteroRoam.formatting = {
 
-        getCreators(item, {brackets = true} = {}){
-            return item.data.creators.map(creator => {
+        getCreators(item, {creators_as = "string", brackets = true, use_type = true} = {}){
+            let creatorsInfoList = item.data.creators.map(creator => {
                 let nameTag = (creator.name) ? `${creator.name}` : `${[creator.firstName, creator.lastName].filter(Boolean).join(" ")}`;
-                if(brackets == true){
-                    nameTag = `[[${nameTag}]]`;
+                return {
+                    name: nameTag,
+                    type: creator.creatorType,
+                    inGraph: zoteroRoam.utils.lookForPage(nameTag)
                 }
-                if (creator.creatorType != "author") {
-                    nameTag = `${nameTag} (${creator.creatorType})`;
-                }
-                return nameTag;
-            }).join(", ");
+            });
+            switch(creators_as){
+                case "identity":
+                    return creatorsInfoList;
+                case "array":
+                    return creatorsInfoList.map(c => c.name);
+                case "string":
+                default:
+                    if(use_type == true){
+                        return creatorsInfoList.map(creator => {
+                            let creatorTag = brackets == true ? `[[${creator.name}]]` : creator.name;
+                            return creatorTag + `(${creator.type})`;
+                        }).join(", ");
+                    } else {
+                        return creatorsInfoList.map(creator => {
+                            return (brackets == true ? `[[${creator}]]` : creator);
+                        }).join(", ");
+                    }
+            }
         },
 
         async getItemBib(item, {include = "bib", style = "apa", linkwrap = 0, locale = "en-US"} = {}){
@@ -2746,7 +2864,7 @@ var zoteroRoam = {};
             let metadata = [];
     
             if (item.data.title) { metadata.push(`Title:: ${item.data.title}`) }; // Title, if available
-            if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${zoteroRoam.formatting.getCreators(item)}`) }; // Creators list, if available
+            if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${zoteroRoam.formatting.getCreators(item, {creators_as: "string", brackets: true, use_type: true})}`) }; // Creators list, if available
             if (item.data.abstractNote) { metadata.push(`Abstract:: ${item.data.abstractNote}`) }; // Abstract, if available
             if (item.data.itemType) { metadata.push(`Type:: [[${zoteroRoam.formatting.getItemType(item)}]]`) }; // Item type, from typemap or zoteroRoam.typemap (fall back on the raw value)
             metadata.push(`Publication:: ${ item.data.publicationTitle || item.data.bookTitle || "" }`)
@@ -2834,7 +2952,7 @@ var zoteroRoam = {};
             copyCitekey: {
                 defaultShortcut: [],
                 execute(){
-                    let copyButton = document.querySelector('.item-citekey .copy-buttons a.bp3-button[format="citekey"]');
+                    let copyButton = document.querySelector('.item-citekey-section .copy-buttons a.bp3-button[format="citekey"]');
                     if(copyButton !== null){
                         copyButton.click();
                     }
@@ -2843,7 +2961,7 @@ var zoteroRoam = {};
             copyCitation: {
                 defaultShortcut: [],
                 execute(){
-                    let copyButton = document.querySelector('.item-citekey .copy-buttons a.bp3-button[format="citation"]');
+                    let copyButton = document.querySelector('.item-citekey-section .copy-buttons a.bp3-button[format="citation"]');
                     if(copyButton !== null){
                         copyButton.click();
                     }
@@ -2852,7 +2970,7 @@ var zoteroRoam = {};
             copyTag: {
                 defaultShortcut: [],
                 execute(){
-                    let copyButton = document.querySelector('.item-citekey .copy-buttons a.bp3-button[format="tag"]');
+                    let copyButton = document.querySelector('.item-citekey-section .copy-buttons a.bp3-button[format="tag"]');
                     if(copyButton !== null){
                         copyButton.click();
                     }
@@ -2861,7 +2979,7 @@ var zoteroRoam = {};
             copyPageRef: {
                 defaultShortcut: [],
                 execute(){
-                    let copyButton = document.querySelector('.item-citekey .copy-buttons a.bp3-button[format="page-reference"]');
+                    let copyButton = document.querySelector('.item-citekey-section .copy-buttons a.bp3-button[format="page-reference"]');
                     if(copyButton !== null){
                         copyButton.click();
                     }

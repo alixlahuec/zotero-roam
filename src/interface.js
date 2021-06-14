@@ -447,12 +447,14 @@
             zoteroRoam.interface[`${elementKey}`].visible = (command == "show") ? true : false;
         },
 
-        async toggleSearchOverlay(command) {
+        async toggleSearchOverlay(command, {focus = true} = {}) {
             zoteroRoam.interface.search.overlay.style.display = command === "show" ? "block" : "none";
             if (command == "show") {
                 console.log("Opening the Search Panel")
-                await zoteroRoam.utils.sleep(75);
-                zoteroRoam.interface.search.input.focus();
+                if(focus == true){
+                    await zoteroRoam.utils.sleep(75);
+                    zoteroRoam.interface.search.input.focus();
+                }
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");
             } else {
@@ -540,15 +542,15 @@
             document.querySelector("#zotero-roam-search-results-list").setAttribute("aria-label", resultsText);
         },
 
-        renderSelectedItem(feedback){
+        renderItemInPanel(citekey){
+            let itemKey = citekey.startsWith('@') ? citekey : '@' + citekey;
+            let selectedItem = zoteroRoam.data.items.find(it => it.key == itemKey.slice(1));
 
-            let selectedItem = zoteroRoam.data.items.find(it => it.key == feedback.selection.value.key);
-            let citekey = '@' + feedback.selection.value.key;
-            let itemYear = feedback.selection.value.year ? `(${feedback.selection.value.year})` : "";
-        
+            let itemYear = (item.meta.parsedDate) ? `(${(new Date(item.meta.parsedDate)).getUTCFullYear().toString()})` : "";
+
             // Generate list of authors as bp3 tags or Roam page references
-            let infoAuthors = feedback.selection.value.authorsFull;
-            let infoRolesAuthors = feedback.selection.value.authorsRoles;
+            let infoAuthors = selectedItem.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")});
+            let infoRolesAuthors = selectedItem.data.creators.map(c => c.creatorType);
             let divAuthors = "";
             if(infoAuthors.length > 0){
                 for(i=0; i < infoAuthors.length; i++){
@@ -562,9 +564,10 @@
                         divAuthors = divAuthors + " & ";
                     }
                 }
-            } 
+            }
+
             // Generate list of tags as bp3 tags or Roam tags
-            let infoTags = feedback.selection.value.tags;
+            let infoTags = selectedItem.data.tags.map(t => t.tag);
             let divTags = "";
             if(infoTags.length > 0){
                 for(i=0; i < infoTags.length; i++){
@@ -585,7 +588,7 @@
                     console.log(e);
                     console.error("Something went wrong while getting the item's collections data");
                 }
-            };
+            }
 
             // Information about the item
             let pageInGraph = zoteroRoam.utils.lookForPage(citekey);
@@ -598,25 +601,31 @@
                     itemInfo = itemInfo + ` (<b>${nbChildren}</b> direct children)`;
                 } catch(e){};
             }
-            let itemInGraph = `<div style="padding:0 10px;" class="item-in-graph"><span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span><span> ${itemInfo}</span></div>`;
+            let itemInGraph = `
+            <div class="item-in-graph">
+            <span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span>
+            <span> ${itemInfo}</span></div>
+            `;
             
             // Render the header section
             let headerDiv = document.querySelector(".selected-item-header");
-            headerDiv.innerHTML = `<div class="item-basic-metadata">
-                                        <h4 class="item-title" tabindex="0">${feedback.selection.value.title}${itemYear}</h4>
-                                        <p class="item-metadata-string">${divAuthors}${feedback.selection.value.meta}</p>
-                                        </div>
-                                    <div class="item-citekey">
-                                        <div class="bp3-fill" style="font-weight:bold;padding:0 10px;">${citekey}</div>
-                                        <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
-                                            <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
-                                            <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
-                                            <a class="bp3-button bp3-intent-primary" format="tag">#@ ${(zoteroRoam.shortcuts.sequences["copyTag"]) ? zoteroRoam.shortcuts.makeSequenceText("copyTag") : ""}</a>
-                                            <a class="bp3-button bp3-intent-primary" format="page-reference">[[@]] ${(zoteroRoam.shortcuts.sequences["copyPageRef"]) ? zoteroRoam.shortcuts.makeSequenceText("copyPageRef") : ""}</a>
-                                        </div>
-                                        ${itemInGraph}
-                                    </div>`;
-        
+            headerDiv.innerHTML = `
+            <div class="item-basic-metadata">
+                <h4 class="item-title" tabindex="0">${selectedItem.data.title || ""}${itemYear}</h4>
+                <p class="item-metadata-string">${divAuthors}${zoteroRoam.utils.makeMetaString(selectedItem)}</p>
+                </div>
+            <div class="item-citekey-section">
+                <div class="bp3-fill" class="citekey-element">${citekey}</div>
+                <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
+                    <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
+                    <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
+                    <a class="bp3-button bp3-intent-primary" format="tag">#@ ${(zoteroRoam.shortcuts.sequences["copyTag"]) ? zoteroRoam.shortcuts.makeSequenceText("copyTag") : ""}</a>
+                    <a class="bp3-button bp3-intent-primary" format="page-reference">[[@]] ${(zoteroRoam.shortcuts.sequences["copyPageRef"]) ? zoteroRoam.shortcuts.makeSequenceText("copyPageRef") : ""}</a>
+                </div>
+                ${itemInGraph}
+            </div>
+            `;
+
             // Render the graph info section
             let bodyDiv = document.querySelector(".selected-item-body");
             
@@ -655,23 +664,25 @@
                     console.log("Something went wrong while getting the item's children data");
                 }
             }
-            
-            bodyDiv.innerHTML = `<div class="item-additional-metadata">
-                                    <p class="item-abstract">${feedback.selection.value.abstract}</p>
-                                    <p class="item-tags">${divTags}</p>
-                                    <p class="item-collections">${divCollections}</p>
-                                </div>
-                                <div class="item-actions">
-                                    ${goToPage}
-                                    ${importButtonGroup}
-                                    <div class="item-pdf-notes" style="margin-top: 25px;">
-                                        <h5>PDFs & Notes</h5>
-                                        ${childrenDiv}
-                                    </div>
-                                </div>
-                                <div class="item-rendered-notes">
-                                </div>`;
-            
+
+            bodyDiv.innerHTML = `
+            <div class="item-additional-metadata">
+                <p class="item-abstract">${selectedItem.data.abstractNote}</p>
+                <p class="item-tags">${divTags}</p>
+                <p class="item-collections">${divCollections}</p>
+            </div>
+            <div class="item-actions">
+                ${goToPage}
+                ${importButtonGroup}
+                <div class="item-pdf-notes" style="margin-top: 25px;">
+                    <h5>PDFs & Notes</h5>
+                    ${childrenDiv}
+                </div>
+            </div>
+            <div class="item-rendered-notes">
+            </div>
+            `;
+
             // Add event listeners to action buttons
             let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){
@@ -679,15 +690,14 @@
                 zoteroRoam.handlers.addSearchResult(citekey, pageUID, {popup: true});
             });
 
-            Array.from(document.querySelectorAll('.item-citekey .copy-buttons a.bp3-button[format]')).forEach(btn => {
+            Array.from(document.querySelectorAll('.item-citekey-section .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", (e) => {
                     switch(btn.getAttribute('format')){
                         case 'citekey':
                             zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
                             break;
                         case 'citation':
-                            let citationText = `${feedback.selection.value.authors}`;
-                            if(feedback.selection.value.year){ citationText += ` (${feedback.selection.value.year})`; }
+                            let citationText = `${selectedItem.meta.creatorSummary || ""}${itemYear ? " " + itemYear : ""}`;
                             zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${citekey}]])`;
                             break;
                         case 'tag':
@@ -708,7 +718,14 @@
 
             // Finally, make the div visible
             zoteroRoam.interface.search.selectedItemDiv.style.display = "block";
-            document.querySelector('h4.item-title').focus();
+            switch(zoteroRoam.interface.search.overlay.getAttribute("overlay-visible")){
+                case "true":
+                    document.querySelector('h4.item-title').focus();
+                    break;
+                case "false":
+                    zoteroRoam.interface.toggleSearchOverlay("show", {focus: false});
+            }
+
         },
 
         clearSelectedItem(){
