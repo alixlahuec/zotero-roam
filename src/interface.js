@@ -546,7 +546,7 @@
             let itemKey = citekey.startsWith('@') ? citekey : '@' + citekey;
             let selectedItem = zoteroRoam.data.items.find(it => it.key == itemKey.slice(1));
 
-            let itemYear = (item.meta.parsedDate) ? `(${(new Date(item.meta.parsedDate)).getUTCFullYear().toString()})` : "";
+            let itemYear = (selectedItem.meta.parsedDate) ? `(${(new Date(selectedItem.meta.parsedDate)).getUTCFullYear().toString()})` : "";
 
             // Generate list of authors as bp3 tags or Roam page references
             let infoAuthors = selectedItem.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")});
