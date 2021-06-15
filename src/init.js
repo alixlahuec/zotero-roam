@@ -388,7 +388,7 @@ var zoteroRoam = {};
                                             .zotero-roam-page-menu hr{margin:2px 0;}
                                             .scite-badge{padding-top:5px;min-width:25%;}
                                             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
-                                            .zotero-roam-page-menu-pdf-link, .item-pdf-link{font-weight:600;}
+                                            .zotero-roam-page-menu-pdf-link, .item-pdf-link{font-weight:600;text-align:left!important;}
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;font-size:0.9em;}
                                             .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
                                             .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}

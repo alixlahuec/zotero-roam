@@ -554,7 +554,7 @@
             let itemKey = citekey.startsWith('@') ? citekey : '@' + citekey;
             let selectedItem = zoteroRoam.data.items.find(it => it.key == itemKey.slice(1));
 
-            let itemYear = (selectedItem.meta.parsedDate) ? `(${(new Date(selectedItem.meta.parsedDate)).getUTCFullYear().toString()})` : "";
+            let itemYear = (selectedItem.meta.parsedDate) ? ` (${(new Date(selectedItem.meta.parsedDate)).getUTCFullYear().toString()})` : "";
 
             // Generate list of authors as bp3 tags or Roam page references
             let infoAuthors = selectedItem.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")});
@@ -592,7 +592,7 @@
             if(infoCollections){
                 divCollections = `<strong>Collections : </strong>`;
                 try {
-                    divCollections = infoCollections.map(collec => zoteroRoam.utils.renderBP3Tag(string = collec.data.name, { modifier: "bp3-intent-success bp3-round", icon: "projects" })).join(" ");
+                    divCollections += infoCollections.map(collec => zoteroRoam.utils.renderBP3Tag(string = collec.data.name, { modifier: "bp3-intent-success bp3-round", icon: "projects" })).join(" ");
                 } catch(e){
                     console.log(infoCollections);
                     console.log(e);
@@ -643,18 +643,19 @@
             let goToPageSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
             let pageURL = (pageInGraph.present == true) ? `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}` : "javascript:void(0)";
             let goToPage = `
-            <div class="bp3-button-group bp3-minimal">
+            <div class="bp3-button-group bp3-minimal bp3-fill bp3-align-left">
             ${zoteroRoam.utils.renderBP3Button_link(string = "Go to Roam page" + goToPageSeq, {linkClass: "item-go-to-page", icon: "arrow-right", iconModifier: "bp3-intent-primary", target: pageURL, linkAttribute: goToPageModifier})}
             </div>
             `;
 
             let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
             let importText = `Import metadata  ${importSeq}`;
-            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal", icon: "add", modifier: "bp3-intent-primary" });
+            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal bp3-fill bp3-align-left", icon: "add", modifier: "bp3-intent-primary" });
 
             // Check for children items
             let infoChildren = zoteroRoam.formatting.getItemChildren(selectedItem, { pdf_as: "raw", notes_as: "raw" });
             let childrenDiv = "";
+            let notesDiv = ``;
             if(infoChildren.remoteChildren){
                 childrenDiv += `<p>This item has children, but they were not returned by the API data request. This might be due to a request for 'items/top' rather than 'items'.</p>`;
             } else {
@@ -665,8 +666,18 @@
                         return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal item-pdf-link", icon: "paperclip", target: pdfHref });
                     }).join("");
                     childrenDiv += pdfDiv;
-                    let notesDiv = (!infoChildren.notes) ? "" : zoteroRoam.utils.renderBP3ButtonGroup(string = "Show notes below", { buttonClass: "item-see-notes", icon: "comment" });
-                    childrenDiv += notesDiv;
+                    
+                    if(infoChildren.notes){
+                        childrenDiv += `<p>${infoChildren.notes.length == 1 ? "1 note" : infoChildren.notes.length + "notes"}</p>`;
+                        notesDiv = `
+                        <div class="item-notes-section">
+                        ${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal item-see-notes", icon: "comment"})}
+                        <div class="item-rendered-notes" style="display:none;">
+                            ${ infoChildren.notes.map(n => n.data.note).join("<br>") }
+                        </div>
+                        </div>
+                        `
+                    }
                 } catch(e){
                     console.log(infoChildren);
                     console.log(pdfDiv);
@@ -686,13 +697,12 @@
                     ${goToPage}
                     ${importButtonGroup}
                 </div>
-                <div class="item-pdf-notes" style="margin-top: 25px;">
-                    <h5>PDFs & Notes</h5>
+                <div class="item-pdf-notes">
                     ${childrenDiv}
                 </div>
             </div>
-            <div class="item-rendered-notes">
-            </div>
+            <hr>
+            ${notesDiv}
             `;
 
             // Add event listeners to action buttons
@@ -709,7 +719,7 @@
                             zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
                             break;
                         case 'citation':
-                            let citationText = `${selectedItem.meta.creatorSummary || ""}${itemYear ? " " + itemYear : ""}`;
+                            let citationText = `${selectedItem.meta.creatorSummary || ""}${itemYear || ""}`;
                             zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${citekey}]])`;
                             break;
                         case 'tag':
@@ -723,8 +733,11 @@
                 })
             });
             try{
-                document.querySelector("button.item-see-notes").addEventListener("click", function(){
-                    document.querySelector("div.item-rendered-notes").innerHTML = `<hr><h4>Notes</h4><br>${ infoChildren.notes.map(n => n.data.note).join("<br>") }`;
+                let notesButton = document.querySelector("button.item-see-notes");
+                notesButton.addEventListener("click", function(){
+                    let currentText = notesButton.querySelector('.bp3-button-text').innerText;
+                    document.querySelector("div.item-rendered-notes").style.display = (currentText == "Show Notes") ? "block" : "none";
+                    notesButton.querySelector('.bp3-button-text').innerText = (currentText == "Show Notes") ? "Hide Notes" : "Show Notes";
                 });
             } catch(e){};
 
