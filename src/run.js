@@ -48,8 +48,10 @@
             zoteroRoam.config.params.notes.func = func;
         }
 
-        if(zoteroRoam.config.userSettings.pageMenu.defaults){
-            zoteroRoam.config.params.pageMenu.defaults = zoteroRoam.config.userSettings.pageMenu.defaults;
+        if(zoteroRoam.config.userSettings.pageMenu){
+            if(zoteroRoam.config.userSettings.pageMenu.defaults){
+                zoteroRoam.config.params.pageMenu.defaults = zoteroRoam.config.userSettings.pageMenu.defaults;
+            }
         }
         
         zoteroRoam.shortcuts.setup();
