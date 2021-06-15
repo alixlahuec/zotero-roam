@@ -47,6 +47,10 @@
             zoteroRoam.config.params.notes["split_char"] = split_char;
             zoteroRoam.config.params.notes.func = func;
         }
+
+        if(zoteroRoam.config.userSettings.pageMenu.defaults){
+            zoteroRoam.config.params.pageMenu.defaults = zoteroRoam.config.userSettings.pageMenu.defaults;
+        }
         
         zoteroRoam.shortcuts.setup();
         zoteroRoam.shortcuts.setupSequences();

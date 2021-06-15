@@ -2276,6 +2276,14 @@ var zoteroRoam = {};
                 window.addEventListener("keyup", zoteroRoam.shortcuts.verify);
                 window.addEventListener("keydown", zoteroRoam.shortcuts.verify);
 
+                // Adding search panel to Roam Palette
+                roamAlphaAPI.ui.commandPalette.addCommand({
+                    label: 'zoteroRoam : Open the search panel', 
+                    callback: () => {
+                        zoteroRoam.interface.toggleSearchOverlay("show");
+                    }
+                });
+
                 zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 zoteroRoam.interface.popToast(message = "Zotero data successfully loaded !", intent = "success");
                 console.log('The results of the API request have been received ; you can check them by inspecting the value of the zoteroRoam.data object. Data import context menu should now be available.');
@@ -2311,6 +2319,11 @@ var zoteroRoam = {};
             try { zoteroRoam.config.editingObserver.disconnect() } catch(e){};
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
+
+            // Removing search panel opening from Roam Palette
+            roamAlphaAPI.ui.commandPalette.removeCommand({
+                label: 'zoteroRoam : Open the search panel'
+            });
 
             zoteroRoam.interface.icon.removeAttribute("style");
             zoteroRoam.interface.popToast(message = "All Zotero data was cleared. Bye for now !", intent = "success");
@@ -3190,6 +3203,10 @@ var zoteroRoam = {};
             zoteroRoam.config.params.notes.use = use;
             zoteroRoam.config.params.notes["split_char"] = split_char;
             zoteroRoam.config.params.notes.func = func;
+        }
+
+        if(zoteroRoam.config.userSettings.pageMenu.defaults){
+            zoteroRoam.config.params.pageMenu.defaults = zoteroRoam.config.userSettings.pageMenu.defaults;
         }
         
         zoteroRoam.shortcuts.setup();
