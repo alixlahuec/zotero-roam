@@ -668,7 +668,6 @@
                     childrenDiv += pdfDiv;
                     
                     if(infoChildren.notes){
-                        childrenDiv += `<p>${infoChildren.notes.length == 1 ? "1 note" : infoChildren.notes.length + "notes"}</p>`;
                         notesDiv = `
                         <div class="item-notes-section">
                         ${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal item-see-notes", icon: "comment"})}
@@ -701,8 +700,10 @@
                     ${childrenDiv}
                 </div>
             </div>
+            <div class="item-actions-additional">
             <hr>
             ${notesDiv}
+            </div>
             `;
 
             // Add event listeners to action buttons

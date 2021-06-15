@@ -366,8 +366,9 @@ var zoteroRoam = {};
                                             .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
-                                            .item-abstract{font-size:0.9em;padding:15px;background-color: #f5f8fa;}
-                                            .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
+                                            .item-abstract{font-size:0.8em;padding:15px;background-color: #f5f8fa;}
+                                            .item-pdf-notes{margin-top: 25px;}
+                                            .item-actions-additional{flex: 0 1 95%;margin-top:25px;}
                                             .item-citekey-section, .item-actions{flex:0 1 30%;}
                                             .item-actions > .bp3-card{background-color: #eff8ff;box-shadow:none;}
                                             .item-in-graph{padding: 0 10px;}
@@ -2110,7 +2111,6 @@ var zoteroRoam = {};
                     childrenDiv += pdfDiv;
                     
                     if(infoChildren.notes){
-                        childrenDiv += `<p>${infoChildren.notes.length == 1 ? "1 note" : infoChildren.notes.length + "notes"}</p>`;
                         notesDiv = `
                         <div class="item-notes-section">
                         ${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal item-see-notes", icon: "comment"})}
@@ -2143,8 +2143,10 @@ var zoteroRoam = {};
                     ${childrenDiv}
                 </div>
             </div>
+            <div class="item-actions-additional">
             <hr>
             ${notesDiv}
+            </div>
             `;
 
             // Add event listeners to action buttons

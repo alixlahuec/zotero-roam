@@ -366,8 +366,9 @@ var zoteroRoam = {};
                                             .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
-                                            .item-abstract{font-size:0.9em;padding:15px;background-color: #f5f8fa;}
-                                            .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
+                                            .item-abstract{font-size:0.8em;padding:15px;background-color: #f5f8fa;}
+                                            .item-pdf-notes{margin-top: 25px;}
+                                            .item-actions-additional{flex: 0 1 95%;margin-top:25px;}
                                             .item-citekey-section, .item-actions{flex:0 1 30%;}
                                             .item-actions > .bp3-card{background-color: #eff8ff;box-shadow:none;}
                                             .item-in-graph{padding: 0 10px;}
