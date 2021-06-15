@@ -645,7 +645,8 @@ var zoteroRoam = {};
         },
 
         makeLinkToPDF(item){
-            return (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode) ? `[${item.data.filename || item.data.title}](zotero://open-pdf/library/items/${item.data.key})` : `[${item.data.title}](${item.data.url})`);
+            let libLoc = item.library.type == "group" ? `groups/${item.library.id}` : `library`;
+            return (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode) ? `[${item.data.filename || item.data.title}](zotero://open-pdf/${libLoc}/items/${item.data.key})` : `[${item.data.title}](${item.data.url})`);
         },
 
         // Given an Array of PDF items, returns an Array of Markdown-style links. If a PDF is a `linked_file` or `imported_file`, make a local Zotero open link / else, make a link to the URL
