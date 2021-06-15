@@ -578,6 +578,7 @@
             let infoTags = selectedItem.data.tags.map(t => t.tag);
             let divTags = "";
             if(infoTags.length > 0){
+                divTags = `<strong>Tags : </strong>`;
                 for(i=0; i < infoTags.length; i++){
                     let tagInGraph = zoteroRoam.utils.lookForPage(title = infoTags[i]);
                     let tagElem = (tagInGraph.present == true) ? zoteroRoam.utils.renderPageTag(title = infoTags[i]) : zoteroRoam.utils.renderBP3Tag(string = infoTags[i]);
@@ -589,6 +590,7 @@
             let infoCollections = zoteroRoam.formatting.getItemCollections(selectedItem);
             let divCollections = "";
             if(infoCollections){
+                divCollections = `<strong>Collections : </strong>`;
                 try {
                     divCollections = infoCollections.map(collec => zoteroRoam.utils.renderBP3Tag(string = collec.data.name, { modifier: "bp3-intent-success bp3-round", icon: "projects" })).join(" ");
                 } catch(e){
@@ -623,7 +625,7 @@
                 <p class="item-metadata-string">${divAuthors}${zoteroRoam.utils.makeMetaString(selectedItem)}</p>
                 </div>
             <div class="item-citekey-section">
-                <div class="bp3-fill" class="citekey-element">${citekey}</div>
+                <div class="bp3-fill citekey-element">${citekey}</div>
                 <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
                     <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
                     <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
@@ -659,9 +661,9 @@
                 try {
                     let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
                         let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
-                        let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
-                        return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "paperclip" });
-                    });
+                        let pdfTitle = item.data.filename || item.data.title;
+                        return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal item-pdf-link", icon: "paperclip", target: pdfHref });
+                    }).join("");
                     childrenDiv += pdfDiv;
                     let notesDiv = (!infoChildren.notes) ? "" : zoteroRoam.utils.renderBP3ButtonGroup(string = "Show notes below", { buttonClass: "item-see-notes", icon: "comment" });
                     childrenDiv += notesDiv;
@@ -680,8 +682,10 @@
                 <p class="item-collections">${divCollections}</p>
             </div>
             <div class="item-actions">
-                ${goToPage}
-                ${importButtonGroup}
+                <div class="bp3-card">
+                    ${goToPage}
+                    ${importButtonGroup}
+                </div>
                 <div class="item-pdf-notes" style="margin-top: 25px;">
                     <h5>PDFs & Notes</h5>
                     ${childrenDiv}

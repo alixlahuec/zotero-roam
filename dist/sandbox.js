@@ -366,8 +366,10 @@ var zoteroRoam = {};
                                             .selected-item-header{margin-bottom:20px;}
                                             .selected-item-body{flex-wrap:wrap;}
                                             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
+                                            .item-abstract{font-size:0.9em;padding:15px;background-color: #f5f8fa;}
                                             .item-rendered-notes{flex: 0 1 95%;margin-top:25px;}
                                             .item-citekey-section, .item-actions{flex:0 1 30%;}
+                                            .item-actions > .bp3-card{background-color: #eff8ff;box-shadow:none;}
                                             .item-in-graph{padding: 0 10px;}
                                             .item-citekey-section{margin:10px 0px; overflow-wrap:break-word;}
                                             .item-citekey-section .citekey-element{font-weight:bold;padding:0 10px;}
@@ -386,7 +388,7 @@ var zoteroRoam = {};
                                             .zotero-roam-page-menu hr{margin:2px 0;}
                                             .scite-badge{padding-top:5px;min-width:25%;}
                                             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
-                                            .zotero-roam-page-menu-pdf-link {font-weight:600;}
+                                            .zotero-roam-page-menu-pdf-link, .item-pdf-link{font-weight:600;}
                                             .zotero-roam-page-menu-backlinks-list{list-style-type:none;font-size:0.9em;}
                                             .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
                                             .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
@@ -2018,6 +2020,7 @@ var zoteroRoam = {};
             let infoTags = selectedItem.data.tags.map(t => t.tag);
             let divTags = "";
             if(infoTags.length > 0){
+                divTags = `<strong>Tags : </strong>`;
                 for(i=0; i < infoTags.length; i++){
                     let tagInGraph = zoteroRoam.utils.lookForPage(title = infoTags[i]);
                     let tagElem = (tagInGraph.present == true) ? zoteroRoam.utils.renderPageTag(title = infoTags[i]) : zoteroRoam.utils.renderBP3Tag(string = infoTags[i]);
@@ -2029,6 +2032,7 @@ var zoteroRoam = {};
             let infoCollections = zoteroRoam.formatting.getItemCollections(selectedItem);
             let divCollections = "";
             if(infoCollections){
+                divCollections = `<strong>Collections : </strong>`;
                 try {
                     divCollections = infoCollections.map(collec => zoteroRoam.utils.renderBP3Tag(string = collec.data.name, { modifier: "bp3-intent-success bp3-round", icon: "projects" })).join(" ");
                 } catch(e){
@@ -2063,7 +2067,7 @@ var zoteroRoam = {};
                 <p class="item-metadata-string">${divAuthors}${zoteroRoam.utils.makeMetaString(selectedItem)}</p>
                 </div>
             <div class="item-citekey-section">
-                <div class="bp3-fill" class="citekey-element">${citekey}</div>
+                <div class="bp3-fill citekey-element">${citekey}</div>
                 <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
                     <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
                     <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
@@ -2099,9 +2103,9 @@ var zoteroRoam = {};
                 try {
                     let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
                         let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
-                        let pdfLink = `<a href="${pdfHref}">${item.data.filename || item.data.title}</a>`;
-                        return zoteroRoam.utils.renderBP3ButtonGroup(string = pdfLink, { icon: "paperclip" });
-                    });
+                        let pdfTitle = item.data.filename || item.data.title;
+                        return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal item-pdf-link", icon: "paperclip", target: pdfHref });
+                    }).join("");
                     childrenDiv += pdfDiv;
                     let notesDiv = (!infoChildren.notes) ? "" : zoteroRoam.utils.renderBP3ButtonGroup(string = "Show notes below", { buttonClass: "item-see-notes", icon: "comment" });
                     childrenDiv += notesDiv;
@@ -2120,8 +2124,10 @@ var zoteroRoam = {};
                 <p class="item-collections">${divCollections}</p>
             </div>
             <div class="item-actions">
-                ${goToPage}
-                ${importButtonGroup}
+                <div class="bp3-card">
+                    ${goToPage}
+                    ${importButtonGroup}
+                </div>
                 <div class="item-pdf-notes" style="margin-top: 25px;">
                     <h5>PDFs & Notes</h5>
                     ${childrenDiv}
