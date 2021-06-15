@@ -297,7 +297,7 @@ var zoteroRoam = {};
                     func: "zoteroRoam.utils.formatItemNotes"
                 },
                 pageMenu: {
-                    defaults: ["addMetadata", "importNotes", "pdfLinks", "sciteBadge",
+                    defaults: ["addMetadata", "importNotes", "viewItemInfo", "pdfLinks", "sciteBadge",
                             "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
                 }
             },
@@ -1446,7 +1446,7 @@ var zoteroRoam = {};
             div: null,
             class: "zotero-roam-context-menu",
             overlay: {div: null, class: "zotero-roam-context-overlay"},
-            options: {list: [], class: "zotero-roam-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation", "Check for citing papers"]},
+            options: {list: [], class: "zotero-roam-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation", "Check for citing papers", "View item information"]},
             visible: false,
             targetElement: null,
             position({top, left}){
@@ -1872,6 +1872,9 @@ var zoteroRoam = {};
                         case "Check for citing papers":
                             op.addEventListener("click", () => { zoteroRoam.handlers.checkForScitations(zoteroRoam.interface.contextMenu.targetElement) });
                             break;
+                        case "View item information":
+                            op.addEventListener("click", () => { zoteroRoam.interface.popItemInformation(zoteroRoam.interface.contextMenu.targetElement) });
+                            break;
                         case "Update Zotero data":
                             op.addEventListener("click", zoteroRoam.extension.update)
                             break;
@@ -1980,6 +1983,11 @@ var zoteroRoam = {};
                 resultsText = `Showing ${e.detail.results.length} out of ${e.detail.matches.length} results`;
             }
             document.querySelector("#zotero-roam-search-results-list").setAttribute("aria-label", resultsText);
+        },
+
+        popItemInformation(refSpan){
+            let citekey = refSpan.parentElement.dataset.linkTitle.replace("@", "");
+            zoteroRoam.interface.renderItemInPanel(citekey);
         },
 
         renderItemInPanel(citekey){
@@ -2544,6 +2552,12 @@ var zoteroRoam = {};
                                 importNotes_element = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
                             }
 
+                            // "View item information"
+                            let viewItemInfo_element = ``;
+                            if(menu_defaults.includes("viewItemInfo")){
+                                viewItemInfo_element = zoteroRoam.utils.renderBP3Button_group(string = "View item information", {buttonClass: "bp3-minimal zotero-roam-page-menu-view-item-info", icon: "info-sign"});
+                            }
+
                             // PDF links
                             let pdfLinks_element = ``;
                             if(menu_defaults.includes("pdfLinks")){
@@ -2613,6 +2627,7 @@ var zoteroRoam = {};
                             <div class="zotero-roam-page-menu-actions bp3-button-group">
                             ${addMetadata_element}
                             ${importNotes_element}
+                            ${viewItemInfo_element}
                             ${pdfLinks_element}
                             ${records_list.length == 0 ? "" : records_list.join("")}
                             </div>
@@ -2636,6 +2651,11 @@ var zoteroRoam = {};
                                     let pageInGraph = zoteroRoam.utils.lookForPage(title);
                                     console.log(`Adding notes to ${title} (${pageInGraph.uid})...`);
                                     zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
+                                });
+                            } catch(e){};
+                            try{
+                                menuDiv.querySelector(".zotero-roam-page-menu-view-item-info").addEventListener("click", function(){
+                                    zoteroRoam.interface.renderItemInPanel(citekey = title);
                                 });
                             } catch(e){};
                             try{
@@ -2742,7 +2762,7 @@ var zoteroRoam = {};
                         }).join(", ");
                     } else {
                         return creatorsInfoList.map(creator => {
-                            return (brackets == true ? `[[${creator}]]` : creator);
+                            return (brackets == true ? `[[${creator.name}]]` : creator.name);
                         }).join(", ");
                     }
             }

@@ -24,7 +24,7 @@
                         }).join(", ");
                     } else {
                         return creatorsInfoList.map(creator => {
-                            return (brackets == true ? `[[${creator}]]` : creator);
+                            return (brackets == true ? `[[${creator.name}]]` : creator.name);
                         }).join(", ");
                     }
             }

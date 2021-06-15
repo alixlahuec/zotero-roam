@@ -161,6 +161,12 @@
                                 importNotes_element = !itemChildren.notes ? "" : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
                             }
 
+                            // "View item information"
+                            let viewItemInfo_element = ``;
+                            if(menu_defaults.includes("viewItemInfo")){
+                                viewItemInfo_element = zoteroRoam.utils.renderBP3Button_group(string = "View item information", {buttonClass: "bp3-minimal zotero-roam-page-menu-view-item-info", icon: "info-sign"});
+                            }
+
                             // PDF links
                             let pdfLinks_element = ``;
                             if(menu_defaults.includes("pdfLinks")){
@@ -230,6 +236,7 @@
                             <div class="zotero-roam-page-menu-actions bp3-button-group">
                             ${addMetadata_element}
                             ${importNotes_element}
+                            ${viewItemInfo_element}
                             ${pdfLinks_element}
                             ${records_list.length == 0 ? "" : records_list.join("")}
                             </div>
@@ -253,6 +260,11 @@
                                     let pageInGraph = zoteroRoam.utils.lookForPage(title);
                                     console.log(`Adding notes to ${title} (${pageInGraph.uid})...`);
                                     zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
+                                });
+                            } catch(e){};
+                            try{
+                                menuDiv.querySelector(".zotero-roam-page-menu-view-item-info").addEventListener("click", function(){
+                                    zoteroRoam.interface.renderItemInPanel(citekey = title);
                                 });
                             } catch(e){};
                             try{

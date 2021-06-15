@@ -297,7 +297,7 @@ var zoteroRoam = {};
                     func: "zoteroRoam.utils.formatItemNotes"
                 },
                 pageMenu: {
-                    defaults: ["addMetadata", "importNotes", "pdfLinks", "sciteBadge",
+                    defaults: ["addMetadata", "importNotes", "viewItemInfo", "pdfLinks", "sciteBadge",
                             "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
                 }
             },

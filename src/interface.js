@@ -6,7 +6,7 @@
             div: null,
             class: "zotero-roam-context-menu",
             overlay: {div: null, class: "zotero-roam-context-overlay"},
-            options: {list: [], class: "zotero-roam-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation", "Check for citing papers"]},
+            options: {list: [], class: "zotero-roam-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation", "Check for citing papers", "View item information"]},
             visible: false,
             targetElement: null,
             position({top, left}){
@@ -432,6 +432,9 @@
                         case "Check for citing papers":
                             op.addEventListener("click", () => { zoteroRoam.handlers.checkForScitations(zoteroRoam.interface.contextMenu.targetElement) });
                             break;
+                        case "View item information":
+                            op.addEventListener("click", () => { zoteroRoam.interface.popItemInformation(zoteroRoam.interface.contextMenu.targetElement) });
+                            break;
                         case "Update Zotero data":
                             op.addEventListener("click", zoteroRoam.extension.update)
                             break;
@@ -540,6 +543,11 @@
                 resultsText = `Showing ${e.detail.results.length} out of ${e.detail.matches.length} results`;
             }
             document.querySelector("#zotero-roam-search-results-list").setAttribute("aria-label", resultsText);
+        },
+
+        popItemInformation(refSpan){
+            let citekey = refSpan.parentElement.dataset.linkTitle.replace("@", "");
+            zoteroRoam.interface.renderItemInPanel(citekey);
         },
 
         renderItemInPanel(citekey){
