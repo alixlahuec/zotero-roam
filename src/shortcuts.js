@@ -165,28 +165,27 @@
             zoteroRoam.shortcuts.generateSequences();
 
             // Search Panel : toggle, close
-            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle search panel with ") : "";
+            let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle panel with ") : "";
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
                 let spanSeqs = document.createElement('span');
-                spanSeqs.style = `font-style:italic;`;
+                spanSeqs.style = `font-style:italic;font-size:0.8em;margin:10px;`;
                 spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}  `;
-                let searchHeader = zoteroRoam.interface.search.overlay.querySelector(`.bp3-dialog-header`);
-                searchHeader.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
+                let searchTopControls = zoteroRoam.interface.search.overlay.querySelector(`.controls-top`);
+                searchTopControls.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
 
                 if(closeSeqText.length > 0){
-                    let citationsSearchHeader = zoteroRoam.interface.citations.overlay.querySelector(`.bp3-dialog-header`);
+                    let citationsSearchTopControls = zoteroRoam.interface.citations.overlay.querySelector(`.controls-top`);
                     let spanSeq = document.createElement('span');
-                    spanSeq.style = `font-style:italic;`;
+                    spanSeq.style = `font-style:italic;font-size:0.8em;margin:10px;`;
                     spanSeq.innerHTML = `${closeSeqText}`;
-                    citationsSearchHeader.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
+                    citationsSearchTopControls.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
                 }
             };
             // Quick Copy : toggle
             let qcText = (zoteroRoam.shortcuts.sequences["toggleQuickCopy"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleQuickCopy", pre = " ") : "";
             if(qcText.length > 0){
-                let searchHeader = document.querySelector('.zotero-roam-search-overlay .bp3-dialog-header');
-                searchHeader.querySelector(".bp3-control.bp3-switch").innerHTML += qcText;
+                zoteroRoam.interface.search.overlay.querySelector(".quick-copy-element").innerHTML += qcText;
             };
             // Import metadata => in rendering of selected item
             // Focus searchbar
