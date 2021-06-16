@@ -234,7 +234,7 @@
             quickCopyIndicator.classList.add("bp3-control-indicator");
             quickCopyElement.appendChild(quickCopyIndicator);
 
-            quickCopyElement.innerText = `Quick Copy`;
+            quickCopyElement.innerHTML += `Quick Copy`;
 
             // ---
             
@@ -774,13 +774,13 @@
                     let currentText = notesButton.querySelector('.bp3-button-text').innerText;
                     switch(currentText){
                         case "Show Notes":
-                            zoteroRoam.interface.citations.overlay.querySelector(".side-panel").style["flex-basis"] = "250px";
-                            zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 250px)`;
+                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "250px";
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 250px)`;
                             notesButton.querySelector('.bp3-button-text').innerText = "Hide Notes";
                             break;
                         case "Hide Notes":
-                            zoteroRoam.interface.citations.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
-                            zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").style.width = `60%`;
+                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `60%`;
                             notesButton.querySelector('.bp3-button-text').innerText = "Show Notes";
                             break;
                     }

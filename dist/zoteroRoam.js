@@ -358,7 +358,7 @@ var zoteroRoam = {};
             .zotero-roam-search-overlay .header-content h5{color:#137cbd;}
             .zotero-roam-citations-search-overlay .header-content h5{color: #d9822b;}
             #zotero-roam-portal .panel-subtitle{font-size:0.85em;padding:10px;display:inline-block;font-style:italic;margin-bottom:0px;color:#6d6d6d;}
-            zotero-roam-search-autocomplete{width:85%;}
+            #zotero-roam-search-autocomplete{width:85%;}
             #zotero-roam-portal .quick-copy-element{margin:10px;font-size:0.9em;font-weight:400;display:inline-block;}
             #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;}
@@ -1691,7 +1691,7 @@ var zoteroRoam = {};
             quickCopyIndicator.classList.add("bp3-control-indicator");
             quickCopyElement.appendChild(quickCopyIndicator);
 
-            quickCopyElement.innerText = `Quick Copy`;
+            quickCopyElement.innerHTML += `Quick Copy`;
 
             // ---
             
@@ -2231,13 +2231,13 @@ var zoteroRoam = {};
                     let currentText = notesButton.querySelector('.bp3-button-text').innerText;
                     switch(currentText){
                         case "Show Notes":
-                            zoteroRoam.interface.citations.overlay.querySelector(".side-panel").style["flex-basis"] = "250px";
-                            zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 250px)`;
+                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "250px";
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 250px)`;
                             notesButton.querySelector('.bp3-button-text').innerText = "Hide Notes";
                             break;
                         case "Hide Notes":
-                            zoteroRoam.interface.citations.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
-                            zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").style.width = `60%`;
+                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `60%`;
                             notesButton.querySelector('.bp3-button-text').innerText = "Show Notes";
                             break;
                     }
