@@ -805,9 +805,9 @@
             } catch(e){
                 Array.from(zoteroRoam.interface.search.selectedItemDiv.children).forEach(c => {c.innerHTML = ``});
             }
-            zoteroRoam.interface.citations.overlay.querySelector(".side-panel").innerHTML = ``;
-            zoteroRoam.interface.citations.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
-            zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").style.width = `60%`;
+            zoteroRoam.interface.search.overlay.querySelector(".side-panel").innerHTML = ``;
+            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
+            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `60%`;
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
         },
 
