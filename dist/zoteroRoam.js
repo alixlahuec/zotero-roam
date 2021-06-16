@@ -361,11 +361,11 @@ var zoteroRoam = {};
             #zotero-roam-search-autocomplete{width:85%;}
             #zotero-roam-portal .quick-copy-element{margin:10px;font-size:0.9em;font-weight:400;display:inline-block;}
             #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;}
-            #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;}
+            #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;padding:20px;}
             ul.zotero-roam-search-results-list::before{content:attr(aria-label);}
             li.autoComplete_selected{background-color:#e7f3f7;}
             span.autoComplete_highlighted{color:#146cb7;}
-            .zotero-roam-citations-search-overlay .bp3-dialog-header{justify-content:flex-end;}
+            .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
             .zotero-roam-search-item-title{font-weight:600;}
             .zotero-roam-search-item-tags{font-style:italic;color:#c1c0c0;display:block;}
@@ -1590,7 +1590,7 @@ var zoteroRoam = {};
 
         },
 
-        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;", useBackdrop = true){
+        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;transition:0.5s;", useBackdrop = true){
             try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
 
             let overlay = document.createElement("div");
@@ -2166,8 +2166,8 @@ var zoteroRoam = {};
                     
                     if(infoChildren.notes){
                         childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal item-see-notes", icon: "comment"})}`;
-                        zoteroRoam.interface.citations.overlay.querySelector(".side-panel").innerHTML = `
-                        <h4 style="padding:10px;">Notes</h4>
+                        zoteroRoam.interface.search.overlay.querySelector(".side-panel").innerHTML = `
+                        <h4>Notes</h4>
                         <div class="item-rendered-notes">
                             ${ infoChildren.notes.map(n => n.data.note).join("<br>") }
                         </div>
@@ -2231,8 +2231,8 @@ var zoteroRoam = {};
                     let currentText = notesButton.querySelector('.bp3-button-text').innerText;
                     switch(currentText){
                         case "Show Notes":
-                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "250px";
-                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 250px)`;
+                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "400px";
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 400px)`;
                             notesButton.querySelector('.bp3-button-text').innerText = "Hide Notes";
                             break;
                         case "Hide Notes":

@@ -133,7 +133,7 @@
 
         },
 
-        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;", useBackdrop = true){
+        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;transition:0.5s;", useBackdrop = true){
             try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
 
             let overlay = document.createElement("div");
@@ -709,8 +709,8 @@
                     
                     if(infoChildren.notes){
                         childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal item-see-notes", icon: "comment"})}`;
-                        zoteroRoam.interface.citations.overlay.querySelector(".side-panel").innerHTML = `
-                        <h4 style="padding:10px;">Notes</h4>
+                        zoteroRoam.interface.search.overlay.querySelector(".side-panel").innerHTML = `
+                        <h4>Notes</h4>
                         <div class="item-rendered-notes">
                             ${ infoChildren.notes.map(n => n.data.note).join("<br>") }
                         </div>
@@ -774,8 +774,8 @@
                     let currentText = notesButton.querySelector('.bp3-button-text').innerText;
                     switch(currentText){
                         case "Show Notes":
-                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "250px";
-                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 250px)`;
+                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "400px";
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 400px)`;
                             notesButton.querySelector('.bp3-button-text').innerText = "Hide Notes";
                             break;
                         case "Hide Notes":
