@@ -183,6 +183,11 @@
             let dialogSidePanel = document.createElement('div');
             dialogSidePanel.classList.add("side-panel");
             dialogSidePanel.style = `flex: 1 0 0%;`;
+
+            let sidePanelContents = document.createElement('div');
+            sidePanelContents.classList.add("side-panel-contents");
+            sidePanelContents.style = `width:400px;`;
+            dialogSidePanel.appendChild(sidePanelContents);
         
             // Chain up all the DOM elements
             dialogBody.appendChild(dialogMainPanel);
@@ -710,7 +715,7 @@
                     
                     if(infoChildren.notes){
                         childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal item-see-notes", icon: "comment"})}`;
-                        zoteroRoam.interface.search.overlay.querySelector(".side-panel").innerHTML = `
+                        zoteroRoam.interface.search.overlay.querySelector(".side-panel-contents").innerHTML = `
                         <h4>Notes</h4>
                         <div class="item-rendered-notes">
                             ${ infoChildren.notes.map(n => n.data.note).join("<br>") }
@@ -806,7 +811,7 @@
             } catch(e){
                 Array.from(zoteroRoam.interface.search.selectedItemDiv.children).forEach(c => {c.innerHTML = ``});
             }
-            zoteroRoam.interface.search.overlay.querySelector(".side-panel").innerHTML = ``;
+            zoteroRoam.interface.search.overlay.querySelector(".side-panel-contents").innerHTML = ``;
             zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
             zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `60%`;
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
