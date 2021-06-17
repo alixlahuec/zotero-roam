@@ -170,6 +170,7 @@
 
             let dialogMainPanel = document.createElement('div');
             dialogMainPanel.classList.add("main-panel");
+            dialogMainPanel.style = `flex: 1 1 100%;`;
 
             let controlsTop = document.createElement('div');
             controlsTop.classList.add("controls-top");
@@ -240,8 +241,8 @@
             
             inputGroup.appendChild(panelTitle);
             inputGroup.appendChild(panelSubtitle);
-            inputGroup.appendChild(searchBar);
             inputGroup.appendChild(quickCopyElement);
+            inputGroup.appendChild(searchBar);
 
             dialogMainPanel.appendChild(inputGroup);
 
@@ -774,11 +775,13 @@
                     let currentText = notesButton.querySelector('.bp3-button-text').innerText;
                     switch(currentText){
                         case "Show Notes":
+                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style.display = "flex";
                             zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "400px";
                             zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 400px)`;
                             notesButton.querySelector('.bp3-button-text').innerText = "Hide Notes";
                             break;
                         case "Hide Notes":
+                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style.display = "none";
                             zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
                             zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `60%`;
                             notesButton.querySelector('.bp3-button-text').innerText = "Show Notes";
