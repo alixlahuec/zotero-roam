@@ -133,7 +133,7 @@
 
         },
 
-        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;transition:0.5s;", useBackdrop = true){
+        createOverlay(divClass, dialogCSS = "align-self:baseline;transition:0.5s;", useBackdrop = true){
             try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
 
             let overlay = document.createElement("div");
@@ -141,6 +141,7 @@
             overlay.classList.add("bp3-overlay-open");
             overlay.classList.add("bp3-overlay-scroll-container");
             overlay.classList.add(`${divClass}-overlay`);
+            overlay.classList.add(`zotero-roam-dialog-overlay`);
             overlay.setAttribute("overlay-visible", "false");
             overlay.style = "display:none;"
             
@@ -163,6 +164,7 @@
         
             let dialogDiv = document.createElement("div");
             dialogDiv.classList.add("bp3-dialog");
+            dialogDiv.setAttribute("side-panel", "hidden");
             dialogDiv.style = dialogCSS;
             
             let dialogBody = document.createElement("div");
@@ -186,7 +188,6 @@
 
             let sidePanelContents = document.createElement('div');
             sidePanelContents.classList.add("side-panel-contents");
-            sidePanelContents.style = `width:400px;`;
             dialogSidePanel.appendChild(sidePanelContents);
         
             // Chain up all the DOM elements
@@ -714,7 +715,7 @@
                     childrenDiv += pdfDiv;
                     
                     if(infoChildren.notes){
-                        childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal item-see-notes", icon: "comment"})}`;
+                        childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal bp3-align-left bp3-fill item-see-notes", icon: "comment"})}`;
                         zoteroRoam.interface.search.overlay.querySelector(".side-panel-contents").innerHTML = `
                         <h4>Notes</h4>
                         <div class="item-rendered-notes">
@@ -780,13 +781,11 @@
                     let currentText = notesButton.querySelector('.bp3-button-text').innerText;
                     switch(currentText){
                         case "Show Notes":
-                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "400px";
-                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 400px)`;
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
                             notesButton.querySelector('.bp3-button-text').innerText = "Hide Notes";
                             break;
                         case "Hide Notes":
-                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
-                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `60%`;
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");
                             notesButton.querySelector('.bp3-button-text').innerText = "Show Notes";
                             break;
                     }
@@ -812,8 +811,9 @@
                 Array.from(zoteroRoam.interface.search.selectedItemDiv.children).forEach(c => {c.innerHTML = ``});
             }
             zoteroRoam.interface.search.overlay.querySelector(".side-panel-contents").innerHTML = ``;
-            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
-            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `60%`;
+            if(zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").getAttribute("side-panel") == "visible"){
+                zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");
+            }
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
         },
 

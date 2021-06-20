@@ -65,6 +65,7 @@
         },
 
         async createItem(data, library = zoteroRoam.data.libraries[0]){
+            data = (data.constructor === Array) ? data : [data];
             let canWrite = false;
             let libKeys = zoteroRoam.data.keys.filter(k => zoteroRoam.config.requests.filter(req => req.library == library.prefix).map(req => req.apikey).includes(k.key));
             let apikey = libKeys.find(k => {
@@ -99,8 +100,8 @@
 
                 if(req.ok == true){
                     response = await req.json();
-                    let libIndex = zoteroRoam.data.libraries.find(lib => lib.prefix == library.prefix);
-                    zoteroRoam.data.libraries[libIndex].version = response.headers.get('Last-Modified-Version');
+                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.prefix == library.prefix);
+                    zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
                 } else {
                     console.log(`The request for ${req.url} returned a code of ${req.status}`);
                 }

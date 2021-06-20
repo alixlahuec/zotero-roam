@@ -351,10 +351,17 @@ var zoteroRoam = {};
         addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
             autoCompleteCSS.textContent = `
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(360px + 2.5%);}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 720px);}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 360px);}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:360px;}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:360px;}
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:98.5%;justify-content:flex-end;}
             #zotero-roam-portal .header-content{width:95%;margin: 0 auto;margin-top: -25px;margin-bottom: 20px;}
             #zotero-roam-portal .header-content h5{font-weight:600;display:inline-block;}
+            .zotero-roam-search-overlay .bp3-dialog-container{justify-content:start;}
             .zotero-roam-search-overlay .header-content h5{color:#137cbd;}
             .zotero-roam-citations-search-overlay .header-content h5{color: #d9822b;}
             #zotero-roam-portal .panel-subtitle{font-size:0.85em;padding:10px;display:inline-block;font-style:italic;margin-bottom:0px;color:#6d6d6d;}
@@ -1572,6 +1579,7 @@ var zoteroRoam = {};
         },
 
         async createItem(data, library = zoteroRoam.data.libraries[0]){
+            data = (data.constructor === Array) ? data : [data];
             let canWrite = false;
             let libKeys = zoteroRoam.data.keys.filter(k => zoteroRoam.config.requests.filter(req => req.library == library.prefix).map(req => req.apikey).includes(k.key));
             let apikey = libKeys.find(k => {
@@ -1606,8 +1614,8 @@ var zoteroRoam = {};
 
                 if(req.ok == true){
                     response = await req.json();
-                    let libIndex = zoteroRoam.data.libraries.find(lib => lib.prefix == library.prefix);
-                    zoteroRoam.data.libraries[libIndex].version = response.headers.get('Last-Modified-Version');
+                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.prefix == library.prefix);
+                    zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
                 } else {
                     console.log(`The request for ${req.url} returned a code of ${req.status}`);
                 }
@@ -1757,7 +1765,7 @@ var zoteroRoam = {};
 
         },
 
-        createOverlay(divClass, dialogCSS = "width:60%;align-self:baseline;transition:0.5s;", useBackdrop = true){
+        createOverlay(divClass, dialogCSS = "align-self:baseline;transition:0.5s;", useBackdrop = true){
             try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
 
             let overlay = document.createElement("div");
@@ -1765,6 +1773,7 @@ var zoteroRoam = {};
             overlay.classList.add("bp3-overlay-open");
             overlay.classList.add("bp3-overlay-scroll-container");
             overlay.classList.add(`${divClass}-overlay`);
+            overlay.classList.add(`zotero-roam-dialog-overlay`);
             overlay.setAttribute("overlay-visible", "false");
             overlay.style = "display:none;"
             
@@ -1787,6 +1796,7 @@ var zoteroRoam = {};
         
             let dialogDiv = document.createElement("div");
             dialogDiv.classList.add("bp3-dialog");
+            dialogDiv.setAttribute("side-panel", "hidden");
             dialogDiv.style = dialogCSS;
             
             let dialogBody = document.createElement("div");
@@ -1810,7 +1820,6 @@ var zoteroRoam = {};
 
             let sidePanelContents = document.createElement('div');
             sidePanelContents.classList.add("side-panel-contents");
-            sidePanelContents.style = `width:400px;`;
             dialogSidePanel.appendChild(sidePanelContents);
         
             // Chain up all the DOM elements
@@ -2338,7 +2347,7 @@ var zoteroRoam = {};
                     childrenDiv += pdfDiv;
                     
                     if(infoChildren.notes){
-                        childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal item-see-notes", icon: "comment"})}`;
+                        childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal bp3-align-left bp3-fill item-see-notes", icon: "comment"})}`;
                         zoteroRoam.interface.search.overlay.querySelector(".side-panel-contents").innerHTML = `
                         <h4>Notes</h4>
                         <div class="item-rendered-notes">
@@ -2404,13 +2413,11 @@ var zoteroRoam = {};
                     let currentText = notesButton.querySelector('.bp3-button-text').innerText;
                     switch(currentText){
                         case "Show Notes":
-                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "400px";
-                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `calc(60% + 400px)`;
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
                             notesButton.querySelector('.bp3-button-text').innerText = "Hide Notes";
                             break;
                         case "Hide Notes":
-                            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
-                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `60%`;
+                            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");
                             notesButton.querySelector('.bp3-button-text').innerText = "Show Notes";
                             break;
                     }
@@ -2436,8 +2443,9 @@ var zoteroRoam = {};
                 Array.from(zoteroRoam.interface.search.selectedItemDiv.children).forEach(c => {c.innerHTML = ``});
             }
             zoteroRoam.interface.search.overlay.querySelector(".side-panel-contents").innerHTML = ``;
-            zoteroRoam.interface.search.overlay.querySelector(".side-panel").style["flex-basis"] = "0%";
-            zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").style.width = `60%`;
+            if(zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").getAttribute("side-panel") == "visible"){
+                zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");
+            }
             zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
         },
 

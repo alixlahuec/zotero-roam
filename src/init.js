@@ -351,10 +351,17 @@ var zoteroRoam = {};
         addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
             autoCompleteCSS.textContent = `
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(360px + 2.5%);}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 720px);}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 360px);}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:360px;}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
+            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:360px;}
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:98.5%;justify-content:flex-end;}
             #zotero-roam-portal .header-content{width:95%;margin: 0 auto;margin-top: -25px;margin-bottom: 20px;}
             #zotero-roam-portal .header-content h5{font-weight:600;display:inline-block;}
+            .zotero-roam-search-overlay .bp3-dialog-container{justify-content:start;}
             .zotero-roam-search-overlay .header-content h5{color:#137cbd;}
             .zotero-roam-citations-search-overlay .header-content h5{color: #d9822b;}
             #zotero-roam-portal .panel-subtitle{font-size:0.85em;padding:10px;display:inline-block;font-style:italic;margin-bottom:0px;color:#6d6d6d;}
