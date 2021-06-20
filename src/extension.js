@@ -9,6 +9,17 @@
                 zoteroRoam.interface.popToast(message = "There was a problem with the Zotero data request. Please check your specification !", intent = "danger");
                 throw new Error("The API request encountered a problem. Please check your request specification, and the console for any registered errors.");
             } else {
+                try{
+                    let keyCalls = [];
+                    Array.from(new Set(zoteroRoam.config.requests.map(req => req.apikey))).forEach(key => {
+                        keyCalls.push(fetch(`https://api.zotero.org/keys/${key}`, {method: 'GET', headers: {'Zotero-API-Version': 3, 'Zotero-API-Key': key}}));
+                    })
+                    let keyResults = await Promise.all(keyCalls);
+                    keyResults = await Promise.all(keyResults.map(res => res.json()));
+                    keyResults = keyResults.flat(1);
+                    zoteroRoam.data.keys = keyResults;
+                } catch(e){ console.error(e) };
+
                 zoteroRoam.data.items = requestReturns.data.items;
                 zoteroRoam.data.collections = requestReturns.data.collections;
                 zoteroRoam.interface.icon.setAttribute("status", "on");
@@ -66,7 +77,7 @@
 
         unload(){
             zoteroRoam.interface.icon.setAttribute("status", "off");
-            zoteroRoam.data = {items: [], collections: [], scite: []};
+            zoteroRoam.data = {items: [], collections: [], scite: [], libraries: [], keys: []};
             if(zoteroRoam.autoComplete !== null){
                 zoteroRoam.autoComplete.unInit();
             }
@@ -116,8 +127,7 @@
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
             let updateRequests = zoteroRoam.config.requests.map(rq => {
-                let items = zoteroRoam.data.items.filter(i => i.requestLabel == rq.name);
-                let latest = items.reduce( (f,s) => {return (f.version < s.version) ? s : f}).version;
+                let latest = zoteroRoam.data.libraries.find(lib => lib.prefix == rq.library).version;
                 let {apikey, dataURI, params: setParams, name} = rq;
                 let paramsQuery = new URLSearchParams(setParams);
                 paramsQuery.set('since', latest);

@@ -7,7 +7,7 @@ module.exports = function(grunt){
             },
             browser: {
                 src: ["src/init.js", 
-                "src/utils.js", "src/handlers.js", 
+                "src/utils.js", "src/handlers.js", "src/write.js",
                 "src/interface.js", "src/extension.js", 
                 "src/inPage.js",
                 "src/formatting.js", "src/shortcuts.js",
@@ -16,7 +16,7 @@ module.exports = function(grunt){
             },
             sandbox: {
                 src: ["src/init.js", 
-                "src/utils.js", "src/handlers.js", 
+                "src/utils.js", "src/handlers.js", "src/write.js",
                 "src/interface.js", "src/extension.js", 
                 "src/inPage.js",
                 "src/formatting.js", "src/shortcuts.js",

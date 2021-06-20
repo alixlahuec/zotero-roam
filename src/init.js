@@ -64,7 +64,7 @@ var zoteroRoam = {};
             }
         },
 
-        data: {items: [], collections: [], scite: []},
+        data: {items: [], collections: [], scite: [], libraries: [], keys: []},
 
         autoComplete: null,
 

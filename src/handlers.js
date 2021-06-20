@@ -304,9 +304,12 @@
                         apikey: apikey,
                         dataURI: dataURI,
                         params: params,
-                        name: name
+                        name: name,
+                        library: dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1)
                     }; 
                 });
+                let libList = Array.from(new Set(requests.map(rq => rq.library)));
+                zoteroRoam.data.libraries = libList.map(lib => { return {prefix: lib, version: 0} });
                 zoteroRoam.config.requests = requests;
             }
         },
@@ -329,6 +332,43 @@
                 }
             } catch (e) {
                 console.error(e);
+            }
+        },
+
+        async requestCitoid(query, { format = "zotero", has_relation = false, tag_with = []} = {}){
+            let results = false;
+            try{
+                let dataReq = await fetch(`https://en.wikipedia.org/api/rest_v1/data/citation/${format}/${encodeURIComponent(query)}`,{ method: 'GET' });
+                if(dataReq.ok == true){
+                    let dataRes = await dataReq.json();
+                    if(dataRes.length > 0){
+                        var {key, version, ...item} = dataRes[0];
+                        item.collections = [];
+                        item.relations = {};
+                        if(has_relation != false){
+                            item.relations["dc_relation"] = `http://zotero.org/${zoteroRoam.utils.getItemPrefix(has_relation)}/items/${has_relation.data.key}`;
+                        }
+                        if(tag_with.length > 0){
+                            if(tag_with.constructor === Array){
+                                tag_with.forEach(t => item.tags.push({tag: t}));
+                            } else if(tag_with.constructor === String){
+                                item.tags.push({tag: tag_with});
+                            } else {
+                                console.log(`Unsupported tag input : ${tag_with}`);
+                            }
+                        }
+                        results = item;
+                    }
+                } else {
+                    console.log(`The request for ${dataReq.url} returned a code of ${dataReq.status}`);
+                }
+            } catch(e){
+                console.error(e);
+                zoteroRoam.interface.popToast("The extension encountered an error while accessing citation data. Please check the console for details.", "danger");
+            } finally {
+                return {
+                    data: results
+                }
             }
         },
 
@@ -366,9 +406,8 @@
             }
             try{
                 requests.forEach( rq => {
-                    let userOrGroupPrefix = rq.dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1);
                     dataCalls.push(zoteroRoam.handlers.fetchData(apiKey = rq.apikey, dataURI = rq.dataURI, params = rq.params));
-                    collectionsCalls.push(fetch(`https://api.zotero.org/${userOrGroupPrefix}/collections`, {
+                    collectionsCalls.push(fetch(`https://api.zotero.org/${rq.library}/collections`, {
                         method: 'GET',
                         headers: {
                             'Zotero-API-Version': 3,
@@ -378,7 +417,17 @@
                 });
                 // Items data
                 let requestsResults = await Promise.all(dataCalls);
-                requestsResults = requestsResults.map( (res, i) => res.data.map(item => { item.requestLabel = requests[i].name; item.requestIndex = i; return item })).flat(1);
+                requestsResults = requestsResults.map( (res, i) => {
+                    let latestVersion = res.headers.get('Last-Modified-Version');
+                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.prefix == requests[i].library);
+                    if(latestVersion > zoteroRoam.data.libraries[libIndex].version){ zoteroRoam.data.libraries[libIndex].version = latestVersion };
+
+                    return res.data.map(item => { 
+                        item.requestLabel = requests[i].name; 
+                        item.requestIndex = i; 
+                        return item;
+                    })
+                }).flat(1);
                 requestsResults = zoteroRoam.handlers.extractCitekeys(requestsResults);
                 // Collections data
                 let collectionsResults = await Promise.all(collectionsCalls);
