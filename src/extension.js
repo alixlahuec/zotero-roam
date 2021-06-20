@@ -77,7 +77,11 @@
 
         unload(){
             zoteroRoam.interface.icon.setAttribute("status", "off");
-            zoteroRoam.data = {items: [], collections: [], scite: [], libraries: [], keys: []};
+            zoteroRoam.data.items = [];
+            zoteroRoam.data.collections = [];
+            zoteroRoam.data.scite = [];
+            zoteroRoam.data.keys = [];
+
             if(zoteroRoam.autoComplete !== null){
                 zoteroRoam.autoComplete.unInit();
             }
@@ -128,7 +132,7 @@
             // For each request, get the latest version of any item that belongs to it
             let updateRequests = zoteroRoam.config.requests.map(rq => {
                 let latest = zoteroRoam.data.libraries.find(lib => lib.prefix == rq.library).version;
-                let {apikey, dataURI, params: setParams, name} = rq;
+                let {apikey, dataURI, params: setParams, name, library} = rq;
                 let paramsQuery = new URLSearchParams(setParams);
                 paramsQuery.set('since', latest);
                 setParams = paramsQuery.toString();
@@ -136,7 +140,8 @@
                     apikey: apikey,
                     dataURI: dataURI,
                     params: setParams,
-                    name: name
+                    name: name,
+                    library: library
                 };
             });
             let updateResults = await zoteroRoam.handlers.requestData(updateRequests);

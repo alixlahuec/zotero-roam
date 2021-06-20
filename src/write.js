@@ -92,7 +92,7 @@
                     body: JSON.stringify(data),
                     headers: {
                         'Zotero-API-Version': 3,
-                        'Zotero-API-Key': apikey,
+                        'Zotero-API-Key': apikey.key,
                         'If-Unmodified-Since-Version': library.version
                     }
                 });
