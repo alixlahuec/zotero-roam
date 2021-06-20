@@ -1286,21 +1286,21 @@ var zoteroRoam = {};
                 });
                 // Items data
                 let requestsResults = await Promise.all(dataCalls);
-                requestsResults = requestsResults.map( (res, i) => {
-                    let latestVersion = res.headers.get('Last-Modified-Version');
-                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.prefix == requests[i].library);
-                    if(latestVersion > zoteroRoam.data.libraries[libIndex].version){ zoteroRoam.data.libraries[libIndex].version = latestVersion };
-
-                    return res.data.map(item => { 
+                requestsResults = requestsResults.map( (res, i) => res.data.map(item => { 
                         item.requestLabel = requests[i].name; 
                         item.requestIndex = i; 
                         return item;
-                    })
-                }).flat(1);
+                    })).flat(1);
                 requestsResults = zoteroRoam.handlers.extractCitekeys(requestsResults);
                 // Collections data
                 let collectionsResults = await Promise.all(collectionsCalls);
-                collectionsResults = await Promise.all(collectionsResults.map(cl => cl.json()));
+                collectionsResults = await Promise.all(collectionsResults.map( (cl, i) => {
+                    let latestVersion = cl.headers.get('Last-Modified-Version');
+                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.prefix == requests[i].library);
+                    if(latestVersion > zoteroRoam.data.libraries[libIndex].version){ zoteroRoam.data.libraries[libIndex].version = latestVersion };
+
+                    return cl.json();
+                }));
                 collectionsResults = collectionsResults.flat(1);
                 
                 return {
