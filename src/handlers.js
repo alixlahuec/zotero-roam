@@ -520,6 +520,7 @@
                         abstract: cit.abstract || "",
                         doi: cit.doi || "",
                         keywords: cit.keywords || [],
+                        keywordsString: cit.keywords ? cit.keywords.join(" ") : "",
                         links: {
                             scite: `https://scite.ai/reports/${cit.slug}`
                         },

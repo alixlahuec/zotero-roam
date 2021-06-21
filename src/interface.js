@@ -55,7 +55,6 @@
 
             zoteroRoam.interface.search.updateButton.addEventListener("click", function(){zoteroRoam.extension.update(popup = true)});
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
-            zoteroRoam.interface.search.input.addEventListener("rendered", zoteroRoam.interface.renderNbResults);
         },
 
         createIcon(id) {
@@ -646,14 +645,6 @@
 
         popIconContextMenu(e){
             zoteroRoam.interface.popContextOverlay(e, "iconContextMenu");
-        },
-
-        renderNbResults(e){
-            if(e.detail.results.length > 0){
-            document.querySelector(".zotero-roam-library-results-count").innerHTML = `
-            <strong>${e.detail.results.length}</strong> / ${e.detail.matches.length} results
-            `;
-            }
         },
 
         popItemInformation(refSpan){
