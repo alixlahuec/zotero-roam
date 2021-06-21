@@ -525,7 +525,7 @@
                             scite: `https://scite.ai/reports/${cit.slug}`
                         },
                         title: cit.title,
-                        year: cit.year || "",
+                        year: `${cit.year}` || "",
                         meta: ""
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];

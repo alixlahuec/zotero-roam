@@ -183,11 +183,8 @@ var zoteroRoam = {};
                             zoteroRoam.interface.clearSelectedItem();
                             zoteroRoam.librarySearch.autocomplete.start();
                         },
-                        keydown: (event) => {
-                            zoteroRoam.interface.clearSelectedItem();
-                            zoteroRoam.librarySearch.autocomplete.start();
-                        },
                         results: (event) => {
+                            zoteroRoam.interface.clearSelectedItem();
                             if(event.detail.query.length > 0 && event.detail.results.length == 0){
                                 document.querySelector(".zotero-roam-library-results-count").innerHTML = `
                                 <strong>No results</strong> for ${event.detail.query}
@@ -262,9 +259,6 @@ var zoteroRoam = {};
                 resultsList: false,
                 events: {
                     input: {
-                        keydown: (event) => {
-                            zoteroRoam.citations.autocomplete.start();
-                        },
                         results: (event) => {
                             if(event.detail.results.length > 0){
                                 zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: event.detail.results.map(res => res.value)});
