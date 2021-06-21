@@ -391,7 +391,7 @@
             dialogMainPanel.appendChild(pagination);
 
             // ---
-            
+
             let footerActions = document.createElement('div');
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
@@ -604,7 +604,7 @@
             zoteroRoam.interface.renderCitationsPagination();
             // Setup autocomplete
             if(zoteroRoam.citations.autocomplete == null){
-                zoteroRoam.config.citationsSearch.maxResults = zoteroRoam.data.items.length;
+                // zoteroRoam.config.citationsSearch.resultsList.maxResults = zoteroRoam.data.items.length;
                 zoteroRoam.citations.autocomplete = new autoComplete(zoteroRoam.config.citationsSearch);
             } else {
                 zoteroRoam.citations.autocomplete.init();
