@@ -252,11 +252,28 @@
 
             dialogMainPanel.appendChild(inputGroup);
 
+            // ---
+
+            let renderedDiv = document.createElement('div');
+            renderedDiv.id = "zotero-roam-library-rendered";
+            renderedDiv.setAttribute("view", "search");
+
+            let librarySearchDiv = document.createElement('div');
+            librarySearchDiv.id = "zotero-roam-library-search-div";
+
+            let searchPaginationDiv = document.createElement('div');
+            searchPaginationDiv.classList.add("bp3-button-group");
+            searchPaginationDiv.classList.add("bp3-minimal");
+            searchPaginationDiv.innerHTML = `
+            <span class="zotero-roam-library-results-count"></span>
+            `;
+
+            librarySearchDiv.appendChild(searchPaginationDiv);
         
             let selectedItemDiv = document.createElement('div');
             selectedItemDiv.id = "zotero-roam-search-selected-item";
             selectedItemDiv.classList.add("bp3-card");
-            selectedItemDiv.style = "width:95%;margin:0 auto;display:none;";
+            selectedItemDiv.style = "width:95%;margin:0 auto;";
         
             let selectedItemMetadata = document.createElement('div');
             selectedItemMetadata.classList.add("selected-item-header");
@@ -265,8 +282,11 @@
         
             selectedItemDiv.appendChild(selectedItemMetadata);
             selectedItemDiv.appendChild(selectedItemGraphInfo);
+
+            renderedDiv.appendChild(librarySearchDiv);
+            renderedDiv.appendChild(selectedItemDiv);
         
-            dialogMainPanel.appendChild(selectedItemDiv);
+            dialogMainPanel.appendChild(renderedDiv);
 
             let footerActions = document.createElement('div');
             footerActions.classList.add("bp3-dialog-footer-actions");
@@ -328,7 +348,7 @@
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
             <span class="zotero-roam-citations-results-count"></span>
-            `
+            `;
             pagination.appendChild(pageControls);
             inputGroup.appendChild(pagination);
             dialogMainPanel.appendChild(inputGroup);
@@ -588,11 +608,11 @@
         },
 
         renderNbResults(e){
-            let resultsText = "";
             if(e.detail.results.length > 0){
-                resultsText = `Showing ${e.detail.results.length} out of ${e.detail.matches.length} results`;
+            document.querySelector(".zotero-roam-library-results-count").innerHTML = `
+            <strong>${e.detail.results.length}</strong> / ${e.detail.matches.length} results
+            `;
             }
-            document.querySelector("#zotero-roam-search-results-list").setAttribute("aria-label", resultsText);
         },
 
         popItemInformation(refSpan){
@@ -796,7 +816,7 @@
             } catch(e){};
 
             // Finally, make the div visible
-            zoteroRoam.interface.search.selectedItemDiv.style.display = "block";
+            document.querySelector("#zotero-roam-library-rendered").setAttribute("view", "item");
             switch(zoteroRoam.interface.search.overlay.getAttribute("overlay-visible")){
                 case "true":
                     document.querySelector('h4.item-title').focus();
@@ -817,7 +837,7 @@
             if(zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").getAttribute("side-panel") == "visible"){
                 zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");
             }
-            zoteroRoam.interface.search.selectedItemDiv.style.display = "none";
+            document.querySelector("#zotero-roam-library-rendered").setAttribute("view", "search");
         },
 
         // Detect if a block is currently being edited
