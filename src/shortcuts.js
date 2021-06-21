@@ -97,7 +97,7 @@
             toggleNotes: {
                 defaultShortcut: [],
                 execute(){
-                    let notesButton = document.querySelector('.bp3-dialog[side-panel="visible"] button.item-see-notes');
+                    let notesButton = document.querySelector('.zotero-roam-search-overlay[overlay-visible="true"] button.item-see-notes');
                     if(notesButton !== null){
                         notesButton.click();
                     }

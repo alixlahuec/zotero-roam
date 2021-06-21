@@ -169,11 +169,11 @@
 
                             let openZoteroLocal_element = ``;
                             if(menu_defaults.includes("openZoteroLocal")){
-                                openZoteroLocal_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (local)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-local", target: zoteroRoam.formatting.getLocalLink(item, {format: "target"})});
+                                openZoteroLocal_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (local)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-local", target: zoteroRoam.formatting.getLocalLink(itemInLib, {format: "target"})});
                             }
                             let openZoteroWeb_element = ``;
                             if(menu_defaults.includes("openZoteroWeb")){
-                                openZoteroWeb_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (web)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-web", target: zoteroRoam.formatting.getWebLink(item, {format: "target"})});
+                                openZoteroWeb_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (web)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-web", target: zoteroRoam.formatting.getWebLink(itemInLib, {format: "target"})});
                             }
 
                             // PDF links

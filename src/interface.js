@@ -273,9 +273,11 @@
             footerActions.innerHTML = `
             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
             <span class="bp3-popover2-target" tabindex="0">
-                <button type="button" class="zotero-roam-update-data bp3-button">
-            <span class="bp3-button-text">Update Zotero data</span>
-            </button></span>
+                <button type="button" class="zotero-roam-update-data bp3-button bp3-minimal">
+                <span icon="refresh" class="bp3-icon bp3-icon-refresh"></span>
+                <span class="bp3-button-text">Update Zotero data</span>
+                </button>
+            </span>
             `;
 
             dialogMainPanel.appendChild(footerActions);
@@ -649,7 +651,7 @@
             }
 
             // Information about the item
-            let pageInGraph = zoteroRoam.utils.lookForPage(citekey);
+            let pageInGraph = zoteroRoam.utils.lookForPage(itemKey);
             let iconName = (pageInGraph.present == true) ? "tick" : "cross";
             let iconIntent = (pageInGraph.present == true) ? "success" : "danger";
             let itemInfo = (pageInGraph.present == true) ? `In the graph` : "Not in the graph";
@@ -673,7 +675,7 @@
                 <p class="item-metadata-string">${divAuthors}${zoteroRoam.utils.makeMetaString(selectedItem)}</p>
                 </div>
             <div class="item-citekey-section">
-                <div class="bp3-fill citekey-element">${citekey}</div>
+                <div class="bp3-fill citekey-element">${itemKey}</div>
                 <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
                     <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
                     <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
@@ -753,24 +755,24 @@
             let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){
                 console.log("Importing metadata...");
-                zoteroRoam.handlers.addSearchResult(citekey, pageUID, {popup: true});
+                zoteroRoam.handlers.addSearchResult(itemKey, pageUID, {popup: true});
             });
 
             Array.from(document.querySelectorAll('.item-citekey-section .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", (e) => {
                     switch(btn.getAttribute('format')){
                         case 'citekey':
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${citekey}`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${itemKey}`;
                             break;
                         case 'citation':
                             let citationText = `${selectedItem.meta.creatorSummary || ""}${itemYear || ""}`;
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${citekey}]])`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${itemKey}]])`;
                             break;
                         case 'tag':
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `#[[${citekey}]]`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `#[[${itemKey}]]`;
                             break;
                         case 'page-reference':
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[[${citekey}]]`;
+                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[[${itemKey}]]`;
                     };
                     zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').select();
                     document.execCommand("copy");
