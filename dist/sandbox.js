@@ -97,6 +97,14 @@ var zoteroRoam = {};
                 },
                 selector: '#zotero-roam-search-autocomplete',
                 wrapper: false,
+                trigger: (query) => {
+                    if(query.length == 0){
+                        document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
+                        return false;
+                    } else {
+                        return true;
+                    }
+                },
                 searchEngine: (query, record) => {
                     return zoteroRoam.utils.multiwordMatch(query, record);
                 },
@@ -180,9 +188,7 @@ var zoteroRoam = {};
                             zoteroRoam.librarySearch.autocomplete.start();
                         },
                         results: (event) => {
-                            if(event.detail.query.length == 0){
-                                document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
-                            } else if(event.detail.query.length > 0 && event.detail.results.length == 0){
+                            if(event.detail.query.length > 0 && event.detail.results.length == 0){
                                 document.querySelector(".zotero-roam-library-results-count").innerHTML = `
                                 <strong>No results</strong> for ${event.detail.query}
                                 `;
@@ -229,7 +235,7 @@ var zoteroRoam = {};
                             return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
                         }
                     },
-                    keys: ['year', 'title', 'keywords', 'authorsString', 'abstract', 'meta'],
+                    keys: ['year', 'title', 'keywordsString', 'authorsString', 'abstract', 'meta'],
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         const filteredMatches = Array.from(new Set(list.map((item) => item.value.doi))).map((doi) => {
@@ -242,6 +248,14 @@ var zoteroRoam = {};
                 },
                 selector: '#zotero-roam-citations-autocomplete',
                 wrapper: false,
+                trigger: (query) => {
+                    if(query.length == 0){
+                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI);
+                        return false;
+                    } else {
+                        return true;
+                    }
+                },
                 searchEngine: (query, record) => {
                     return zoteroRoam.utils.multiwordMatch(query, record)
                 },
@@ -256,17 +270,13 @@ var zoteroRoam = {};
                                 zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: event.detail.results.map(res => res.value)});
                                 zoteroRoam.interface.renderCitationsPagination();
                             } else {
-                                if(event.detail.query.length == 0){
-                                    zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI);
-                                } else {
-                                    let paginationDiv = document.querySelector("#zotero-roam-citations-pagination");
-                                    paginationDiv.querySelector(".zotero-roam-citations-results-count").innerHTML = `
-                                    <strong>No results</strong> for ${event.detail.query}
-                                    `;
-                                    zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: []});
-                                    let paginatedList = paginationDiv.querySelector("ul");
-                                    paginatedList.innerHTML = ``;
-                                }
+                                let paginationDiv = document.querySelector("#zotero-roam-citations-pagination");
+                                paginationDiv.querySelector(".zotero-roam-citations-results-count").innerHTML = `
+                                <strong>No results</strong> for ${event.detail.query}
+                                `;
+                                zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: []});
+                                let paginatedList = paginationDiv.querySelector("ul");
+                                paginatedList.innerHTML = ``;
                             }
                         }
                     }
@@ -385,7 +395,7 @@ var zoteroRoam = {};
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
             #zotero-roam-portal .panel-subtitle{font-size:0.85em;padding-bottom:10px;display:inline-block;font-style:italic;margin-bottom:0px;color:#6d6d6d;}
             #zotero-roam-search-autocomplete{width:100%;margin-bottom:20px;padding: 0px 10px;}
-            #zotero-roam-citations-autocomplete{padding-left:0px;}
+            #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;}
             #zotero-roam-portal .quick-copy-element{margin:10px;font-size:0.9em;font-weight:400;display:inline-block;}
             #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
@@ -2931,11 +2941,11 @@ var zoteroRoam = {};
 
                             let openZoteroLocal_element = ``;
                             if(menu_defaults.includes("openZoteroLocal")){
-                                openZoteroLocal_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (local)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-local", target: zoteroRoam.formatting.getLocalLink(itemInLib, {format: "target"})});
+                                openZoteroLocal_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (local)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-local", target: zoteroRoam.formatting.getLocalLink(itemInLib, {format: "target"}), linkAttribute: `target="_blank"`});
                             }
                             let openZoteroWeb_element = ``;
                             if(menu_defaults.includes("openZoteroWeb")){
-                                openZoteroWeb_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (web)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-web", target: zoteroRoam.formatting.getWebLink(itemInLib, {format: "target"})});
+                                openZoteroWeb_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (web)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-web", target: zoteroRoam.formatting.getWebLink(itemInLib, {format: "target"}), linkAttribute: `target="_blank"`});
                             }
 
                             // PDF links
@@ -2944,7 +2954,7 @@ var zoteroRoam = {};
                                 pdfLinks_element =!itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
                                     let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
                                     let pdfTitle = item.data.filename || item.data.title;
-                                    return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip", target: pdfHref });
+                                    return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip", target: pdfHref, linkAttribute: `target="_blank"` });
                                 }).join("");
                             }
 
