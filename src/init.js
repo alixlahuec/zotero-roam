@@ -80,14 +80,14 @@ var zoteroRoam = {};
                             return zoteroRoam.handlers.simplifyDataArray(zoteroRoam.data.items);
                         }
                     },
-                    key: ['title', 'authorsLastNames', 'year', 'tagsString', 'key', '_multiField'],
+                    keys: ['title', 'authorsLastNames', 'year', 'tagsString', 'key', '_multiField'],
                     cache: false,
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         // Records are sorted alphabetically (by key name) => _multiField should come last
                         const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
-                            return list.filter(item => item.index === index).sort((a,b) => {
-                                return zoteroRoam.config.autoComplete.data.key.findIndex(key => key == a.key) < zoteroRoam.config.autoComplete.data.key.findIndex(key => b.key) ? -1 : 1;
+                            return list.filter(item => item.index == index).sort((a,b) => {
+                                return zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == a.key) < zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == b.key) ? -1 : 1;
                             })[0];
                         });
                         return filteredMatches;
@@ -164,9 +164,11 @@ var zoteroRoam = {};
                 events: {
                     input: {
                         focus: (event) => {
+                            zoteroRoam.interface.clearSelectedItem();
                             zoteroRoam.librarySearch.autocomplete.start();
                         },
                         keydown: (event) => {
+                            zoteroRoam.interface.clearSelectedItem();
                             zoteroRoam.librarySearch.autocomplete.start();
                         },
                         results: (event) => {
@@ -219,12 +221,12 @@ var zoteroRoam = {};
                             return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
                         }
                     },
-                    key: ['year', 'title', 'keywords', 'authorsLastNames', 'abstract', 'meta'],
+                    keys: ['year', 'title', 'keywords', 'authorsLastNames', 'abstract', 'meta'],
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
-                            return list.filter(item => item.index === index).sort((a,b) => {
-                                return zoteroRoam.config.citationsSearch.data.key.findIndex(key => key == a.key) < zoteroRoam.config.citationsSearch.data.key.findIndex(key => key == b.key) ? -1 : 1;
+                            return list.filter(item => item.index == index).sort((a,b) => {
+                                return zoteroRoam.config.citationsSearch.data.keys.findIndex(key => key == a.key) < zoteroRoam.config.citationsSearch.data.keys.findIndex(key => key == b.key) ? -1 : 1;
                             })[0];
                         });
                         return filteredMatches;

@@ -46,9 +46,6 @@
                 } else {
                     zoteroRoam.librarySearch.autocomplete.init();
                 }
-                zoteroRoam.config.autoComplete.trigger.event.forEach(ev => {
-                    zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
-                })
                 // Setup observer for autocompletion tribute
                 if(zoteroRoam.config.params.autocomplete.enabled == true){
                     zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
