@@ -442,7 +442,7 @@ var zoteroRoam = {};
     // Load the autoComplete JS (if there's a better way, I'm all ears)
     // This should be done early on so that the autoComplete constructor is available & ready
     var ac = document.createElement("script");
-    ac.src = "https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.1.5/dist/js/autoComplete.js";
+    ac.src = "https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.1.5/dist/autoComplete.js";
     ac.type = "text/javascript";
     document.getElementsByTagName("head")[0].appendChild(ac);
 
