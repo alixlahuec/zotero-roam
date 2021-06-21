@@ -174,14 +174,6 @@
             dialogMainPanel.classList.add("main-panel");
             dialogMainPanel.style = `flex: 1 1 100%;`;
 
-            let controlsTop = document.createElement('div');
-            controlsTop.classList.add("controls-top");
-            controlsTop.innerHTML = `
-            <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
-            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
-            `;
-            dialogMainPanel.appendChild(controlsTop);
-
             let dialogSidePanel = document.createElement('div');
             dialogSidePanel.classList.add("side-panel");
             dialogSidePanel.style = `flex: 1 0 0%;`;
@@ -206,9 +198,14 @@
         fillSearchOverlay(divClass = zoteroRoam.interface.search.overlayClass){
             let dialogMainPanel = document.querySelector(`.${divClass}-overlay .bp3-dialog-body .main-panel`);
 
-            let inputGroup = document.createElement('div');
-            inputGroup.classList.add("bp3-input-group");
-            inputGroup.classList.add("header-content");
+            let headerContent = document.createElement('div');
+            headerContent.classList.add("bp3-input-group");
+            headerContent.classList.add("header-content");
+
+            // Header (left)
+
+            let headerLeft = document.createElement('div');
+            headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
             panelTitle.innerText = "Zotero Library";
@@ -225,7 +222,21 @@
             searchBar.classList.add("bp3-input");
             searchBar.classList.add("bp3-intent-primary");
 
-            // Quick Copy toggle
+            headerLeft.appendChild(panelTitle);
+            headerLeft.appendChild(panelSubtitle);
+            headerLeft.appendChild(searchBar);
+
+            // Header (right)
+
+            let headerRight = document.createElement('div');
+            headerRight.classList.add("header-right");
+
+            let controlsTop = document.createElement('div');
+            controlsTop.classList.add("controls-top");
+            controlsTop.innerHTML = `
+            <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
+            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
+            `;
 
             let quickCopyElement = document.createElement('label');
             quickCopyElement.classList.add("bp3-control");
@@ -243,14 +254,15 @@
 
             quickCopyElement.innerHTML += `Quick Copy`;
 
+            headerRight.appendChild(controlsTop);
+            headerRight.appendChild(quickCopyElement);
+
             // ---
             
-            inputGroup.appendChild(panelTitle);
-            inputGroup.appendChild(panelSubtitle);
-            inputGroup.appendChild(quickCopyElement);
-            inputGroup.appendChild(searchBar);
+            headerContent.appendChild(headerLeft);
+            headerContent.appendChild(headerRight);
 
-            dialogMainPanel.appendChild(inputGroup);
+            dialogMainPanel.appendChild(headerContent);
 
             // ---
 
@@ -273,7 +285,6 @@
             let selectedItemDiv = document.createElement('div');
             selectedItemDiv.id = "zotero-roam-search-selected-item";
             selectedItemDiv.classList.add("bp3-card");
-            selectedItemDiv.style = "width:95%;margin:0 auto;";
         
             let selectedItemMetadata = document.createElement('div');
             selectedItemMetadata.classList.add("selected-item-header");
@@ -313,9 +324,13 @@
         fillCitationsOverlay(divClass = zoteroRoam.interface.citations.overlayClass){
             let dialogMainPanel = document.querySelector(`.${divClass}-overlay .bp3-dialog-body .main-panel`);
             
-            let inputGroup = document.createElement('div');
-            inputGroup.classList.add("bp3-input-group");
-            inputGroup.classList.add("header-content");
+            let headerContent = document.createElement('div');
+            headerContent.classList.add("bp3-input-group");
+            headerContent.classList.add("header-content");
+
+            // Header (left)
+            let headerLeft = document.createElement('div');
+            headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
             panelTitle.innerText = "Citing Papers";
@@ -333,10 +348,29 @@
             searchBar.classList.add("bp3-input");
             searchBar.classList.add("bp3-intent-warning");
             
-            inputGroup.appendChild(panelTitle);
-            inputGroup.appendChild(panelSubtitle);
-            inputGroup.appendChild(searchBar);
-        
+            headerLeft.appendChild(panelTitle);
+            headerLeft.appendChild(panelSubtitle);
+            headerLeft.appendChild(searchBar);
+
+            // Header (right)
+            let headerRight = document.createElement('div');
+            headerRight.classList.add("header-right");
+
+            let controlsTop = document.createElement('div');
+            controlsTop.classList.add("controls-top");
+            controlsTop.innerHTML = `
+            <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
+            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
+            `;
+
+            headerRight.appendChild(controlsTop);
+
+            // ---
+
+            headerContent.appendChild(headerLeft);
+            headerContent.appendChild(headerRight);
+            
+            // ---
 
             let pagination = document.createElement('div');
             pagination.id = "zotero-roam-citations-pagination";
@@ -422,7 +456,7 @@
 
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                <a href="https://doi.org/${cit.doi}" class="zotero-roam-citation-doi-link">${cit.doi}</a>
+                <a href="https://doi.org/${cit.doi}" target="_blank" class="zotero-roam-citation-doi-link">${cit.doi}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
                 ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-intent-primary bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 </span>
@@ -528,11 +562,13 @@
                     await zoteroRoam.utils.sleep(75);
                     zoteroRoam.interface.search.input.focus();
                 }
+                document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");
             } else {
                 console.log("Closing the Search Panel")
                 zoteroRoam.interface.clearSelectedItem();
+                document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = "";
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "false");

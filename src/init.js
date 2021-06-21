@@ -66,7 +66,7 @@ var zoteroRoam = {};
 
         data: {items: [], collections: [], scite: [], libraries: [], keys: []},
 
-        autoComplete: null,
+        librarySearch: {autocomplete: null},
 
         citations: {pagination: null, autocomplete: null, currentDOI: ""},
 
@@ -171,6 +171,7 @@ var zoteroRoam = {};
                 },
                 onSelection: (feedback) => {
                     zoteroRoam.interface.search.input.blur();
+                    document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
                     let quickCopyEnabled = document.querySelector("#zotero-roam-quick-copy-mode").checked;
                     if(zoteroRoam.config.params.always_copy == true || (quickCopyEnabled && !zoteroRoam.config.params.override_quickcopy.overridden)){
                         let clipboard = zoteroRoam.interface.search.overlay.querySelector("input.clipboard-copy-utility");
@@ -355,10 +356,12 @@ var zoteroRoam = {};
             .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:360px;}
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:98.5%;justify-content:flex-end;}
-            #zotero-roam-portal .header-content{width:95%;margin: 0 auto;margin-top: -25px;margin-bottom: 20px;}
+            #zotero-roam-portal .header-content{width:95%;margin: 0 auto;}
             #zotero-roam-portal .header-content h5{font-weight:600;display:inline-block;}
             .zotero-roam-search-overlay .header-content h5{color:#137cbd;}
             .zotero-roam-citations-search-overlay .header-content h5{color: #d9822b;}
+            #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:10px;}
+            #zotero-roam-portal .header-right{flex: 0 1 34%;}
             #zotero-roam-portal .panel-subtitle{font-size:0.85em;padding:10px;display:inline-block;font-style:italic;margin-bottom:0px;color:#6d6d6d;}
             #zotero-roam-search-autocomplete{width:100%;margin-bottom:20px;padding: 0px 10px;}
             #zotero-roam-portal .quick-copy-element{margin:10px;font-size:0.9em;font-weight:400;display:inline-block;}
@@ -378,6 +381,7 @@ var zoteroRoam = {};
             .zotero-roam-citations-search_result{padding:3px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}
+            #zotero-roam-library-rendered {width:95%;margin: 0 auto;}
             #zotero-roam-library-rendered[view="search"] #zotero-roam-search-selected-item{display:none;}
             #zotero-roam-library-rendered[view="item"] #zotero-roam-library-search-div{display:none;}
             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}

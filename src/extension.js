@@ -41,10 +41,10 @@
                 }
 
                 // Setup the search autoComplete object
-                if(zoteroRoam.autoComplete == null){
-                    zoteroRoam.autoComplete = new autoComplete(zoteroRoam.config.autoComplete);
+                if(zoteroRoam.librarySearch.autocomplete == null){
+                    zoteroRoam.librarySearch.autocomplete = new autoComplete(zoteroRoam.config.autoComplete);
                 } else {
-                    zoteroRoam.autoComplete.init();
+                    zoteroRoam.librarySearch.autocomplete.init();
                 }
                 zoteroRoam.config.autoComplete.trigger.event.forEach(ev => {
                     zoteroRoam.interface.search.input.addEventListener(ev, zoteroRoam.interface.clearSelectedItem);
@@ -82,8 +82,8 @@
             zoteroRoam.data.scite = [];
             zoteroRoam.data.keys = [];
 
-            if(zoteroRoam.autoComplete !== null){
-                zoteroRoam.autoComplete.unInit();
+            if(zoteroRoam.librarySearch.autocomplete !== null){
+                zoteroRoam.librarySearch.autocomplete.unInit();
             }
             if(zoteroRoam.citations.autocomplete !== null){
                 zoteroRoam.citations.autocomplete.unInit();
