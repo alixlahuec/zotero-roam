@@ -2018,9 +2018,14 @@ var zoteroRoam = {};
             <span class="zotero-roam-citations-results-count"></span>
             `;
             pagination.appendChild(pageControls);
-            inputGroup.appendChild(pagination);
-            dialogMainPanel.appendChild(inputGroup);
 
+            // ---
+
+            dialogMainPanel.appendChild(headerContent);
+            dialogMainPanel.appendChild(pagination);
+
+            // ---
+            
             let footerActions = document.createElement('div');
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
