@@ -80,13 +80,13 @@ var zoteroRoam = {};
                             return zoteroRoam.handlers.simplifyDataArray(zoteroRoam.data.items);
                         }
                     },
-                    keys: ['title', 'authorsLastNames', 'year', 'tagsString', 'key', '_multiField'],
+                    keys: ['title', 'authorsString', 'year', 'tagsString', 'key', '_multiField'],
                     cache: false,
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         // Records are sorted alphabetically (by key name) => _multiField should come last
-                        const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
-                            return list.filter(item => item.index == index).sort((a,b) => {
+                        const filteredMatches = Array.from(new Set(list.map((item) => item.value.key))).map((citekey) => {
+                            return list.filter(item => item.value.key == citekey).sort((a,b) => {
                                 return zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == a.key) < zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == b.key) ? -1 : 1;
                             })[0];
                         });
@@ -134,7 +134,7 @@ var zoteroRoam = {};
                         let itemAuthors = "";
                         if(data.value.authors){
                             // If the match is in the full list of authors, manually add the .autoComplete_highlighted class to the abbreviated authors span
-                            if(data.key == "authorsLastNames" || data.key == "year"){
+                            if(data.key == "authorsString" || data.key == "year"){
                                 itemAuthors = `<span class="zotero-roam-search-item-authors autoComplete_highlighted">${data.value.authors}${itemYear}</span>`;
                             } else {
                                 itemAuthors = `<span class="zotero-roam-search-item-authors">${zoteroRoam.utils.renderBP3Tag(data.value.authors + itemYear, {modifier: "bp3-intent-primary"})}</span>`;
@@ -221,11 +221,11 @@ var zoteroRoam = {};
                             return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
                         }
                     },
-                    keys: ['year', 'title', 'keywords', 'authorsLastNames', 'abstract', 'meta'],
+                    keys: ['year', 'title', 'keywords', 'authorsString', 'abstract', 'meta'],
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
-                        const filteredMatches = Array.from(new Set(list.map((item) => item.index))).map((index) => {
-                            return list.filter(item => item.index == index).sort((a,b) => {
+                        const filteredMatches = Array.from(new Set(list.map((item) => item.value.doi))).map((doi) => {
+                            return list.filter(item => item.value.doi == doi).sort((a,b) => {
                                 return zoteroRoam.config.citationsSearch.data.keys.findIndex(key => key == a.key) < zoteroRoam.config.citationsSearch.data.keys.findIndex(key => key == b.key) ? -1 : 1;
                             })[0];
                         });
@@ -1390,11 +1390,12 @@ var zoteroRoam = {};
                     tags: item.data.tags.map(t => t.tag),
                     authorsFull: item.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")}),
                     authorsRoles: item.data.creators.map(c => c.creatorType),
-                    authorsLastNames: item.data.creators.map(c => c.lastName),
+                    authorsLastNames: item.data.creators.map(c => c.lastName || c.name),
+                    authorsString: item.data.creators.map(c => c.lastName || c.name).join(" "),
                     tagsString: item.data.tags.map(i => `#${i.tag}`).join(", ")
                 }
 
-                simplifiedItem["_multiField"] = simplifiedItem.authorsLastNames + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
+                simplifiedItem["_multiField"] = simplifiedItem.authorsString + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
         
                 return simplifiedItem;
         
@@ -1419,6 +1420,7 @@ var zoteroRoam = {};
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
                     simplifiedCitation.authorsLastNames = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
+                    simplifiedCitation.authorsString = simplifiedCitation.authorsLastNames.join(" ");
                     if(authors.length > 0){
                         if(authors.length > 2){
                             authors = authors.slice(0, 1).join(", ") + " et al.";

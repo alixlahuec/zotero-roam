@@ -499,11 +499,12 @@
                     tags: item.data.tags.map(t => t.tag),
                     authorsFull: item.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")}),
                     authorsRoles: item.data.creators.map(c => c.creatorType),
-                    authorsLastNames: item.data.creators.map(c => c.lastName),
+                    authorsLastNames: item.data.creators.map(c => c.lastName || c.name),
+                    authorsString: item.data.creators.map(c => c.lastName || c.name).join(" "),
                     tagsString: item.data.tags.map(i => `#${i.tag}`).join(", ")
                 }
 
-                simplifiedItem["_multiField"] = simplifiedItem.authorsLastNames + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
+                simplifiedItem["_multiField"] = simplifiedItem.authorsString + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
         
                 return simplifiedItem;
         
@@ -528,6 +529,7 @@
                     };
                     let authors = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
                     simplifiedCitation.authorsLastNames = cit.authors.length > 0 ? cit.authors.map(auth => auth.family) : [];
+                    simplifiedCitation.authorsString = simplifiedCitation.authorsLastNames.join(" ");
                     if(authors.length > 0){
                         if(authors.length > 2){
                             authors = authors.slice(0, 1).join(", ") + " et al.";
