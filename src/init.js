@@ -297,8 +297,8 @@ var zoteroRoam = {};
                     func: "zoteroRoam.utils.formatItemNotes"
                 },
                 pageMenu: {
-                    defaults: ["addMetadata", "importNotes", "viewItemInfo", "pdfLinks", "sciteBadge",
-                            "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
+                    defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb",
+                            "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -351,21 +351,21 @@ var zoteroRoam = {};
         addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
             autoCompleteCSS.textContent = `
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(360px + 2.5%);}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 720px);}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 360px);}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:360px;}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:360px;}
+            .zotero-roam-dialog-overlay .bp3-dialog-container{justify-content:start;}
+            .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(360px + 2.5%);padding-bottom:0px;}
+            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 720px);}
+            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 360px);}
+            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:360px!important;}
+            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
+            .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:360px;}
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:98.5%;justify-content:flex-end;}
             #zotero-roam-portal .header-content{width:95%;margin: 0 auto;margin-top: -25px;margin-bottom: 20px;}
             #zotero-roam-portal .header-content h5{font-weight:600;display:inline-block;}
-            .zotero-roam-search-overlay .bp3-dialog-container{justify-content:start;}
             .zotero-roam-search-overlay .header-content h5{color:#137cbd;}
             .zotero-roam-citations-search-overlay .header-content h5{color: #d9822b;}
             #zotero-roam-portal .panel-subtitle{font-size:0.85em;padding:10px;display:inline-block;font-style:italic;margin-bottom:0px;color:#6d6d6d;}
-            #zotero-roam-search-autocomplete{width:85%;margin-bottom:20px;padding: 0px 10px;}
+            #zotero-roam-search-autocomplete{width:100%;margin-bottom:20px;padding: 0px 10px;}
             #zotero-roam-portal .quick-copy-element{margin:10px;font-size:0.9em;font-weight:400;display:inline-block;}
             #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}

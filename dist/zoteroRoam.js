@@ -297,8 +297,8 @@ var zoteroRoam = {};
                     func: "zoteroRoam.utils.formatItemNotes"
                 },
                 pageMenu: {
-                    defaults: ["addMetadata", "importNotes", "viewItemInfo", "pdfLinks", "sciteBadge",
-                            "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
+                    defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb",
+                            "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
                 }
             },
             requests: {}, // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -351,21 +351,21 @@ var zoteroRoam = {};
         addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
             autoCompleteCSS.textContent = `
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(360px + 2.5%);}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 720px);}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 360px);}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:360px;}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
-            #zotero-roam-portal .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:360px;}
+            .zotero-roam-dialog-overlay .bp3-dialog-container{justify-content:start;}
+            .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(360px + 2.5%);padding-bottom:0px;}
+            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 720px);}
+            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 360px);}
+            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:360px!important;}
+            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
+            .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:360px;}
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:98.5%;justify-content:flex-end;}
             #zotero-roam-portal .header-content{width:95%;margin: 0 auto;margin-top: -25px;margin-bottom: 20px;}
             #zotero-roam-portal .header-content h5{font-weight:600;display:inline-block;}
-            .zotero-roam-search-overlay .bp3-dialog-container{justify-content:start;}
             .zotero-roam-search-overlay .header-content h5{color:#137cbd;}
             .zotero-roam-citations-search-overlay .header-content h5{color: #d9822b;}
             #zotero-roam-portal .panel-subtitle{font-size:0.85em;padding:10px;display:inline-block;font-style:italic;margin-bottom:0px;color:#6d6d6d;}
-            #zotero-roam-search-autocomplete{width:85%;margin-bottom:20px;padding: 0px 10px;}
+            #zotero-roam-search-autocomplete{width:100%;margin-bottom:20px;padding: 0px 10px;}
             #zotero-roam-portal .quick-copy-element{margin:10px;font-size:0.9em;font-weight:400;display:inline-block;}
             #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
@@ -2347,7 +2347,8 @@ var zoteroRoam = {};
                     childrenDiv += pdfDiv;
                     
                     if(infoChildren.notes){
-                        childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal bp3-align-left bp3-fill item-see-notes", icon: "comment"})}`;
+                        let toggleNotesSeq = (zoteroRoam.shortcuts.sequences["toggleNotes"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleNotes", pre = " ") : "";
+                        childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes` + toggleNotesSeq, {buttonClass: "bp3-minimal bp3-align-left bp3-fill item-see-notes", icon: "comment"})}`;
                         zoteroRoam.interface.search.overlay.querySelector(".side-panel-contents").innerHTML = `
                         <h4>Notes</h4>
                         <div class="item-rendered-notes">
@@ -2410,15 +2411,15 @@ var zoteroRoam = {};
             try{
                 let notesButton = document.querySelector("button.item-see-notes");
                 notesButton.addEventListener("click", function(){
-                    let currentText = notesButton.querySelector('.bp3-button-text').innerText;
-                    switch(currentText){
-                        case "Show Notes":
+                    let currentHTML = notesButton.querySelector('.bp3-button-text').innerHTML;
+                    switch(true){
+                        case (currentHTML.startsWith("Show")):
                             zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
-                            notesButton.querySelector('.bp3-button-text').innerText = "Hide Notes";
+                            notesButton.querySelector('.bp3-button-text').innerHTML = currentHTML.replace("Show", "Hide");
                             break;
-                        case "Hide Notes":
+                        case (currentHTML.startsWith("Hide")):
                             zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");
-                            notesButton.querySelector('.bp3-button-text').innerText = "Show Notes";
+                            notesButton.querySelector('.bp3-button-text').innerHTML = currentHTML.replace("Hide", "Show");
                             break;
                     }
                 });
@@ -2850,6 +2851,15 @@ var zoteroRoam = {};
                                 viewItemInfo_element = zoteroRoam.utils.renderBP3Button_group(string = "View item information", {buttonClass: "bp3-minimal zotero-roam-page-menu-view-item-info", icon: "info-sign"});
                             }
 
+                            let openZoteroLocal_element = ``;
+                            if(menu_defaults.includes("openZoteroLocal")){
+                                openZoteroLocal_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (local)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-local", target: zoteroRoam.formatting.getLocalLink(item, {format: "target"})});
+                            }
+                            let openZoteroWeb_element = ``;
+                            if(menu_defaults.includes("openZoteroWeb")){
+                                openZoteroWeb_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (web)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-web", target: zoteroRoam.formatting.getWebLink(item, {format: "target"})});
+                            }
+
                             // PDF links
                             let pdfLinks_element = ``;
                             if(menu_defaults.includes("pdfLinks")){
@@ -2920,6 +2930,8 @@ var zoteroRoam = {};
                             ${addMetadata_element}
                             ${importNotes_element}
                             ${viewItemInfo_element}
+                            ${openZoteroLocal_element}
+                            ${openZoteroWeb_element}
                             ${pdfLinks_element}
                             ${records_list.length == 0 ? "" : records_list.join("")}
                             </div>
@@ -2991,6 +3003,7 @@ var zoteroRoam = {};
                             try{
                                 let citationsButton = menuDiv.querySelector(".zotero-roam-page-menu-backlinks-total");
                                 citationsButton.addEventListener("click", function(){
+                                    zoteroRoam.interface.citations.overlay.querySelector(".header-content h5").innerText = `Papers citing ${title}`;
                                     let doi = citationsButton.getAttribute("data-doi");
                                     zoteroRoam.interface.popCitationsOverlay(doi);
                                 });
@@ -3159,13 +3172,27 @@ var zoteroRoam = {};
             return mapping;
         },
 
-        getLocalLink(item, {text = "Local library"} = {}){
-            return `[${text}](zotero://select/library/items/${item.data.key})`
+        getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
+            let target = `zotero://select/library/items/${item.data.key}`;
+            switch(format){
+                case "target":
+                default:
+                    return target;
+                case "markdown":
+                    return `[${text}](${target})`;
+            }
         },
 
-        getWebLink(item, {text = "Web library"} = {}){
-            let webURI = (item.library.type = "user") ? "users" : "groups";
-            return `[${text}](https://www.zotero.org/${webURI}/${item.library.id}/items/${item.data.key})`;
+        getWebLink(item, {format = "markdown", text = "Web library"} = {}){
+            let webURI = ((item.library.type = "user") ? "users" : "groups") + `/${item.library.id}`;
+            let target = `https://www.zotero.org/${webURI}/items/${item.data.key}`;
+            switch(format){
+                case "target":
+                default:
+                    return target;
+                case "markdown":
+                    return `[${text}](${target})`;
+            }
         },
 
         getTags(item){
@@ -3296,6 +3323,15 @@ var zoteroRoam = {};
                         copyButton.click();
                     }
                 }
+            },
+            toggleNotes: {
+                defaultShortcut: [],
+                execute(){
+                    let notesButton = document.querySelector('.bp3-dialog[side-panel="visible"] button.item-see-notes');
+                    if(notesButton !== null){
+                        notesButton.click();
+                    }
+                }
             }
         },
 
@@ -3401,6 +3437,8 @@ var zoteroRoam = {};
                 Array.from(document.querySelectorAll(`#${zoteroRoam.interface.portal.id} input.bp3-input[type="text"]`)).forEach(bar => bar.closest('.bp3-input-group').appendChild(spanSeq.cloneNode(true)));
             }
             // Go to item page => in rendering of selected item
+            // Copy buttons => in rendering of selected item
+            // Toggle notes => in rendering of selected item
         },
 
         verify(e){

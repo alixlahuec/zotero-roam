@@ -167,6 +167,15 @@
                                 viewItemInfo_element = zoteroRoam.utils.renderBP3Button_group(string = "View item information", {buttonClass: "bp3-minimal zotero-roam-page-menu-view-item-info", icon: "info-sign"});
                             }
 
+                            let openZoteroLocal_element = ``;
+                            if(menu_defaults.includes("openZoteroLocal")){
+                                openZoteroLocal_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (local)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-local", target: zoteroRoam.formatting.getLocalLink(item, {format: "target"})});
+                            }
+                            let openZoteroWeb_element = ``;
+                            if(menu_defaults.includes("openZoteroWeb")){
+                                openZoteroWeb_element = zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (web)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-web", target: zoteroRoam.formatting.getWebLink(item, {format: "target"})});
+                            }
+
                             // PDF links
                             let pdfLinks_element = ``;
                             if(menu_defaults.includes("pdfLinks")){
@@ -237,6 +246,8 @@
                             ${addMetadata_element}
                             ${importNotes_element}
                             ${viewItemInfo_element}
+                            ${openZoteroLocal_element}
+                            ${openZoteroWeb_element}
                             ${pdfLinks_element}
                             ${records_list.length == 0 ? "" : records_list.join("")}
                             </div>
@@ -308,6 +319,7 @@
                             try{
                                 let citationsButton = menuDiv.querySelector(".zotero-roam-page-menu-backlinks-total");
                                 citationsButton.addEventListener("click", function(){
+                                    zoteroRoam.interface.citations.overlay.querySelector(".header-content h5").innerText = `Papers citing ${title}`;
                                     let doi = citationsButton.getAttribute("data-doi");
                                     zoteroRoam.interface.popCitationsOverlay(doi);
                                 });

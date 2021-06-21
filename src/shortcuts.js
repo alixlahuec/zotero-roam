@@ -93,6 +93,15 @@
                         copyButton.click();
                     }
                 }
+            },
+            toggleNotes: {
+                defaultShortcut: [],
+                execute(){
+                    let notesButton = document.querySelector('.bp3-dialog[side-panel="visible"] button.item-see-notes');
+                    if(notesButton !== null){
+                        notesButton.click();
+                    }
+                }
             }
         },
 
@@ -198,6 +207,8 @@
                 Array.from(document.querySelectorAll(`#${zoteroRoam.interface.portal.id} input.bp3-input[type="text"]`)).forEach(bar => bar.closest('.bp3-input-group').appendChild(spanSeq.cloneNode(true)));
             }
             // Go to item page => in rendering of selected item
+            // Copy buttons => in rendering of selected item
+            // Toggle notes => in rendering of selected item
         },
 
         verify(e){

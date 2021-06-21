@@ -129,13 +129,27 @@
             return mapping;
         },
 
-        getLocalLink(item, {text = "Local library"} = {}){
-            return `[${text}](zotero://select/library/items/${item.data.key})`
+        getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
+            let target = `zotero://select/library/items/${item.data.key}`;
+            switch(format){
+                case "target":
+                default:
+                    return target;
+                case "markdown":
+                    return `[${text}](${target})`;
+            }
         },
 
-        getWebLink(item, {text = "Web library"} = {}){
-            let webURI = (item.library.type = "user") ? "users" : "groups";
-            return `[${text}](https://www.zotero.org/${webURI}/${item.library.id}/items/${item.data.key})`;
+        getWebLink(item, {format = "markdown", text = "Web library"} = {}){
+            let webURI = ((item.library.type = "user") ? "users" : "groups") + `/${item.library.id}`;
+            let target = `https://www.zotero.org/${webURI}/items/${item.data.key}`;
+            switch(format){
+                case "target":
+                default:
+                    return target;
+                case "markdown":
+                    return `[${text}](${target})`;
+            }
         },
 
         getTags(item){

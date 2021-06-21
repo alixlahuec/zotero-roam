@@ -715,7 +715,8 @@
                     childrenDiv += pdfDiv;
                     
                     if(infoChildren.notes){
-                        childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes`, {buttonClass: "bp3-minimal bp3-align-left bp3-fill item-see-notes", icon: "comment"})}`;
+                        let toggleNotesSeq = (zoteroRoam.shortcuts.sequences["toggleNotes"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleNotes", pre = " ") : "";
+                        childrenDiv += `${zoteroRoam.utils.renderBP3Button_group(string = `Show Notes` + toggleNotesSeq, {buttonClass: "bp3-minimal bp3-align-left bp3-fill item-see-notes", icon: "comment"})}`;
                         zoteroRoam.interface.search.overlay.querySelector(".side-panel-contents").innerHTML = `
                         <h4>Notes</h4>
                         <div class="item-rendered-notes">
@@ -778,15 +779,15 @@
             try{
                 let notesButton = document.querySelector("button.item-see-notes");
                 notesButton.addEventListener("click", function(){
-                    let currentText = notesButton.querySelector('.bp3-button-text').innerText;
-                    switch(currentText){
-                        case "Show Notes":
+                    let currentHTML = notesButton.querySelector('.bp3-button-text').innerHTML;
+                    switch(true){
+                        case (currentHTML.startsWith("Show")):
                             zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
-                            notesButton.querySelector('.bp3-button-text').innerText = "Hide Notes";
+                            notesButton.querySelector('.bp3-button-text').innerHTML = currentHTML.replace("Show", "Hide");
                             break;
-                        case "Hide Notes":
+                        case (currentHTML.startsWith("Hide")):
                             zoteroRoam.interface.search.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");
-                            notesButton.querySelector('.bp3-button-text').innerText = "Show Notes";
+                            notesButton.querySelector('.bp3-button-text').innerHTML = currentHTML.replace("Hide", "Show");
                             break;
                     }
                 });
