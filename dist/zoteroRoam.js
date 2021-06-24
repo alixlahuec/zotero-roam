@@ -394,7 +394,7 @@ var zoteroRoam = {};
             #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal .side-panel > .side-panel-contents{padding:10px 20px;}
-            li.autoComplete_selected{background-color:#e7f3f7;}
+            li[aria-selected="true"]{background-color:#e7f3f7;}
             span.autoComplete_highlighted{color:#146cb7;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
@@ -595,8 +595,8 @@ var zoteroRoam = {};
             }
         },
 
-        getAllPageUIDs(){
-            return roamAlphaAPI.q('[:find ?pt ?pu :where[?p :block/uid ?pu][?p :node/title ?pt]]');
+        getAllRefPages(){
+            return roamAlphaAPI.q(`[:find [(pull ?e [:node/title :block/uid])...] :where[?e :node/title ?t][(clojure.string/starts-with? ?t "@")]]`);
         },
 
         getItemPrefix(item){
@@ -3255,7 +3255,8 @@ var zoteroRoam = {};
         },
 
         getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
-            let target = `zotero://select/library/items/${item.data.key}`;
+            let libLoc = item.library.type == "group" ? `groups/${item.library.id}` : `library`;
+            let target = `zotero://select/${libLoc}/items/${item.data.key}`;
             switch(format){
                 case "target":
                 default:
@@ -3266,8 +3267,8 @@ var zoteroRoam = {};
         },
 
         getWebLink(item, {format = "markdown", text = "Web library"} = {}){
-            let webURI = ((item.library.type = "user") ? "users" : "groups") + `/${item.library.id}`;
-            let target = `https://www.zotero.org/${webURI}/items/${item.data.key}`;
+            let libLoc = ((item.library.type == "user") ? "users" : "groups") + `/${item.library.id}`;
+            let target = `https://www.zotero.org/${libLoc}/items/${item.data.key}`;
             switch(format){
                 case "target":
                 default:
@@ -3291,7 +3292,7 @@ var zoteroRoam = {};
             metadata.push(`Publication:: ${ item.data.publicationTitle || item.data.bookTitle || "" }`)
             if (item.data.url) { metadata.push(`URL : ${item.data.url}`) };
             if (item.data.dateAdded) { metadata.push(`Date Added:: ${zoteroRoam.utils.makeDNP(item.data.dateAdded, {brackets: true})}`) }; // Date added, as Daily Notes Page reference
-            metadata.push(`Zotero links:: ${zoteroRoam.formatting.getLocalLink(item)}, ${zoteroRoam.formatting.getWebLink(item)}`); // Local + Web links to the item
+            metadata.push(`Zotero links:: ${zoteroRoam.formatting.getLocalLink(item, {format = "markdown", text = "Local library"})}, ${zoteroRoam.formatting.getWebLink(item, {format = "markdown", text = "Local library"})}`); // Local + Web links to the item
             if (item.data.tags.length > 0) { metadata.push(`Tags:: ${zoteroRoam.formatting.getTags(item)}`) }; // Tags, if any
             
             let children = zoteroRoam.formatting.getItemChildren(item, {pdf_as: "links", notes_as: "formatted"});
