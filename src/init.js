@@ -132,12 +132,13 @@ var zoteroRoam = {};
                     tag: 'li',
                     class: "zotero-roam-search_result",
                     id: "zotero-roam-search_result",
+                    highlight: "result_highlighted",
                     element: (item, data) => {
                         let itemMetadata = `<span class="zotero-roam-search-item-metadata"> ${data.value.meta}</span>`;
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
                         let itemTitle = `<span class="zotero-roam-search-item-title" style="display:block;">${itemTitleContent}</span>`;
                         
-                        let localTarget = item.data.location.startsWith("users") ? "library" : item.data.location;
+                        let localTarget = data.value.location.startsWith("users") ? "library" : data.value.location;
                         let keyEl = `
                         <span class="bp3-menu-item-label zotero-roam-search-item-key">
                         <a href="zotero://select/${localTarget}/items/${data.value.itemKey}" destination="zotero">${data.value.key}</a>
@@ -149,9 +150,9 @@ var zoteroRoam = {};
                         // Prepare authors element, if there are any
                         let itemAuthors = "";
                         if(data.value.authors){
-                            // If the match is in the full list of authors, manually add the .autoComplete_highlighted class to the abbreviated authors span
+                            // If the match is in the full list of authors, manually add the .result_highlighted class to the abbreviated authors span
                             if(data.key == "authorsString" || data.key == "year"){
-                                itemAuthors = `<span class="zotero-roam-search-item-authors autoComplete_highlighted">${data.value.authors}${itemYear}</span>`;
+                                itemAuthors = `<span class="zotero-roam-search-item-authors result_highlighted">${data.value.authors}${itemYear}</span>`;
                             } else {
                                 itemAuthors = `<span class="zotero-roam-search-item-authors">${zoteroRoam.utils.renderBP3Tag(data.value.authors + itemYear, {modifier: "bp3-intent-primary"})}</span>`;
                             }
@@ -396,7 +397,7 @@ var zoteroRoam = {};
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal .side-panel > .side-panel-contents{padding:10px 20px;}
             li[aria-selected="true"]{background-color:#e7f3f7;}
-            span.autoComplete_highlighted{color:#146cb7;}
+            span.result_highlighted{color:#146cb7;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
             .zotero-roam-search-item-title{font-weight:600;font-size:0.9em;}
