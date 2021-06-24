@@ -339,7 +339,7 @@
             if(icon.length > 0){
                 return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">${string}</span>${tagRem}</span>`;
             } else {
-                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}${tagRem}</span>`;
+                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:3px;">${string}${tagRem}</span>`;
             }
         },
 

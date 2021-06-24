@@ -415,6 +415,7 @@ var zoteroRoam = {};
             .selected-item-body{flex-wrap:wrap;}
             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
             .item-abstract{font-size:0.8em;padding:15px;background-color: #f5f8fa;}
+            .item-metadata-string{font-size:0.85em;}
             .item-pdf-notes{margin-top: 25px;}
             .item-actions-additional{flex: 0 1 95%;margin-top:25px;}
             .item-citekey-section, .item-actions{flex:0 1 30%;}
@@ -819,7 +820,7 @@ var zoteroRoam = {};
             if(icon.length > 0){
                 return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">${string}</span>${tagRem}</span>`;
             } else {
-                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:5px;">${string}${tagRem}</span>`;
+                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:3px;">${string}${tagRem}</span>`;
             }
         },
 
@@ -2328,7 +2329,7 @@ var zoteroRoam = {};
             if(infoAuthors.length > 0){
                 for(i=0; i < infoAuthors.length; i++){
                     let authorInGraph = zoteroRoam.utils.lookForPage(title = infoAuthors[i]);
-                    let authorElem = (authorInGraph.present == true) ? zoteroRoam.utils.renderPageReference(title = infoAuthors[i], uid = authorInGraph.uid) : zoteroRoam.utils.renderBP3Tag(string = infoAuthors[i], {modifier: "bp3-intent-primary bp3-round"});
+                    let authorElem = (authorInGraph.present == true) ? zoteroRoam.utils.renderPageReference(title = infoAuthors[i], uid = authorInGraph.uid) : zoteroRoam.utils.renderBP3Tag(string = infoAuthors[i], {modifier: "bp3-intent-primary item-creator-tag"});
                     let authorRole = (infoRolesAuthors[i] && infoRolesAuthors[i] != "author") ? (` (${infoRolesAuthors[i]})`) : "";
                     divAuthors = divAuthors + authorElem + authorRole;
                     if(i < infoAuthors.length - 2){
@@ -2403,6 +2404,14 @@ var zoteroRoam = {};
 
             // Render the graph info section
             let bodyDiv = document.querySelector(".selected-item-body");
+
+            let openWebElement = ``;
+            if(selectedItem.data.DOI && selectedItem.data.DOI.startsWith("10.")){
+                let target = `https://doi.org/${selectedItem.data.DOI}`;
+                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: target, linkAttribute: `target="_blank"`});
+            } else if(selectedItem.data.url){
+                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: selectedItem.data.url, linkAttribute: `target="_blank"`});
+            }
             
             let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
             let goToPageSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
@@ -2427,7 +2436,7 @@ var zoteroRoam = {};
                     let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
                         let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
                         let pdfTitle = item.data.filename || item.data.title;
-                        return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal item-pdf-link", icon: "paperclip", target: pdfHref });
+                        return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal item-pdf-link", icon: "paperclip", target: pdfHref, linkAttribute: `target="_blank"` });
                     }).join("");
                     childrenDiv += pdfDiv;
                     
@@ -2457,6 +2466,7 @@ var zoteroRoam = {};
             </div>
             <div class="item-actions">
                 <div class="bp3-card">
+                    ${openWebElement}
                     ${goToPage}
                     ${importButtonGroup}
                 </div>

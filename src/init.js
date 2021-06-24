@@ -415,6 +415,7 @@ var zoteroRoam = {};
             .selected-item-body{flex-wrap:wrap;}
             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
             .item-abstract{font-size:0.8em;padding:15px;background-color: #f5f8fa;}
+            .item-metadata-string{font-size:0.85em;}
             .item-pdf-notes{margin-top: 25px;}
             .item-actions-additional{flex: 0 1 95%;margin-top:25px;}
             .item-citekey-section, .item-actions{flex:0 1 30%;}

@@ -665,7 +665,7 @@
             if(infoAuthors.length > 0){
                 for(i=0; i < infoAuthors.length; i++){
                     let authorInGraph = zoteroRoam.utils.lookForPage(title = infoAuthors[i]);
-                    let authorElem = (authorInGraph.present == true) ? zoteroRoam.utils.renderPageReference(title = infoAuthors[i], uid = authorInGraph.uid) : zoteroRoam.utils.renderBP3Tag(string = infoAuthors[i], {modifier: "bp3-intent-primary bp3-round"});
+                    let authorElem = (authorInGraph.present == true) ? zoteroRoam.utils.renderPageReference(title = infoAuthors[i], uid = authorInGraph.uid) : zoteroRoam.utils.renderBP3Tag(string = infoAuthors[i], {modifier: "bp3-intent-primary item-creator-tag"});
                     let authorRole = (infoRolesAuthors[i] && infoRolesAuthors[i] != "author") ? (` (${infoRolesAuthors[i]})`) : "";
                     divAuthors = divAuthors + authorElem + authorRole;
                     if(i < infoAuthors.length - 2){
@@ -740,6 +740,14 @@
 
             // Render the graph info section
             let bodyDiv = document.querySelector(".selected-item-body");
+
+            let openWebElement = ``;
+            if(selectedItem.data.DOI && selectedItem.data.DOI.startsWith("10.")){
+                let target = `https://doi.org/${selectedItem.data.DOI}`;
+                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: target, linkAttribute: `target="_blank"`});
+            } else if(selectedItem.data.url){
+                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: selectedItem.data.url, linkAttribute: `target="_blank"`});
+            }
             
             let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
             let goToPageSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
@@ -764,7 +772,7 @@
                     let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
                         let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
                         let pdfTitle = item.data.filename || item.data.title;
-                        return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal item-pdf-link", icon: "paperclip", target: pdfHref });
+                        return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal item-pdf-link", icon: "paperclip", target: pdfHref, linkAttribute: `target="_blank"` });
                     }).join("");
                     childrenDiv += pdfDiv;
                     
@@ -794,6 +802,7 @@
             </div>
             <div class="item-actions">
                 <div class="bp3-card">
+                    ${openWebElement}
                     ${goToPage}
                     ${importButtonGroup}
                 </div>
