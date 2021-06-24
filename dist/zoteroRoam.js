@@ -64,7 +64,7 @@ var zoteroRoam = {};
             }
         },
 
-        version: "0.6.25",
+        version: "0.6.27",
 
         data: {items: [], collections: [], scite: [], libraries: [], keys: []},
 
@@ -374,6 +374,7 @@ var zoteroRoam = {};
         addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
             autoCompleteCSS.textContent = `
+            .zotero-roam-search-backdrop, .zotero-roam-citations-search-backdrop {opacity:0.4;}
             .zotero-roam-dialog-overlay .bp3-dialog-container{justify-content:start;}
             .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(360px + 2.5%);padding-bottom:0px;}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 720px);}
