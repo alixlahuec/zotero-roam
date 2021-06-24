@@ -115,8 +115,8 @@
             }
         },
 
-        getAllPageUIDs(){
-            return roamAlphaAPI.q('[:find ?pt ?pu :where[?p :block/uid ?pu][?p :node/title ?pt]]');
+        getAllRefPages(){
+            return roamAlphaAPI.q(`[:find [(pull ?e [:node/title :block/uid])...] :where[?e :node/title ?t][(clojure.string/starts-with? ?t "@")]]`);
         },
 
         getItemPrefix(item){
