@@ -501,7 +501,8 @@
                     authorsRoles: item.data.creators.map(c => c.creatorType),
                     authorsLastNames: item.data.creators.map(c => c.lastName || c.name),
                     authorsString: item.data.creators.map(c => c.lastName || c.name).join(" "),
-                    tagsString: item.data.tags.map(i => `#${i.tag}`).join(", ")
+                    tagsString: item.data.tags.map(i => `#${i.tag}`).join(", "),
+                    location: zoteroRoam.utils.getItemPrefix(item)
                 }
 
                 simplifiedItem["_multiField"] = simplifiedItem.authorsString + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;

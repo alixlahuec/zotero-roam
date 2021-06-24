@@ -137,9 +137,10 @@ var zoteroRoam = {};
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
                         let itemTitle = `<span class="zotero-roam-search-item-title" style="display:block;">${itemTitleContent}</span>`;
                         
+                        let localTarget = item.data.location.startsWith("users") ? "library" : item.data.location;
                         let keyEl = `
                         <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                        <a href="zotero://select/library/items/${data.value.itemKey}" destination="zotero">${data.value.key}</a>
+                        <a href="zotero://select/${localTarget}/items/${data.value.itemKey}" destination="zotero">${data.value.key}</a>
                         </span>
                         `;
 
@@ -398,7 +399,7 @@ var zoteroRoam = {};
             span.autoComplete_highlighted{color:#146cb7;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
-            .zotero-roam-search-item-title{font-weight:600;}
+            .zotero-roam-search-item-title{font-weight:600;font-size:0.9em;}
             .zotero-roam-search-item-tags{font-style:italic;color:#5c7080;opacity:0.5;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
             .zotero-roam-citation-link a, .zotero-roam-citation-metadata-contents{font-size:0.85em;}
@@ -601,8 +602,7 @@ var zoteroRoam = {};
         },
 
         getItemPrefix(item){
-            let itemRequest = zoteroRoam.config.requests.find(c => c.name == item.requestLabel);
-            return itemRequest.dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1);
+            return `${item.library.type}s/${item.library.id}`;
         },
 
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
@@ -662,7 +662,7 @@ var zoteroRoam = {};
             let meta = "";
             let pubInfo = [item.data.publicationTitle, item.data.university, item.data.bookTitle].filter(Boolean);
             if(pubInfo.length > 0){
-                meta += `, ${pubInfo[0]}`;
+                meta += ` ${pubInfo[0]}`;
             }
             if(item.data.publisher){
                 meta += `, ${item.data.publisher}`;
@@ -676,7 +676,7 @@ var zoteroRoam = {};
                     meta += `(${item.data.issue})`;
                 }
             }
-            meta = (item.data.pages) ? (meta + `, ${item.data.pages}.`) : ".";
+            meta = meta + (item.data.pages ? `, ${item.data.pages}.` : ".");
 
             return meta;
         },
@@ -1406,7 +1406,8 @@ var zoteroRoam = {};
                     authorsRoles: item.data.creators.map(c => c.creatorType),
                     authorsLastNames: item.data.creators.map(c => c.lastName || c.name),
                     authorsString: item.data.creators.map(c => c.lastName || c.name).join(" "),
-                    tagsString: item.data.tags.map(i => `#${i.tag}`).join(", ")
+                    tagsString: item.data.tags.map(i => `#${i.tag}`).join(", "),
+                    location: zoteroRoam.utils.getItemPrefix(item)
                 }
 
                 simplifiedItem["_multiField"] = simplifiedItem.authorsString + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;

@@ -120,8 +120,7 @@
         },
 
         getItemPrefix(item){
-            let itemRequest = zoteroRoam.config.requests.find(c => c.name == item.requestLabel);
-            return itemRequest.dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1);
+            return `${item.library.type}s/${item.library.id}`;
         },
 
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
@@ -181,7 +180,7 @@
             let meta = "";
             let pubInfo = [item.data.publicationTitle, item.data.university, item.data.bookTitle].filter(Boolean);
             if(pubInfo.length > 0){
-                meta += `, ${pubInfo[0]}`;
+                meta += ` ${pubInfo[0]}`;
             }
             if(item.data.publisher){
                 meta += `, ${item.data.publisher}`;
@@ -195,7 +194,7 @@
                     meta += `(${item.data.issue})`;
                 }
             }
-            meta = (item.data.pages) ? (meta + `, ${item.data.pages}.`) : ".";
+            meta = meta + (item.data.pages ? `, ${item.data.pages}.` : ".");
 
             return meta;
         },

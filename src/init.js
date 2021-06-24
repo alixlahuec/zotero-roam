@@ -137,9 +137,10 @@ var zoteroRoam = {};
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
                         let itemTitle = `<span class="zotero-roam-search-item-title" style="display:block;">${itemTitleContent}</span>`;
                         
+                        let localTarget = item.data.location.startsWith("users") ? "library" : item.data.location;
                         let keyEl = `
                         <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                        <a href="zotero://select/library/items/${data.value.itemKey}" destination="zotero">${data.value.key}</a>
+                        <a href="zotero://select/${localTarget}/items/${data.value.itemKey}" destination="zotero">${data.value.key}</a>
                         </span>
                         `;
 
@@ -398,7 +399,7 @@ var zoteroRoam = {};
             span.autoComplete_highlighted{color:#146cb7;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
-            .zotero-roam-search-item-title{font-weight:600;}
+            .zotero-roam-search-item-title{font-weight:600;font-size:0.9em;}
             .zotero-roam-search-item-tags{font-style:italic;color:#5c7080;opacity:0.5;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
             .zotero-roam-citation-link a, .zotero-roam-citation-metadata-contents{font-size:0.85em;}
