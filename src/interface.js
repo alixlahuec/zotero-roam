@@ -462,7 +462,7 @@
                 <span class="bp3-menu-item-label zotero-roam-search-item-key">
                 <a href="https://doi.org/${cit.doi}" target="_blank" class="zotero-roam-citation-doi-link">${cit.doi}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
-                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-intent-primary bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
+                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 </span>
                 `;
 
@@ -744,9 +744,9 @@
             let openWebElement = ``;
             if(selectedItem.data.DOI && selectedItem.data.DOI.startsWith("10.")){
                 let target = `https://doi.org/${selectedItem.data.DOI}`;
-                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: target, linkAttribute: `target="_blank"`});
+                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "bp3-minimal item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: target, linkAttribute: `target="_blank"`});
             } else if(selectedItem.data.url){
-                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: selectedItem.data.url, linkAttribute: `target="_blank"`});
+                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "bp3-minimal item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: selectedItem.data.url, linkAttribute: `target="_blank"`});
             }
             
             let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
