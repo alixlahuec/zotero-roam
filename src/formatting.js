@@ -20,7 +20,7 @@
                     if(use_type == true){
                         return creatorsInfoList.map(creator => {
                             let creatorTag = brackets == true ? `[[${creator.name}]]` : creator.name;
-                            return creatorTag + `(${creator.type})`;
+                            return creatorTag + (creator.type == "author" ? "" : `(${creator.type})`);
                         }).join(", ");
                     } else {
                         return creatorsInfoList.map(creator => {
