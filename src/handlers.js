@@ -432,7 +432,11 @@
 
                     return cl.json();
                 }));
-                collectionsResults = collectionsResults.flat(1);
+                collectionsResults = collectionsResults.map( (arr, i) => arr.map(cl => {
+                    cl.requestLabel = requests[i].name;
+                    cl.requestIndex = i;
+                    return cl;
+                })).flat(1);
                 
                 return {
                     success: true,

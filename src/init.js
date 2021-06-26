@@ -388,9 +388,9 @@ var zoteroRoam = {};
             #zotero-roam-portal .header-content{width:95%;margin: 0 auto;display:flex;}
             #zotero-roam-portal .header-content h5{font-weight:600;display:inline-block;padding-right:15px;}
             .zotero-roam-search-overlay .header-content h5{color:#137cbd;}
-            .bp3-dark .zotero-roam-search-overlay .header-content h5{color:#48aff0;}
+            .bp3-dark.zotero-roam-search-overlay .header-content h5{color:#48aff0;}
             .zotero-roam-citations-search-overlay .header-content h5{color:#d9822b;}
-            .bp3-dark .zotero-roam-citations-search-overlay .header-content h5{color:#ffb366;}
+            .bp3-dark.zotero-roam-citations-search-overlay .header-content h5{color:#ffb366;}
             #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:10px;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
             #zotero-roam-portal .panel-subtitle{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
@@ -403,7 +403,7 @@ var zoteroRoam = {};
             #zotero-roam-portal .side-panel > .side-panel-contents{padding:10px 20px;}
             li[aria-selected="true"]{background-color:#e7f3f7;}
             .bp3-dark li[aria-selected="true"]{background-color:#191919;}
-            span.result_highlighted{color:#146cb7;}
+            span.result_highlighted{color:#146cb7;font-weight:500;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
             #zotero-roam-search-results-list, .zotero-roam-citations-search-results-list {max-height:70vh;overflow:scroll;}
@@ -413,8 +413,8 @@ var zoteroRoam = {};
             .zotero-roam-citation-link a, .zotero-roam-citation-metadata-contents{font-size:0.85em;}
             .zotero-roam-citations-results-count, .zotero-roam-library-results-count{padding: 6px 10px;color:#5c7080;}
             .bp3-dark .zotero-roam-citations-results-count, .zotero-roam-library-results-count{color:#95a8b7;}
-            .zotero-roam-citations-search-results-list.bp3-menu{padding:0px;}
-            .zotero-roam-citations-search_result{padding:3px;}
+            .zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu{padding:0px;}
+            .zotero-roam-search_result, .zotero-roam-citations-search_result{padding:3px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}
             #zotero-roam-library-rendered, #zotero-roam-citations-pagination {width:95%;margin: 0 auto;}
@@ -424,7 +424,7 @@ var zoteroRoam = {};
             .selected-item-header{margin-bottom:20px;}
             .selected-item-body{flex-wrap:wrap;}
             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
-            .item-abstract{padding:15px;background-color: #f5f8fa;font-weight:300;}
+            .item-abstract{padding:15px;background-color: #f5f8fa;font-weight:350;border-left-width:6px;}
             .bp3-dark .item-abstract{background-color:#191919;}
             .item-metadata-string{font-size:0.85em;}
             .item-pdf-notes{margin-top: 25px;}
@@ -437,7 +437,7 @@ var zoteroRoam = {};
             .item-citekey-section .citekey-element{font-weight:bold;padding:0 10px;}
             .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
             a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
-            span.zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;}
+            span.zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}
             .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}
             .zotero-roam-tribute ul li {padding: 2px 5px;font-weight:300;}

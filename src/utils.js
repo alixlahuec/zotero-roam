@@ -23,6 +23,29 @@
             return context[func].apply(context, args);
         },
 
+        getWriteableCollections(){
+            return zoteroRoam.data.collections.map(cl => {
+                let req_apikey = zoteroRoam.config.requests[`${cl.requestIndex}`].apikey;
+                let keyAccess = zoteroRoam.data.keys.find(k => k.key == req_apikey).access;
+                let permissions = {};
+                if(cl.library.type == "user"){
+                    permissions = keyAccess.user;
+                } else {
+                    let libID = cl.library.id.toString();
+                    permissions = Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups.libID : keyAccess.groups.all;
+                }
+
+                return {
+                    name: cl.data.name,
+                    version: cl.version,
+                    key: cl.data.key,
+                    location: cl.library.type + "s/" + cl.library.id,
+                    libraryName: cl.library.name,
+                    permissions: permissions
+                }
+            }).filter(cl => cl.permissions.write == true);
+        },
+
         findCommonTags(item, {exclude_attachments = true, excluded_tags = [], more_than = 0} = {}){
             let itemTags = item.data.tags.map(t => t.tag.toLowerCase()).filter(t => !excluded_tags.includes(t));
             let haystack = (exclude_attachments == true) ? zoteroRoam.data.items.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType)) : zoteroRoam.data.items;

@@ -220,7 +220,6 @@
             searchBar.tabIndex = "1";
             searchBar.type = "text";
             searchBar.classList.add("bp3-input");
-            searchBar.classList.add("bp3-intent-primary");
 
             headerLeft.appendChild(panelTitle);
             headerLeft.appendChild(panelSubtitle);
@@ -348,7 +347,6 @@
             searchBar.tabIndex = "1";
             searchBar.type = "text";
             searchBar.classList.add("bp3-input");
-            searchBar.classList.add("bp3-intent-warning");
             
             headerLeft.appendChild(panelTitle);
             headerLeft.appendChild(panelSubtitle);
@@ -799,7 +797,7 @@
 
             bodyDiv.innerHTML = `
             <div class="item-additional-metadata">
-                <p class="item-abstract bp3-running-text bp3-text-small">${selectedItem.data.abstractNote}</p>
+                <p class="item-abstract bp3-running-text bp3-text-small bp3-blockquote">${selectedItem.data.abstractNote}</p>
                 <p class="item-tags">${divTags}</p>
                 <p class="item-collections">${divCollections}</p>
             </div>
