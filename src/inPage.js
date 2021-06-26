@@ -129,7 +129,7 @@
                             if(itemDOI){
                                 pageDiv.innerHTML = `
                                 <span class="zotero-roam-page-doi" data-doi="${itemDOI}">
-                                <a href="https://doi.org/${itemDOI}" target="_blank">${itemDOI}</a>
+                                <a href="https://doi.org/${itemDOI}" class="bp3-text-muted" target="_blank">${itemDOI}</a>
                                 </span>
                                 `;
                             }
@@ -216,7 +216,7 @@
 
                                     if(papersInLib.length > 0){
                                         backlinksLib += `
-                                        <ul class="zotero-roam-page-menu-backlinks-list" style="display:none;">
+                                        <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
                                         ${papersInLib.map(paper => {
                                             let paperInGraph = zoteroRoam.utils.lookForPage("@" + paper.key);
                                             switch(paperInGraph.present){
@@ -224,7 +224,7 @@
                                                     return `
                                                     <li class="zotero-roam-page-menu-backlinks-item">
                                                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar"`})}
-                                                    <a href="https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
+                                                    <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
                                                     </li>`;
                                                 default:
                                                     return `

@@ -210,7 +210,8 @@
             panelTitle.innerText = "Zotero Library";
 
             let panelSubtitle = document.createElement('p');
-            panelSubtitle.classList.add("bp3-text");
+            panelSubtitle.classList.add("bp3-text-muted");
+            panelSubtitle.classList.add("bp3-text-small");
             panelSubtitle.classList.add("panel-subtitle");
             panelSubtitle.innerText = `Search by title, year, authors (last names), citekey, tags`;
         
@@ -240,6 +241,7 @@
             let quickCopyElement = document.createElement('label');
             quickCopyElement.classList.add("bp3-control");
             quickCopyElement.classList.add("bp3-switch");
+            quickCopyElement.classList.add("bp3-text-small");
             quickCopyElement.classList.add("quick-copy-element");
 
             let quickCopyInput = document.createElement('input');
@@ -335,7 +337,8 @@
             panelTitle.innerText = "Citing Papers";
 
             let panelSubtitle = document.createElement('p');
-            panelSubtitle.classList.add("bp3-text");
+            panelSubtitle.classList.add("bp3-text-muted");
+            panelSubtitle.classList.add("bp3-text-small");
             panelSubtitle.classList.add("panel-subtitle");
             panelSubtitle.innerText = `Search by title, year, authors (last names), abstract, keywords, publication`;
 
@@ -460,7 +463,7 @@
 
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                <a href="https://doi.org/${cit.doi}" target="_blank" class="zotero-roam-citation-doi-link">${cit.doi}</a>
+                <a href="https://doi.org/${cit.doi}" target="_blank" class="bp3-text-muted zotero-roam-citation-doi-link">${cit.doi}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
                 ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 </span>
@@ -744,9 +747,9 @@
             let openWebElement = ``;
             if(selectedItem.data.DOI && selectedItem.data.DOI.startsWith("10.")){
                 let target = `https://doi.org/${selectedItem.data.DOI}`;
-                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "bp3-minimal item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: target, linkAttribute: `target="_blank"`});
+                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "bp3-minimal bp3-fill bp3-align-left item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: target, linkAttribute: `target="_blank"`});
             } else if(selectedItem.data.url){
-                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "bp3-minimal item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: selectedItem.data.url, linkAttribute: `target="_blank"`});
+                openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "bp3-minimal bp3-fill bp3-align-left item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: selectedItem.data.url, linkAttribute: `target="_blank"`});
             }
             
             let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
@@ -796,7 +799,7 @@
 
             bodyDiv.innerHTML = `
             <div class="item-additional-metadata">
-                <p class="item-abstract">${selectedItem.data.abstractNote}</p>
+                <p class="item-abstract bp3-running-text bp3-text-small">${selectedItem.data.abstractNote}</p>
                 <p class="item-tags">${divTags}</p>
                 <p class="item-collections">${divCollections}</p>
             </div>
