@@ -406,7 +406,7 @@ var zoteroRoam = {};
             span.result_highlighted{color:#146cb7;font-weight:500;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
-            #zotero-roam-search-results-list, .zotero-roam-citations-search-results-list {max-height:70vh;overflow:scroll;}
+            #zotero-roam-search-results-list, .zotero-roam-citations-search-results-list {max-height:70vh;overflow-y:scroll;}
             .zotero-roam-search-item-title{font-weight:600;font-size:0.9em;}
             .zotero-roam-search-item-tags{font-style:italic;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}

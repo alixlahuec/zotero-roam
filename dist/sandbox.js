@@ -406,7 +406,7 @@ var zoteroRoam = {};
             span.result_highlighted{color:#146cb7;font-weight:500;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
-            #zotero-roam-search-results-list, .zotero-roam-citations-search-results-list {max-height:70vh;overflow:scroll;}
+            #zotero-roam-search-results-list, .zotero-roam-citations-search-results-list {max-height:70vh;overflow-y:scroll;}
             .zotero-roam-search-item-title{font-weight:600;font-size:0.9em;}
             .zotero-roam-search-item-tags{font-style:italic;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
@@ -524,7 +524,7 @@ var zoteroRoam = {};
                     permissions = keyAccess.user;
                 } else {
                     let libID = cl.library.id.toString();
-                    permissions = Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups.libID : keyAccess.groups.all;
+                    permissions = Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all;
                 }
 
                 return {
@@ -2473,7 +2473,8 @@ var zoteroRoam = {};
             } else {
                 try {
                     let pdfDiv = (!infoChildren.pdfItems) ? `No PDF attachments` : infoChildren.pdfItems.map(item => {
-                        let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
+                        let libLoc = item.library.type == "group" ? `groups/${item.library.id}` : `library`;
+                        let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${item.data.key}` : item.data.url;
                         let pdfTitle = item.data.filename || item.data.title;
                         return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal item-pdf-link", icon: "paperclip", target: pdfHref, linkAttribute: `target="_blank"` });
                     }).join("");
@@ -2995,7 +2996,8 @@ var zoteroRoam = {};
                             let pdfLinks_element = ``;
                             if(menu_defaults.includes("pdfLinks")){
                                 pdfLinks_element =!itemChildren.pdfItems ? "" : itemChildren.pdfItems.map(item => {
-                                    let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/library/items/${item.data.key}` : item.data.url;
+                                    let libLoc = item.library.type == "group" ? `groups/${item.library.id}` : `library`;
+                                    let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(item.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${item.data.key}` : item.data.url;
                                     let pdfTitle = item.data.filename || item.data.title;
                                     return zoteroRoam.utils.renderBP3Button_link(string = pdfTitle, {linkClass: "bp3-minimal zotero-roam-page-menu-pdf-link", icon: "paperclip", target: pdfHref, linkAttribute: `target="_blank"` });
                                 }).join("");

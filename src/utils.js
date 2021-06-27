@@ -32,7 +32,7 @@
                     permissions = keyAccess.user;
                 } else {
                     let libID = cl.library.id.toString();
-                    permissions = Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups.libID : keyAccess.groups.all;
+                    permissions = Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all;
                 }
 
                 return {
