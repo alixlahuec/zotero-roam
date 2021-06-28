@@ -394,12 +394,12 @@
 
             // ---
 
-            let importTitle = document.createElement('h4');
-            importTitle.innerText = "Add to Zotero";
-            importTitle.style = `margin-bottom:1.3em;`;
-
-            let importButton = document.createElement('div');
-            importButton.innerHTML = zoteroRoam.utils.renderBP3Button_group("Import", {buttonClass: "import-button bp3-intent-primary", buttonAttribute: "disabled"});
+            let importHeader = document.createElement('div');
+            importHeader.style = `display:flex;justify-content:space-between;margin-bottom:15px;align-items:center;`;
+            importHeader.innerHTML = `
+            <h4>Add to Zotero</h4>
+            ${zoteroRoam.utils.renderBP3Button_group("Import", {buttonClass: "import-button bp3-intent-primary", buttonAttribute: "disabled"})}
+            `;
 
             let importOptions = document.createElement('div');
             importOptions.classList.add("import-options");
@@ -407,22 +407,29 @@
 
             let optionsLib = document.createElement('div');
             optionsLib.classList.add("options-library");
-            optionsLib.innerHTML = `<label class="bp3-label">Library</label><div class="options-library-list"></div>`;
+            optionsLib.style = `flex:1 0 50%;`;
+            optionsLib.innerHTML = `<label class="bp3-label bp3-text-muted">Library</label><div class="options-library-list"></div>`;
 
             let optionsColl = document.createElement('div');
             optionsColl.classList.add("options-collections");
-            optionsColl.innerHTML = `<label class="bp3-label">Collections</label><div class="options-collections-list"></div>`;
+            optionsColl.style = `flex:1 0 50%;`;
+            optionsColl.innerHTML = `<label class="bp3-label bp3-text-muted">Collections</label><div class="options-collections-list"></div>`;
 
             importOptions.appendChild(optionsLib);
             importOptions.appendChild(optionsColl);
 
             let importItems = document.createElement('div');
             importItems.classList.add("import-items");
+            importItems.classList.add("bp3-list-unstyled");
+            importItems.style = `font-size:0.9em;margin:20px 0;`;
 
             let importCancel = document.createElement('div');
-            importCancel.innerHTML = zoteroRoam.utils.renderBP3Button_group("Cancel", {buttonClass: "import-cancel-button"});
+            importCancel.innerHTML = zoteroRoam.utils.renderBP3Button_group("Cancel", {buttonClass: "import-cancel-button bp3-small"});
 
-            dialogSidePanel.appendChild(importTitle);
+            importHeader.appendChild(importTitle);
+            importHeader.appendChild(importButton);
+
+            dialogSidePanel.appendChild(importHeader);
             dialogSidePanel.appendChild(importButton);
             dialogSidePanel.appendChild(importOptions);
             dialogSidePanel.appendChild(importItems);
@@ -506,7 +513,7 @@
                 <a href="https://doi.org/${cit.doi}" target="_blank" class="bp3-text-muted zotero-roam-citation-doi-link">${cit.doi}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
                 ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
-                ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined", icon: "inheritance"})}
+                ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
                 </span>
                 `;
 
@@ -979,7 +986,7 @@
         addToImport(element){
             let identifier = element.querySelector(".zotero-roam-citation-doi-link").innerText;
             let title = element.querySelector(".zotero-roam-search-item-title").innerText;
-            let origin = element.querySelector(".zotero-roam-citation-origin");
+            let origin = element.querySelector(".zotero-roam-citation-origin").innerText;
 
             if(zoteroRoam.interface.activeImport == null){
                 zoteroRoam.interface.activeImport = {
@@ -1010,6 +1017,9 @@
 
             zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = optionsLib;
             zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = optionsColl;
+
+            Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`input[name="library"]`)).forEach(el => addEventListener("click", zoteroRoam.interface.selectImportLibrary));
+
             
         },
 
