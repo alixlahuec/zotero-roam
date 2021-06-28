@@ -128,7 +128,7 @@
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
             let updateRequests = zoteroRoam.config.requests.map(rq => {
-                let latest = zoteroRoam.data.libraries.find(lib => lib.prefix == rq.library).version;
+                let latest = zoteroRoam.data.libraries.find(lib => lib.path == rq.library).version;
                 let {apikey, dataURI, params: setParams, name, library} = rq;
                 let paramsQuery = new URLSearchParams(setParams);
                 paramsQuery.set('since', latest);

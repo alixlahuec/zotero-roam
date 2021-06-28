@@ -64,54 +64,28 @@
             }
         },
 
-        async createItem(data, library = zoteroRoam.data.libraries[0]){
+        async importItems(data, library){
             data = (data.constructor === Array) ? data : [data];
-            let canWrite = false;
-            let libKeys = zoteroRoam.data.keys.filter(k => zoteroRoam.config.requests.filter(req => req.library == library.prefix).map(req => req.apikey).includes(k.key));
-            let apikey = libKeys.find(k => {
-                let libType = library.prefix.startsWith("users") ? "users" : "groups";
-                switch(libType){
-                    case "users":
-                        canWrite = k.access.user.write;
-                        break;
-                    case "groups":
-                        let groupID = library.prefix.split("/")[1];
-                        if(Object.keys(k.access.groups).includes(groupID)){
-                            canWrite = k.access.groups[groupID].write;
-                        } else {
-                            canWrite = k.access.groups.all.write;
-                        }
-                        break;
+            let response = false;
+            let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Zotero-API-Version': 3,
+                    'Zotero-API-Key': library.apikey,
+                    'If-Unmodified-Since-Version': library.version
                 }
-                return canWrite;
             });
 
-            if(apikey){
-                let response = false;
-                let req = await fetch(`https://api.zotero.org/${library.prefix}/items`, {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: {
-                        'Zotero-API-Version': 3,
-                        'Zotero-API-Key': apikey.key,
-                        'If-Unmodified-Since-Version': library.version
-                    }
-                });
-
-                if(req.ok == true){
-                    response = await req.json();
-                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.prefix == library.prefix);
-                    zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
-                } else {
-                    console.log(`The request for ${req.url} returned a code of ${req.status}`);
-                }
-
-                return response;
+            if(req.ok == true){
+                response = await req.json();
+                let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
+                zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
             } else {
-                console.log(`No API key has permission to write in the target library ${library.prefix}`);
-                return false;
+                console.log(`The request for ${req.url} returned a code of ${req.status}`)
             }
 
+            return response;
         }
 
     }

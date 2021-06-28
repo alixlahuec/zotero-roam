@@ -149,28 +149,22 @@
             }
         },
 
-        getWriteableCollections(){
-            return zoteroRoam.data.collections.map(cl => {
-                let req_apikey = zoteroRoam.config.requests[`${cl.requestIndex}`].apikey;
-                let keyAccess = zoteroRoam.data.keys.find(k => k.key == req_apikey).access;
-                let permissions = {};
-                if(cl.library.type == "user"){
-                    permissions = keyAccess.user;
-                } else {
-                    let libID = cl.library.id.toString();
-                    permissions = Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all;
-                }
-
+        getLibraries(){
+            return zoteroRoam.config.requests.map(rq => {
+                let keyAccess = zoteroRoam.data.keys.find(k => k.key == rq.apikey).access;
+                let {libType, libID} = rq.library.split("/");
+                let permissions = libType == "users" ? keyAccess.user : (Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all);
+                let collections = zoteroRoam.data.collections.filter(cl => cl.requestLabel == rq.name);
+                let libName = collections.length > 0 ? collections[0].library.name : rq.library;
                 return {
-                    name: cl.data.name,
-                    version: cl.version,
-                    key: cl.data.key,
-                    location: cl.library.type + "s/" + cl.library.id,
-                    libraryName: cl.library.name,
-                    permissions: permissions,
-                    apikey: req_apikey
+                    name: libName,
+                    apikey: rq.apikey, 
+                    path: rq.library, 
+                    writeable: permissions.write, 
+                    collections: collections,
+                    version: zoteroRoam.data.libraries.find(lib => lib.path == rq.library).version
                 }
-            }).filter(cl => cl.permissions.write == true);
+            });
         },
 
         lookForPage(title){
@@ -355,6 +349,30 @@
             return `<div class="bp3-button-group ${divClass}">
                         ${zoteroRoam.utils.renderBP3Button_group(string = string, {buttonClass: buttonClass, icon: icon, modifier: modifier, buttonAttribute: buttonModifier})}
                     </div>`;
+        },
+
+        renderBP3_list(arr, type, {varName, has_value, has_string, optClass = "", selectFirst = false, active_if = ""} = {}){
+            return arr.map((op, i) => {
+                let mod = "";
+                if(active_if){
+                    mod = op[active_if] ? "" : "disabled";
+                    optClass += op[active_if] ? "" : "bp3-disabled";
+                }
+                if(selectFirst && i == 0 && mod == ""){
+                    mod = "checked";
+                }
+                return zoteroRoam.utils.renderBP3_option(string = op[has_string], type = type, {varName: varName, optClass: optClass, modifier: mod, optValue: op[has_value]})
+            }).join("\n");
+        },
+
+        renderBP3_option(string, type, {varName, optClass = "", modifier = "", optValue = ""} = {}){
+            return `
+            <label class="bp3-control bp3-${type} ${optClass}">
+                <input type="${type}" name="${varName}" value="${optValue}" ${modifier} />
+                <span class="bp3-control-indicator"></span>
+                ${string}
+            </label>
+            `;
         },
         
         renderBP3Tag(string, {modifier = "", icon = "", tagRemove = false} = {}){

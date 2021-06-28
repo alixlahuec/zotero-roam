@@ -641,28 +641,22 @@ var zoteroRoam = {};
             }
         },
 
-        getWriteableCollections(){
-            return zoteroRoam.data.collections.map(cl => {
-                let req_apikey = zoteroRoam.config.requests[`${cl.requestIndex}`].apikey;
-                let keyAccess = zoteroRoam.data.keys.find(k => k.key == req_apikey).access;
-                let permissions = {};
-                if(cl.library.type == "user"){
-                    permissions = keyAccess.user;
-                } else {
-                    let libID = cl.library.id.toString();
-                    permissions = Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all;
-                }
-
+        getLibraries(){
+            return zoteroRoam.config.requests.map(rq => {
+                let keyAccess = zoteroRoam.data.keys.find(k => k.key == rq.apikey).access;
+                let {libType, libID} = rq.library.split("/");
+                let permissions = libType == "users" ? keyAccess.user : (Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all);
+                let collections = zoteroRoam.data.collections.filter(cl => cl.requestLabel == rq.name);
+                let libName = collections.length > 0 ? collections[0].library.name : rq.library;
                 return {
-                    name: cl.data.name,
-                    version: cl.version,
-                    key: cl.data.key,
-                    location: cl.library.type + "s/" + cl.library.id,
-                    libraryName: cl.library.name,
-                    permissions: permissions,
-                    apikey: req_apikey
+                    name: libName,
+                    apikey: rq.apikey, 
+                    path: rq.library, 
+                    writeable: permissions.write, 
+                    collections: collections,
+                    version: zoteroRoam.data.libraries.find(lib => lib.path == rq.library).version
                 }
-            }).filter(cl => cl.permissions.write == true);
+            });
         },
 
         lookForPage(title){
@@ -847,6 +841,30 @@ var zoteroRoam = {};
             return `<div class="bp3-button-group ${divClass}">
                         ${zoteroRoam.utils.renderBP3Button_group(string = string, {buttonClass: buttonClass, icon: icon, modifier: modifier, buttonAttribute: buttonModifier})}
                     </div>`;
+        },
+
+        renderBP3_list(arr, type, {varName, has_value, has_string, optClass = "", selectFirst = false, active_if = ""} = {}){
+            return arr.map((op, i) => {
+                let mod = "";
+                if(active_if){
+                    mod = op[active_if] ? "" : "disabled";
+                    optClass += op[active_if] ? "" : "bp3-disabled";
+                }
+                if(selectFirst && i == 0 && mod == ""){
+                    mod = "checked";
+                }
+                return zoteroRoam.utils.renderBP3_option(string = op[has_string], type = type, {varName: varName, optClass: optClass, modifier: mod, optValue: op[has_value]})
+            }).join("\n");
+        },
+
+        renderBP3_option(string, type, {varName, optClass = "", modifier = "", optValue = ""} = {}){
+            return `
+            <label class="bp3-control bp3-${type} ${optClass}">
+                <input type="${type}" name="${varName}" value="${optValue}" ${modifier} />
+                <span class="bp3-control-indicator"></span>
+                ${string}
+            </label>
+            `;
         },
         
         renderBP3Tag(string, {modifier = "", icon = "", tagRemove = false} = {}){
@@ -1248,7 +1266,7 @@ var zoteroRoam = {};
                     }; 
                 });
                 let libList = Array.from(new Set(requests.map(rq => rq.library)));
-                zoteroRoam.data.libraries = libList.map(lib => { return {prefix: lib, version: 0} });
+                zoteroRoam.data.libraries = libList.map(lib => { return {path: lib, version: 0} });
                 zoteroRoam.config.requests = requests;
             }
         },
@@ -1274,7 +1292,31 @@ var zoteroRoam = {};
             }
         },
 
-        async requestCitoid(query, { format = "zotero", has_relation = false, tag_with = []} = {}){
+        async importSelectedItems(){
+            let lib = zoteroRoam.interface.activeImport.currentLib;
+            let colls = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-collections [name="collections"]`)).filter(op => op.checked).map(op => op.value);
+            let items = zoteroRoam.interface.activeImport.items;
+
+            let itemCalls = [];
+            items.forEach(it => {
+                itemCalls.push(zoteroRoam.handlers.requestCitoid(query = it, {collections: colls}));
+            })
+
+            let itemResults = await Promise.all(itemCalls);
+            itemResults = itemResults.map(res => res.data);
+
+            let successes = itemResults.filter(res => res != false);
+            let errors = items.filter((item, index) => itemResults[index] == false);
+
+            // log errors
+            console.log(errors);
+            // import successes to Zotero
+            let importReq = await zoteroRoam.write.importItems(successes, lib);
+            console.log(importReq);
+
+        },
+
+        async requestCitoid(query, { format = "zotero", has_relation = false, tag_with = [], collections = []} = {}){
             let results = false;
             try{
                 let dataReq = await fetch(`https://en.wikipedia.org/api/rest_v1/data/citation/${format}/${encodeURIComponent(query)}`,{ method: 'GET' });
@@ -1282,7 +1324,7 @@ var zoteroRoam = {};
                     let dataRes = await dataReq.json();
                     if(dataRes.length > 0){
                         var {key, version, ...item} = dataRes[0];
-                        item.collections = [];
+                        item.collections = collections;
                         item.relations = {};
                         if(has_relation != false){
                             item.relations["dc_relation"] = `http://zotero.org/${zoteroRoam.utils.getItemPrefix(has_relation)}/items/${has_relation.data.key}`;
@@ -1365,8 +1407,9 @@ var zoteroRoam = {};
                 // Collections data
                 let collectionsResults = await Promise.all(collectionsCalls);
                 collectionsResults = await Promise.all(collectionsResults.map( (cl, i) => {
+                    // Update stored data on libraries
                     let latestVersion = cl.headers.get('Last-Modified-Version');
-                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.prefix == requests[i].library);
+                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == requests[i].library);
                     if(latestVersion > zoteroRoam.data.libraries[libIndex].version){ zoteroRoam.data.libraries[libIndex].version = latestVersion };
 
                     return cl.json();
@@ -1649,54 +1692,28 @@ var zoteroRoam = {};
             }
         },
 
-        async createItem(data, library = zoteroRoam.data.libraries[0]){
+        async importItems(data, library){
             data = (data.constructor === Array) ? data : [data];
-            let canWrite = false;
-            let libKeys = zoteroRoam.data.keys.filter(k => zoteroRoam.config.requests.filter(req => req.library == library.prefix).map(req => req.apikey).includes(k.key));
-            let apikey = libKeys.find(k => {
-                let libType = library.prefix.startsWith("users") ? "users" : "groups";
-                switch(libType){
-                    case "users":
-                        canWrite = k.access.user.write;
-                        break;
-                    case "groups":
-                        let groupID = library.prefix.split("/")[1];
-                        if(Object.keys(k.access.groups).includes(groupID)){
-                            canWrite = k.access.groups[groupID].write;
-                        } else {
-                            canWrite = k.access.groups.all.write;
-                        }
-                        break;
+            let response = false;
+            let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Zotero-API-Version': 3,
+                    'Zotero-API-Key': library.apikey,
+                    'If-Unmodified-Since-Version': library.version
                 }
-                return canWrite;
             });
 
-            if(apikey){
-                let response = false;
-                let req = await fetch(`https://api.zotero.org/${library.prefix}/items`, {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: {
-                        'Zotero-API-Version': 3,
-                        'Zotero-API-Key': apikey.key,
-                        'If-Unmodified-Since-Version': library.version
-                    }
-                });
-
-                if(req.ok == true){
-                    response = await req.json();
-                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.prefix == library.prefix);
-                    zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
-                } else {
-                    console.log(`The request for ${req.url} returned a code of ${req.status}`);
-                }
-
-                return response;
+            if(req.ok == true){
+                response = await req.json();
+                let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
+                zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
             } else {
-                console.log(`No API key has permission to write in the target library ${library.prefix}`);
-                return false;
+                console.log(`The request for ${req.url} returned a code of ${req.status}`)
             }
 
+            return response;
         }
 
     }
@@ -1735,6 +1752,7 @@ var zoteroRoam = {};
         tributeTrigger: ``,
         tributeBlockTrigger: null,
         tributeNewText: ``,
+        activeImport: null,
 
         create(){
             zoteroRoam.interface.createIcon(id = "zotero-roam-icon");
@@ -2026,6 +2044,7 @@ var zoteroRoam = {};
 
         fillCitationsOverlay(divClass = zoteroRoam.interface.citations.overlayClass){
             let dialogMainPanel = document.querySelector(`.${divClass}-overlay .bp3-dialog-body .main-panel`);
+            let dialogSidePanel = document.querySelector(`.${divClass}-overlay .bp3-dialog-body .side-panel`);
             
             let headerContent = document.createElement('div');
             headerContent.classList.add("bp3-input-group");
@@ -2095,6 +2114,42 @@ var zoteroRoam = {};
 
             // ---
 
+            let importTitle = document.createElement('h4');
+            importTitle.innerText = "Add to Zotero";
+            importTitle.style = `margin-bottom:1.3em;`;
+
+            let importButton = document.createElement('div');
+            importButton.innerHTML = zoteroRoam.utils.renderBP3Button_group("Import", {buttonClass: "import-button bp3-intent-primary", buttonAttribute: "disabled"});
+
+            let importOptions = document.createElement('div');
+            importOptions.classList.add("import-options");
+            importOptions.style = `display:flex;justify-content:space-between;font-size:0.85em;`;
+
+            let optionsLib = document.createElement('div');
+            optionsLib.classList.add("options-library");
+            optionsLib.innerHTML = `<label class="bp3-label">Library</label><div class="options-library-list"></div>`;
+
+            let optionsColl = document.createElement('div');
+            optionsColl.classList.add("options-collections");
+            optionsColl.innerHTML = `<label class="bp3-label">Collections</label><div class="options-collections-list"></div>`;
+
+            importOptions.appendChild(optionsLib);
+            importOptions.appendChild(optionsColl);
+
+            let importItems = document.createElement('div');
+            importItems.classList.add("import-items");
+
+            let importCancel = document.createElement('div');
+            importCancel.innerHTML = zoteroRoam.utils.renderBP3Button_group("Cancel", {buttonClass: "import-cancel-button"});
+
+            dialogSidePanel.appendChild(importTitle);
+            dialogSidePanel.appendChild(importButton);
+            dialogSidePanel.appendChild(importOptions);
+            dialogSidePanel.appendChild(importItems);
+            dialogSidePanel.appendChild(importCancel);
+
+            // ---
+
             let footerActions = document.createElement('div');
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
@@ -2115,6 +2170,10 @@ var zoteroRoam = {};
 
             // Rigging close overlay button
             zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
+
+            // Rigging items import button
+            zoteroRoam.interface.citations.overlay.querySelector(".import-button").addEventListener("click", zoteroRoam.handlers.importSelectedItems);
+            zoteroRoam.interface.citations.overlay.querySelector(".import-cancel-button").addEventListener("click", zoteroRoam.interface.clearImportPanel);
 
         },
 
@@ -2622,6 +2681,58 @@ var zoteroRoam = {};
                 textArea.dispatchEvent(ev);
             });
 
+        },
+
+        addToImport(){
+            if(zoteroRoam.interface.activeImport == null){
+                zoteroRoam.interface.activeImport = {
+                    libraries: zoteroRoam.utils.getLibraries(),
+                    items: [],
+                    currentLib: ""
+                }
+                zoteroRoam.interface.renderImportOptions();
+                // addToImport
+                // pop side panel
+                zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
+            } else {
+                // push identifier/data to zoteroRoam.interface.activeImport.items
+                // inject HTML for the item into side panel section, zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML
+            }
+        },
+
+        renderImportOptions(){
+            let libs = zoteroRoam.interface.activeImport.libraries;
+            let optionsLib = zoteroRoam.utils.renderBP3_list(libs, "radio", {varName: "library", has_value: "path", has_string: "name", selectFirst: true, active_if: "writeable"});
+            let optionsColl = "";
+            if(libs[0].writeable == true){
+                zoteroRoam.interface.activeImport.currentLib = libs[0];
+                optionsColl = zoteroRoam.utils.renderBP3_list(libs[0].collections.map(cl => {return{name: cl.data.name, key: cl.key}}), "checkbox", {varName: "collections", has_value: "key", has_string: "name"});
+            }
+
+            zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = optionsLib;
+            zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = optionsColl;
+            
+        },
+
+        selectImportLibrary(){
+            let currentLib = zoteroRoam.interface.activeImport.currentLib.path;
+            let newLib = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-library [name="library"]`)).find(op => op.checked == true).value;
+            if(newLib != currentLib){
+                zoteroRoam.interface.activeImport.currentLib = zoteroRoam.interface.activeImport.libraries.find(lib => lib.path == newLib);
+                let optionsColl = zoteroRoam.utils.renderBP3_list(zoteroRoam.interface.activeImport.currentLib.collections.map(cl => {return{name: cl.data.name, key: cl.key}}), "checkbox", {varName: "collections", has_value: "key", has_string: "name"});
+                zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = optionsColl;
+            }
+
+        },
+
+        clearImportPanel(){
+            zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");
+
+            zoteroRoam.interface.activeImport = null;
+            zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = ``;
+            zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = ``;
+            zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML = ``;
+
         }
     }
 })();
@@ -2756,7 +2867,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
             let updateRequests = zoteroRoam.config.requests.map(rq => {
-                let latest = zoteroRoam.data.libraries.find(lib => lib.prefix == rq.library).version;
+                let latest = zoteroRoam.data.libraries.find(lib => lib.path == rq.library).version;
                 let {apikey, dataURI, params: setParams, name, library} = rq;
                 let paramsQuery = new URLSearchParams(setParams);
                 paramsQuery.set('since', latest);

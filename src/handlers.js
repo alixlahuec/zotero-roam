@@ -309,7 +309,7 @@
                     }; 
                 });
                 let libList = Array.from(new Set(requests.map(rq => rq.library)));
-                zoteroRoam.data.libraries = libList.map(lib => { return {prefix: lib, version: 0} });
+                zoteroRoam.data.libraries = libList.map(lib => { return {path: lib, version: 0} });
                 zoteroRoam.config.requests = requests;
             }
         },
@@ -335,7 +335,31 @@
             }
         },
 
-        async requestCitoid(query, { format = "zotero", has_relation = false, tag_with = []} = {}){
+        async importSelectedItems(){
+            let lib = zoteroRoam.interface.activeImport.currentLib;
+            let colls = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-collections [name="collections"]`)).filter(op => op.checked).map(op => op.value);
+            let items = zoteroRoam.interface.activeImport.items;
+
+            let itemCalls = [];
+            items.forEach(it => {
+                itemCalls.push(zoteroRoam.handlers.requestCitoid(query = it, {collections: colls}));
+            })
+
+            let itemResults = await Promise.all(itemCalls);
+            itemResults = itemResults.map(res => res.data);
+
+            let successes = itemResults.filter(res => res != false);
+            let errors = items.filter((item, index) => itemResults[index] == false);
+
+            // log errors
+            console.log(errors);
+            // import successes to Zotero
+            let importReq = await zoteroRoam.write.importItems(successes, lib);
+            console.log(importReq);
+
+        },
+
+        async requestCitoid(query, { format = "zotero", has_relation = false, tag_with = [], collections = []} = {}){
             let results = false;
             try{
                 let dataReq = await fetch(`https://en.wikipedia.org/api/rest_v1/data/citation/${format}/${encodeURIComponent(query)}`,{ method: 'GET' });
@@ -343,7 +367,7 @@
                     let dataRes = await dataReq.json();
                     if(dataRes.length > 0){
                         var {key, version, ...item} = dataRes[0];
-                        item.collections = [];
+                        item.collections = collections;
                         item.relations = {};
                         if(has_relation != false){
                             item.relations["dc_relation"] = `http://zotero.org/${zoteroRoam.utils.getItemPrefix(has_relation)}/items/${has_relation.data.key}`;
@@ -426,8 +450,9 @@
                 // Collections data
                 let collectionsResults = await Promise.all(collectionsCalls);
                 collectionsResults = await Promise.all(collectionsResults.map( (cl, i) => {
+                    // Update stored data on libraries
                     let latestVersion = cl.headers.get('Last-Modified-Version');
-                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.prefix == requests[i].library);
+                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == requests[i].library);
                     if(latestVersion > zoteroRoam.data.libraries[libIndex].version){ zoteroRoam.data.libraries[libIndex].version = latestVersion };
 
                     return cl.json();
