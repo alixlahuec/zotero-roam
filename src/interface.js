@@ -427,7 +427,6 @@
             importCancel.innerHTML = zoteroRoam.utils.renderBP3Button_group("Cancel", {buttonClass: "import-cancel-button bp3-small"});
 
             dialogSidePanel.appendChild(importHeader);
-            dialogSidePanel.appendChild(importButton);
             dialogSidePanel.appendChild(importOptions);
             dialogSidePanel.appendChild(importItems);
             dialogSidePanel.appendChild(importCancel);
