@@ -426,9 +426,6 @@
             let importCancel = document.createElement('div');
             importCancel.innerHTML = zoteroRoam.utils.renderBP3Button_group("Cancel", {buttonClass: "import-cancel-button bp3-small"});
 
-            importHeader.appendChild(importTitle);
-            importHeader.appendChild(importButton);
-
             dialogSidePanel.appendChild(importHeader);
             dialogSidePanel.appendChild(importButton);
             dialogSidePanel.appendChild(importOptions);
