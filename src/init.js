@@ -72,6 +72,8 @@ var zoteroRoam = {};
 
         citations: {pagination: null, autocomplete: null, currentDOI: ""},
 
+        tagSelection: {autocomplete: null},
+
         config: {
             autoComplete: {
                 data: {
@@ -274,6 +276,44 @@ var zoteroRoam = {};
                                 let paginatedList = paginationDiv.querySelector("ul");
                                 paginatedList.innerHTML = ``;
                             }
+                        }
+                    }
+                }
+            },
+            tagSelection: {
+                data: {
+                    src: (query) => {
+                        let roamPages = zoteroRoam.utils.getRoamPages();
+                        let hasQuery = roamPages.findIndex(p => p.title == query) != -1;
+                        if(!hasQuery){
+                            return [{title: query, weight: 0}, ...roamPages];
+                        } else {
+                            return roamPages;
+                        }
+                    },
+                    keys: ['title']
+                },
+                selector: '#zotero-roam-tags-autocomplete',
+                wrapper: false,
+                searchEngine: (query, record) => {
+                    return zoteroRoam.utils.multiwordMatch(query, record);
+                },
+                resultsList: {
+                    class: "zotero-roam-import-tags-list",
+                    id: "zotero-roam-import-tags-list",
+                    maxResults: 15,
+                    element: (list, data) => {
+                        list.classList.add("bp3-menu");
+                    }
+                },
+                events: {
+                    input: {
+                        selection: (event) => {
+                            let feedback = event.detail;
+                            let selection = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection");
+                            selection.innerHTML += zoteroRoam.utils.renderBP3Tag(string = feedback.selection.value.title, {tagRemove: true});
+                            selection.dataset.tags.push(feedback.selection.value.title);
+                            document.querySelector(`${zoteroRoam.config.tagSelection.selector}`).value = "";
                         }
                     }
                 }

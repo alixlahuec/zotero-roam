@@ -403,7 +403,7 @@
 
             let importOptions = document.createElement('div');
             importOptions.classList.add("import-options");
-            importOptions.style = `display:flex;justify-content:space-between;font-size:0.85em;`;
+            importOptions.style = `display:flex;justify-content:space-between;font-size:0.85em;flex-wrap:wrap;`;
 
             let optionsLib = document.createElement('div');
             optionsLib.classList.add("options-library");
@@ -415,8 +415,25 @@
             optionsColl.style = `flex:1 0 50%;`;
             optionsColl.innerHTML = `<label class="bp3-label bp3-text-muted">Collections</label><div class="options-collections-list"></div>`;
 
+            let optionsTags = document.createElement('div');
+            optionsTags.classList.add("options-tags");
+
+            let tagsSearchBar = document.createElement('input');
+            tagsSearchBar.id = "zotero-roam-tags-autocomplete";
+            tagsSearchBar.tabIndex = "1";
+            tagsSearchBar.type = "text";
+            tagsSearchBar.classList.add("bp3-input");
+
+            let tagsSelected = document.createElement('div');
+            tagsSelected.classList.add("options-tags_selection");
+            tagsSelected.dataset.tags = [];
+
+            optionsTags.appendChild(tagsSearchBar);
+            optionsTags.appendChild(tagsSelected);
+
             importOptions.appendChild(optionsLib);
             importOptions.appendChild(optionsColl);
+            importOptions.appendChild(optionsTags);
 
             let importItems = document.createElement('div');
             importItems.classList.add("import-items");
@@ -457,6 +474,20 @@
             // Rigging items import button
             zoteroRoam.interface.citations.overlay.querySelector(".import-button").addEventListener("click", zoteroRoam.handlers.importSelectedItems);
             zoteroRoam.interface.citations.overlay.querySelector(".import-cancel-button").addEventListener("click", zoteroRoam.interface.clearImportPanel);
+
+            // Riggin import items section
+            zoteroRoam.interface.citations.overlay.querySelector(".import-items").addEventListener("click", (e) => {
+                let removeBtn = e.target.closest('button.selected_remove-button');
+                if(removeBtn !== null){
+                    let item = removeBtn.closest(".import-items_selected");
+                    try{
+                        zoteroRoam.interface.activeImport.items = zoteroRoam.interface.activeImport.items.filter(i => i!= item.dataset.identifier);
+                        item.remove();
+                    }catch(e){
+                        console.error(e);
+                    }
+                }
+            })
 
         },
 
@@ -997,7 +1028,17 @@
             } else {
                 if(!zoteroRoam.interface.activeImport.items.includes(identifier)){
                     zoteroRoam.interface.activeImport.items.push(identifier);
-                    zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML += `<li><strong>${title}</strong>${origin}</li>`;
+                    zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML += `
+                    <li class="import-items_selected" style="display:flex;justify-content:space-between;" data-identifier="${identifier}">
+                    <div class="selected_info">
+                    <span class="selected_title" style="font-weight:600;">${title}</span>
+                    <span class="selected_origin" style="padding: 0px 10px;">${origin}</span>
+                    </div>
+                    <div class="selected_remove" style="flex: 1 0 20%;text-align:right;">
+                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-small bp3-minimal bp3-intent-danger selected_remove-button", icon: "cross"})}
+                    </div>
+                    </li>
+                    `;
                 }
             }
         },

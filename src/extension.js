@@ -51,6 +51,12 @@
                     zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
                     zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
                 }
+                // Setup the tag selection autoComplete object
+                if(zoteroRoam.tagSelection.autocomplete == null){
+                    zoteroRoam.tagSelection.autocomplete = new autoComplete(zoteroRoam.config.tagSelection);
+                } else {
+                    zoteroRoam.tagSelection.autocomplete.init();
+                }
                 // Setup contextmenu event for the extension's icon
                 zoteroRoam.interface.icon.addEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
                 // Setup keypress listeners to detect shortcuts
@@ -84,6 +90,9 @@
             }
             if(zoteroRoam.citations.autocomplete !== null){
                 zoteroRoam.citations.autocomplete.unInit();
+            }
+            if(zoteroRoam.tagSelection.autocomplete !== null){
+                zoteroRoam.tagSelection.autocomplete.unInit();
             }
 
             // Remove in-page menus

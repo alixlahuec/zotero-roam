@@ -115,6 +115,10 @@
             }
         },
 
+        getRoamPages(){
+            return roamAlphaAPI.q(`[:find [(pull ?e [:node/title])...] :where[?e :node/title ?t]]`);
+        },
+
         getAllRefPages(){
             return roamAlphaAPI.q(`[:find [(pull ?e [:node/title :block/uid])...] :where[?e :node/title ?t][(clojure.string/starts-with? ?t "@")]]`);
         },
@@ -337,10 +341,11 @@
 
         renderBP3Button_group(string, {buttonClass = "", icon = "", modifier = "", buttonAttribute = ""} = {}){
             let iconEl = icon ? `<span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${modifier}"></span>` : "";
+            let textEl = string == "" ? "" : `<span class="bp3-button-text">${string}</span>`;
             return `
             <button type="button" class="bp3-button ${buttonClass}" ${buttonAttribute}>
             ${iconEl}
-            <span class="bp3-button-text">${string}</span>
+            ${textEl}
             </button>
             `;
         },
