@@ -82,15 +82,7 @@ var zoteroRoam = {};
                         if(zoteroRoam.data.items.length > 0){
                             data = zoteroRoam.handlers.simplifyDataArray(zoteroRoam.data.items);
                         }
-                        return data.sort((a,b) => {
-                            if(a.authors.length == 0){
-                                return 2;
-                            } else if(a.authors.toLowerCase() < b.authors.toLowerCase() || b.authors.length == 0){
-                                return 0;
-                            } else{
-                                return 1;
-                            }
-                        })
+                        return data;
                     },
                     keys: ['title', 'authorsString', 'year', 'tagsString', 'key', '_multiField'],
                     cache: false,
@@ -102,7 +94,15 @@ var zoteroRoam = {};
                                 return zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == a.key) < zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == b.key) ? -1 : 1;
                             })[0];
                         });
-                        return filteredMatches;
+                        return filteredMatches.sort((a,b) => {
+                            if(a.value.authors.length == 0){
+                                return 2;
+                            } else if(a.value.authors.toLowerCase() < b.value.authors.toLowerCase() || b.value.authors.length == 0){
+                                return 0;
+                            } else{
+                                return 1;
+                            }
+                        })
                     }
                 },
                 selector: '#zotero-roam-search-autocomplete',
@@ -286,15 +286,7 @@ var zoteroRoam = {};
             tagSelection: {
                 data: {
                     src: async function(query){
-                        let roamPages = zoteroRoam.utils.getRoamPages().sort((a,b) => {
-                            if(a == query){
-                                return -1;
-                            } else if(a.length == 0){
-                                return 1000;
-                            } else {
-                                return a.length;
-                            }
-                        });
+                        let roamPages = zoteroRoam.utils.getRoamPages();
                         let hasQuery = roamPages.findIndex(p => p.title == query) != -1;
                         if(!hasQuery){
                             return [{title: query, identity: "self"}, ...roamPages];
@@ -302,13 +294,23 @@ var zoteroRoam = {};
                             return roamPages;
                         }
                     },
-                    keys: ['title']
+                    keys: ['title'],
+                    filter: (list) => {
+                        return list.sort((a,b) => {
+                            if(a.value.title == query){
+                                return -1;
+                            } else {
+                                return a.value.title.length;
+                            }
+                        })
+                    }
                 },
                 selector: '#zotero-roam-tags-autocomplete',
                 wrapper: false,
                 searchEngine: (query, record) => {
                     return zoteroRoam.utils.multiwordMatch(query, record);
                 },
+                placeHolder : "Add tags...",
                 resultsList: {
                     class: "zotero-roam-import-tags-list",
                     id: "zotero-roam-import-tags-list",
@@ -325,6 +327,9 @@ var zoteroRoam = {};
                 },
                 events: {
                     input: {
+                        blur: (event) => {
+                            zoteroRoam.interface.citations.overlay.querySelector(`${zoteroRoam.config.tagSelection.selector}`).value = ``;
+                        },
                         selection: (event) => {
                             let feedback = event.detail;
                             let selection = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection");
@@ -519,7 +524,10 @@ var zoteroRoam = {};
             .zotero-roam-search-item-key .zotero-roam-citation-doi-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}
-            #zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;}
+            .options-library-list label{font-weight:600;}
+            .options-collections-list label{font-weight:400;}
+            #zotero-roam-tags-autocomplete{box-shadow:none;}
+            #zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
             #zotero-roam-import-tags-list > li{padding:3px 5px;}
             `;
             document.head.append(autoCompleteCSS);

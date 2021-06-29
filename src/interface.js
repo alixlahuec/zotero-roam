@@ -395,7 +395,7 @@
             // ---
 
             let importHeader = document.createElement('div');
-            importHeader.style = `display:flex;justify-content:space-between;margin-bottom:15px;align-items:center;`;
+            importHeader.style = `display:flex;justify-content:space-between;margin-bottom:25px;align-items:center;`;
             importHeader.innerHTML = `
             <h4>Add to Zotero</h4>
             <div class="import-actions">
@@ -409,23 +409,16 @@
             importOptions.style = `display:flex;justify-content:space-between;flex-wrap:wrap;`;
 
             let optionsLib = document.createElement('div');
-            optionsLib.classList.add("options-library");
+            optionsLib.classList.add("options-library-list");
             optionsLib.style = `flex:1 0 50%;`;
-            optionsLib.innerHTML = `<label class="bp3-label bp3-text-muted">Library</label><div class="options-library-list"></div>`;
 
             let optionsColl = document.createElement('div');
-            optionsColl.classList.add("options-collections");
+            optionsColl.classList.add("options-collections-list");
             optionsColl.style = `flex:1 0 50%;`;
-            optionsColl.innerHTML = `<label class="bp3-label bp3-text-muted">Collections</label><div class="options-collections-list"></div>`;
 
             let optionsTags = document.createElement('div');
             optionsTags.classList.add("options-tags");
             optionsTags.style = `padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;`;
-
-            let tagsLabel = document.createElement('label');
-            tagsLabel.classList.add("bp3-label");
-            tagsLabel.innerText = "Roam Tags";
-            tagsLabel.style = `flex: 1 0 100%;`;
 
             let tagsSelect = document.createElement('div');
             tagsSelect.classList.add("options-tags-select");
@@ -453,7 +446,6 @@
             tagsSelect.appendChild(tagsIcon);
             tagsSelect.appendChild(tagsSearchBar);
 
-            optionsTags.appendChild(tagsLabel);
             optionsTags.appendChild(tagsSelect);
             optionsTags.appendChild(tagsSelection);
 
@@ -463,6 +455,7 @@
 
             let itemsHeader = document.createElement('h5');
             itemsHeader.innerText = "Selected Items";
+            itemsHeader.classList.add("import-selection-header");
 
             let importItems = document.createElement('div');
             importItems.classList.add("import-items");
@@ -523,8 +516,10 @@
                     try{
                         zoteroRoam.interface.activeImport.items = zoteroRoam.interface.activeImport.items.filter(i => i!= item.dataset.identifier);
                         item.remove();
+                        zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items (${zoteroRoam.interface.activeImport.items.length})`;
                         if(zoteroRoam.interface.activeImport.items.length == 0){
                             zoteroRoam.interface.citations.overlay.querySelector(".import-button").setAttribute("disabled", "");
+                            zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items`;
                         }
                     }catch(e){
                         console.error(e);
@@ -1082,6 +1077,7 @@
                     </div>
                     </li>
                     `;
+                    zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items (${zoteroRoam.interface.activeImport.items.length})`;
                 }
             }
         },
@@ -1125,6 +1121,7 @@
             zoteroRoam.interface.citations.overlay.querySelector("#zotero-roam-import-tags-list").value = ``;
             zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").innerHTML = ``;
             zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags = "[]";
+            zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items`;
             zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML = ``;
 
         }
