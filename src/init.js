@@ -287,12 +287,12 @@ var zoteroRoam = {};
                 data: {
                     src: async function(query){
                         let roamPages = zoteroRoam.utils.getRoamPages().sort((a,b) => {
-                            if(a.length == 0){
-                                return 2;
-                            } else if(a.length < b.length || b.length == 0){
-                                return 0;
+                            if(a == query){
+                                return -1;
+                            } else if(a.length == 0){
+                                return 1000;
                             } else {
-                                return 1;
+                                return a.length;
                             }
                         });
                         let hasQuery = roamPages.findIndex(p => p.title == query) != -1;
@@ -316,7 +316,7 @@ var zoteroRoam = {};
                     element: (list, data) => {
                         list.classList.add("bp3-menu");
                         list.classList.add("bp3-elevation");
-                        if(data.length > 0){
+                        if(data.results.length > 0){
                             try{
                                 zoteroRoam.tagSelection.autocomplete.goTo(0);
                             } catch(e){};

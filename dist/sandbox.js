@@ -287,12 +287,12 @@ var zoteroRoam = {};
                 data: {
                     src: async function(query){
                         let roamPages = zoteroRoam.utils.getRoamPages().sort((a,b) => {
-                            if(a.length == 0){
-                                return 2;
-                            } else if(a.length < b.length || b.length == 0){
-                                return 0;
+                            if(a == query){
+                                return -1;
+                            } else if(a.length == 0){
+                                return 1000;
                             } else {
-                                return 1;
+                                return a.length;
                             }
                         });
                         let hasQuery = roamPages.findIndex(p => p.title == query) != -1;
@@ -316,7 +316,7 @@ var zoteroRoam = {};
                     element: (list, data) => {
                         list.classList.add("bp3-menu");
                         list.classList.add("bp3-elevation");
-                        if(data.length > 0){
+                        if(data.results.length > 0){
                             try{
                                 zoteroRoam.tagSelection.autocomplete.goTo(0);
                             } catch(e){};
@@ -2187,8 +2187,8 @@ var zoteroRoam = {};
             importHeader.innerHTML = `
             <h4>Add to Zotero</h4>
             <div class="import-actions">
-                ${zoteroRoam.utils.renderBP3Button_group("Import", {buttonClass: "import-button bp3-intent-primary", icon: "inheritance", buttonAttribute: "disabled"})}
                 ${zoteroRoam.utils.renderBP3Button_group("Cancel", {buttonClass: "import-cancel-button bp3-minimal bp3-intent-warning"})}
+                ${zoteroRoam.utils.renderBP3Button_group("Import", {buttonClass: "import-button bp3-intent-primary", icon: "inheritance", buttonAttribute: "disabled"})}
             </div>
             `;
 
@@ -2208,7 +2208,7 @@ var zoteroRoam = {};
 
             let optionsTags = document.createElement('div');
             optionsTags.classList.add("options-tags");
-            optionsTags.style = `padding-top:20px;flex: 1 0 100%;flex-wrap:wrap;display:flex;`;
+            optionsTags.style = `padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;`;
 
             let tagsLabel = document.createElement('label');
             tagsLabel.classList.add("bp3-label");
@@ -2249,13 +2249,17 @@ var zoteroRoam = {};
             importOptions.appendChild(optionsColl);
             importOptions.appendChild(optionsTags);
 
+            let itemsHeader = document.createElement('h5');
+            itemsHeader.innerText = "Selected Items";
+
             let importItems = document.createElement('div');
             importItems.classList.add("import-items");
             importItems.classList.add("bp3-list-unstyled");
-            importItems.style = `font-size:0.9em;margin:20px 0;`;
+            importItems.style = `margin:20px 0;`;
 
             dialogSidePanel.appendChild(importHeader);
             dialogSidePanel.appendChild(importOptions);
+            dialogSidePanel.appendChild(itemsHeader);
             dialogSidePanel.appendChild(importItems);
 
             // ---
@@ -2856,10 +2860,10 @@ var zoteroRoam = {};
                 if(!zoteroRoam.interface.activeImport.items.includes(identifier)){
                     zoteroRoam.interface.activeImport.items.push(identifier);
                     zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML += `
-                    <li class="import-items_selected" style="display:flex;justify-content:space-between;padding:8px 0px;" data-identifier="${identifier}">
+                    <li class="import-items_selected bp3-blockquote" style="display:flex;justify-content:space-between;padding:5px 0 5px 15px;background:#f9fafb;" data-identifier="${identifier}">
                     <div class="selected_info">
                     <span class="selected_title bp3-text-muted" style="font-weight:500;">${title}</span>
-                    ${zoteroRoam.utils.renderBP3Tag(string = origin, {modifier: "selected_origin", tagAttribute: `style="font-size:0.9em;"`})}
+                    <span class="selected_origin" style="display:block;font-weight:300;">${origin}</span>
                     </div>
                     <div class="selected_remove" style="flex: 1 0 10%;text-align:right;">
                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-small bp3-minimal bp3-intent-danger selected_remove-button", icon: "cross"})}
