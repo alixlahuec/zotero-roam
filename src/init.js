@@ -78,11 +78,19 @@ var zoteroRoam = {};
             autoComplete: {
                 data: {
                     src: async function() {
-                        if(zoteroRoam.data.items.length == 0){
-                            return [];
-                        } else {
-                            return zoteroRoam.handlers.simplifyDataArray(zoteroRoam.data.items);
+                        let data = [];
+                        if(zoteroRoam.data.items.length > 0){
+                            data = zoteroRoam.handlers.simplifyDataArray(zoteroRoam.data.items);
                         }
+                        return data.sort((a,b) => {
+                            if(a.authors.length == 0){
+                                return 2;
+                            } else if(a.authors.toLowerCase() < b.authors.toLowerCase() || b.authors.length == 0){
+                                return 0;
+                            } else{
+                                return 1;
+                            }
+                        })
                     },
                     keys: ['title', 'authorsString', 'year', 'tagsString', 'key', '_multiField'],
                     cache: false,
@@ -109,11 +117,6 @@ var zoteroRoam = {};
                 },
                 searchEngine: (query, record) => {
                     return zoteroRoam.utils.multiwordMatch(query, record);
-                },
-                sort: (a, b) => { // Sort by author, alphabetically
-                    if(a.value.authors.toLowerCase() < b.value.authors.toLowerCase()) return -1;
-                    if(a.value.authors.toLowerCase() > b.value.authors.toLowerCase()) return 1;
-                    return 0;
                 },
                 resultsList: {
                     class: "zotero-roam-search-results-list",
@@ -283,10 +286,18 @@ var zoteroRoam = {};
             tagSelection: {
                 data: {
                     src: async function(query){
-                        let roamPages = zoteroRoam.utils.getRoamPages();
+                        let roamPages = zoteroRoam.utils.getRoamPages().sort((a,b) => {
+                            if(a.length == 0){
+                                return 2;
+                            } else if(a.length < b.length || b.length == 0){
+                                return 0;
+                            } else {
+                                return 1;
+                            }
+                        });
                         let hasQuery = roamPages.findIndex(p => p.title == query) != -1;
                         if(!hasQuery){
-                            return [{title: query, weight: 0}, ...roamPages];
+                            return [{title: query, identity: "self"}, ...roamPages];
                         } else {
                             return roamPages;
                         }
@@ -301,9 +312,15 @@ var zoteroRoam = {};
                 resultsList: {
                     class: "zotero-roam-import-tags-list",
                     id: "zotero-roam-import-tags-list",
-                    maxResults: 15,
+                    maxResults: 20,
                     element: (list, data) => {
                         list.classList.add("bp3-menu");
+                        list.classList.add("bp3-elevation");
+                        if(data.length > 0){
+                            try{
+                                zoteroRoam.tagSelection.autocomplete.goTo(0);
+                            } catch(e){};
+                        }
                     }
                 },
                 events: {
@@ -502,6 +519,8 @@ var zoteroRoam = {};
             .zotero-roam-search-item-key .zotero-roam-citation-doi-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}
+            #zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;}
+            #zotero-roam-import-tags-list > li{padding:3px 5px;}
             `;
             document.head.append(autoCompleteCSS);
         }
