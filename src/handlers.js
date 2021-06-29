@@ -339,10 +339,12 @@
             let lib = zoteroRoam.interface.activeImport.currentLib;
             let colls = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-collections [name="collections"]`)).filter(op => op.checked).map(op => op.value);
             let items = zoteroRoam.interface.activeImport.items;
+            let tags = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags;
+            tags = JSON.parse(tags);
 
             let itemCalls = [];
             items.forEach(it => {
-                itemCalls.push(zoteroRoam.handlers.requestCitoid(query = it, {collections: colls}));
+                itemCalls.push(zoteroRoam.handlers.requestCitoid(query = it, {collections: colls, tag_with: tags}));
             })
 
             let itemResults = await Promise.all(itemCalls);

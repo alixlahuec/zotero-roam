@@ -282,7 +282,7 @@ var zoteroRoam = {};
             },
             tagSelection: {
                 data: {
-                    src: (query) => {
+                    src: async function(query){
                         let roamPages = zoteroRoam.utils.getRoamPages();
                         let hasQuery = roamPages.findIndex(p => p.title == query) != -1;
                         if(!hasQuery){
@@ -311,8 +311,10 @@ var zoteroRoam = {};
                         selection: (event) => {
                             let feedback = event.detail;
                             let selection = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection");
-                            selection.innerHTML += zoteroRoam.utils.renderBP3Tag(string = feedback.selection.value.title, {tagRemove: true});
-                            selection.dataset.tags.push(feedback.selection.value.title);
+                            selection.innerHTML += zoteroRoam.utils.renderBP3Tag(string = feedback.selection.value.title, {tagRemove: true, tagAttribute: `data-tag="${feedback.selection.value.title}"`});
+                            let selectedTags = JSON.parse(selection.dataset.tags);
+                            selectedTags.push(feedback.selection.value.title);
+                            selection.dataset.tags = JSON.stringify(selectedTags);
                             document.querySelector(`${zoteroRoam.config.tagSelection.selector}`).value = "";
                         }
                     }

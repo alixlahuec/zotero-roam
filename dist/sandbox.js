@@ -282,7 +282,7 @@ var zoteroRoam = {};
             },
             tagSelection: {
                 data: {
-                    src: (query) => {
+                    src: async function(query){
                         let roamPages = zoteroRoam.utils.getRoamPages();
                         let hasQuery = roamPages.findIndex(p => p.title == query) != -1;
                         if(!hasQuery){
@@ -311,8 +311,10 @@ var zoteroRoam = {};
                         selection: (event) => {
                             let feedback = event.detail;
                             let selection = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection");
-                            selection.innerHTML += zoteroRoam.utils.renderBP3Tag(string = feedback.selection.value.title, {tagRemove: true});
-                            selection.dataset.tags.push(feedback.selection.value.title);
+                            selection.innerHTML += zoteroRoam.utils.renderBP3Tag(string = feedback.selection.value.title, {tagRemove: true, tagAttribute: `data-tag="${feedback.selection.value.title}"`});
+                            let selectedTags = JSON.parse(selection.dataset.tags);
+                            selectedTags.push(feedback.selection.value.title);
+                            selection.dataset.tags = JSON.stringify(selectedTags);
                             document.querySelector(`${zoteroRoam.config.tagSelection.selector}`).value = "";
                         }
                     }
@@ -912,12 +914,12 @@ var zoteroRoam = {};
             `;
         },
         
-        renderBP3Tag(string, {modifier = "", icon = "", tagRemove = false} = {}){
+        renderBP3Tag(string, {modifier = "", icon = "", tagRemove = false, tagAttribute = ""} = {}){
             let tagRem = tagRemove ? `<button class="bp3-tag-remove"></button>` : "";
             if(icon.length > 0){
-                return `<span class="bp3-tag bp3-minimal ${modifier}"><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">${string}</span>${tagRem}</span>`;
+                return `<span class="bp3-tag bp3-minimal ${modifier}" ${tagAttribute}><span icon="${icon}" class="bp3-icon bp3-icon-${icon}"></span><span class="bp3-text-overflow-ellipsis bp3-fill">${string}</span>${tagRem}</span>`;
             } else {
-                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:3px;">${string}${tagRem}</span>`;
+                return `<span class="bp3-tag bp3-minimal ${modifier}" style="margin:3px;" ${tagAttribute}>${string}${tagRem}</span>`;
             }
         },
 
@@ -1341,10 +1343,12 @@ var zoteroRoam = {};
             let lib = zoteroRoam.interface.activeImport.currentLib;
             let colls = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-collections [name="collections"]`)).filter(op => op.checked).map(op => op.value);
             let items = zoteroRoam.interface.activeImport.items;
+            let tags = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags;
+            tags = JSON.parse(tags);
 
             let itemCalls = [];
             items.forEach(it => {
-                itemCalls.push(zoteroRoam.handlers.requestCitoid(query = it, {collections: colls}));
+                itemCalls.push(zoteroRoam.handlers.requestCitoid(query = it, {collections: colls, tag_with: tags}));
             })
 
             let itemResults = await Promise.all(itemCalls);
@@ -2188,10 +2192,11 @@ var zoteroRoam = {};
             tagsSearchBar.tabIndex = "1";
             tagsSearchBar.type = "text";
             tagsSearchBar.classList.add("bp3-input");
+            tagsSearchBar.classList.add("bp3-small");
 
             let tagsSelected = document.createElement('div');
             tagsSelected.classList.add("options-tags_selection");
-            tagsSelected.dataset.tags = [];
+            tagsSelected.setAttribute("data-tags", "[]");
 
             optionsTags.appendChild(tagsSearchBar);
             optionsTags.appendChild(tagsSelected);
@@ -2240,7 +2245,21 @@ var zoteroRoam = {};
             zoteroRoam.interface.citations.overlay.querySelector(".import-button").addEventListener("click", zoteroRoam.handlers.importSelectedItems);
             zoteroRoam.interface.citations.overlay.querySelector(".import-cancel-button").addEventListener("click", zoteroRoam.interface.clearImportPanel);
 
-            // Riggin import items section
+            // Rigging tags selection section
+            zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").addEventListener("click", (e) => {
+                let removeBtn = e.target.closest('.bp3-tag-remove');
+                if(removeBtn !== null){
+                    let tag = removeBtn.closest('.bp3-tag');
+                    try{
+                        let tagsSelection = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection");
+                        tagsSelection.dataset.tags = JSON.stringify(JSON.parse(tagsSelection.dataset.tags).filter(t => t!= tag.dataset.tag));
+                        tag.remove();
+                    }catch(e){
+                        console.error(e);
+                    }
+                }
+            });
+            // Rigging import items section
             zoteroRoam.interface.citations.overlay.querySelector(".import-items").addEventListener("click", (e) => {
                 let removeBtn = e.target.closest('button.selected_remove-button');
                 if(removeBtn !== null){
@@ -2252,7 +2271,7 @@ var zoteroRoam = {};
                         console.error(e);
                     }
                 }
-            })
+            });
 
         },
 
@@ -2843,6 +2862,8 @@ var zoteroRoam = {};
             zoteroRoam.interface.citations.overlay.querySelector(".import-button").setAttribute("disabled", "");
             zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = ``;
             zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = ``;
+            zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").innerHTML = ``;
+            zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags = "[]";
             zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML = ``;
 
         }

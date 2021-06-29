@@ -423,10 +423,11 @@
             tagsSearchBar.tabIndex = "1";
             tagsSearchBar.type = "text";
             tagsSearchBar.classList.add("bp3-input");
+            tagsSearchBar.classList.add("bp3-small");
 
             let tagsSelected = document.createElement('div');
             tagsSelected.classList.add("options-tags_selection");
-            tagsSelected.dataset.tags = [];
+            tagsSelected.setAttribute("data-tags", "[]");
 
             optionsTags.appendChild(tagsSearchBar);
             optionsTags.appendChild(tagsSelected);
@@ -475,7 +476,21 @@
             zoteroRoam.interface.citations.overlay.querySelector(".import-button").addEventListener("click", zoteroRoam.handlers.importSelectedItems);
             zoteroRoam.interface.citations.overlay.querySelector(".import-cancel-button").addEventListener("click", zoteroRoam.interface.clearImportPanel);
 
-            // Riggin import items section
+            // Rigging tags selection section
+            zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").addEventListener("click", (e) => {
+                let removeBtn = e.target.closest('.bp3-tag-remove');
+                if(removeBtn !== null){
+                    let tag = removeBtn.closest('.bp3-tag');
+                    try{
+                        let tagsSelection = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection");
+                        tagsSelection.dataset.tags = JSON.stringify(JSON.parse(tagsSelection.dataset.tags).filter(t => t!= tag.dataset.tag));
+                        tag.remove();
+                    }catch(e){
+                        console.error(e);
+                    }
+                }
+            });
+            // Rigging import items section
             zoteroRoam.interface.citations.overlay.querySelector(".import-items").addEventListener("click", (e) => {
                 let removeBtn = e.target.closest('button.selected_remove-button');
                 if(removeBtn !== null){
@@ -487,7 +502,7 @@
                         console.error(e);
                     }
                 }
-            })
+            });
 
         },
 
@@ -1078,6 +1093,8 @@
             zoteroRoam.interface.citations.overlay.querySelector(".import-button").setAttribute("disabled", "");
             zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = ``;
             zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = ``;
+            zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").innerHTML = ``;
+            zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags = "[]";
             zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML = ``;
 
         }
