@@ -287,17 +287,18 @@ var zoteroRoam = {};
                 data: {
                     src: async function(query){
                         let roamPages = zoteroRoam.utils.getRoamPages();
-                        let hasQuery = roamPages.findIndex(p => p.title == query) != -1;
-                        if(!hasQuery){
+                        let hasQuery = roamPages.findIndex(p => p.title == query);
+                        if(hasQuery == -1){
                             return [{title: query, identity: "self"}, ...roamPages];
                         } else {
+                            roamPages[hasQuery].identity = "self";
                             return roamPages;
                         }
                     },
                     keys: ['title'],
                     filter: (list) => {
                         return list.sort((a,b) => {
-                            if(a.value.title == query){
+                            if(a.value.identity == "self"){
                                 return -1;
                             } else {
                                 return a.value.title.length;
