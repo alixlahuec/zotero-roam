@@ -286,7 +286,10 @@ var zoteroRoam = {};
             tagSelection: {
                 data: {
                     src: async function(query){
-                        let roamPages = zoteroRoam.utils.getRoamPages();
+                        let roamPages = [];
+                        if(zoteroRoam.interface.activeImport !== null){
+                            roamPages = zoteroRoam.interface.activeImport.pages;
+                        }
                         let hasQuery = roamPages.findIndex(p => p.title == query);
                         if(hasQuery == -1){
                             return [{title: query, identity: "self"}, ...roamPages];
@@ -299,13 +302,12 @@ var zoteroRoam = {};
                     filter: (list) => {
                         return list.sort((a,b) => {
                             if(a.value.identity == "self"){
-                                return -1;
+                                return -1000;
                             } else {
-                                return a.value.title.length;
+                                return a.value.title.length - b.value.title.length;
                             }
                         })
-                    },
-                    cache: true
+                    }
                 },
                 selector: '#zotero-roam-tags-autocomplete',
                 wrapper: false,
@@ -535,7 +537,7 @@ var zoteroRoam = {};
             .zotero-roam-search-item-key .zotero-roam-citation-doi-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}
-            .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px;margin-bottom:20px;}
+            .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
             .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
             .options-library-list, .options-collections-list{flex:1 0 50%;}
             .options-library-list label{font-weight:600;}

@@ -1048,7 +1048,8 @@
                 zoteroRoam.interface.activeImport = {
                     libraries: zoteroRoam.utils.getLibraries(),
                     items: [],
-                    currentLib: {}
+                    currentLib: {},
+                    pages: zoteroRoam.utils.getRoamPages()
                 }
                 zoteroRoam.tagSelection.autocomplete.init();
                 zoteroRoam.interface.renderImportOptions();
