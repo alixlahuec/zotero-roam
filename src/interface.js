@@ -1050,7 +1050,7 @@
                     items: [],
                     currentLib: {}
                 }
-                zoteroRoam.tagsSelection.autocomplete.init();
+                zoteroRoam.tagSelection.autocomplete.init();
                 zoteroRoam.interface.renderImportOptions();
                 zoteroRoam.interface.addToImport(element);
                 zoteroRoam.interface.citations.overlay.querySelector(".import-button").removeAttribute("disabled");

@@ -134,13 +134,13 @@
 
                 let pageUID = uid || "";
                 if(uid){
-                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemNotes);
+                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = [{string: "[[Notes]]", children: itemNotes}]);
                 } else {
                     window.roamAlphaAPI.createPage({'page': {'title': title}});
                     pageUID = await zoteroRoam.handlers.waitForPageUID(title);
 
                     if(pageUID != null){
-                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemNotes);
+                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
                         try {
                             let inGraphDiv = document.querySelector(".item-in-graph");
                             if(inGraphDiv != null){

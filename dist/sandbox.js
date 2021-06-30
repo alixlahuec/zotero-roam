@@ -1186,13 +1186,13 @@ var zoteroRoam = {};
 
                 let pageUID = uid || "";
                 if(uid){
-                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemNotes);
+                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = [{string: "[[Notes]]", children: itemNotes}]);
                 } else {
                     window.roamAlphaAPI.createPage({'page': {'title': title}});
                     pageUID = await zoteroRoam.handlers.waitForPageUID(title);
 
                     if(pageUID != null){
-                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemNotes);
+                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
                         try {
                             let inGraphDiv = document.querySelector(".item-in-graph");
                             if(inGraphDiv != null){
@@ -2867,7 +2867,7 @@ var zoteroRoam = {};
                     items: [],
                     currentLib: {}
                 }
-                zoteroRoam.tagsSelection.autocomplete.init();
+                zoteroRoam.tagSelection.autocomplete.init();
                 zoteroRoam.interface.renderImportOptions();
                 zoteroRoam.interface.addToImport(element);
                 zoteroRoam.interface.citations.overlay.querySelector(".import-button").removeAttribute("disabled");
