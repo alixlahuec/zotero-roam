@@ -1837,7 +1837,7 @@ var zoteroRoam = {};
                         zoteroRoam.interface.activeImport.libraries = zoteroRoam.utils.getLibraries();
                         zoteroRoam.interface.activeImport.currentLib = zoteroRoam.interface.activeImport.libraries.find(lib => lib.path == zoteroRoam.interface.activeImport.currentLib.path);
 
-                        return await zoteroRoam.write.importItems(data, library, retry = false);
+                        return await zoteroRoam.write.importItems(data, library = zoteroRoam.interface.activeImport.currentLib, retry = false);
                     } else {
                         console.log(`The request for ${req.url} returned a code of ${req.status} (${req.statusText}).`);
                         // If the request returned an API response but was not successful, log it in the outcome
@@ -2454,7 +2454,7 @@ var zoteroRoam = {};
                 <a href="https://doi.org/${cit.doi}" target="_blank" class="bp3-text-muted zotero-roam-citation-doi-link">${cit.doi}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
                 ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
-                ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
+                ${cit.inLibrary ? "" : zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
                 </span>
                 `;
 
