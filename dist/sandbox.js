@@ -551,7 +551,7 @@ var zoteroRoam = {};
             li.import-items_selected{display:flex;justify-content:space-between;padding:5px 0 5px 15px;background:#f9fafb;}
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
-            .selected_remove{flex: 1 0 10%;text-align:right;}
+            .selected_state{flex: 1 0 10%;text-align:right;}
             `;
             document.head.append(autoCompleteCSS);
         }
@@ -1420,7 +1420,7 @@ var zoteroRoam = {};
 
             // Return outcome of the import process
             console.log(outcome);
-            zoteroRoam.activeImport.outcome = outcome;
+            zoteroRoam.interface.activeImport.outcome = outcome;
             zoteroRoam.interface.renderImportResults(outcome);
             return outcome;
 
@@ -3365,6 +3365,7 @@ var zoteroRoam = {};
         },
 
         async addPageMenus(){
+            zoteroRoam.utils.sleep(100);
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
             for(const page of openPages) {
                 let title = page.querySelector("span") ? page.querySelector("span").innerText : "";

@@ -114,6 +114,7 @@
         },
 
         async addPageMenus(){
+            zoteroRoam.utils.sleep(100);
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
             for(const page of openPages) {
                 let title = page.querySelector("span") ? page.querySelector("span").innerText : "";

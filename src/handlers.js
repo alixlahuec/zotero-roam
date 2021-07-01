@@ -366,7 +366,7 @@
 
             // Return outcome of the import process
             console.log(outcome);
-            zoteroRoam.activeImport.outcome = outcome;
+            zoteroRoam.interface.activeImport.outcome = outcome;
             zoteroRoam.interface.renderImportResults(outcome);
             return outcome;
 
