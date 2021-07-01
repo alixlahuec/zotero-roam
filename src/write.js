@@ -66,27 +66,44 @@
 
         async importItems(data, library){
             data = (data.constructor === Array) ? data : [data];
-            let response = false;
-            let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Zotero-API-Version': 3,
-                    'Zotero-API-Key': library.apikey,
-                    'If-Unmodified-Since-Version': library.version
+            let outcome = {};
+            try{
+                let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Zotero-API-Version': 3,
+                        'Zotero-API-Key': library.apikey,
+                        'If-Unmodified-Since-Version': library.version
+                    }
+                });
+                if(req.ok == true){
+                    // If the request returned a successful API response, log the data & update global info
+                    let reqResults = await req.json();
+                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
+                    // Update the extension's information on library version
+                    zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
+                    outcome = {
+                        success: true,
+                        data: reqResults
+                    }
+                } else {
+                    // If the request returned an API response but was not successful, log it in the outcome
+                    console.log(`The request for ${req.url} returned a code of ${req.status}`)
+                    outcome = {
+                        success: false,
+                        response: req
+                    }
                 }
-            });
-
-            if(req.ok == true){
-                response = await req.json();
-                let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
-                zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
-            } else {
-                console.log(`The request for ${req.url} returned a code of ${req.status}`)
+            } catch(e){
+                // If the request yielded an error, log it in the outcome
+                outcome = {
+                    success : null,
+                    error: e
+                }
+            } finally {
+                return outcome;
             }
-
-            return response;
         }
-
     }
 })();

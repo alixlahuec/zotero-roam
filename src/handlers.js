@@ -336,65 +336,82 @@
         },
 
         async importSelectedItems(){
+
+            let outcome = {};
+
+            // Retrieve import parameters
             let lib = zoteroRoam.interface.activeImport.currentLib;
-            let colls = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-collections [name="collections"]`)).filter(op => op.checked).map(op => op.value);
-            let items = zoteroRoam.interface.activeImport.items;
+            let colls = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-collections-list [name="collections"]`)).filter(op => op.checked).map(op => op.value);
+            let identifiers = zoteroRoam.interface.activeImport.items;
             let tags = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags;
             tags = JSON.parse(tags);
 
-            let itemCalls = [];
-            items.forEach(it => {
-                itemCalls.push(zoteroRoam.handlers.requestCitoid(query = it, {collections: colls, tag_with: tags}));
-            })
+            // Request metadata for each item
+            let harvestCalls = [];
+            identifiers.forEach(id => {
+                harvestCalls.push(zoteroRoam.handlers.requestCitoid(query = id, {collections: colls, tag_with: tags}));
+            });
+            outcome.harvest = await Promise.all(harvestCalls);
 
-            let itemResults = await Promise.all(itemCalls);
-            itemResults = itemResults.map(res => res.data);
+            // Write obtained metadata to Zotero
+            let toWrite = {identifiers: [], data: []};
+            outcome.harvest.forEach(res => {
+                if(res.success == true){
+                    toWrite.identifiers.push(res.query);
+                    toWrite.data.push(res.data);
+                }
+            });
+            outcome.write = await zoteroRoam.write.importItems(toWrite.data, lib);
+            outcome.write.identifiers = toWrite.identifiers;
 
-            let successes = itemResults.filter(res => res != false);
-            let errors = items.filter((item, index) => itemResults[index] == false);
-
-            // log errors
-            console.log(errors);
-            // import successes to Zotero
-            let importReq = await zoteroRoam.write.importItems(successes, lib);
-            console.log(importReq);
+            // Return outcome of the import process
+            console.log(outcome);
+            zoteroRoam.activeImport.outcome = outcome;
+            zoteroRoam.interface.renderImportResults(outcome);
+            return outcome;
 
         },
 
         async requestCitoid(query, { format = "zotero", has_relation = false, tag_with = [], collections = []} = {}){
-            let results = false;
+            let outcome = {};
+
             try{
-                let dataReq = await fetch(`https://en.wikipedia.org/api/rest_v1/data/citation/${format}/${encodeURIComponent(query)}`,{ method: 'GET' });
-                if(dataReq.ok == true){
-                    let dataRes = await dataReq.json();
-                    if(dataRes.length > 0){
-                        var {key, version, ...item} = dataRes[0];
-                        item.collections = collections;
-                        item.relations = {};
-                        if(has_relation != false){
-                            item.relations["dc_relation"] = `http://zotero.org/${zoteroRoam.utils.getItemPrefix(has_relation)}/items/${has_relation.data.key}`;
-                        }
-                        if(tag_with.length > 0){
-                            if(tag_with.constructor === Array){
-                                tag_with.forEach(t => item.tags.push({tag: t}));
-                            } else if(tag_with.constructor === String){
-                                item.tags.push({tag: tag_with});
-                            } else {
-                                console.log(`Unsupported tag input : ${tag_with}`);
-                            }
-                        }
-                        results = item;
+                let req = await fetch(`https://en.wikipedia.org/api/rest_v1/data/citation/${format}/${encodeURIComponent(query)}`, { method: 'GET' });
+                if(req.ok == true){
+                    let reqResults = await req.json();
+                    // Remove key and version from the data object
+                    var {key, version, ...item} = reqResults[0];
+                    // Set collections, tags, relations (if any)
+                    item.collections = collections;
+                    item.tags = tag_with.map(t => { return {tag: t} });
+                    item.relations = {};
+                    if(has_relation != false){
+                        item.relations["dc_relation"] = `http://zotero.org/${zoteroRoam.utils.getItemPrefix(has_relation)}/items/${has_relation.data.key}`;
+                    }
+                    // If the request returned a successful API response, log the data
+                    outcome = {
+                        query: query,
+                        success: true,
+                        data: item
                     }
                 } else {
-                    console.log(`The request for ${dataReq.url} returned a code of ${dataReq.status}`);
+                    // If the request returned an API response but was not successful, log it in the outcome
+                    console.log(`The request for ${req.url} returned a code of ${req.status}`)
+                    outcome = {
+                        query: query,
+                        success: false,
+                        response: req
+                    }
                 }
             } catch(e){
-                console.error(e);
-                zoteroRoam.interface.popToast("The extension encountered an error while accessing citation data. Please check the console for details.", "danger");
-            } finally {
-                return {
-                    data: results
+                // If the request yielded an error, log it in the outcome
+                outcome = {
+                    query: query,
+                    success : null,
+                    error: e
                 }
+            } finally {
+                return outcome;
             }
         },
 
