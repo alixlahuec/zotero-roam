@@ -1420,8 +1420,6 @@ var zoteroRoam = {};
 
             // Return outcome of the import process
             console.log(outcome);
-            zoteroRoam.interface.activeImport.outcome = outcome;
-            zoteroRoam.interface.renderImportResults(outcome);
             return outcome;
 
         },
@@ -1808,10 +1806,11 @@ var zoteroRoam = {};
             }
         },
 
-        async importItems(data, library){
+        async importItems(data, library, retry = true){
             data = (data.constructor === Array) ? data : [data];
             let outcome = {};
             try{
+                let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
                 let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -1824,7 +1823,6 @@ var zoteroRoam = {};
                 if(req.ok == true){
                     // If the request returned a successful API response, log the data & update global info
                     let reqResults = await req.json();
-                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
                     // Update the extension's information on library version
                     zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
                     outcome = {
@@ -1832,11 +1830,17 @@ var zoteroRoam = {};
                         data: reqResults
                     }
                 } else {
-                    // If the request returned an API response but was not successful, log it in the outcome
-                    console.log(`The request for ${req.url} returned a code of ${req.status}`)
-                    outcome = {
-                        success: false,
-                        response: req
+                    // If the API response is a 412 error (Precondition Failed), update data + try again once
+                    if(req.status == 412 && retry == true){
+                        await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.library == library.path));
+                        return await zoteroRoam.write.importItems(data, library, retry = false);
+                    } else {
+                        console.log(`The request for ${req.url} returned a code of ${req.status} (${req.statusText}).`);
+                        // If the request returned an API response but was not successful, log it in the outcome
+                        outcome = {
+                            success: false,
+                            response: req
+                        }
                     }
                 }
             } catch(e){
@@ -2335,7 +2339,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
 
             // Rigging header buttons
-            zoteroRoam.interface.citations.overlay.querySelector(".import-header").addEventListener("click", (e) => {
+            zoteroRoam.interface.citations.overlay.querySelector(".import-header").addEventListener("click", async function(e){
                 let btn = e.target.closest('button[role]');
                 if(btn !== null){
                     switch(btn.getAttribute("role")){
@@ -2343,7 +2347,10 @@ var zoteroRoam = {};
                             zoteroRoam.interface.clearImportPanel(action = "close");
                             break;
                         case "add":
-                            zoteroRoam.handlers.importSelectedItems();
+                            btn.setAttribute("disabled", "");
+                            let importOutcome = await zoteroRoam.handlers.importSelectedItems();
+                            zoteroRoam.interface.activeImport.outcome = importOutcome;
+                            zoteroRoam.interface.renderImportResults(importOutcome);
                             break;
                         case "done":
                             zoteroRoam.interface.clearImportPanel(action = "reset");
@@ -2923,6 +2930,8 @@ var zoteroRoam = {};
                 zoteroRoam.interface.addToImport(element);
                 zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
                 zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
+            } else if(zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`)){
+                zoteroRoam.interface.clearImportPanel(action = "reset");
             } else {
                 if(!zoteroRoam.interface.activeImport.items.includes(identifier)){
                     zoteroRoam.interface.activeImport.items.push(identifier);
@@ -2969,7 +2978,7 @@ var zoteroRoam = {};
                         elem.querySelector(".selected_state").innerHTML = `<span icon="ban-circle" class="bp3-icon bp3-icon-ban-circle bp3-intent-danger" title="${harvest.error.name} : ${harvest.error.message}"></span>`;
                         break;
                     case false:
-                        elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="Error ${harvest.response.status}"></span>`;
+                        elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="${harvest.response.status}"></span>`;
                         break;
                     case true:
                         let citoid = harvest.data;
@@ -2979,7 +2988,7 @@ var zoteroRoam = {};
                                 elem.querySelector(".selected_state").innerHTML = `<span icon="ban-circle" class="bp3-icon bp3-icon-ban-circle bp3-intent-danger" title="${write.error.name} : ${write.error.message}"></span>`;
                                 break;
                             case false:
-                                elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="Error ${write.response.status}"></span>`;
+                                elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="${write.response.status} : ${write.response.statusText}"></span>`;
                                 break;
                             case true:
                                 let libItem = Object.values(write.data.successful).find(item => item.data.title == citoid.title && item.data.url == citoid.url);
@@ -3001,6 +3010,7 @@ var zoteroRoam = {};
             nextActionBtn.querySelector(".bp3-icon").setAttribute("icon", "tick");
             nextActionBtn.querySelector(".bp3-button-text").innerText = "Done";
             nextActionBtn.classList.add("bp3-intent-success");
+            nextActionBtn.removeAttribute("disabled");
             nextActionBtn.setAttribute("role", "done");
         },
 
@@ -3185,11 +3195,11 @@ var zoteroRoam = {};
             }
         },
 
-        async update(popup = "true"){
+        async update(popup = "true", reqs = zoteroRoam.config.requests){
             // Turn the icon background to orange while we're updating the data
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
-            let updateRequests = zoteroRoam.config.requests.map(rq => {
+            let updateRequests = reqs.map(rq => {
                 let latest = zoteroRoam.data.libraries.find(lib => lib.path == rq.library).version;
                 let {apikey, dataURI, params: setParams, name, library} = rq;
                 let paramsQuery = new URLSearchParams(setParams);

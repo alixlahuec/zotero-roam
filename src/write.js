@@ -64,10 +64,11 @@
             }
         },
 
-        async importItems(data, library){
+        async importItems(data, library, retry = true){
             data = (data.constructor === Array) ? data : [data];
             let outcome = {};
             try{
+                let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
                 let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -80,7 +81,6 @@
                 if(req.ok == true){
                     // If the request returned a successful API response, log the data & update global info
                     let reqResults = await req.json();
-                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
                     // Update the extension's information on library version
                     zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
                     outcome = {
@@ -88,11 +88,17 @@
                         data: reqResults
                     }
                 } else {
-                    // If the request returned an API response but was not successful, log it in the outcome
-                    console.log(`The request for ${req.url} returned a code of ${req.status}`)
-                    outcome = {
-                        success: false,
-                        response: req
+                    // If the API response is a 412 error (Precondition Failed), update data + try again once
+                    if(req.status == 412 && retry == true){
+                        await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.library == library.path));
+                        return await zoteroRoam.write.importItems(data, library, retry = false);
+                    } else {
+                        console.log(`The request for ${req.url} returned a code of ${req.status} (${req.statusText}).`);
+                        // If the request returned an API response but was not successful, log it in the outcome
+                        outcome = {
+                            success: false,
+                            response: req
+                        }
                     }
                 }
             } catch(e){

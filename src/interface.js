@@ -482,7 +482,7 @@
             zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
 
             // Rigging header buttons
-            zoteroRoam.interface.citations.overlay.querySelector(".import-header").addEventListener("click", (e) => {
+            zoteroRoam.interface.citations.overlay.querySelector(".import-header").addEventListener("click", async function(e){
                 let btn = e.target.closest('button[role]');
                 if(btn !== null){
                     switch(btn.getAttribute("role")){
@@ -490,7 +490,10 @@
                             zoteroRoam.interface.clearImportPanel(action = "close");
                             break;
                         case "add":
-                            zoteroRoam.handlers.importSelectedItems();
+                            btn.setAttribute("disabled", "");
+                            let importOutcome = await zoteroRoam.handlers.importSelectedItems();
+                            zoteroRoam.interface.activeImport.outcome = importOutcome;
+                            zoteroRoam.interface.renderImportResults(importOutcome);
                             break;
                         case "done":
                             zoteroRoam.interface.clearImportPanel(action = "reset");
@@ -1070,6 +1073,8 @@
                 zoteroRoam.interface.addToImport(element);
                 zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
                 zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
+            } else if(zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`)){
+                zoteroRoam.interface.clearImportPanel(action = "reset");
             } else {
                 if(!zoteroRoam.interface.activeImport.items.includes(identifier)){
                     zoteroRoam.interface.activeImport.items.push(identifier);
@@ -1116,7 +1121,7 @@
                         elem.querySelector(".selected_state").innerHTML = `<span icon="ban-circle" class="bp3-icon bp3-icon-ban-circle bp3-intent-danger" title="${harvest.error.name} : ${harvest.error.message}"></span>`;
                         break;
                     case false:
-                        elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="Error ${harvest.response.status}"></span>`;
+                        elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="${harvest.response.status}"></span>`;
                         break;
                     case true:
                         let citoid = harvest.data;
@@ -1126,7 +1131,7 @@
                                 elem.querySelector(".selected_state").innerHTML = `<span icon="ban-circle" class="bp3-icon bp3-icon-ban-circle bp3-intent-danger" title="${write.error.name} : ${write.error.message}"></span>`;
                                 break;
                             case false:
-                                elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="Error ${write.response.status}"></span>`;
+                                elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="${write.response.status} : ${write.response.statusText}"></span>`;
                                 break;
                             case true:
                                 let libItem = Object.values(write.data.successful).find(item => item.data.title == citoid.title && item.data.url == citoid.url);
@@ -1148,6 +1153,7 @@
             nextActionBtn.querySelector(".bp3-icon").setAttribute("icon", "tick");
             nextActionBtn.querySelector(".bp3-button-text").innerText = "Done";
             nextActionBtn.classList.add("bp3-intent-success");
+            nextActionBtn.removeAttribute("disabled");
             nextActionBtn.setAttribute("role", "done");
         },
 
