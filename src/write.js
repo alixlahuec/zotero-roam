@@ -95,7 +95,7 @@
                         zoteroRoam.interface.activeImport.libraries = zoteroRoam.utils.getLibraries();
                         zoteroRoam.interface.activeImport.currentLib = zoteroRoam.interface.activeImport.libraries.find(lib => lib.path == zoteroRoam.interface.activeImport.currentLib.path);
 
-                        return await zoteroRoam.write.importItems(data, library = zoteroRoam.interface.activeImport.currentLib, retry = false);
+                        outcome = await zoteroRoam.write.importItems(data, library = zoteroRoam.interface.activeImport.currentLib, retry = false);
                     } else {
                         console.log(`The request for ${req.url} returned a code of ${req.status} (${req.statusText}).`);
                         // If the request returned an API response but was not successful, log it in the outcome
