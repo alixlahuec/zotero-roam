@@ -551,7 +551,7 @@ var zoteroRoam = {};
             li.import-items_selected{display:flex;justify-content:space-between;padding:5px 0 5px 15px;background:#f9fafb;}
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
-            .selected_state{flex: 1 0 10%;text-align:right;}
+            .selected_state{flex: 1 0 10%;text-align:center;}
             `;
             document.head.append(autoCompleteCSS);
         }

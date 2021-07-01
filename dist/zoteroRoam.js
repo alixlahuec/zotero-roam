@@ -551,7 +551,7 @@ var zoteroRoam = {};
             li.import-items_selected{display:flex;justify-content:space-between;padding:5px 0 5px 15px;background:#f9fafb;}
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
-            .selected_state{flex: 1 0 10%;text-align:right;}
+            .selected_state{flex: 1 0 10%;text-align:center;}
             `;
             document.head.append(autoCompleteCSS);
         }
@@ -2966,25 +2966,25 @@ var zoteroRoam = {};
                 let harvest = outcome.harvest.find(res => res.query == identifier);
                 switch(harvest.success){
                     case null:
-                        elem.querySelector(".selected-state").innerHTML = `<span icon="ban-circle" class="bp3-icon bp3-icon-ban-circle bp3-intent-danger" title="${harvest.error.name} : ${harvest.error.message}"></span>`;
+                        elem.querySelector(".selected_state").innerHTML = `<span icon="ban-circle" class="bp3-icon bp3-icon-ban-circle bp3-intent-danger" title="${harvest.error.name} : ${harvest.error.message}"></span>`;
                         break;
                     case false:
-                        elem.querySelector(".selected-state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="Error ${harvest.response.status}"></span>`;
+                        elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="Error ${harvest.response.status}"></span>`;
                         break;
                     case true:
                         let citoid = harvest.data;
                         let write = outcome.write;
                         switch(write.success){
                             case null:
-                                elem.querySelector(".selected-state").innerHTML = `<span icon="ban-circle" class="bp3-icon bp3-icon-ban-circle bp3-intent-danger" title="${write.error.name} : ${write.error.message}"></span>`;
+                                elem.querySelector(".selected_state").innerHTML = `<span icon="ban-circle" class="bp3-icon bp3-icon-ban-circle bp3-intent-danger" title="${write.error.name} : ${write.error.message}"></span>`;
                                 break;
                             case false:
-                                elem.querySelector(".selected-state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="Error ${write.response.status}"></span>`;
+                                elem.querySelector(".selected_state").innerHTML = `<span icon="error" class="bp3-icon bp3-icon-error bp3-intent-warning" title="Error ${write.response.status}"></span>`;
                                 break;
                             case true:
-                                let libItem = write.data.successful.find(item => item.data.title == citoid.data.title && item.data.url == citoid.data.url);
+                                let libItem = Object.values(write.data.successful).find(item => item.data.title == citoid.title && item.data.url == citoid.url);
                                 if(libItem){
-                                    elem.querySelector(".selected-state").innerHTML = `<span icon="tick" class="bp3-icon bp3-icon-tick bp3-intent-success" title="${libItem.data.key}"></span>`;
+                                    elem.querySelector(".selected_state").innerHTML = `<span icon="tick" class="bp3-icon bp3-icon-tick bp3-intent-success" title="${libItem.data.key}"></span>`;
                                 }
                                 // TODO: what if not successful ?
                                 // If successful : Zotero key will be in libItem.key, or better yet libItem.data.key
