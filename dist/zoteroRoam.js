@@ -1833,6 +1833,10 @@ var zoteroRoam = {};
                     // If the API response is a 412 error (Precondition Failed), update data + try again once
                     if(req.status == 412 && retry == true){
                         await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.library == library.path));
+                        // Update the lib data for the active import
+                        zoteroRoam.interface.activeImport.libraries = zoteroRoam.utils.getLibraries();
+                        zoteroRoam.interface.activeImport.currentLib = zoteroRoam.interface.activeImport.libraries.find(lib => lib.path == zoteroRoam.interface.activeImport.currentLib.path);
+
                         return await zoteroRoam.write.importItems(data, library, retry = false);
                     } else {
                         console.log(`The request for ${req.url} returned a code of ${req.status} (${req.statusText}).`);
@@ -2255,7 +2259,7 @@ var zoteroRoam = {};
             importHeader.classList.add("import-header");
             importHeader.innerHTML = `
             ${zoteroRoam.utils.renderBP3Button_group("Cancel", {buttonClass: "bp3-minimal bp3-intent-warning", icon: "chevron-left", buttonAttribute: 'role="cancel"'})}
-            ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "bp3-minimal bp3-intent-primary", icon: "inheritance", buttonAttribute: 'disabled role="add"'})}
+            ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "bp3-minimal bp3-intent-primary", icon: "inheritance", buttonAttribute: 'disabled role="add" style="font-weight:600;"'})}
             `;
 
             let importOptions = document.createElement('div');
@@ -2356,7 +2360,15 @@ var zoteroRoam = {};
                             zoteroRoam.interface.clearImportPanel(action = "reset");
                     }
                 }
-            })
+            });
+
+            // Rigging library selection section
+            zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").addEventListener("click", (e) => {
+                let libOption = e.closest(`input[name="library"]`);
+                if(libOption){
+                    zoteroRoam.interface.selectImportLibrary();
+                }
+            });
 
             // Rigging tags selection section
             zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").addEventListener("click", (e) => {
@@ -2930,9 +2942,10 @@ var zoteroRoam = {};
                 zoteroRoam.interface.addToImport(element);
                 zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
                 zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
-            } else if(zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`)){
-                zoteroRoam.interface.clearImportPanel(action = "reset");
             } else {
+                if(zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`)){
+                    zoteroRoam.interface.clearImportPanel(action = "reset");
+                }
                 if(!zoteroRoam.interface.activeImport.items.includes(identifier)){
                     zoteroRoam.interface.activeImport.items.push(identifier);
                     zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML += `
@@ -2963,9 +2976,6 @@ var zoteroRoam = {};
 
             zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = optionsLib;
             zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = optionsColl;
-
-            Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`input[name="library"]`)).forEach(el => el.addEventListener("click", zoteroRoam.interface.selectImportLibrary));
-
             
         },
 
@@ -3215,7 +3225,14 @@ var zoteroRoam = {};
             });
             let updateResults = await zoteroRoam.handlers.requestData(updateRequests);
             if(updateResults.success == true){
-                zoteroRoam.data.collections = updateResults.data.collections; // Collections are fetched without a 'since' parameter, so simply replacing the whole Object is fine
+                updateResults.data.collections.forEach(collection => {
+                    let inStore = zoteroRoam.data.collections.findIndex(cl => cl.key == collection.key);
+                    if(inStore == -1){
+                        zoteroRoam.data.collections.push(collection);
+                    } else {
+                        zoteroRoam.data.collections[inStore] = collection;
+                    }
+                })
                 
                 let updatedItems = updateResults.data.items;
                 if(updatedItems.length == 0){

@@ -152,7 +152,14 @@
             });
             let updateResults = await zoteroRoam.handlers.requestData(updateRequests);
             if(updateResults.success == true){
-                zoteroRoam.data.collections = updateResults.data.collections; // Collections are fetched without a 'since' parameter, so simply replacing the whole Object is fine
+                updateResults.data.collections.forEach(collection => {
+                    let inStore = zoteroRoam.data.collections.findIndex(cl => cl.key == collection.key);
+                    if(inStore == -1){
+                        zoteroRoam.data.collections.push(collection);
+                    } else {
+                        zoteroRoam.data.collections[inStore] = collection;
+                    }
+                })
                 
                 let updatedItems = updateResults.data.items;
                 if(updatedItems.length == 0){

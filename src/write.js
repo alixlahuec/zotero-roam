@@ -91,6 +91,10 @@
                     // If the API response is a 412 error (Precondition Failed), update data + try again once
                     if(req.status == 412 && retry == true){
                         await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.library == library.path));
+                        // Update the lib data for the active import
+                        zoteroRoam.interface.activeImport.libraries = zoteroRoam.utils.getLibraries();
+                        zoteroRoam.interface.activeImport.currentLib = zoteroRoam.interface.activeImport.libraries.find(lib => lib.path == zoteroRoam.interface.activeImport.currentLib.path);
+
                         return await zoteroRoam.write.importItems(data, library, retry = false);
                     } else {
                         console.log(`The request for ${req.url} returned a code of ${req.status} (${req.statusText}).`);

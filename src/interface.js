@@ -398,7 +398,7 @@
             importHeader.classList.add("import-header");
             importHeader.innerHTML = `
             ${zoteroRoam.utils.renderBP3Button_group("Cancel", {buttonClass: "bp3-minimal bp3-intent-warning", icon: "chevron-left", buttonAttribute: 'role="cancel"'})}
-            ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "bp3-minimal bp3-intent-primary", icon: "inheritance", buttonAttribute: 'disabled role="add"'})}
+            ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "bp3-minimal bp3-intent-primary", icon: "inheritance", buttonAttribute: 'disabled role="add" style="font-weight:600;"'})}
             `;
 
             let importOptions = document.createElement('div');
@@ -499,7 +499,15 @@
                             zoteroRoam.interface.clearImportPanel(action = "reset");
                     }
                 }
-            })
+            });
+
+            // Rigging library selection section
+            zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").addEventListener("click", (e) => {
+                let libOption = e.closest(`input[name="library"]`);
+                if(libOption){
+                    zoteroRoam.interface.selectImportLibrary();
+                }
+            });
 
             // Rigging tags selection section
             zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").addEventListener("click", (e) => {
@@ -1073,9 +1081,10 @@
                 zoteroRoam.interface.addToImport(element);
                 zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
                 zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
-            } else if(zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`)){
-                zoteroRoam.interface.clearImportPanel(action = "reset");
             } else {
+                if(zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`)){
+                    zoteroRoam.interface.clearImportPanel(action = "reset");
+                }
                 if(!zoteroRoam.interface.activeImport.items.includes(identifier)){
                     zoteroRoam.interface.activeImport.items.push(identifier);
                     zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML += `
@@ -1106,9 +1115,6 @@
 
             zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = optionsLib;
             zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = optionsColl;
-
-            Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`input[name="library"]`)).forEach(el => el.addEventListener("click", zoteroRoam.interface.selectImportLibrary));
-
             
         },
 
