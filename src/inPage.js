@@ -139,7 +139,7 @@
                             </span>
                             `;
                             page.parentElement.appendChild(pageDiv);
-                        } else {
+
                             // ---
                             // Page menu
                             let menuDiv = page.parentElement.querySelector('.zotero-roam-page-menu');
