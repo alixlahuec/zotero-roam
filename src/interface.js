@@ -494,6 +494,14 @@
                             let importOutcome = await zoteroRoam.handlers.importSelectedItems();
                             zoteroRoam.interface.activeImport.outcome = importOutcome;
                             zoteroRoam.interface.renderImportResults(importOutcome);
+                            zoteroRoam.interface.activeImport.check = importOutcome.write.success != true ? null : setInterval(async function(){
+                                let check = await zoteroRoam.write.checkImport(importOutcome.write.data.successful);
+                                console.log(check);
+                                if(check.updated == true){
+                                    clearInterval(zoteroRoam.interface.activeImport.check);
+                                    zoteroRoam.interface.activeImport.check = null;
+                                }
+                            }, 1000);
                             break;
                         case "done":
                             zoteroRoam.interface.clearImportPanel(action = "reset");
@@ -1176,6 +1184,7 @@
         },
 
         clearImportPanel(action = "close"){
+            try{ clearInterval(zoteroRoam.interface.activeImport.check); zoteroRoam.interface.activeImport.check = null; } catch(e){};
             switch(action){
                 case "close":
                     zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");

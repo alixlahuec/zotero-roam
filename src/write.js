@@ -85,8 +85,6 @@
                     zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
                     zoteroRoam.interface.activeImport.libraries = zoteroRoam.utils.getLibraries();
                     zoteroRoam.interface.activeImport.currentLib = zoteroRoam.interface.activeImport.libraries.find(lib => lib.path == zoteroRoam.interface.activeImport.currentLib.path);
-                    zoteroRoam.utils.sleep(1000);
-                    reqResults.successful = await zoteroRoam.write.checkImport(reqResults.successful);
                     outcome = {
                         success: true,
                         data: reqResults
@@ -122,13 +120,13 @@
 
         async checkImport(reqResults){
             let lib = zoteroRoam.interface.activeImport.currentLib;
-            let libIndex = zoteroRoam.data.libraries.findIndex(l => l.path == lib.path);
             let keys = Object.values(reqResults).map(it => it.data.key);
-            let counter = 0;
+            let version = Object.values(reqResults)[0].version;
+            let checkVersion = version;
+
             let updatedData = false;
-            while(counter < 2 && !updatedData){
                 try{
-                    let check = await fetch(`https://api.zotero.org/${lib.path}/items?itemKey=${keys.join(",")}&since=${lib.version}`, {
+                    let check = await fetch(`https://api.zotero.org/${lib.path}/items?itemKey=${keys.join(",")}&since=${version}`, {
                         method: 'GET',
                         headers: {
                             'Zotero-API-Version': 3,
@@ -139,18 +137,16 @@
                         let checkResults = await check.json();
                         if(checkResults.length > 0){
                             updatedData = {...zoteroRoam.handlers.extractCitekeys(checkResults)};
-                            zoteroRoam.data.libraries[libIndex].version = check.headers.get('Last-Modified-Version');
-                            zoteroRoam.interface.activeImport.libraries = zoteroRoam.utils.getLibraries();
-                            zoteroRoam.interface.activeImport.currentLib = zoteroRoam.interface.activeImport.libraries.find(l => l.path == zoteroRoam.interface.activeImport.currentLib.path);
-                        } else {
-                            zoteroRoam.utils.sleep(2000);
+                            checkVersion = check.headers.get('Last-Modified-Version');
                         }
                     }
-                    counter += 1;
                 } catch(e){console.log(e)};
-            }
+            
 
-            return updatedData || reqResults;
+            return {
+                updated: checkVersion > version,
+                data: updatedData || reqResults
+            };
         }
     }
 })();
