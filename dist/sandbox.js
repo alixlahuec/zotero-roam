@@ -2399,7 +2399,35 @@ var zoteroRoam = {};
             // Rigging page controls
             Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(".zotero-roam-page-control")).forEach(control => {
                 control.addEventListener("click", (e) => { zoteroRoam.interface.changePage(goto = control.getAttribute("goto")) });
-            })
+            });
+
+            // Rigging pagination div
+            pagination.addEventListener("click", function(e){
+                let btn = e.target.closest('button');
+                if(btn){
+                    if(btn.classList.contains('zotero-roam-citation-copy-doi')){
+                        // Copy-to-clipboard buttons for DOIs
+                        zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = btn.dataset.doi;
+                        zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').select();
+                        document.execCommand("copy");
+                    } else if(btn.classList.contains('zotero-roam-citation-toggle-abstract')){
+                        // Toggles for abstracts
+                        let toggleText = btn.querySelector('.bp3-button-text');
+                        let abstractSpan = btn.closest('.zotero-roam-citations-search_result').querySelector('.zotero-roam-citation-abstract');
+                        if(abstractSpan.style.display == "none"){
+                            abstractSpan.style.display = "block";
+                            toggleText.innerHTML = `Hide Abstract`;
+                        } else {
+                            abstractSpan.style.display = "none";
+                            toggleText.innerHTML = `Show Abstract`;
+                        }
+                    } else if(btn.classList.contains('zotero-roam-citation-add-import')){
+                         // Add to Import buttons
+                        zoteroRoam.interface.addToImport(element = btn.closest('.bp3-menu-item'));
+                    }
+                }
+
+            });
 
             // Rigging close overlay button
             zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
@@ -2543,52 +2571,6 @@ var zoteroRoam = {};
                 </div></li>
                 `
             }).join("");
-
-            // Adding interaction
-            // Copy-to-clipboard buttons for DOIs
-            try{
-                let copyDOIBtns = Array.from(paginationDiv.querySelectorAll('button.zotero-roam-citation-copy-doi'));
-                if(copyDOIBtns.length > 0){
-                    for(const btn of copyDOIBtns){
-                        btn.addEventListener("click", function(){
-                            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = btn.dataset.doi;
-                            zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').select();
-                            document.execCommand("copy");
-                        })
-                    }
-                }
-            }catch(e){};
-            // Toggles for abstracts
-            try{
-                let abstractToggles = Array.from(paginationDiv.querySelectorAll("button.zotero-roam-citation-toggle-abstract"));
-                if(abstractToggles.length > 0){
-                    for(const togg of abstractToggles){
-                        togg.addEventListener("click", function(){
-                            let toggleText = togg.querySelector('.bp3-button-text');
-                            let abstractSpan = togg.closest('.zotero-roam-citations-search_result').querySelector('.zotero-roam-citation-abstract');
-                            if(abstractSpan.style.display == "none"){
-                                abstractSpan.style.display = "block";
-                                toggleText.innerHTML = `Hide Abstract`;
-                            } else{
-                                abstractSpan.style.display = "none";
-                                toggleText.innerHTML = `Show Abstract`;
-                            }
-                        });
-                        
-                    }
-                }
-            }catch(e){};
-            // Add to Import buttons
-            try{
-                let addToImportBtns = Array.from(paginationDiv.querySelectorAll("button.zotero-roam-citation-add-import"));
-                if(addToImportBtns.length > 0){
-                    for(const btn of addToImportBtns){
-                        btn.addEventListener("click", function(){
-                            zoteroRoam.interface.addToImport(element = btn.closest(".bp3-menu-item"));
-                        })
-                    }
-                }
-            }catch(e){};
 
         },
 
