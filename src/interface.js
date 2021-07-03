@@ -503,7 +503,7 @@
 
             // Rigging library selection section
             zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").addEventListener("click", (e) => {
-                let libOption = e.closest(`input[name="library"]`);
+                let libOption = e.target.closest(`input[name="library"]`);
                 if(libOption){
                     zoteroRoam.interface.selectImportLibrary();
                 }

@@ -309,7 +309,7 @@
                     }; 
                 });
                 let libList = Array.from(new Set(requests.map(rq => rq.library)));
-                zoteroRoam.data.libraries = libList.map(lib => { return {path: lib, version: 0} });
+                zoteroRoam.data.libraries = libList.map(lib => { return {path: lib, version: 0, apikey: requests.find(rq => rq.library == lib).apikey} });
                 zoteroRoam.config.requests = requests;
             }
         },
@@ -439,59 +439,86 @@
             }
         },
 
-        async requestData(requests) {
+        async requestData(requests, update = false, collections = true) {
             let dataCalls = [];
             let collectionsCalls = [];
+            let collectionsResults = [];
+            let deletedCalls = [];
+            let deletedResults = [];
             if(requests.length == 0){
                 throw new Error("No data requests were added to the config object - check for upstream problems");
             }
             try{
+                // Items data
                 requests.forEach( rq => {
                     dataCalls.push(zoteroRoam.handlers.fetchData(apiKey = rq.apikey, dataURI = rq.dataURI, params = rq.params));
-                    collectionsCalls.push(fetch(`https://api.zotero.org/${rq.library}/collections`, {
-                        method: 'GET',
-                        headers: {
-                            'Zotero-API-Version': 3,
-                            'Zotero-API-Key': rq.apikey
-                        }
-                    }));
                 });
-                // Items data
                 let requestsResults = await Promise.all(dataCalls);
                 requestsResults = requestsResults.map( (res, i) => res.data.map(item => { 
                         item.requestLabel = requests[i].name; 
                         item.requestIndex = i; 
                         return item;
-                    })).flat(1);
+                })).flat(1);
                 requestsResults = zoteroRoam.handlers.extractCitekeys(requestsResults);
                 // Collections data
-                let collectionsResults = await Promise.all(collectionsCalls);
-                collectionsResults = await Promise.all(collectionsResults.map( (cl, i) => {
-                    // Update stored data on libraries
-                    let latestVersion = cl.headers.get('Last-Modified-Version');
-                    let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == requests[i].library);
-                    if(latestVersion > zoteroRoam.data.libraries[libIndex].version){ zoteroRoam.data.libraries[libIndex].version = latestVersion };
-
-                    return cl.json();
-                }));
-                collectionsResults = collectionsResults.map( (arr, i) => arr.map(cl => {
-                    cl.requestLabel = requests[i].name;
-                    cl.requestIndex = i;
-                    return cl;
-                })).flat(1);
+                if(collections == true){
+                    zoteroRoam.data.libraries.forEach(lib => {
+                        collectionsCalls.push(fetch(`https://api.zotero.org/${lib.path}/collections?since=${lib.version}`, {
+                            method: 'GET',
+                            headers: {
+                                'Zotero-API-Version': 3,
+                                'Zotero-API-Key': lib.apikey
+                            }
+                        }));
+                    });
+                    collectionsResults = await Promise.all(collectionsCalls);
+                    collectionsResults = await Promise.all(collectionsResults.map( (cl, i) => {
+                        // Update stored data on libraries
+                        let latestVersion = cl.headers.get('Last-Modified-Version');
+                        zoteroRoam.data.libraries[i].version = latestVersion;
+                        return cl.json();
+                    }));
+                    collectionsResults = collectionsResults.flat(1);
+                }
+                // Deleted data
+                if(update == true){
+                    zoteroRoam.data.libraries.forEach(lib => {
+                        deletedCalls.push(fetch(`https://api.zotero.org/${lib.path}/deleted?since=${lib.version}`, {
+                            method: 'GET',
+                            headers: {
+                                'Zotero-API-Version': 3,
+                                'Zotero-API-Key': lib.apikey
+                            }
+                        }));
+                    });
+                    deletedResults = await Promise.all(deletedCalls);
+                    deletedResults = await Promise.all(deletedResults.map(res => res.json()));
+                    deletedResults = deletedResults.map((res, i) => {
+                        return {
+                            path: zoteroRoam.data.libraries[i].path,
+                            items: res.items,
+                            collections: res.collections
+                        }
+                    });
+                    // Remove deleted items & collections from extension dataset
+                    zoteroRoam.data.items = zoteroRoam.data.items.filter(it => !deletedResults.find(res => res.path == zoteroRoam.utils.getItemPrefix(it)).items.includes(it.data.key));
+                    zoteroRoam.data.collections = zoteroRoam.data.collections.filter(cl => !deletedResults.find(res => res.path == zoteroRoam.utils.getItemPrefix(cl)).collections.includes(cl.key));
+                }
                 
                 return {
                     success: true,
                     data: {
                         items: requestsResults,
-                        collections: collectionsResults
+                        collections: collectionsResults,
+                        deleted: deletedResults
                     }
                 }
             } catch(e) {
                 console.error(e);
                 console.log({
                     dataCalls: dataCalls,
-                    collectionsCalls: collectionsCalls
+                    collectionsCalls: collectionsCalls,
+                    deletedCalls : deletedCalls
                 })
                 return {
                     success: false

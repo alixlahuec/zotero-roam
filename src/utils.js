@@ -154,21 +154,21 @@
         },
 
         getLibraries(){
-            return zoteroRoam.config.requests.map(rq => {
-                let keyAccess = zoteroRoam.data.keys.find(k => k.key == rq.apikey).access;
-                let {libType, libID} = rq.library.split("/");
+            return zoteroRoam.data.libraries.map(lib => {
+                let keyAccess = zoteroRoam.data.keys.find(k => k.key == lib.apikey).access;
+                let {libType, libID} = lib.path.split("/");
                 let permissions = libType == "users" ? keyAccess.user : (Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all);
-                let collections = zoteroRoam.data.collections.filter(cl => cl.requestLabel == rq.name);
-                let libName = collections.length > 0 ? collections[0].library.name : rq.library;
+                let collections = zoteroRoam.data.collections.filter(cl => zoteroRoam.utils.getItemPrefix(cl) == lib.path);
+                let libName = collections.length > 0 ? collections[0].library.name : lib.path;
                 return {
                     name: libName,
-                    apikey: rq.apikey, 
-                    path: rq.library, 
-                    writeable: permissions.write, 
+                    apikey: lib.apikey,
+                    path: lib.path,
+                    writeable: permissions.write,
                     collections: collections,
-                    version: zoteroRoam.data.libraries.find(lib => lib.path == rq.library).version
+                    version: lib.version
                 }
-            });
+            })
         },
 
         lookForPage(title){

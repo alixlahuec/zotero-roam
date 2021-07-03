@@ -150,7 +150,7 @@
                     library: library
                 };
             });
-            let updateResults = await zoteroRoam.handlers.requestData(updateRequests);
+            let updateResults = await zoteroRoam.handlers.requestData(updateRequests, update = true);
             if(updateResults.success == true){
                 updateResults.data.collections.forEach(collection => {
                     let inStore = zoteroRoam.data.collections.findIndex(cl => cl.key == collection.key);
