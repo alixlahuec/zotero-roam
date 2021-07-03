@@ -460,9 +460,11 @@
                         return item;
                 })).flat(1);
                 requestsResults = zoteroRoam.handlers.extractCitekeys(requestsResults);
+
+                let currentLibs = zoteroRoam.data.libraries;
                 // Collections data
                 if(collections == true){
-                    zoteroRoam.data.libraries.forEach(lib => {
+                    currentLibs.forEach(lib => {
                         collectionsCalls.push(fetch(`https://api.zotero.org/${lib.path}/collections?since=${lib.version}`, {
                             method: 'GET',
                             headers: {
@@ -482,7 +484,7 @@
                 }
                 // Deleted data
                 if(update == true){
-                    zoteroRoam.data.libraries.forEach(lib => {
+                    currentLibs.forEach(lib => {
                         deletedCalls.push(fetch(`https://api.zotero.org/${lib.path}/deleted?since=${lib.version}`, {
                             method: 'GET',
                             headers: {

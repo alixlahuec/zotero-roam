@@ -1514,9 +1514,11 @@ var zoteroRoam = {};
                         return item;
                 })).flat(1);
                 requestsResults = zoteroRoam.handlers.extractCitekeys(requestsResults);
+
+                let currentLibs = zoteroRoam.data.libraries;
                 // Collections data
                 if(collections == true){
-                    zoteroRoam.data.libraries.forEach(lib => {
+                    currentLibs.forEach(lib => {
                         collectionsCalls.push(fetch(`https://api.zotero.org/${lib.path}/collections?since=${lib.version}`, {
                             method: 'GET',
                             headers: {
@@ -1536,7 +1538,7 @@ var zoteroRoam = {};
                 }
                 // Deleted data
                 if(update == true){
-                    zoteroRoam.data.libraries.forEach(lib => {
+                    currentLibs.forEach(lib => {
                         deletedCalls.push(fetch(`https://api.zotero.org/${lib.path}/deleted?since=${lib.version}`, {
                             method: 'GET',
                             headers: {
@@ -1854,6 +1856,7 @@ var zoteroRoam = {};
                     zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
                     zoteroRoam.interface.activeImport.libraries = zoteroRoam.utils.getLibraries();
                     zoteroRoam.interface.activeImport.currentLib = zoteroRoam.interface.activeImport.libraries.find(lib => lib.path == zoteroRoam.interface.activeImport.currentLib.path);
+                    zoteroRoam.utils.sleep(1000);
                     reqResults.successful = await zoteroRoam.write.checkImport(reqResults.successful);
                     outcome = {
                         success: true,
@@ -1894,7 +1897,7 @@ var zoteroRoam = {};
             let keys = Object.values(reqResults).map(it => it.data.key);
             let counter = 0;
             let updatedData = false;
-            while(counter < 3 && !updatedData){
+            while(counter < 2 && !updatedData){
                 try{
                     let check = await fetch(`https://api.zotero.org/${lib.path}/items?itemKey=${keys.join(",")}&since=${lib.version}`, {
                         method: 'GET',
@@ -1911,7 +1914,7 @@ var zoteroRoam = {};
                             zoteroRoam.interface.activeImport.libraries = zoteroRoam.utils.getLibraries();
                             zoteroRoam.interface.activeImport.currentLib = zoteroRoam.interface.activeImport.libraries.find(l => l.path == zoteroRoam.interface.activeImport.currentLib.path);
                         } else {
-                            zoteroRoam.utils.sleep(1000);
+                            zoteroRoam.utils.sleep(2000);
                         }
                     }
                     counter += 1;
