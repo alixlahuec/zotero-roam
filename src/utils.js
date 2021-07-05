@@ -2,7 +2,9 @@
     zoteroRoam.utils = {
 
         addBlock(uid, blockString, order = 0) {
-            window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': { 'string': blockString } });
+            let blockUID = window.roamAlphaAPI.util.generateUID();
+            window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': { 'string': blockString, 'uid': blockUID } });
+            return blockUID;
         },
 
         // From Darren Cook on SO : https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
@@ -127,6 +129,7 @@
             return `${item.library.type}s/${item.library.id}`;
         },
 
+        // RETIRED
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
         // Note: The case where the parent doesn't have children isn't handled here. It shouldn't be a problem because the context in which it is called is that of looking to add grandchildren blocks, essentially
         // I.e this only gets called if the block with UID equal to parent_uid has a child that also has a child/children

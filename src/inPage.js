@@ -113,8 +113,8 @@
 
         },
 
-        async addPageMenus(){
-            zoteroRoam.utils.sleep(100);
+        async addPageMenus(wait = 100){
+            zoteroRoam.utils.sleep(wait);
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
             for(const page of openPages) {
                 let title = page.querySelector("span") ? page.querySelector("span").innerText : "";
@@ -167,13 +167,14 @@
                             // Web records
                             let records_list = [];
                             if(menu_defaults.includes("connectedPapers")){ records_list.push(zoteroRoam.utils.renderBP3Button_link(string = "Connected Papers", {icon: "layout", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-connected-papers", linkAttribute: `target="_blank"`, target: `https://www.connectedpapers.com/${(!itemInLib.data.DOI) ? "search?q=" + encodeURIComponent(itemInLib.data.title) : "api/redirect/doi/" + itemDOI}`})) }
-                            if(menu_defaults.includes("semanticScholar")){ records_list.push((!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_link(string = "Semantic Scholar", {icon: "bookmark", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-semantic-scholar", linkAttribute: `target="_blank"`, target: `https://api.semanticscholar.org/${itemDOI}`})) }
+                            if(menu_defaults.includes("semanticScholar")){ records_list.push((!itemDOI) ? "" : zoteroRoam.utils.renderBP3Button_link(string = "Semantic Scholar", {icon: "bookmark", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-semantic-scholar", linkAttribute: `target="_blank"`, target: `https://api.semanticscholar.org/${itemDOI}`})) }
                             if(menu_defaults.includes("googleScholar")){ records_list.push(zoteroRoam.utils.renderBP3Button_link(string = "Google Scholar", {icon: "learning", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-google-scholar", linkAttribute: `target="_blank"`, target: `https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}`})) }
 
                             // Backlinks
                             let backlinksLib = "";
-                            if(menu_defaults.includes("citingPapers") && itemInLib.data.DOI){
-                                let citeObject = await zoteroRoam.handlers.requestScitations(itemDOI);
+                            let citeObject = null;
+                            if(menu_defaults.includes("citingPapers") && itemDOI){
+                                citeObject = await zoteroRoam.handlers.requestScitations(itemDOI);
                                 let scitingDOIs = citeObject.citations.map(cit => cit.doi);
                                 
                                 if(scitingDOIs.length > 0){
@@ -239,6 +240,17 @@
                                     window.__SCITE.insertBadges();
                                 }
                             }
+
+                            zoteroRoam.events.emit('menu-ready', {
+                                title: title,
+                                item: itemInLib,
+                                doi: itemDOI,
+                                pageInGraph: pageInGraph,
+                                children: itemChildren,
+                                scite: citeObject,
+                                div: pageDiv,
+                                context: pageDiv.closest('.roam-article') ? "main" : "sidebar"
+                            });
                         }
                     } else {
                         try{
@@ -265,7 +277,7 @@
             if(btn){
                 if(btn.classList.contains('zotero-roam-page-menu-add-metadata')){
                     console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
-                    zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: true});
+                    zoteroRoam.handlers.importItemMetadata(title, uid = pageInGraph.uid, {popup: true});
                 } else if(btn.classList.contains('zotero-roam-page-menu-import-notes')){
                     console.log(`Adding notes to ${title} (${pageInGraph.uid})...`);
                     zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
@@ -288,7 +300,7 @@
                 } else if(btn.classList.contains('zotero-roam-page-menu-backlink-add-sidebar')){
                     let elUID = roamAlphaAPI.util.generateUID();
                     roamAlphaAPI.createPage({'page': {'title': btn.dataset.title, 'uid': elUID}});
-                    await zoteroRoam.handlers.addSearchResult(title = btn.dataset.title, uid = elUID, {popup: false});
+                    await zoteroRoam.handlers.importItemMetadata(title = btn.dataset.title, uid = elUID, {popup: false});
                     zoteroRoam.utils.addToSidebar(uid = elUID);
                 } else if(btn.classList.contains('zotero-roam-page-menu-backlinks-total')){
                     zoteroRoam.interface.citations.overlay.querySelector(".header-content h5").innerText = `Papers citing ${title}`;

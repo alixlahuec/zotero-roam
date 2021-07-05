@@ -31,9 +31,10 @@
                 zoteroRoam.config.ref_checking = setInterval(zoteroRoam.inPage.checkReferences, 1000); // continuous
 
                 // Setup page menus :
-                zoteroRoam.inPage.addPageMenus(); // initial
+                zoteroRoam.utils.sleep(100);
+                zoteroRoam.inPage.addPageMenus(wait = 0); // initial
                 window.addEventListener('locationchange', zoteroRoam.inPage.addPageMenus, true); // URL change
-                zoteroRoam.config.page_checking = setInterval(zoteroRoam.inPage.addPageMenus, 1000); // continuous
+                zoteroRoam.config.page_checking = setInterval(function(){zoteroRoam.inPage.addPageMenus(wait = 0)}, 1000); // continuous
 
                 // Auto-update ?
                 if(zoteroRoam.config.userSettings.autoupdate){
@@ -71,6 +72,7 @@
                     }
                 });
 
+                zoteroRoam.events.emit('ready', detail = zoteroRoam.data);
                 zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 zoteroRoam.interface.popToast(message = "Zotero data successfully loaded !", intent = "success");
                 console.log('The results of the API request have been received ; you can check them by inspecting the value of the zoteroRoam.data object. Data import context menu should now be available.');
@@ -150,7 +152,7 @@
                     library: library
                 };
             });
-            let updateResults = await zoteroRoam.handlers.requestData(updateRequests, update = true);
+            let updateResults = await zoteroRoam.handlers.requestData(updateRequests, update = true, collections = true);
             if(updateResults.success == true){
                 updateResults.data.collections.forEach(collection => {
                     let inStore = zoteroRoam.data.collections.findIndex(cl => cl.key == collection.key);
@@ -173,7 +175,7 @@
                     let nbModifiedItems = 0;
 
                     updatedItems.forEach(item => {
-                        let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => {return libItem.key == item.key & libItem.requestLabel == item.requestLabel});
+                        let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => libItem.data.key == item.data.key & libItem.requestLabel == item.requestLabel);
                         if(duplicateIndex == -1){
                             zoteroRoam.data.items.push(item);
                         } else {
@@ -199,6 +201,11 @@
                     console.log("Something went wrong when updating the data. Check the console for any errors.");
                 };
             }
+            zoteroRoam.events.emit('update', {
+                success: updateResults.success,
+                requests: updateRequests,
+                data: updateResults.data
+            })
         }
     };
 })();

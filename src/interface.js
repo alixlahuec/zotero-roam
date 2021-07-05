@@ -662,18 +662,24 @@
 
             elementsKeys.forEach(key => {
                 zoteroRoam.interface[`${key}`].options.list.forEach( (op, index) => {
+                    let target = zoteroRoam.interface.contextMenu.targetElement;
                     switch(zoteroRoam.interface[`${key}`].options.labels[index]){
                         case "Import Zotero data to page":
-                            op.addEventListener("click", () => { zoteroRoam.handlers.addItemData(zoteroRoam.interface.contextMenu.targetElement) })
+                            op.addEventListener("click", () => {
+                                // The DOM element with class "rm-page-ref" is the target of mouse events -- but it's its parent that has the information about the citekey + the page UID
+                                let citekey = target.parentElement.dataset.linkTitle;
+                                let pageUID = target.parentElement.dataset.linkUid;
+                                zoteroRoam.handlers.importItemMetadata(title = citekey, uid = pageUID);
+                            })
                             break;
                         case "Convert to citation":
-                            op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(zoteroRoam.interface.contextMenu.targetElement) });
+                            op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(target) });
                             break;
                         case "Check for citing papers":
-                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForScitations(zoteroRoam.interface.contextMenu.targetElement) });
+                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForScitations(target) });
                             break;
                         case "View item information":
-                            op.addEventListener("click", () => { zoteroRoam.interface.popItemInformation(zoteroRoam.interface.contextMenu.targetElement) });
+                            op.addEventListener("click", () => { zoteroRoam.interface.popItemInformation(target) });
                             break;
                         case "Update Zotero data":
                             op.addEventListener("click", zoteroRoam.extension.update)
@@ -950,7 +956,7 @@
             let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){
                 console.log("Importing metadata...");
-                zoteroRoam.handlers.addSearchResult(itemKey, pageUID, {popup: true});
+                zoteroRoam.handlers.importItemMetadata(itemKey, pageUID, {popup: true});
             });
 
             Array.from(document.querySelectorAll('.item-citekey-section .copy-buttons a.bp3-button[format]')).forEach(btn => {

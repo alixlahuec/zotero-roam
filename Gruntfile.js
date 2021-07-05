@@ -10,7 +10,7 @@ module.exports = function(grunt){
                 "src/utils.js", "src/handlers.js", "src/write.js",
                 "src/interface.js", "src/extension.js", 
                 "src/inPage.js",
-                "src/formatting.js", "src/shortcuts.js",
+                "src/formatting.js", "src/shortcuts.js", "src/events.js",
                 "src/run.js"],
                 dest: "dist/zoteroRoam.js"
             },
@@ -19,7 +19,7 @@ module.exports = function(grunt){
                 "src/utils.js", "src/handlers.js", "src/write.js",
                 "src/interface.js", "src/extension.js", 
                 "src/inPage.js",
-                "src/formatting.js", "src/shortcuts.js",
+                "src/formatting.js", "src/shortcuts.js", "src/events.js",
                 "src/sand.js"],
                 dest: "dist/sandbox.js"
             }

@@ -586,7 +586,9 @@ var zoteroRoam = {};
     zoteroRoam.utils = {
 
         addBlock(uid, blockString, order = 0) {
-            window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': { 'string': blockString } });
+            let blockUID = window.roamAlphaAPI.util.generateUID();
+            window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': { 'string': blockString, 'uid': blockUID } });
+            return blockUID;
         },
 
         // From Darren Cook on SO : https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
@@ -711,6 +713,7 @@ var zoteroRoam = {};
             return `${item.library.type}s/${item.library.id}`;
         },
 
+        // RETIRED
         // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
         // Note: The case where the parent doesn't have children isn't handled here. It shouldn't be a problem because the context in which it is called is that of looking to add grandchildren blocks, essentially
         // I.e this only gets called if the block with UID equal to parent_uid has a child that also has a child/children
@@ -1055,26 +1058,23 @@ var zoteroRoam = {};
 ;(()=>{
     zoteroRoam.handlers = {
 
-        async addBlockObject(parent_uid, object) {
+        addBlockObject(parent_uid, object) {
             // If the Object doesn't have a string property, throw an error
             if(typeof(object.string) === 'undefined'){
                 console.log(object);
                 throw new Error('All blocks passed as an Object must have a string property');
             } else {
                 // Otherwise add the block
-                zoteroRoam.utils.addBlock(uid = parent_uid, blockString = object.string, order = 0);
+                let blockUID = zoteroRoam.utils.addBlock(uid = parent_uid, blockString = object.string, order = 0);
                 // If the Object has a `children` property
                 if(typeof(object.children) !== 'undefined'){
-                    // Wait until the block above has been added to the page
-                    // A recent update provides a function to request a block UID, but let's stick with waiting so that we can make sure not to create orphan blocks
-                    let top_uid = await zoteroRoam.handlers.waitForBlockUID(parent_uid, object.string);
-                    // Once the UID of the parent block has been obtained, go through each child element 1-by-1
+                    // Go through each child element 1-by-1
                     // If a child has children itself, the recursion should ensure everything gets added where it should
                     for(let j = object.children.length - 1; j >= 0; j--){
                         if(object.children[j].constructor === Object){
-                            await zoteroRoam.handlers.addBlockObject(top_uid, object.children[j]);
+                            zoteroRoam.handlers.addBlockObject(blockUID, object.children[j]);
                         } else if(object.children[j].constructor === String){
-                            zoteroRoam.utils.addBlock(uid = top_uid, blockString = object.children[j], order = 0);
+                            zoteroRoam.utils.addBlock(uid = blockUID, blockString = object.children[j], order = 0);
                         } else {
                             throw new Error('All children array items should be of type String or Object');
                         }
@@ -1082,31 +1082,14 @@ var zoteroRoam = {};
                 }
             }
         },
-
-        // refSpan is the DOM element with class "rm-page-ref" that is the target of mouse events -- but it's its parent that has the information about the citekey + the page UID
-        async addItemData(refSpan) {
-            try {
-                let citekey = refSpan.parentElement.dataset.linkTitle.replace("@", ""); // I'll deal with tags later, or not at all
-                let pageUID = refSpan.parentElement.dataset.linkUid;
-                let item = zoteroRoam.data.items.find(i => { return i.key == citekey });
-                if (item) {
-                    let itemData = await zoteroRoam.handlers.formatData(item);
-                    if (itemData.length > 0) {
-                        await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
-                    }
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        },  
-
-        async addMetadataArray(page_uid, arr){
+        
+        addMetadataArray(page_uid, arr){
             if(arr.length > 0){
                 // Go through the array items in reverse order, because each block gets added to the top so have to start with the 'last' block
                 for(k = arr.length - 1; k >= 0; k--){
                     // If the element is an Object, pass it to addBlockObject to recursively process its contents
                     if(arr[k].constructor === Object){
-                        await zoteroRoam.handlers.addBlockObject(page_uid, arr[k]);
+                        zoteroRoam.handlers.addBlockObject(page_uid, arr[k]);
                     } else if(arr[k].constructor === String) {
                         // If the element is a simple String, add the corresponding block & move on
                         zoteroRoam.utils.addBlock(uid = page_uid, blockString = arr[k], order = 0);
@@ -1120,14 +1103,14 @@ var zoteroRoam = {};
                     success: true
                 }
             } else {
-                console.log("The metadata array was empty ; nothing was done.")
+                console.log("The metadata array was empty ; nothing was done.");
                 return {
                     success: false
                 }
             }
         },
 
-        async addSearchResult(title, uid, {popup = true} = {}){
+        async importItemMetadata(title, uid, {popup = true} = {}){
             let citekey = title.replace("@", "");
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
             let itemData = await zoteroRoam.handlers.formatData(item);
@@ -1136,12 +1119,11 @@ var zoteroRoam = {};
             if(item && itemData.length > 0){
                 let pageUID = uid || "";
                 if(uid) {
-                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
+                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
                 } else {
-                    window.roamAlphaAPI.createPage({'page': {'title': title}});
-                    pageUID = await zoteroRoam.handlers.waitForPageUID(title);
-                    if(pageUID != null){
-                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                    pageUID = window.roamAlphaAPI.util.generateUID();
+                    window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
+                        outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                         try {
                             let inGraphDiv = document.querySelector(".item-in-graph");
                             if(inGraphDiv != null){
@@ -1154,15 +1136,6 @@ var zoteroRoam = {};
                                 goToPageButton.removeAttribute("disabled");
                             }
                         } catch(e){};
-                        await zoteroRoam.utils.sleep(125);
-                    } else {
-                        let errorMsg = `There was a problem in obtaining the page's UID for ${title}.`;
-                        if(popup == true){
-                            zoteroRoam.interface.popToast(errorMsg, "danger");
-                        } else{
-                            console.log(errorMsg);
-                        }
-                    }
                 }
                 let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
                 let intent = outcome.success ? "success" : "danger";
@@ -1176,9 +1149,16 @@ var zoteroRoam = {};
                 console.log(itemData);
                 zoteroRoam.interface.popToast(message = "Something went wrong when formatting or importing the item's data.", intent = "danger");
             }
+            zoteroRoam.events.emit('metadata-added', {
+                success: outcome.success,
+                uid: pageUID,
+                title: title,
+                item: item,
+                meta: itemData
+            });
         },
 
-        async addItemNotes(title, uid, {popup = true} = {}){
+        addItemNotes(title, uid, {popup = true} = {}){
             let citekey = title.startsWith("@") ? title.slice(1) : title;
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
@@ -1188,33 +1168,22 @@ var zoteroRoam = {};
 
                 let pageUID = uid || "";
                 if(uid){
-                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = [{string: "[[Notes]]", children: itemNotes}]);
+                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = [{string: "[[Notes]]", children: itemNotes}]);
                 } else {
-                    window.roamAlphaAPI.createPage({'page': {'title': title}});
-                    pageUID = await zoteroRoam.handlers.waitForPageUID(title);
-
-                    if(pageUID != null){
-                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
-                        try {
-                            let inGraphDiv = document.querySelector(".item-in-graph");
-                            if(inGraphDiv != null){
-                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
-                            }
-                            let goToPageButton = document.querySelector(".item-go-to-page");
-                            if(goToPageButton != null){
-                                goToPageButton.setAttribute("data-uid", pageUID);
-                                goToPageButton.disabled = false;
-                            }
-                        } catch(e){};
-                        await zoteroRoam.utils.sleep(125);
-                    } else {
-                        let errorMsg = `There was a problem in obtaining the page's UID for ${title}.`;
-                        if(popup == true){
-                            zoteroRoam.interface.popToast(errorMsg, "danger");
-                        } else{
-                            console.log(errorMsg);
+                    pageUID = window.roamAlphaAPI.util.generateUID();
+                    window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
+                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
+                    try {
+                        let inGraphDiv = document.querySelector(".item-in-graph");
+                        if(inGraphDiv != null){
+                            inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
                         }
-                    }
+                        let goToPageButton = document.querySelector(".item-go-to-page");
+                        if(goToPageButton != null){
+                            goToPageButton.setAttribute("data-uid", pageUID);
+                            goToPageButton.disabled = false;
+                        }
+                    } catch(e){};
                 }
 
                 let outcomeMsg = outcome.success ? "Notes successfully imported." : "The notes couldn't be imported.";
@@ -1224,6 +1193,13 @@ var zoteroRoam = {};
                 } else {
                     console.log(outcomeMsg);
                 }
+                zoteroRoam.events.emit('notes-added', {
+                    success: outcome.success,
+                    uid: pageUID,
+                    title: title,
+                    item: item,
+                    notes: itemNotes
+                });
 
             } catch(e){
                 console.error(e);
@@ -1419,6 +1395,13 @@ var zoteroRoam = {};
             outcome.write.identifiers = toWrite.identifiers;
 
             // Return outcome of the import process
+            zoteroRoam.events.emit('write', {
+                collections: colls,
+                identifiers: identifiers,
+                library: lib,
+                tags: tags,
+                outcome: outcome
+            })
             console.log(outcome);
             return outcome;
 
@@ -1577,7 +1560,8 @@ var zoteroRoam = {};
                     deletedCalls : deletedCalls
                 })
                 return {
-                    success: false
+                    success: false,
+                    data: null
                 }
             }
         },
@@ -1725,6 +1709,7 @@ var zoteroRoam = {};
             });
         },
 
+        // RETIRED
         async waitForBlockUID(parent_uid, string) {
             let top_block = null;
             let found = false;
@@ -1750,6 +1735,7 @@ var zoteroRoam = {};
             }
         },
 
+        // RETIRED
         async waitForPageUID(title) {
             let found = false;
             let tries = 0;
@@ -2585,18 +2571,24 @@ var zoteroRoam = {};
 
             elementsKeys.forEach(key => {
                 zoteroRoam.interface[`${key}`].options.list.forEach( (op, index) => {
+                    let target = zoteroRoam.interface.contextMenu.targetElement;
                     switch(zoteroRoam.interface[`${key}`].options.labels[index]){
                         case "Import Zotero data to page":
-                            op.addEventListener("click", () => { zoteroRoam.handlers.addItemData(zoteroRoam.interface.contextMenu.targetElement) })
+                            op.addEventListener("click", () => {
+                                // The DOM element with class "rm-page-ref" is the target of mouse events -- but it's its parent that has the information about the citekey + the page UID
+                                let citekey = target.parentElement.dataset.linkTitle;
+                                let pageUID = target.parentElement.dataset.linkUid;
+                                zoteroRoam.handlers.importItemMetadata(title = citekey, uid = pageUID);
+                            })
                             break;
                         case "Convert to citation":
-                            op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(zoteroRoam.interface.contextMenu.targetElement) });
+                            op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(target) });
                             break;
                         case "Check for citing papers":
-                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForScitations(zoteroRoam.interface.contextMenu.targetElement) });
+                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForScitations(target) });
                             break;
                         case "View item information":
-                            op.addEventListener("click", () => { zoteroRoam.interface.popItemInformation(zoteroRoam.interface.contextMenu.targetElement) });
+                            op.addEventListener("click", () => { zoteroRoam.interface.popItemInformation(target) });
                             break;
                         case "Update Zotero data":
                             op.addEventListener("click", zoteroRoam.extension.update)
@@ -2873,7 +2865,7 @@ var zoteroRoam = {};
             let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
             document.querySelector("button.item-add-metadata").addEventListener("click", function(){
                 console.log("Importing metadata...");
-                zoteroRoam.handlers.addSearchResult(itemKey, pageUID, {popup: true});
+                zoteroRoam.handlers.importItemMetadata(itemKey, pageUID, {popup: true});
             });
 
             Array.from(document.querySelectorAll('.item-citekey-section .copy-buttons a.bp3-button[format]')).forEach(btn => {
@@ -3157,9 +3149,10 @@ var zoteroRoam = {};
                 zoteroRoam.config.ref_checking = setInterval(zoteroRoam.inPage.checkReferences, 1000); // continuous
 
                 // Setup page menus :
-                zoteroRoam.inPage.addPageMenus(); // initial
+                zoteroRoam.utils.sleep(100);
+                zoteroRoam.inPage.addPageMenus(wait = 0); // initial
                 window.addEventListener('locationchange', zoteroRoam.inPage.addPageMenus, true); // URL change
-                zoteroRoam.config.page_checking = setInterval(zoteroRoam.inPage.addPageMenus, 1000); // continuous
+                zoteroRoam.config.page_checking = setInterval(function(){zoteroRoam.inPage.addPageMenus(wait = 0)}, 1000); // continuous
 
                 // Auto-update ?
                 if(zoteroRoam.config.userSettings.autoupdate){
@@ -3197,6 +3190,7 @@ var zoteroRoam = {};
                     }
                 });
 
+                zoteroRoam.events.emit('ready', detail = zoteroRoam.data);
                 zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 zoteroRoam.interface.popToast(message = "Zotero data successfully loaded !", intent = "success");
                 console.log('The results of the API request have been received ; you can check them by inspecting the value of the zoteroRoam.data object. Data import context menu should now be available.');
@@ -3276,7 +3270,7 @@ var zoteroRoam = {};
                     library: library
                 };
             });
-            let updateResults = await zoteroRoam.handlers.requestData(updateRequests, update = true);
+            let updateResults = await zoteroRoam.handlers.requestData(updateRequests, update = true, collections = true);
             if(updateResults.success == true){
                 updateResults.data.collections.forEach(collection => {
                     let inStore = zoteroRoam.data.collections.findIndex(cl => cl.key == collection.key);
@@ -3299,7 +3293,7 @@ var zoteroRoam = {};
                     let nbModifiedItems = 0;
 
                     updatedItems.forEach(item => {
-                        let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => {return libItem.key == item.key & libItem.requestLabel == item.requestLabel});
+                        let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => libItem.data.key == item.data.key & libItem.requestLabel == item.requestLabel);
                         if(duplicateIndex == -1){
                             zoteroRoam.data.items.push(item);
                         } else {
@@ -3325,6 +3319,11 @@ var zoteroRoam = {};
                     console.log("Something went wrong when updating the data. Check the console for any errors.");
                 };
             }
+            zoteroRoam.events.emit('update', {
+                success: updateResults.success,
+                requests: updateRequests,
+                data: updateResults.data
+            })
         }
     };
 })();
@@ -3444,8 +3443,8 @@ var zoteroRoam = {};
 
         },
 
-        async addPageMenus(){
-            zoteroRoam.utils.sleep(100);
+        async addPageMenus(wait = 100){
+            zoteroRoam.utils.sleep(wait);
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
             for(const page of openPages) {
                 let title = page.querySelector("span") ? page.querySelector("span").innerText : "";
@@ -3498,13 +3497,14 @@ var zoteroRoam = {};
                             // Web records
                             let records_list = [];
                             if(menu_defaults.includes("connectedPapers")){ records_list.push(zoteroRoam.utils.renderBP3Button_link(string = "Connected Papers", {icon: "layout", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-connected-papers", linkAttribute: `target="_blank"`, target: `https://www.connectedpapers.com/${(!itemInLib.data.DOI) ? "search?q=" + encodeURIComponent(itemInLib.data.title) : "api/redirect/doi/" + itemDOI}`})) }
-                            if(menu_defaults.includes("semanticScholar")){ records_list.push((!itemInLib.data.DOI) ? "" : zoteroRoam.utils.renderBP3Button_link(string = "Semantic Scholar", {icon: "bookmark", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-semantic-scholar", linkAttribute: `target="_blank"`, target: `https://api.semanticscholar.org/${itemDOI}`})) }
+                            if(menu_defaults.includes("semanticScholar")){ records_list.push((!itemDOI) ? "" : zoteroRoam.utils.renderBP3Button_link(string = "Semantic Scholar", {icon: "bookmark", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-semantic-scholar", linkAttribute: `target="_blank"`, target: `https://api.semanticscholar.org/${itemDOI}`})) }
                             if(menu_defaults.includes("googleScholar")){ records_list.push(zoteroRoam.utils.renderBP3Button_link(string = "Google Scholar", {icon: "learning", linkClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-google-scholar", linkAttribute: `target="_blank"`, target: `https://scholar.google.com/scholar?q=${(!itemInLib.data.DOI) ? encodeURIComponent(itemInLib.data.title) : itemDOI}`})) }
 
                             // Backlinks
                             let backlinksLib = "";
-                            if(menu_defaults.includes("citingPapers") && itemInLib.data.DOI){
-                                let citeObject = await zoteroRoam.handlers.requestScitations(itemDOI);
+                            let citeObject = null;
+                            if(menu_defaults.includes("citingPapers") && itemDOI){
+                                citeObject = await zoteroRoam.handlers.requestScitations(itemDOI);
                                 let scitingDOIs = citeObject.citations.map(cit => cit.doi);
                                 
                                 if(scitingDOIs.length > 0){
@@ -3570,6 +3570,17 @@ var zoteroRoam = {};
                                     window.__SCITE.insertBadges();
                                 }
                             }
+
+                            zoteroRoam.events.emit('menu-ready', {
+                                title: title,
+                                item: itemInLib,
+                                doi: itemDOI,
+                                pageInGraph: pageInGraph,
+                                children: itemChildren,
+                                scite: citeObject,
+                                div: pageDiv,
+                                context: pageDiv.closest('.roam-article') ? "main" : "sidebar"
+                            });
                         }
                     } else {
                         try{
@@ -3596,7 +3607,7 @@ var zoteroRoam = {};
             if(btn){
                 if(btn.classList.contains('zotero-roam-page-menu-add-metadata')){
                     console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
-                    zoteroRoam.handlers.addSearchResult(title, uid = pageInGraph.uid, {popup: true});
+                    zoteroRoam.handlers.importItemMetadata(title, uid = pageInGraph.uid, {popup: true});
                 } else if(btn.classList.contains('zotero-roam-page-menu-import-notes')){
                     console.log(`Adding notes to ${title} (${pageInGraph.uid})...`);
                     zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
@@ -3619,7 +3630,7 @@ var zoteroRoam = {};
                 } else if(btn.classList.contains('zotero-roam-page-menu-backlink-add-sidebar')){
                     let elUID = roamAlphaAPI.util.generateUID();
                     roamAlphaAPI.createPage({'page': {'title': btn.dataset.title, 'uid': elUID}});
-                    await zoteroRoam.handlers.addSearchResult(title = btn.dataset.title, uid = elUID, {popup: false});
+                    await zoteroRoam.handlers.importItemMetadata(title = btn.dataset.title, uid = elUID, {popup: false});
                     zoteroRoam.utils.addToSidebar(uid = elUID);
                 } else if(btn.classList.contains('zotero-roam-page-menu-backlinks-total')){
                     zoteroRoam.interface.citations.overlay.querySelector(".header-content h5").innerText = `Papers citing ${title}`;
@@ -4058,6 +4069,42 @@ var zoteroRoam = {};
                     zoteroRoam.shortcuts.actions[`${sh.action}`].execute();
                 }
             });
+        }
+    }
+})();
+
+;(()=>{
+    zoteroRoam.events = {
+        // zotero-roam:ready
+        // Signals the extension has loaded successfully
+        // Emitted by : extension.load
+        'ready': {},
+        // zotero-roam:menu-ready
+        // Signals a page menu has been rendered
+        // Emitted by : inPage.addPageMenus
+        'menu-ready': {},
+        // zotero-roam:metadata-added
+        // Signals a metadata import has terminated (successfully?)
+        // Emitted by : handlers.importItemMetadata
+        'metadata-added': {},
+        // zotero-roam:notes-added
+        // Signals a notes import has terminated (successfully?)
+        // Emitted by : handlers.addItemNotes
+        'notes-added': {},
+        // zotero-roam:update
+        // Signals the extension's dataset has been updated (successfully?)
+        // Emitted by : extension.update
+        'update': {},
+        // zotero-roam:write
+        // Signals a write call has terminated
+        // Emitted by : handlers.importSelectedItems
+        'write': {},
+        emit(type, detail = {}, target = document){
+            let e = new CustomEvent(`zotero-roam:${type}`, {bubbles: true, cancelable: true, detail: detail});
+            if(zoteroRoam.config.userSettings.logEvents == true){
+                console.log(e);
+            }
+            return target.dispatchEvent(e);
         }
     }
 })();

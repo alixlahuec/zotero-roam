@@ -1,26 +1,23 @@
 ;(()=>{
     zoteroRoam.handlers = {
 
-        async addBlockObject(parent_uid, object) {
+        addBlockObject(parent_uid, object) {
             // If the Object doesn't have a string property, throw an error
             if(typeof(object.string) === 'undefined'){
                 console.log(object);
                 throw new Error('All blocks passed as an Object must have a string property');
             } else {
                 // Otherwise add the block
-                zoteroRoam.utils.addBlock(uid = parent_uid, blockString = object.string, order = 0);
+                let blockUID = zoteroRoam.utils.addBlock(uid = parent_uid, blockString = object.string, order = 0);
                 // If the Object has a `children` property
                 if(typeof(object.children) !== 'undefined'){
-                    // Wait until the block above has been added to the page
-                    // A recent update provides a function to request a block UID, but let's stick with waiting so that we can make sure not to create orphan blocks
-                    let top_uid = await zoteroRoam.handlers.waitForBlockUID(parent_uid, object.string);
-                    // Once the UID of the parent block has been obtained, go through each child element 1-by-1
+                    // Go through each child element 1-by-1
                     // If a child has children itself, the recursion should ensure everything gets added where it should
                     for(let j = object.children.length - 1; j >= 0; j--){
                         if(object.children[j].constructor === Object){
-                            await zoteroRoam.handlers.addBlockObject(top_uid, object.children[j]);
+                            zoteroRoam.handlers.addBlockObject(blockUID, object.children[j]);
                         } else if(object.children[j].constructor === String){
-                            zoteroRoam.utils.addBlock(uid = top_uid, blockString = object.children[j], order = 0);
+                            zoteroRoam.utils.addBlock(uid = blockUID, blockString = object.children[j], order = 0);
                         } else {
                             throw new Error('All children array items should be of type String or Object');
                         }
@@ -28,31 +25,14 @@
                 }
             }
         },
-
-        // refSpan is the DOM element with class "rm-page-ref" that is the target of mouse events -- but it's its parent that has the information about the citekey + the page UID
-        async addItemData(refSpan) {
-            try {
-                let citekey = refSpan.parentElement.dataset.linkTitle.replace("@", ""); // I'll deal with tags later, or not at all
-                let pageUID = refSpan.parentElement.dataset.linkUid;
-                let item = zoteroRoam.data.items.find(i => { return i.key == citekey });
-                if (item) {
-                    let itemData = await zoteroRoam.handlers.formatData(item);
-                    if (itemData.length > 0) {
-                        await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
-                    }
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        },  
-
-        async addMetadataArray(page_uid, arr){
+        
+        addMetadataArray(page_uid, arr){
             if(arr.length > 0){
                 // Go through the array items in reverse order, because each block gets added to the top so have to start with the 'last' block
                 for(k = arr.length - 1; k >= 0; k--){
                     // If the element is an Object, pass it to addBlockObject to recursively process its contents
                     if(arr[k].constructor === Object){
-                        await zoteroRoam.handlers.addBlockObject(page_uid, arr[k]);
+                        zoteroRoam.handlers.addBlockObject(page_uid, arr[k]);
                     } else if(arr[k].constructor === String) {
                         // If the element is a simple String, add the corresponding block & move on
                         zoteroRoam.utils.addBlock(uid = page_uid, blockString = arr[k], order = 0);
@@ -66,14 +46,14 @@
                     success: true
                 }
             } else {
-                console.log("The metadata array was empty ; nothing was done.")
+                console.log("The metadata array was empty ; nothing was done.");
                 return {
                     success: false
                 }
             }
         },
 
-        async addSearchResult(title, uid, {popup = true} = {}){
+        async importItemMetadata(title, uid, {popup = true} = {}){
             let citekey = title.replace("@", "");
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
             let itemData = await zoteroRoam.handlers.formatData(item);
@@ -82,12 +62,11 @@
             if(item && itemData.length > 0){
                 let pageUID = uid || "";
                 if(uid) {
-                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
+                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
                 } else {
-                    window.roamAlphaAPI.createPage({'page': {'title': title}});
-                    pageUID = await zoteroRoam.handlers.waitForPageUID(title);
-                    if(pageUID != null){
-                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                    pageUID = window.roamAlphaAPI.util.generateUID();
+                    window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
+                        outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                         try {
                             let inGraphDiv = document.querySelector(".item-in-graph");
                             if(inGraphDiv != null){
@@ -100,15 +79,6 @@
                                 goToPageButton.removeAttribute("disabled");
                             }
                         } catch(e){};
-                        await zoteroRoam.utils.sleep(125);
-                    } else {
-                        let errorMsg = `There was a problem in obtaining the page's UID for ${title}.`;
-                        if(popup == true){
-                            zoteroRoam.interface.popToast(errorMsg, "danger");
-                        } else{
-                            console.log(errorMsg);
-                        }
-                    }
                 }
                 let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
                 let intent = outcome.success ? "success" : "danger";
@@ -122,9 +92,16 @@
                 console.log(itemData);
                 zoteroRoam.interface.popToast(message = "Something went wrong when formatting or importing the item's data.", intent = "danger");
             }
+            zoteroRoam.events.emit('metadata-added', {
+                success: outcome.success,
+                uid: pageUID,
+                title: title,
+                item: item,
+                meta: itemData
+            });
         },
 
-        async addItemNotes(title, uid, {popup = true} = {}){
+        addItemNotes(title, uid, {popup = true} = {}){
             let citekey = title.startsWith("@") ? title.slice(1) : title;
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
@@ -134,33 +111,22 @@
 
                 let pageUID = uid || "";
                 if(uid){
-                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = [{string: "[[Notes]]", children: itemNotes}]);
+                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = [{string: "[[Notes]]", children: itemNotes}]);
                 } else {
-                    window.roamAlphaAPI.createPage({'page': {'title': title}});
-                    pageUID = await zoteroRoam.handlers.waitForPageUID(title);
-
-                    if(pageUID != null){
-                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
-                        try {
-                            let inGraphDiv = document.querySelector(".item-in-graph");
-                            if(inGraphDiv != null){
-                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
-                            }
-                            let goToPageButton = document.querySelector(".item-go-to-page");
-                            if(goToPageButton != null){
-                                goToPageButton.setAttribute("data-uid", pageUID);
-                                goToPageButton.disabled = false;
-                            }
-                        } catch(e){};
-                        await zoteroRoam.utils.sleep(125);
-                    } else {
-                        let errorMsg = `There was a problem in obtaining the page's UID for ${title}.`;
-                        if(popup == true){
-                            zoteroRoam.interface.popToast(errorMsg, "danger");
-                        } else{
-                            console.log(errorMsg);
+                    pageUID = window.roamAlphaAPI.util.generateUID();
+                    window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
+                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
+                    try {
+                        let inGraphDiv = document.querySelector(".item-in-graph");
+                        if(inGraphDiv != null){
+                            inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
                         }
-                    }
+                        let goToPageButton = document.querySelector(".item-go-to-page");
+                        if(goToPageButton != null){
+                            goToPageButton.setAttribute("data-uid", pageUID);
+                            goToPageButton.disabled = false;
+                        }
+                    } catch(e){};
                 }
 
                 let outcomeMsg = outcome.success ? "Notes successfully imported." : "The notes couldn't be imported.";
@@ -170,6 +136,13 @@
                 } else {
                     console.log(outcomeMsg);
                 }
+                zoteroRoam.events.emit('notes-added', {
+                    success: outcome.success,
+                    uid: pageUID,
+                    title: title,
+                    item: item,
+                    notes: itemNotes
+                });
 
             } catch(e){
                 console.error(e);
@@ -365,6 +338,13 @@
             outcome.write.identifiers = toWrite.identifiers;
 
             // Return outcome of the import process
+            zoteroRoam.events.emit('write', {
+                collections: colls,
+                identifiers: identifiers,
+                library: lib,
+                tags: tags,
+                outcome: outcome
+            })
             console.log(outcome);
             return outcome;
 
@@ -523,7 +503,8 @@
                     deletedCalls : deletedCalls
                 })
                 return {
-                    success: false
+                    success: false,
+                    data: null
                 }
             }
         },
@@ -671,6 +652,7 @@
             });
         },
 
+        // RETIRED
         async waitForBlockUID(parent_uid, string) {
             let top_block = null;
             let found = false;
@@ -696,6 +678,7 @@
             }
         },
 
+        // RETIRED
         async waitForPageUID(title) {
             let found = false;
             let tries = 0;
