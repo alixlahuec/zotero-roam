@@ -56,6 +56,12 @@
 
             zoteroRoam.interface.search.updateButton.addEventListener("click", function(){zoteroRoam.extension.update(popup = true)});
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
+
+            document.addEventListener("click", (e) => {
+                if(e.target.closest('.zotero-roam-page-div')){
+                    zoteroRoam.inPage.handleClicks(e.target);
+                }
+            })
         },
 
         createIcon(id) {

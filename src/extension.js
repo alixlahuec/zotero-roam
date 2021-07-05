@@ -86,6 +86,10 @@
             zoteroRoam.data.collections = [];
             zoteroRoam.data.scite = [];
             zoteroRoam.data.keys = [];
+            zoteroRoam.data.libraries = zoteroRoam.data.libraries.map(lib => {
+                lib.version = "0";
+                return lib;
+            });
 
             if(zoteroRoam.librarySearch.autocomplete !== null){
                 zoteroRoam.librarySearch.autocomplete.unInit();

@@ -25,7 +25,7 @@
                 }
             }
         },
-        
+
         addMetadataArray(page_uid, arr){
             if(arr.length > 0){
                 // Go through the array items in reverse order, because each block gets added to the top so have to start with the 'last' block
@@ -58,9 +58,9 @@
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
             let itemData = await zoteroRoam.handlers.formatData(item);
             let outcome = {};
-        
+            let pageUID = uid || "";
+            
             if(item && itemData.length > 0){
-                let pageUID = uid || "";
                 if(uid) {
                     outcome = zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
                 } else {

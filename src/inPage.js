@@ -133,6 +133,8 @@
                         if(pageDiv == null){
                             pageDiv = document.createElement("div");
                             pageDiv.classList.add("zotero-roam-page-div");
+                            pageDiv.setAttribute("data-uid", pageInGraph.uid);
+                            pageDiv.setAttribute("data-title", title);
                             pageDiv.innerHTML = !itemDOI ? `` :`
                             <span class="zotero-roam-page-doi" data-doi="${itemDOI}">
                             <a href="https://doi.org/${itemDOI}" class="bp3-text-muted" target="_blank">${itemDOI}</a>
@@ -226,9 +228,6 @@
                             ${backlinksLib}
                             </div>
                             `;
-
-                            // Adding event listeners for action buttons
-                            menuDiv.addEventListener("click", function(e){ zoteroRoam.inPage.handleClicks({target: e.target, title: title, pageInGraph: pageInGraph}) })
                             
                             // ---
                             // Badge from scite.ai
@@ -245,7 +244,7 @@
                                 title: title,
                                 item: itemInLib,
                                 doi: itemDOI,
-                                pageInGraph: pageInGraph,
+                                uid: pageInGraph.uid,
                                 children: itemChildren,
                                 scite: citeObject,
                                 div: pageDiv,
@@ -272,15 +271,18 @@
             return sciteBadge;
         },
 
-        async handleClicks({target = null, title = "", pageInGraph = {}} = {}){
+        async handleClicks(target){
+            let pageDiv = target.closest('.zotero-roam-page-div');
+            let title = pageDiv.dataset.title;
+            let uid = pageDiv.dataset.uid;
             let btn = target.closest('button');
             if(btn){
                 if(btn.classList.contains('zotero-roam-page-menu-add-metadata')){
-                    console.log(`Importing metadata to ${title} (${pageInGraph.uid})...`);
-                    zoteroRoam.handlers.importItemMetadata(title, uid = pageInGraph.uid, {popup: true});
+                    console.log(`Importing metadata to ${title} (${uid})...`);
+                    zoteroRoam.handlers.importItemMetadata(title, uid = uid, {popup: true});
                 } else if(btn.classList.contains('zotero-roam-page-menu-import-notes')){
-                    console.log(`Adding notes to ${title} (${pageInGraph.uid})...`);
-                    zoteroRoam.handlers.addItemNotes(title = title, uid = pageInGraph.uid);
+                    console.log(`Adding notes to ${title} (${uid})...`);
+                    zoteroRoam.handlers.addItemNotes(title = title, uid = uid);
                 } else if(btn.classList.contains('zotero-roam-page-menu-view-item-info')){
                     zoteroRoam.interface.renderItemInPanel(citekey = title);
                 } else if(btn.classList.contains('zotero-roam-page-menu-backlinks-button')){
