@@ -70,7 +70,7 @@ var zoteroRoam = {};
 
         librarySearch: {autocomplete: null},
 
-        citations: {pagination: null, autocomplete: null, currentDOI: ""},
+        citations: {pagination: null, autocomplete: null, currentDOI: "", currentCitekey: ""},
 
         tagSelection: {autocomplete: null},
 
@@ -254,7 +254,7 @@ var zoteroRoam = {};
                 wrapper: false,
                 trigger: (query) => {
                     if(query.length == 0){
-                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI);
+                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI, citekey = zoteroRoam.citations.currentCitekey);
                         return false;
                     } else {
                         return true;
@@ -903,6 +903,50 @@ var zoteroRoam = {};
             return cleanBlock;
         },
 
+        parseSemanticItem(item){
+            let cleanItem = {
+                doi: item.doi,
+                intent: item.intent,
+                isInfluential: item.isInfluential,
+                links: {
+                    semanticScholar: `https://www.semanticscholar.org/paper/${item.paperId}`
+                },
+                meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
+                title: item.title,
+                year: item.year.toString()
+            }
+
+            // Parse authors data
+            cleanItem.authorsLastNames = item.authors.map(a => a.name.replaceAll(".", "").split(" ").slice(1).filter(n => n.length > 1).join(" "));
+            cleanItem.authorsString = cleanItem.authorsLastNames.join(" ");
+            switch(cleanItem.authorsLastNames.length){
+                case 0:
+                    cleanItem.authors = "";
+                    break;
+                case 1:
+                    cleanItem.authors = cleanItem.authorsLastNames[0];
+                    break;
+                case 2:
+                    cleanItem.authors = cleanItem.authorsLastNames[0] + " & " + cleanItem.authorsLastNames[1];
+                    break;
+                case 3:
+                    cleanItem.authors = cleanItem.authorsLastNames[0] + ", " + cleanItem.authorsLastNames[1] + " & " + cleanItem.authorsLastNames[2];
+                    break;
+                default:
+                    cleanItem.authors = cleanItem.authorsLastNames[0] + " et al.";
+            }
+
+            if(item.arxivId){
+                cleanItem.links['arxiv'] = `https://arxiv.org/abs/${item.arxivId}`;
+            }
+            if(item.doi){
+                cleanItem.links['connectedPapers'] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
+                cleanItem.links['googleScholar'] = `https://scholar.google.com/scholar?q=${item.doi}`;
+            }
+
+            return cleanItem;
+        },
+
         cleanNewlines(text){
             let cleanText = text;
             if(cleanText.startsWith("\n")){
@@ -1116,7 +1160,7 @@ var zoteroRoam = {};
             let itemData = await zoteroRoam.handlers.formatData(item);
             let outcome = {};
             let pageUID = uid || "";
-            
+
             if(item && itemData.length > 0){
                 if(uid) {
                     outcome = zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
@@ -1354,7 +1398,7 @@ var zoteroRoam = {};
                         if(scitations.simplified.length == 0){
                             zoteroRoam.interface.popToast("This item has no available citing papers");
                         } else {
-                            zoteroRoam.interface.popCitationsOverlay(item.data.DOI);
+                            zoteroRoam.interface.popCitationsOverlay(item.data.DOI, citekey);
                         }
                     } else{
                         zoteroRoam.interface.popToast("This item has no DOI (required for citations lookup).", "danger");
@@ -1400,7 +1444,13 @@ var zoteroRoam = {};
                 identifiers: identifiers,
                 library: lib,
                 tags: tags,
-                outcome: outcome
+                outcome: outcome,
+                context: {
+                    citing: {
+                        doi: zoteroRoam.citations.currentDOI,
+                        key: zoteroRoam.citations.currentCitekey
+                    }
+                }
             })
             console.log(outcome);
             return outcome;
@@ -1474,6 +1524,69 @@ var zoteroRoam = {};
             } else{
                 return zoteroRoam.data.scite[sciteListIndex];
             }
+        },
+
+        async getSemantic(doi){
+            let dataIndex = zoteroRoam.data.semantic.findIndex(res => res.doi == doi);
+            if(dataIndex == -1){
+                let outcome = await zoteroRoam.handlers.requestSemantic(doi);
+                if(outcome.success == true){
+                    zoteroRoam.data.semantic.push(outcome.data);
+                    return outcome.data;
+                } else {
+                    console.log(outcome);
+                    return [];
+                }
+            } else {
+                return zoteroRoam.data.semantic[dataIndex];
+            }
+        },
+
+        async requestSemantic(doi){
+            let outcome = {};
+
+            try{
+                let req = await fetch(`https://api.semanticscholar.org/v1/paper/${doi}?include_unknown_references=true`, {method: 'GET'});
+                if(req.ok == true){
+                    let reqResults = await req.json();
+                    // Extract citations and references from the data object
+                    var {citations, references} = reqResults;
+                    let citeObject = {
+                        doi: doi,
+                        data: reqResults,
+                        citations: citations || [],
+                        references: references || []
+                    };
+                    // Parse metadata for both citations and references
+                    citeObject.citations = citeObject.citations.map(cit => zoteroRoam.utils.parseSemanticItem(cit));
+                    citeObject.references = citeObject.references.map(ref => zoteroRoam.utils.parseSemanticItem(ref));
+
+                    // If the request returned a successful API response, log the data
+                    outcome = {
+                        success: true,
+                        data: citeObject
+                    }
+                    
+                } else {
+                    // If the request returned an API response but was not successful, log it in the outcome
+                    console.log(`The request for ${req.url} returned a code of ${req.status}`)
+                    outcome = {
+                        doi: doi,
+                        success: false,
+                        response: req
+                    }
+                }
+            } catch(e){
+                // If the request yielded an error, log it in the outcome
+                outcome = {
+                    doi: doi,
+                    success: null,
+                    error: e
+                }
+            } finally {
+                return outcome;
+            }
+
         },
 
         async requestData(requests, update = false, collections = true) {
@@ -2647,8 +2760,9 @@ var zoteroRoam = {};
             }
         },
 
-        popCitationsOverlay(doi){
+        popCitationsOverlay(doi, citekey){
             zoteroRoam.citations.currentDOI = doi;
+            zoteroRoam.citations.currentCitekey = citekey;
             // All citations -- paginated
             let fullData = zoteroRoam.data.scite.find(item => item.doi == doi).simplified;
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
@@ -3209,6 +3323,7 @@ var zoteroRoam = {};
             zoteroRoam.data.items = [];
             zoteroRoam.data.collections = [];
             zoteroRoam.data.scite = [];
+            zoteroRoam.data.semantic = [];
             zoteroRoam.data.keys = [];
             zoteroRoam.data.libraries = zoteroRoam.data.libraries.map(lib => {
                 lib.version = "0";
@@ -3459,7 +3574,8 @@ var zoteroRoam = {};
             for(const page of openPages) {
                 let title = page.querySelector("span") ? page.querySelector("span").innerText : "";
                 if(title.startsWith("@")){
-                    let itemInLib = zoteroRoam.data.items.find(it => it.key == title.slice(1));
+                    let itemCitekey = title.slice(1);
+                    let itemInLib = zoteroRoam.data.items.find(it => it.key == citekey);
                     // If the item is in the library
                     if(typeof(itemInLib) !== 'undefined'){
                         let itemDOI = !itemInLib.data.DOI ? "" : zoteroRoam.utils.parseDOI(itemInLib.data.DOI);
@@ -3495,8 +3611,8 @@ var zoteroRoam = {};
                             let addMetadata_element = !menu_defaults.includes("addMetadata") ? `` : zoteroRoam.utils.renderBP3Button_group(string = "Add metadata", {buttonClass: "bp3-minimal zotero-roam-page-menu-add-metadata", icon: "add"});
                             let importNotes_element = !menu_defaults.includes("importNotes") || !itemChildren.notes ? `` : zoteroRoam.utils.renderBP3Button_group(string = "Import notes", {buttonClass: "bp3-minimal zotero-roam-page-menu-import-notes", icon: "comment"});
                             let viewItemInfo_element = !menu_defaults.includes("viewItemInfo") ? `` : zoteroRoam.utils.renderBP3Button_group(string = "View item information", {buttonClass: "bp3-minimal zotero-roam-page-menu-view-item-info", icon: "info-sign"});
-                            let openZoteroLocal_element = !menu_defaults.includes("openZoteroLocal") ? `` : zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (local)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-local", target: zoteroRoam.formatting.getLocalLink(itemInLib, {format: "target"}), linkAttribute: `target="_blank"`});
-                            let openZoteroWeb_element = !menu_defaults.includes("openZoteroWeb") ? `` : zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero (web)", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-web", target: zoteroRoam.formatting.getWebLink(itemInLib, {format: "target"}), linkAttribute: `target="_blank"`});
+                            let openZoteroLocal_element = !menu_defaults.includes("openZoteroLocal") ? `` : zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-local", target: zoteroRoam.formatting.getLocalLink(itemInLib, {format: "target"}), linkAttribute: `target="_blank"`, icon: "application"});
+                            let openZoteroWeb_element = !menu_defaults.includes("openZoteroWeb") ? `` : zoteroRoam.utils.renderBP3Button_link(string = "Open in Zotero", {linkClass: "bp3-minimal zotero-roam-page-menu-open-zotero-web", target: zoteroRoam.formatting.getWebLink(itemInLib, {format: "target"}), linkAttribute: `target="_blank"`, icon: "cloud"});
 
                             // PDF links
                             let pdfLinks_element = !menu_defaults.includes("pdfLinks") || !itemChildren.pdfItems ? `` : itemChildren.pdfItems.map(item => {
@@ -3523,8 +3639,8 @@ var zoteroRoam = {};
                                     let doiPapers = zoteroRoam.data.items.filter(it => it.data.DOI);
                                     let papersInLib = doiPapers.filter(it => scitingDOIs.includes(zoteroRoam.utils.parseDOI(it.data.DOI)));
                                     backlinksLib = "<hr>";
-                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} citations in library`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
-                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${scitingDOIs.length} citations available`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "citation", buttonAttribute: `data-doi=${itemDOI}`});
+                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${scitingDOIs.length} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}"`});
 
                                     if(papersInLib.length > 0){
                                         backlinksLib += `
@@ -3647,7 +3763,8 @@ var zoteroRoam = {};
                 } else if(btn.classList.contains('zotero-roam-page-menu-backlinks-total')){
                     zoteroRoam.interface.citations.overlay.querySelector(".header-content h5").innerText = `Papers citing ${title}`;
                     let doi = btn.getAttribute("data-doi");
-                    zoteroRoam.interface.popCitationsOverlay(doi);
+                    let citekey = btn.getAttribute("data-citekey");
+                    zoteroRoam.interface.popCitationsOverlay(doi, citekey);
                 }
             }
         }

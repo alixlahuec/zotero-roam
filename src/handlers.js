@@ -59,7 +59,7 @@
             let itemData = await zoteroRoam.handlers.formatData(item);
             let outcome = {};
             let pageUID = uid || "";
-            
+
             if(item && itemData.length > 0){
                 if(uid) {
                     outcome = zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
@@ -297,7 +297,7 @@
                         if(scitations.simplified.length == 0){
                             zoteroRoam.interface.popToast("This item has no available citing papers");
                         } else {
-                            zoteroRoam.interface.popCitationsOverlay(item.data.DOI);
+                            zoteroRoam.interface.popCitationsOverlay(item.data.DOI, citekey);
                         }
                     } else{
                         zoteroRoam.interface.popToast("This item has no DOI (required for citations lookup).", "danger");
@@ -343,7 +343,13 @@
                 identifiers: identifiers,
                 library: lib,
                 tags: tags,
-                outcome: outcome
+                outcome: outcome,
+                context: {
+                    citing: {
+                        doi: zoteroRoam.citations.currentDOI,
+                        key: zoteroRoam.citations.currentCitekey
+                    }
+                }
             })
             console.log(outcome);
             return outcome;
@@ -417,6 +423,69 @@
             } else{
                 return zoteroRoam.data.scite[sciteListIndex];
             }
+        },
+
+        async getSemantic(doi){
+            let dataIndex = zoteroRoam.data.semantic.findIndex(res => res.doi == doi);
+            if(dataIndex == -1){
+                let outcome = await zoteroRoam.handlers.requestSemantic(doi);
+                if(outcome.success == true){
+                    zoteroRoam.data.semantic.push(outcome.data);
+                    return outcome.data;
+                } else {
+                    console.log(outcome);
+                    return [];
+                }
+            } else {
+                return zoteroRoam.data.semantic[dataIndex];
+            }
+        },
+
+        async requestSemantic(doi){
+            let outcome = {};
+
+            try{
+                let req = await fetch(`https://api.semanticscholar.org/v1/paper/${doi}?include_unknown_references=true`, {method: 'GET'});
+                if(req.ok == true){
+                    let reqResults = await req.json();
+                    // Extract citations and references from the data object
+                    var {citations, references} = reqResults;
+                    let citeObject = {
+                        doi: doi,
+                        data: reqResults,
+                        citations: citations || [],
+                        references: references || []
+                    };
+                    // Parse metadata for both citations and references
+                    citeObject.citations = citeObject.citations.map(cit => zoteroRoam.utils.parseSemanticItem(cit));
+                    citeObject.references = citeObject.references.map(ref => zoteroRoam.utils.parseSemanticItem(ref));
+
+                    // If the request returned a successful API response, log the data
+                    outcome = {
+                        success: true,
+                        data: citeObject
+                    }
+                    
+                } else {
+                    // If the request returned an API response but was not successful, log it in the outcome
+                    console.log(`The request for ${req.url} returned a code of ${req.status}`)
+                    outcome = {
+                        doi: doi,
+                        success: false,
+                        response: req
+                    }
+                }
+            } catch(e){
+                // If the request yielded an error, log it in the outcome
+                outcome = {
+                    doi: doi,
+                    success: null,
+                    error: e
+                }
+            } finally {
+                return outcome;
+            }
+
         },
 
         async requestData(requests, update = false, collections = true) {

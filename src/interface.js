@@ -738,8 +738,9 @@
             }
         },
 
-        popCitationsOverlay(doi){
+        popCitationsOverlay(doi, citekey){
             zoteroRoam.citations.currentDOI = doi;
+            zoteroRoam.citations.currentCitekey = citekey;
             // All citations -- paginated
             let fullData = zoteroRoam.data.scite.find(item => item.doi == doi).simplified;
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});

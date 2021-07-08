@@ -319,6 +319,50 @@
             return cleanBlock;
         },
 
+        parseSemanticItem(item){
+            let cleanItem = {
+                doi: item.doi,
+                intent: item.intent,
+                isInfluential: item.isInfluential,
+                links: {
+                    semanticScholar: `https://www.semanticscholar.org/paper/${item.paperId}`
+                },
+                meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
+                title: item.title,
+                year: item.year.toString()
+            }
+
+            // Parse authors data
+            cleanItem.authorsLastNames = item.authors.map(a => a.name.replaceAll(".", "").split(" ").slice(1).filter(n => n.length > 1).join(" "));
+            cleanItem.authorsString = cleanItem.authorsLastNames.join(" ");
+            switch(cleanItem.authorsLastNames.length){
+                case 0:
+                    cleanItem.authors = "";
+                    break;
+                case 1:
+                    cleanItem.authors = cleanItem.authorsLastNames[0];
+                    break;
+                case 2:
+                    cleanItem.authors = cleanItem.authorsLastNames[0] + " & " + cleanItem.authorsLastNames[1];
+                    break;
+                case 3:
+                    cleanItem.authors = cleanItem.authorsLastNames[0] + ", " + cleanItem.authorsLastNames[1] + " & " + cleanItem.authorsLastNames[2];
+                    break;
+                default:
+                    cleanItem.authors = cleanItem.authorsLastNames[0] + " et al.";
+            }
+
+            if(item.arxivId){
+                cleanItem.links['arxiv'] = `https://arxiv.org/abs/${item.arxivId}`;
+            }
+            if(item.doi){
+                cleanItem.links['connectedPapers'] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
+                cleanItem.links['googleScholar'] = `https://scholar.google.com/scholar?q=${item.doi}`;
+            }
+
+            return cleanItem;
+        },
+
         cleanNewlines(text){
             let cleanText = text;
             if(cleanText.startsWith("\n")){

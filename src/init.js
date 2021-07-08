@@ -70,7 +70,7 @@ var zoteroRoam = {};
 
         librarySearch: {autocomplete: null},
 
-        citations: {pagination: null, autocomplete: null, currentDOI: ""},
+        citations: {pagination: null, autocomplete: null, currentDOI: "", currentCitekey: ""},
 
         tagSelection: {autocomplete: null},
 
@@ -254,7 +254,7 @@ var zoteroRoam = {};
                 wrapper: false,
                 trigger: (query) => {
                     if(query.length == 0){
-                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI);
+                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI, citekey = zoteroRoam.citations.currentCitekey);
                         return false;
                     } else {
                         return true;

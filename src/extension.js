@@ -85,6 +85,7 @@
             zoteroRoam.data.items = [];
             zoteroRoam.data.collections = [];
             zoteroRoam.data.scite = [];
+            zoteroRoam.data.semantic = [];
             zoteroRoam.data.keys = [];
             zoteroRoam.data.libraries = zoteroRoam.data.libraries.map(lib => {
                 lib.version = "0";
