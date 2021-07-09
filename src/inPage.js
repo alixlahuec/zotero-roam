@@ -120,7 +120,7 @@
                 let title = page.querySelector("span") ? page.querySelector("span").innerText : "";
                 if(title.startsWith("@")){
                     let itemCitekey = title.slice(1);
-                    let itemInLib = zoteroRoam.data.items.find(it => it.key == citekey);
+                    let itemInLib = zoteroRoam.data.items.find(it => it.key == itemCitekey);
                     // If the item is in the library
                     if(typeof(itemInLib) !== 'undefined'){
                         let itemDOI = !itemInLib.data.DOI ? "" : zoteroRoam.utils.parseDOI(itemInLib.data.DOI);
