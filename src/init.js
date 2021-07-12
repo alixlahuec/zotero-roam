@@ -588,12 +588,13 @@ var zoteroRoam = {};
             #zotero-roam-import-tags-list > li{padding:3px 5px;}
             li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;background:#f9fafb;}
             li.import-items_selected{padding:5px 0 5px 15px;}
-            li.related-item_listed{padding:0 0 0 15px;margin-bottom:0px;}
+            li.related-item_listed{padding:0 0 0 15px;}
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
             .selected_info, .related_info{flex: 0 1 90%;}
             .related_info{display:flex;}
-            .related_info a{padding:6px 0px;}
+            .related_info > *{padding:6px 0px;font-size:0.9em;}
+            .related_info .bp3-icon{margin-right:5px;}
             .selected_state, .related_state{flex: 1 0 10%;text-align:center;}
             `;
             document.head.append(autoCompleteCSS);

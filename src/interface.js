@@ -91,7 +91,7 @@
 
             let backdropStyle = `z-index:25;`;
             let containerStyle = `width: auto; position: fixed;z-index:25;`;
-            let menuOptions = config.options.labels.map(op => `<li class="${config.options.class}"><a class="bp3-menu-item bp3-popover-dismiss"><div class="bp3-fill bp3-text-overflow-ellipsis">${op}</div></a></li>`).join("");
+            let menuOptions = config.options.labels.map(op => `<li class="${config.options.class} zotero-roam-cm-option"><a class="bp3-menu-item bp3-popover-dismiss"><div class="bp3-fill bp3-text-overflow-ellipsis">${op}</div></a></li>`).join("");
 
             var overlayDiv = document.createElement("div");
             overlayDiv.classList.add("bp3-overlay");
@@ -668,33 +668,36 @@
             });
 
             elementsKeys.forEach(key => {
-                zoteroRoam.interface[`${key}`].options.list.forEach( (op, index) => {
+                zoteroRoam.interface[`${key}`].div.addEventListener("click", (e) => {
                     let target = zoteroRoam.interface.contextMenu.targetElement;
-                    switch(zoteroRoam.interface[`${key}`].options.labels[index]){
-                        case "Import Zotero data to page":
-                            op.addEventListener("click", () => {
+                    let op = target.closest('li.zotero-roam-cm-option');
+                    if(op){
+                        let action = op.innerText;
+                        switch(action){
+                            case "Import Zotero data to page":
                                 // The DOM element with class "rm-page-ref" is the target of mouse events -- but it's its parent that has the information about the citekey + the page UID
                                 let citekey = target.parentElement.dataset.linkTitle;
                                 let pageUID = target.parentElement.dataset.linkUid;
                                 zoteroRoam.handlers.importItemMetadata(title = citekey, uid = pageUID);
-                            })
-                            break;
-                        case "Convert to citation":
-                            op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(target) });
-                            break;
-                        case "Check for citing papers":
-                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForSemantic_citations(target) });
-                            break;
-                        case "View item information":
-                            op.addEventListener("click", () => { zoteroRoam.interface.popItemInformation(target) });
-                            break;
-                        case "Update Zotero data":
-                            op.addEventListener("click", zoteroRoam.extension.update)
-                            break;
-                        case "Search in dataset...":
-                            op.addEventListener("click", () => { zoteroRoam.interface.toggleSearchOverlay("show") });
+                                break;
+                            case "Convert to citation":
+                                zoteroRoam.inPage.convertToCitekey(target);
+                                break;
+                            case "Check for citing papers":
+                                zoteroRoam.handlers.checkForSemantic_citations(target);
+                                break;
+                            case "View item information":
+                                zoteroRoam.interface.popItemInformation(target);
+                                break;
+                            case "Update Zotero data":
+                                zoteroRoam.extension.update();
+                                break;
+                            case "Search in dataset...":
+                                zoteroRoam.interface.toggleSearchOverlay("show");
+                                break;
+                        }
                     }
-                })
+                });
             })
         },
 
@@ -715,7 +718,6 @@
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");
             } else {
-                console.log("Closing the Search Panel")
                 zoteroRoam.interface.clearSelectedItem();
                 document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
                 zoteroRoam.interface.search.input.value = "";

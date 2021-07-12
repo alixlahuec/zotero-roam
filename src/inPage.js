@@ -224,7 +224,7 @@
                                                             return `
                                                             <li class="related-item_listed bp3-blockquote">
                                                             <div class="related_info">
-                                                            <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
+                                                            <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
                                                             </div>
                                                             <div class="related_state">
                                                             ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" data-type="${paper.type}"`})}
@@ -234,7 +234,7 @@
                                                             return `
                                                             <li class="related-item_listed bp3-blockquote">
                                                             <div class="related_info">
-                                                            <span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}
+                                                            <span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
                                                             </div>
                                                             <div class="related_state">
                                                             ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" data-type="${paper.type}"`})}
@@ -248,14 +248,14 @@
                                             if(referencesInLib.length > 0){
                                                 referencesList = `
                                                 <ul class="zotero-roam-in-library-references bp3-list-unstyled" style="flex: 1 0 50%;">
-                                                ${citationsInLib.map(paper => {
+                                                ${referencesInLib.map(paper => {
                                                     let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
                                                     switch(paperInGraph.present){
                                                         case true:
                                                             return `
                                                             <li class="related-item_listed bp3-blockquote">
                                                             <div class="related_info">
-                                                            <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
+                                                            <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
                                                             </div>
                                                             <div class="related_state">
                                                             ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" data-type="${paper.type}"`})}
@@ -265,7 +265,7 @@
                                                             return `
                                                             <li class="related-item_listed bp3-blockquote">
                                                             <div class="related_info">
-                                                            <span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}
+                                                            <span><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
                                                             </div>
                                                             <div class="related_state">
                                                             ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" data-type="${paper.type}"`})}
@@ -389,7 +389,7 @@
 
                     if(Array.from(caretEl.classList).includes("rm-caret-closed") && backlinksList){
                         caretEl.classList.replace("rm-caret-closed", "rm-caret-open");
-                        backlinksList.style.display = "block";
+                        backlinksList.style.display = "flex";
                     } else if(Array.from(caretEl.classList).includes("rm-caret-open")){
                         caretEl.classList.replace("rm-caret-open", "rm-caret-closed");
                         backlinksList.style.display = "none";
