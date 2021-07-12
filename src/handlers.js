@@ -162,7 +162,14 @@
             });
         },
 
-        // TODO: Add handling of non-200 response codes from the API
+        /**
+         * @todo Add handling of non-200 response codes from the API
+         * Fetches data from the Zotero Web API
+         * @param {string} apiKey - The API key for the request 
+         * @param {string} dataURI - The dataURI for the request
+         * @param {string} params - The params for the request
+         * @returns {Object} The data received from the API, if successful
+         */
         async fetchData(apiKey, dataURI, params){
             let requestURL = `https://api.zotero.org/${dataURI}?${params}`;
             let results = [];
@@ -287,11 +294,12 @@
             }
         },
 
+        /** No longer in use */
         async checkForScitations(refSpan){
             try {
                 let citekey = refSpan.parentElement.dataset.linkTitle.replace("@", ""); // I'll deal with tags later, or not at all
-                let item = zoteroRoam.data.items.find(i => { return i.key == citekey });
-                if (item) {
+                let item = zoteroRoam.data.items.find(i => i.key == citekey);
+                if(item) {
                     if(item.data.DOI){
                         let scitations = await zoteroRoam.handlers.requestScitations(item.data.DOI);
                         if(scitations.simplified.length == 0){
@@ -304,6 +312,58 @@
                     }
                 }
             } catch (e) {
+                console.error(e);
+            }
+        },
+
+        async checkForSemantic_citations(refSpan){
+            try {
+                let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
+                let item = zoteroRoam.data.items.find(i => i.key == citekey);
+                if(item){
+                    if(item.data.DOI){
+                        let doi = zoteroRoam.utils.parseDOI(item.data.DOI);
+                        let semantic = await zoteroRoam.handlers.getSemantic(doi);
+                        if(semantic.citations){
+                            if(semantic.citations.length == 0){
+                                zoteroRoam.interface.popToast("This item has no available citing papers");
+                            } else {
+                                zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "citations");
+                            }
+                        } else {
+                            zoteroRoam.interface.popToast("No data could be retrieved.", "danger");
+                        }
+                    } else {
+                        zoteroRoam.interface.popToast("This item has no DOI (required for citations lookup).", "danger");
+                    }
+                }
+            } catch(e){
+                console.error(e);
+            }
+        },
+
+        async checkForSemantic_references(refSpan){
+            try {
+                let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
+                let item = zoteroRoam.data.items.find(i => i.key == citekey);
+                if(item){
+                    if(item.data.DOI){
+                        let doi = zoteroRoam.utils.parseDOI(item.data.DOI);
+                        let semantic = await zoteroRoam.handlers.getSemantic(doi);
+                        if(semantic.references){
+                            if(semantic.references.length == 0){
+                                zoteroRoam.interface.popToast("This item has no available references");
+                            } else {
+                                zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "references");
+                            }
+                        } else {
+                            zoteroRoam.interface.popToast("No data could be retrieved.", "danger");
+                        }
+                    } else {
+                        zoteroRoam.interface.popToast("This item has no DOI (required for references lookup).", "danger");
+                    }
+                }
+            } catch(e){
                 console.error(e);
             }
         },
@@ -347,7 +407,8 @@
                 context: {
                     citing: {
                         doi: zoteroRoam.citations.currentDOI,
-                        key: zoteroRoam.citations.currentCitekey
+                        key: zoteroRoam.citations.currentCitekey,
+                        type: zoteroRoam.citations.currentType
                     }
                 }
             })
@@ -399,6 +460,7 @@
             }
         },
 
+        /** No longer in use */
         async requestScitations(doi){
             let sciteListIndex = zoteroRoam.data.scite.findIndex(res => res.doi == doi);
             if(sciteListIndex == -1){
@@ -430,11 +492,22 @@
             if(dataIndex == -1){
                 let outcome = await zoteroRoam.handlers.requestSemantic(doi);
                 if(outcome.success == true){
+                    let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                    outcome.data.citations.forEach((cit, index) => {
+                        if(libDOIs.includes(cit.doi)){
+                            outcome.data.citations[index].inLibrary = true;
+                        }
+                    });
+                    outcome.data.references.forEach((ref, index) => {
+                        if(libDOIs.includes(ref.doi)){
+                            outcome.data.references[index].inLibrary = true;
+                        }
+                    })
                     zoteroRoam.data.semantic.push(outcome.data);
                     return outcome.data;
                 } else {
                     console.log(outcome);
-                    return [];
+                    return {};
                 }
             } else {
                 return zoteroRoam.data.semantic[dataIndex];
@@ -457,8 +530,8 @@
                         references: references || []
                     };
                     // Parse metadata for both citations and references
-                    citeObject.citations = citeObject.citations.map(cit => zoteroRoam.utils.parseSemanticItem(cit));
-                    citeObject.references = citeObject.references.map(ref => zoteroRoam.utils.parseSemanticItem(ref));
+                    citeObject.citations = citeObject.citations.filter(cit => cit.doi || cit.url).map(cit => zoteroRoam.utils.parseSemanticItem(cit));
+                    citeObject.references = citeObject.references.filter(ref => ref.doi || ref.url).map(ref => zoteroRoam.utils.parseSemanticItem(ref));
 
                     // If the request returned a successful API response, log the data
                     outcome = {

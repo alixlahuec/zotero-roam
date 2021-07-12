@@ -1,10 +1,16 @@
 
+/** @namespace */
 var zoteroRoam = {};
 
 ;(()=>{
-    
+
     zoteroRoam = {
 
+        /** Represents a shortcut
+         * @constructor
+         * @memberof! zoteroRoam
+         * @param {{action: string, template: Object<string, boolean>}} obj - The object describing the shortcut
+         */
         Shortcut: function(obj) {
             this.action = obj.action;
             this.template = {
@@ -30,6 +36,12 @@ var zoteroRoam = {};
             }
         },
 
+        /** Represents a paginated dataset
+         * @constructor
+         * @param {Object} obj - An object containing pagination settings
+         * @param {Array} obj.data - The dataset to be paginated
+         * @param {Integer} obj.itemsPerPage - The number of items for each page
+         */
         Pagination: function(obj){
             this.data = obj.data;
             this.itemsPerPage = obj.itemsPerPage || zoteroRoam.config.params.citations.itemsPerPage;
@@ -63,20 +75,22 @@ var zoteroRoam = {};
                 zoteroRoam.interface.renderCitationsPagination();
             }
         },
-
+        
         version: "0.6.30",
 
-        data: {items: [], collections: [], scite: [], libraries: [], keys: []},
-
+        data: {items: [], collections: [], semantic: [], libraries: [], keys: []},
+        
         librarySearch: {autocomplete: null},
-
-        citations: {pagination: null, autocomplete: null, currentDOI: "", currentCitekey: ""},
-
+        
+        citations: {pagination: null, autocomplete: null, currentDOI: "", currentCitekey: "", currentType: "citations"},
+        
         tagSelection: {autocomplete: null},
-
+        
         config: {
+            /** autoComplete configuration for the library search panel */
             autoComplete: {
                 data: {
+                    /** @returns {Array} The dataset in simplified format, if any data has been imported */
                     src: async function() {
                         let data = [];
                         if(zoteroRoam.data.items.length > 0){
@@ -86,6 +100,7 @@ var zoteroRoam = {};
                     },
                     keys: ['title', 'authorsString', 'year', 'tagsString', 'key', '_multiField'],
                     cache: false,
+                    /** @returns {Array} The results, filtered in the order of the 'keys' parameter above, and sorted by authors ascending */
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         // Records are sorted alphabetically (by key name) => _multiField should come last
@@ -107,6 +122,7 @@ var zoteroRoam = {};
                 },
                 selector: '#zotero-roam-search-autocomplete',
                 wrapper: false,
+                /** @returns {boolean} Indicates whether the search should be run */
                 trigger: (query) => {
                     if(query.length == 0){
                         document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
@@ -124,6 +140,11 @@ var zoteroRoam = {};
                     destination: "#zotero-roam-library-search-div",
                     position: "beforeend",
                     maxResults: 100,
+                    /**
+                     * Controls the rendering of the results list
+                     * @param {Element} list - The DOM Element corresponding to the results list 
+                     * @param {object} data - The dataset containing the search results
+                     */
                     element: (list, data) => {
                         list.classList.add("bp3-menu");
                         if(data.results && data.results.length > 0){
@@ -138,6 +159,11 @@ var zoteroRoam = {};
                     class: "zotero-roam-search_result",
                     id: "zotero-roam-search_result",
                     highlight: "result_highlighted",
+                    /**
+                     * Controls the rendering of each search result
+                     * @param {Element} item - The DOM Element corresponding to a given search result 
+                     * @param {object} data - The search data associated with a given result
+                     */
                     element: (item, data) => {
                         let itemMetadata = `<span class="zotero-roam-search-item-metadata"> ${data.value.meta}</span>`;
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
@@ -230,16 +256,19 @@ var zoteroRoam = {};
                     }
                 }
             },
+            /** autoComplete configuration for the citations search panel */
             citationsSearch: {
                 data: {
+                    /** @returns {Array} The citations dataset in simplified format, if any DOI has been selected */
                     src: async function(){
                         if(zoteroRoam.citations.currentDOI.length == 0){
                             return [];
                         } else {
-                            return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
+                            return zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
                         }
                     },
                     keys: ['year', 'title', 'keywordsString', 'authorsString', 'abstract', 'meta'],
+                    /** @returns {Array} The results, filtered in the order of the 'keys' parameter above */
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         const filteredMatches = Array.from(new Set(list.map((item) => item.value.doi))).map((doi) => {
@@ -252,9 +281,10 @@ var zoteroRoam = {};
                 },
                 selector: '#zotero-roam-citations-autocomplete',
                 wrapper: false,
+                /** @returns {boolean} Indicates whether the search should be run */
                 trigger: (query) => {
                     if(query.length == 0){
-                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI, citekey = zoteroRoam.citations.currentCitekey);
+                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI, citekey = zoteroRoam.citations.currentCitekey, zoteroRoam.citations.currentType);
                         return false;
                     } else {
                         return true;
@@ -283,8 +313,10 @@ var zoteroRoam = {};
                     }
                 }
             },
+            /** autoComplete configuration for the tag selection in the 'Add to Zotero' side panel */
             tagSelection: {
                 data: {
+                    /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
                     src: async function(query){
                         let roamPages = [];
                         if(zoteroRoam.interface.activeImport !== null){
@@ -299,6 +331,7 @@ var zoteroRoam = {};
                         }
                     },
                     keys: ['title'],
+                    /** @returns {Array} The list of existing Roam pages, with the current query always at the top */
                     filter: (list) => {
                         return list.sort((a,b) => {
                             if(a.value.identity == "self"){
@@ -311,8 +344,10 @@ var zoteroRoam = {};
                 },
                 selector: '#zotero-roam-tags-autocomplete',
                 wrapper: false,
+                /** @returns {boolean} Indicates whether the search should be run */
                 trigger: (query) => {
                     if(query.length == 0){
+                        /** Close the selection dropdown if the query is cleared from the searchbox */
                         zoteroRoam.tagSelection.autocomplete.close();
                         return false;
                     } else {
@@ -327,6 +362,11 @@ var zoteroRoam = {};
                     class: "zotero-roam-import-tags-list",
                     id: "zotero-roam-import-tags-list",
                     maxResults: 20,
+                    /**
+                     * Controls the rendering of the results list
+                     * @param {Element} list - The DOM Element corresponding to the results list 
+                     * @param {object} data - The dataset containing the search results
+                     */
                     element: (list, data) => {
                         list.classList.add("bp3-menu");
                         list.classList.add("bp3-elevation");
@@ -355,9 +395,7 @@ var zoteroRoam = {};
                     }
                 }
             },
-            // The tribute's `values` property is set when the tribute is attached to the textarea
-            // This is to reflect the most up-to-date version of the dataset
-            // Otherwise it could be done here, using cb(), but results were piling up when using that instead of being replaced (function was called at every keystroke I think)
+            /** tribute configuration for the inline tribute */
             tribute: {
                 trigger: '',
                 selectClass: 'zotero-roam-tribute-selected',
@@ -534,7 +572,7 @@ var zoteroRoam = {};
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
             .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;}
-            .zotero-roam-search-item-key .zotero-roam-citation-doi-link {display:block;}
+            .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
@@ -908,16 +946,22 @@ var zoteroRoam = {};
                 doi: item.doi,
                 intent: item.intent,
                 isInfluential: item.isInfluential,
-                links: {
-                    semanticScholar: `https://www.semanticscholar.org/paper/${item.paperId}`
-                },
+                links: {},
                 meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
                 title: item.title,
-                year: item.year.toString()
+                url: item.url || "",
+                year: item.year ? item.year.toString() : ""
             }
 
             // Parse authors data
-            cleanItem.authorsLastNames = item.authors.map(a => a.name.replaceAll(".", "").split(" ").slice(1).filter(n => n.length > 1).join(" "));
+            cleanItem.authorsLastNames = item.authors.map(a => {
+                let components = a.name.replaceAll(".", " ").split(" ").filter(Boolean);
+                if(components.length == 1){
+                    return components[0];
+                } else {
+                    return components.slice(1).filter(c => c.length > 1).join(" ");
+                }
+            });
             cleanItem.authorsString = cleanItem.authorsLastNames.join(" ");
             switch(cleanItem.authorsLastNames.length){
                 case 0:
@@ -935,7 +979,9 @@ var zoteroRoam = {};
                 default:
                     cleanItem.authors = cleanItem.authorsLastNames[0] + " et al.";
             }
-
+            if(item.paperId){
+                cleanItem.links['semanticScholar'] = `https://www.semanticscholar.org/paper/${item.paperId}`;
+            }
             if(item.arxivId){
                 cleanItem.links['arxiv'] = `https://arxiv.org/abs/${item.arxivId}`;
             }
@@ -1263,7 +1309,14 @@ var zoteroRoam = {};
             });
         },
 
-        // TODO: Add handling of non-200 response codes from the API
+        /**
+         * @todo Add handling of non-200 response codes from the API
+         * Fetches data from the Zotero Web API
+         * @param {string} apiKey - The API key for the request 
+         * @param {string} dataURI - The dataURI for the request
+         * @param {string} params - The params for the request
+         * @returns {Object} The data received from the API, if successful
+         */
         async fetchData(apiKey, dataURI, params){
             let requestURL = `https://api.zotero.org/${dataURI}?${params}`;
             let results = [];
@@ -1388,11 +1441,12 @@ var zoteroRoam = {};
             }
         },
 
+        /** No longer in use */
         async checkForScitations(refSpan){
             try {
                 let citekey = refSpan.parentElement.dataset.linkTitle.replace("@", ""); // I'll deal with tags later, or not at all
-                let item = zoteroRoam.data.items.find(i => { return i.key == citekey });
-                if (item) {
+                let item = zoteroRoam.data.items.find(i => i.key == citekey);
+                if(item) {
                     if(item.data.DOI){
                         let scitations = await zoteroRoam.handlers.requestScitations(item.data.DOI);
                         if(scitations.simplified.length == 0){
@@ -1405,6 +1459,58 @@ var zoteroRoam = {};
                     }
                 }
             } catch (e) {
+                console.error(e);
+            }
+        },
+
+        async checkForSemantic_citations(refSpan){
+            try {
+                let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
+                let item = zoteroRoam.data.items.find(i => i.key == citekey);
+                if(item){
+                    if(item.data.DOI){
+                        let doi = zoteroRoam.utils.parseDOI(item.data.DOI);
+                        let semantic = await zoteroRoam.handlers.getSemantic(doi);
+                        if(semantic.citations){
+                            if(semantic.citations.length == 0){
+                                zoteroRoam.interface.popToast("This item has no available citing papers");
+                            } else {
+                                zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "citations");
+                            }
+                        } else {
+                            zoteroRoam.interface.popToast("No data could be retrieved.", "danger");
+                        }
+                    } else {
+                        zoteroRoam.interface.popToast("This item has no DOI (required for citations lookup).", "danger");
+                    }
+                }
+            } catch(e){
+                console.error(e);
+            }
+        },
+
+        async checkForSemantic_references(refSpan){
+            try {
+                let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
+                let item = zoteroRoam.data.items.find(i => i.key == citekey);
+                if(item){
+                    if(item.data.DOI){
+                        let doi = zoteroRoam.utils.parseDOI(item.data.DOI);
+                        let semantic = await zoteroRoam.handlers.getSemantic(doi);
+                        if(semantic.references){
+                            if(semantic.references.length == 0){
+                                zoteroRoam.interface.popToast("This item has no available references");
+                            } else {
+                                zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "references");
+                            }
+                        } else {
+                            zoteroRoam.interface.popToast("No data could be retrieved.", "danger");
+                        }
+                    } else {
+                        zoteroRoam.interface.popToast("This item has no DOI (required for references lookup).", "danger");
+                    }
+                }
+            } catch(e){
                 console.error(e);
             }
         },
@@ -1448,7 +1554,8 @@ var zoteroRoam = {};
                 context: {
                     citing: {
                         doi: zoteroRoam.citations.currentDOI,
-                        key: zoteroRoam.citations.currentCitekey
+                        key: zoteroRoam.citations.currentCitekey,
+                        type: zoteroRoam.citations.currentType
                     }
                 }
             })
@@ -1500,6 +1607,7 @@ var zoteroRoam = {};
             }
         },
 
+        /** No longer in use */
         async requestScitations(doi){
             let sciteListIndex = zoteroRoam.data.scite.findIndex(res => res.doi == doi);
             if(sciteListIndex == -1){
@@ -1531,11 +1639,22 @@ var zoteroRoam = {};
             if(dataIndex == -1){
                 let outcome = await zoteroRoam.handlers.requestSemantic(doi);
                 if(outcome.success == true){
+                    let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                    outcome.data.citations.forEach((cit, index) => {
+                        if(libDOIs.includes(cit.doi)){
+                            outcome.data.citations[index].inLibrary = true;
+                        }
+                    });
+                    outcome.data.references.forEach((ref, index) => {
+                        if(libDOIs.includes(ref.doi)){
+                            outcome.data.references[index].inLibrary = true;
+                        }
+                    })
                     zoteroRoam.data.semantic.push(outcome.data);
                     return outcome.data;
                 } else {
                     console.log(outcome);
-                    return [];
+                    return {};
                 }
             } else {
                 return zoteroRoam.data.semantic[dataIndex];
@@ -1558,8 +1677,8 @@ var zoteroRoam = {};
                         references: references || []
                     };
                     // Parse metadata for both citations and references
-                    citeObject.citations = citeObject.citations.map(cit => zoteroRoam.utils.parseSemanticItem(cit));
-                    citeObject.references = citeObject.references.map(ref => zoteroRoam.utils.parseSemanticItem(ref));
+                    citeObject.citations = citeObject.citations.filter(cit => cit.doi || cit.url).map(cit => zoteroRoam.utils.parseSemanticItem(cit));
+                    citeObject.references = citeObject.references.filter(ref => ref.doi || ref.url).map(ref => zoteroRoam.utils.parseSemanticItem(ref));
 
                     // If the request returned a successful API response, log the data
                     outcome = {
@@ -2363,6 +2482,7 @@ var zoteroRoam = {};
             headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
+            panelTitle.classList.add("panel-title");
             panelTitle.innerText = "Citing Papers";
 
             let panelSubtitle = document.createElement('p');
@@ -2624,7 +2744,7 @@ var zoteroRoam = {};
             let page = zoteroRoam.citations.pagination.getCurrentPageData();
             // Indicate results shown
             paginationDiv.querySelector(".zotero-roam-citations-results-count").innerHTML = `
-            <strong>${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1}</strong> / ${zoteroRoam.citations.pagination.data.length} citations
+            <strong>${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1}</strong> / ${zoteroRoam.citations.pagination.data.length} ${zoteroRoam.citations.currentType}
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
@@ -2654,9 +2774,9 @@ var zoteroRoam = {};
 
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                <a href="https://doi.org/${cit.doi}" target="_blank" class="bp3-text-muted zotero-roam-citation-doi-link">${cit.doi}</a>
+                <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : cit.url}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
-                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
+                ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 ${cit.inLibrary ? "" : zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
                 </span>
                 `;
@@ -2704,7 +2824,7 @@ var zoteroRoam = {};
                             op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(target) });
                             break;
                         case "Check for citing papers":
-                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForScitations(target) });
+                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForSemantic_citations(target) });
                             break;
                         case "View item information":
                             op.addEventListener("click", () => { zoteroRoam.interface.popItemInformation(target) });
@@ -2760,11 +2880,12 @@ var zoteroRoam = {};
             }
         },
 
-        popCitationsOverlay(doi, citekey){
+        popCitationsOverlay(doi, citekey, type = "citations"){
             zoteroRoam.citations.currentDOI = doi;
             zoteroRoam.citations.currentCitekey = citekey;
+            zoteroRoam.citations.currentType = type;
             // All citations -- paginated
-            let fullData = zoteroRoam.data.scite.find(item => item.doi == doi).simplified;
+            let fullData = zoteroRoam.data.semantic.find(item => item.doi == doi)[`${type}`];
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
             // Render HTML for pagination
             zoteroRoam.interface.renderCitationsPagination();
@@ -2775,6 +2896,9 @@ var zoteroRoam = {};
             } else {
                 zoteroRoam.citations.autocomplete.init();
             }
+            // Rendering panel title
+            let relation = type == "citations" ? "citing" : "cited by"
+            zoteroRoam.interface.citations.overlay.querySelector("h5.panel-title").innerText = `Papers ${relation} ${title}`;
             // Make overlay visible
             zoteroRoam.interface.citations.overlay.style.display = "block";
             zoteroRoam.interface.citations.input.value = "";
@@ -3089,7 +3213,7 @@ var zoteroRoam = {};
         },
 
         addToImport(element){
-            let identifier = element.querySelector(".zotero-roam-citation-doi-link").innerText;
+            let identifier = element.querySelector(".zotero-roam-citation-identifier-link").innerText;
             let title = element.querySelector(".zotero-roam-search-item-title").innerText;
             let origin = element.querySelector(".zotero-roam-citation-origin").innerText;
 
@@ -3239,6 +3363,8 @@ var zoteroRoam = {};
 ;(()=>{
     zoteroRoam.extension = {
 
+        /** Turns the extension 'on'
+         * @fires zotero-roam:ready */
         async load(){
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             let requestReturns = await zoteroRoam.handlers.requestData(zoteroRoam.config.requests);
@@ -3309,7 +3435,12 @@ var zoteroRoam = {};
                         zoteroRoam.interface.toggleSearchOverlay("show");
                     }
                 });
-
+                /**
+                 * Ready event
+                 * 
+                 * @event zoteroRoam:ready
+                 * @type {object}
+                 */
                 zoteroRoam.events.emit('ready', detail = zoteroRoam.data);
                 zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 zoteroRoam.interface.popToast(message = "Zotero data successfully loaded !", intent = "success");
@@ -3318,11 +3449,11 @@ var zoteroRoam = {};
             }
         },
 
+        /** Turns the extension 'off' */
         unload(){
             zoteroRoam.interface.icon.setAttribute("status", "off");
             zoteroRoam.data.items = [];
             zoteroRoam.data.collections = [];
-            zoteroRoam.data.scite = [];
             zoteroRoam.data.semantic = [];
             zoteroRoam.data.keys = [];
             zoteroRoam.data.libraries = zoteroRoam.data.libraries.map(lib => {
@@ -3369,6 +3500,7 @@ var zoteroRoam = {};
             console.log('Data and request outputs have been removed');
         },
         
+        /** Toggles the state of the extension (on/off) */
         toggle(){
             if(zoteroRoam.interface.icon.getAttribute('status') == "off"){
                 zoteroRoam.extension.load();
@@ -3377,6 +3509,11 @@ var zoteroRoam = {};
             }
         },
 
+        /** Checks for data updates for an Array of requests
+         * @fires zotero-roam:update
+         * @param {string} popup - Specifies if a toast should display the update's outcome
+         * @param {{apikey: string, dataURI: string, library: string, name: string, params: string}[]} reqs - The data requests to retrieve updates for
+         */
         async update(popup = "true", reqs = zoteroRoam.config.requests){
             // Turn the icon background to orange while we're updating the data
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
@@ -3444,6 +3581,13 @@ var zoteroRoam = {};
                     console.log("Something went wrong when updating the data. Check the console for any errors.");
                 };
             }
+            /** Update event
+             * @event zotero-roam:update
+             * @type {object}
+             * @property {?boolean} success - Indicates if the update was successful
+             * @property {array} requests - The data requests that were part of the update
+             * @property {object} data - The updated data, if any
+             */
             zoteroRoam.events.emit('update', {
                 success: updateResults.success,
                 requests: updateRequests,
@@ -3455,7 +3599,7 @@ var zoteroRoam = {};
 
 ;(()=>{
     zoteroRoam.inPage = {
-
+        /** Rigs ref-citekey elements that are in the dataset with a listener for context menu */
         addContextMenuListener() {
             var refCitekeys = document.querySelectorAll(".ref-citekey");
             for (var i = 0; i < refCitekeys.length; i++) {
@@ -3478,6 +3622,8 @@ var zoteroRoam = {};
             }
         },
 
+        /** Checks references for new citekeys, then checks data for the citekeys and adds a listener to them
+         * @param {boolean} update - Should old references be re-checked ? */
         checkReferences(update = false){
             let refCitekeyFound = false;
             setTimeout(function(){
@@ -3490,6 +3636,9 @@ var zoteroRoam = {};
             zoteroRoam.inPage.addContextMenuListener();
         },
 
+        /** Scans page references to find new citekeys (do not have the 'ref-citekey' custom class)
+         * @param {Element[]} refs = The Array of page references to be scanned
+         * @returns {boolean} Was there a new citekey found ? */
         identifyCitekeys(refs){
             let matched = false;
             for (i = 0; i < refs.length; i++) {
@@ -3498,19 +3647,17 @@ var zoteroRoam = {};
                     continue;
                 } else {
                     // Only do this for page refs for now, we'll see about tags later or not at all
-                    if (parentDiv.dataset.linkTitle.startsWith("@")) {
-                        if (parentDiv.classList.contains("ref-citekey")) {
-                            matched = false;
-                        } else {
-                            parentDiv.classList.add("ref-citekey");
-                            matched = true;
-                        }
+                    if (parentDiv.dataset.linkTitle.startsWith("@") && !parentDiv.classList.contains("ref-citekey")) {
+                        parentDiv.classList.add("ref-citekey");
+                        matched = true;
                     }
                 }
             }
             return matched;
         },
-
+        
+        /** Verifies if citekeys in the current view are present in the loaded dataset
+         * @param {boolean} update - Should the extension also verify citekeys that had been checked previously ? */
         checkCitekeys(update = false){
             let refCitekeys = document.querySelectorAll('.ref-citekey');
             let newMatches = 0;
@@ -3550,6 +3697,8 @@ var zoteroRoam = {};
             }
         },
 
+        /** Converts a Roam page reference to a citation alias
+         * @param {Element} el - The DOM Element of the page reference */
         convertToCitekey(el){
             let libItem = zoteroRoam.data.items.find(item => item.key == el.innerText.slice(1));
             let currentBlock = el.closest('.roam-block');
@@ -3568,6 +3717,9 @@ var zoteroRoam = {};
 
         },
 
+        /** Generates a page menu for each page currently in view
+         * @fires zotero-roam:menu-ready
+         * @param {number} wait - The duration of the delay to wait before attempting to generate the menu */
         async addPageMenus(wait = 100){
             zoteroRoam.utils.sleep(wait);
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
@@ -3632,40 +3784,52 @@ var zoteroRoam = {};
                             let backlinksLib = "";
                             let citeObject = null;
                             if(menu_defaults.includes("citingPapers") && itemDOI){
-                                citeObject = await zoteroRoam.handlers.requestScitations(itemDOI);
-                                let scitingDOIs = citeObject.citations.map(cit => cit.doi);
-                                
-                                if(scitingDOIs.length > 0){
-                                    let doiPapers = zoteroRoam.data.items.filter(it => it.data.DOI);
-                                    let papersInLib = doiPapers.filter(it => scitingDOIs.includes(zoteroRoam.utils.parseDOI(it.data.DOI)));
-                                    backlinksLib = "<hr>";
-                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
-                                    backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${scitingDOIs.length} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}"`});
-
-                                    if(papersInLib.length > 0){
-                                        backlinksLib += `
-                                        <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                        ${papersInLib.map(paper => {
-                                            let paperInGraph = zoteroRoam.utils.lookForPage("@" + paper.key);
-                                            switch(paperInGraph.present){
-                                                case true:
-                                                    return `
-                                                    <li class="zotero-roam-page-menu-backlinks-item">
-                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar"`})}
-                                                    <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
-                                                    </li>`;
-                                                default:
-                                                    return `
-                                                    <li class="zotero-roam-page-menu-backlinks-item">
-                                                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-add-sidebar", icon: "add-column-right", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
-                                                    ${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}
-                                                    </li>`
+                                citeObject = await zoteroRoam.handlers.getSemantic(itemDOI);
+                                if(citeObject.data){
+                                    let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
+                                    let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                                    let allDOIs = [...citingDOIs, ...citedDOIs];
+                                    if(allDOIs.length > 0){
+                                        let papersInLib = zoteroRoam.data.items.filter(it => it.data.DOI).filter(it => allDOIs.includes(zoteroRoam.utils.parseDOI(it.data.DOI)));
+                                        papersInLib.forEach((paper, index) => {
+                                            let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
+                                            if(citingDOIs.includes(cleanDOI)){
+                                                papersInLib[index].type = "citing";
+                                            } else {
+                                                papersInLib[index].type = "cited";
                                             }
-                                        }).join("")}
-                                        </ul>
-                                        `
+                                        });
+                                        backlinksLib = "<hr>";
+                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citingDOIs.length > 0 ? citingDOIs.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
+                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citedDOIs.length > 0 ? citedDOIs.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
+
+                                        if(papersInLib.length > 0){
+                                            backlinksLib += `
+                                            <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
+                                            ${papersInLib.map(paper => {
+                                                let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
+                                                switch(paperInGraph.present){
+                                                    case true:
+                                                        return `
+                                                        <li class="zotero-roam-page-menu-backlinks-item">
+                                                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" type="${paper.type}"`})}
+                                                        <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
+                                                        </li>`;
+                                                    default:
+                                                        return `
+                                                        <li class="zotero-roam-page-menu-backlinks-item">
+                                                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-add-sidebar", icon: "add-column-right", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" type="${paper.type}"`})}
+                                                        ${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}
+                                                        </li>`
+                                                }
+                                            }).join("")}
+                                            </ul>
+                                            `
+                                        }
                                     }
                                 }
+                                
                             }
 
                             menuDiv.innerHTML = `
@@ -3696,13 +3860,25 @@ var zoteroRoam = {};
                                 }
                             }
 
+                            /**
+                             * @event zoteroRoam:menu-ready
+                             * @type {object}
+                             * @property {string} title - The item's Roam page title
+                             * @property {object} item - The item's Zotero data object
+                             * @property {string} doi - The item's DOI
+                             * @property {string} uid - The item's Roam page UID
+                             * @property {object} children - The item's children
+                             * @property {object} semantic - The item's citations data from Semantic Scholar
+                             * @property {Element} div - The menu's HTML node
+                             * @property {string} context - The context in which the menu was generated (main section or sidebar)
+                             */
                             zoteroRoam.events.emit('menu-ready', {
                                 title: title,
                                 item: itemInLib,
                                 doi: itemDOI,
                                 uid: pageInGraph.uid,
                                 children: itemChildren,
-                                scite: citeObject,
+                                semantic: citeObject,
                                 div: pageDiv,
                                 context: pageDiv.closest('.roam-article') ? "main" : "sidebar"
                             });
@@ -3716,6 +3892,13 @@ var zoteroRoam = {};
             };
         },
 
+        /** Generates code for a Scite badge
+         * @param {string} doi - The DOI for which the badge should be made
+         * @param {object} settings - An object containing badge settings 
+         * @param {string} settings.layout - Should the badge be horizontal or vertical ?
+         * @param {string} settings.showZero - Should the badge include categories that contain no citing paper ?
+         * @param {string} settings.showLabels - Should the badge display category labels ?
+         * @returns {string} The HTML for the badge */
         makeSciteBadge(doi, {layout = "horizontal", showZero = "true", showLabels = "false"} = {}){
             let sciteBadge = document.createElement("div");
             sciteBadge.classList.add("scite-badge");
@@ -3727,6 +3910,8 @@ var zoteroRoam = {};
             return sciteBadge;
         },
 
+        /** Event delegation for clicks within a page menu
+         * @param {Element} target - The DOM Element where the click event happened  */
         async handleClicks(target){
             let pageDiv = target.closest('.zotero-roam-page-div');
             let title = pageDiv.dataset.title;
@@ -3761,10 +3946,13 @@ var zoteroRoam = {};
                     await zoteroRoam.handlers.importItemMetadata(title = btn.dataset.title, uid = elUID, {popup: false});
                     zoteroRoam.utils.addToSidebar(uid = elUID);
                 } else if(btn.classList.contains('zotero-roam-page-menu-backlinks-total')){
-                    zoteroRoam.interface.citations.overlay.querySelector(".header-content h5").innerText = `Papers citing ${title}`;
                     let doi = btn.getAttribute("data-doi");
                     let citekey = btn.getAttribute("data-citekey");
-                    zoteroRoam.interface.popCitationsOverlay(doi, citekey);
+                    zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "citations");
+                } else if(btn.classList.contains('zotero-roam-page-menu-references-total')){
+                    let doi = btn.getAttribute("data-doi");
+                    let citekey = btn.getAttribute("data-citekey");
+                    zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "references");
                 }
             }
         }
@@ -4204,36 +4392,49 @@ var zoteroRoam = {};
 
 ;(()=>{
     zoteroRoam.events = {
-        // zotero-roam:ready
-        // Signals the extension has loaded successfully
-        // Emitted by : extension.load
+        /**
+         * Signals the extensiom has loaded successfully
+         * @event zoteroRoam:ready
+         */
         'ready': {},
-        // zotero-roam:menu-ready
-        // Signals a page menu has been rendered
-        // Emitted by : inPage.addPageMenus
+        /**
+         * Signals a page menu has been rendered
+         * @event zotero-roam:menu-ready
+         */
         'menu-ready': {},
-        // zotero-roam:metadata-added
-        // Signals a metadata import has terminated (successfully?)
-        // Emitted by : handlers.importItemMetadata
+        /**
+         * Signals a metadata import has terminated
+         * @event zotero-roam:metadata-added
+         */
         'metadata-added': {},
-        // zotero-roam:notes-added
-        // Signals a notes import has terminated (successfully?)
-        // Emitted by : handlers.addItemNotes
+        /**
+         * Signals a notes import has terminated
+         * @event zotero-roam:notes-added
+         */
         'notes-added': {},
-        // zotero-roam:update
-        // Signals the extension's dataset has been updated (successfully?)
-        // Emitted by : extension.update
+        /**
+         * Signals a data update has terminated
+         * @event zotero-roam:update
+         */
         'update': {},
-        // zotero-roam:write
-        // Signals a write call has terminated
-        // Emitted by : handlers.importSelectedItems
+        /**
+         * Signals a write call has terminated
+         * @event zotero-roam:write
+         */
         'write': {},
+        /**
+         * Emits a custom event for the extension
+         * @alias zoteroRoam.events.emit
+         * @param {string} type - The suffix of the event to be emitted
+         * @param {object} detail - The object containing the event's detail
+         * @param {Element} target - The DOM target on which the event should be emitted 
+         */
         emit(type, detail = {}, target = document){
             let e = new CustomEvent(`zotero-roam:${type}`, {bubbles: true, cancelable: true, detail: detail});
             if(zoteroRoam.config.userSettings.logEvents == true){
                 console.log(e);
             }
-            return target.dispatchEvent(e);
+            target.dispatchEvent(e);
         }
     }
 })();

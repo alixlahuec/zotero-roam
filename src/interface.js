@@ -341,6 +341,7 @@
             headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
+            panelTitle.classList.add("panel-title");
             panelTitle.innerText = "Citing Papers";
 
             let panelSubtitle = document.createElement('p');
@@ -602,7 +603,7 @@
             let page = zoteroRoam.citations.pagination.getCurrentPageData();
             // Indicate results shown
             paginationDiv.querySelector(".zotero-roam-citations-results-count").innerHTML = `
-            <strong>${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1}</strong> / ${zoteroRoam.citations.pagination.data.length} citations
+            <strong>${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1}</strong> / ${zoteroRoam.citations.pagination.data.length} ${zoteroRoam.citations.currentType}
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
@@ -632,9 +633,9 @@
 
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                <a href="https://doi.org/${cit.doi}" target="_blank" class="bp3-text-muted zotero-roam-citation-doi-link">${cit.doi}</a>
+                <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : cit.url}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
-                ${zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
+                ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 ${cit.inLibrary ? "" : zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
                 </span>
                 `;
@@ -682,7 +683,7 @@
                             op.addEventListener("click", () => { zoteroRoam.inPage.convertToCitekey(target) });
                             break;
                         case "Check for citing papers":
-                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForScitations(target) });
+                            op.addEventListener("click", () => { zoteroRoam.handlers.checkForSemantic_citations(target) });
                             break;
                         case "View item information":
                             op.addEventListener("click", () => { zoteroRoam.interface.popItemInformation(target) });
@@ -738,11 +739,12 @@
             }
         },
 
-        popCitationsOverlay(doi, citekey){
+        popCitationsOverlay(doi, citekey, type = "citations"){
             zoteroRoam.citations.currentDOI = doi;
             zoteroRoam.citations.currentCitekey = citekey;
+            zoteroRoam.citations.currentType = type;
             // All citations -- paginated
-            let fullData = zoteroRoam.data.scite.find(item => item.doi == doi).simplified;
+            let fullData = zoteroRoam.data.semantic.find(item => item.doi == doi)[`${type}`];
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
             // Render HTML for pagination
             zoteroRoam.interface.renderCitationsPagination();
@@ -753,6 +755,9 @@
             } else {
                 zoteroRoam.citations.autocomplete.init();
             }
+            // Rendering panel title
+            let relation = type == "citations" ? "citing" : "cited by"
+            zoteroRoam.interface.citations.overlay.querySelector("h5.panel-title").innerText = `Papers ${relation} ${title}`;
             // Make overlay visible
             zoteroRoam.interface.citations.overlay.style.display = "block";
             zoteroRoam.interface.citations.input.value = "";
@@ -1067,7 +1072,7 @@
         },
 
         addToImport(element){
-            let identifier = element.querySelector(".zotero-roam-citation-doi-link").innerText;
+            let identifier = element.querySelector(".zotero-roam-citation-identifier-link").innerText;
             let title = element.querySelector(".zotero-roam-search-item-title").innerText;
             let origin = element.querySelector(".zotero-roam-citation-origin").innerText;
 

@@ -1,6 +1,8 @@
 ;(()=>{
     zoteroRoam.extension = {
 
+        /** Turns the extension 'on'
+         * @fires zotero-roam:ready */
         async load(){
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             let requestReturns = await zoteroRoam.handlers.requestData(zoteroRoam.config.requests);
@@ -71,7 +73,12 @@
                         zoteroRoam.interface.toggleSearchOverlay("show");
                     }
                 });
-
+                /**
+                 * Ready event
+                 * 
+                 * @event zoteroRoam:ready
+                 * @type {object}
+                 */
                 zoteroRoam.events.emit('ready', detail = zoteroRoam.data);
                 zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 zoteroRoam.interface.popToast(message = "Zotero data successfully loaded !", intent = "success");
@@ -80,11 +87,11 @@
             }
         },
 
+        /** Turns the extension 'off' */
         unload(){
             zoteroRoam.interface.icon.setAttribute("status", "off");
             zoteroRoam.data.items = [];
             zoteroRoam.data.collections = [];
-            zoteroRoam.data.scite = [];
             zoteroRoam.data.semantic = [];
             zoteroRoam.data.keys = [];
             zoteroRoam.data.libraries = zoteroRoam.data.libraries.map(lib => {
@@ -131,6 +138,7 @@
             console.log('Data and request outputs have been removed');
         },
         
+        /** Toggles the state of the extension (on/off) */
         toggle(){
             if(zoteroRoam.interface.icon.getAttribute('status') == "off"){
                 zoteroRoam.extension.load();
@@ -139,6 +147,11 @@
             }
         },
 
+        /** Checks for data updates for an Array of requests
+         * @fires zotero-roam:update
+         * @param {string} popup - Specifies if a toast should display the update's outcome
+         * @param {{apikey: string, dataURI: string, library: string, name: string, params: string}[]} reqs - The data requests to retrieve updates for
+         */
         async update(popup = "true", reqs = zoteroRoam.config.requests){
             // Turn the icon background to orange while we're updating the data
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
@@ -206,6 +219,13 @@
                     console.log("Something went wrong when updating the data. Check the console for any errors.");
                 };
             }
+            /** Update event
+             * @event zotero-roam:update
+             * @type {object}
+             * @property {?boolean} success - Indicates if the update was successful
+             * @property {array} requests - The data requests that were part of the update
+             * @property {object} data - The updated data, if any
+             */
             zoteroRoam.events.emit('update', {
                 success: updateResults.success,
                 requests: updateRequests,

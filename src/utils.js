@@ -324,16 +324,22 @@
                 doi: item.doi,
                 intent: item.intent,
                 isInfluential: item.isInfluential,
-                links: {
-                    semanticScholar: `https://www.semanticscholar.org/paper/${item.paperId}`
-                },
+                links: {},
                 meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
                 title: item.title,
-                year: item.year.toString()
+                url: item.url || "",
+                year: item.year ? item.year.toString() : ""
             }
 
             // Parse authors data
-            cleanItem.authorsLastNames = item.authors.map(a => a.name.replaceAll(".", "").split(" ").slice(1).filter(n => n.length > 1).join(" "));
+            cleanItem.authorsLastNames = item.authors.map(a => {
+                let components = a.name.replaceAll(".", " ").split(" ").filter(Boolean);
+                if(components.length == 1){
+                    return components[0];
+                } else {
+                    return components.slice(1).filter(c => c.length > 1).join(" ");
+                }
+            });
             cleanItem.authorsString = cleanItem.authorsLastNames.join(" ");
             switch(cleanItem.authorsLastNames.length){
                 case 0:
@@ -351,7 +357,9 @@
                 default:
                     cleanItem.authors = cleanItem.authorsLastNames[0] + " et al.";
             }
-
+            if(item.paperId){
+                cleanItem.links['semanticScholar'] = `https://www.semanticscholar.org/paper/${item.paperId}`;
+            }
             if(item.arxivId){
                 cleanItem.links['arxiv'] = `https://arxiv.org/abs/${item.arxivId}`;
             }

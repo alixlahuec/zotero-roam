@@ -1,10 +1,16 @@
 
+/** @namespace */
 var zoteroRoam = {};
 
 ;(()=>{
-    
+
     zoteroRoam = {
 
+        /** Represents a shortcut
+         * @constructor
+         * @memberof! zoteroRoam
+         * @param {{action: string, template: Object<string, boolean>}} obj - The object describing the shortcut
+         */
         Shortcut: function(obj) {
             this.action = obj.action;
             this.template = {
@@ -30,6 +36,12 @@ var zoteroRoam = {};
             }
         },
 
+        /** Represents a paginated dataset
+         * @constructor
+         * @param {Object} obj - An object containing pagination settings
+         * @param {Array} obj.data - The dataset to be paginated
+         * @param {Integer} obj.itemsPerPage - The number of items for each page
+         */
         Pagination: function(obj){
             this.data = obj.data;
             this.itemsPerPage = obj.itemsPerPage || zoteroRoam.config.params.citations.itemsPerPage;
@@ -63,20 +75,22 @@ var zoteroRoam = {};
                 zoteroRoam.interface.renderCitationsPagination();
             }
         },
-
+        
         version: "0.6.30",
 
-        data: {items: [], collections: [], scite: [], libraries: [], keys: []},
-
+        data: {items: [], collections: [], semantic: [], libraries: [], keys: []},
+        
         librarySearch: {autocomplete: null},
-
-        citations: {pagination: null, autocomplete: null, currentDOI: "", currentCitekey: ""},
-
+        
+        citations: {pagination: null, autocomplete: null, currentDOI: "", currentCitekey: "", currentType: "citations"},
+        
         tagSelection: {autocomplete: null},
-
+        
         config: {
+            /** autoComplete configuration for the library search panel */
             autoComplete: {
                 data: {
+                    /** @returns {Array} The dataset in simplified format, if any data has been imported */
                     src: async function() {
                         let data = [];
                         if(zoteroRoam.data.items.length > 0){
@@ -86,6 +100,7 @@ var zoteroRoam = {};
                     },
                     keys: ['title', 'authorsString', 'year', 'tagsString', 'key', '_multiField'],
                     cache: false,
+                    /** @returns {Array} The results, filtered in the order of the 'keys' parameter above, and sorted by authors ascending */
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         // Records are sorted alphabetically (by key name) => _multiField should come last
@@ -107,6 +122,7 @@ var zoteroRoam = {};
                 },
                 selector: '#zotero-roam-search-autocomplete',
                 wrapper: false,
+                /** @returns {boolean} Indicates whether the search should be run */
                 trigger: (query) => {
                     if(query.length == 0){
                         document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
@@ -124,6 +140,11 @@ var zoteroRoam = {};
                     destination: "#zotero-roam-library-search-div",
                     position: "beforeend",
                     maxResults: 100,
+                    /**
+                     * Controls the rendering of the results list
+                     * @param {Element} list - The DOM Element corresponding to the results list 
+                     * @param {object} data - The dataset containing the search results
+                     */
                     element: (list, data) => {
                         list.classList.add("bp3-menu");
                         if(data.results && data.results.length > 0){
@@ -138,6 +159,11 @@ var zoteroRoam = {};
                     class: "zotero-roam-search_result",
                     id: "zotero-roam-search_result",
                     highlight: "result_highlighted",
+                    /**
+                     * Controls the rendering of each search result
+                     * @param {Element} item - The DOM Element corresponding to a given search result 
+                     * @param {object} data - The search data associated with a given result
+                     */
                     element: (item, data) => {
                         let itemMetadata = `<span class="zotero-roam-search-item-metadata"> ${data.value.meta}</span>`;
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
@@ -230,16 +256,19 @@ var zoteroRoam = {};
                     }
                 }
             },
+            /** autoComplete configuration for the citations search panel */
             citationsSearch: {
                 data: {
+                    /** @returns {Array} The citations dataset in simplified format, if any DOI has been selected */
                     src: async function(){
                         if(zoteroRoam.citations.currentDOI.length == 0){
                             return [];
                         } else {
-                            return zoteroRoam.data.scite.find(it => it.doi == zoteroRoam.citations.currentDOI).simplified;
+                            return zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
                         }
                     },
                     keys: ['year', 'title', 'keywordsString', 'authorsString', 'abstract', 'meta'],
+                    /** @returns {Array} The results, filtered in the order of the 'keys' parameter above */
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
                         const filteredMatches = Array.from(new Set(list.map((item) => item.value.doi))).map((doi) => {
@@ -252,9 +281,10 @@ var zoteroRoam = {};
                 },
                 selector: '#zotero-roam-citations-autocomplete',
                 wrapper: false,
+                /** @returns {boolean} Indicates whether the search should be run */
                 trigger: (query) => {
                     if(query.length == 0){
-                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI, citekey = zoteroRoam.citations.currentCitekey);
+                        zoteroRoam.interface.popCitationsOverlay(doi = zoteroRoam.citations.currentDOI, citekey = zoteroRoam.citations.currentCitekey, zoteroRoam.citations.currentType);
                         return false;
                     } else {
                         return true;
@@ -283,8 +313,10 @@ var zoteroRoam = {};
                     }
                 }
             },
+            /** autoComplete configuration for the tag selection in the 'Add to Zotero' side panel */
             tagSelection: {
                 data: {
+                    /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
                     src: async function(query){
                         let roamPages = [];
                         if(zoteroRoam.interface.activeImport !== null){
@@ -299,6 +331,7 @@ var zoteroRoam = {};
                         }
                     },
                     keys: ['title'],
+                    /** @returns {Array} The list of existing Roam pages, with the current query always at the top */
                     filter: (list) => {
                         return list.sort((a,b) => {
                             if(a.value.identity == "self"){
@@ -311,8 +344,10 @@ var zoteroRoam = {};
                 },
                 selector: '#zotero-roam-tags-autocomplete',
                 wrapper: false,
+                /** @returns {boolean} Indicates whether the search should be run */
                 trigger: (query) => {
                     if(query.length == 0){
+                        /** Close the selection dropdown if the query is cleared from the searchbox */
                         zoteroRoam.tagSelection.autocomplete.close();
                         return false;
                     } else {
@@ -327,6 +362,11 @@ var zoteroRoam = {};
                     class: "zotero-roam-import-tags-list",
                     id: "zotero-roam-import-tags-list",
                     maxResults: 20,
+                    /**
+                     * Controls the rendering of the results list
+                     * @param {Element} list - The DOM Element corresponding to the results list 
+                     * @param {object} data - The dataset containing the search results
+                     */
                     element: (list, data) => {
                         list.classList.add("bp3-menu");
                         list.classList.add("bp3-elevation");
@@ -355,9 +395,7 @@ var zoteroRoam = {};
                     }
                 }
             },
-            // The tribute's `values` property is set when the tribute is attached to the textarea
-            // This is to reflect the most up-to-date version of the dataset
-            // Otherwise it could be done here, using cb(), but results were piling up when using that instead of being replaced (function was called at every keystroke I think)
+            /** tribute configuration for the inline tribute */
             tribute: {
                 trigger: '',
                 selectClass: 'zotero-roam-tribute-selected',
@@ -534,7 +572,7 @@ var zoteroRoam = {};
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
             .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;}
-            .zotero-roam-search-item-key .zotero-roam-citation-doi-link {display:block;}
+            .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
