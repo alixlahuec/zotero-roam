@@ -267,7 +267,7 @@ var zoteroRoam = {};
                             return zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
                         }
                     },
-                    keys: ['year', 'title', 'keywordsString', 'authorsString', 'abstract', 'meta'],
+                    keys: ['year', 'title', 'authorsString', 'meta'],
                     /** @returns {Array} The results, filtered in the order of the 'keys' parameter above */
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
@@ -501,11 +501,11 @@ var zoteroRoam = {};
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:98.5%;justify-content:flex-end;}
             #zotero-roam-portal .header-content{width:95%;margin: 0 auto;display:flex;}
-            #zotero-roam-portal .header-content h5{font-weight:600;display:inline-block;padding-right:15px;}
-            .zotero-roam-search-overlay .header-content h5{color:#137cbd;}
-            .bp3-dark.zotero-roam-search-overlay .header-content h5{color:#48aff0;}
-            .zotero-roam-citations-search-overlay .header-content h5{color:#d9822b;}
-            .bp3-dark.zotero-roam-citations-search-overlay .header-content h5{color:#ffb366;}
+            #zotero-roam-portal h5.panel-title{font-weight:600;display:inline-block;padding-right:15px;}
+            .zotero-roam-search-overlay h5.panel-title{color:#137cbd;}
+            .bp3-dark.zotero-roam-search-overlay h5.panel-title{color:#48aff0;}
+            .zotero-roam-citations-search-overlay h5.panel-title{color:#d9822b;}
+            .bp3-dark.zotero-roam-citations-search-overlay h5.panel-title{color:#ffb366;}
             #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:10px;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
             #zotero-roam-portal .panel-subtitle{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
@@ -586,10 +586,15 @@ var zoteroRoam = {};
             #zotero-roam-tags-autocomplete{box-shadow:none;}
             #zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
             #zotero-roam-import-tags-list > li{padding:3px 5px;}
-            li.import-items_selected{display:flex;justify-content:space-between;padding:5px 0 5px 15px;background:#f9fafb;}
+            li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;background:#f9fafb;}
+            li.import-items_selected{padding:5px 0 5px 15px;}
+            li.related-item_listed{padding:0 0 0 15px;margin-bottom:0px;}
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
-            .selected_state{flex: 1 0 10%;text-align:center;}
+            .selected_info, .related_info{flex: 0 1 90%;}
+            .related_info{display:flex;}
+            .related_info a{padding:6px 0px;}
+            .selected_state, .related_state{flex: 1 0 10%;text-align:center;}
             `;
             document.head.append(autoCompleteCSS);
         }

@@ -48,9 +48,13 @@
                     continue;
                 } else {
                     // Only do this for page refs for now, we'll see about tags later or not at all
-                    if (parentDiv.dataset.linkTitle.startsWith("@") && !parentDiv.classList.contains("ref-citekey")) {
-                        parentDiv.classList.add("ref-citekey");
-                        matched = true;
+                    if (parentDiv.dataset.linkTitle.startsWith("@")) {
+                        if (parentDiv.classList.contains("ref-citekey")) {
+                            matched = false;
+                        } else {
+                            parentDiv.classList.add("ref-citekey");
+                            matched = true;
+                        }
                     }
                 }
             }
@@ -206,25 +210,76 @@
                                         backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citedDOIs.length > 0 ? citedDOIs.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
 
                                         if(papersInLib.length > 0){
+                                            let citationsInLib = papersInLib.filter(paper => paper.type == "citing");
+                                            let referencesInLib = papersInLib.filter(paper => paper.type == "cited");
+                                            let citationsList = ``;
+                                            let referencesList = ``;
+                                            if(citationsInLib.length > 0){
+                                                citationsList = `
+                                                <ul class="zotero-roam-in-library-citations bp3-list-unstyled" style="flex: 1 0 50%;">
+                                                ${citationsInLib.map(paper => {
+                                                    let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
+                                                    switch(paperInGraph.present){
+                                                        case true:
+                                                            return `
+                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <div class="related_info">
+                                                            <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
+                                                            </div>
+                                                            <div class="related_state">
+                                                            ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" data-type="${paper.type}"`})}
+                                                            </div>
+                                                            </li>`;
+                                                        default:
+                                                            return `
+                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <div class="related_info">
+                                                            <span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}
+                                                            </div>
+                                                            <div class="related_state">
+                                                            ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" data-type="${paper.type}"`})}
+                                                            </div>
+                                                            </li>`
+                                                    }
+                                                }).join(" ")}
+                                                </ul>
+                                                `;
+                                            }
+                                            if(referencesInLib.length > 0){
+                                                referencesList = `
+                                                <ul class="zotero-roam-in-library-references bp3-list-unstyled" style="flex: 1 0 50%;">
+                                                ${citationsInLib.map(paper => {
+                                                    let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
+                                                    switch(paperInGraph.present){
+                                                        case true:
+                                                            return `
+                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <div class="related_info">
+                                                            <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
+                                                            </div>
+                                                            <div class="related_state">
+                                                            ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" data-type="${paper.type}"`})}
+                                                            </div>
+                                                            </li>`;
+                                                        default:
+                                                            return `
+                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <div class="related_info">
+                                                            <span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}
+                                                            </div>
+                                                            <div class="related_state">
+                                                            ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" data-type="${paper.type}"`})}
+                                                            </div>
+                                                            </li>`
+                                                    }
+                                                }).join(" ")}
+                                                </ul>
+                                                `;
+                                            }
                                             backlinksLib += `
                                             <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                            ${papersInLib.map(paper => {
-                                                let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
-                                                switch(paperInGraph.present){
-                                                    case true:
-                                                        return `
-                                                        <li class="zotero-roam-page-menu-backlinks-item">
-                                                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-open-sidebar", icon: "two-columns", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" type="${paper.type}"`})}
-                                                        <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}">${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</a>
-                                                        </li>`;
-                                                    default:
-                                                        return `
-                                                        <li class="zotero-roam-page-menu-backlinks-item">
-                                                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-add-sidebar", icon: "add-column-right", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" type="${paper.type}"`})}
-                                                        ${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}
-                                                        </li>`
-                                                }
-                                            }).join("")}
+                                            ${citationsList}
+                                            ${referencesList}
                                             </ul>
                                             `
                                         }

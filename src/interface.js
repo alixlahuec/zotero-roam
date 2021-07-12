@@ -348,7 +348,7 @@
             panelSubtitle.classList.add("bp3-text-muted");
             panelSubtitle.classList.add("bp3-text-small");
             panelSubtitle.classList.add("panel-subtitle");
-            panelSubtitle.innerText = `Search by title, year, authors (last names), abstract, keywords, publication`;
+            panelSubtitle.innerText = `Search by title, year, authors (last names), publication`;
 
 
             let searchBar = document.createElement('input');
@@ -757,7 +757,7 @@
             }
             // Rendering panel title
             let relation = type == "citations" ? "citing" : "cited by"
-            zoteroRoam.interface.citations.overlay.querySelector("h5.panel-title").innerText = `Papers ${relation} ${title}`;
+            zoteroRoam.interface.citations.overlay.querySelector("h5.panel-title").innerText = `Papers ${relation} @${citekey}`;
             // Make overlay visible
             zoteroRoam.interface.citations.overlay.style.display = "block";
             zoteroRoam.interface.citations.input.value = "";
