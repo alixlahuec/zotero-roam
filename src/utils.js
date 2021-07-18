@@ -287,6 +287,7 @@
             let formattingSpecs = {
                 "</p>": "",
                 "</div>": "",
+                "</span>": "",
                 "<blockquote>": "> ",
                 "</blockquote>": "",
                 "<strong>": "**",

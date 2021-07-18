@@ -1048,27 +1048,30 @@
             tribute.attach(textArea);
 
             textArea.addEventListener('tribute-replaced', (e) => {
-                let textArea = document.querySelector('textarea.rm-block-input');
-                let trigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
-                let triggerPos = e.detail.context.mentionPosition;
+                let item = e.detail.item;
+                if(item.source == "zotero"){
+                    let textArea = document.querySelector('textarea.rm-block-input');
+                    let trigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
+                    let triggerPos = e.detail.context.mentionPosition;
 
-                let replacement = e.detail.item.original.value;
-                let blockContents = e.target.defaultValue;
+                    let replacement = e.detail.item.original.value;
+                    let blockContents = e.target.defaultValue;
 
-                let escapedTrigger = zoteroRoam.utils.escapeRegExp(trigger);
-                let triggerRegex = new RegExp(escapedTrigger, 'g');
-                let newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
+                    let escapedTrigger = zoteroRoam.utils.escapeRegExp(trigger);
+                    let triggerRegex = new RegExp(escapedTrigger, 'g');
+                    let newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
 
-                // Store info about the replacement, to help debug
-                zoteroRoam.interface.tributeTrigger = trigger;
-                zoteroRoam.interface.tributeBlockTrigger = textArea;
-                zoteroRoam.interface.tributeNewText = newText;
+                    // Store info about the replacement, to help debug
+                    zoteroRoam.interface.tributeTrigger = trigger;
+                    zoteroRoam.interface.tributeBlockTrigger = textArea;
+                    zoteroRoam.interface.tributeNewText = newText;
 
-                var setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
-                setValue.call(textArea, newText);
+                    var setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+                    setValue.call(textArea, newText);
 
-                var ev = new Event('input', { bubbles: true });
-                textArea.dispatchEvent(ev);
+                    var ev = new Event('input', { bubbles: true });
+                    textArea.dispatchEvent(ev); 
+                }
             });
 
         },

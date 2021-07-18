@@ -788,7 +788,8 @@
         
         getLibItems(format = "citekey", display = "citekey"){
             return zoteroRoam.data.items.filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType)).map(item => {
-                return {key: item.key, 
+                return {key: item.key,
+                        source: "zotero",
                         value: zoteroRoam.utils.formatItemReference(item, format) || item.key,
                         display: zoteroRoam.utils.formatItemReference(item, display)};
             });
