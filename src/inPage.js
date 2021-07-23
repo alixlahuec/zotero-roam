@@ -206,7 +206,7 @@
                                                 papersInLib[index].type = "cited";
                                             }
                                         });
-                                        backlinksLib = "<hr>";
+                                        backlinksLib = "";
                                         backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citedDOIs.length > 0 ? citedDOIs.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
                                         backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citingDOIs.length > 0 ? citingDOIs.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
                                         backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "bp3-intent-success" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
@@ -217,7 +217,7 @@
                                             let referencesList = [];
                                             let citationsList = [];
                                             if(referencesInLib.length > 0){
-                                                referencesList = referencesInLib.map(paper => {
+                                                referencesList = referencesInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
                                                     let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
                                                     switch(paperInGraph.present){
                                                         case true:
@@ -244,7 +244,7 @@
                                                 });
                                             }
                                             if(citationsInLib.length > 0){
-                                                citationsList = citationsInLib.map(paper => {
+                                                citationsList = citationsInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
                                                     let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
                                                     switch(paperInGraph.present){
                                                         case true:
@@ -273,14 +273,21 @@
                                             let fullLib = [...referencesList, ...citationsList];
                                             // https://flaviocopes.com/how-to-cut-array-half-javascript/
                                             let half = Math.ceil(fullLib.length / 2);
-                                            let firstHalf = fullLib.slice(0, half);
-                                            let secondHalf = fullLib.slice(-half);
+                                            let firstHalf = [];
+                                            let secondHalf = [];
+                                            if(referencesList.length > half){
+                                                firstHalf = referencesList.slice(0, half);
+                                                secondHalf = [...citationsList, ...referencesList.slice(-(half - citationsList.length))];
+                                            } else {
+                                                firstHalf = fullLib.slice(0, half);
+                                                secondHalf = fullLib.slice(-half);
+                                            }
                                             backlinksLib += `
                                             <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                            <ul class="col-1-left bp3-list-unstyled" style="flex: 1 0 50%;">
+                                            <ul class="col-1-left bp3-list-unstyled">
                                             ${firstHalf.join("")}
                                             </ul>
-                                            <ul class="col-2-right bp3-list-unstyled" style="flex: 1 0 50%;">
+                                            <ul class="col-2-right bp3-list-unstyled">
                                             ${secondHalf.join("")}
                                             </ul>
                                             </ul>
