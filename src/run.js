@@ -48,6 +48,10 @@
             zoteroRoam.config.params.notes.func = func;
         }
 
+        if(zoteroRoam.config.userSettings.theme){
+            zoteroRoam.config.params.theme = zoteroRoam.config.userSettings.theme;
+        }
+
         if(zoteroRoam.config.userSettings.pageMenu){
             if(zoteroRoam.config.userSettings.pageMenu.defaults){
                 zoteroRoam.config.params.pageMenu.defaults = zoteroRoam.config.userSettings.pageMenu.defaults;

@@ -437,7 +437,8 @@ var zoteroRoam = {};
                 pageMenu: {
                     defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb",
                             "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
-                }
+                },
+                theme: ""
             },
             requests: [], // Assigned the processed Array of requests (see handlers.setupUserRequests)
             shortcuts: [], // Assigned the processed Array of zoteroRoam.Shortcut objects (see shortcuts.setup)
@@ -491,7 +492,7 @@ var zoteroRoam = {};
             autoCompleteCSS.textContent = `
             .zotero-roam-search-backdrop, .zotero-roam-citations-search-backdrop {opacity:0.4;}
             .zotero-roam-dialog-overlay .bp3-dialog-container{justify-content:start;}
-            .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;}
+            .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 40vw);}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 20vw);}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:20vw!important;}
@@ -499,16 +500,19 @@ var zoteroRoam = {};
             .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:20vw;}
             .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents .item-rendered-notes p{font-weight:350;}
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
-            #zotero-roam-portal .controls-top{display:flex;width:98.5%;justify-content:flex-end;}
-            #zotero-roam-portal .header-content{width:95%;margin: 0 auto;display:flex;}
-            #zotero-roam-portal h5.panel-title{font-weight:600;display:inline-block;padding-right:15px;}
-            .zotero-roam-search-overlay h5.panel-title{color:#137cbd;}
-            .bp3-dark.zotero-roam-search-overlay h5.panel-title{color:#48aff0;}
-            .zotero-roam-citations-search-overlay h5.panel-title{color:#d9822b;}
-            .bp3-dark.zotero-roam-citations-search-overlay h5.panel-title{color:#ffb366;}
+            #zotero-roam-portal .controls-top{display:flex;width:100%;justify-content:flex-end;}
+            #zotero-roam-portal .header-content{width:97.5%;margin:0;margin-left:2.5%;display:flex;}
+            .zotero-roam-dialog-overlay h5.panel-tt{font-weight:600;display:inline-block;padding-right:15px;}
+            .zotero-roam-dialog-overlay h5.panel-tt[list-type="library"]{color:#137cbd;}
+            .zotero-roam-dialog-overlay h5.panel-tt[list-type="citations"]{color:#d9822b;}
+            .zotero-roam-dialog-overlay h5.panel-tt[list-type="references"]{color:#137cbd;}
+            .bp3-dark.zotero-roam-dialog-overlay h5.panel-tt[list-type="library"]{color:#48aff0;}
+            .bp3-dark.zotero-roam-dialog-overlay h5.panel-tt[list-type="citations"]{color:#ffb366;}
+            .bp3-dark.zotero-roam-dialog-overlay h5.panel-tt[list-type="references"]{color:#48aff0;}
             #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:10px;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
-            #zotero-roam-portal .panel-subtitle{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
+            .zotero-roam-search-close{margin:0;padding:0;min-width:41px;}
+            #zotero-roam-portal .panel-st{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
             #zotero-roam-search-autocomplete{width:100%;margin-bottom:20px;padding: 0px 10px;}
             #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;}
             #zotero-roam-portal .quick-copy-element{margin:10px;font-weight:600;display:inline-block;}
@@ -558,15 +562,15 @@ var zoteroRoam = {};
             .zotero-roam-tribute ul li {padding: 2px 5px;font-weight:300;}
             .zotero-roam-tribute-selected {background-color: #4f97d4;color:white;}
             .zotero-roam-page-doi{margin:10px;display:block;font-weight:600;letter-spacing:0.3mm;}
-            .zotero-roam-page-menu{justify-content:space-between;border:1px #eaeaea solid;padding:10px;border-radius:5px;background-color: #f8f8f9;}
+            .zotero-roam-page-menu{justify-content:space-between;border-width:0px;padding:10px;border-radius:5px;background-color: #f8f8f9;}
             .zotero-roam-page-menu-header{display:flex;}
             .zotero-roam-page-menu-actions{flex-wrap:wrap;}
             .zotero-roam-page-menu hr{margin:2px 0;}
             .scite-badge{padding-top:5px;min-width:25%;}
             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
             .zotero-roam-page-menu-pdf-link, .item-pdf-link{font-weight:600;text-align:left!important;}
-            .zotero-roam-page-menu-backlinks-list{padding-left:1vw;}
-            .zotero-roam-page-menu-backlinks-total {font-weight: 700;}
+            .zotero-roam-page-menu-backlinks-list > ul{padding:1vw;}
+            .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
             .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
             .zotero-roam-citations-search_result > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
@@ -583,10 +587,11 @@ var zoteroRoam = {};
             .options-tags{padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;}
             .options-tags-select{flex: 1 0 50%;}
             .options-tags_selection{flex: 1 0 50%;padding:0px 8px;}
-            #zotero-roam-tags-autocomplete{box-shadow:none;}
+            #zotero-roam-tags-autocomplete{box-shadow:none;background:none;}
             #zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
             #zotero-roam-import-tags-list > li{padding:3px 5px;}
             li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;background:#f9fafb;}
+            .bp3-dark li.import-items_selected, .bp3-dark li.related-item_listed{background:#3e3e3e;}
             li.import-items_selected{padding:5px 0 5px 15px;}
             li.related-item_listed{padding:0 0 0 15px;}
             .selected_title{font-weight:500;}
@@ -2151,13 +2156,13 @@ var zoteroRoam = {};
     zoteroRoam.interface = {
         icon: null,
         portal: {div: null, id: "zotero-roam-portal"},
+        contextTarget: null,
         contextMenu: {
             div: null,
             class: "zotero-roam-context-menu",
             overlay: {div: null, class: "zotero-roam-context-overlay"},
             options: {list: [], class: "zotero-roam-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation", "Check for citing papers", "View item information"]},
             visible: false,
-            targetElement: null,
             position({top, left}){
                 zoteroRoam.interface.contextMenu.div.style.left = `${left}px`;
                 zoteroRoam.interface.contextMenu.div.style.top = `${top}px`;
@@ -2319,6 +2324,7 @@ var zoteroRoam = {};
         
             let dialogDiv = document.createElement("div");
             dialogDiv.classList.add("bp3-dialog");
+            if(zoteroRoam.config.params.theme){ dialogDiv.classList.add(zoteroRoam.config.params.theme) };
             dialogDiv.setAttribute("side-panel", "hidden");
             dialogDiv.style = dialogCSS;
             
@@ -2363,12 +2369,14 @@ var zoteroRoam = {};
             headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
+            panelTitle.classList.add("panel-tt");
+            panelTitle.setAttribute("list-type", "library");
             panelTitle.innerText = "Zotero Library";
 
             let panelSubtitle = document.createElement('p');
             panelSubtitle.classList.add("bp3-text-muted");
             panelSubtitle.classList.add("bp3-text-small");
-            panelSubtitle.classList.add("panel-subtitle");
+            panelSubtitle.classList.add("panel-st");
             panelSubtitle.innerText = `Search by title, year, authors (last names), citekey, tags`;
         
             let searchBar = document.createElement('input');
@@ -2490,13 +2498,13 @@ var zoteroRoam = {};
             headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
-            panelTitle.classList.add("panel-title");
+            panelTitle.classList.add("panel-tt");
             panelTitle.innerText = "Citing Papers";
 
             let panelSubtitle = document.createElement('p');
             panelSubtitle.classList.add("bp3-text-muted");
             panelSubtitle.classList.add("bp3-text-small");
-            panelSubtitle.classList.add("panel-subtitle");
+            panelSubtitle.classList.add("panel-st");
             panelSubtitle.innerText = `Search by title, year, authors (last names), publication`;
 
 
@@ -2818,7 +2826,7 @@ var zoteroRoam = {};
 
             elementsKeys.forEach(key => {
                 zoteroRoam.interface[`${key}`].div.addEventListener("click", (e) => {
-                    let target = zoteroRoam.interface.contextMenu.targetElement;
+                    let target = zoteroRoam.interface.contextTarget;
                     let op = target.closest('li.zotero-roam-cm-option');
                     if(op){
                         let action = op.innerText;
@@ -2907,8 +2915,10 @@ var zoteroRoam = {};
                 zoteroRoam.citations.autocomplete.init();
             }
             // Rendering panel title
-            let relation = type == "citations" ? "citing" : "cited by"
-            zoteroRoam.interface.citations.overlay.querySelector("h5.panel-title").innerText = `Papers ${relation} @${citekey}`;
+            let relation = type == "citations" ? "Citing" : "Referenced by"
+            let panelTitle = zoteroRoam.interface.citations.overlay.querySelector("h5.panel-tt");
+            panelTitle.innerText = `${relation} @${citekey}`;
+            panelTitle.setAttribute("list-type", type);
             // Make overlay visible
             zoteroRoam.interface.citations.overlay.style.display = "block";
             zoteroRoam.interface.citations.input.value = "";
@@ -2932,7 +2942,7 @@ var zoteroRoam = {};
                 top: e.pageY
             };
             zoteroRoam.interface[`${elementKey}`].position(origin);
-            if(elementKey == "contextMenu"){ zoteroRoam.interface.contextMenu.targetElement = e.target; };
+            zoteroRoam.interface.contextTarget = e.target;
             return false;
         },
 
@@ -3773,6 +3783,8 @@ var zoteroRoam = {};
                             if(menuDiv == null){
                                 menuDiv = document.createElement("div");
                                 menuDiv.classList.add("zotero-roam-page-menu");
+                                menuDiv.classList.add("bp3-card");
+                                if(zoteroRoam.config.params.theme){ menuDiv.classList.add(zoteroRoam.config.params.theme) };
                                 pageDiv.appendChild(menuDiv);
                             }
 
@@ -4555,6 +4567,10 @@ var zoteroRoam = {};
             zoteroRoam.config.params.notes.use = use;
             zoteroRoam.config.params.notes["split_char"] = split_char;
             zoteroRoam.config.params.notes.func = func;
+        }
+
+        if(zoteroRoam.config.userSettings.theme){
+            zoteroRoam.config.params.theme = zoteroRoam.config.userSettings.theme;
         }
 
         if(zoteroRoam.config.userSettings.pageMenu){

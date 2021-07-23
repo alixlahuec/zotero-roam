@@ -161,6 +161,8 @@
                             if(menuDiv == null){
                                 menuDiv = document.createElement("div");
                                 menuDiv.classList.add("zotero-roam-page-menu");
+                                menuDiv.classList.add("bp3-card");
+                                if(zoteroRoam.config.params.theme){ menuDiv.classList.add(zoteroRoam.config.params.theme) };
                                 pageDiv.appendChild(menuDiv);
                             }
 

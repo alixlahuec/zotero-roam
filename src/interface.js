@@ -2,13 +2,13 @@
     zoteroRoam.interface = {
         icon: null,
         portal: {div: null, id: "zotero-roam-portal"},
+        contextTarget: null,
         contextMenu: {
             div: null,
             class: "zotero-roam-context-menu",
             overlay: {div: null, class: "zotero-roam-context-overlay"},
             options: {list: [], class: "zotero-roam-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation", "Check for citing papers", "View item information"]},
             visible: false,
-            targetElement: null,
             position({top, left}){
                 zoteroRoam.interface.contextMenu.div.style.left = `${left}px`;
                 zoteroRoam.interface.contextMenu.div.style.top = `${top}px`;
@@ -170,6 +170,7 @@
         
             let dialogDiv = document.createElement("div");
             dialogDiv.classList.add("bp3-dialog");
+            if(zoteroRoam.config.params.theme){ dialogDiv.classList.add(zoteroRoam.config.params.theme) };
             dialogDiv.setAttribute("side-panel", "hidden");
             dialogDiv.style = dialogCSS;
             
@@ -214,12 +215,14 @@
             headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
+            panelTitle.classList.add("panel-tt");
+            panelTitle.setAttribute("list-type", "library");
             panelTitle.innerText = "Zotero Library";
 
             let panelSubtitle = document.createElement('p');
             panelSubtitle.classList.add("bp3-text-muted");
             panelSubtitle.classList.add("bp3-text-small");
-            panelSubtitle.classList.add("panel-subtitle");
+            panelSubtitle.classList.add("panel-st");
             panelSubtitle.innerText = `Search by title, year, authors (last names), citekey, tags`;
         
             let searchBar = document.createElement('input');
@@ -341,13 +344,13 @@
             headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
-            panelTitle.classList.add("panel-title");
+            panelTitle.classList.add("panel-tt");
             panelTitle.innerText = "Citing Papers";
 
             let panelSubtitle = document.createElement('p');
             panelSubtitle.classList.add("bp3-text-muted");
             panelSubtitle.classList.add("bp3-text-small");
-            panelSubtitle.classList.add("panel-subtitle");
+            panelSubtitle.classList.add("panel-st");
             panelSubtitle.innerText = `Search by title, year, authors (last names), publication`;
 
 
@@ -669,7 +672,7 @@
 
             elementsKeys.forEach(key => {
                 zoteroRoam.interface[`${key}`].div.addEventListener("click", (e) => {
-                    let target = zoteroRoam.interface.contextMenu.targetElement;
+                    let target = zoteroRoam.interface.contextTarget;
                     let op = target.closest('li.zotero-roam-cm-option');
                     if(op){
                         let action = op.innerText;
@@ -758,8 +761,10 @@
                 zoteroRoam.citations.autocomplete.init();
             }
             // Rendering panel title
-            let relation = type == "citations" ? "citing" : "cited by"
-            zoteroRoam.interface.citations.overlay.querySelector("h5.panel-title").innerText = `Papers ${relation} @${citekey}`;
+            let relation = type == "citations" ? "Citing" : "Referenced by"
+            let panelTitle = zoteroRoam.interface.citations.overlay.querySelector("h5.panel-tt");
+            panelTitle.innerText = `${relation} @${citekey}`;
+            panelTitle.setAttribute("list-type", type);
             // Make overlay visible
             zoteroRoam.interface.citations.overlay.style.display = "block";
             zoteroRoam.interface.citations.input.value = "";
@@ -783,7 +788,7 @@
                 top: e.pageY
             };
             zoteroRoam.interface[`${elementKey}`].position(origin);
-            if(elementKey == "contextMenu"){ zoteroRoam.interface.contextMenu.targetElement = e.target; };
+            zoteroRoam.interface.contextTarget = e.target;
             return false;
         },
 
