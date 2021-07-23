@@ -209,7 +209,7 @@
                                         backlinksLib = "";
                                         backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citedDOIs.length > 0 ? citedDOIs.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
                                         backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citingDOIs.length > 0 ? citingDOIs.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
-                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "bp3-intent-success" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
 
                                         if(papersInLib.length > 0){
                                             let citationsInLib = papersInLib.filter(paper => paper.type == "citing");
@@ -310,6 +310,7 @@
                             ${records_list.length == 0 ? "" : records_list.join("\n")}
                             </div>
                             </div>
+                            <hr>
                             <div class="zotero-roam-page-menu-citations">
                             ${backlinksLib}
                             </div>
