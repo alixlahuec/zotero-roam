@@ -2,13 +2,16 @@
     // This code will run on re/load
     // It contains the interactive portion of the setup (reading user specifications, and setting up certain objects accordingly)
     if (typeof(window.zoteroRoam_settings) !== 'undefined') {
+        // Get user settings
+        zoteroRoam.config.userSettings = window.zoteroRoam_settings;
+        if(zoteroRoam.config.userSettings.theme){
+            zoteroRoam.config.params.theme = zoteroRoam.config.userSettings.theme;
+        }
         // Add DOM interface elements + set them up
         zoteroRoam.interface.create();
         zoteroRoam.interface.setup();
         zoteroRoam.addExtensionCSS();
         window.addEventListener("hashchange", () => { zoteroRoam.interface.toggleSearchOverlay("hide") });
-
-        zoteroRoam.config.userSettings = window.zoteroRoam_settings;
 
         // Check for additional settings
         // override_quickcopy
@@ -46,10 +49,6 @@
             zoteroRoam.config.params.notes.use = use;
             zoteroRoam.config.params.notes["split_char"] = split_char;
             zoteroRoam.config.params.notes.func = func;
-        }
-
-        if(zoteroRoam.config.userSettings.theme){
-            zoteroRoam.config.params.theme = zoteroRoam.config.userSettings.theme;
         }
 
         if(zoteroRoam.config.userSettings.pageMenu){

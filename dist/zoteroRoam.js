@@ -569,6 +569,8 @@ var zoteroRoam = {};
             .scite-badge{padding-top:5px;min-width:25%;}
             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
             .zotero-roam-page-menu-pdf-link, .item-pdf-link{font-weight:600;text-align:left!important;}
+            .zotero-roam-page-menu-citations{display:flex;padding:10px;flex-wrap:wrap;}
+            .zotero-roam-page-menu-citations > button{flex: 1 0 33%;}
             .zotero-roam-page-menu-backlinks-list > ul{padding:1vw;}
             .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
             .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
@@ -591,7 +593,7 @@ var zoteroRoam = {};
             #zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
             #zotero-roam-import-tags-list > li{padding:3px 5px;}
             li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;background:#f9fafb;}
-            .bp3-dark li.import-items_selected, .bp3-dark li.related-item_listed{background:#3e3e3e;}
+            .bp3-dark li.import-items_selected, .bp3-dark li.related-item_listed{background:#2e2f3187;}
             li.import-items_selected{padding:5px 0 5px 15px;}
             li.related-item_listed{padding:0 0 0 15px;}
             .selected_title{font-weight:500;}
@@ -2826,7 +2828,7 @@ var zoteroRoam = {};
 
             elementsKeys.forEach(key => {
                 zoteroRoam.interface[`${key}`].div.addEventListener("click", (e) => {
-                    let target = zoteroRoam.interface.contextTarget;
+                    let target = e.target;
                     let op = target.closest('li.zotero-roam-cm-option');
                     if(op){
                         let action = op.innerText;
@@ -3829,9 +3831,9 @@ var zoteroRoam = {};
                                             }
                                         });
                                         backlinksLib = "<hr>";
-                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
-                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citingDOIs.length > 0 ? citingDOIs.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
                                         backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citedDOIs.length > 0 ? citedDOIs.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
+                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citingDOIs.length > 0 ? citingDOIs.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
+                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "bp3-intent-success" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
 
                                         if(papersInLib.length > 0){
                                             let citationsInLib = papersInLib.filter(paper => paper.type == "citing");
@@ -3846,7 +3848,7 @@ var zoteroRoam = {};
                                                     switch(paperInGraph.present){
                                                         case true:
                                                             return `
-                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <li class="related-item_listed bp3-blockquote" item-type="citation">
                                                             <div class="related_info">
                                                             <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
                                                             </div>
@@ -3856,7 +3858,7 @@ var zoteroRoam = {};
                                                             </li>`;
                                                         default:
                                                             return `
-                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <li class="related-item_listed bp3-blockquote" item-type="citation">
                                                             <div class="related_info">
                                                             <span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
                                                             </div>
@@ -3877,7 +3879,7 @@ var zoteroRoam = {};
                                                     switch(paperInGraph.present){
                                                         case true:
                                                             return `
-                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <li class="related-item_listed bp3-blockquote" item-type="reference">
                                                             <div class="related_info">
                                                             <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
                                                             </div>
@@ -3887,7 +3889,7 @@ var zoteroRoam = {};
                                                             </li>`;
                                                         default:
                                                             return `
-                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <li class="related-item_listed bp3-blockquote" item-type="reference">
                                                             <div class="related_info">
                                                             <span><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
                                                             </div>
@@ -3902,8 +3904,8 @@ var zoteroRoam = {};
                                             }
                                             backlinksLib += `
                                             <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                            ${citationsList}
                                             ${referencesList}
+                                            ${citationsList}
                                             </ul>
                                             `
                                         }
@@ -4523,13 +4525,16 @@ var zoteroRoam = {};
     // This code will run on re/load
     // It contains the interactive portion of the setup (reading user specifications, and setting up certain objects accordingly)
     if (typeof(window.zoteroRoam_settings) !== 'undefined') {
+        // Get user settings
+        zoteroRoam.config.userSettings = window.zoteroRoam_settings;
+        if(zoteroRoam.config.userSettings.theme){
+            zoteroRoam.config.params.theme = zoteroRoam.config.userSettings.theme;
+        }
         // Add DOM interface elements + set them up
         zoteroRoam.interface.create();
         zoteroRoam.interface.setup();
         zoteroRoam.addExtensionCSS();
         window.addEventListener("hashchange", () => { zoteroRoam.interface.toggleSearchOverlay("hide") });
-
-        zoteroRoam.config.userSettings = window.zoteroRoam_settings;
 
         // Check for additional settings
         // override_quickcopy
@@ -4567,10 +4572,6 @@ var zoteroRoam = {};
             zoteroRoam.config.params.notes.use = use;
             zoteroRoam.config.params.notes["split_char"] = split_char;
             zoteroRoam.config.params.notes.func = func;
-        }
-
-        if(zoteroRoam.config.userSettings.theme){
-            zoteroRoam.config.params.theme = zoteroRoam.config.userSettings.theme;
         }
 
         if(zoteroRoam.config.userSettings.pageMenu){

@@ -207,9 +207,9 @@
                                             }
                                         });
                                         backlinksLib = "<hr>";
-                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: "bp3-minimal bp3-intent-success zotero-roam-page-menu-backlinks-button", icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
-                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citingDOIs.length > 0 ? citingDOIs.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
                                         backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citedDOIs.length > 0 ? citedDOIs.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
+                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citingDOIs.length > 0 ? citingDOIs.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
+                                        backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "bp3-intent-success" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
 
                                         if(papersInLib.length > 0){
                                             let citationsInLib = papersInLib.filter(paper => paper.type == "citing");
@@ -224,7 +224,7 @@
                                                     switch(paperInGraph.present){
                                                         case true:
                                                             return `
-                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <li class="related-item_listed bp3-blockquote" item-type="citation">
                                                             <div class="related_info">
                                                             <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
                                                             </div>
@@ -234,7 +234,7 @@
                                                             </li>`;
                                                         default:
                                                             return `
-                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <li class="related-item_listed bp3-blockquote" item-type="citation">
                                                             <div class="related_info">
                                                             <span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
                                                             </div>
@@ -255,7 +255,7 @@
                                                     switch(paperInGraph.present){
                                                         case true:
                                                             return `
-                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <li class="related-item_listed bp3-blockquote" item-type="reference">
                                                             <div class="related_info">
                                                             <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
                                                             </div>
@@ -265,7 +265,7 @@
                                                             </li>`;
                                                         default:
                                                             return `
-                                                            <li class="related-item_listed bp3-blockquote">
+                                                            <li class="related-item_listed bp3-blockquote" item-type="reference">
                                                             <div class="related_info">
                                                             <span><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
                                                             </div>
@@ -280,8 +280,8 @@
                                             }
                                             backlinksLib += `
                                             <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                            ${citationsList}
                                             ${referencesList}
+                                            ${citationsList}
                                             </ul>
                                             `
                                         }

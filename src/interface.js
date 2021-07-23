@@ -672,7 +672,7 @@
 
             elementsKeys.forEach(key => {
                 zoteroRoam.interface[`${key}`].div.addEventListener("click", (e) => {
-                    let target = zoteroRoam.interface.contextTarget;
+                    let target = e.target;
                     let op = target.closest('li.zotero-roam-cm-option');
                     if(op){
                         let action = op.innerText;
