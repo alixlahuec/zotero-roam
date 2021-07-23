@@ -214,43 +214,10 @@
                                         if(papersInLib.length > 0){
                                             let citationsInLib = papersInLib.filter(paper => paper.type == "citing");
                                             let referencesInLib = papersInLib.filter(paper => paper.type == "cited");
-                                            let citationsList = ``;
-                                            let referencesList = ``;
-                                            if(citationsInLib.length > 0){
-                                                citationsList = `
-                                                <ul class="zotero-roam-in-library-citations bp3-list-unstyled" style="flex: 1 0 50%;">
-                                                ${citationsInLib.map(paper => {
-                                                    let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
-                                                    switch(paperInGraph.present){
-                                                        case true:
-                                                            return `
-                                                            <li class="related-item_listed bp3-blockquote" item-type="citation">
-                                                            <div class="related_info">
-                                                            <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
-                                                            </div>
-                                                            <div class="related_state">
-                                                            ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" data-type="${paper.type}"`})}
-                                                            </div>
-                                                            </li>`;
-                                                        default:
-                                                            return `
-                                                            <li class="related-item_listed bp3-blockquote" item-type="citation">
-                                                            <div class="related_info">
-                                                            <span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
-                                                            </div>
-                                                            <div class="related_state">
-                                                            ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" data-type="${paper.type}"`})}
-                                                            </div>
-                                                            </li>`
-                                                    }
-                                                }).join(" ")}
-                                                </ul>
-                                                `;
-                                            }
+                                            let referencesList = [];
+                                            let citationsList = [];
                                             if(referencesInLib.length > 0){
-                                                referencesList = `
-                                                <ul class="zotero-roam-in-library-references bp3-list-unstyled" style="flex: 1 0 50%;">
-                                                ${referencesInLib.map(paper => {
+                                                referencesList = referencesInLib.map(paper => {
                                                     let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
                                                     switch(paperInGraph.present){
                                                         case true:
@@ -274,14 +241,48 @@
                                                             </div>
                                                             </li>`
                                                     }
-                                                }).join(" ")}
-                                                </ul>
-                                                `;
+                                                });
                                             }
+                                            if(citationsInLib.length > 0){
+                                                citationsList = citationsInLib.map(paper => {
+                                                    let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
+                                                    switch(paperInGraph.present){
+                                                        case true:
+                                                            return `
+                                                            <li class="related-item_listed bp3-blockquote" item-type="citation">
+                                                            <div class="related_info">
+                                                            <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
+                                                            </div>
+                                                            <div class="related_state">
+                                                            ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" data-type="${paper.type}"`})}
+                                                            </div>
+                                                            </li>`;
+                                                        default:
+                                                            return `
+                                                            <li class="related-item_listed bp3-blockquote" item-type="citation">
+                                                            <div class="related_info">
+                                                            <span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
+                                                            </div>
+                                                            <div class="related_state">
+                                                            ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" data-type="${paper.type}"`})}
+                                                            </div>
+                                                            </li>`
+                                                    }
+                                                });
+                                            }
+                                            let fullLib = [...referencesList, ...citationsList];
+                                            // https://flaviocopes.com/how-to-cut-array-half-javascript/
+                                            let half = Math.ceil(fullLib.length / 2);
+                                            let firstHalf = fullLib.slice(0, half);
+                                            let secondHalf = fullLib.slice(-half);
                                             backlinksLib += `
                                             <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                            ${referencesList}
-                                            ${citationsList}
+                                            <ul class="col-1-left bp3-list-unstyled" style="flex: 1 0 50%;">
+                                            ${firstHalf.join("")}
+                                            </ul>
+                                            <ul class="col-2-right bp3-list-unstyled" style="flex: 1 0 50%;">
+                                            ${secondHalf.join("")}
+                                            </ul>
                                             </ul>
                                             `
                                         }
