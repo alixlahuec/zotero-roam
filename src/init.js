@@ -334,7 +334,7 @@ var zoteroRoam = {};
                     /** @returns {Array} The list of existing Roam pages, with the current query always at the top */
                     filter: (list) => {
                         return list.sort((a,b) => {
-                            if(a.value.identity == "self"){
+                            if(a.value.identity && a.value.identity == "self"){
                                 return -1000;
                             } else {
                                 return a.value.title.length - b.value.title.length;
@@ -590,6 +590,7 @@ var zoteroRoam = {};
             .options-tags{padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;}
             .options-tags-select{flex: 1 0 50%;}
             .options-tags_selection{flex: 1 0 50%;padding:0px 8px;}
+            .options-tags_selection .bp3-tag{word-break:break-word;}
             #zotero-roam-tags-autocomplete{box-shadow:none;background:none;}
             #zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
             #zotero-roam-import-tags-list > li{padding:3px 5px;}

@@ -49,8 +49,8 @@
             }).filter(x => x.proximity > more_than);
         },
 
-        findSameDay(item, {exclude_attachments = true} = {}){
-            let fullArray = zoteroRoam.data.items.filter(it => new Date(it.data.dateAdded).toDateString() == new Date(item.data.dateAdded).toDateString());
+        findSameDay(date, {exclude_attachments = true} = {}){
+            let fullArray = zoteroRoam.data.items.filter(it => new Date(it.data.dateAdded).toDateString() == date.toDateString());
             if(fullArray.length == 0){
                 return [];
             } else if(exclude_attachments == true){
@@ -199,6 +199,12 @@
             } else{
                 return dateString;
             }
+        },
+
+        readDNP(string){
+            let [match, mm, dd, yy] = Array.from(string.matchAll(/(.+) ([0-9]+).{2}, ([0-9]{4})/g))[0];
+            let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return new Date(parseInt(yy), months.findIndex(month => month == mm), parseInt(dd));
         },
 
         makeMetaString(item){
