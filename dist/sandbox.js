@@ -3767,7 +3767,7 @@ var zoteroRoam = {};
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
             for(const page of openPages) {
                 if(page.parentElement.querySelector('.zotero-roam-page-div') || page.querySelector('.zotero-roam-page-related')){
-                    return;
+                    continue;
                 }
                 let title = page.querySelector('span') ? page.querySelector('span').innerText : page.innerText;
                 // Case 1 (ref-citekey) = make page menu
@@ -3800,7 +3800,7 @@ var zoteroRoam = {};
                 } else {
                 // Case 3 (all other pages) - display items with matching tags + abstracts
                     let taggedWith = zoteroRoam.data.items.filter(i => i.data.tags && i.data.tags.map(t => t.tag).includes(title));
-                    let abstractMentions = zoteroRoam.data.items.filter(i => i.data.abstractNote && i.data.abstractNote.contains(title));
+                    let abstractMentions = zoteroRoam.data.items.filter(i => i.data.abstractNote && i.data.abstractNote.includes(title));
                     if(taggedWith.length > 0 || abstractMentions.length > 0){
                         let listDiv = document.createElement('div');
                         listDiv.classList.add('zotero-roam-page-related');
