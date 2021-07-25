@@ -10,6 +10,8 @@
                             zoteroRoam.interface.toggleSearchOverlay("hide");
                         } else if(Array.from(openOverlay.classList).includes(`${zoteroRoam.interface.citations.overlayClass}-overlay`)){
                             zoteroRoam.interface.closeCitationsOverlay();
+                        } else if(Array.from(openOverlay.classList).includes("zotero-roam-auxiliary-overlay")){
+                            zoteroRoam.interface.closeAuxiliaryOverlay();
                         }
                     }
                 }

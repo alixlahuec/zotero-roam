@@ -826,17 +826,26 @@
             overlay.querySelector('.main-panel .header-left').innerHTML = `
             <h5 class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
             `;
-
-            let items = keys.map(k => zoteroRoam.data.items.find(i => i.key == k));
+            let roamPages = zoteroRoam.utils.getAllRefPages();
+            let items = keys.map(k => {
+                let libItem = zoteroRoam.data.items.find(i => i.key == k);
+                let year = libItem.meta.parsedDate ? `(${libItem.meta.parsedDate})` : "";
+                let creator = libItem.meta.creatorSummary + " " || "";
+                let inLibrary = roamPages.find(i => i.title == '@' + k) ? true : false;
+                return {
+                    key: k,
+                    meta: `${creator}${year}`,
+                    title: libItem.data.title || "",
+                    inLibrary: inLibrary
+                }
+            }).sort((a,b) => (a.meta < b.meta ? -1 : 1));
             let itemsList = items.map(item => {
-                let year = item.meta.parsedDate ? `(${item.meta.parsedDate})` : "";
-                let creator = item.meta.creatorSummary + " " || "";
                 return `
                 <li>
-                <div class="bp3-menu-item" label="${item.key}">
+                <div class="bp3-menu-item" label="${item.key}" inLibrary="${item.inLibrary}">
                 <div class="bp3-text-overflow-ellipsis bp3-fill">
-                <span class="zotero-roam-search-item-title" style="display:block;">${item.data.title}</span>
-                <span class="zotero-roam-citation-metadata-contents">${creator}${year}</span>
+                <span class="zotero-roam-search-item-title" style="display:block;white-space:normal;">${item.title}</span>
+                <span class="zotero-roam-citation-metadata-contents">${item.meta}</span>
                 </div>
                 </div>
                 </li>

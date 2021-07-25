@@ -279,6 +279,7 @@
          * @param {Element} elem - The DOM Element of the h1.rm-title-display for which the menu is being added 
          */
         async renderCitekeyMenu(item, title, elem){
+            let itemCitekey = title.slice(1);
             let itemDOI = !item.data.DOI ? "" : zoteroRoam.utils.parseDOI(item.data.DOI);
             let pageInGraph = zoteroRoam.utils.lookForPage(title);
             let itemChildren = zoteroRoam.formatting.getItemChildren(item, { pdf_as: "raw", notes_as: "raw" });
