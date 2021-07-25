@@ -863,6 +863,14 @@
                 }
             }).sort((a,b) => (a[`${defaultSort}`].toLowerCase() < b[`${defaultSort}`].toLowerCase() ? -1 : 1));
             let itemsList = items.map(item => {
+                let actionsDiv = "";
+                if(item.inGraph){
+                    actionsDiv = `
+                    <span class="zotero-roam-search-item-key">
+                    ${zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-outlined bp3-intent-success bp3-small"})}
+                    </span>
+                    `;
+                }
                 return `
                 <li class="zotero-roam-list-item">
                 <div class="bp3-menu-item" label="${item.key}" in-graph="${item.inGraph}">
@@ -871,8 +879,10 @@
                         <span class="zotero-roam-search-item-title" style="display:block;white-space:normal;">${item.title}</span>
                         <span class="zotero-roam-citation-metadata-contents">${item.meta}</span>
                         ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal"}) : ""}
+                        <span class="bp3-text-muted" style="padding:0 5px;">Key: ${item.key}</span>
                         <span class="zotero-roam-citation-abstract" style="display:none;">${item.abstract}</span>
                     </div>
+                    ${actionsDiv}
                 </div>
                 </li>
                 `;
