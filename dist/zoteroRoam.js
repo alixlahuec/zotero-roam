@@ -582,14 +582,15 @@ var zoteroRoam = {};
             .zotero-roam-page-menu-citations > button{flex: 1 0 33%;}
             .zotero-roam-page-menu-backlinks-list > ul{padding:1vw;display:flex;flex:1 0 50%;flex-direction:column;}
             .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
-            .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
-            .zotero-roam-citations-search_result > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
+            .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item, .zotero-roam-list-item > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
+            .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
             .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;}
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
-            .zotero-roam-citation-abstract{font-size:0.88em;font-weight:300;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;}
+            .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
+            .zotero-roam-citation-abstract{font-size:0.88em;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;white-space:break-spaces;}
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
             .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
             .options-library-list, .options-collections-list{flex:1 0 50%;}
@@ -2231,7 +2232,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.citations.overlayClass);
             zoteroRoam.interface.fillCitationsOverlay();
             // Create small dialog overlay
-            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "transition:0.3s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
+            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "align-self:start;transition:0.3s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
             zoteroRoam.interface.fillAuxiliaryOverlay();
             // Create toast overlay
             zoteroRoam.interface.createToastOverlay();
@@ -3039,7 +3040,7 @@ var zoteroRoam = {};
                 let creator = libItem.meta.creatorSummary + " " || "";
                 let inGraph = roamPages.find(i => i.title == '@' + k) ? true : false;
                 return {
-                    abtract: libItem.data.abstractNote || "",
+                    abstract: libItem.data.abstractNote || "",
                     key: k,
                     meta: `${creator}${year}`,
                     title: libItem.data.title || "",
@@ -3056,7 +3057,7 @@ var zoteroRoam = {};
                     <div class="bp3-text-overflow-ellipsis bp3-fill">
                         <span class="zotero-roam-search-item-title" style="display:block;white-space:normal;">${item.title}</span>
                         <span class="zotero-roam-citation-metadata-contents">${item.meta}</span>
-                        ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
+                        ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal"}) : ""}
                         <span class="zotero-roam-citation-abstract" style="display:none;">${item.abstract}</span>
                     </div>
                 </div>

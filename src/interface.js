@@ -45,7 +45,7 @@
             zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.citations.overlayClass);
             zoteroRoam.interface.fillCitationsOverlay();
             // Create small dialog overlay
-            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "transition:0.3s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
+            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "align-self:start;transition:0.3s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
             zoteroRoam.interface.fillAuxiliaryOverlay();
             // Create toast overlay
             zoteroRoam.interface.createToastOverlay();
@@ -853,7 +853,7 @@
                 let creator = libItem.meta.creatorSummary + " " || "";
                 let inGraph = roamPages.find(i => i.title == '@' + k) ? true : false;
                 return {
-                    abtract: libItem.data.abstractNote || "",
+                    abstract: libItem.data.abstractNote || "",
                     key: k,
                     meta: `${creator}${year}`,
                     title: libItem.data.title || "",
@@ -870,7 +870,7 @@
                     <div class="bp3-text-overflow-ellipsis bp3-fill">
                         <span class="zotero-roam-search-item-title" style="display:block;white-space:normal;">${item.title}</span>
                         <span class="zotero-roam-citation-metadata-contents">${item.meta}</span>
-                        ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
+                        ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal"}) : ""}
                         <span class="zotero-roam-citation-abstract" style="display:none;">${item.abstract}</span>
                     </div>
                 </div>
