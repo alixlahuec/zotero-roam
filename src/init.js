@@ -611,6 +611,8 @@ var zoteroRoam = {};
             [item-type="reference"] .bp3-icon, [item-type="reference"] a {color:#7ec8de!important;}
             .bp3-dark [item-type="citation"] .bp3-icon, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
             [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#d6a956!important;}
+            .zotero-roam-page-related{opacity:0.6;float:right;margin-top:-40px;}
+            .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             `;
             document.head.append(autoCompleteCSS);
         }

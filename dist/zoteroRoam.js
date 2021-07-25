@@ -611,6 +611,8 @@ var zoteroRoam = {};
             [item-type="reference"] .bp3-icon, [item-type="reference"] a {color:#7ec8de!important;}
             .bp3-dark [item-type="citation"] .bp3-icon, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
             [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#d6a956!important;}
+            .zotero-roam-page-related{opacity:0.6;float:right;margin-top:-40px;}
+            .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             `;
             document.head.append(autoCompleteCSS);
         }
@@ -3766,7 +3768,7 @@ var zoteroRoam = {};
             zoteroRoam.utils.sleep(wait);
             let openPages = Array.from(document.querySelectorAll("h1.rm-title-display"));
             for(const page of openPages) {
-                if(page.parentElement.querySelector('.zotero-roam-page-div') || page.querySelector('.zotero-roam-page-related')){
+                if(page.parentElement.querySelector('.zotero-roam-page-div') || page.parentElement.querySelector('.zotero-roam-page-related')){
                     continue;
                 }
                 let title = page.querySelector('span') ? page.querySelector('span').innerText : page.innerText;
@@ -3793,9 +3795,8 @@ var zoteroRoam = {};
                         listDiv.classList.add('bp3-minimal');
                         listDiv.classList.add('bp3-align-left');
                         listDiv.classList.add('bp3-vertical');
-                        listDiv.style = `line-height:1rem;float:right;opacity:0.6;`;
-                        listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} items added`, {icon: "calendar", buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
-                        page.appendChild(listDiv);
+                        listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} item${addedOn.length > 1 ? "s" : ""} added`, {icon: "calendar", buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
+                        page.parentElement.appendChild(listDiv, page);
                     }
                 } else {
                 // Case 3 (all other pages) - display items with matching tags + abstracts
@@ -3808,22 +3809,21 @@ var zoteroRoam = {};
                         listDiv.classList.add('bp3-minimal');
                         listDiv.classList.add('bp3-align-left');
                         listDiv.classList.add('bp3-vertical');
-                        listDiv.style = `line-height:1rem;float:right;opacity:0.6;`;
                         let tagBtn = "";
                         if(taggedWith.length > 0){
                             let itemKeys = taggedWith.map(i => i.key);
-                            tagBtn = zoteroRoam.utils.renderBP3Button_group(`${taggedWith.length} tagged items`, {icon: 'manual', buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
+                            tagBtn = zoteroRoam.utils.renderBP3Button_group(`${taggedWith.length} tagged item${taggedWith.length > 1 ? "s" : ""}`, {icon: 'manual', buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
                         }
                         let abstractBtn = "";
                         if(abstractMentions.length > 0){
                             let itemKeys = abstractMentions.map(i => i.key);
-                            abstractBtn = zoteroRoam.utils.renderBP3Button_group(`${abstractMentions.length} abstracts`, {icon: 'manually-entered-data', buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
+                            abstractBtn = zoteroRoam.utils.renderBP3Button_group(`${abstractMentions.length} abstract${abstractMentions.length > 1 ? "s" : ""}`, {icon: 'manually-entered-data', buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
                         }
                         listDiv.innerHTML = `
                         ${tagBtn}
                         ${abstractBtn}
                         `;
-                        page.appendChild(listDiv);
+                        page.parentElement.appendChild(listDiv, page);
                     }
                 }
             };
