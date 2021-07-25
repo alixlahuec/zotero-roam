@@ -3824,7 +3824,7 @@ var zoteroRoam = {};
                         listDiv.classList.add('bp3-align-left');
                         listDiv.classList.add('bp3-vertical');
                         listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} item${addedOn.length > 1 ? "s" : ""} added`, {icon: "calendar", buttonClass: "zotero-roam-page-added-on", buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
-                        page.parentElement.appendChild(listDiv, page);
+                        page.insertAdjacentElement('afterend', listDiv);
                     }
                 } else {
                 // Case 3 (all other pages) - display items with matching tags + abstracts
@@ -3851,7 +3851,7 @@ var zoteroRoam = {};
                         ${tagBtn}
                         ${abstractBtn}
                         `;
-                        page.parentElement.appendChild(listDiv, page);
+                        page.insertAdjacentElement('afterend', listDiv);
                     }
                 }
             };
@@ -3962,7 +3962,7 @@ var zoteroRoam = {};
                 <a href="https://doi.org/${itemDOI}" class="bp3-text-muted" target="_blank">${itemDOI}</a>
                 </span>
                 `;
-                elem.parentElement.appendChild(pageDiv);
+                elem.insertAdjacentElement('afterend', pageDiv);
         
                 // ---
                 // Page menu
