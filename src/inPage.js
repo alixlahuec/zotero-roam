@@ -262,11 +262,11 @@
                     let title = btn.dataset.title;
                     let keys = JSON.parse(btn.dataset.keys);
                     if(btn.classList.contains("zotero-roam-page-added-on")){
-                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "addedOn");
+                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "added-on");
                     } else if(btn.classList.contains("zotero-roam-page-tagged-with")){
-                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "taggedWith");
+                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "tagged-with");
                     } else if(btn.classList.contains("zotero-roam-page-abstract-mentions")){
-                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "abstractMentions");
+                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "abstract-mention");
                     }
                 }
             }

@@ -494,7 +494,7 @@ var zoteroRoam = {};
             let autoCompleteCSS = document.createElement('style');
             autoCompleteCSS.textContent = `
             .zotero-roam-search-backdrop, .zotero-roam-citations-search-backdrop {opacity:0.4;}
-            .zotero-roam-dialog-overlay .bp3-dialog-container{justify-content:start;}
+            .zotero-roam-dialog-overlay .bp3-dialog-container, .zotero-roam-dialog-small .bp3-dialog-container{justify-content:start;}
             .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(10vw + 20%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 40vw);}
@@ -510,13 +510,13 @@ var zoteroRoam = {};
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:100%;justify-content:flex-end;}
             #zotero-roam-portal .header-content{width:97.5%;margin:0;margin-left:2.5%;display:flex;}
-            .zotero-roam-dialog-overlay h5.panel-tt{font-weight:600;display:inline-block;padding-right:15px;}
-            .zotero-roam-dialog-overlay h5.panel-tt[list-type="library"]{color:#137cbd;}
-            .zotero-roam-dialog-overlay h5.panel-tt[list-type="citations"]{color:#d9822b;}
-            .zotero-roam-dialog-overlay h5.panel-tt[list-type="references"]{color:#137cbd;}
-            .zotero-roam-dialog-overlay .bp3-dark h5.panel-tt[list-type="library"]{color:#48aff0;}
-            .zotero-roam-dialog-overlay .bp3-dark h5.panel-tt[list-type="citations"]{color:#ffb366;}
-            .zotero-roam-dialog-overlay .bp3-dark h5.panel-tt[list-type="references"]{color:#48aff0;}
+            #zotero-roam-portal h5.panel-tt{font-weight:600;display:inline-block;padding-right:15px;}
+            #zotero-roam-portal h5.panel-tt[list-type="library"]{color:#137cbd;}
+            #zotero-roam-portal h5.panel-tt[list-type="citations"]{color:#d9822b;}
+            #zotero-roam-portal h5.panel-tt[list-type="references"]{color:#137cbd;}
+            #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="library"]{color:#48aff0;}
+            #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="citations"]{color:#ffb366;}
+            #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="references"]{color:#48aff0;}
             #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:10px;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
             .zotero-roam-search-close{margin:0;padding:0;min-width:41px;}
@@ -2227,6 +2227,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.fillCitationsOverlay();
             // Create small dialog overlay
             zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "transition:0.3s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
+            zoteroRoam.interface.fillAuxiliaryOverlay();
             // Create toast overlay
             zoteroRoam.interface.createToastOverlay();
         },
@@ -2237,11 +2238,19 @@ var zoteroRoam = {};
             zoteroRoam.interface.setupContextMenus(["contextMenu", "iconContextMenu"]);
 
             zoteroRoam.interface.search.updateButton.addEventListener("click", function(){zoteroRoam.extension.update(popup = true)});
-            zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
 
             document.addEventListener("click", (e) => {
                 if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related')){
                     zoteroRoam.inPage.handleClicks(e.target);
+                } else if(e.target.closest('.zotero-roam-search-close')){
+                    let overlay = e.target.closest('.zotero-roam-dialog-overlay') || e.target.closest('.zotero-roam-dialog-small');
+                    if(overlay.classList.contains('zotero-roam-citations-search-overlay')){
+                        zoteroRoam.interface.closeCitationsOverlay();
+                    } else if(overlay.classList.contains('zotero-roam-search-overlay')){
+                        zoteroRoam.interface.toggleSearchOverlay("hide");
+                    } else if(overlay.classList.contains('zotero-roam-auxiliary-overlay')){
+                        zoteroRoam.interface.closeAuxiliaryOverlay();
+                    }
                 }
             })
         },
@@ -2382,6 +2391,43 @@ var zoteroRoam = {};
         
             zoteroRoam.interface.portal.div.appendChild(overlay);
 
+        },
+
+        fillAuxiliaryOverlay(){
+            let dialogMainPanel = document.querySelector('.zotero-roam-auxiliary-overlay .bp3-dialog-body .main-panel');
+
+            let dialogCard = document.createElement('div');
+            dialogCard.classList.add("bp3-card");
+
+            let headerContent = document.createElement('div');
+            headerContent.classList.add("bp3-input-group");
+            headerContent.classList.add("header-content");
+
+            let headerLeft = document.createElement('div');
+            headerLeft.classList.add("header-left");
+
+            let headerRight = document.createElement('div');
+            headerRight.classList.add("header-right");
+
+            let controlsTop = document.createElement('div');
+            controlsTop.classList.add("controls-top");
+            controlsTop.innerHTML = `
+            <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
+            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
+            `;
+
+            headerRight.appendChild(controlsTop);
+            
+            headerContent.appendChild(headerLeft);
+            headerContent.appendChild(headerRight);
+
+            let renderedDiv = document.createElement('div');
+            renderedDiv.classList.add("rendered-div");
+
+            dialogCard.appendChild(headerContent);
+            dialogCard.appendChild(renderedDiv);
+
+            dialogMainPanel.appendChild(dialogCard);
         },
 
         fillSearchOverlay(divClass = zoteroRoam.interface.search.overlayClass){
@@ -2698,9 +2744,6 @@ var zoteroRoam = {};
 
             });
 
-            // Rigging close overlay button
-            zoteroRoam.interface.citations.closeButton.addEventListener("click", zoteroRoam.interface.closeCitationsOverlay);
-
             // Rigging header buttons
             zoteroRoam.interface.citations.overlay.querySelector(".import-header").addEventListener("click", async function(e){
                 let btn = e.target.closest('button[role]');
@@ -2955,11 +2998,14 @@ var zoteroRoam = {};
             zoteroRoam.interface.citations.input.focus();
         },
 
-        popRelatedDialog(title, keys, type = "taggedWith"){
+        popRelatedDialog(title, keys, type){
             let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
+            let relation = (type == "added-on") ? "item(s) added on" : (type == "tagged-with" ? "item(s) tagged with" : "abstract(s) mentioning")
             // Fill the dialog
-            overlay.querySelector('.main-panel').innerHTML = `
-            <h5>${keys.length} papers ${type} ${title}</h5>
+            overlay.querySelector('.main-panel .header-left').innerHTML = `
+            <h5 class="panel-tt" list-type="${type}">${keys.length} papers ${relation} ${title}</h5>
+            `
+            overlay.querySelector('.main-panel .rendered-div').innerHTML = `
             <ul class="bp3-list-unstyled">
             ${keys.map(k => "<li>" + zoteroRoam.data.items.find(i => i.key == k).data.title + "</li>").join("\n")}
             </ul>
@@ -2968,6 +3014,12 @@ var zoteroRoam = {};
             overlay.style.display = "block";
             overlay.setAttribute("overlay-visible", "true");
 
+        },
+
+        closeAuxiliaryOverlay(){
+            let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
+            overlay.style.display = "none";
+            overlay.setAttribute("overlay-visible", "false");
         },
 
         closeCitationsOverlay(){
@@ -3927,11 +3979,11 @@ var zoteroRoam = {};
                     let title = btn.dataset.title;
                     let keys = JSON.parse(btn.dataset.keys);
                     if(btn.classList.contains("zotero-roam-page-added-on")){
-                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "addedOn");
+                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "added-on");
                     } else if(btn.classList.contains("zotero-roam-page-tagged-with")){
-                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "taggedWith");
+                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "tagged-with");
                     } else if(btn.classList.contains("zotero-roam-page-abstract-mentions")){
-                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "abstractMentions");
+                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "abstract-mention");
                     }
                 }
             }
