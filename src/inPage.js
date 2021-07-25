@@ -301,7 +301,7 @@
         
                 // ---
                 // Page menu
-                let menuDiv = page.parentElement.querySelector('.zotero-roam-page-menu');
+                let menuDiv = elem.parentElement.querySelector('.zotero-roam-page-menu');
                 if(menuDiv == null){
                     menuDiv = document.createElement("div");
                     menuDiv.classList.add("zotero-roam-page-menu");

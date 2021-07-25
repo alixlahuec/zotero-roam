@@ -173,7 +173,7 @@
         setupSequences(){
             zoteroRoam.shortcuts.generateSequences();
 
-            // Search Panel : toggle, close
+            // Overlay Panels : toggle, close
             let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle panel with ") : "";
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
@@ -189,6 +189,10 @@
                     spanSeq.style = `font-style:italic;font-size:0.8em;margin:10px;`;
                     spanSeq.innerHTML = `${closeSeqText}`;
                     citationsSearchTopControls.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
+
+                    let auxiliaryTopControls = document.querySelector('.zotero-roam-auxiliary-overlay .controls-top');
+                    let auxSpanSeq = spanSeq.cloneNode(true);
+                    auxiliaryTopControls.insertBefore(auxSpanSeq, auxiliaryTopControls.querySelector('.bp3-dialog-close-button'));
                 }
             };
             // Quick Copy : toggle

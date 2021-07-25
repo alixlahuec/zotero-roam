@@ -2423,6 +2423,7 @@ var zoteroRoam = {};
 
             let renderedDiv = document.createElement('div');
             renderedDiv.classList.add("rendered-div");
+            renderedDiv.style = `width:95%;margin:0 auto;`;
 
             dialogCard.appendChild(headerContent);
             dialogCard.appendChild(renderedDiv);
@@ -3003,11 +3004,28 @@ var zoteroRoam = {};
             let relation = (type == "added-on") ? "item(s) added on" : (type == "tagged-with" ? "item(s) tagged with" : "abstract(s) mentioning")
             // Fill the dialog
             overlay.querySelector('.main-panel .header-left').innerHTML = `
-            <h5 class="panel-tt" list-type="${type}">${keys.length} papers ${relation} ${title}</h5>
-            `
+            <h5 class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
+            `;
+
+            let items = keys.map(k => zoteroRoam.data.items.find(i => i.key == k));
+            let itemsList = items.map(item => {
+                let year = item.meta.parsedDate ? `(${item.meta.parsedDate})` : "";
+                let creator = item.meta.creatorSummary + " " || "";
+                return `
+                <li>
+                <div class="bp3-menu-item" label="${item.key}">
+                <div class="bp3-text-overflow-ellipsis bp3-fill">
+                <span class="zotero-roam-search-item-title" style="display:block;">${item.data.title}</span>
+                <span class="zotero-roam-citation-metadata-contents">${creator}${year}</span>
+                </div>
+                </div>
+                </li>
+                `;
+            }).join("\n");
+
             overlay.querySelector('.main-panel .rendered-div').innerHTML = `
             <ul class="bp3-list-unstyled">
-            ${keys.map(k => "<li>" + zoteroRoam.data.items.find(i => i.key == k).data.title + "</li>").join("\n")}
+            ${itemsList}
             </ul>
             `
             // Make the dialog visible
@@ -4018,7 +4036,7 @@ var zoteroRoam = {};
         
                 // ---
                 // Page menu
-                let menuDiv = page.parentElement.querySelector('.zotero-roam-page-menu');
+                let menuDiv = elem.parentElement.querySelector('.zotero-roam-page-menu');
                 if(menuDiv == null){
                     menuDiv = document.createElement("div");
                     menuDiv.classList.add("zotero-roam-page-menu");
@@ -4579,7 +4597,7 @@ var zoteroRoam = {};
         setupSequences(){
             zoteroRoam.shortcuts.generateSequences();
 
-            // Search Panel : toggle, close
+            // Overlay Panels : toggle, close
             let toggleSeqText = (zoteroRoam.shortcuts.sequences["toggleSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("toggleSearchPanel", pre = "Toggle panel with ") : "";
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
@@ -4595,6 +4613,10 @@ var zoteroRoam = {};
                     spanSeq.style = `font-style:italic;font-size:0.8em;margin:10px;`;
                     spanSeq.innerHTML = `${closeSeqText}`;
                     citationsSearchTopControls.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
+
+                    let auxiliaryTopControls = document.querySelector('.zotero-roam-auxiliary-overlay .controls-top');
+                    let auxSpanSeq = spanSeq.cloneNode(true);
+                    auxiliaryTopControls.insertBefore(auxSpanSeq, auxiliaryTopControls.querySelector('.bp3-dialog-close-button'));
                 }
             };
             // Quick Copy : toggle

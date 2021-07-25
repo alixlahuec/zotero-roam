@@ -243,6 +243,7 @@
 
             let renderedDiv = document.createElement('div');
             renderedDiv.classList.add("rendered-div");
+            renderedDiv.style = `width:95%;margin:0 auto;`;
 
             dialogCard.appendChild(headerContent);
             dialogCard.appendChild(renderedDiv);
@@ -823,11 +824,28 @@
             let relation = (type == "added-on") ? "item(s) added on" : (type == "tagged-with" ? "item(s) tagged with" : "abstract(s) mentioning")
             // Fill the dialog
             overlay.querySelector('.main-panel .header-left').innerHTML = `
-            <h5 class="panel-tt" list-type="${type}">${keys.length} papers ${relation} ${title}</h5>
-            `
+            <h5 class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
+            `;
+
+            let items = keys.map(k => zoteroRoam.data.items.find(i => i.key == k));
+            let itemsList = items.map(item => {
+                let year = item.meta.parsedDate ? `(${item.meta.parsedDate})` : "";
+                let creator = item.meta.creatorSummary + " " || "";
+                return `
+                <li>
+                <div class="bp3-menu-item" label="${item.key}">
+                <div class="bp3-text-overflow-ellipsis bp3-fill">
+                <span class="zotero-roam-search-item-title" style="display:block;">${item.data.title}</span>
+                <span class="zotero-roam-citation-metadata-contents">${creator}${year}</span>
+                </div>
+                </div>
+                </li>
+                `;
+            }).join("\n");
+
             overlay.querySelector('.main-panel .rendered-div').innerHTML = `
             <ul class="bp3-list-unstyled">
-            ${keys.map(k => "<li>" + zoteroRoam.data.items.find(i => i.key == k).data.title + "</li>").join("\n")}
+            ${itemsList}
             </ul>
             `
             // Make the dialog visible
