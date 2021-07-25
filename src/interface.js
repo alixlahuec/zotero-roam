@@ -45,7 +45,7 @@
             zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.citations.overlayClass);
             zoteroRoam.interface.fillCitationsOverlay();
             // Create small dialog overlay
-            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "align-self:start;transition:0.3s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
+            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "align-self:start;transition:0.5s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
             zoteroRoam.interface.fillAuxiliaryOverlay();
             // Create toast overlay
             zoteroRoam.interface.createToastOverlay();

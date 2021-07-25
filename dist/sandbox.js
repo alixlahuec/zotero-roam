@@ -501,7 +501,7 @@ var zoteroRoam = {};
             .zotero-roam-dialog-small .bp3-dialog[side-panel="hidden"]{width:calc(50% - 10vw);}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 20vw);}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:20vw!important;}
-            .zotero-roam-dialog-small .bp3-dialog[side-panel="visible"]{width:calc(50% - 10vw);}
+            .zotero-roam-dialog-small .bp3-dialog[side-panel="visible"]{width:calc(50% - 0vw);}
             .zotero-roam-dialog-small .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:10vw!important;}
             #zotero-roam-portal .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
             .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:20vw;}
@@ -553,7 +553,7 @@ var zoteroRoam = {};
             .selected-item-body{flex-wrap:wrap;}
             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
             .item-abstract{padding:15px;background-color: #f5f8fa;font-weight:350;border-left-width:6px;}
-            .bp3-dark .item-abstract{background-color:#2b3135;}
+            .bp3-dark .item-abstract, .bp3-dark  .zotero-roam-citation-abstract{background-color:#2b3135;}
             .item-metadata-string{font-size:0.85em;}
             .item-pdf-notes{margin-top: 25px;}
             .item-actions-additional{flex: 0 1 95%;margin-top:25px;}
@@ -583,14 +583,14 @@ var zoteroRoam = {};
             .zotero-roam-page-menu-backlinks-list > ul{padding:1vw;display:flex;flex:1 0 50%;flex-direction:column;}
             .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
             .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item, .zotero-roam-list-item > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
-            .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
+            .zotero-roam-citations-search_result > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
             .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;}
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
-            .zotero-roam-citation-abstract{font-size:0.88em;color:black;padding:3px 5px;flex:0 1 100%;background-color:#edf7ff;white-space:break-spaces;}
+            .zotero-roam-citation-abstract{font-size:0.88em;padding:5px 10px;flex:0 1 100%;background-color:#f5f8fa;white-space:break-spaces;}
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
             .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
             .options-library-list, .options-collections-list{flex:1 0 50%;}
@@ -623,6 +623,9 @@ var zoteroRoam = {};
             .zotero-roam-page-related{opacity:0.6;float:right;margin-top:-40px;}
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .zotero-roam-item-timestamp{font-size:0.85em;}
+            .zotero-roam-list-item [in-graph="true"] .zotero-roam-search-item-title, .zotero-roam-list-item [in-graph="true"] .zotero-roam-citation-metadata-contents {color:#7AC07A;}
+            .zotero-roam-auxiliary-overlay .bp3-card{padding-top:0px;}
+            .zotero-roam-list-item > .bp3-menu-item:hover{cursor:unset;}
             `;
             document.head.append(autoCompleteCSS);
         }
@@ -2232,7 +2235,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.citations.overlayClass);
             zoteroRoam.interface.fillCitationsOverlay();
             // Create small dialog overlay
-            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "align-self:start;transition:0.3s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
+            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "align-self:start;transition:0.5s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
             zoteroRoam.interface.fillAuxiliaryOverlay();
             // Create toast overlay
             zoteroRoam.interface.createToastOverlay();
