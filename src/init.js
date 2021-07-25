@@ -436,7 +436,10 @@ var zoteroRoam = {};
                 },
                 pageMenu: {
                     defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb",
-                            "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"]
+                            "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
+                    trigger: (title) => {
+                        return title.length > 3 ? true : false;
+                    }
                 },
                 theme: ""
             },
@@ -493,11 +496,16 @@ var zoteroRoam = {};
             .zotero-roam-search-backdrop, .zotero-roam-citations-search-backdrop {opacity:0.4;}
             .zotero-roam-dialog-overlay .bp3-dialog-container{justify-content:start;}
             .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;box-shadow:none;}
+            .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(10vw + 20%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 40vw);}
+            .zotero-roam-dialog-small .bp3-dialog[side-panel="hidden"]{width:calc(50% - 10vw);}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 20vw);}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:20vw!important;}
-            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
+            .zotero-roam-dialog-small .bp3-dialog[side-panel="visible"]{width:calc(50% - 10vw);}
+            .zotero-roam-dialog-small .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:10vw!important;}
+            #zotero-roam-portal .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
             .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:20vw;}
+            .zotero-roam-dialog-small .bp3-dialog .side-panel-contents{width:10vw;}
             .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents .item-rendered-notes p{font-weight:350;}
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:100%;justify-content:flex-end;}

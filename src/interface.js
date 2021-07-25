@@ -45,6 +45,8 @@
             // Create citations search overlay
             zoteroRoam.interface.createOverlay(divClass = zoteroRoam.interface.citations.overlayClass);
             zoteroRoam.interface.fillCitationsOverlay();
+            // Create small dialog overlay
+            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "transition:0.3s;", useBackdrop = false, commonTag = "zotero-roam-dialog-small");
             // Create toast overlay
             zoteroRoam.interface.createToastOverlay();
         },
@@ -58,7 +60,7 @@
             zoteroRoam.interface.search.closeButton.addEventListener("click", function(){zoteroRoam.interface.toggleSearchOverlay("hide")});
 
             document.addEventListener("click", (e) => {
-                if(e.target.closest('.zotero-roam-page-div')){
+                if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related')){
                     zoteroRoam.inPage.handleClicks(e.target);
                 }
             })
@@ -139,7 +141,7 @@
 
         },
 
-        createOverlay(divClass, dialogCSS = "align-self:baseline;transition:0.5s;", useBackdrop = true){
+        createOverlay(divClass, dialogCSS = "align-self:baseline;transition:0.5s;", useBackdrop = true, commonTag = "zotero-roam-dialog-overlay"){
             try{ document.querySelector(`.${divClass}-overlay`).remove() } catch(e){};
 
             let overlay = document.createElement("div");
@@ -147,7 +149,7 @@
             overlay.classList.add("bp3-overlay-open");
             overlay.classList.add("bp3-overlay-scroll-container");
             overlay.classList.add(`${divClass}-overlay`);
-            overlay.classList.add(`zotero-roam-dialog-overlay`);
+            if(commonTag){ overlay.classList.add(commonTag) };
             overlay.setAttribute("overlay-visible", "false");
             overlay.style = "display:none;"
             
@@ -771,6 +773,21 @@
             zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = "";
             zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "true");
             zoteroRoam.interface.citations.input.focus();
+        },
+
+        popRelatedDialog(title, keys, type = "taggedWith"){
+            let overlay = document.querySelector('.zotero-roam-auxiliary');
+            // Fill the dialog
+            overlay.innerHTML = `
+            <h5>${keys.length} papers ${type} ${title}</h5>
+            <ul class="bp3-list-unstyled">
+            ${keys.map(k => "<li>" + zoteroRoam.data.items.find(i => i.key == k).data.title + "</li>").join("\n")}
+            </ul>
+            `
+            // Make the dialog visible
+            overlay.style.display = "block";
+            overlay.setAttribute("overlay-visible", "true");
+
         },
 
         closeCitationsOverlay(){

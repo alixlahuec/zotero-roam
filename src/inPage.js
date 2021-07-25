@@ -132,6 +132,9 @@
                     continue;
                 }
                 let title = page.querySelector('span') ? page.querySelector('span').innerText : page.innerText;
+                if(!zoteroRoam.config.params.pageMenu.trigger(title)){
+                    continue;
+                }
                 // Case 1 (ref-citekey) = make page menu
                 if(title.startsWith("@")){
                     let itemCitekey = title.slice(1);
@@ -155,7 +158,7 @@
                         listDiv.classList.add('bp3-minimal');
                         listDiv.classList.add('bp3-align-left');
                         listDiv.classList.add('bp3-vertical');
-                        listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} item${addedOn.length > 1 ? "s" : ""} added`, {icon: "calendar", buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
+                        listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} item${addedOn.length > 1 ? "s" : ""} added`, {icon: "calendar", buttonClass: "zotero-roam-page-added-on", buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
                         page.parentElement.appendChild(listDiv, page);
                     }
                 } else {
@@ -172,12 +175,12 @@
                         let tagBtn = "";
                         if(taggedWith.length > 0){
                             let itemKeys = taggedWith.map(i => i.key);
-                            tagBtn = zoteroRoam.utils.renderBP3Button_group(`${taggedWith.length} tagged item${taggedWith.length > 1 ? "s" : ""}`, {icon: 'manual', buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
+                            tagBtn = zoteroRoam.utils.renderBP3Button_group(`${taggedWith.length} tagged item${taggedWith.length > 1 ? "s" : ""}`, {icon: 'manual', buttonClass: "zotero-roam-page-tagged-with", buttonAttribute: `data-title="${title}" data-keys=${JSON.stringify(itemKeys)}`});
                         }
                         let abstractBtn = "";
                         if(abstractMentions.length > 0){
                             let itemKeys = abstractMentions.map(i => i.key);
-                            abstractBtn = zoteroRoam.utils.renderBP3Button_group(`${abstractMentions.length} abstract${abstractMentions.length > 1 ? "s" : ""}`, {icon: 'manually-entered-data', buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
+                            abstractBtn = zoteroRoam.utils.renderBP3Button_group(`${abstractMentions.length} abstract${abstractMentions.length > 1 ? "s" : ""}`, {icon: 'manually-entered-data', buttonClass: "zotero-roam-page-abstract-mentions", buttonAttribute: `data-title="${title}" data-keys=${JSON.stringify(itemKeys)}`});
                         }
                         listDiv.innerHTML = `
                         ${tagBtn}
@@ -210,46 +213,61 @@
         /** Event delegation for clicks within a page menu
          * @param {Element} target - The DOM Element where the click event happened  */
         async handleClicks(target){
-            let pageDiv = target.closest('.zotero-roam-page-div');
-            let title = pageDiv.dataset.title;
-            let uid = pageDiv.dataset.uid;
-            let btn = target.closest('button');
-            if(btn){
-                if(btn.classList.contains('zotero-roam-page-menu-add-metadata')){
-                    console.log(`Importing metadata to ${title} (${uid})...`);
-                    zoteroRoam.handlers.importItemMetadata(title, uid = uid, {popup: true});
-                } else if(btn.classList.contains('zotero-roam-page-menu-import-notes')){
-                    console.log(`Adding notes to ${title} (${uid})...`);
-                    zoteroRoam.handlers.addItemNotes(title = title, uid = uid);
-                } else if(btn.classList.contains('zotero-roam-page-menu-view-item-info')){
-                    zoteroRoam.interface.renderItemInPanel(citekey = title);
-                } else if(btn.classList.contains('zotero-roam-page-menu-backlinks-button')){
-                    // Change caret class & show the backlinks list
-                    let caretEl = btn.querySelector(".bp3-icon-caret-down");
-                    let backlinksList = btn.parentElement.querySelector(".zotero-roam-page-menu-backlinks-list");
+            if(target.closest('.zotero-roam-page-div')){
+                let pageDiv = target.closest('.zotero-roam-page-div');
+                let title = pageDiv.dataset.title;
+                let uid = pageDiv.dataset.uid;
+                let btn = target.closest('button');
+                if(btn){
+                    if(btn.classList.contains('zotero-roam-page-menu-add-metadata')){
+                        console.log(`Importing metadata to ${title} (${uid})...`);
+                        zoteroRoam.handlers.importItemMetadata(title, uid = uid, {popup: true});
+                    } else if(btn.classList.contains('zotero-roam-page-menu-import-notes')){
+                        console.log(`Adding notes to ${title} (${uid})...`);
+                        zoteroRoam.handlers.addItemNotes(title = title, uid = uid);
+                    } else if(btn.classList.contains('zotero-roam-page-menu-view-item-info')){
+                        zoteroRoam.interface.renderItemInPanel(citekey = title);
+                    } else if(btn.classList.contains('zotero-roam-page-menu-backlinks-button')){
+                        // Change caret class & show the backlinks list
+                        let caretEl = btn.querySelector(".bp3-icon-caret-down");
+                        let backlinksList = btn.parentElement.querySelector(".zotero-roam-page-menu-backlinks-list");
 
-                    if(Array.from(caretEl.classList).includes("rm-caret-closed") && backlinksList){
-                        caretEl.classList.replace("rm-caret-closed", "rm-caret-open");
-                        backlinksList.style.display = "flex";
-                    } else if(Array.from(caretEl.classList).includes("rm-caret-open")){
-                        caretEl.classList.replace("rm-caret-open", "rm-caret-closed");
-                        backlinksList.style.display = "none";
+                        if(Array.from(caretEl.classList).includes("rm-caret-closed") && backlinksList){
+                            caretEl.classList.replace("rm-caret-closed", "rm-caret-open");
+                            backlinksList.style.display = "flex";
+                        } else if(Array.from(caretEl.classList).includes("rm-caret-open")){
+                            caretEl.classList.replace("rm-caret-open", "rm-caret-closed");
+                            backlinksList.style.display = "none";
+                        }
+                    } else if(btn.classList.contains('zotero-roam-page-menu-backlink-open-sidebar')){
+                        zoteroRoam.utils.addToSidebar(uid = btn.dataset.uid);
+                    } else if(btn.classList.contains('zotero-roam-page-menu-backlink-add-sidebar')){
+                        let elUID = roamAlphaAPI.util.generateUID();
+                        roamAlphaAPI.createPage({'page': {'title': btn.dataset.title, 'uid': elUID}});
+                        await zoteroRoam.handlers.importItemMetadata(title = btn.dataset.title, uid = elUID, {popup: false});
+                        zoteroRoam.utils.addToSidebar(uid = elUID);
+                    } else if(btn.classList.contains('zotero-roam-page-menu-backlinks-total')){
+                        let doi = btn.getAttribute("data-doi");
+                        let citekey = btn.getAttribute("data-citekey");
+                        zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "citations");
+                    } else if(btn.classList.contains('zotero-roam-page-menu-references-total')){
+                        let doi = btn.getAttribute("data-doi");
+                        let citekey = btn.getAttribute("data-citekey");
+                        zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "references");
                     }
-                } else if(btn.classList.contains('zotero-roam-page-menu-backlink-open-sidebar')){
-                    zoteroRoam.utils.addToSidebar(uid = btn.dataset.uid);
-                } else if(btn.classList.contains('zotero-roam-page-menu-backlink-add-sidebar')){
-                    let elUID = roamAlphaAPI.util.generateUID();
-                    roamAlphaAPI.createPage({'page': {'title': btn.dataset.title, 'uid': elUID}});
-                    await zoteroRoam.handlers.importItemMetadata(title = btn.dataset.title, uid = elUID, {popup: false});
-                    zoteroRoam.utils.addToSidebar(uid = elUID);
-                } else if(btn.classList.contains('zotero-roam-page-menu-backlinks-total')){
-                    let doi = btn.getAttribute("data-doi");
-                    let citekey = btn.getAttribute("data-citekey");
-                    zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "citations");
-                } else if(btn.classList.contains('zotero-roam-page-menu-references-total')){
-                    let doi = btn.getAttribute("data-doi");
-                    let citekey = btn.getAttribute("data-citekey");
-                    zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "references");
+                }
+            } else if(target.closest('.zotero-roam-page-related')){
+                let btn = target.closest('button');
+                if(btn){
+                    let title = btn.dataset.title;
+                    let keys = btn.dataset.keys;
+                    if(btn.classList.contains("zotero-roam-page-added-on")){
+                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "addedOn");
+                    } else if(btn.classList.contains("zotero-roam-page-tagged-with")){
+                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "taggedWith");
+                    } else if(btn.classList.contains("zotero-roam-page-abstract-mentions")){
+                        zoteroRoam.interface.popRelatedDialog(title, keys, type = "abstractMentions");
+                    }
                 }
             }
         },
