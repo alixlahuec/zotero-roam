@@ -776,9 +776,9 @@
         },
 
         popRelatedDialog(title, keys, type = "taggedWith"){
-            let overlay = document.querySelector('.zotero-roam-auxiliary');
+            let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
             // Fill the dialog
-            overlay.innerHTML = `
+            overlay.querySelector('.main-panel').innerHTML = `
             <h5>${keys.length} papers ${type} ${title}</h5>
             <ul class="bp3-list-unstyled">
             ${keys.map(k => "<li>" + zoteroRoam.data.items.find(i => i.key == k).data.title + "</li>").join("\n")}

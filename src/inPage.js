@@ -158,7 +158,7 @@
                         listDiv.classList.add('bp3-minimal');
                         listDiv.classList.add('bp3-align-left');
                         listDiv.classList.add('bp3-vertical');
-                        listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} item${addedOn.length > 1 ? "s" : ""} added`, {icon: "calendar", buttonClass: "zotero-roam-page-added-on", buttonAttribute: `data-keys=${JSON.stringify(itemKeys)}`});
+                        listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} item${addedOn.length > 1 ? "s" : ""} added`, {icon: "calendar", buttonClass: "zotero-roam-page-added-on", buttonAttribute: `data-title="${title}" data-keys=${JSON.stringify(itemKeys)}`});
                         page.insertAdjacentElement('afterend', listDiv);
                     }
                 } else {
@@ -260,7 +260,7 @@
                 let btn = target.closest('button');
                 if(btn){
                     let title = btn.dataset.title;
-                    let keys = btn.dataset.keys;
+                    let keys = JSON.parse(btn.dataset.keys);
                     if(btn.classList.contains("zotero-roam-page-added-on")){
                         zoteroRoam.interface.popRelatedDialog(title, keys, type = "addedOn");
                     } else if(btn.classList.contains("zotero-roam-page-tagged-with")){
