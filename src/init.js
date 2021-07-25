@@ -627,6 +627,7 @@ var zoteroRoam = {};
             .zotero-roam-auxiliary-overlay .bp3-card{padding-top:0px;}
             .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;}
             .zotero-roam-auxiliary-overlay .zotero-roam-search-item-key button{opacity:0.6;}
+            .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
             `;
             document.head.append(autoCompleteCSS);
         }
