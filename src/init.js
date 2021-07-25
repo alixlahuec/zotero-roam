@@ -82,7 +82,7 @@ var zoteroRoam = {};
         
         librarySearch: {autocomplete: null},
         
-        citations: {pagination: null, autocomplete: null, currentDOI: "", currentCitekey: "", currentType: "citations"},
+        citations: {pagination: null, autocomplete: null, currentDOI: "", currentCitekey: "", currentType: "citations", activeImport: null},
         
         tagSelection: {autocomplete: null},
         
@@ -319,8 +319,8 @@ var zoteroRoam = {};
                     /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
                     src: async function(query){
                         let roamPages = [];
-                        if(zoteroRoam.interface.activeImport !== null){
-                            roamPages = zoteroRoam.interface.activeImport.pages;
+                        if(zoteroRoam.citations.activeImport !== null){
+                            roamPages = zoteroRoam.citations.activeImport.pages;
                         }
                         let hasQuery = roamPages.findIndex(p => p.title == query);
                         if(hasQuery == -1){
@@ -621,6 +621,7 @@ var zoteroRoam = {};
             [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#d6a956!important;}
             .zotero-roam-page-related{opacity:0.6;float:right;margin-top:-40px;}
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
+            .zotero-roam-item-timestamp{font-size:0.85em;}
             `;
             document.head.append(autoCompleteCSS);
         }

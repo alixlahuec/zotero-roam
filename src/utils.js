@@ -190,6 +190,11 @@
             return pageInfo;
         },
 
+        makeTimestamp(date){
+            let d = date.constructor === Date ? date : new Date(date);
+            return `${d.getHours()}:${d.getMinutes()}`;
+        },
+
         makeDNP(date, {brackets = true} = {}){
             if(date.constructor !== Date){ date = new Date(date); };
             let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

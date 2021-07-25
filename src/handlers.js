@@ -373,9 +373,9 @@
             let outcome = {};
 
             // Retrieve import parameters
-            let lib = zoteroRoam.interface.activeImport.currentLib;
+            let lib = zoteroRoam.citations.activeImport.currentLib;
             let colls = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-collections-list [name="collections"]`)).filter(op => op.checked).map(op => op.value);
-            let identifiers = zoteroRoam.interface.activeImport.items;
+            let identifiers = zoteroRoam.citations.activeImport.items;
             let tags = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags;
             tags = JSON.parse(tags);
 
