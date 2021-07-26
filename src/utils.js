@@ -54,7 +54,7 @@
             if(fullArray.length == 0){
                 return [];
             } else if(exclude_attachments == true){
-                return fullArray.filter(it => it.data.itemType != "attachment");
+                return fullArray.filter(it => !["attachment", "annotation", "note"].includes(it.data.itemType));
             } else {
                 return fullArray;
             }
@@ -192,7 +192,7 @@
 
         makeTimestamp(date){
             let d = date.constructor === Date ? date : new Date(date);
-            return `${d.getHours()}:${d.getMinutes()}`;
+            return `${d.getHours()}:${('0' + d.getMinutes()).slice(-2)}`;
         },
 
         makeDNP(date, {brackets = true} = {}){

@@ -582,7 +582,7 @@ var zoteroRoam = {};
             .zotero-roam-page-menu-citations > button{flex: 1 0 33%;}
             .zotero-roam-page-menu-backlinks-list > ul{padding:1vw;display:flex;flex:1 0 50%;flex-direction:column;}
             .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
-            .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;}
+            .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;user-select:initial;}
             .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
@@ -626,7 +626,7 @@ var zoteroRoam = {};
             .zotero-roam-list-item [in-graph="true"] .zotero-roam-search-item-title {color:#7AC07A;}
             .zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
             .zotero-roam-auxiliary-overlay .bp3-card{padding:5px;}
-            .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;}
+            .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;user-select:initial;}
             .zotero-roam-auxiliary-overlay .zotero-roam-search-item-key button{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
             .zotero-roam-auxiliary-overlay .bp3-card ul.bp3-list-unstyled {padding:15px 0;}
@@ -716,7 +716,7 @@ var zoteroRoam = {};
             if(fullArray.length == 0){
                 return [];
             } else if(exclude_attachments == true){
-                return fullArray.filter(it => it.data.itemType != "attachment");
+                return fullArray.filter(it => !["attachment", "annotation", "note"].includes(it.data.itemType));
             } else {
                 return fullArray;
             }
@@ -854,7 +854,7 @@ var zoteroRoam = {};
 
         makeTimestamp(date){
             let d = date.constructor === Date ? date : new Date(date);
-            return `${d.getHours()}:${d.getMinutes()}`;
+            return `${d.getHours()}:${('0' + d.getMinutes()).slice(-2)}`;
         },
 
         makeDNP(date, {brackets = true} = {}){
