@@ -624,10 +624,12 @@ var zoteroRoam = {};
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .zotero-roam-item-timestamp{font-size:0.85em;}
             .zotero-roam-list-item [in-graph="true"] .zotero-roam-search-item-title {color:#7AC07A;}
-            .zotero-roam-auxiliary-overlay .bp3-card{padding-top:0px;}
+            .zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
+            .zotero-roam-auxiliary-overlay .bp3-card{padding:5px;}
             .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;}
             .zotero-roam-auxiliary-overlay .zotero-roam-search-item-key button{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
+            .zotero-roam-auxiliary-overlay .bp3-card ul.bp3-list-unstyled {padding:15px 0;}
             `;
             document.head.append(autoCompleteCSS);
         }
@@ -1264,6 +1266,7 @@ var zoteroRoam = {};
                     pageUID = window.roamAlphaAPI.util.generateUID();
                     window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
                         outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                        // Update item-in-graph display, if applicable
                         try {
                             let inGraphDiv = document.querySelector(".item-in-graph");
                             if(inGraphDiv != null){
@@ -1274,6 +1277,14 @@ var zoteroRoam = {};
                                 goToPageButton.setAttribute("data-uid", pageUID);
                                 goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`);
                                 goToPageButton.removeAttribute("disabled");
+                            }
+                        } catch(e){};
+                        // Update auxiliary dialog, if applicable
+                        try {
+                            let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${title}"]`);
+                            if(auxItem != null){
+                                auxItem.setAttribute('in-graph', 'true');
+                                auxItem.querySelector('.zotero-roam-add-to-graph').remove();
                             }
                         } catch(e){};
                 }
@@ -2455,6 +2466,10 @@ var zoteroRoam = {};
                             abstractSpan.style.display = "none";
                             toggleText.innerHTML = `Show Abstract`;
                         }
+                    } else if(btn.classList.contains('zotero-roam-add-to-graph')){
+                        let itemKey = btn.closest('.bp3-menu-item').getAttribute('label');
+                        console.log("Importing metadata...");
+                        zoteroRoam.handlers.importItemMetadata(itemKey, uid = "", {popup: true});
                     }
                 }
 
@@ -3059,7 +3074,7 @@ var zoteroRoam = {};
                 if(!item.inGraph){
                     actionsDiv = `
                     <span class="zotero-roam-search-item-key">
-                    ${zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-outlined bp3-intent-success bp3-small"})}
+                    ${zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-minimal bp3-intent-success bp3-small zotero-roam-add-to-graph"})}
                     </span>
                     `;
                 }
@@ -3067,10 +3082,10 @@ var zoteroRoam = {};
                 <li class="zotero-roam-list-item">
                 <div class="bp3-menu-item" label="${item.key}" in-graph="${item.inGraph}">
                     ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp">${item.timestamp}</span>` : ""}
-                    <div class="bp3-text-overflow-ellipsis bp3-fill">
+                    <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                         <span class="zotero-roam-search-item-title" style="display:block;white-space:normal;">${item.title}</span>
                         <span class="zotero-roam-citation-metadata-contents">${item.meta}</span>
-                        <span class="zotero-roam-list-item-key bp3-text-muted">Key: ${item.key}</span>
+                        <span class="zotero-roam-list-item-key bp3-text-muted">[${item.key}]</span>
                         ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal"}) : ""}
                         <span class="zotero-roam-citation-abstract" style="display:none;">${item.abstract}</span>
                     </div>
@@ -3304,21 +3319,22 @@ var zoteroRoam = {};
 
             Array.from(document.querySelectorAll('.item-citekey-section .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", (e) => {
+                    let copyUtil = zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility');
                     switch(btn.getAttribute('format')){
                         case 'citekey':
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${itemKey}`;
+                            copyUtil.value = `${itemKey}`;
                             break;
                         case 'citation':
                             let citationText = `${selectedItem.meta.creatorSummary || ""}${itemYear || ""}`;
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${itemKey}]])`;
+                            copyUtil.value = `[${citationText}]([[${itemKey}]])`;
                             break;
                         case 'tag':
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `#[[${itemKey}]]`;
+                            copyUtil.value = `#[[${itemKey}]]`;
                             break;
                         case 'page-reference':
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[[${itemKey}]]`;
+                            copyUtil.value = `[[${itemKey}]]`;
                     };
-                    zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').select();
+                    copyUtil.select();
                     document.execCommand("copy");
                 })
             });
@@ -3951,6 +3967,7 @@ var zoteroRoam = {};
                         listDiv.classList.add('bp3-align-left');
                         listDiv.classList.add('bp3-vertical');
                         listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} item${addedOn.length > 1 ? "s" : ""} added`, {icon: "calendar", buttonClass: "zotero-roam-page-added-on", buttonAttribute: `data-title="${title}" data-keys=${JSON.stringify(itemKeys)}`});
+                        page.parentElement.style.overflow = "auto";
                         page.insertAdjacentElement('afterend', listDiv);
                     }
                 } else {
@@ -3978,6 +3995,7 @@ var zoteroRoam = {};
                         ${tagBtn}
                         ${abstractBtn}
                         `;
+                        page.parentElement.style.overflow = "auto";
                         page.insertAdjacentElement('afterend', listDiv);
                     }
                 }

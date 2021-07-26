@@ -624,10 +624,12 @@ var zoteroRoam = {};
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .zotero-roam-item-timestamp{font-size:0.85em;}
             .zotero-roam-list-item [in-graph="true"] .zotero-roam-search-item-title {color:#7AC07A;}
-            .zotero-roam-auxiliary-overlay .bp3-card{padding-top:0px;}
+            .zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
+            .zotero-roam-auxiliary-overlay .bp3-card{padding:5px;}
             .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;}
             .zotero-roam-auxiliary-overlay .zotero-roam-search-item-key button{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
+            .zotero-roam-auxiliary-overlay .bp3-card ul.bp3-list-unstyled {padding:15px 0;}
             `;
             document.head.append(autoCompleteCSS);
         }

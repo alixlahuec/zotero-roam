@@ -263,6 +263,10 @@
                             abstractSpan.style.display = "none";
                             toggleText.innerHTML = `Show Abstract`;
                         }
+                    } else if(btn.classList.contains('zotero-roam-add-to-graph')){
+                        let itemKey = btn.closest('.bp3-menu-item').getAttribute('label');
+                        console.log("Importing metadata...");
+                        zoteroRoam.handlers.importItemMetadata(itemKey, uid = "", {popup: true});
                     }
                 }
 
@@ -867,7 +871,7 @@
                 if(!item.inGraph){
                     actionsDiv = `
                     <span class="zotero-roam-search-item-key">
-                    ${zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-outlined bp3-intent-success bp3-small"})}
+                    ${zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-minimal bp3-intent-success bp3-small zotero-roam-add-to-graph"})}
                     </span>
                     `;
                 }
@@ -875,10 +879,10 @@
                 <li class="zotero-roam-list-item">
                 <div class="bp3-menu-item" label="${item.key}" in-graph="${item.inGraph}">
                     ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp">${item.timestamp}</span>` : ""}
-                    <div class="bp3-text-overflow-ellipsis bp3-fill">
+                    <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                         <span class="zotero-roam-search-item-title" style="display:block;white-space:normal;">${item.title}</span>
                         <span class="zotero-roam-citation-metadata-contents">${item.meta}</span>
-                        <span class="zotero-roam-list-item-key bp3-text-muted">Key: ${item.key}</span>
+                        <span class="zotero-roam-list-item-key bp3-text-muted">[${item.key}]</span>
                         ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal"}) : ""}
                         <span class="zotero-roam-citation-abstract" style="display:none;">${item.abstract}</span>
                     </div>
@@ -1112,21 +1116,22 @@
 
             Array.from(document.querySelectorAll('.item-citekey-section .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", (e) => {
+                    let copyUtil = zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility');
                     switch(btn.getAttribute('format')){
                         case 'citekey':
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `${itemKey}`;
+                            copyUtil.value = `${itemKey}`;
                             break;
                         case 'citation':
                             let citationText = `${selectedItem.meta.creatorSummary || ""}${itemYear || ""}`;
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[${citationText}]([[${itemKey}]])`;
+                            copyUtil.value = `[${citationText}]([[${itemKey}]])`;
                             break;
                         case 'tag':
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `#[[${itemKey}]]`;
+                            copyUtil.value = `#[[${itemKey}]]`;
                             break;
                         case 'page-reference':
-                            zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = `[[${itemKey}]]`;
+                            copyUtil.value = `[[${itemKey}]]`;
                     };
-                    zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').select();
+                    copyUtil.select();
                     document.execCommand("copy");
                 })
             });

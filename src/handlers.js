@@ -67,6 +67,7 @@
                     pageUID = window.roamAlphaAPI.util.generateUID();
                     window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
                         outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                        // Update item-in-graph display, if applicable
                         try {
                             let inGraphDiv = document.querySelector(".item-in-graph");
                             if(inGraphDiv != null){
@@ -77,6 +78,14 @@
                                 goToPageButton.setAttribute("data-uid", pageUID);
                                 goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`);
                                 goToPageButton.removeAttribute("disabled");
+                            }
+                        } catch(e){};
+                        // Update auxiliary dialog, if applicable
+                        try {
+                            let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${title}"]`);
+                            if(auxItem != null){
+                                auxItem.setAttribute('in-graph', 'true');
+                                auxItem.querySelector('.zotero-roam-add-to-graph').remove();
                             }
                         } catch(e){};
                 }

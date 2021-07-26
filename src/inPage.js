@@ -159,6 +159,7 @@
                         listDiv.classList.add('bp3-align-left');
                         listDiv.classList.add('bp3-vertical');
                         listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} item${addedOn.length > 1 ? "s" : ""} added`, {icon: "calendar", buttonClass: "zotero-roam-page-added-on", buttonAttribute: `data-title="${title}" data-keys=${JSON.stringify(itemKeys)}`});
+                        page.parentElement.style.overflow = "auto";
                         page.insertAdjacentElement('afterend', listDiv);
                     }
                 } else {
@@ -186,6 +187,7 @@
                         ${tagBtn}
                         ${abstractBtn}
                         `;
+                        page.parentElement.style.overflow = "auto";
                         page.insertAdjacentElement('afterend', listDiv);
                     }
                 }
