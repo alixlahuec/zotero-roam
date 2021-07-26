@@ -266,7 +266,7 @@
                     } else if(btn.classList.contains('zotero-roam-add-to-graph')){
                         let itemKey = btn.closest('.bp3-menu-item').getAttribute('label');
                         console.log("Importing metadata...");
-                        zoteroRoam.handlers.importItemMetadata(itemKey, uid = "", {popup: true});
+                        zoteroRoam.handlers.importItemMetadata('@' + itemKey, uid = "", {popup: true});
                     }
                 }
 
