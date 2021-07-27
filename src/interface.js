@@ -266,7 +266,7 @@
                     } else if(btn.classList.contains('zotero-roam-add-to-graph')){
                         let itemKey = btn.closest('.bp3-menu-item').getAttribute('label');
                         console.log("Importing metadata...");
-                        zoteroRoam.handlers.importItemMetadata('@' + itemKey, uid = "", {popup: true});
+                        zoteroRoam.handlers.importItemMetadata(title = '@' + itemKey, uid = "", {popup: true});
                     }
                 }
 
@@ -870,7 +870,7 @@
                 let actionsDiv = "";
                 if(!item.inGraph){
                     actionsDiv = `
-                    <span class="zotero-roam-search-item-key">
+                    <span class="zotero-roam-list-item-actions">
                     ${zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-minimal bp3-intent-success bp3-small zotero-roam-add-to-graph"})}
                     </span>
                     `;
@@ -1224,11 +1224,11 @@
             let origin = element.querySelector(".zotero-roam-citation-origin").innerText;
 
             if(zoteroRoam.citations.activeImport == null){
+                zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
                 zoteroRoam.citations.activeImport = {
                     libraries: zoteroRoam.utils.getLibraries(),
                     items: [],
                     currentLib: {},
-                    pages: zoteroRoam.utils.getRoamPages(),
                     outcome: null
                 }
                 zoteroRoam.tagSelection.autocomplete.init();

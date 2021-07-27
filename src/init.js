@@ -78,7 +78,7 @@ var zoteroRoam = {};
         
         version: "0.6.30",
 
-        data: {items: [], collections: [], semantic: [], libraries: [], keys: []},
+        data: {items: [], collections: [], semantic: [], libraries: [], keys: [], roamPages: []},
         
         librarySearch: {autocomplete: null},
         
@@ -318,10 +318,7 @@ var zoteroRoam = {};
                 data: {
                     /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
                     src: async function(query){
-                        let roamPages = [];
-                        if(zoteroRoam.citations.activeImport !== null){
-                            roamPages = zoteroRoam.citations.activeImport.pages;
-                        }
+                        let roamPages = zoteroRoam.data.roamPages;
                         let hasQuery = roamPages.findIndex(p => p.title == query);
                         if(hasQuery == -1){
                             return [{title: query, identity: "self"}, ...roamPages];
@@ -588,7 +585,7 @@ var zoteroRoam = {};
             .zotero-roam-citation-links-list{display:block;}
             .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;}
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
-            .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
+            .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-abstract{font-size:0.88em;padding:5px 10px;flex:0 1 100%;background-color:#f5f8fa;white-space:break-spaces;}
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
@@ -627,7 +624,8 @@ var zoteroRoam = {};
             .zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
             .zotero-roam-auxiliary-overlay .bp3-card{padding:5px;}
             .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;user-select:initial;}
-            .zotero-roam-auxiliary-overlay .zotero-roam-search-item-key button{opacity:0.6;}
+            .zotero-roam-list-item-actions{text-align:right;flex: 0 0 20%;}
+            .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions button{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
             .zotero-roam-auxiliary-overlay .bp3-card ul.bp3-list-unstyled {padding:15px 0;}
             `;

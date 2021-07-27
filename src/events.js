@@ -43,6 +43,77 @@
                 console.log(e);
             }
             target.dispatchEvent(e);
+        },
+
+        defaultHooks(){
+            document.addEventListener("zotero-roam:metadata-added", (e) => {
+                // Update item-in-graph display, if applicable
+                try {
+                    let inGraphDiv = document.querySelector(".item-in-graph");
+                    if(inGraphDiv != null){
+                        inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
+                    }
+                    let goToPageButton = document.querySelector(".item-go-to-page");
+                    if(goToPageButton != null){
+                        goToPageButton.setAttribute("data-uid", e.detail.uid);
+                        goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.detail.uid}`);
+                        goToPageButton.removeAttribute("disabled");
+                    }
+                } catch(e){};
+                // Update auxiliary dialog, if applicable
+                try {
+                    let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${e.detail.title.slice(1)}"]`);
+                    if(auxItem != null){
+                        auxItem.setAttribute('in-graph', 'true');
+                        auxItem.querySelector('.zotero-roam-add-to-graph').remove();
+                    }
+                } catch(e){};
+                // Update on-page menu backlink, if applicable
+                try {
+                    let backlinks = Array.from(document.querySelectorAll(`.related-item_listed[data-key="${e.detail.title}"][in-graph="false"]`));
+                    if(backlinks.length > 0){
+                        for(link of backlinks){
+                            link.outerHTML = zoteroRoam.inPage.renderBacklinksItem(paper = e.detail.item, type = link.getAttribute('item-type'), uid = e.detail.uid);
+                        }
+                    }
+                } catch(e){};
+            });
+
+            document.addEventListener("zotero-roam:update", (e) => {
+                let updatedItems = e.detail.data.items;
+                if(updatedItems.length > 0){
+                    for(item of updatedItems){
+                        if(item.data.DOI){
+                            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                            // --- DNP buttons
+                            let dnpButtons = Array.from(document.querySelectorAll('.zotero-roam-page-added-on'));
+                            if(dnpButtons.length > 0){
+                                let itemDate = zoteroRoam.utils.makeDNP(item.data.dateAdded, {brackets: false});
+                                for(btn of dnpButtons){
+                                    if(btn.getAttribute('data-title') != itemDate){
+                                        continue;
+                                    } else {
+                                        let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
+                                        if(!btnKeys.includes(item.key)){
+                                            if(!btnKeys.includes(item.data.key)){
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                            } else {
+                                                // Special case where the item's citekey was updated
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
+                                            }
+                                            let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
+                                            btn.querySelector('.bp3-button-text').innerText =  `${newKeysCount} item${newKeysCount == 1 ? "" : "s"} added`
+                                        }
+                                    }
+                                }
+                            }
+                            // --- Tagged with / Abstract Mentions
+                            // --- Citekey menus (through DOI)
+                        }
+                    }
+                }
+                // --- Deleted items
+            })
         }
     }
 })();

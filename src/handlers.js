@@ -66,28 +66,7 @@
                 } else {
                     pageUID = window.roamAlphaAPI.util.generateUID();
                     window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
-                        outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
-                        // Update item-in-graph display, if applicable
-                        try {
-                            let inGraphDiv = document.querySelector(".item-in-graph");
-                            if(inGraphDiv != null){
-                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
-                            }
-                            let goToPageButton = document.querySelector(".item-go-to-page");
-                            if(goToPageButton != null){
-                                goToPageButton.setAttribute("data-uid", pageUID);
-                                goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`);
-                                goToPageButton.removeAttribute("disabled");
-                            }
-                        } catch(e){};
-                        // Update auxiliary dialog, if applicable
-                        try {
-                            let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${title}"]`);
-                            if(auxItem != null){
-                                auxItem.setAttribute('in-graph', 'true');
-                                auxItem.querySelector('.zotero-roam-add-to-graph').remove();
-                            }
-                        } catch(e){};
+                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                 }
                 let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
                 let intent = outcome.success ? "success" : "danger";

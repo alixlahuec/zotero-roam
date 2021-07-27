@@ -78,7 +78,7 @@ var zoteroRoam = {};
         
         version: "0.6.30",
 
-        data: {items: [], collections: [], semantic: [], libraries: [], keys: []},
+        data: {items: [], collections: [], semantic: [], libraries: [], keys: [], roamPages: []},
         
         librarySearch: {autocomplete: null},
         
@@ -318,10 +318,7 @@ var zoteroRoam = {};
                 data: {
                     /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
                     src: async function(query){
-                        let roamPages = [];
-                        if(zoteroRoam.citations.activeImport !== null){
-                            roamPages = zoteroRoam.citations.activeImport.pages;
-                        }
+                        let roamPages = zoteroRoam.data.roamPages;
                         let hasQuery = roamPages.findIndex(p => p.title == query);
                         if(hasQuery == -1){
                             return [{title: query, identity: "self"}, ...roamPages];
@@ -588,7 +585,7 @@ var zoteroRoam = {};
             .zotero-roam-citation-links-list{display:block;}
             .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;}
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
-            .zotero-roam-search-item-key a, .zotero-roam-search-item-key button{font-size:0.8em;overflow-wrap:break-word;}
+            .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-abstract{font-size:0.88em;padding:5px 10px;flex:0 1 100%;background-color:#f5f8fa;white-space:break-spaces;}
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
@@ -627,7 +624,8 @@ var zoteroRoam = {};
             .zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
             .zotero-roam-auxiliary-overlay .bp3-card{padding:5px;}
             .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;user-select:initial;}
-            .zotero-roam-auxiliary-overlay .zotero-roam-search-item-key button{opacity:0.6;}
+            .zotero-roam-list-item-actions{text-align:right;flex: 0 0 20%;}
+            .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions button{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
             .zotero-roam-auxiliary-overlay .bp3-card ul.bp3-list-unstyled {padding:15px 0;}
             `;
@@ -1265,28 +1263,7 @@ var zoteroRoam = {};
                 } else {
                     pageUID = window.roamAlphaAPI.util.generateUID();
                     window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
-                        outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
-                        // Update item-in-graph display, if applicable
-                        try {
-                            let inGraphDiv = document.querySelector(".item-in-graph");
-                            if(inGraphDiv != null){
-                                inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
-                            }
-                            let goToPageButton = document.querySelector(".item-go-to-page");
-                            if(goToPageButton != null){
-                                goToPageButton.setAttribute("data-uid", pageUID);
-                                goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`);
-                                goToPageButton.removeAttribute("disabled");
-                            }
-                        } catch(e){};
-                        // Update auxiliary dialog, if applicable
-                        try {
-                            let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${title}"]`);
-                            if(auxItem != null){
-                                auxItem.setAttribute('in-graph', 'true');
-                                auxItem.querySelector('.zotero-roam-add-to-graph').remove();
-                            }
-                        } catch(e){};
+                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                 }
                 let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
                 let intent = outcome.success ? "success" : "danger";
@@ -2469,7 +2446,7 @@ var zoteroRoam = {};
                     } else if(btn.classList.contains('zotero-roam-add-to-graph')){
                         let itemKey = btn.closest('.bp3-menu-item').getAttribute('label');
                         console.log("Importing metadata...");
-                        zoteroRoam.handlers.importItemMetadata('@' + itemKey, uid = "", {popup: true});
+                        zoteroRoam.handlers.importItemMetadata(title = '@' + itemKey, uid = "", {popup: true});
                     }
                 }
 
@@ -3073,7 +3050,7 @@ var zoteroRoam = {};
                 let actionsDiv = "";
                 if(!item.inGraph){
                     actionsDiv = `
-                    <span class="zotero-roam-search-item-key">
+                    <span class="zotero-roam-list-item-actions">
                     ${zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-minimal bp3-intent-success bp3-small zotero-roam-add-to-graph"})}
                     </span>
                     `;
@@ -3427,11 +3404,11 @@ var zoteroRoam = {};
             let origin = element.querySelector(".zotero-roam-citation-origin").innerText;
 
             if(zoteroRoam.citations.activeImport == null){
+                zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
                 zoteroRoam.citations.activeImport = {
                     libraries: zoteroRoam.utils.getLibraries(),
                     items: [],
                     currentLib: {},
-                    pages: zoteroRoam.utils.getRoamPages(),
                     outcome: null
                 }
                 zoteroRoam.tagSelection.autocomplete.init();
@@ -4174,54 +4151,20 @@ var zoteroRoam = {};
                                 if(referencesInLib.length > 0){
                                     referencesList = referencesInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
                                         let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
-                                        switch(paperInGraph.present){
-                                            case true:
-                                                return `
-                                                <li class="related-item_listed bp3-blockquote" item-type="reference">
-                                                <div class="related_info">
-                                                <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
-                                                </div>
-                                                <div class="related_state">
-                                                ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" data-type="${paper.type}"`})}
-                                                </div>
-                                                </li>`;
-                                            default:
-                                                return `
-                                                <li class="related-item_listed bp3-blockquote" item-type="reference">
-                                                <div class="related_info">
-                                                <span><span class="bp3-icon bp3-icon-citation"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
-                                                </div>
-                                                <div class="related_state">
-                                                ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" data-type="${paper.type}"`})}
-                                                </div>
-                                                </li>`
+                                        if(paperInGraph.present){
+                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "reference", uid = paperInGraph.uid);
+                                        } else {
+                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "reference");
                                         }
                                     });
                                 }
                                 if(citationsInLib.length > 0){
                                     citationsList = citationsInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
                                         let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
-                                        switch(paperInGraph.present){
-                                            case true:
-                                                return `
-                                                <li class="related-item_listed bp3-blockquote" item-type="citation">
-                                                <div class="related_info">
-                                                <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${paperInGraph.uid}"><span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
-                                                </div>
-                                                <div class="related_state">
-                                                ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${paperInGraph.uid}" title="Open in sidebar" data-type="${paper.type}"`})}
-                                                </div>
-                                                </li>`;
-                                            default:
-                                                return `
-                                                <li class="related-item_listed bp3-blockquote" item-type="citation">
-                                                <div class="related_info">
-                                                <span><span class="bp3-icon bp3-icon-chat"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
-                                                </div>
-                                                <div class="related_state">
-                                                ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" data-type="${paper.type}"`})}
-                                                </div>
-                                                </li>`
+                                        if(paperInGraph.present){
+                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "citation", uid = paperInGraph.uid);
+                                        } else {
+                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "citation");
                                         }
                                     });
                                 }
@@ -4305,6 +4248,31 @@ var zoteroRoam = {};
                     context: pageDiv.closest('.roam-article') ? "main" : "sidebar"
                 });
         
+            }
+        },
+
+        renderBacklinksItem(paper, type, uid = null){
+            let icon = type == "reference" ? "citation" : "chat";
+            if(uid){
+                return `
+                <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="true">
+                <div class="related_info">
+                <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}"><span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
+                </div>
+                <div class="related_state">
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
+                </div>
+                </li>`;
+            } else {
+                return `
+                <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="false">
+                <div class="related_info">
+                <span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
+                </div>
+                <div class="related_state">
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
+                </div>
+                </li>`
             }
         }
     }
@@ -4792,6 +4760,77 @@ var zoteroRoam = {};
                 console.log(e);
             }
             target.dispatchEvent(e);
+        },
+
+        defaultHooks(){
+            document.addEventListener("zotero-roam:metadata-added", (e) => {
+                // Update item-in-graph display, if applicable
+                try {
+                    let inGraphDiv = document.querySelector(".item-in-graph");
+                    if(inGraphDiv != null){
+                        inGraphDiv.innerHTML = `<span class="bp3-icon-tick bp3-icon bp3-intent-success"></span><span> In the graph</span>`;
+                    }
+                    let goToPageButton = document.querySelector(".item-go-to-page");
+                    if(goToPageButton != null){
+                        goToPageButton.setAttribute("data-uid", e.detail.uid);
+                        goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.detail.uid}`);
+                        goToPageButton.removeAttribute("disabled");
+                    }
+                } catch(e){};
+                // Update auxiliary dialog, if applicable
+                try {
+                    let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${e.detail.title.slice(1)}"]`);
+                    if(auxItem != null){
+                        auxItem.setAttribute('in-graph', 'true');
+                        auxItem.querySelector('.zotero-roam-add-to-graph').remove();
+                    }
+                } catch(e){};
+                // Update on-page menu backlink, if applicable
+                try {
+                    let backlinks = Array.from(document.querySelectorAll(`.related-item_listed[data-key="${e.detail.title}"][in-graph="false"]`));
+                    if(backlinks.length > 0){
+                        for(link of backlinks){
+                            link.outerHTML = zoteroRoam.inPage.renderBacklinksItem(paper = e.detail.item, type = link.getAttribute('item-type'), uid = e.detail.uid);
+                        }
+                    }
+                } catch(e){};
+            });
+
+            document.addEventListener("zotero-roam:update", (e) => {
+                let updatedItems = e.detail.data.items;
+                if(updatedItems.length > 0){
+                    for(item of updatedItems){
+                        if(item.data.DOI){
+                            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                            // --- DNP buttons
+                            let dnpButtons = Array.from(document.querySelectorAll('.zotero-roam-page-added-on'));
+                            if(dnpButtons.length > 0){
+                                let itemDate = zoteroRoam.utils.makeDNP(item.data.dateAdded, {brackets: false});
+                                for(btn of dnpButtons){
+                                    if(btn.getAttribute('data-title') != itemDate){
+                                        continue;
+                                    } else {
+                                        let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
+                                        if(!btnKeys.includes(item.key)){
+                                            if(!btnKeys.includes(item.data.key)){
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                            } else {
+                                                // Special case where the item's citekey was updated
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
+                                            }
+                                            let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
+                                            btn.querySelector('.bp3-button-text').innerText =  `${newKeysCount} item${newKeysCount == 1 ? "" : "s"} added`
+                                        }
+                                    }
+                                }
+                            }
+                            // --- Tagged with / Abstract Mentions
+                            // --- Citekey menus (through DOI)
+                        }
+                    }
+                }
+                // --- Deleted items
+            })
         }
     }
 })();
@@ -4858,6 +4897,7 @@ var zoteroRoam = {};
         zoteroRoam.shortcuts.setup();
         zoteroRoam.shortcuts.setupSequences();
         zoteroRoam.handlers.setupUserRequests();
+        zoteroRoam.events.defaultHooks();
 
         if(zoteroRoam.config.userSettings.autoload == true){
             setTimeout(function(){zoteroRoam.extension.load()}, 1000);

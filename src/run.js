@@ -60,6 +60,7 @@
         zoteroRoam.shortcuts.setup();
         zoteroRoam.shortcuts.setupSequences();
         zoteroRoam.handlers.setupUserRequests();
+        zoteroRoam.events.defaultHooks();
 
         if(zoteroRoam.config.userSettings.autoload == true){
             setTimeout(function(){zoteroRoam.extension.load()}, 1000);
