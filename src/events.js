@@ -84,7 +84,8 @@
                 if(updatedItems.length > 0){
                     for(item of updatedItems){
                         if(item.data.DOI){
-                            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                            // Update network data
+                            zoteroRoam.handlers.refreshSemanticCollection();
                             // --- DNP buttons
                             let dnpButtons = Array.from(document.querySelectorAll('.zotero-roam-page-added-on'));
                             if(dnpButtons.length > 0){
@@ -149,6 +150,7 @@
                                 }
                             }
                             // --- Citekey menus (through DOI)
+                            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
                         }
                     }
                 }

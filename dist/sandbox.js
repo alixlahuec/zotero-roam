@@ -1750,6 +1750,22 @@ var zoteroRoam = {};
 
         },
 
+        refreshSemanticCollection(){
+            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+            zoteroRoam.data.semantic.forEach((obj, i) =>{
+                obj.citations.forEach((cit, j) => {
+                    if(zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
+                        zoteroRoam.data.semantic[i].citations[j].inLibrary = true;
+                    }
+                });
+                obj.references.forEach((ref, j) => {
+                    if(zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
+                        zoteroRoam.data.semantic[i].references[j].inLibrary = true;
+                    }
+                });
+            })
+        },
+
         async requestData(requests, update = false, collections = true) {
             let dataCalls = [];
             let collectionsCalls = [];
@@ -4805,7 +4821,8 @@ var zoteroRoam = {};
                 if(updatedItems.length > 0){
                     for(item of updatedItems){
                         if(item.data.DOI){
-                            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                            // Update network data
+                            zoteroRoam.handlers.refreshSemanticCollection();
                             // --- DNP buttons
                             let dnpButtons = Array.from(document.querySelectorAll('.zotero-roam-page-added-on'));
                             if(dnpButtons.length > 0){
@@ -4870,6 +4887,7 @@ var zoteroRoam = {};
                                 }
                             }
                             // --- Citekey menus (through DOI)
+                            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
                         }
                     }
                 }
