@@ -834,6 +834,10 @@ var zoteroRoam = {};
             })
         },
 
+        includes_anycase(arr, str){
+            return arr.join("\n").toLowerCase().split("\n").includes(str);
+        },
+
         lookForPage(title){
             let pageInfo = null;
             let pageSearch = window.roamAlphaAPI.q('[:find ?uid :in $ ?title :where[?p :block/uid ?uid][?p :node/title ?title]]', title);
@@ -1679,12 +1683,12 @@ var zoteroRoam = {};
                 if(outcome.success == true){
                     let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
                     outcome.data.citations.forEach((cit, index) => {
-                        if(libDOIs.includes(cit.doi)){
+                        if(zoteroRoam.utils.includes_anycase(libDOIS, cit.doi)){
                             outcome.data.citations[index].inLibrary = true;
                         }
                     });
                     outcome.data.references.forEach((ref, index) => {
-                        if(libDOIs.includes(ref.doi)){
+                        if(zoteroRoam.utils.includes_anycase(libDOIs, ref.doi)){
                             outcome.data.references[index].inLibrary = true;
                         }
                     })
@@ -4129,7 +4133,7 @@ var zoteroRoam = {};
                         let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
                         let allDOIs = [...citingDOIs, ...citedDOIs];
                         if(allDOIs.length > 0){
-                            let papersInLib = zoteroRoam.data.items.filter(it => it.data.DOI).filter(it => allDOIs.includes(zoteroRoam.utils.parseDOI(it.data.DOI)));
+                            let papersInLib = zoteroRoam.data.items.filter(it => it.data.DOI).filter(it => zoteroRoam.utils.includes_anycase(allDOIs, zoteroRoam.utils.parseDOI(it.data.DOI)));
                             papersInLib.forEach((paper, index) => {
                                 let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
                                 if(citingDOIs.includes(cleanDOI)){
@@ -4175,10 +4179,10 @@ var zoteroRoam = {};
                                 let secondHalf = [];
                                 if(referencesList.length > half){
                                     firstHalf = referencesList.slice(0, half);
-                                    secondHalf = [...citationsList, ...referencesList.slice(-(half - citationsList.length))];
+                                    secondHalf = [...citationsList, ...referencesList.slice(half)];
                                 } else {
                                     firstHalf = fullLib.slice(0, half);
-                                    secondHalf = fullLib.slice(-half);
+                                    secondHalf = fullLib.slice(half);
                                 }
                                 backlinksLib += `
                                 <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
@@ -4797,7 +4801,7 @@ var zoteroRoam = {};
             });
 
             document.addEventListener("zotero-roam:update", (e) => {
-                let updatedItems = e.detail.data.items;
+                let updatedItems = e.detail.data ? e.detail.data.items : [];
                 if(updatedItems.length > 0){
                     for(item of updatedItems){
                         if(item.data.DOI){
@@ -4825,6 +4829,46 @@ var zoteroRoam = {};
                                 }
                             }
                             // --- Tagged with / Abstract Mentions
+                            let taggedButtons = Array.from(document.querySelectorAll('.zotero-roam-page-tagged-with'));
+                            if(taggedButtons.length > 0){
+                                for(btn of taggedButtons){
+                                    let pageTitle = btn.getAttribute('data-title');
+                                    let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
+                                    if(item.data.tags && item.data.tags.map(t => t.tag).includes(pageTitle)){
+                                        if(!btnKeys.includes(item.key)){
+                                            if(!btnKeys.includes(item.data.key)){
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                            } else {
+                                                // Special case where the item's citekey was updated
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
+                                            }
+                                            let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
+                                            btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} tagged item${newKeysCount == 1 ? "" : "s"}`;
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                            let abstractButtons = Array.from(document.querySelectorAll('.zotero-roam-page-abstract-mentions'));
+                            if(abstractButtons.length > 0){
+                                for(btn of abstractButtons){
+                                    let pageTitle = btn.getAttribute('data-title');
+                                    let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
+                                    if(item.data.abstractNote && item.data.abstractNote.includes(pageTitle)){
+                                        if(!btnKeys.includes(item.key)){
+                                            if(!btnKeys.includes(item.data.key)){
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                            } else {
+                                                // Special case where the item's citekey was updated
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
+                                            }
+                                            let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
+                                            btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} abstract${newKeysCount == 1 ? "" : "s"}`;
+                                        }
+                                    }
+                                    
+                                }
+                            }
                             // --- Citekey menus (through DOI)
                         }
                     }

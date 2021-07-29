@@ -80,7 +80,7 @@
             });
 
             document.addEventListener("zotero-roam:update", (e) => {
-                let updatedItems = e.detail.data.items;
+                let updatedItems = e.detail.data ? e.detail.data.items : [];
                 if(updatedItems.length > 0){
                     for(item of updatedItems){
                         if(item.data.DOI){
@@ -108,6 +108,46 @@
                                 }
                             }
                             // --- Tagged with / Abstract Mentions
+                            let taggedButtons = Array.from(document.querySelectorAll('.zotero-roam-page-tagged-with'));
+                            if(taggedButtons.length > 0){
+                                for(btn of taggedButtons){
+                                    let pageTitle = btn.getAttribute('data-title');
+                                    let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
+                                    if(item.data.tags && item.data.tags.map(t => t.tag).includes(pageTitle)){
+                                        if(!btnKeys.includes(item.key)){
+                                            if(!btnKeys.includes(item.data.key)){
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                            } else {
+                                                // Special case where the item's citekey was updated
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
+                                            }
+                                            let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
+                                            btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} tagged item${newKeysCount == 1 ? "" : "s"}`;
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                            let abstractButtons = Array.from(document.querySelectorAll('.zotero-roam-page-abstract-mentions'));
+                            if(abstractButtons.length > 0){
+                                for(btn of abstractButtons){
+                                    let pageTitle = btn.getAttribute('data-title');
+                                    let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
+                                    if(item.data.abstractNote && item.data.abstractNote.includes(pageTitle)){
+                                        if(!btnKeys.includes(item.key)){
+                                            if(!btnKeys.includes(item.data.key)){
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                            } else {
+                                                // Special case where the item's citekey was updated
+                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
+                                            }
+                                            let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
+                                            btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} abstract${newKeysCount == 1 ? "" : "s"}`;
+                                        }
+                                    }
+                                    
+                                }
+                            }
                             // --- Citekey menus (through DOI)
                         }
                     }

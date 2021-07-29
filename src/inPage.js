@@ -344,7 +344,7 @@
                         let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
                         let allDOIs = [...citingDOIs, ...citedDOIs];
                         if(allDOIs.length > 0){
-                            let papersInLib = zoteroRoam.data.items.filter(it => it.data.DOI).filter(it => allDOIs.includes(zoteroRoam.utils.parseDOI(it.data.DOI)));
+                            let papersInLib = zoteroRoam.data.items.filter(it => it.data.DOI).filter(it => zoteroRoam.utils.includes_anycase(allDOIs, zoteroRoam.utils.parseDOI(it.data.DOI)));
                             papersInLib.forEach((paper, index) => {
                                 let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
                                 if(citingDOIs.includes(cleanDOI)){
@@ -390,10 +390,10 @@
                                 let secondHalf = [];
                                 if(referencesList.length > half){
                                     firstHalf = referencesList.slice(0, half);
-                                    secondHalf = [...citationsList, ...referencesList.slice(-(half - citationsList.length))];
+                                    secondHalf = [...citationsList, ...referencesList.slice(half)];
                                 } else {
                                     firstHalf = fullLib.slice(0, half);
-                                    secondHalf = fullLib.slice(-half);
+                                    secondHalf = fullLib.slice(half);
                                 }
                                 backlinksLib += `
                                 <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">

@@ -174,6 +174,10 @@
             })
         },
 
+        includes_anycase(arr, str){
+            return arr.join("\n").toLowerCase().split("\n").includes(str);
+        },
+
         lookForPage(title){
             let pageInfo = null;
             let pageSearch = window.roamAlphaAPI.q('[:find ?uid :in $ ?title :where[?p :block/uid ?uid][?p :node/title ?title]]', title);
