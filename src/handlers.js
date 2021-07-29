@@ -482,7 +482,7 @@
                 if(outcome.success == true){
                     let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
                     outcome.data.citations.forEach((cit, index) => {
-                        if(zoteroRoam.utils.includes_anycase(libDOIS, cit.doi)){
+                        if(zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
                             outcome.data.citations[index].inLibrary = true;
                         }
                     });

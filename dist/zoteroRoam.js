@@ -1683,7 +1683,7 @@ var zoteroRoam = {};
                 if(outcome.success == true){
                     let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
                     outcome.data.citations.forEach((cit, index) => {
-                        if(zoteroRoam.utils.includes_anycase(libDOIS, cit.doi)){
+                        if(zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
                             outcome.data.citations[index].inLibrary = true;
                         }
                     });
@@ -4837,10 +4837,10 @@ var zoteroRoam = {};
                                     if(item.data.tags && item.data.tags.map(t => t.tag).includes(pageTitle)){
                                         if(!btnKeys.includes(item.key)){
                                             if(!btnKeys.includes(item.data.key)){
-                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                                btn.setAttribute('data-keys', JSON.stringify([...btnKeys, item.key]));
                                             } else {
                                                 // Special case where the item's citekey was updated
-                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
+                                                btn.setAttribute('data-keys', JSON.stringify([...btnKeys.filter(k => k != item.data.key), item.key]));
                                             }
                                             let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
                                             btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} tagged item${newKeysCount == 1 ? "" : "s"}`;
@@ -4857,10 +4857,10 @@ var zoteroRoam = {};
                                     if(item.data.abstractNote && item.data.abstractNote.includes(pageTitle)){
                                         if(!btnKeys.includes(item.key)){
                                             if(!btnKeys.includes(item.data.key)){
-                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                                btn.setAttribute('data-keys', JSON.stringify([...btnKeys, item.key]));
                                             } else {
                                                 // Special case where the item's citekey was updated
-                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
+                                                btn.setAttribute('data-keys', JSON.stringify([...btnKeys.filter(k => k != item.data.key), item.key]));
                                             }
                                             let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
                                             btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} abstract${newKeysCount == 1 ? "" : "s"}`;
