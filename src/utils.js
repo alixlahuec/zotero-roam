@@ -175,7 +175,7 @@
         },
 
         includes_anycase(arr, str){
-            return arr.join("\n").toLowerCase().split("\n").includes(str);
+            return arr.join("\n").toLowerCase().split("\n").includes(str.toLowerCase());
         },
 
         lookForPage(title){
