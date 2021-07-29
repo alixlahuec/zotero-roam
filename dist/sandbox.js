@@ -1683,12 +1683,12 @@ var zoteroRoam = {};
                 if(outcome.success == true){
                     let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
                     outcome.data.citations.forEach((cit, index) => {
-                        if(zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
+                        if(cit.doi && zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
                             outcome.data.citations[index].inLibrary = true;
                         }
                     });
                     outcome.data.references.forEach((ref, index) => {
-                        if(zoteroRoam.utils.includes_anycase(libDOIs, ref.doi)){
+                        if(ref.doi && zoteroRoam.utils.includes_anycase(libDOIs, ref.doi)){
                             outcome.data.references[index].inLibrary = true;
                         }
                     })
@@ -1754,12 +1754,12 @@ var zoteroRoam = {};
             let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
             zoteroRoam.data.semantic.forEach((obj, i) =>{
                 obj.citations.forEach((cit, j) => {
-                    if(zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
+                    if(cit.doi && zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
                         zoteroRoam.data.semantic[i].citations[j].inLibrary = true;
                     }
                 });
                 obj.references.forEach((ref, j) => {
-                    if(zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
+                    if(ref.doi && zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
                         zoteroRoam.data.semantic[i].references[j].inLibrary = true;
                     }
                 });
