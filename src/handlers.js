@@ -2,22 +2,23 @@
     zoteroRoam.handlers = {
 
         addBlockObject(parent_uid, object) {
+            let {string: blockString, children: blockChildren, ...opts} = object;
             // If the Object doesn't have a string property, throw an error
-            if(typeof(object.string) === 'undefined'){
+            if(typeof(blockString) === 'undefined'){
                 console.log(object);
                 throw new Error('All blocks passed as an Object must have a string property');
             } else {
                 // Otherwise add the block
-                let blockUID = zoteroRoam.utils.addBlock(uid = parent_uid, blockString = object.string, order = 0);
+                let blockUID = zoteroRoam.utils.addBlock(uid = parent_uid, blockString = blockString, order = 0, opts);
                 // If the Object has a `children` property
-                if(typeof(object.children) !== 'undefined'){
+                if(typeof(blockChildren) !== 'undefined'){
                     // Go through each child element 1-by-1
                     // If a child has children itself, the recursion should ensure everything gets added where it should
-                    for(let j = object.children.length - 1; j >= 0; j--){
-                        if(object.children[j].constructor === Object){
-                            zoteroRoam.handlers.addBlockObject(blockUID, object.children[j]);
-                        } else if(object.children[j].constructor === String){
-                            zoteroRoam.utils.addBlock(uid = blockUID, blockString = object.children[j], order = 0);
+                    for(let j = blockChildren.length - 1; j >= 0; j--){
+                        if(blockChildren[j].constructor === Object){
+                            zoteroRoam.handlers.addBlockObject(blockUID, blockChildren[j]);
+                        } else if(blockChildren[j].constructor === String){
+                            zoteroRoam.utils.addBlock(uid = blockUID, blockString = blockChildren[j], order = 0);
                         } else {
                             throw new Error('All children array items should be of type String or Object');
                         }

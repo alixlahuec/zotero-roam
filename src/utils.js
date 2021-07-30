@@ -1,9 +1,20 @@
 ;(()=>{
     zoteroRoam.utils = {
 
-        addBlock(uid, blockString, order = 0) {
+        addBlock(uid, blockString, order = 0, opts = {}) {
             let blockUID = window.roamAlphaAPI.util.generateUID();
-            window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': { 'string': blockString, 'uid': blockUID } });
+            let blockContents = {
+                'string': blockString,
+                'uid': blockUID
+            }
+            if(Object.keys(opts).length > 0){
+                for(k of Object.keys(opts)){
+                    if(['children-view-type', 'alignment', 'heading'].includes(k)){
+                        blockContents[k] = opts[k];
+                    }
+                }
+            }
+            window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': blockContents });
             return blockUID;
         },
 
