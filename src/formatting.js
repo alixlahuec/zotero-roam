@@ -37,9 +37,9 @@
         },
 
         getChildrenInDataset(item){
-            let childn = zoteroRoam.data.items.filter(i => i.data.parentItem == item.data.key & i.library.id == item.library.id);
-            if(childn.length > 0){
-                return childn;
+            let children = zoteroRoam.data.items.filter(i => i.data.parentItem == item.data.key & i.library.id == item.library.id);
+            if(children.length > 0){
+                return children;
             } else {
                 return false;
             }
@@ -55,14 +55,13 @@
             let childrenObject = {pdfItems: false, notes: false};
             let itemChildren = [];
 
-            if(item.meta.numChildren > 0){
-                let childrenInDataset = zoteroRoam.formatting.getChildrenInDataset(item);
-                if(!childrenInDataset){
-                    childrenObject.remoteChildren = true;
-                } else {
-                    itemChildren = childrenInDataset;
-                }
+            let childrenInDataset = zoteroRoam.formatting.getChildrenInDataset(item);
+            if(!childrenInDataset && item.meta.numChildren > 0){
+                childrenObject.remoteChildren = true;
+            } else {
+                itemChildren = childrenInDataset;
             }
+            
             switch(pdf_as){
                 case "raw":
                     let pdfResults = itemChildren.filter(c => c.data.contentType == "application/pdf");

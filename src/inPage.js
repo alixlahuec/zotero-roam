@@ -344,10 +344,10 @@
                         let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
                         let allDOIs = [...citingDOIs, ...citedDOIs];
                         if(allDOIs.length > 0){
-                            let papersInLib = zoteroRoam.data.items.filter(it => it.data.DOI).filter(it => zoteroRoam.utils.includes_anycase(allDOIs, zoteroRoam.utils.parseDOI(it.data.DOI)));
+                            let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
                             papersInLib.forEach((paper, index) => {
                                 let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
-                                if(citingDOIs.includes(cleanDOI)){
+                                if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
                                     papersInLib[index].type = "citing";
                                 } else {
                                     papersInLib[index].type = "cited";
@@ -359,56 +359,14 @@
                             backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
         
                             if(papersInLib.length > 0){
-                                let citationsInLib = papersInLib.filter(paper => paper.type == "citing");
-                                let referencesInLib = papersInLib.filter(paper => paper.type == "cited");
-                                let referencesList = [];
-                                let citationsList = [];
-                                if(referencesInLib.length > 0){
-                                    referencesList = referencesInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
-                                        let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
-                                        if(paperInGraph.present){
-                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "reference", uid = paperInGraph.uid);
-                                        } else {
-                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "reference");
-                                        }
-                                    });
-                                }
-                                if(citationsInLib.length > 0){
-                                    citationsList = citationsInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
-                                        let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
-                                        if(paperInGraph.present){
-                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "citation", uid = paperInGraph.uid);
-                                        } else {
-                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "citation");
-                                        }
-                                    });
-                                }
-                                let fullLib = [...referencesList, ...citationsList];
-                                // https://flaviocopes.com/how-to-cut-array-half-javascript/
-                                let half = Math.ceil(fullLib.length / 2);
-                                let firstHalf = [];
-                                let secondHalf = [];
-                                if(referencesList.length > half){
-                                    firstHalf = referencesList.slice(0, half);
-                                    secondHalf = [...citationsList, ...referencesList.slice(half)];
-                                } else {
-                                    firstHalf = fullLib.slice(0, half);
-                                    secondHalf = fullLib.slice(half);
-                                }
                                 backlinksLib += `
                                 <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                <ul class="col-1-left bp3-list-unstyled">
-                                ${firstHalf.join("")}
-                                </ul>
-                                <ul class="col-2-right bp3-list-unstyled">
-                                ${secondHalf.join("")}
-                                </ul>
+                                ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
                                 </ul>
                                 `
                             }
                         }
                     }
-                    
                 }
         
                 menuDiv.innerHTML = `
@@ -424,7 +382,7 @@
                 </div>
                 </div>
                 <hr>
-                <div class="zotero-roam-page-menu-citations">
+                <div class="zotero-roam-page-menu-citations" ${itemDOI ? `data-doi="${itemDOI}"` : ""}>
                 ${backlinksLib}
                 </div>
                 `;
@@ -489,6 +447,45 @@
                 </div>
                 </li>`
             }
+        },
+
+        renderBacklinksList(papers){
+            let citationsInLib = papers.filter(p => p.type == "citing");
+            let referencesInLib = papers.filter(p => p.type == "cited");
+            let referencesList = [];
+            let citationsList = [];
+            if(referencesInLib.length > 0){
+                referencesList = referencesInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
+                    let paperUID = zoteroRoam.utils.lookForPage('@' + paper.key).uid || null;
+                    return zoteroRoam.inPage.renderBacklinksItem(paper, "reference", uid = paperUID);
+                });
+            }
+            if(citationsInLib.length > 0){
+                citationsList = citationsInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
+                    let paperUID = zoteroRoam.utils.lookForPage('@' + paper.key).uid || null;
+                    return zoteroRoam.inPage.renderBacklinksItem(paper, "citation", uid = paperUID);
+                });
+            }
+            let fullLib = [...referencesList, ...citationsList];
+            // https://flaviocopes.com/how-to-cut-array-half-javascript/
+            let half = Math.ceil(fullLib.length / 2);
+            let firstHalf = [];
+            let secondHalf = [];
+            if(referencesList.length > half){
+                firstHalf = referencesList.slice(0, half);
+                secondHalf = [...citationsList, ...referencesList.slice(half)];
+            } else {
+                firstHalf = fullLib.slice(0, half);
+                secondHalf = fullLib.slice(half);
+            }
+            return `
+            <ul class="col-1-left bp3-list-unstyled">
+            ${firstHalf.join("")}
+            </ul>
+            <ul class="col-2-right bp3-list-unstyled">
+            ${secondHalf.join("")}
+            </ul>
+            `
         }
     }
 })();

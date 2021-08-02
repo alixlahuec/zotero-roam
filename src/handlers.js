@@ -550,22 +550,6 @@
 
         },
 
-        refreshSemanticCollection(){
-            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
-            zoteroRoam.data.semantic.forEach((obj, i) =>{
-                obj.citations.forEach((cit, j) => {
-                    if(cit.doi && zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
-                        zoteroRoam.data.semantic[i].citations[j].inLibrary = true;
-                    }
-                });
-                obj.references.forEach((ref, j) => {
-                    if(ref.doi && zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
-                        zoteroRoam.data.semantic[i].references[j].inLibrary = true;
-                    }
-                });
-            })
-        },
-
         async requestData(requests, update = false, collections = true) {
             let dataCalls = [];
             let collectionsCalls = [];

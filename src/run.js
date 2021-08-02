@@ -11,7 +11,10 @@
         zoteroRoam.interface.create();
         zoteroRoam.interface.setup();
         zoteroRoam.addExtensionCSS();
-        window.addEventListener("hashchange", () => { zoteroRoam.interface.toggleSearchOverlay("hide") });
+        window.addEventListener("hashchange", () => { 
+            zoteroRoam.interface.toggleSearchOverlay("hide");
+            zoteroRoam.interface.closeAuxiliaryOverlay();
+        });
 
         // Check for additional settings
         // override_quickcopy

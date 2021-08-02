@@ -264,7 +264,12 @@ var zoteroRoam = {};
                         if(zoteroRoam.citations.currentDOI.length == 0){
                             return [];
                         } else {
-                            return zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
+                            let papersList = zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
+                            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                            papersList.forEach((paper, i) => {
+                                if(paper.doi && zoteroRoam.utils.includes_anycase(libDOIs, paper.doi)){ papersList[i].inLibrary = true }
+                            });
+                            return papersList;
                         }
                     },
                     keys: ['year', 'title', 'authorsString', 'meta'],
@@ -616,7 +621,7 @@ var zoteroRoam = {};
             .related_state button {height:100%;}
             [item-type="reference"] .bp3-icon, [item-type="reference"] a {color:#7ec8de!important;}
             .bp3-dark [item-type="citation"] .bp3-icon, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
-            [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#d6a956!important;}
+            [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#e09f26!important;}
             .zotero-roam-page-related{opacity:0.6;float:right;margin-top:-40px;}
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .zotero-roam-item-timestamp{font-size:0.85em;}

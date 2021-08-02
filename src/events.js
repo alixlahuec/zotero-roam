@@ -79,13 +79,11 @@
                 } catch(e){};
             });
 
-            document.addEventListener("zotero-roam:update", (e) => {
+            document.addEventListener("zotero-roam:update", async function(e){
                 let updatedItems = e.detail.data ? e.detail.data.items : [];
                 if(updatedItems.length > 0){
                     for(item of updatedItems){
                         if(item.data.DOI){
-                            // Update network data
-                            zoteroRoam.handlers.refreshSemanticCollection();
                             // --- DNP buttons
                             let dnpButtons = Array.from(document.querySelectorAll('.zotero-roam-page-added-on'));
                             if(dnpButtons.length > 0){
@@ -150,7 +148,44 @@
                                 }
                             }
                             // --- Citekey menus (through DOI)
-                            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                            if(item.data.DOI && zoteroRoam.config.params.pageMenu.defaults.includes("citingPapers")){
+                                let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                                let pageMenus = Array.from(document.querySelectorAll('.zotero-roam-page-menu-citations[data-doi]'));
+                                for(menu of pageMenus){
+                                    let doi = menu.dataset.doi;
+                                    let citeObject = await zoteroRoam.handlers.getSemantic(doi);
+                                    if(citeObject.data){
+                                        let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
+                                        let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                                        let allDOIs = [...citingDOIs, ...citedDOIs];
+                                        if(zoteroRoam.utils.includes_anycase(allDOIs, itemDOI)){
+                                            let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
+                                            papersInLib.forEach((paper, index) => {
+                                                let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
+                                                if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
+                                                    papersInLib[index].type = "citing";
+                                                } else {
+                                                    papersInLib[index].type = "cited";
+                                                }
+                                            });
+                                            let relatedBtn = menu.querySelector('.zotero-roam-page-menu-backlinks-button');
+                                            relatedBtn.querySelector('.bp3-button-text').innerText = `${papersInLib.length} related library items`;
+                                            relatedBtn.classList.remove('bp3-disabled');
+
+                                            let relatedList = menu.querySelector('.zotero-roam-page-menu-backlinks-list');
+                                            if(!relatedList){
+                                                menu.innerHTML += `
+                                                <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
+                                                ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
+                                                </ul>
+                                                `
+                                            } else {
+                                                relatedList.innerHTML = `${zoteroRoam.inPage.renderBacklinksList(papersInLib)}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

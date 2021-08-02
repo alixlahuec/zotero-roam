@@ -264,7 +264,12 @@ var zoteroRoam = {};
                         if(zoteroRoam.citations.currentDOI.length == 0){
                             return [];
                         } else {
-                            return zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
+                            let papersList = zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
+                            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                            papersList.forEach((paper, i) => {
+                                if(paper.doi && zoteroRoam.utils.includes_anycase(libDOIs, paper.doi)){ papersList[i].inLibrary = true }
+                            });
+                            return papersList;
                         }
                     },
                     keys: ['year', 'title', 'authorsString', 'meta'],
@@ -616,7 +621,7 @@ var zoteroRoam = {};
             .related_state button {height:100%;}
             [item-type="reference"] .bp3-icon, [item-type="reference"] a {color:#7ec8de!important;}
             .bp3-dark [item-type="citation"] .bp3-icon, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
-            [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#d6a956!important;}
+            [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#e09f26!important;}
             .zotero-roam-page-related{opacity:0.6;float:right;margin-top:-40px;}
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .zotero-roam-item-timestamp{font-size:0.85em;}
@@ -1760,22 +1765,6 @@ var zoteroRoam = {};
                 return outcome;
             }
 
-        },
-
-        refreshSemanticCollection(){
-            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
-            zoteroRoam.data.semantic.forEach((obj, i) =>{
-                obj.citations.forEach((cit, j) => {
-                    if(cit.doi && zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
-                        zoteroRoam.data.semantic[i].citations[j].inLibrary = true;
-                    }
-                });
-                obj.references.forEach((ref, j) => {
-                    if(ref.doi && zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
-                        zoteroRoam.data.semantic[i].references[j].inLibrary = true;
-                    }
-                });
-            })
         },
 
         async requestData(requests, update = false, collections = true) {
@@ -3031,6 +3020,10 @@ var zoteroRoam = {};
             zoteroRoam.citations.currentType = type;
             // All citations -- paginated
             let fullData = zoteroRoam.data.semantic.find(item => item.doi == doi)[`${type}`];
+            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+            fullData.forEach((paper, i) => {
+                if(paper.doi && zoteroRoam.utils.includes_anycase(libDOIs, paper.doi)){ fullData[i].inLibrary = true }
+            });
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
             // Render HTML for pagination
             zoteroRoam.interface.renderCitationsPagination();
@@ -3081,11 +3074,11 @@ var zoteroRoam = {};
             let itemsList = items.map(item => {
                 let actionsDiv = "";
                 if(!item.inGraph){
-                    actionsDiv = `
-                    <span class="zotero-roam-list-item-actions">
-                    ${zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-minimal bp3-intent-success bp3-small zotero-roam-add-to-graph"})}
-                    </span>
-                    `;
+                    actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-minimal bp3-intent-success bp3-small zotero-roam-add-to-graph"});
+                } else {
+                    let pageUID = zoteroRoam.utils.lookForPage('@' + item.key).uid;
+                    let pageURL = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`;
+                    actionsDiv = zoteroRoam.utils.renderBP3Button_link(string = "Go to page", {linkClass: "zotero-roam-list-item-go-to-page", icon: "arrow-right", iconModifier: "bp3-intent-primary", target: pageURL, linkAttribute: `data-uid="${pageUID}"`});
                 }
                 return `
                 <li class="zotero-roam-list-item">
@@ -3098,7 +3091,9 @@ var zoteroRoam = {};
                         ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal"}) : ""}
                         <span class="zotero-roam-citation-abstract" style="display:none;">${item.abstract}</span>
                     </div>
-                    ${actionsDiv}
+                    <span class="zotero-roam-list-item-actions">
+                        ${actionsDiv}
+                    </span>
                 </div>
                 </li>
                 `;
@@ -3257,7 +3252,7 @@ var zoteroRoam = {};
             
             let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
             let goToPageSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
-            let pageURL = (pageInGraph.present == true) ? `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}` : "javascript:void(0)";
+            let pageURL = (pageInGraph.present == true) ? `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}` : "javascript:void(0)";
             let goToPage = `
             <div class="bp3-button-group bp3-minimal bp3-fill bp3-align-left">
             ${zoteroRoam.utils.renderBP3Button_link(string = "Go to Roam page" + goToPageSeq, {linkClass: "item-go-to-page", icon: "arrow-right", iconModifier: "bp3-intent-primary", target: pageURL, linkAttribute: goToPageModifier})}
@@ -4161,10 +4156,10 @@ var zoteroRoam = {};
                         let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
                         let allDOIs = [...citingDOIs, ...citedDOIs];
                         if(allDOIs.length > 0){
-                            let papersInLib = zoteroRoam.data.items.filter(it => it.data.DOI).filter(it => zoteroRoam.utils.includes_anycase(allDOIs, zoteroRoam.utils.parseDOI(it.data.DOI)));
+                            let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
                             papersInLib.forEach((paper, index) => {
                                 let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
-                                if(citingDOIs.includes(cleanDOI)){
+                                if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
                                     papersInLib[index].type = "citing";
                                 } else {
                                     papersInLib[index].type = "cited";
@@ -4176,56 +4171,14 @@ var zoteroRoam = {};
                             backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
         
                             if(papersInLib.length > 0){
-                                let citationsInLib = papersInLib.filter(paper => paper.type == "citing");
-                                let referencesInLib = papersInLib.filter(paper => paper.type == "cited");
-                                let referencesList = [];
-                                let citationsList = [];
-                                if(referencesInLib.length > 0){
-                                    referencesList = referencesInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
-                                        let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
-                                        if(paperInGraph.present){
-                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "reference", uid = paperInGraph.uid);
-                                        } else {
-                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "reference");
-                                        }
-                                    });
-                                }
-                                if(citationsInLib.length > 0){
-                                    citationsList = citationsInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
-                                        let paperInGraph = zoteroRoam.utils.lookForPage('@' + paper.key);
-                                        if(paperInGraph.present){
-                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "citation", uid = paperInGraph.uid);
-                                        } else {
-                                            return zoteroRoam.inPage.renderBacklinksItem(paper, "citation");
-                                        }
-                                    });
-                                }
-                                let fullLib = [...referencesList, ...citationsList];
-                                // https://flaviocopes.com/how-to-cut-array-half-javascript/
-                                let half = Math.ceil(fullLib.length / 2);
-                                let firstHalf = [];
-                                let secondHalf = [];
-                                if(referencesList.length > half){
-                                    firstHalf = referencesList.slice(0, half);
-                                    secondHalf = [...citationsList, ...referencesList.slice(half)];
-                                } else {
-                                    firstHalf = fullLib.slice(0, half);
-                                    secondHalf = fullLib.slice(half);
-                                }
                                 backlinksLib += `
                                 <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                <ul class="col-1-left bp3-list-unstyled">
-                                ${firstHalf.join("")}
-                                </ul>
-                                <ul class="col-2-right bp3-list-unstyled">
-                                ${secondHalf.join("")}
-                                </ul>
+                                ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
                                 </ul>
                                 `
                             }
                         }
                     }
-                    
                 }
         
                 menuDiv.innerHTML = `
@@ -4241,7 +4194,7 @@ var zoteroRoam = {};
                 </div>
                 </div>
                 <hr>
-                <div class="zotero-roam-page-menu-citations">
+                <div class="zotero-roam-page-menu-citations" ${itemDOI ? `data-doi="${itemDOI}"` : ""}>
                 ${backlinksLib}
                 </div>
                 `;
@@ -4306,6 +4259,45 @@ var zoteroRoam = {};
                 </div>
                 </li>`
             }
+        },
+
+        renderBacklinksList(papers){
+            let citationsInLib = papers.filter(p => p.type == "citing");
+            let referencesInLib = papers.filter(p => p.type == "cited");
+            let referencesList = [];
+            let citationsList = [];
+            if(referencesInLib.length > 0){
+                referencesList = referencesInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
+                    let paperUID = zoteroRoam.utils.lookForPage('@' + paper.key).uid || null;
+                    return zoteroRoam.inPage.renderBacklinksItem(paper, "reference", uid = paperUID);
+                });
+            }
+            if(citationsInLib.length > 0){
+                citationsList = citationsInLib.sort((a,b) => (a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1)).map(paper => {
+                    let paperUID = zoteroRoam.utils.lookForPage('@' + paper.key).uid || null;
+                    return zoteroRoam.inPage.renderBacklinksItem(paper, "citation", uid = paperUID);
+                });
+            }
+            let fullLib = [...referencesList, ...citationsList];
+            // https://flaviocopes.com/how-to-cut-array-half-javascript/
+            let half = Math.ceil(fullLib.length / 2);
+            let firstHalf = [];
+            let secondHalf = [];
+            if(referencesList.length > half){
+                firstHalf = referencesList.slice(0, half);
+                secondHalf = [...citationsList, ...referencesList.slice(half)];
+            } else {
+                firstHalf = fullLib.slice(0, half);
+                secondHalf = fullLib.slice(half);
+            }
+            return `
+            <ul class="col-1-left bp3-list-unstyled">
+            ${firstHalf.join("")}
+            </ul>
+            <ul class="col-2-right bp3-list-unstyled">
+            ${secondHalf.join("")}
+            </ul>
+            `
         }
     }
 })();
@@ -4349,9 +4341,9 @@ var zoteroRoam = {};
         },
 
         getChildrenInDataset(item){
-            let childn = zoteroRoam.data.items.filter(i => i.data.parentItem == item.data.key & i.library.id == item.library.id);
-            if(childn.length > 0){
-                return childn;
+            let children = zoteroRoam.data.items.filter(i => i.data.parentItem == item.data.key & i.library.id == item.library.id);
+            if(children.length > 0){
+                return children;
             } else {
                 return false;
             }
@@ -4367,14 +4359,13 @@ var zoteroRoam = {};
             let childrenObject = {pdfItems: false, notes: false};
             let itemChildren = [];
 
-            if(item.meta.numChildren > 0){
-                let childrenInDataset = zoteroRoam.formatting.getChildrenInDataset(item);
-                if(!childrenInDataset){
-                    childrenObject.remoteChildren = true;
-                } else {
-                    itemChildren = childrenInDataset;
-                }
+            let childrenInDataset = zoteroRoam.formatting.getChildrenInDataset(item);
+            if(!childrenInDataset && item.meta.numChildren > 0){
+                childrenObject.remoteChildren = true;
+            } else {
+                itemChildren = childrenInDataset;
             }
+            
             switch(pdf_as){
                 case "raw":
                     let pdfResults = itemChildren.filter(c => c.data.contentType == "application/pdf");
@@ -4828,13 +4819,11 @@ var zoteroRoam = {};
                 } catch(e){};
             });
 
-            document.addEventListener("zotero-roam:update", (e) => {
+            document.addEventListener("zotero-roam:update", async function(e){
                 let updatedItems = e.detail.data ? e.detail.data.items : [];
                 if(updatedItems.length > 0){
                     for(item of updatedItems){
                         if(item.data.DOI){
-                            // Update network data
-                            zoteroRoam.handlers.refreshSemanticCollection();
                             // --- DNP buttons
                             let dnpButtons = Array.from(document.querySelectorAll('.zotero-roam-page-added-on'));
                             if(dnpButtons.length > 0){
@@ -4899,7 +4888,44 @@ var zoteroRoam = {};
                                 }
                             }
                             // --- Citekey menus (through DOI)
-                            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                            if(item.data.DOI && zoteroRoam.config.params.pageMenu.defaults.includes("citingPapers")){
+                                let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                                let pageMenus = Array.from(document.querySelectorAll('.zotero-roam-page-menu-citations[data-doi]'));
+                                for(menu of pageMenus){
+                                    let doi = menu.dataset.doi;
+                                    let citeObject = await zoteroRoam.handlers.getSemantic(doi);
+                                    if(citeObject.data){
+                                        let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
+                                        let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                                        let allDOIs = [...citingDOIs, ...citedDOIs];
+                                        if(zoteroRoam.utils.includes_anycase(allDOIs, itemDOI)){
+                                            let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
+                                            papersInLib.forEach((paper, index) => {
+                                                let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
+                                                if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
+                                                    papersInLib[index].type = "citing";
+                                                } else {
+                                                    papersInLib[index].type = "cited";
+                                                }
+                                            });
+                                            let relatedBtn = menu.querySelector('.zotero-roam-page-menu-backlinks-button');
+                                            relatedBtn.querySelector('.bp3-button-text').innerText = `${papersInLib.length} related library items`;
+                                            relatedBtn.classList.remove('bp3-disabled');
+
+                                            let relatedList = menu.querySelector('.zotero-roam-page-menu-backlinks-list');
+                                            if(!relatedList){
+                                                menu.innerHTML += `
+                                                <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
+                                                ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
+                                                </ul>
+                                                `
+                                            } else {
+                                                relatedList.innerHTML = `${zoteroRoam.inPage.renderBacklinksList(papersInLib)}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
