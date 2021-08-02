@@ -877,7 +877,7 @@
                 } else {
                     let pageUID = zoteroRoam.utils.lookForPage('@' + item.key).uid;
                     let pageURL = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`;
-                    actionsDiv = zoteroRoam.utils.renderBP3Button_link(string = "Go to page", {linkClass: "bp3-minimal bp3-intent-primary zotero-roam-list-item-go-to-page", icon: "arrow-right", iconModifier: "bp3-intent-primary", target: pageURL, linkAttribute: `data-uid="${pageUID}"`});
+                    actionsDiv = zoteroRoam.utils.renderBP3Button_link(string = "Go to page", {linkClass: "bp3-minimal bp3-intent-primary bp3-small zotero-roam-list-item-go-to-page", icon: "arrow-right", iconModifier: "bp3-intent-primary", target: pageURL, linkAttribute: `data-uid="${pageUID}"`});
                 }
                 return `
                 <li class="zotero-roam-list-item">
