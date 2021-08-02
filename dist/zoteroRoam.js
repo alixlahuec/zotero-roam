@@ -3078,7 +3078,7 @@ var zoteroRoam = {};
                 } else {
                     let pageUID = zoteroRoam.utils.lookForPage('@' + item.key).uid;
                     let pageURL = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`;
-                    actionsDiv = zoteroRoam.utils.renderBP3Button_link(string = "Go to page", {linkClass: "zotero-roam-list-item-go-to-page", icon: "arrow-right", iconModifier: "bp3-intent-primary", target: pageURL, linkAttribute: `data-uid="${pageUID}"`});
+                    actionsDiv = zoteroRoam.utils.renderBP3Button_link(string = "Go to page", {linkClass: "bp3-minimal bp3-intent-primary zotero-roam-list-item-go-to-page", icon: "arrow-right", iconModifier: "bp3-intent-primary", target: pageURL, linkAttribute: `data-uid="${pageUID}"`});
                 }
                 return `
                 <li class="zotero-roam-list-item">
@@ -4360,8 +4360,10 @@ var zoteroRoam = {};
             let itemChildren = [];
 
             let childrenInDataset = zoteroRoam.formatting.getChildrenInDataset(item);
-            if(!childrenInDataset && item.meta.numChildren > 0){
-                childrenObject.remoteChildren = true;
+            if(!childrenInDataset){
+                if(item.meta.numChildren > 0){
+                    childrenObject.remoteChildren = true;
+                }
             } else {
                 itemChildren = childrenInDataset;
             }

@@ -56,8 +56,10 @@
             let itemChildren = [];
 
             let childrenInDataset = zoteroRoam.formatting.getChildrenInDataset(item);
-            if(!childrenInDataset && item.meta.numChildren > 0){
-                childrenObject.remoteChildren = true;
+            if(!childrenInDataset){
+                if(item.meta.numChildren > 0){
+                    childrenObject.remoteChildren = true;
+                }
             } else {
                 itemChildren = childrenInDataset;
             }
