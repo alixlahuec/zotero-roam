@@ -848,7 +848,8 @@
 
         popRelatedDialog(title, keys, type){
             let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
-            let relation = (type == "added-on") ? "item(s) added on" : (type == "tagged-with" ? "item(s) tagged with" : "abstract(s) mentioning")
+            let suffix = keys.length > 1 ? "s" : "";
+            let relation = (type == "added-on") ? `item${suffix} added on` : (type == "tagged-with" ? `item${suffix} tagged with` : `abstract${suffix} mentioning`);
             // Fill the dialog
             overlay.querySelector('.main-panel .header-left').innerHTML = `
             <h5 class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
