@@ -200,14 +200,16 @@
          * @param {string} settings.layout - Should the badge be horizontal or vertical ?
          * @param {string} settings.showZero - Should the badge include categories that contain no citing paper ?
          * @param {string} settings.showLabels - Should the badge display category labels ?
+         * @param {string} settings.tooltip - Where should the tooltip be displayed ?
          * @returns {string} The HTML for the badge */
-        makeSciteBadge(doi, {layout = "horizontal", showZero = "true", showLabels = "false"} = {}){
+        makeSciteBadge(doi, {layout = "horizontal", showZero = "true", showLabels = "false", tooltip = "bottom"} = {}){
             let sciteBadge = document.createElement("div");
             sciteBadge.classList.add("scite-badge");
             sciteBadge.setAttribute("data-doi", doi);
             sciteBadge.setAttribute("data-layout", layout);
             sciteBadge.setAttribute("data-show-zero", showZero);
             sciteBadge.setAttribute("data-show-labels", showLabels);
+            sciteBadge.setAttribute("data-tooltip-placement", tooltip);
 
             return sciteBadge;
         },
@@ -354,8 +356,8 @@
                                 }
                             });
                             backlinksLib = "";
-                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citedDOIs.length > 0 ? citedDOIs.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
-                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citingDOIs.length > 0 ? citingDOIs.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
+                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
+                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
                             backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
         
                             if(papersInLib.length > 0){

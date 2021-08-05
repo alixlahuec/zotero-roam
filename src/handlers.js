@@ -278,7 +278,7 @@
                     }; 
                 });
                 let libList = Array.from(new Set(requests.map(rq => rq.library)));
-                zoteroRoam.data.libraries = libList.map(lib => { return {path: lib, version: 0, apikey: requests.find(rq => rq.library == lib).apikey} });
+                zoteroRoam.data.libraries = libList.map(lib => { return {path: lib, version: "0", apikey: requests.find(rq => rq.library == lib).apikey} });
                 zoteroRoam.config.requests = requests;
             }
         },
