@@ -76,7 +76,7 @@ var zoteroRoam = {};
             }
         },
         
-        version: "0.6.60",
+        version: "0.6.62",
 
         data: {items: [], collections: [], semantic: [], libraries: [], keys: [], roamPages: []},
         
