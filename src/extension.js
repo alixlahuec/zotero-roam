@@ -76,7 +76,7 @@
                 /**
                  * Ready event
                  * 
-                 * @event zoteroRoam:ready
+                 * @event zotero-roam:ready
                  * @type {object}
                  */
                 zoteroRoam.events.emit('ready', detail = zoteroRoam.data);

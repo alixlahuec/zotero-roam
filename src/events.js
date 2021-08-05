@@ -2,7 +2,7 @@
     zoteroRoam.events = {
         /**
          * Signals the extensiom has loaded successfully
-         * @event zoteroRoam:ready
+         * @event zotero-roam:ready
          */
         'ready': {},
         /**

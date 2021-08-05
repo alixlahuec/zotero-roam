@@ -381,7 +381,6 @@
                 ${records_list.length == 0 ? "" : records_list.join("\n")}
                 </div>
                 </div>
-                <hr>
                 <div class="zotero-roam-page-menu-citations" ${itemDOI ? `data-doi="${itemDOI}"` : ""}>
                 ${backlinksLib}
                 </div>

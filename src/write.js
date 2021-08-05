@@ -82,7 +82,8 @@
                     // If the request returned a successful API response, log the data & update global info
                     let reqResults = await req.json();
                     // Update the extension's information on library version
-                    zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
+                    let latestVersion = req.headers.get('Last-Modified-Version');
+                    if(latestVersion){ zoteroRoam.data.libraries[libIndex].version = latestVersion }
                     zoteroRoam.citations.activeImport.libraries = zoteroRoam.utils.getLibraries();
                     zoteroRoam.citations.activeImport.currentLib = zoteroRoam.citations.activeImport.libraries.find(lib => lib.path == zoteroRoam.citations.activeImport.currentLib.path);
                     outcome = {

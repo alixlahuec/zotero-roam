@@ -76,7 +76,7 @@ var zoteroRoam = {};
             }
         },
         
-        version: "0.6.30",
+        version: "0.6.60",
 
         data: {items: [], collections: [], semantic: [], libraries: [], keys: [], roamPages: []},
         
@@ -580,7 +580,8 @@ var zoteroRoam = {};
             .scite-badge{padding-top:5px;min-width:25%;}
             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
             .zotero-roam-page-menu-pdf-link, .item-pdf-link{font-weight:600;text-align:left!important;}
-            .zotero-roam-page-menu-citations{display:flex;padding:5px;flex-wrap:wrap;padding-bottom:0px;}
+            .zotero-roam-page-menu-citations{display:flex;padding:5px;flex-wrap:wrap;padding-bottom:0px;border-top: 1px #f1f1f1 solid;}
+            .bp3-dark .zotero-roam-page-menu-citations{border-top-color:#f1f1f12e;}
             .zotero-roam-page-menu-citations > button{flex: 1 0 33%;}
             .zotero-roam-page-menu-backlinks-list > ul{padding:1vw;display:flex;flex:1 0 50%;flex-direction:column;}
             .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
@@ -1611,11 +1612,9 @@ var zoteroRoam = {};
                 tags: tags,
                 outcome: outcome,
                 context: {
-                    citing: {
-                        doi: zoteroRoam.citations.currentDOI,
-                        key: zoteroRoam.citations.currentCitekey,
-                        type: zoteroRoam.citations.currentType
-                    }
+                    doi: zoteroRoam.citations.currentDOI,
+                    key: zoteroRoam.citations.currentCitekey,
+                    type: zoteroRoam.citations.currentType
                 }
             })
             console.log(outcome);
@@ -1805,7 +1804,7 @@ var zoteroRoam = {};
                     collectionsResults = await Promise.all(collectionsResults.map( (cl, i) => {
                         // Update stored data on libraries
                         let latestVersion = cl.headers.get('Last-Modified-Version');
-                        zoteroRoam.data.libraries[i].version = latestVersion;
+                        if(latestVersion){ zoteroRoam.data.libraries[i].version = latestVersion }
                         return cl.json();
                     }));
                     collectionsResults = collectionsResults.flat(1);
@@ -2131,7 +2130,8 @@ var zoteroRoam = {};
                     // If the request returned a successful API response, log the data & update global info
                     let reqResults = await req.json();
                     // Update the extension's information on library version
-                    zoteroRoam.data.libraries[libIndex].version = req.headers.get('Last-Modified-Version');
+                    let latestVersion = req.headers.get('Last-Modified-Version');
+                    if(latestVersion){ zoteroRoam.data.libraries[libIndex].version = latestVersion }
                     zoteroRoam.citations.activeImport.libraries = zoteroRoam.utils.getLibraries();
                     zoteroRoam.citations.activeImport.currentLib = zoteroRoam.citations.activeImport.libraries.find(lib => lib.path == zoteroRoam.citations.activeImport.currentLib.path);
                     outcome = {
@@ -2309,18 +2309,19 @@ var zoteroRoam = {};
             overlayDiv.classList.add("bp3-overlay-open");
             overlayDiv.classList.add(`${config.overlay.class}`);
             overlayDiv.style = `display:none;`;
-            overlayDiv.innerHTML = `<div class="bp3-overlay-backdrop bp3-popover-backdrop bp3-popover-appear-done bp3-popover-enter-done" style="${backdropStyle}"></div>
-                                    <div class="bp3-transition-container bp3-popover-appear-done bp3-popover-enter-done ${config.class}" style="${containerStyle}">
-                                        <div class="bp3-popover bp3-minimal">
-                                            <div class="bp3-popover-content">
-                                                <div>
-                                                    <ul class="bp3-menu bp3-text-small">
-                                                        ${menuOptions}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>`;
+            overlayDiv.innerHTML = `
+            <div class="bp3-overlay-backdrop bp3-popover-backdrop bp3-popover-appear-done bp3-popover-enter-done" style="${backdropStyle}"></div>
+            <div class="bp3-transition-container bp3-popover-appear-done bp3-popover-enter-done ${config.class}" style="${containerStyle}">
+                <div class="bp3-popover bp3-minimal ${zoteroRoam.config.params.theme ? zoteroRoam.config.params.theme : ""}">
+                    <div class="bp3-popover-content">
+                        <div>
+                            <ul class="bp3-menu bp3-text-small">
+                                ${menuOptions}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
 
             zoteroRoam.interface.portal.div.appendChild(overlayDiv);
             zoteroRoam.interface[`${elementKey}`].overlay.div = document.querySelector(`.${zoteroRoam.interface[`${elementKey}`].overlay.class}`);
@@ -3652,7 +3653,7 @@ var zoteroRoam = {};
                 /**
                  * Ready event
                  * 
-                 * @event zoteroRoam:ready
+                 * @event zotero-roam:ready
                  * @type {object}
                  */
                 zoteroRoam.events.emit('ready', detail = zoteroRoam.data);
@@ -4194,7 +4195,6 @@ var zoteroRoam = {};
                 ${records_list.length == 0 ? "" : records_list.join("\n")}
                 </div>
                 </div>
-                <hr>
                 <div class="zotero-roam-page-menu-citations" ${itemDOI ? `data-doi="${itemDOI}"` : ""}>
                 ${backlinksLib}
                 </div>
@@ -4745,7 +4745,7 @@ var zoteroRoam = {};
     zoteroRoam.events = {
         /**
          * Signals the extensiom has loaded successfully
-         * @event zoteroRoam:ready
+         * @event zotero-roam:ready
          */
         'ready': {},
         /**

@@ -394,11 +394,9 @@
                 tags: tags,
                 outcome: outcome,
                 context: {
-                    citing: {
-                        doi: zoteroRoam.citations.currentDOI,
-                        key: zoteroRoam.citations.currentCitekey,
-                        type: zoteroRoam.citations.currentType
-                    }
+                    doi: zoteroRoam.citations.currentDOI,
+                    key: zoteroRoam.citations.currentCitekey,
+                    type: zoteroRoam.citations.currentType
                 }
             })
             console.log(outcome);
@@ -588,7 +586,7 @@
                     collectionsResults = await Promise.all(collectionsResults.map( (cl, i) => {
                         // Update stored data on libraries
                         let latestVersion = cl.headers.get('Last-Modified-Version');
-                        zoteroRoam.data.libraries[i].version = latestVersion;
+                        if(latestVersion){ zoteroRoam.data.libraries[i].version = latestVersion }
                         return cl.json();
                     }));
                     collectionsResults = collectionsResults.flat(1);

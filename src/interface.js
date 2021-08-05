@@ -108,18 +108,19 @@
             overlayDiv.classList.add("bp3-overlay-open");
             overlayDiv.classList.add(`${config.overlay.class}`);
             overlayDiv.style = `display:none;`;
-            overlayDiv.innerHTML = `<div class="bp3-overlay-backdrop bp3-popover-backdrop bp3-popover-appear-done bp3-popover-enter-done" style="${backdropStyle}"></div>
-                                    <div class="bp3-transition-container bp3-popover-appear-done bp3-popover-enter-done ${config.class}" style="${containerStyle}">
-                                        <div class="bp3-popover bp3-minimal">
-                                            <div class="bp3-popover-content">
-                                                <div>
-                                                    <ul class="bp3-menu bp3-text-small">
-                                                        ${menuOptions}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>`;
+            overlayDiv.innerHTML = `
+            <div class="bp3-overlay-backdrop bp3-popover-backdrop bp3-popover-appear-done bp3-popover-enter-done" style="${backdropStyle}"></div>
+            <div class="bp3-transition-container bp3-popover-appear-done bp3-popover-enter-done ${config.class}" style="${containerStyle}">
+                <div class="bp3-popover bp3-minimal ${zoteroRoam.config.params.theme ? zoteroRoam.config.params.theme : ""}">
+                    <div class="bp3-popover-content">
+                        <div>
+                            <ul class="bp3-menu bp3-text-small">
+                                ${menuOptions}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
 
             zoteroRoam.interface.portal.div.appendChild(overlayDiv);
             zoteroRoam.interface[`${elementKey}`].overlay.div = document.querySelector(`.${zoteroRoam.interface[`${elementKey}`].overlay.class}`);
