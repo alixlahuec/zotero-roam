@@ -1199,7 +1199,7 @@
 
             textArea.addEventListener('tribute-replaced', (e) => {
                 let item = e.detail.item;
-                if(item.source == "zotero"){
+                if(item.original.source == "zotero"){
                     let textArea = document.querySelector('textarea.rm-block-input');
                     let trigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
                     let triggerPos = e.detail.context.mentionPosition;
