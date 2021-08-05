@@ -604,7 +604,7 @@
                             zoteroRoam.interface.renderImportResults(importOutcome);
                             zoteroRoam.citations.activeImport.check = importOutcome.write.success != true ? null : setInterval(async function(){
                                 let check = await zoteroRoam.write.checkImport(importOutcome.write.data.successful);
-                                console.log(check);
+                                if(zoteroRoam.config.userSettings.logEvents == true){ console.log(check) };
                                 if(check.updated == true){
                                     clearInterval(zoteroRoam.citations.activeImport.check);
                                     zoteroRoam.citations.activeImport.check = null;
