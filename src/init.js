@@ -598,6 +598,8 @@ var zoteroRoam = {};
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
             .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
             .options-library-list, .options-collections-list{flex:1 0 50%;}
+            .options-collections-list {max-height: 50vh;overflow-y:scroll;}
+            .options-collections-list::-webkit-scrollbar {width:0.2em;}
             .options-library-list label{font-weight:600;}
             .options-collections-list label{font-weight:400;}
             .options-tags{padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;}

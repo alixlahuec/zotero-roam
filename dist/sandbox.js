@@ -598,6 +598,8 @@ var zoteroRoam = {};
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
             .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
             .options-library-list, .options-collections-list{flex:1 0 50%;}
+            .options-collections-list {max-height: 50vh;overflow-y:scroll;}
+            .options-collections-list::-webkit-scrollbar {width:0.2em;}
             .options-library-list label{font-weight:600;}
             .options-collections-list label{font-weight:400;}
             .options-tags{padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;}
@@ -840,6 +842,8 @@ var zoteroRoam = {};
                 let {libType, libID} = lib.path.split("/");
                 let permissions = libType == "users" ? keyAccess.user : (Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all);
                 let collections = zoteroRoam.data.collections.filter(cl => zoteroRoam.utils.getItemPrefix(cl) == lib.path);
+                // Sort collections by parent/child relationships
+                collections = zoteroRoam.utils.sortCollectionsList(collections);
                 let libName = collections.length > 0 ? collections[0].library.name : lib.path;
                 return {
                     name: libName,
@@ -970,9 +974,17 @@ var zoteroRoam = {};
         },
 
         parseDOI(doi){
-            // Clean up the DOI format if needed, to extract prefix + suffix only
-            let cleanDOI = (doi.startsWith("10")) ? doi : doi.match(/10\.([0-9]+?)\/(.+)/g)[0];
-            return cleanDOI;
+            if(!doi){
+              return false;
+            } else {
+              // Clean up the DOI format if needed, to extract prefix + suffix only
+                let formatCheck = doi.match(/10\.([0-9]+?)\/(.+)/g);
+                if(formatCheck){
+                    return formatCheck[0];
+                } else {
+                    return false;
+                }
+            }
         },
 
         parseNoteBlock(block){
@@ -1115,13 +1127,13 @@ var zoteroRoam = {};
                 if(selectFirst && i == 0 && mod == ""){
                     mod = "checked";
                 }
-                return zoteroRoam.utils.renderBP3_option(string = op[has_string], type = type, {varName: varName, optClass: optClass, modifier: mod, optValue: op[has_value]})
+                return zoteroRoam.utils.renderBP3_option(string = op[has_string], type = type, depth = op.depth || 0, {varName: varName, optClass: optClass, modifier: mod, optValue: op[has_value]})
             }).join("\n");
         },
 
-        renderBP3_option(string, type, {varName, optClass = "", modifier = "", optValue = ""} = {}){
+        renderBP3_option(string, type, depth, {varName, optClass = "", modifier = "", optValue = ""} = {}){
             return `
-            <label class="bp3-control bp3-${type} ${optClass}">
+            <label class="bp3-control bp3-${type} ${optClass}" data-option-depth="${depth}">
                 <input type="${type}" name="${varName}" value="${optValue}" ${modifier} />
                 <span class="bp3-control-indicator"></span>
                 ${string}
@@ -1194,6 +1206,83 @@ var zoteroRoam = {};
             return `<span tabindex="-1" data-tag="${title}" class="rm-page-ref rm-page-ref--tag">#${title}</span>`;
         },
 
+        // Inclusive search engine
+        searchEngine(string, text, {any_case = true, word_order = "strict", match = "partial", search_compounds = true} = {}){
+            let query = string;
+            let target = text;
+        
+            // If search is case-insensitive, and the query is not an acronym, transform query & target to lowercase
+            if(any_case == true && !query.match(/[A-Z]{2}/g)){
+                query = string.toLowerCase();
+                target = text.toLowerCase();
+            }
+        
+            // Is the query multi-word? Aka, has 1+ space(s) ?
+            let queryWords = query.split(" ");
+            let isHyphenated = false;
+            queryWords.forEach(w => {
+                if(w.includes("-")){ isHyphenated = true }
+            });
+        
+            if(queryWords.length == 1){
+                // Single-word query
+                let searchString = query;
+                if(isHyphenated && search_compounds == true){
+                    // Replace hyphen by inclusive match (hyphen, space, nothing)
+                    searchString = query.replace('-', '(?: |-)?');
+                }
+                // Then carry on with the search op
+                if(match == "partial"){
+                    let searchReg = new RegExp(searchString, 'g');
+                    return target.match(searchReg) ? true : false;
+                } else {
+                    let searchReg = new RegExp('(?:\\W|^)' + searchString + '(?:\\W|$)', 'g');
+                    return target.match(searchReg) ? true : false;
+                }
+            } else {
+                // Multi-word query
+                let searchArray = queryWords;
+                if(search_compounds == true){
+                    if(isHyphenated){
+                        // For each hyphenated term, replace hyphen by inclusive match (hyphen, space, nothing)
+                        searchArray = queryWords.map(w => {
+                            if(w.includes("-")){
+                                return w.replace('-', '(?: |-)?');
+                            } else {
+                                return w;
+                            }
+                        });
+                    } else if(!isHyphenated && word_order == "strict"){
+                        // If strict mode :
+                        // Join the search Array by inclusive match pattern (hyphen, space, nothing)
+                        searchArray = [queryWords.join('(?: |-)?')]; // keeping Array form so that the logic can be the same later on       
+                    }
+                    // If loose mode :
+                    // No special action necessary, should use searchArray = queryWords as defined above (default)
+                }
+                // If search_compounds == false :
+                // No special action necessary, should use searchArray = queryWords as defined above (default)
+        
+                // Then carry on with the search op
+                if(word_order == "loose"){
+                    let searchArrayReg = searchArray.map(t => '(?:\\W|^)' + t + '(?:\\W|$)');
+                    let match = true;
+                    searchArrayReg.forEach(exp => {
+                        let regex = new RegExp(exp, 'g');
+                        if(!target.match(regex)){
+                            match = false;
+                            return;
+                        }
+                    });
+                    return match;
+                } else {
+                    let searchReg = new RegExp('(?:\\W|^)' + searchArray.join(" ") + '(?:\\W|$)', 'g');
+                    return target.match(searchReg) ? true : false;
+                }
+            }
+        
+        },
+
         // From @aweary : https://github.com/facebook/react/issues/11095
         // Leaving in case I want to use it at some point in the future, but currently not in use
         setNativeValue(element, value) {
@@ -1212,6 +1301,51 @@ var zoteroRoam = {};
         // This is the basis for the async/await structure, which is needed to make sure processing is sequential and never parallel
         sleep(ms){
             return new Promise(resolve => setTimeout(resolve, ms));
+        },
+
+        sortCollectionChildren(parent, children, depth = 0){
+            let parColl = parent;
+            parColl.depth = depth;
+            if(children.length > 0){
+                let chldn = children.filter(ch => ch.data.parentCollection == parColl.key);
+                // If the collection has children, recurse
+                if(chldn){
+                    let collArray = [parColl];
+                    // Go through each child collection 1-by-1
+                    // If a child has children itself, the recursion should ensure everything gets added where it should
+                    for(let j = 0; j < chldn.length; j++){
+                        collArray.push(...zoteroRoam.utils.sortCollectionChildren(chldn[j], children, depth + 1));
+                    }
+                    return collArray;
+                } else {
+                    return [parColl];
+                }
+            } else {
+                return [parColl];
+            }
+        },
+
+        sortCollectionsList(arr){
+            if(arr.length > 0){
+                // Sort collections A-Z
+                arr = arr.sort((a,b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
+                let orderedArray = [];
+                let topColls = arr.filter(cl => !cl.data.parentCollection);
+                topColls.forEach((cl, i) => { topColls[i].depth = 0 });
+                let childColls = arr.filter(cl => cl.data.parentCollection);
+                for(k = 0; k < topColls.length; k++){
+                    let chldn = childColls.filter(ch => ch.data.parentCollection == topColls[k].key);
+                    // If the collection has children, pass it to sortCollectionChildren to recursively process the nested collections
+                    if(chldn){
+                        orderedArray.push(...zoteroRoam.utils.sortCollectionChildren(parent = topColls[k], children = childColls, depth = 0));
+                    } else {
+                        orderedArray.push(topColls[k]);
+                    }
+                };
+                return orderedArray;
+            } else {
+                return [];
+            }
         }
 
     };
@@ -1793,7 +1927,7 @@ var zoteroRoam = {};
                 // Collections data
                 if(collections == true){
                     currentLibs.forEach(lib => {
-                        collectionsCalls.push(fetch(`https://api.zotero.org/${lib.path}/collections?since=${lib.version}`, {
+                        collectionsCalls.push(fetch(`https://api.zotero.org/${lib.path}/collections?since=${lib.version}&limit=100`, {
                             method: 'GET',
                             headers: {
                                 'Zotero-API-Version': 3,
@@ -3444,7 +3578,10 @@ var zoteroRoam = {};
                 zoteroRoam.tagSelection.autocomplete.init();
                 zoteroRoam.interface.renderImportOptions();
                 zoteroRoam.interface.addToImport(element);
-                zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
+                if(zoteroRoam.citations.activeImport.currentLib){
+                    // Only enable the "Add" button if there is a library selected
+                    zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
+                }
                 zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
             } else {
                 if(zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`)){
@@ -3463,7 +3600,10 @@ var zoteroRoam = {};
                     </div>
                     </li>
                     `;
-                    zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
+                    if(zoteroRoam.citations.activeImport.currentLib){
+                        // Only enable the "Add" button if there is a library selected
+                        zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
+                    }
                     zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items (${zoteroRoam.citations.activeImport.items.length})`;
                 }
             }
@@ -3473,11 +3613,13 @@ var zoteroRoam = {};
             let libs = zoteroRoam.citations.activeImport.libraries;
             let optionsLib = zoteroRoam.utils.renderBP3_list(libs, "radio", {varName: "library", has_value: "path", has_string: "name", selectFirst: true, active_if: "writeable"});
             let optionsColl = "";
-            if(libs[0].writeable == true){
-                zoteroRoam.citations.activeImport.currentLib = libs[0];
-                optionsColl = zoteroRoam.utils.renderBP3_list(libs[0].collections.map(cl => {return{name: cl.data.name, key: cl.key}}), "checkbox", {varName: "collections", has_value: "key", has_string: "name"});
+            let firstWriteableLib = libs.find(library => library.writeable == true);
+            if(firstWriteableLib){
+                zoteroRoam.citations.activeImport.currentLib = firstWriteableLib;
+                optionsColl = zoteroRoam.utils.renderBP3_list(firstWriteableLib.collections.map(cl => {return{name: cl.data.name, key: cl.key, depth: cl.depth}}), "checkbox", {varName: "collections", has_value: "key", has_string: "name"});
+            } else {
+                // If none of the libraries are writeable, the currentLib property will be empty which the addToImport function will pick up on
             }
-
             zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = optionsLib;
             zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = optionsColl;
             
@@ -4154,36 +4296,40 @@ var zoteroRoam = {};
                 // Backlinks
                 let backlinksLib = "";
                 let citeObject = null;
-                if(menu_defaults.includes("citingPapers") && itemDOI){
-                    citeObject = await zoteroRoam.handlers.getSemantic(itemDOI);
-                    if(citeObject.data){
-                        let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
-                        let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
-                        let allDOIs = [...citingDOIs, ...citedDOIs];
-                        if(allDOIs.length > 0){
-                            let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
-                            papersInLib.forEach((paper, index) => {
-                                let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
-                                if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
-                                    papersInLib[index].type = "citing";
-                                } else {
-                                    papersInLib[index].type = "cited";
+                try{
+                    if(menu_defaults.includes("citingPapers") && itemDOI){
+                        citeObject = await zoteroRoam.handlers.getSemantic(itemDOI);
+                        if(citeObject.data){
+                            let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
+                            let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                            let allDOIs = [...citingDOIs, ...citedDOIs];
+                            if(allDOIs.length > 0){
+                                let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
+                                papersInLib.forEach((paper, index) => {
+                                    let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
+                                    if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
+                                        papersInLib[index].type = "citing";
+                                    } else {
+                                        papersInLib[index].type = "cited";
+                                    }
+                                });
+                                backlinksLib = "";
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+            
+                                if(papersInLib.length > 0){
+                                    backlinksLib += `
+                                    <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
+                                    ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
+                                    </ul>
+                                    `
                                 }
-                            });
-                            backlinksLib = "";
-                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
-                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
-                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
-        
-                            if(papersInLib.length > 0){
-                                backlinksLib += `
-                                <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
-                                </ul>
-                                `
                             }
                         }
                     }
+                } catch(e){
+                    console.log(`Citations rendering error : ${e}`);
                 }
         
                 menuDiv.innerHTML = `

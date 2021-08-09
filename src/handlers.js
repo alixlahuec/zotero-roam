@@ -574,7 +574,7 @@
                 // Collections data
                 if(collections == true){
                     currentLibs.forEach(lib => {
-                        collectionsCalls.push(fetch(`https://api.zotero.org/${lib.path}/collections?since=${lib.version}`, {
+                        collectionsCalls.push(fetch(`https://api.zotero.org/${lib.path}/collections?since=${lib.version}&limit=100`, {
                             method: 'GET',
                             headers: {
                                 'Zotero-API-Version': 3,

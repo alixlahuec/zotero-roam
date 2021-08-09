@@ -339,36 +339,40 @@
                 // Backlinks
                 let backlinksLib = "";
                 let citeObject = null;
-                if(menu_defaults.includes("citingPapers") && itemDOI){
-                    citeObject = await zoteroRoam.handlers.getSemantic(itemDOI);
-                    if(citeObject.data){
-                        let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
-                        let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
-                        let allDOIs = [...citingDOIs, ...citedDOIs];
-                        if(allDOIs.length > 0){
-                            let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
-                            papersInLib.forEach((paper, index) => {
-                                let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
-                                if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
-                                    papersInLib[index].type = "citing";
-                                } else {
-                                    papersInLib[index].type = "cited";
+                try{
+                    if(menu_defaults.includes("citingPapers") && itemDOI){
+                        citeObject = await zoteroRoam.handlers.getSemantic(itemDOI);
+                        if(citeObject.data){
+                            let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
+                            let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                            let allDOIs = [...citingDOIs, ...citedDOIs];
+                            if(allDOIs.length > 0){
+                                let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
+                                papersInLib.forEach((paper, index) => {
+                                    let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
+                                    if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
+                                        papersInLib[index].type = "citing";
+                                    } else {
+                                        papersInLib[index].type = "cited";
+                                    }
+                                });
+                                backlinksLib = "";
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+            
+                                if(papersInLib.length > 0){
+                                    backlinksLib += `
+                                    <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
+                                    ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
+                                    </ul>
+                                    `
                                 }
-                            });
-                            backlinksLib = "";
-                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
-                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
-                            backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
-        
-                            if(papersInLib.length > 0){
-                                backlinksLib += `
-                                <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
-                                </ul>
-                                `
                             }
                         }
                     }
+                } catch(e){
+                    console.log(`Citations rendering error : ${e}`);
                 }
         
                 menuDiv.innerHTML = `

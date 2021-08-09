@@ -1242,7 +1242,10 @@
                 zoteroRoam.tagSelection.autocomplete.init();
                 zoteroRoam.interface.renderImportOptions();
                 zoteroRoam.interface.addToImport(element);
-                zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
+                if(zoteroRoam.citations.activeImport.currentLib){
+                    // Only enable the "Add" button if there is a library selected
+                    zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
+                }
                 zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
             } else {
                 if(zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`)){
@@ -1261,7 +1264,10 @@
                     </div>
                     </li>
                     `;
-                    zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
+                    if(zoteroRoam.citations.activeImport.currentLib){
+                        // Only enable the "Add" button if there is a library selected
+                        zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
+                    }
                     zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items (${zoteroRoam.citations.activeImport.items.length})`;
                 }
             }
@@ -1271,11 +1277,13 @@
             let libs = zoteroRoam.citations.activeImport.libraries;
             let optionsLib = zoteroRoam.utils.renderBP3_list(libs, "radio", {varName: "library", has_value: "path", has_string: "name", selectFirst: true, active_if: "writeable"});
             let optionsColl = "";
-            if(libs[0].writeable == true){
-                zoteroRoam.citations.activeImport.currentLib = libs[0];
-                optionsColl = zoteroRoam.utils.renderBP3_list(libs[0].collections.map(cl => {return{name: cl.data.name, key: cl.key}}), "checkbox", {varName: "collections", has_value: "key", has_string: "name"});
+            let firstWriteableLib = libs.find(library => library.writeable == true);
+            if(firstWriteableLib){
+                zoteroRoam.citations.activeImport.currentLib = firstWriteableLib;
+                optionsColl = zoteroRoam.utils.renderBP3_list(firstWriteableLib.collections.map(cl => {return{name: cl.data.name, key: cl.key, depth: cl.depth}}), "checkbox", {varName: "collections", has_value: "key", has_string: "name"});
+            } else {
+                // If none of the libraries are writeable, the currentLib property will be empty which the addToImport function will pick up on
             }
-
             zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = optionsLib;
             zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = optionsColl;
             
