@@ -284,7 +284,7 @@
          */
         async renderCitekeyMenu(item, title, elem){
             let itemCitekey = title.slice(1);
-            let itemDOI = !item.data.DOI ? "" : zoteroRoam.utils.parseDOI(item.data.DOI);
+            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI) || "";
             let pageInGraph = zoteroRoam.utils.lookForPage(title);
             let itemChildren = zoteroRoam.formatting.getItemChildren(item, { pdf_as: "raw", notes_as: "raw" });
             // List of default elements to include
@@ -347,9 +347,10 @@
                             let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
                             let allDOIs = [...citingDOIs, ...citedDOIs];
                             if(allDOIs.length > 0){
-                                let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
+                                let doisInLib = zoteroRoam.data.items.filter(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                                let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
                                 papersInLib.forEach((paper, index) => {
-                                    let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
+                                    let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI) || "";
                                     if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
                                         papersInLib[index].type = "citing";
                                     } else {

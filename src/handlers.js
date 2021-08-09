@@ -310,14 +310,14 @@
                 let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
                 let item = zoteroRoam.data.items.find(i => i.key == citekey);
                 if(item){
-                    if(item.data.DOI){
-                        let doi = zoteroRoam.utils.parseDOI(item.data.DOI);
-                        let semantic = await zoteroRoam.handlers.getSemantic(doi);
+                    let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                    if(itemDOI){
+                        let semantic = await zoteroRoam.handlers.getSemantic(itemDOI);
                         if(semantic.citations){
                             if(semantic.citations.length == 0){
                                 zoteroRoam.interface.popToast("This item has no available citing papers");
                             } else {
-                                zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "citations");
+                                zoteroRoam.interface.popCitationsOverlay(itemDOI, citekey, type = "citations");
                             }
                         } else {
                             zoteroRoam.interface.popToast("No data could be retrieved.", "danger");
@@ -336,14 +336,14 @@
                 let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
                 let item = zoteroRoam.data.items.find(i => i.key == citekey);
                 if(item){
-                    if(item.data.DOI){
-                        let doi = zoteroRoam.utils.parseDOI(item.data.DOI);
-                        let semantic = await zoteroRoam.handlers.getSemantic(doi);
+                    let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                    if(itemDOI){
+                        let semantic = await zoteroRoam.handlers.getSemantic(itemDOI);
                         if(semantic.references){
                             if(semantic.references.length == 0){
                                 zoteroRoam.interface.popToast("This item has no available references");
                             } else {
-                                zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "references");
+                                zoteroRoam.interface.popCitationsOverlay(itemDOI, citekey, type = "references");
                             }
                         } else {
                             zoteroRoam.interface.popToast("No data could be retrieved.", "danger");
@@ -447,46 +447,19 @@
             }
         },
 
-        /** No longer in use */
-        async requestScitations(doi){
-            let sciteListIndex = zoteroRoam.data.scite.findIndex(res => res.doi == doi);
-            if(sciteListIndex == -1){
-                let scitations = await fetch(`https://api.scite.ai/papers/sources/${doi}`);
-                let scitingPapers = await scitations.json();
-                let citeList = Object.values(scitingPapers.papers);
-                let citeObject = {
-                    doi: doi,
-                    citations: citeList || []
-                };
-                citeObject.citations.forEach((cit, index) => {
-                    let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
-                    if(libDOIs.includes(cit.doi)){
-                        citeObject.citations[index].inLibrary = true;
-                    }            
-                });
-                citeObject.simplified = zoteroRoam.handlers.simplifyCitationsObject(citeObject.citations);
-                citeObject.keywords = zoteroRoam.handlers.getCitationsKeywordsCounts(citeObject.citations);
-
-                zoteroRoam.data.scite.push(citeObject);
-                return citeObject;
-            } else{
-                return zoteroRoam.data.scite[sciteListIndex];
-            }
-        },
-
         async getSemantic(doi){
             let dataIndex = zoteroRoam.data.semantic.findIndex(res => res.doi == doi);
             if(dataIndex == -1){
                 let outcome = await zoteroRoam.handlers.requestSemantic(doi);
                 if(outcome.success == true){
-                    let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                    let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
                     outcome.data.citations.forEach((cit, index) => {
-                        if(cit.doi && zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
+                        if(cit.doi && zoteroRoam.utils.includes_anycase(doisInLib, cit.doi)){
                             outcome.data.citations[index].inLibrary = true;
                         }
                     });
                     outcome.data.references.forEach((ref, index) => {
-                        if(ref.doi && zoteroRoam.utils.includes_anycase(libDOIs, ref.doi)){
+                        if(ref.doi && zoteroRoam.utils.includes_anycase(doisInLib, ref.doi)){
                             outcome.data.references[index].inLibrary = true;
                         }
                     })

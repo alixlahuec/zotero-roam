@@ -820,9 +820,9 @@
             zoteroRoam.citations.currentType = type;
             // All citations -- paginated
             let fullData = zoteroRoam.data.semantic.find(item => item.doi == doi)[`${type}`];
-            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+            let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
             fullData.forEach((paper, i) => {
-                if(paper.doi && zoteroRoam.utils.includes_anycase(libDOIs, paper.doi)){ fullData[i].inLibrary = true }
+                if(paper.doi && zoteroRoam.utils.includes_anycase(doisInLib, paper.doi)){ fullData[i].inLibrary = true }
             });
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
             // Render HTML for pagination

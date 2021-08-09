@@ -265,9 +265,9 @@ var zoteroRoam = {};
                             return [];
                         } else {
                             let papersList = zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
-                            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                            let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
                             papersList.forEach((paper, i) => {
-                                if(paper.doi && zoteroRoam.utils.includes_anycase(libDOIs, paper.doi)){ papersList[i].inLibrary = true }
+                                if(paper.doi && zoteroRoam.utils.includes_anycase(doisInLib, paper.doi)){ papersList[i].inLibrary = true }
                             });
                             return papersList;
                         }
@@ -600,6 +600,10 @@ var zoteroRoam = {};
             .options-library-list, .options-collections-list{flex:1 0 50%;}
             .options-collections-list {max-height: 50vh;overflow-y:scroll;}
             .options-collections-list::-webkit-scrollbar {width:0.2em;}
+            .options-collections-list label[data-option-depth="0"]{margin-left:0px;}
+            .options-collections-list label[data-option-depth="1"]{margin-left:10px;}
+            .options-collections-list label[data-option-depth="2"]{margin-left:15px;}
+            .options-collections-list label{margin-left:20px;}
             .options-library-list label{font-weight:600;}
             .options-collections-list label{font-weight:400;}
             .options-tags{padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;}

@@ -265,9 +265,9 @@ var zoteroRoam = {};
                             return [];
                         } else {
                             let papersList = zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
-                            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                            let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
                             papersList.forEach((paper, i) => {
-                                if(paper.doi && zoteroRoam.utils.includes_anycase(libDOIs, paper.doi)){ papersList[i].inLibrary = true }
+                                if(paper.doi && zoteroRoam.utils.includes_anycase(doisInLib, paper.doi)){ papersList[i].inLibrary = true }
                             });
                             return papersList;
                         }
@@ -600,6 +600,10 @@ var zoteroRoam = {};
             .options-library-list, .options-collections-list{flex:1 0 50%;}
             .options-collections-list {max-height: 50vh;overflow-y:scroll;}
             .options-collections-list::-webkit-scrollbar {width:0.2em;}
+            .options-collections-list label[data-option-depth="0"]{margin-left:0px;}
+            .options-collections-list label[data-option-depth="1"]{margin-left:10px;}
+            .options-collections-list label[data-option-depth="2"]{margin-left:15px;}
+            .options-collections-list label{margin-left:20px;}
             .options-library-list label{font-weight:600;}
             .options-collections-list label{font-weight:400;}
             .options-tags{padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;}
@@ -1663,14 +1667,14 @@ var zoteroRoam = {};
                 let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
                 let item = zoteroRoam.data.items.find(i => i.key == citekey);
                 if(item){
-                    if(item.data.DOI){
-                        let doi = zoteroRoam.utils.parseDOI(item.data.DOI);
-                        let semantic = await zoteroRoam.handlers.getSemantic(doi);
+                    let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                    if(itemDOI){
+                        let semantic = await zoteroRoam.handlers.getSemantic(itemDOI);
                         if(semantic.citations){
                             if(semantic.citations.length == 0){
                                 zoteroRoam.interface.popToast("This item has no available citing papers");
                             } else {
-                                zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "citations");
+                                zoteroRoam.interface.popCitationsOverlay(itemDOI, citekey, type = "citations");
                             }
                         } else {
                             zoteroRoam.interface.popToast("No data could be retrieved.", "danger");
@@ -1689,14 +1693,14 @@ var zoteroRoam = {};
                 let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
                 let item = zoteroRoam.data.items.find(i => i.key == citekey);
                 if(item){
-                    if(item.data.DOI){
-                        let doi = zoteroRoam.utils.parseDOI(item.data.DOI);
-                        let semantic = await zoteroRoam.handlers.getSemantic(doi);
+                    let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                    if(itemDOI){
+                        let semantic = await zoteroRoam.handlers.getSemantic(itemDOI);
                         if(semantic.references){
                             if(semantic.references.length == 0){
                                 zoteroRoam.interface.popToast("This item has no available references");
                             } else {
-                                zoteroRoam.interface.popCitationsOverlay(doi, citekey, type = "references");
+                                zoteroRoam.interface.popCitationsOverlay(itemDOI, citekey, type = "references");
                             }
                         } else {
                             zoteroRoam.interface.popToast("No data could be retrieved.", "danger");
@@ -1800,46 +1804,19 @@ var zoteroRoam = {};
             }
         },
 
-        /** No longer in use */
-        async requestScitations(doi){
-            let sciteListIndex = zoteroRoam.data.scite.findIndex(res => res.doi == doi);
-            if(sciteListIndex == -1){
-                let scitations = await fetch(`https://api.scite.ai/papers/sources/${doi}`);
-                let scitingPapers = await scitations.json();
-                let citeList = Object.values(scitingPapers.papers);
-                let citeObject = {
-                    doi: doi,
-                    citations: citeList || []
-                };
-                citeObject.citations.forEach((cit, index) => {
-                    let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
-                    if(libDOIs.includes(cit.doi)){
-                        citeObject.citations[index].inLibrary = true;
-                    }            
-                });
-                citeObject.simplified = zoteroRoam.handlers.simplifyCitationsObject(citeObject.citations);
-                citeObject.keywords = zoteroRoam.handlers.getCitationsKeywordsCounts(citeObject.citations);
-
-                zoteroRoam.data.scite.push(citeObject);
-                return citeObject;
-            } else{
-                return zoteroRoam.data.scite[sciteListIndex];
-            }
-        },
-
         async getSemantic(doi){
             let dataIndex = zoteroRoam.data.semantic.findIndex(res => res.doi == doi);
             if(dataIndex == -1){
                 let outcome = await zoteroRoam.handlers.requestSemantic(doi);
                 if(outcome.success == true){
-                    let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                    let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
                     outcome.data.citations.forEach((cit, index) => {
-                        if(cit.doi && zoteroRoam.utils.includes_anycase(libDOIs, cit.doi)){
+                        if(cit.doi && zoteroRoam.utils.includes_anycase(doisInLib, cit.doi)){
                             outcome.data.citations[index].inLibrary = true;
                         }
                     });
                     outcome.data.references.forEach((ref, index) => {
-                        if(ref.doi && zoteroRoam.utils.includes_anycase(libDOIs, ref.doi)){
+                        if(ref.doi && zoteroRoam.utils.includes_anycase(doisInLib, ref.doi)){
                             outcome.data.references[index].inLibrary = true;
                         }
                     })
@@ -3156,9 +3133,9 @@ var zoteroRoam = {};
             zoteroRoam.citations.currentType = type;
             // All citations -- paginated
             let fullData = zoteroRoam.data.semantic.find(item => item.doi == doi)[`${type}`];
-            let libDOIs = zoteroRoam.data.items.filter(it => it.data.DOI).map(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+            let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
             fullData.forEach((paper, i) => {
-                if(paper.doi && zoteroRoam.utils.includes_anycase(libDOIs, paper.doi)){ fullData[i].inLibrary = true }
+                if(paper.doi && zoteroRoam.utils.includes_anycase(doisInLib, paper.doi)){ fullData[i].inLibrary = true }
             });
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
             // Render HTML for pagination
@@ -4241,7 +4218,7 @@ var zoteroRoam = {};
          */
         async renderCitekeyMenu(item, title, elem){
             let itemCitekey = title.slice(1);
-            let itemDOI = !item.data.DOI ? "" : zoteroRoam.utils.parseDOI(item.data.DOI);
+            let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI) || "";
             let pageInGraph = zoteroRoam.utils.lookForPage(title);
             let itemChildren = zoteroRoam.formatting.getItemChildren(item, { pdf_as: "raw", notes_as: "raw" });
             // List of default elements to include
@@ -4304,9 +4281,10 @@ var zoteroRoam = {};
                             let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
                             let allDOIs = [...citingDOIs, ...citedDOIs];
                             if(allDOIs.length > 0){
-                                let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
+                                let doisInLib = zoteroRoam.data.items.filter(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                                let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
                                 papersInLib.forEach((paper, index) => {
-                                    let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
+                                    let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI) || "";
                                     if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
                                         papersInLib[index].type = "citing";
                                     } else {
@@ -4975,110 +4953,110 @@ var zoteroRoam = {};
                 let updatedItems = e.detail.data ? e.detail.data.items : [];
                 if(updatedItems.length > 0){
                     for(item of updatedItems){
-                        if(item.data.DOI){
-                            // --- DNP buttons
-                            let dnpButtons = Array.from(document.querySelectorAll('.zotero-roam-page-added-on'));
-                            if(dnpButtons.length > 0){
-                                let itemDate = zoteroRoam.utils.makeDNP(item.data.dateAdded, {brackets: false});
-                                for(btn of dnpButtons){
-                                    if(btn.getAttribute('data-title') != itemDate){
-                                        continue;
-                                    } else {
-                                        let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
-                                        if(!btnKeys.includes(item.key)){
-                                            if(!btnKeys.includes(item.data.key)){
-                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
-                                            } else {
-                                                // Special case where the item's citekey was updated
-                                                btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
-                                            }
-                                            let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
-                                            btn.querySelector('.bp3-button-text').innerText =  `${newKeysCount} item${newKeysCount == 1 ? "" : "s"} added`
-                                        }
-                                    }
-                                }
-                            }
-                            // --- Tagged with / Abstract Mentions
-                            let taggedButtons = Array.from(document.querySelectorAll('.zotero-roam-page-tagged-with'));
-                            if(taggedButtons.length > 0){
-                                for(btn of taggedButtons){
-                                    let pageTitle = btn.getAttribute('data-title');
+                        let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
+                        // --- DNP buttons
+                        let dnpButtons = Array.from(document.querySelectorAll('.zotero-roam-page-added-on'));
+                        if(dnpButtons.length > 0){
+                            let itemDate = zoteroRoam.utils.makeDNP(item.data.dateAdded, {brackets: false});
+                            for(btn of dnpButtons){
+                                if(btn.getAttribute('data-title') != itemDate){
+                                    continue;
+                                } else {
                                     let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
-                                    if(item.data.tags && item.data.tags.map(t => t.tag).includes(pageTitle)){
-                                        if(!btnKeys.includes(item.key)){
-                                            if(!btnKeys.includes(item.data.key)){
-                                                btn.setAttribute('data-keys', JSON.stringify([...btnKeys, item.key]));
-                                            } else {
-                                                // Special case where the item's citekey was updated
-                                                btn.setAttribute('data-keys', JSON.stringify([...btnKeys.filter(k => k != item.data.key), item.key]));
-                                            }
-                                            let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
-                                            btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} tagged item${newKeysCount == 1 ? "" : "s"}`;
+                                    if(!btnKeys.includes(item.key)){
+                                        if(!btnKeys.includes(item.data.key)){
+                                            btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                        } else {
+                                            // Special case where the item's citekey was updated
+                                            btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
                                         }
+                                        let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
+                                        btn.querySelector('.bp3-button-text').innerText =  `${newKeysCount} item${newKeysCount == 1 ? "" : "s"} added`
                                     }
-                                    
                                 }
                             }
-                            let abstractButtons = Array.from(document.querySelectorAll('.zotero-roam-page-abstract-mentions'));
-                            if(abstractButtons.length > 0){
-                                for(btn of abstractButtons){
-                                    let pageTitle = btn.getAttribute('data-title');
-                                    let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
-                                    if(item.data.abstractNote && item.data.abstractNote.includes(pageTitle)){
-                                        if(!btnKeys.includes(item.key)){
-                                            if(!btnKeys.includes(item.data.key)){
-                                                btn.setAttribute('data-keys', JSON.stringify([...btnKeys, item.key]));
-                                            } else {
-                                                // Special case where the item's citekey was updated
-                                                btn.setAttribute('data-keys', JSON.stringify([...btnKeys.filter(k => k != item.data.key), item.key]));
-                                            }
-                                            let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
-                                            btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} abstract${newKeysCount == 1 ? "" : "s"}`;
+                        }
+                        // --- Tagged with / Abstract Mentions
+                        let taggedButtons = Array.from(document.querySelectorAll('.zotero-roam-page-tagged-with'));
+                        if(taggedButtons.length > 0){
+                            for(btn of taggedButtons){
+                                let pageTitle = btn.getAttribute('data-title');
+                                let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
+                                if(item.data.tags && item.data.tags.map(t => t.tag).includes(pageTitle)){
+                                    if(!btnKeys.includes(item.key)){
+                                        if(!btnKeys.includes(item.data.key)){
+                                            btn.setAttribute('data-keys', JSON.stringify([...btnKeys, item.key]));
+                                        } else {
+                                            // Special case where the item's citekey was updated
+                                            btn.setAttribute('data-keys', JSON.stringify([...btnKeys.filter(k => k != item.data.key), item.key]));
                                         }
+                                        let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
+                                        btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} tagged item${newKeysCount == 1 ? "" : "s"}`;
                                     }
-                                    
                                 }
+                                
                             }
-                            // --- Citekey menus (through DOI)
-                            if(item.data.DOI && zoteroRoam.config.params.pageMenu.defaults.includes("citingPapers")){
-                                let itemDOI = zoteroRoam.utils.parseDOI(item.data.DOI);
-                                let pageMenus = Array.from(document.querySelectorAll('.zotero-roam-page-menu-citations[data-doi]'));
-                                for(menu of pageMenus){
-                                    let doi = menu.dataset.doi;
-                                    let citeObject = await zoteroRoam.handlers.getSemantic(doi);
-                                    if(citeObject.data){
-                                        let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
-                                        let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
-                                        let allDOIs = [...citingDOIs, ...citedDOIs];
-                                        if(zoteroRoam.utils.includes_anycase(allDOIs, itemDOI)){
-                                            let papersInLib = allDOIs.map(doi => zoteroRoam.data.items.filter(it => it.data.DOI).find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
-                                            papersInLib.forEach((paper, index) => {
-                                                let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
-                                                if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
-                                                    papersInLib[index].type = "citing";
-                                                } else {
-                                                    papersInLib[index].type = "cited";
-                                                }
-                                            });
-                                            let relatedBtn = menu.querySelector('.zotero-roam-page-menu-backlinks-button');
-                                            relatedBtn.querySelector('.bp3-button-text').innerText = `${papersInLib.length} related library items`;
-                                            relatedBtn.classList.remove('bp3-disabled');
+                        }
+                        let abstractButtons = Array.from(document.querySelectorAll('.zotero-roam-page-abstract-mentions'));
+                        if(abstractButtons.length > 0){
+                            for(btn of abstractButtons){
+                                let pageTitle = btn.getAttribute('data-title');
+                                let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
+                                if(item.data.abstractNote && item.data.abstractNote.includes(pageTitle)){
+                                    if(!btnKeys.includes(item.key)){
+                                        if(!btnKeys.includes(item.data.key)){
+                                            btn.setAttribute('data-keys', JSON.stringify([...btnKeys, item.key]));
+                                        } else {
+                                            // Special case where the item's citekey was updated
+                                            btn.setAttribute('data-keys', JSON.stringify([...btnKeys.filter(k => k != item.data.key), item.key]));
+                                        }
+                                        let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
+                                        btn.querySelector('.bp3-button-text').innerText = `${newKeysCount} abstract${newKeysCount == 1 ? "" : "s"}`;
+                                    }
+                                }
+                                
+                            }
+                        }
+                        // --- Citekey menus (through DOI)
+                        if(itemDOI && zoteroRoam.config.params.pageMenu.defaults.includes("citingPapers")){
+                            let pageMenus = Array.from(document.querySelectorAll('.zotero-roam-page-menu-citations[data-doi]'));
+                            for(menu of pageMenus){
+                                let doi = menu.dataset.doi;
+                                let citeObject = await zoteroRoam.handlers.getSemantic(doi);
+                                if(citeObject.data){
+                                    let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
+                                    let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                                    let allDOIs = [...citingDOIs, ...citedDOIs];
+                                    if(zoteroRoam.utils.includes_anycase(allDOIs, itemDOI)){
+                                        let doisInLib = zoteroRoam.data.items.filter(it => zoteroRoam.utils.parseDOI(it.data.DOI));
+                                        let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
+                                        papersInLib.forEach((paper, index) => {
+                                            let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
+                                            if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
+                                                papersInLib[index].type = "citing";
+                                            } else {
+                                                papersInLib[index].type = "cited";
+                                            }
+                                        });
+                                        let relatedBtn = menu.querySelector('.zotero-roam-page-menu-backlinks-button');
+                                        relatedBtn.querySelector('.bp3-button-text').innerText = `${papersInLib.length} related library items`;
+                                        relatedBtn.classList.remove('bp3-disabled');
 
-                                            let relatedList = menu.querySelector('.zotero-roam-page-menu-backlinks-list');
-                                            if(!relatedList){
-                                                menu.innerHTML += `
-                                                <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                                ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
-                                                </ul>
-                                                `
-                                            } else {
-                                                relatedList.innerHTML = `${zoteroRoam.inPage.renderBacklinksList(papersInLib)}`;
-                                            }
+                                        let relatedList = menu.querySelector('.zotero-roam-page-menu-backlinks-list');
+                                        if(!relatedList){
+                                            menu.innerHTML += `
+                                            <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
+                                            ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
+                                            </ul>
+                                            `
+                                        } else {
+                                            relatedList.innerHTML = `${zoteroRoam.inPage.renderBacklinksList(papersInLib)}`;
                                         }
                                     }
                                 }
                             }
                         }
+                        
                     }
                 }
                 // --- Deleted items
