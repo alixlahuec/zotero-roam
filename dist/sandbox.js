@@ -76,7 +76,7 @@ var zoteroRoam = {};
             }
         },
         
-        version: "0.6.62",
+        version: "0.6.65",
 
         data: {items: [], collections: [], semantic: [], libraries: [], keys: [], roamPages: []},
         
@@ -600,12 +600,10 @@ var zoteroRoam = {};
             .options-library-list, .options-collections-list{flex:1 0 50%;}
             .options-collections-list {max-height: 50vh;overflow-y:scroll;}
             .options-collections-list::-webkit-scrollbar {width:0.2em;}
+            .options-collections-list label{font-weight:400;margin-left:40px;font-size:0.8em;margin-bottom:0px;}
             .options-collections-list label[data-option-depth="0"]{margin-left:0px;}
-            .options-collections-list label[data-option-depth="1"]{margin-left:10px;}
-            .options-collections-list label[data-option-depth="2"]{margin-left:15px;}
-            .options-collections-list label{margin-left:20px;}
+            .options-collections-list label[data-option-depth="1"]{margin-left:20px;}
             .options-library-list label{font-weight:600;}
-            .options-collections-list label{font-weight:400;}
             .options-tags{padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;}
             .options-tags-select{flex: 1 0 50%;}
             .options-tags_selection{flex: 1 0 50%;padding:0px 8px;}
