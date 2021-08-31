@@ -2387,7 +2387,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.search.updateButton.addEventListener("click", function(){zoteroRoam.extension.update(popup = true)});
 
             document.addEventListener("click", (e) => {
-                if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related')){
+                if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related') | e.target.closest('.zotero-roam-explo-import')){
                     zoteroRoam.inPage.handleClicks(e.target);
                 } else if(e.target.closest('.zotero-roam-search-close')){
                     let overlay = e.target.closest('.zotero-roam-dialog-overlay') || e.target.closest('.zotero-roam-dialog-small');
@@ -4527,12 +4527,12 @@ var zoteroRoam = {};
                 let firstElem = b.firstChild;
                 if(links.length > 0){
                 b.setAttribute('data-zr-explo', 'true');
-                if(!firstElem.classList.includes('bp3-icon-geosearch')){
-                    b.insertAdjacentElement('afterbegin', exploBtn.cloneNode());
+                if(!Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
+                    b.insertAdjacentElement('afterbegin', exploBtn.cloneNode(true));
                 }
                 } else {
                 b.setAttribute('data-zr-explo', 'false');
-                if(firstElem.classList.includes('bp3-icon-geosearch')){
+                if(Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
                     firstElem.remove();
                 }
                 }

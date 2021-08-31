@@ -524,12 +524,12 @@
                 let firstElem = b.firstChild;
                 if(links.length > 0){
                 b.setAttribute('data-zr-explo', 'true');
-                if(!firstElem.classList.includes('bp3-icon-geosearch')){
-                    b.insertAdjacentElement('afterbegin', exploBtn.cloneNode());
+                if(!Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
+                    b.insertAdjacentElement('afterbegin', exploBtn.cloneNode(true));
                 }
                 } else {
                 b.setAttribute('data-zr-explo', 'false');
-                if(firstElem.classList.includes('bp3-icon-geosearch')){
+                if(Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
                     firstElem.remove();
                 }
                 }

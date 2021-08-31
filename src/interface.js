@@ -59,7 +59,7 @@
             zoteroRoam.interface.search.updateButton.addEventListener("click", function(){zoteroRoam.extension.update(popup = true)});
 
             document.addEventListener("click", (e) => {
-                if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related')){
+                if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related') | e.target.closest('.zotero-roam-explo-import')){
                     zoteroRoam.inPage.handleClicks(e.target);
                 } else if(e.target.closest('.zotero-roam-search-close')){
                     let overlay = e.target.closest('.zotero-roam-dialog-overlay') || e.target.closest('.zotero-roam-dialog-small');
