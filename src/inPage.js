@@ -276,7 +276,7 @@
             } else if(target.closest('.zotero-roam-explo-import')){
                 let rBlock = target.closest('.rm-block');
                 let links = rBlock.querySelectorAll('.rm-block a:not(.rm-alias--page):not(.rm-alias--block)');
-                let urlList = links.map(l => l.href);
+                let urlList = Array.from(links).map(l => l.href);
 
                 let citoidList = [];
                 urlList.forEach(url => {
@@ -516,7 +516,7 @@
             exploBtn.classList.add('bp3-minimal');
             exploBtn.classList.add('zotero-roam-explo-import');
             exploBtn.innerHTML = `<span icon="geosearch" class="bp3-icon bp3-icon-geosearch"></span>`;
-            exploBtn.style = `position:absolute;top:10px;right:0px;opacity:0.3;z-index:10;`;
+            exploBtn.style = `position:absolute;right:0px;opacity:0.3;z-index:10;`;
             // Get all blocks with trigger tags
             let trigBlocks = Array.from(document.querySelectorAll('.rm-block:not([data-zr-explo]):not(.rm-block--ghost)')).filter(b => zoteroRoam.utils.matchArrays(tagList, JSON.parse(b.getAttribute('data-page-links'))));
             trigBlocks.forEach(b => {

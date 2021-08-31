@@ -918,13 +918,14 @@
             let suffix = successes.length > 1 ? "s" : "";
             // Fill the dialog
             overlay.querySelector('.main-panel .header-left').innerHTML = `
-            <h5 class="panel-tt">${successes.length} resource${suffix} available</h5>
+            <h5 class="panel-tt">${successes.length} linked resource${suffix}</h5>
             `;
             if(successes.length > 0){
                 let items = successes.map(cit => {
                     return {
                         abstract: cit.data.abstractNote,
                         creators: cit.data.creators ? zoteroRoam.formatting.getCreators(cit, {creators_as: "string", brackets: false, use_type: false}) : "",
+                        publication: cit.data.publicationTitle || cit.data.bookTitle || cit.data.websiteTitle || "",
                         title: cit.data.title || "",
                         type: zoteroRoam.formatting.getItemType(cit),
                         url: cit.query
@@ -932,13 +933,13 @@
                 });
                 let itemsList = items.map((item, j) => {
                     return `
-                    <li class="zotero-roam-list-item">
+                    <li class="zotero-roam-list-item zr-explo-list-item">
                         <div class="bp3-menu-item" label="link-${j}">
-                            <span>${zoteroRoam.utils.renderBP3_option(string = item.title, type = "checkbox", depth = 0, {varName: "explo-selected", optValue: `link-${j}`})}</span>
+                            <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-selected", optValue: `link-${j}`})}</span>
                             <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                                 <span class="zotero-roam-citation-metadata-contents">${item.type}${item.creators ? " | " + item.creators : ""}</span>
-                                <span class="bp3-text-muted">${item.url}</span>
-                                <span style="display:block;">${item.abstract}</span>
+                                ${item.publication ? `<span class="bp3-text-disabled">${item.publication}</span>` : ""}
+                                <span style="display:block;font-size:0.8em;white-space:break-spaces;" class="bp3-text-muted">${item.abstract}</span>
                             </div>
                         </div>
                     </li>
@@ -950,6 +951,9 @@
                 ${itemsList}
                 </ul>
                 `
+                overlay.querySelector('.main-panel .header-left').innerHTML = `
+                ${zoteroRoam.utils.renderBP3_option(string=`<h5 class="panel-tt">${successes.length} linked resource${suffix}</h5>`, type = "checkbox", depth = 0, {varName: "selectAll"})}
+                `;
             } else {
                 overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
             }

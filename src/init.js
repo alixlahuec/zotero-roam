@@ -643,6 +643,10 @@ var zoteroRoam = {};
             .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions button, .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions a{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
             .zotero-roam-auxiliary-overlay .bp3-card ul.bp3-list-unstyled {padding:15px 0;}
+            .zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}
+            .zr-explo-title{flex:1 0 100%;}
+            .zr-explo-title .bp3-checkbox{margin-bottom:0px;}
+            .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
             `;
             document.head.append(autoCompleteCSS);
         }

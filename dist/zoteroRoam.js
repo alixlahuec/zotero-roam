@@ -643,6 +643,10 @@ var zoteroRoam = {};
             .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions button, .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions a{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
             .zotero-roam-auxiliary-overlay .bp3-card ul.bp3-list-unstyled {padding:15px 0;}
+            .zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}
+            .zr-explo-title{flex:1 0 100%;}
+            .zr-explo-title .bp3-checkbox{margin-bottom:0px;}
+            .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
             `;
             document.head.append(autoCompleteCSS);
         }
@@ -3246,13 +3250,14 @@ var zoteroRoam = {};
             let suffix = successes.length > 1 ? "s" : "";
             // Fill the dialog
             overlay.querySelector('.main-panel .header-left').innerHTML = `
-            <h5 class="panel-tt">${successes.length} resource${suffix} available</h5>
+            <h5 class="panel-tt">${successes.length} linked resource${suffix}</h5>
             `;
             if(successes.length > 0){
                 let items = successes.map(cit => {
                     return {
                         abstract: cit.data.abstractNote,
                         creators: cit.data.creators ? zoteroRoam.formatting.getCreators(cit, {creators_as: "string", brackets: false, use_type: false}) : "",
+                        publication: cit.data.publicationTitle || cit.data.bookTitle || cit.data.websiteTitle || "",
                         title: cit.data.title || "",
                         type: zoteroRoam.formatting.getItemType(cit),
                         url: cit.query
@@ -3260,13 +3265,13 @@ var zoteroRoam = {};
                 });
                 let itemsList = items.map((item, j) => {
                     return `
-                    <li class="zotero-roam-list-item">
+                    <li class="zotero-roam-list-item zr-explo-list-item">
                         <div class="bp3-menu-item" label="link-${j}">
-                            <span>${zoteroRoam.utils.renderBP3_option(string = item.title, type = "checkbox", depth = 0, {varName: "explo-selected", optValue: `link-${j}`})}</span>
+                            <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-selected", optValue: `link-${j}`})}</span>
                             <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                                 <span class="zotero-roam-citation-metadata-contents">${item.type}${item.creators ? " | " + item.creators : ""}</span>
-                                <span class="bp3-text-muted">${item.url}</span>
-                                <span style="display:block;">${item.abstract}</span>
+                                ${item.publication ? `<span class="bp3-text-disabled">${item.publication}</span>` : ""}
+                                <span style="display:block;font-size:0.8em;white-space:break-spaces;" class="bp3-text-muted">${item.abstract}</span>
                             </div>
                         </div>
                     </li>
@@ -3278,6 +3283,9 @@ var zoteroRoam = {};
                 ${itemsList}
                 </ul>
                 `
+                overlay.querySelector('.main-panel .header-left').innerHTML = `
+                ${zoteroRoam.utils.renderBP3_option(string=`<h5 class="panel-tt">${successes.length} linked resource${suffix}</h5>`, type = "checkbox", depth = 0, {varName: "selectAll"})}
+                `;
             } else {
                 overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
             }
@@ -4279,7 +4287,7 @@ var zoteroRoam = {};
             } else if(target.closest('.zotero-roam-explo-import')){
                 let rBlock = target.closest('.rm-block');
                 let links = rBlock.querySelectorAll('.rm-block a:not(.rm-alias--page):not(.rm-alias--block)');
-                let urlList = links.map(l => l.href);
+                let urlList = Array.from(links).map(l => l.href);
 
                 let citoidList = [];
                 urlList.forEach(url => {
@@ -4519,7 +4527,7 @@ var zoteroRoam = {};
             exploBtn.classList.add('bp3-minimal');
             exploBtn.classList.add('zotero-roam-explo-import');
             exploBtn.innerHTML = `<span icon="geosearch" class="bp3-icon bp3-icon-geosearch"></span>`;
-            exploBtn.style = `position:absolute;top:10px;right:0px;opacity:0.3;z-index:10;`;
+            exploBtn.style = `position:absolute;right:0px;opacity:0.3;z-index:10;`;
             // Get all blocks with trigger tags
             let trigBlocks = Array.from(document.querySelectorAll('.rm-block:not([data-zr-explo]):not(.rm-block--ghost)')).filter(b => zoteroRoam.utils.matchArrays(tagList, JSON.parse(b.getAttribute('data-page-links'))));
             trigBlocks.forEach(b => {
