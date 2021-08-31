@@ -171,7 +171,16 @@
             return zoteroRoam.data.libraries.map(lib => {
                 let keyAccess = zoteroRoam.data.keys.find(k => k.key == lib.apikey).access;
                 let {libType, libID} = lib.path.split("/");
-                let permissions = libType == "users" ? keyAccess.user : (Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all);
+                let permissions = {};
+                if(libType == "users"){
+                    permissions = keyAccess.user || {};
+                } else {
+                    if(keyAccess.groups){
+                        permissions = Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all;
+                    } else {
+                        console.log(keyAccess); // For debugging (#13)
+                    }
+                }
                 let collections = zoteroRoam.data.collections.filter(cl => zoteroRoam.utils.getItemPrefix(cl) == lib.path);
                 // Sort collections by parent/child relationships
                 collections = zoteroRoam.utils.sortCollectionsList(collections);
@@ -180,7 +189,7 @@
                     name: libName,
                     apikey: lib.apikey,
                     path: lib.path,
-                    writeable: permissions.write,
+                    writeable: permissions.write || false,
                     collections: collections,
                     version: lib.version
                 }
@@ -279,6 +288,10 @@
             } else{
                 return false;
             }
+        },
+
+        matchArrays(arr1, arr2){
+            return arr1.filter(el => arr2.includes(el)).length > 0;
         },
 
         multiwordMatch(query, string){

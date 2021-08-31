@@ -443,6 +443,9 @@ var zoteroRoam = {};
                         return title.length > 3 ? true : false;
                     }
                 },
+                webimport: {
+                    tags: []
+                },
                 theme: ""
             },
             requests: [], // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -450,6 +453,7 @@ var zoteroRoam = {};
             userSettings: {}, // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
             ref_checking: null,
             page_checking: null,
+            tag_checking: null,
             auto_update: null,
             editingObserver: null
         },

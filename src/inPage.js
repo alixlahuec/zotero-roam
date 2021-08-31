@@ -273,6 +273,17 @@
                         zoteroRoam.interface.popRelatedDialog(title, keys, type = "abstract-mention");
                     }
                 }
+            } else if(target.closest('.zotero-roam-explo-import')){
+                let rBlock = target.closest('.rm-block');
+                let links = rBlock.querySelectorAll('.rm-block a:not(.rm-alias--page):not(.rm-alias--block)');
+                let urlList = links.map(l => l.href);
+
+                let citoidList = [];
+                urlList.forEach(url => {
+                    citoidList.push(zoteroRoam.handlers.requestCitoid(query = url));
+                });
+                let harvest = await Promise.all(citoidList);
+                zoteroRoam.interface.popWebImportDialog(harvest);
             }
         },
 
@@ -492,6 +503,37 @@
             ${secondHalf.join("")}
             </ul>
             `
+        },
+
+        addWebImport(){
+            let tags = zoteroRoam.config.params.webimport.tags;
+            // Allow for multiple trigger tags
+            let tagList = tags.constructor === Array ? tags : [tags];
+            // Template for button
+            let exploBtn = document.createElement('button');
+            exploBtn.setAttribute('type', 'button');
+            exploBtn.classList.add('bp3-button');
+            exploBtn.classList.add('bp3-minimal');
+            exploBtn.classList.add('zotero-roam-explo-import');
+            exploBtn.innerHTML = `<span icon="geosearch" class="bp3-icon bp3-icon-geosearch"></span>`;
+            exploBtn.style = `position:absolute;top:10px;right:0px;opacity:0.3;z-index:10;`;
+            // Get all blocks with trigger tags
+            let trigBlocks = Array.from(document.querySelectorAll('.rm-block:not([data-zr-explo]):not(.rm-block--ghost)')).filter(b => zoteroRoam.utils.matchArrays(tagList, JSON.parse(b.getAttribute('data-page-links'))));
+            trigBlocks.forEach(b => {
+                let links = b.querySelectorAll('.rm-block a:not(.rm-alias--page):not(.rm-alias--block)');
+                let firstElem = b.firstChild;
+                if(links.length > 0){
+                b.setAttribute('data-zr-explo', 'true');
+                if(!firstElem.classList.includes('bp3-icon-geosearch')){
+                    b.insertAdjacentElement('afterbegin', exploBtn.cloneNode());
+                }
+                } else {
+                b.setAttribute('data-zr-explo', 'false');
+                if(firstElem.classList.includes('bp3-icon-geosearch')){
+                    firstElem.remove();
+                }
+                }
+            })
         }
     }
 })();

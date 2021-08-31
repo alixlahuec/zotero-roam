@@ -59,6 +59,11 @@
             if(defaults){ zoteroRoam.config.params.pageMenu.defaults = defaults };
             if(trigger && typeof(trigger) == "function"){ zoteroRoam.config.params.pageMenu.trigger = trigger };
         }
+
+        if(zoteroRoam.config.userSettings.webimport){
+            let {tags = []} = zoteroRoam.config.userSettings.webimport;
+            zoteroRoam.config.params.webimport.tags = tags;
+        }
         
         zoteroRoam.shortcuts.setup();
         zoteroRoam.shortcuts.setupSequences();

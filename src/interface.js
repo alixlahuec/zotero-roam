@@ -911,6 +911,53 @@
 
         },
 
+        popWebImportDialog(harvest){
+            console.log(harvest);
+            let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
+            let successes = harvest.filter(cit => cit.success == true);
+            let suffix = successes.length > 1 ? "s" : "";
+            // Fill the dialog
+            overlay.querySelector('.main-panel .header-left').innerHTML = `
+            <h5 class="panel-tt">${successes.length} resource${suffix} available</h5>
+            `;
+            if(successes.length > 0){
+                let items = successes.map(cit => {
+                    return {
+                        abstract: cit.data.abstractNote,
+                        creators: cit.data.creators ? zoteroRoam.formatting.getCreators(cit, {creators_as: "string", brackets: false, use_type: false}) : "",
+                        title: cit.data.title || "",
+                        type: zoteroRoam.formatting.getItemType(cit),
+                        url: cit.query
+                    }
+                });
+                let itemsList = items.map((item, j) => {
+                    return `
+                    <li class="zotero-roam-list-item">
+                        <div class="bp3-menu-item" label="link-${j}">
+                            <span>${zoteroRoam.utils.renderBP3_option(string = item.title, type = "checkbox", depth = 0, {varName: "explo-selected", optValue: `link-${j}`})}</span>
+                            <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
+                                <span class="zotero-roam-citation-metadata-contents">${item.type}${item.creators ? " | " + item.creators : ""}</span>
+                                <span class="bp3-text-muted">${item.url}</span>
+                                <span style="display:block;">${item.abstract}</span>
+                            </div>
+                        </div>
+                    </li>
+                    `;
+                }).join("\n");
+
+                overlay.querySelector('.main-panel .rendered-div').innerHTML = `
+                <ul class="bp3-list-unstyled">
+                ${itemsList}
+                </ul>
+                `
+            } else {
+                overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
+            }
+            // Make the dialog visible
+            overlay.style.display = "block";
+            overlay.setAttribute("overlay-visible", "true");
+        },
+
         closeAuxiliaryOverlay(){
             let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
             overlay.style.display = "none";
@@ -1226,6 +1273,7 @@
 
         },
 
+        // Import to Zotero -- from citations/references list
         addToImport(element){
             let identifier = element.querySelector(".zotero-roam-citation-identifier-link").innerText;
             let title = element.querySelector(".zotero-roam-search-item-title").innerText;

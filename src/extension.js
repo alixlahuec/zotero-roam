@@ -38,6 +38,11 @@
                 window.addEventListener('locationchange', zoteroRoam.inPage.addPageMenus, true); // URL change
                 zoteroRoam.config.page_checking = setInterval(function(){zoteroRoam.inPage.addPageMenus(wait = 0)}, 1000); // continuous
 
+                // Setup exploratory search buttons :
+                if(zoteroRoam.config.userSettings.webimport){
+                    zoteroRoam.config.tag_checking = setInterval(function(){zoteroRoam.inPage.addWebImport()}, 1000); // continuous
+                }
+
                 // Auto-update ?
                 if(zoteroRoam.config.userSettings.autoupdate){
                     zoteroRoam.config.auto_update = setInterval(function(){zoteroRoam.extension.update(popup = false)}, 60000); // Update every 60s
@@ -123,6 +128,7 @@
             window.removeEventListener('locationchange', zoteroRoam.inPage.checkReferences, true);
             try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.page_checking) } catch(e){};
+            try { clearInterval(zoteroRoam.config.tag_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.auto_update) } catch(e){};
             try { zoteroRoam.config.editingObserver.disconnect() } catch(e){};
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);

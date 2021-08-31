@@ -443,6 +443,9 @@ var zoteroRoam = {};
                         return title.length > 3 ? true : false;
                     }
                 },
+                webimport: {
+                    tags: []
+                },
                 theme: ""
             },
             requests: [], // Assigned the processed Array of requests (see handlers.setupUserRequests)
@@ -450,6 +453,7 @@ var zoteroRoam = {};
             userSettings: {}, // Assigned the value of the zoteroRoam_settings Object defined by the user (see run.js)
             ref_checking: null,
             page_checking: null,
+            tag_checking: null,
             auto_update: null,
             editingObserver: null
         },
@@ -842,7 +846,16 @@ var zoteroRoam = {};
             return zoteroRoam.data.libraries.map(lib => {
                 let keyAccess = zoteroRoam.data.keys.find(k => k.key == lib.apikey).access;
                 let {libType, libID} = lib.path.split("/");
-                let permissions = libType == "users" ? keyAccess.user : (Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all);
+                let permissions = {};
+                if(libType == "users"){
+                    permissions = keyAccess.user || {};
+                } else {
+                    if(keyAccess.groups){
+                        permissions = Object.keys(keyAccess.groups).includes(libID) ? keyAccess.groups[libID] : keyAccess.groups.all;
+                    } else {
+                        console.log(keyAccess); // For debugging (#13)
+                    }
+                }
                 let collections = zoteroRoam.data.collections.filter(cl => zoteroRoam.utils.getItemPrefix(cl) == lib.path);
                 // Sort collections by parent/child relationships
                 collections = zoteroRoam.utils.sortCollectionsList(collections);
@@ -851,7 +864,7 @@ var zoteroRoam = {};
                     name: libName,
                     apikey: lib.apikey,
                     path: lib.path,
-                    writeable: permissions.write,
+                    writeable: permissions.write || false,
                     collections: collections,
                     version: lib.version
                 }
@@ -950,6 +963,10 @@ var zoteroRoam = {};
             } else{
                 return false;
             }
+        },
+
+        matchArrays(arr1, arr2){
+            return arr1.filter(el => arr2.includes(el)).length > 0;
         },
 
         multiwordMatch(query, string){
@@ -3222,6 +3239,53 @@ var zoteroRoam = {};
 
         },
 
+        popWebImportDialog(harvest){
+            console.log(harvest);
+            let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
+            let successes = harvest.filter(cit => cit.success == true);
+            let suffix = successes.length > 1 ? "s" : "";
+            // Fill the dialog
+            overlay.querySelector('.main-panel .header-left').innerHTML = `
+            <h5 class="panel-tt">${successes.length} resource${suffix} available</h5>
+            `;
+            if(successes.length > 0){
+                let items = successes.map(cit => {
+                    return {
+                        abstract: cit.data.abstractNote,
+                        creators: cit.data.creators ? zoteroRoam.formatting.getCreators(cit, {creators_as: "string", brackets: false, use_type: false}) : "",
+                        title: cit.data.title || "",
+                        type: zoteroRoam.formatting.getItemType(cit),
+                        url: cit.query
+                    }
+                });
+                let itemsList = items.map((item, j) => {
+                    return `
+                    <li class="zotero-roam-list-item">
+                        <div class="bp3-menu-item" label="link-${j}">
+                            <span>${zoteroRoam.utils.renderBP3_option(string = item.title, type = "checkbox", depth = 0, {varName: "explo-selected", optValue: `link-${j}`})}</span>
+                            <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
+                                <span class="zotero-roam-citation-metadata-contents">${item.type}${item.creators ? " | " + item.creators : ""}</span>
+                                <span class="bp3-text-muted">${item.url}</span>
+                                <span style="display:block;">${item.abstract}</span>
+                            </div>
+                        </div>
+                    </li>
+                    `;
+                }).join("\n");
+
+                overlay.querySelector('.main-panel .rendered-div').innerHTML = `
+                <ul class="bp3-list-unstyled">
+                ${itemsList}
+                </ul>
+                `
+            } else {
+                overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
+            }
+            // Make the dialog visible
+            overlay.style.display = "block";
+            overlay.setAttribute("overlay-visible", "true");
+        },
+
         closeAuxiliaryOverlay(){
             let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
             overlay.style.display = "none";
@@ -3537,6 +3601,7 @@ var zoteroRoam = {};
 
         },
 
+        // Import to Zotero -- from citations/references list
         addToImport(element){
             let identifier = element.querySelector(".zotero-roam-citation-identifier-link").innerText;
             let title = element.querySelector(".zotero-roam-search-item-title").innerText;
@@ -3733,6 +3798,11 @@ var zoteroRoam = {};
                 window.addEventListener('locationchange', zoteroRoam.inPage.addPageMenus, true); // URL change
                 zoteroRoam.config.page_checking = setInterval(function(){zoteroRoam.inPage.addPageMenus(wait = 0)}, 1000); // continuous
 
+                // Setup exploratory search buttons :
+                if(zoteroRoam.config.userSettings.webimport){
+                    zoteroRoam.config.tag_checking = setInterval(function(){zoteroRoam.inPage.addWebImport()}, 1000); // continuous
+                }
+
                 // Auto-update ?
                 if(zoteroRoam.config.userSettings.autoupdate){
                     zoteroRoam.config.auto_update = setInterval(function(){zoteroRoam.extension.update(popup = false)}, 60000); // Update every 60s
@@ -3818,6 +3888,7 @@ var zoteroRoam = {};
             window.removeEventListener('locationchange', zoteroRoam.inPage.checkReferences, true);
             try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.page_checking) } catch(e){};
+            try { clearInterval(zoteroRoam.config.tag_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.auto_update) } catch(e){};
             try { zoteroRoam.config.editingObserver.disconnect() } catch(e){};
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
@@ -4205,6 +4276,17 @@ var zoteroRoam = {};
                         zoteroRoam.interface.popRelatedDialog(title, keys, type = "abstract-mention");
                     }
                 }
+            } else if(target.closest('.zotero-roam-explo-import')){
+                let rBlock = target.closest('.rm-block');
+                let links = rBlock.querySelectorAll('.rm-block a:not(.rm-alias--page):not(.rm-alias--block)');
+                let urlList = links.map(l => l.href);
+
+                let citoidList = [];
+                urlList.forEach(url => {
+                    citoidList.push(zoteroRoam.handlers.requestCitoid(query = url));
+                });
+                let harvest = await Promise.all(citoidList);
+                zoteroRoam.interface.popWebImportDialog(harvest);
             }
         },
 
@@ -4424,6 +4506,37 @@ var zoteroRoam = {};
             ${secondHalf.join("")}
             </ul>
             `
+        },
+
+        addWebImport(){
+            let tags = zoteroRoam.config.params.webimport.tags;
+            // Allow for multiple trigger tags
+            let tagList = tags.constructor === Array ? tags : [tags];
+            // Template for button
+            let exploBtn = document.createElement('button');
+            exploBtn.setAttribute('type', 'button');
+            exploBtn.classList.add('bp3-button');
+            exploBtn.classList.add('bp3-minimal');
+            exploBtn.classList.add('zotero-roam-explo-import');
+            exploBtn.innerHTML = `<span icon="geosearch" class="bp3-icon bp3-icon-geosearch"></span>`;
+            exploBtn.style = `position:absolute;top:10px;right:0px;opacity:0.3;z-index:10;`;
+            // Get all blocks with trigger tags
+            let trigBlocks = Array.from(document.querySelectorAll('.rm-block:not([data-zr-explo]):not(.rm-block--ghost)')).filter(b => zoteroRoam.utils.matchArrays(tagList, JSON.parse(b.getAttribute('data-page-links'))));
+            trigBlocks.forEach(b => {
+                let links = b.querySelectorAll('.rm-block a:not(.rm-alias--page):not(.rm-alias--block)');
+                let firstElem = b.firstChild;
+                if(links.length > 0){
+                b.setAttribute('data-zr-explo', 'true');
+                if(!firstElem.classList.includes('bp3-icon-geosearch')){
+                    b.insertAdjacentElement('afterbegin', exploBtn.cloneNode());
+                }
+                } else {
+                b.setAttribute('data-zr-explo', 'false');
+                if(firstElem.classList.includes('bp3-icon-geosearch')){
+                    firstElem.remove();
+                }
+                }
+            })
         }
     }
 })();
@@ -5123,6 +5236,11 @@ var zoteroRoam = {};
             let {defaults, trigger} = zoteroRoam.config.userSettings.pageMenu;
             if(defaults){ zoteroRoam.config.params.pageMenu.defaults = defaults };
             if(trigger && typeof(trigger) == "function"){ zoteroRoam.config.params.pageMenu.trigger = trigger };
+        }
+
+        if(zoteroRoam.config.userSettings.webimport){
+            let {tags = []} = zoteroRoam.config.userSettings.webimport;
+            zoteroRoam.config.params.webimport.tags = tags;
         }
         
         zoteroRoam.shortcuts.setup();
