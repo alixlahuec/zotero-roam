@@ -643,6 +643,7 @@ var zoteroRoam = {};
             .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions button, .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions a{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
             .zotero-roam-auxiliary-overlay .bp3-card ul.bp3-list-unstyled {padding:15px 0;}
+            .zotero-roam-explo-import{position:absolute;right:0px;opacity:0.7;z-index:10;}
             .zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}
             .zr-explo-title{flex:1 0 100%;}
             .zr-explo-title .bp3-checkbox{margin-bottom:0px;}
@@ -2391,7 +2392,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.search.updateButton.addEventListener("click", function(){zoteroRoam.extension.update(popup = true)});
 
             document.addEventListener("click", (e) => {
-                if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related') | e.target.closest('.zotero-roam-explo-import')){
+                if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related') || e.target.closest('.zotero-roam-explo-import')){
                     zoteroRoam.inPage.handleClicks(e.target);
                 } else if(e.target.closest('.zotero-roam-search-close')){
                     let overlay = e.target.closest('.zotero-roam-dialog-overlay') || e.target.closest('.zotero-roam-dialog-small');
@@ -3269,8 +3270,8 @@ var zoteroRoam = {};
                         <div class="bp3-menu-item" label="link-${j}">
                             <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-selected", optValue: `link-${j}`})}</span>
                             <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
-                                <span class="zotero-roam-citation-metadata-contents">${item.type}${item.creators ? " | " + item.creators : ""}</span>
-                                ${item.publication ? `<span class="bp3-text-disabled">${item.publication}</span>` : ""}
+                                <span class="zotero-roam-citation-metadata-contents" style="padding-right:10px;">${item.type}${item.creators ? " | " + item.creators : ""}</span>
+                                ${item.publication ? `<span class="bp3-text-disabled" style="font-size:0.85em;display:block;white-space:break-spaces;">${item.publication}</span>` : ""}
                                 <span style="display:block;font-size:0.8em;white-space:break-spaces;" class="bp3-text-muted">${item.abstract}</span>
                             </div>
                         </div>
@@ -4527,7 +4528,6 @@ var zoteroRoam = {};
             exploBtn.classList.add('bp3-minimal');
             exploBtn.classList.add('zotero-roam-explo-import');
             exploBtn.innerHTML = `<span icon="geosearch" class="bp3-icon bp3-icon-geosearch"></span>`;
-            exploBtn.style = `position:absolute;right:0px;opacity:0.3;z-index:10;`;
             // Get all blocks with trigger tags
             let trigBlocks = Array.from(document.querySelectorAll('.rm-block:not([data-zr-explo]):not(.rm-block--ghost)')).filter(b => zoteroRoam.utils.matchArrays(tagList, JSON.parse(b.getAttribute('data-page-links'))));
             trigBlocks.forEach(b => {

@@ -59,7 +59,7 @@
             zoteroRoam.interface.search.updateButton.addEventListener("click", function(){zoteroRoam.extension.update(popup = true)});
 
             document.addEventListener("click", (e) => {
-                if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related') | e.target.closest('.zotero-roam-explo-import')){
+                if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related') || e.target.closest('.zotero-roam-explo-import')){
                     zoteroRoam.inPage.handleClicks(e.target);
                 } else if(e.target.closest('.zotero-roam-search-close')){
                     let overlay = e.target.closest('.zotero-roam-dialog-overlay') || e.target.closest('.zotero-roam-dialog-small');
@@ -937,8 +937,8 @@
                         <div class="bp3-menu-item" label="link-${j}">
                             <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-selected", optValue: `link-${j}`})}</span>
                             <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
-                                <span class="zotero-roam-citation-metadata-contents">${item.type}${item.creators ? " | " + item.creators : ""}</span>
-                                ${item.publication ? `<span class="bp3-text-disabled">${item.publication}</span>` : ""}
+                                <span class="zotero-roam-citation-metadata-contents" style="padding-right:10px;">${item.type}${item.creators ? " | " + item.creators : ""}</span>
+                                ${item.publication ? `<span class="bp3-text-disabled" style="font-size:0.85em;display:block;white-space:break-spaces;">${item.publication}</span>` : ""}
                                 <span style="display:block;font-size:0.8em;white-space:break-spaces;" class="bp3-text-muted">${item.abstract}</span>
                             </div>
                         </div>
