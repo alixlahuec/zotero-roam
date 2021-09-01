@@ -292,8 +292,10 @@
                     citoidList.push(zoteroRoam.handlers.requestCitoid(query = url));
                 });
                 let harvest = await Promise.all(citoidList);
-                zoteroRoam.webImport.activeImport.harvest = harvest;
-                
+                zoteroRoam.webImport.activeImport = {
+                    harvest: harvest
+                };
+
                 let successes = harvest.filter(cit => cit.success == true);
                 if(successes.length > 0){
                     zoteroRoam.interface.fillWebImportDialog(successes);
