@@ -277,13 +277,29 @@
                 let rBlock = target.closest('.rm-block');
                 let links = rBlock.querySelectorAll('.rm-block a:not(.rm-alias--page):not(.rm-alias--block)');
                 let urlList = Array.from(links).map(l => l.href);
+                zoteroRoam.webImport.currentBlock = rBlock.querySelector('.rm-block-main .roam-block');
 
+                // Open the dialog before harvesting the metadata, show loading state
+                let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
+                overlay.querySelector('.main-panel .header-left').innerHTML = ``;
+                overlay.querySelector('.main-panel .rendered-div').innerHTML = `<p>Parsing links...</p>`;
+                overlay.style.display = "block";
+                overlay.setAttribute("overlay-visible", "true");
+
+                // Request metadata
                 let citoidList = [];
                 urlList.forEach(url => {
                     citoidList.push(zoteroRoam.handlers.requestCitoid(query = url));
                 });
                 let harvest = await Promise.all(citoidList);
-                zoteroRoam.interface.popWebImportDialog(harvest);
+                zoteroRoam.webImport.activeImport.harvest = harvest;
+                
+                let successes = harvest.filter(cit => cit.success == true);
+                if(successes.length > 0){
+                    zoteroRoam.interface.fillWebImportDialog(successes);
+                } else {
+                    overlay.querySelector('.main-panel .rendered-div').innerHTML = `<p>No data successfully retrieved</p>`;
+                }
             }
         },
 

@@ -70,6 +70,8 @@
                     } else if(overlay.classList.contains('zotero-roam-auxiliary-overlay')){
                         zoteroRoam.interface.closeAuxiliaryOverlay();
                     }
+                } else if(e.target.closest('[zr-import]')){
+                    zoteroRoam.interface.handleImportPanelClicks(e);
                 }
             })
         },
@@ -215,6 +217,7 @@
 
         fillAuxiliaryOverlay(){
             let dialogMainPanel = document.querySelector('.zotero-roam-auxiliary-overlay .bp3-dialog-body .main-panel');
+            let dialogSidePanel = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-dialog-body .side-panel-contents`);
 
             let dialogCard = document.createElement('div');
             dialogCard.classList.add("bp3-card");
@@ -250,6 +253,41 @@
 
             dialogMainPanel.appendChild(dialogCard);
 
+            let importHeader = document.createElement('div');
+            importHeader.classList.add("import-header");
+            importHeader.innerHTML = `
+            ${zoteroRoam.utils.renderBP3Button_group("Cancel", {buttonClass: "bp3-minimal bp3-intent-warning", icon: "chevron-left", buttonAttribute: 'role="cancel"'})}
+            ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "bp3-minimal bp3-intent-primary", icon: "inheritance", buttonAttribute: 'disabled role="add" style="font-weight:600;"'})}
+            `;
+
+            let importOptions = document.createElement('div');
+            importOptions.classList.add("import-options");
+
+            let optionsLib = document.createElement('div');
+            optionsLib.classList.add("options-library-list");
+
+            let optionsColl = document.createElement('div');
+            optionsColl.classList.add("options-collections-list");
+
+            importOptions.appendChild(optionsLib);
+            importOptions.appendChild(optionsColl);
+
+            let itemsHeader = document.createElement('h5');
+            itemsHeader.innerText = "Selected Items";
+            itemsHeader.classList.add("import-selection-header");
+
+            let importItems = document.createElement('div');
+            importItems.classList.add("import-items");
+            importItems.classList.add("bp3-list-unstyled");
+
+            // Attribute a role to the side panel
+            dialogSidePanel.setAttribute('zr-import', 'weblinks');
+
+            dialogSidePanel.appendChild(importHeader);
+            dialogSidePanel.appendChild(importOptions);
+            dialogSidePanel.appendChild(itemsHeader);
+            dialogSidePanel.appendChild(importItems);
+
             dialogMainPanel.addEventListener("click", function(e){
                 let btn = e.target.closest('button');
                 if(btn){
@@ -269,6 +307,17 @@
                         console.log("Importing metadata...");
                         zoteroRoam.handlers.importItemMetadata(title = '@' + itemKey, uid = "", {popup: true});
                     }
+                } else {
+                    let chck = e.target.closest('input[type="checkbox"]');
+                    // WebImport : select all
+                    if(chck && chck.getAttribute('name') == 'selectAll'){
+                        let status = chck.checked;
+                        let webLinks = Array.from(document.querySelectorAll('.zotero-roam-auxiliary-overlay [name="explo-weblink"]'));
+                        webLinks.forEach(lk => {
+                            lk.checked = status;
+                        });
+                    }
+
                 }
 
             });
@@ -536,6 +585,9 @@
             importItems.classList.add("import-items");
             importItems.classList.add("bp3-list-unstyled");
 
+            // Attribute a role to the side panel
+            dialogSidePanel.setAttribute('zr-import', 'citations');
+
             dialogSidePanel.appendChild(importHeader);
             dialogSidePanel.appendChild(importOptions);
             dialogSidePanel.appendChild(itemsHeader);
@@ -589,75 +641,79 @@
 
             });
 
+        },
+
+        async handleImportPanelClicks(e){
+            let importDiv = e.target.closest('[zr-import]');
+            let type = importDiv.getAttribute('zr-import');
+
             // Rigging header buttons
-            zoteroRoam.interface.citations.overlay.querySelector(".import-header").addEventListener("click", async function(e){
-                let btn = e.target.closest('button[role]');
-                if(btn !== null){
-                    switch(btn.getAttribute("role")){
-                        case "cancel":
-                            zoteroRoam.interface.clearImportPanel(action = "close");
-                            break;
-                        case "add":
-                            btn.setAttribute("disabled", "");
+            let btn = e.target.closest('button[role]');
+            if(btn !== null){
+                switch(btn.getAttribute("role")){
+                    case "cancel":
+                        zoteroRoam.interface.clearImportPanel(action = "close", type = type);
+                        break;
+                    case "add":
+                        btn.setAttribute("disabled", "");
+                        // Citations panel
+                        if(type == "citations"){
                             let importOutcome = await zoteroRoam.handlers.importSelectedItems();
                             zoteroRoam.citations.activeImport.outcome = importOutcome;
                             zoteroRoam.interface.renderImportResults(importOutcome);
-                            zoteroRoam.citations.activeImport.check = importOutcome.write.success != true ? null : setInterval(async function(){
-                                let check = await zoteroRoam.write.checkImport(importOutcome.write.data.successful);
-                                if(zoteroRoam.config.userSettings.logEvents == true){ console.log(check) };
-                                if(check.updated == true){
-                                    clearInterval(zoteroRoam.citations.activeImport.check);
-                                    zoteroRoam.citations.activeImport.check = null;
-                                }
-                            }, 1000);
-                            break;
-                        case "done":
-                            zoteroRoam.interface.clearImportPanel(action = "reset");
-                    }
+                        }
+                        break;
+                    case "done":
+                        zoteroRoam.interface.clearImportPanel(action = "reset", type = type);
                 }
-            });
+            }
 
             // Rigging library selection section
-            zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").addEventListener("click", (e) => {
-                let libOption = e.target.closest(`input[name="library"]`);
-                if(libOption){
-                    zoteroRoam.interface.selectImportLibrary();
-                }
-            });
+            let libOption = e.target.closest('input[name="library"]');
+            if(libOption !== null){
+                zoteroRoam.interface.selectImportLibrary(type = type);
+            }
 
             // Rigging tags selection section
-            zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").addEventListener("click", (e) => {
+            let tagsSelection = e.target.closest('.options-tags_selection');
+            if(tagsSelection !== null){
                 let removeBtn = e.target.closest('.bp3-tag-remove');
                 if(removeBtn !== null){
                     let tag = removeBtn.closest('.bp3-tag');
                     try{
-                        let tagsSelection = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection");
-                        tagsSelection.dataset.tags = JSON.stringify(JSON.parse(tagsSelection.dataset.tags).filter(t => t!= tag.dataset.tag));
-                        tag.remove();
-                    }catch(e){
+                        if(type == "citations"){
+                            let tagsSelection = importDiv.querySelector(".options-tags_selection");
+                            tagsSelection.dataset.tags = JSON.stringify(JSON.parse(tagsSelection.dataset.tags).filter(t => t!= tag.dataset.tag));
+                            tag.remove();
+                        }
+                    } catch(e){
                         console.error(e);
                     }
                 }
-            });
+            }
+
             // Rigging import items section
-            zoteroRoam.interface.citations.overlay.querySelector(".import-items").addEventListener("click", (e) => {
+            let importItems = e.target.closest('.import-items');
+            if(importItems !== null){
                 let removeBtn = e.target.closest('button.selected_remove-button');
                 if(removeBtn !== null){
                     let item = removeBtn.closest(".import-items_selected");
                     try{
-                        zoteroRoam.citations.activeImport.items = zoteroRoam.citations.activeImport.items.filter(i => i!= item.dataset.identifier);
-                        item.remove();
-                        zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items (${zoteroRoam.citations.activeImport.items.length})`;
-                        if(zoteroRoam.citations.activeImport.items.length == 0){
-                            zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).setAttribute("disabled", "");
-                            zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items`;
+                        // Citations panel
+                        if(type == "citations"){
+                            zoteroRoam.citations.activeImport.items = zoteroRoam.citations.activeImport.items.filter(i => i!= item.dataset.identifier);
+                            item.remove();
+                            zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items (${zoteroRoam.citations.activeImport.items.length})`;
+                            if(zoteroRoam.citations.activeImport.items.length == 0){
+                                zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).setAttribute("disabled", "");
+                                zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items`;
+                            }
                         }
-                    }catch(e){
+                    } catch(e){
                         console.error(e);
                     }
                 }
-            });
-
+            }
         },
 
         renderCitationsPagination(){
@@ -911,55 +967,47 @@
 
         },
 
-        popWebImportDialog(harvest){
-            console.log(harvest);
+        fillWebImportDialog(items){
             let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
-            let successes = harvest.filter(cit => cit.success == true);
-            let suffix = successes.length > 1 ? "s" : "";
-            // Fill the dialog
-            overlay.querySelector('.main-panel .header-left').innerHTML = `
-            <h5 class="panel-tt">${successes.length} linked resource${suffix}</h5>
-            `;
-            if(successes.length > 0){
-                let items = successes.map(cit => {
-                    return {
-                        abstract: cit.data.abstractNote,
-                        creators: cit.data.creators ? zoteroRoam.formatting.getCreators(cit, {creators_as: "string", brackets: false, use_type: false}) : "",
-                        publication: cit.data.publicationTitle || cit.data.bookTitle || cit.data.websiteTitle || "",
-                        title: cit.data.title || "",
-                        type: zoteroRoam.formatting.getItemType(cit),
-                        url: cit.query
-                    }
-                });
-                let itemsList = items.map((item, j) => {
-                    return `
-                    <li class="zotero-roam-list-item zr-explo-list-item">
-                        <div class="bp3-menu-item" label="link-${j}">
-                            <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-selected", optValue: `link-${j}`})}</span>
-                            <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
-                                <span class="zotero-roam-citation-metadata-contents" style="padding-right:10px;">${item.type}${item.creators ? " | " + item.creators : ""}</span>
-                                ${item.publication ? `<span class="bp3-text-disabled" style="font-size:0.85em;display:block;white-space:break-spaces;">${item.publication}</span>` : ""}
-                                <span style="display:block;font-size:0.8em;white-space:break-spaces;" class="bp3-text-muted">${item.abstract}</span>
-                            </div>
-                        </div>
-                    </li>
-                    `;
-                }).join("\n");
 
-                overlay.querySelector('.main-panel .rendered-div').innerHTML = `
-                <ul class="bp3-list-unstyled">
-                ${itemsList}
-                </ul>
-                `
-                overlay.querySelector('.main-panel .header-left').innerHTML = `
-                ${zoteroRoam.utils.renderBP3_option(string=`<h5 class="panel-tt">${successes.length} linked resource${suffix}</h5>`, type = "checkbox", depth = 0, {varName: "selectAll"})}
+            let webItems = items.map(cit => {
+                return {
+                    abstract: cit.data.abstractNote,
+                    creators: cit.data.creators ? zoteroRoam.formatting.getCreators(cit, {creators_as: "string", brackets: false, use_type: false}) : "",
+                    publication: cit.data.publicationTitle || cit.data.bookTitle || cit.data.websiteTitle || "",
+                    title: cit.data.title || "",
+                    type: zoteroRoam.formatting.getItemType(cit),
+                    url: cit.query
+                }
+            });
+            zoteroRoam.webImport.activeImport.items = webItems;
+
+            let suffix = webItems.length > 1 ? "s" : "";
+            overlay.querySelector('.main-panel .header-left').innerHTML = `
+            <h5 class="panel-tt" list-type="weblinks">${webItems.length} linked resource${suffix}</h5>
+            `;
+
+            let itemsList = webItems.map((item, j) => {
+                return `
+                <li class="zotero-roam-list-item zr-explo-list-item">
+                    <div class="bp3-menu-item" label="link-${j}">
+                        <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${j}`})}</span>
+                        <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
+                            <span class="zotero-roam-citation-metadata-contents" style="padding-right:10px;">${item.type}${item.creators ? " | " + item.creators : ""}</span>
+                            ${item.publication ? `<span class="bp3-text-disabled" style="font-size:0.85em;display:block;white-space:break-spaces;">${item.publication}</span>` : ""}
+                            <span style="display:block;font-size:0.8em;white-space:break-spaces;" class="bp3-text-muted">${item.abstract}</span>
+                        </div>
+                    </div>
+                </li>
                 `;
-            } else {
-                overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
-            }
-            // Make the dialog visible
-            overlay.style.display = "block";
-            overlay.setAttribute("overlay-visible", "true");
+            }).join("\n");
+
+            overlay.querySelector('.main-panel .rendered-div').innerHTML = `
+            <ul class="bp3-list-unstyled">
+            ${itemsList}
+            </ul>
+            `
+            
         },
 
         closeAuxiliaryOverlay(){
@@ -972,7 +1020,7 @@
             zoteroRoam.interface.citations.overlay.style.display = "none";
             zoteroRoam.interface.citations.input.value = "";
             zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = "";
-            zoteroRoam.interface.clearImportPanel();
+            zoteroRoam.interface.clearImportPanel(action = "close", type = "citations");
             zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "false");
         },
 
@@ -1277,67 +1325,73 @@
 
         },
 
-        // Import to Zotero -- from citations/references list
-        addToImport(element){
-            let identifier = element.querySelector(".zotero-roam-citation-identifier-link").innerText;
-            let title = element.querySelector(".zotero-roam-search-item-title").innerText;
-            let origin = element.querySelector(".zotero-roam-citation-origin").innerText;
+        // Add to import list to Zotero
+        addToImport(element, type = "citations"){
+            let importDiv = document.querySelector(`[zr-import="${type}"]`);
+            let currentImport = type == "citations" ? zoteroRoam.citations.activeImport : zoteroRoam.webImport.activeImport;
 
-            if(zoteroRoam.citations.activeImport == null){
+            if(currentImport == null){
                 zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
-                zoteroRoam.citations.activeImport = {
-                    libraries: zoteroRoam.utils.getLibraries(),
-                    items: [],
-                    currentLib: {},
-                    outcome: null
-                }
-                zoteroRoam.tagSelection.autocomplete.init();
-                zoteroRoam.interface.renderImportOptions();
-                zoteroRoam.interface.addToImport(element);
-                if(zoteroRoam.citations.activeImport.currentLib){
-                    // Only enable the "Add" button if there is a library selected
-                    zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
-                }
-                zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
+                zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
             } else {
-                if(zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`)){
-                    zoteroRoam.interface.clearImportPanel(action = "reset");
-                }
-                if(!zoteroRoam.citations.activeImport.items.includes(identifier)){
-                    zoteroRoam.citations.activeImport.items.push(identifier);
-                    zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML += `
-                    <li class="import-items_selected" data-identifier="${identifier}">
-                    <div class="selected_info">
-                    <span class="selected_title bp3-text-muted">${title}</span>
-                    <span class="selected_origin">${origin}</span>
-                    </div>
-                    <div class="selected_state">
-                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-small bp3-minimal bp3-intent-danger selected_remove-button", icon: "cross"})}
-                    </div>
-                    </li>
-                    `;
-                    if(zoteroRoam.citations.activeImport.currentLib){
-                        // Only enable the "Add" button if there is a library selected
-                        zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).removeAttribute("disabled");
-                    }
-                    zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items (${zoteroRoam.citations.activeImport.items.length})`;
+                if(importDiv.querySelector(`button[role="done"]`)){
+                    zoteroRoam.interface.clearImportPanel(action = "reset", type = type);
                 }
             }
+
+            if(type == "citations"){
+                let identifier = element.querySelector(".zotero-roam-citation-identifier-link").innerText;
+                let title = element.querySelector(".zotero-roam-search-item-title").innerText;
+                let origin = element.querySelector(".zotero-roam-citation-origin").innerText;
+                if(zoteroRoam.citations.activeImport == null){
+                    zoteroRoam.citations.activeImport = {
+                        items: [],
+                        outcome: null
+                    }
+                    zoteroRoam.tagSelection.autocomplete.init();
+                    zoteroRoam.interface.renderImportOptions(type = type);
+                    zoteroRoam.interface.addToImport(element, type = type);
+                    importDiv.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
+                } else {
+                    if(!zoteroRoam.citations.activeImport.items.includes(identifier)){
+                        zoteroRoam.citations.activeImport.items.push(identifier);
+                        importDiv.querySelector(".import-items").innerHTML += `
+                        <li class="import-items_selected" data-identifier="${identifier}">
+                        <div class="selected_info">
+                        <span class="selected_title bp3-text-muted">${title}</span>
+                        <span class="selected_origin">${origin}</span>
+                        </div>
+                        <div class="selected_state">
+                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-small bp3-minimal bp3-intent-danger selected_remove-button", icon: "cross"})}
+                        </div>
+                        </li>
+                        `;
+                        importDiv.querySelector(".import-selection-header").innerText = `Selected Items (${zoteroRoam.citations.activeImport.items.length})`;
+                    }
+                }
+            }
+
+            if(zoteroRoam.activeImport.currentLib){
+                // Only enable the "Add" button if there is a library selected
+                importDiv.querySelector(`button[role="add"]`).removeAttribute("disabled");
+            }
+
         },
 
-        renderImportOptions(){
-            let libs = zoteroRoam.citations.activeImport.libraries;
+        renderImportOptions(type = "citations"){
+            let importDiv = document.querySelector(`[zr-import="${type}"]`);
+            let libs = zoteroRoam.activeImport.libraries;
             let optionsLib = zoteroRoam.utils.renderBP3_list(libs, "radio", {varName: "library", has_value: "path", has_string: "name", selectFirst: true, active_if: "writeable"});
             let optionsColl = "";
             let firstWriteableLib = libs.find(library => library.writeable == true);
             if(firstWriteableLib){
-                zoteroRoam.citations.activeImport.currentLib = firstWriteableLib;
+                zoteroRoam.activeImport.currentLib = firstWriteableLib;
                 optionsColl = zoteroRoam.utils.renderBP3_list(firstWriteableLib.collections.map(cl => {return{name: cl.data.name, key: cl.key, depth: cl.depth}}), "checkbox", {varName: "collections", has_value: "key", has_string: "name"});
             } else {
                 // If none of the libraries are writeable, the currentLib property will be empty which the addToImport function will pick up on
             }
-            zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = optionsLib;
-            zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = optionsColl;
+            importDiv.querySelector(".options-library-list").innerHTML = optionsLib;
+            importDiv.querySelector(".options-collections-list").innerHTML = optionsColl;
             
         },
 
@@ -1386,33 +1440,38 @@
             nextActionBtn.setAttribute("role", "done");
         },
 
-        selectImportLibrary(){
-            if(zoteroRoam.citations.activeImport !== null){
-                let currentLoc = zoteroRoam.citations.activeImport.currentLib.path;
-                let newLoc = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-library-list [name="library"]`)).find(op => op.checked == true).value;
-                if(newLoc != currentLoc){
-                    zoteroRoam.citations.activeImport.currentLib = zoteroRoam.citations.activeImport.libraries.find(lib => lib.path == newLoc);
-                    let optionsColl = zoteroRoam.utils.renderBP3_list(zoteroRoam.citations.activeImport.currentLib.collections.map(cl => {return{name: cl.data.name, key: cl.key}}), "checkbox", {varName: "collections", has_value: "key", has_string: "name"});
-                    zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = optionsColl;
-                }
+        selectImportLibrary(type = "citations"){
+            let importDiv = document.querySelector(`[zr-import="${type}"]`);
+            let currentLoc = zoteroRoam.activeImport.currentLib.path;
+            let newLoc = Array.from(importDiv.querySelectorAll(`.options-library-list [name="library"]`)).find(op => op.checked == true).value;
+            if(newLoc != currentLoc){
+                zoteroRoam.activeImport.currentLib = zoteroRoam.activeImport.libraries.find(lib => lib.path == newLoc);
+                let optionsColl = zoteroRoam.utils.renderBP3_list(zoteroRoam.activeImport.currentLib.collections.map(cl => {return{name: cl.data.name, key: cl.key}}), "checkbox", {varName: "collections", has_value: "key", has_string: "name"});
+                importDiv.querySelector(".options-collections-list").innerHTML = optionsColl;
             }
         },
 
-        clearImportPanel(action = "close"){
-            try{ clearInterval(zoteroRoam.citations.activeImport.check); zoteroRoam.citations.activeImport.check = null; } catch(e){};
+        clearImportPanel(action = "close", type = "citations"){
+            let importDiv = document.querySelector(`[zr-import="${type}"]`);
             switch(action){
                 case "close":
-                    zoteroRoam.interface.citations.overlay.querySelector(".bp3-dialog").setAttribute("side-panel", "hidden");
-                    zoteroRoam.citations.activeImport = null;
-                    zoteroRoam.interface.citations.overlay.querySelector(".options-library-list").innerHTML = ``;
-                    zoteroRoam.interface.citations.overlay.querySelector(".options-collections-list").innerHTML = ``;
+                    importDiv.closest(".bp3-dialog").setAttribute("side-panel", "hidden");
+                    if(type == "citations"){
+                        zoteroRoam.citations.activeImport = null;
+                    } else if(type == "weblinks"){
+                        zoteroRoam.webImport.activeImport = null;
+                    }
+                    importDiv.querySelector(".options-library-list").innerHTML = ``;
+                    importDiv.querySelector(".options-collections-list").innerHTML = ``;
                     break;
                 case "reset":
-                    zoteroRoam.citations.activeImport.items = [];
-                    zoteroRoam.citations.activeImport.outcome = null;
+                    if(type == "citations"){
+                        zoteroRoam.citations.activeImport.items = [];
+                        zoteroRoam.citations.activeImport.outcome = null;
+                    }
             }
             
-            let clearBtn = zoteroRoam.interface.citations.overlay.querySelector(`button[role="done"]`);
+            let clearBtn = importDiv.querySelector(`button[role="done"]`);
             if(clearBtn){
                 clearBtn.classList.remove("bp3-intent-success");
                 clearBtn.querySelector(".bp3-icon").classList.remove("bp3-icon-tick");
@@ -1422,13 +1481,16 @@
                 clearBtn.classList.add("bp3-intent-primary");
                 clearBtn.setAttribute("role", "add");
             }
-            zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`).setAttribute("disabled", "");
+            importDiv.querySelector(`button[role="add"]`).setAttribute("disabled", "");
             
-            zoteroRoam.interface.citations.overlay.querySelector("#zotero-roam-import-tags-list").value = ``;
-            zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").innerHTML = ``;
-            zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags = "[]";
-            zoteroRoam.interface.citations.overlay.querySelector(".import-selection-header").innerText = `Selected Items`;
-            zoteroRoam.interface.citations.overlay.querySelector(".import-items").innerHTML = ``;
+            // temporarily conditional, while I figure out the issue of the tags selection autocomplete
+            if(type == "citations"){
+                importDiv.querySelector(".zotero-roam-import-tags-list").value = ``;
+                importDiv.querySelector(".options-tags_selection").innerHTML = ``;
+                importDiv.querySelector(".options-tags_selection").dataset.tags = "[]";
+            }
+            importDiv.querySelector(".import-selection-header").innerText = `Selected Items`;
+            importDiv.querySelector(".import-items").innerHTML = ``;
 
         }
     }

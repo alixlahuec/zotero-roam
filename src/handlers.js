@@ -357,12 +357,51 @@
             }
         },
 
+        async importSelectedWeblinks(){
+
+            let importDiv = document.querySelector(`[zr-import="weblinks"]`);
+            let outcome = {};
+
+            // Retrieve import parameters
+            let lib = zoteroRoam.activeImport.currentLib;
+            let colls = Array.from(importDiv.querySelectorAll('.options-collections-list [name="collections"]')).filter(op => op.checked).map(op => op.value);
+            let tags = []; // temporary, while I figure out how to have the tag selection bar show up twice somehow
+
+            // Get checked items
+            let indices = Array.from(importDiv.querySelectorAll('[name="explo-weblink"]')).filter(op => op.checked).map(op => op.value);
+            let items = indices.map(i => zoteroRoam.webImport.activeImport.items[Number(i)]);
+
+            // Add in collections & tags
+            items.forEach((item, j) => {
+                items[j].collections = colls;
+                items[j].tags = tags.map(t => { return {tag: t} });
+            });
+            
+            // Write metadata to Zotero
+            outcome.harvest = items;
+            outcome.write = await zoteroRoam.write.importItems(items, lib);
+            outcome.write.identifiers = indices;
+
+            // Return outcome of the import process
+            zoteroRoam.events.emit('write', {
+                collections: colls,
+                identifiers: indices,
+                library: lib,
+                tags: tags,
+                outcome: outcome,
+                context: {
+                    block: zoteroRoam.webImport.currentBlock
+                }
+            })
+
+        },
+
         async importSelectedItems(){
 
             let outcome = {};
 
             // Retrieve import parameters
-            let lib = zoteroRoam.citations.activeImport.currentLib;
+            let lib = zoteroRoam.activeImport.currentLib;
             let colls = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-collections-list [name="collections"]`)).filter(op => op.checked).map(op => op.value);
             let identifiers = zoteroRoam.citations.activeImport.items;
             let tags = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags;

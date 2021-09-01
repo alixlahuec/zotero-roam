@@ -84,8 +84,8 @@
                     // Update the extension's information on library version
                     let latestVersion = req.headers.get('Last-Modified-Version');
                     if(latestVersion){ zoteroRoam.data.libraries[libIndex].version = latestVersion }
-                    zoteroRoam.citations.activeImport.libraries = zoteroRoam.utils.getLibraries();
-                    zoteroRoam.citations.activeImport.currentLib = zoteroRoam.citations.activeImport.libraries.find(lib => lib.path == zoteroRoam.citations.activeImport.currentLib.path);
+                    zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
+                    zoteroRoam.activeImport.currentLib = zoteroRoam.activeImport.libraries.find(lib => lib.path == zoteroRoam.activeImport.currentLib.path);
                     outcome = {
                         success: true,
                         data: reqResults
@@ -95,10 +95,10 @@
                     if(req.status == 412 && retry == true){
                         await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.library == library.path));
                         // Update the lib data for the active import
-                        zoteroRoam.citations.activeImport.libraries = zoteroRoam.utils.getLibraries();
-                        zoteroRoam.citations.activeImport.currentLib = zoteroRoam.citations.activeImport.libraries.find(lib => lib.path == zoteroRoam.citations.activeImport.currentLib.path);
+                        zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
+                        zoteroRoam.activeImport.currentLib = zoteroRoam.activeImport.libraries.find(lib => lib.path == zoteroRoam.activeImport.currentLib.path);
 
-                        outcome = await zoteroRoam.write.importItems(data, library = zoteroRoam.citations.activeImport.currentLib, retry = false);
+                        outcome = await zoteroRoam.write.importItems(data, library = zoteroRoam.activeImport.currentLib, retry = false);
                     } else {
                         console.log(`The request for ${req.url} returned a code of ${req.status} (${req.statusText}).`);
                         // If the request returned an API response but was not successful, log it in the outcome
@@ -120,7 +120,7 @@
         },
 
         async checkImport(reqResults){
-            let lib = zoteroRoam.citations.activeImport.currentLib;
+            let lib = zoteroRoam.activeImport.currentLib;
             let keys = Object.values(reqResults).map(it => it.data.key);
             let version = Object.values(reqResults)[0].version;
             let checkVersion = version;
