@@ -3695,7 +3695,7 @@ var zoteroRoam = {};
             let importDiv = document.querySelector(`[zr-import="${type}"]`);
             let currentImport = type == "citations" ? zoteroRoam.citations.activeImport : zoteroRoam.webImport.activeImport;
 
-            if((type == "citations" && currentImport == null) || (type == "weblinks" && currentImport.items == null)){
+            if(currentImport == null){
                 zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
                 zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                 zoteroRoam.interface.renderImportOptions(type = type);
@@ -3751,9 +3751,11 @@ var zoteroRoam = {};
         },
 
         renderImportWeblinks(){
-            let importDiv = document.querySelector(`[zr-import="weblinks"]`);
-            let selectedItems = importDiv.querySelectorAll(`[name="explo-weblink"]`).filter(i => i.checked);
-            zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest[Number(i.getAttribute('value'))]);
+            if(zoteroRoam.webImport.activeImport != null){
+                let importDiv = document.querySelector(`[zr-import="weblinks"]`);
+                let selectedItems = importDiv.querySelectorAll(`[name="explo-weblink"]`).filter(i => i.checked);
+                zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest[Number(i.getAttribute('value'))]);
+            }
         },
 
         renderImportOptions(type = "citations"){
