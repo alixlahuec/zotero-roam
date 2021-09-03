@@ -1333,7 +1333,8 @@
                 zoteroRoam.interface.renderImportWeblinks();
             }
 
-            if(zoteroRoam.activeImport.currentLib && currentImport.items.length > 0){
+            let any_select = currentImport ? currentImport.items.length > 0 : false;
+            if(any_select && zoteroRoam.activeImport.currentLib){
                 // Only enable the "Add" button if there is a library selected, & at least one item is selected
                 importDiv.querySelector(`button[role="add"]`).removeAttribute("disabled");
             } else {
