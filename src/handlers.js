@@ -368,8 +368,8 @@
             let tags = []; // temporary, while I figure out how to have the tag selection bar show up twice somehow
 
             // Get checked items
-            let indices = Array.from(importDiv.querySelectorAll('[name="explo-weblink"]')).filter(op => op.checked).map(op => op.value);
-            let items = indices.map(i => zoteroRoam.webImport.activeImport.items[Number(i)]);
+            let indices = Array.from(importDiv.querySelectorAll('[name="explo-weblink"]')).filter(op => op.checked);
+            let items = indices.map(i => zoteroRoam.webImport.activeImport.harvest[Number(i.getAttribute('value'))]);
 
             // Add in collections & tags
             items.forEach((item, j) => {

@@ -283,6 +283,8 @@
                 let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
                 overlay.querySelector('.main-panel .header-left').innerHTML = ``;
                 overlay.querySelector('.main-panel .rendered-div').innerHTML = `<p>Parsing links...</p>`;
+                overlay.querySelector('.bp3-dialog').setAttribute('side-panel', 'visible');
+                zoteroRoam.interface.triggerImport(type = "weblinks");
                 overlay.style.display = "block";
                 overlay.setAttribute("overlay-visible", "true");
 
@@ -293,9 +295,8 @@
                 });
                 let harvest = await Promise.all(citoidList);
                 zoteroRoam.webImport.activeImport = {
-                    harvest: harvest
-                };
-
+                    items: null
+                }
                 let successes = harvest.filter(cit => cit.success == true);
                 if(successes.length > 0){
                     zoteroRoam.interface.fillWebImportDialog(successes);
