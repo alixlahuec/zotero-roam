@@ -3379,6 +3379,7 @@ var zoteroRoam = {};
             let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
             overlay.style.display = "none";
             overlay.setAttribute("overlay-visible", "false");
+            overlay.querySelector('.bp3-dialog').setAttribute('side-panel', 'hidden');
         },
 
         closeCitationsOverlay(){
@@ -3753,8 +3754,7 @@ var zoteroRoam = {};
 
         renderImportWeblinks(){
             if(zoteroRoam.webImport.activeImport != null){
-                let importDiv = document.querySelector(`[zr-import="weblinks"]`);
-                let selectedItems = importDiv.querySelectorAll(`[name="explo-weblink"]`).filter(i => i.checked);
+                let selectedItems = Array.from(document.querySelectorAll(`[name="explo-weblink"]`)).filter(i => i.checked);
                 zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest[Number(i.getAttribute('value'))]);
             }
         },
