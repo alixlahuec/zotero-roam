@@ -2674,13 +2674,17 @@ var zoteroRoam = {};
                     }
                 } else {
                     let chck = e.target.closest('input[type="checkbox"]');
-                    // WebImport : select all
                     if(chck && chck.getAttribute('name') == 'selectAll'){
+                        // WebImport : select all
                         let status = chck.checked;
                         let webLinks = Array.from(document.querySelectorAll('.zotero-roam-auxiliary-overlay [name="explo-weblink"]'));
                         webLinks.forEach(lk => {
                             lk.checked = status;
                         });
+                        zoteroRoam.interface.triggerImport(type = "weblinks");
+                    } else if(chck && chck.getAttribute('name') == 'explo-weblink'){
+                        // WebImport : item checkboxes
+                        zoteroRoam.interface.triggerImport(type = "weblinks");
                     }
 
                 }
