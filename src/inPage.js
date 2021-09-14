@@ -536,20 +536,20 @@
             exploBtn.classList.add('zotero-roam-explo-import');
             exploBtn.innerHTML = `<span icon="geosearch" class="bp3-icon bp3-icon-geosearch"></span>`;
             // Get all blocks with trigger tags
-            let trigBlocks = Array.from(document.querySelectorAll('.rm-block:not([data-zr-explo]):not(.rm-block--ghost)')).filter(b => zoteroRoam.utils.matchArrays(tagList, JSON.parse(b.getAttribute('data-page-links'))));
+            let trigBlocks = Array.from(document.querySelectorAll('.rm-block:not(.rm-block--ghost)')).filter(b => zoteroRoam.utils.matchArrays(tagList, JSON.parse(b.getAttribute('data-page-links'))));
             trigBlocks.forEach(b => {
                 let links = b.querySelectorAll('.rm-block a:not(.rm-alias--page):not(.rm-alias--block)');
                 let firstElem = b.firstChild;
                 if(links.length > 0){
-                b.setAttribute('data-zr-explo', 'true');
-                if(!Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
-                    b.insertAdjacentElement('afterbegin', exploBtn.cloneNode(true));
-                }
+                    b.setAttribute('data-zr-explo', 'true');
+                    if(!Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
+                        b.insertAdjacentElement('afterbegin', exploBtn.cloneNode(true));
+                    }
                 } else {
-                b.setAttribute('data-zr-explo', 'false');
-                if(Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
-                    firstElem.remove();
-                }
+                    b.setAttribute('data-zr-explo', 'false');
+                    if(Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
+                        firstElem.remove();
+                    }
                 }
             })
         }
