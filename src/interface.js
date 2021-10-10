@@ -708,11 +708,9 @@
                 if(removeBtn !== null){
                     let tag = removeBtn.closest('.bp3-tag');
                     try{
-                        if(type == "citations"){
-                            let tagsSelection = importDiv.querySelector(".options-tags_selection");
-                            tagsSelection.dataset.tags = JSON.stringify(JSON.parse(tagsSelection.dataset.tags).filter(t => t!= tag.dataset.tag));
-                            tag.remove();
-                        }
+                        let tagsSelection = importDiv.querySelector(".options-tags_selection");
+                        tagsSelection.dataset.tags = JSON.stringify(JSON.parse(tagsSelection.dataset.tags).filter(t => t!= tag.dataset.tag));
+                        tag.remove();
                     } catch(e){
                         console.error(e);
                     }
@@ -1041,7 +1039,7 @@
             let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
             overlay.style.display = "none";
             overlay.setAttribute("overlay-visible", "false");
-            overlay.querySelector('.bp3-dialog').setAttribute('side-panel', 'hidden');
+            zoteroRoam.interface.clearImportPanel(action = "close", type = "weblinks");
         },
 
         closeCitationsOverlay(){
@@ -1531,9 +1529,9 @@
             importDiv.querySelector(`button[role="add"]`).setAttribute("disabled", "");
             
             importDiv.querySelector(".zotero-roam-import-tags-list").value = ``;
-                importDiv.querySelector(".options-tags_selection").innerHTML = ``;
-                importDiv.querySelector(".options-tags_selection").dataset.tags = "[]";
-                
+            importDiv.querySelector(".options-tags_selection").innerHTML = ``;
+            importDiv.querySelector(".options-tags_selection").dataset.tags = "[]";
+
             if(type == "citations"){
                 // Unique to citations
                 importDiv.querySelector(".import-selection-header").innerText = `Selected Items`;
