@@ -1009,7 +1009,7 @@
 
             let webItems = items.map((cit, j) => {
                 return {
-                    abstract: cit.data.abstractNote,
+                    abstract: cit.data.abstractNote || "",
                     creators: cit.data.creators ? zoteroRoam.formatting.getCreators(cit, {creators_as: "string", brackets: false, use_type: false}) : "",
                     publication: cit.data.publicationTitle || cit.data.bookTitle || cit.data.websiteTitle || "",
                     title: cit.data.title || "",
@@ -1515,6 +1515,7 @@
                         // Reset all checkboxes
                         Array.from(importDiv.closest('.bp3-dialog').querySelectorAll(`[name="explo-weblink"]`)).forEach(lk => {lk.checked = false});
                         importDiv.closest('.bp3-dialog').querySelectorAll(`[name="selectAll"]`).checked = false;
+                        zoteroRoam.webImport.activeImport.items = [];
                     }
             }
             
