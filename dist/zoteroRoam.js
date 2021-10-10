@@ -3060,12 +3060,24 @@ var zoteroRoam = {};
                         break;
                     case "add":
                         btn.setAttribute("disabled", "");
+                        let importOutcome = await zoteroRoam.handlers.importSelectedItems();
                         // Citations panel
                         if(type == "citations"){
-                            let importOutcome = await zoteroRoam.handlers.importSelectedItems();
                             zoteroRoam.citations.activeImport.outcome = importOutcome;
                             zoteroRoam.interface.renderImportResults(importOutcome);
+                        } else if(type == "weblinks"){
+                            zoteroRoam.webImport.activeImport.outcome = importOutcome;
                         }
+                        // Update the "Add ..." button
+                        btn.classList.remove("bp3-intent-primary");
+                        let icn = btn.querySelector(".bp3-icon");
+                        icn.classList.remove("bp3-icon-inheritance");
+                        icn.classList.add("bp3-icon-tick");
+                        icn.setAttribute("icon", "tick");
+                        btn.querySelector(".bp3-button-text").innerText = "Done";
+                        btn.classList.add("bp3-intent-success");
+                        btn.removeAttribute("disabled");
+                        btn.setAttribute("role", "done");
                         break;
                     case "done":
                         zoteroRoam.interface.clearImportPanel(action = "reset", type = type);
@@ -3846,16 +3858,6 @@ var zoteroRoam = {};
                         }
                 }
             });
-
-            let nextActionBtn = zoteroRoam.interface.citations.overlay.querySelector(`button[role="add"]`);
-            nextActionBtn.classList.remove("bp3-intent-primary");
-            nextActionBtn.querySelector(".bp3-icon").classList.remove("bp3-icon-inheritance");
-            nextActionBtn.querySelector(".bp3-icon").classList.add("bp3-icon-tick");
-            nextActionBtn.querySelector(".bp3-icon").setAttribute("icon", "tick");
-            nextActionBtn.querySelector(".bp3-button-text").innerText = "Done";
-            nextActionBtn.classList.add("bp3-intent-success");
-            nextActionBtn.removeAttribute("disabled");
-            nextActionBtn.setAttribute("role", "done");
         },
 
         selectImportLibrary(type = "citations"){
