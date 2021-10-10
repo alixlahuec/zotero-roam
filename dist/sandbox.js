@@ -4713,12 +4713,12 @@ var zoteroRoam = {};
                 let firstElem = b.firstChild;
                 if(links.length > 0){
                     b.setAttribute('data-zr-explo', 'true');
-                    if(!Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
+                    if(!Array.from(firstElem.classList).includes('zotero-roam-explo-import')){
                         b.insertAdjacentElement('afterbegin', exploBtn.cloneNode(true));
                     }
                 } else {
                     b.setAttribute('data-zr-explo', 'false');
-                    if(Array.from(firstElem.classList).includes('bp3-icon-geosearch')){
+                    if(Array.from(firstElem.classList).includes('zotero-roam-explo-import')){
                         firstElem.remove();
                     }
                 }
