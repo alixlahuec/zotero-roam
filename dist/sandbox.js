@@ -3881,8 +3881,8 @@ var zoteroRoam = {};
                         zoteroRoam.citations.activeImport.outcome = null;
                     } else if(type == "weblinks"){
                         // Reset all checkboxes
-                        Array.from(importDiv.querySelectorAll(`[name="explo-weblink"]`)).forEach(lk => {lk.checked = false});
-                        importDiv.querySelectorAll(`[name="selectAll"]`).checked = false;
+                        Array.from(importDiv.closest('.bp3-dialog').querySelectorAll(`[name="explo-weblink"]`)).forEach(lk => {lk.checked = false});
+                        importDiv.closest('.bp3-dialog').querySelectorAll(`[name="selectAll"]`).checked = false;
                     }
             }
             
