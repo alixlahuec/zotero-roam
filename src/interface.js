@@ -683,7 +683,7 @@
                         break;
                     case "add":
                         btn.setAttribute("disabled", "");
-                        let importOutcome = await zoteroRoam.handlers.importSelectedItems();
+                        let importOutcome = await zoteroRoam.handlers.importSelectedItems(importDiv);
                         // Citations panel
                         if(type == "citations"){
                             zoteroRoam.citations.activeImport.outcome = importOutcome;
@@ -1007,28 +1007,28 @@
         fillWebImportDialog(items){
             let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
 
-            let webItems = items.map(cit => {
+            let webItems = items.map((cit, j) => {
                 return {
                     abstract: cit.data.abstractNote,
                     creators: cit.data.creators ? zoteroRoam.formatting.getCreators(cit, {creators_as: "string", brackets: false, use_type: false}) : "",
                     publication: cit.data.publicationTitle || cit.data.bookTitle || cit.data.websiteTitle || "",
                     title: cit.data.title || "",
                     type: zoteroRoam.formatting.getItemType(cit),
-                    url: cit.query
+                    url: cit.query,
+                    item_index: j
                 }
             });
-            zoteroRoam.webImport.activeImport.harvest = webItems;
 
             let suffix = webItems.length > 1 ? "s" : "";
             overlay.querySelector('.main-panel .header-left').innerHTML = `
             ${zoteroRoam.utils.renderBP3_option(string=`<h5 class="panel-tt" list-type="weblinks">${webItems.length} linked resource${suffix}</h5>`, type = "checkbox", depth = 0, {varName: "selectAll"})}
             `;
 
-            let itemsList = webItems.map((item, j) => {
+            let itemsList = webItems.map(item => {
                 return `
                 <li class="zotero-roam-list-item zr-explo-list-item">
                     <div class="bp3-menu-item" label="link-${j}">
-                        <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${j}`})}</span>
+                        <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${item.item_index}`})}</span>
                         <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                             <span class="zotero-roam-citation-metadata-contents" style="padding-right:10px;">${item.type}${item.creators ? " | " + item.creators : ""}</span>
                             ${item.publication ? `<span class="bp3-text-disabled" style="font-size:0.85em;display:block;white-space:break-spaces;">${item.publication}</span>` : ""}
@@ -1426,8 +1426,8 @@
 
         renderImportWeblinks(){
             if(zoteroRoam.webImport.activeImport != null){
-                let selectedItems = Array.from(document.querySelectorAll(`[name="explo-weblink"]`)).filter(i => i.checked);
-                zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest[Number(i.getAttribute('value'))]);
+                let selectedItems = Array.from(document.querySelectorAll(`[name="explo-weblink"]`)).filter(op => op.checked);
+                zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest.find(cit => cit.item_index == Number(i.getAttribute('value'))));
             }
         },
 

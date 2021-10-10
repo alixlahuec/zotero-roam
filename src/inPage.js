@@ -296,6 +296,7 @@
                     items: null
                 }
                 let successes = harvest.filter(cit => cit.success == true);
+                zoteroRoam.webImport.activeImport.harvest = successes;
                 if(successes.length > 0){
                     zoteroRoam.interface.fillWebImportDialog(successes);
                 } else {

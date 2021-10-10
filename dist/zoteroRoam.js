@@ -1739,87 +1739,78 @@ var zoteroRoam = {};
             }
         },
 
-        async importSelectedWeblinks(){
+        async importSelectedItems(importDiv){
 
-            let importDiv = document.querySelector(`[zr-import="weblinks"]`);
             let outcome = {};
+            let type = importDiv.getAttribute('zr-import');
 
             // Retrieve import parameters
             let lib = zoteroRoam.activeImport.currentLib;
-            let colls = Array.from(importDiv.querySelectorAll('.options-collections-list [name="collections"]')).filter(op => op.checked).map(op => op.value);
-            let tags = []; // temporary, while I figure out how to have the tag selection bar show up twice somehow
-
-            // Get checked items
-            let indices = Array.from(importDiv.querySelectorAll('[name="explo-weblink"]')).filter(op => op.checked);
-            let items = indices.map(i => zoteroRoam.webImport.activeImport.harvest[Number(i.getAttribute('value'))]);
-
-            // Add in collections & tags
-            items.forEach((item, j) => {
-                items[j].collections = colls;
-                items[j].tags = tags.map(t => { return {tag: t} });
-            });
-            
-            // Write metadata to Zotero
-            outcome.harvest = items;
-            outcome.write = await zoteroRoam.write.importItems(items, lib);
-            outcome.write.identifiers = indices;
-
-            // Return outcome of the import process
-            zoteroRoam.events.emit('write', {
-                collections: colls,
-                identifiers: indices,
-                library: lib,
-                tags: tags,
-                outcome: outcome,
-                context: {
-                    block: zoteroRoam.webImport.currentBlock
-                }
-            })
-
-        },
-
-        async importSelectedItems(){
-
-            let outcome = {};
-
-            // Retrieve import parameters
-            let lib = zoteroRoam.activeImport.currentLib;
-            let colls = Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(`.options-collections-list [name="collections"]`)).filter(op => op.checked).map(op => op.value);
-            let identifiers = zoteroRoam.citations.activeImport.items;
-            let tags = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection").dataset.tags;
+            let colls = Array.from(importDiv.querySelectorAll(`.options-collections-list [name="collections"]`)).filter(op => op.checked).map(op => op.value);
+            let tags = importDiv.querySelector(".options-tags_selection").dataset.tags;
             tags = JSON.parse(tags);
 
-            // Request metadata for each item
-            let harvestCalls = [];
-            identifiers.forEach(id => {
-                harvestCalls.push(zoteroRoam.handlers.requestCitoid(query = id, {collections: colls, tag_with: tags}));
-            });
-            outcome.harvest = await Promise.all(harvestCalls);
+            if(type == "citations"){
+                let identifiers = zoteroRoam.citations.activeImport.items;
+                // Request metadata for each item
+                let harvestCalls = [];
+                identifiers.forEach(id => {
+                    harvestCalls.push(zoteroRoam.handlers.requestCitoid(query = id, {collections: colls, tag_with: tags}));
+                });
+                outcome.harvest = await Promise.all(harvestCalls);
 
-            // Write obtained metadata to Zotero
-            let toWrite = {identifiers: [], data: []};
-            outcome.harvest.forEach(res => {
-                if(res.success == true){
-                    toWrite.identifiers.push(res.query);
-                    toWrite.data.push(res.data);
-                }
-            });
-            outcome.write = await zoteroRoam.write.importItems(toWrite.data, lib);
-            outcome.write.identifiers = toWrite.identifiers;
+                // Write obtained metadata to Zotero
+                let toWrite = {identifiers: [], data: []};
+                outcome.harvest.forEach(res => {
+                    if(res.success == true){
+                        toWrite.identifiers.push(res.query);
+                        toWrite.data.push(res.data);
+                    }
+                });
+                outcome.write = await zoteroRoam.write.importItems(toWrite.data, lib);
+                outcome.write.identifiers = toWrite.identifiers;
 
-            // Return outcome of the import process
-            zoteroRoam.events.emit('write', {
-                collections: colls,
-                identifiers: identifiers,
-                library: lib,
-                tags: tags,
-                outcome: outcome,
-                context: {
-                    doi: zoteroRoam.citations.currentDOI,
-                    key: zoteroRoam.citations.currentCitekey,
-                    type: zoteroRoam.citations.currentType
-                }
-            })
+                // Return outcome of the import process
+                zoteroRoam.events.emit('write', {
+                    collections: colls,
+                    identifiers: identifiers,
+                    library: lib,
+                    tags: tags,
+                    outcome: outcome,
+                    context: {
+                        doi: zoteroRoam.citations.currentDOI,
+                        key: zoteroRoam.citations.currentCitekey,
+                        type: zoteroRoam.citations.currentType
+                    }
+                })
+            } else if(type == "weblinks"){
+                let items = zoteroRoam.webImport.activeImport.items;
+                let identifiers = items.map(it => it.data.url);
+
+                // Add in collections & tags
+                items.forEach((item, j) => {
+                    items[j].collections = colls;
+                    items[j].tags = tags.map(t => { return {tag: t} });
+                });
+                outcome.harvest = items;
+
+                // Write metadata to Zotero
+                outcome.write = await zoteroRoam.write.importItems(items, lib);
+                outcome.write.identifiers = identifiers;
+
+                // Return outcome of the import process
+                zoteroRoam.events.emit('write', {
+                    collections: colls,
+                    identifiers: identifiers,
+                    library: lib,
+                    tags: tags,
+                    outcome: outcome,
+                    context: {
+                        block: zoteroRoam.webImport.currentBlock
+                    }
+                })
+            }
+            
             console.log(outcome);
             return outcome;
 
@@ -3060,7 +3051,7 @@ var zoteroRoam = {};
                         break;
                     case "add":
                         btn.setAttribute("disabled", "");
-                        let importOutcome = await zoteroRoam.handlers.importSelectedItems();
+                        let importOutcome = await zoteroRoam.handlers.importSelectedItems(importDiv);
                         // Citations panel
                         if(type == "citations"){
                             zoteroRoam.citations.activeImport.outcome = importOutcome;
@@ -3384,28 +3375,28 @@ var zoteroRoam = {};
         fillWebImportDialog(items){
             let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
 
-            let webItems = items.map(cit => {
+            let webItems = items.map((cit, j) => {
                 return {
                     abstract: cit.data.abstractNote,
                     creators: cit.data.creators ? zoteroRoam.formatting.getCreators(cit, {creators_as: "string", brackets: false, use_type: false}) : "",
                     publication: cit.data.publicationTitle || cit.data.bookTitle || cit.data.websiteTitle || "",
                     title: cit.data.title || "",
                     type: zoteroRoam.formatting.getItemType(cit),
-                    url: cit.query
+                    url: cit.query,
+                    item_index: j
                 }
             });
-            zoteroRoam.webImport.activeImport.harvest = webItems;
 
             let suffix = webItems.length > 1 ? "s" : "";
             overlay.querySelector('.main-panel .header-left').innerHTML = `
             ${zoteroRoam.utils.renderBP3_option(string=`<h5 class="panel-tt" list-type="weblinks">${webItems.length} linked resource${suffix}</h5>`, type = "checkbox", depth = 0, {varName: "selectAll"})}
             `;
 
-            let itemsList = webItems.map((item, j) => {
+            let itemsList = webItems.map(item => {
                 return `
                 <li class="zotero-roam-list-item zr-explo-list-item">
                     <div class="bp3-menu-item" label="link-${j}">
-                        <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${j}`})}</span>
+                        <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${item.item_index}`})}</span>
                         <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                             <span class="zotero-roam-citation-metadata-contents" style="padding-right:10px;">${item.type}${item.creators ? " | " + item.creators : ""}</span>
                             ${item.publication ? `<span class="bp3-text-disabled" style="font-size:0.85em;display:block;white-space:break-spaces;">${item.publication}</span>` : ""}
@@ -3803,8 +3794,8 @@ var zoteroRoam = {};
 
         renderImportWeblinks(){
             if(zoteroRoam.webImport.activeImport != null){
-                let selectedItems = Array.from(document.querySelectorAll(`[name="explo-weblink"]`)).filter(i => i.checked);
-                zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest[Number(i.getAttribute('value'))]);
+                let selectedItems = Array.from(document.querySelectorAll(`[name="explo-weblink"]`)).filter(op => op.checked);
+                zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest.find(cit => cit.item_index == Number(i.getAttribute('value'))));
             }
         },
 
@@ -4471,6 +4462,7 @@ var zoteroRoam = {};
                     items: null
                 }
                 let successes = harvest.filter(cit => cit.success == true);
+                zoteroRoam.webImport.activeImport.harvest = successes;
                 if(successes.length > 0){
                     zoteroRoam.interface.fillWebImportDialog(successes);
                 } else {
