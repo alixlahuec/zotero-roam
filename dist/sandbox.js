@@ -1785,7 +1785,7 @@ var zoteroRoam = {};
                 })
             } else if(type == "weblinks"){
                 let items = zoteroRoam.webImport.activeImport.items;
-                let identifiers = items.map(it => it.data.url);
+                let identifiers = items.map(it => it.url);
 
                 // Add in collections & tags
                 items.forEach((item, j) => {
@@ -3795,7 +3795,7 @@ var zoteroRoam = {};
         renderImportWeblinks(){
             if(zoteroRoam.webImport.activeImport != null){
                 let selectedItems = Array.from(document.querySelectorAll(`[name="explo-weblink"]`)).filter(op => op.checked);
-                zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest.find(cit => cit.item_index == Number(i.getAttribute('value'))).data);
+                zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest[Number(i.getAttribute('value'))].data);
             }
         },
 

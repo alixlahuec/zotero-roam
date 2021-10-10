@@ -403,7 +403,7 @@
                 })
             } else if(type == "weblinks"){
                 let items = zoteroRoam.webImport.activeImport.items;
-                let identifiers = items.map(it => it.data.url);
+                let identifiers = items.map(it => it.url);
 
                 // Add in collections & tags
                 items.forEach((item, j) => {
