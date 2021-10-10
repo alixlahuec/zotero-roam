@@ -268,8 +268,41 @@
             let optionsColl = document.createElement('div');
             optionsColl.classList.add("options-collections-list");
 
+            let optionsTags = document.createElement('div');
+            optionsTags.classList.add("options-tags");
+
+            let tagsSelect = document.createElement('div');
+            tagsSelect.classList.add("options-tags-select");
+            tagsSelect.classList.add("bp3-input-group");
+            tagsSelect.classList.add("bp3-small");
+
+            let tagsIcon = document.createElement('span');
+            tagsIcon.classList.add("bp3-icon");
+            tagsIcon.classList.add("bp3-icon-tag");
+            tagsIcon.classList.add("bp3-intent-primary");
+
+            let tagsSearchBar = document.createElement('input');
+            tagsSearchBar.id = "zotero-roam-tagselector_auxiliary";
+            tagsSearchBar.tabIndex = "1";
+            tagsSearchBar.type = "text";
+            tagsSearchBar.classList.add("zotero-roam-tags-autocomplete");
+            tagsSearchBar.classList.add("bp3-input");
+            tagsSearchBar.classList.add("bp3-fill");
+            tagsSearchBar.setAttribute("autocomplete", "off");
+
+            let tagsSelection = document.createElement('div');
+            tagsSelection.classList.add("options-tags_selection");
+            tagsSelection.setAttribute("data-tags", "[]");
+
+            tagsSelect.appendChild(tagsIcon);
+            tagsSelect.appendChild(tagsSearchBar);
+
+            optionsTags.appendChild(tagsSelect);
+            optionsTags.appendChild(tagsSelection);
+
             importOptions.appendChild(optionsLib);
             importOptions.appendChild(optionsColl);
+            importOptions.appendChild(optionsTags);
 
             // Attribute a role to the side panel
             dialogSidePanel.setAttribute('zr-import', 'weblinks');
@@ -549,9 +582,10 @@
             tagsIcon.classList.add("bp3-intent-primary");
 
             let tagsSearchBar = document.createElement('input');
-            tagsSearchBar.id = "zotero-roam-tags-autocomplete";
+            tagsSearchBar.id = "zotero-roam-tagselector_citations";
             tagsSearchBar.tabIndex = "1";
             tagsSearchBar.type = "text";
+            tagsSearchBar.classList.add("zotero-roam-tags-autocomplete");
             tagsSearchBar.classList.add("bp3-input");
             tagsSearchBar.classList.add("bp3-fill");
             tagsSearchBar.setAttribute("autocomplete", "off");
@@ -1326,6 +1360,7 @@
 
             if(currentImport == null){
                 zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
+                zoteroRoam.tagSelection[type == "citations" ? "cit_panel" : "aux_panel"].init();
                 zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                 zoteroRoam.interface.renderImportOptions(type = type);
             } else if(type == "citations" && importDiv.querySelector(`button[role="done"]`)){
@@ -1358,9 +1393,8 @@
                     items: [],
                     outcome: null
                 }
-                zoteroRoam.tagSelection.autocomplete.init();
                 zoteroRoam.interface.triggerImport(type = "citations", element);
-                importDiv.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
+                importDiv.closest(".bp3-dialog").setAttribute("side-panel", "visible");
             } else {
                 if(!zoteroRoam.citations.activeImport.items.includes(identifier)){
                     zoteroRoam.citations.activeImport.items.push(identifier);
@@ -1496,11 +1530,11 @@
             }
             importDiv.querySelector(`button[role="add"]`).setAttribute("disabled", "");
             
-            // temporarily conditional, while I figure out the issue of the tags selection autocomplete
-            if(type == "citations"){
-                importDiv.querySelector(".zotero-roam-import-tags-list").value = ``;
+            importDiv.querySelector(".zotero-roam-import-tags-list").value = ``;
                 importDiv.querySelector(".options-tags_selection").innerHTML = ``;
                 importDiv.querySelector(".options-tags_selection").dataset.tags = "[]";
+                
+            if(type == "citations"){
                 // Unique to citations
                 importDiv.querySelector(".import-selection-header").innerText = `Selected Items`;
                 importDiv.querySelector(".import-items").innerHTML = ``;

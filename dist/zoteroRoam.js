@@ -88,7 +88,7 @@ var zoteroRoam = {};
 
         webImport: {currentBlock: null, activeImport: null},
         
-        tagSelection: {autocomplete: null},
+        tagSelection: {cit_panel: null, aux_panel: null},
         
         config: {
             /** autoComplete configuration for the library search panel */
@@ -322,84 +322,85 @@ var zoteroRoam = {};
                     }
                 }
             },
-            /** autoComplete configuration for the tag selection in the 'Add to Zotero' side panel */
-            tagSelection: {
-                data: {
-                    /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
-                    src: async function(query){
-                        let roamPages = zoteroRoam.data.roamPages;
-                        let hasQuery = roamPages.findIndex(p => p.title == query);
-                        if(hasQuery == -1){
-                            return [{title: query, identity: "self"}, ...roamPages];
-                        } else {
-                            roamPages[hasQuery].identity = "self";
-                            return roamPages;
+            /** Module for tag selector */
+            tagSelection: (selector, index) => {
+                return new autoComplete({
+                    data: {
+                        /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
+                        src: async function(query){
+                            let roamPages = zoteroRoam.data.roamPages;
+                            let hasQuery = roamPages.findIndex(p => p.title == query);
+                            if(hasQuery == -1){
+                                return [{title: query, identity: "self"}, ...roamPages];
+                            } else {
+                                roamPages[hasQuery].identity = "self";
+                                return roamPages;
+                            }
+                        },
+                        keys: ['title'],
+                        /** @returns {Array} The list of existing Roam pages, with the current query always at the top */
+                        filter: (list) => {
+                            return list.sort((a,b) => {
+                                if(a.value.identity && a.value.identity == "self"){
+                                    return -1000;
+                                } else {
+                                    return a.value.title.length - b.value.title.length;
+                                }
+                            })
                         }
                     },
-                    keys: ['title'],
-                    /** @returns {Array} The list of existing Roam pages, with the current query always at the top */
-                    filter: (list) => {
-                        return list.sort((a,b) => {
-                            if(a.value.identity && a.value.identity == "self"){
-                                return -1000;
-                            } else {
-                                return a.value.title.length - b.value.title.length;
+                    wrapper: false,
+                    selector: selector,
+                    /** @returns {boolean} Indicates whether the search should be run */
+                    trigger: (query) => {
+                        if(query.length == 0){
+                            /** Close the selection dropdown if the query is cleared from the searchbox */
+                            zoteroRoam.tagSelection[`${index}`].close();
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    },
+                    searchEngine: (query, record) => {
+                        return zoteroRoam.utils.multiwordMatch(query, record);
+                    },
+                    placeHolder : "Add tags...",
+                    resultsList: {
+                        class: "zotero-roam-import-tags-list",
+                        maxResults: 20,
+                        /**
+                         * Controls the rendering of the results list
+                         * @param {Element} list - The DOM Element corresponding to the results list 
+                         * @param {object} data - The dataset containing the search results
+                         */
+                        element: (list, data) => {
+                            list.classList.add("bp3-menu");
+                            list.classList.add("bp3-elevation");
+                            if(data.results.length > 0){
+                                try{
+                                    zoteroRoam.tagSelection[`${index}`].goTo(0);
+                                } catch(e){};
                             }
-                        })
-                    }
-                },
-                selector: '#zotero-roam-tags-autocomplete',
-                wrapper: false,
-                /** @returns {boolean} Indicates whether the search should be run */
-                trigger: (query) => {
-                    if(query.length == 0){
-                        /** Close the selection dropdown if the query is cleared from the searchbox */
-                        zoteroRoam.tagSelection.autocomplete.close();
-                        return false;
-                    } else {
-                        return true;
-                    }
-                },
-                searchEngine: (query, record) => {
-                    return zoteroRoam.utils.multiwordMatch(query, record);
-                },
-                placeHolder : "Add tags...",
-                resultsList: {
-                    class: "zotero-roam-import-tags-list",
-                    id: "zotero-roam-import-tags-list",
-                    maxResults: 20,
-                    /**
-                     * Controls the rendering of the results list
-                     * @param {Element} list - The DOM Element corresponding to the results list 
-                     * @param {object} data - The dataset containing the search results
-                     */
-                    element: (list, data) => {
-                        list.classList.add("bp3-menu");
-                        list.classList.add("bp3-elevation");
-                        if(data.results.length > 0){
-                            try{
-                                zoteroRoam.tagSelection.autocomplete.goTo(0);
-                            } catch(e){};
+                        }
+                    },
+                    events: {
+                        input: {
+                            blur: (event) => {
+                                document.querySelector(`${selector}`).value = ``;
+                                zoteroRoam.tagSelection[`${index}`].close();
+                            },
+                            selection: (event) => {
+                                let feedback = event.detail;
+                                let selection = document.querySelector(selector).closest('.options-tags').querySelector(".options-tags_selection");
+                                selection.innerHTML += zoteroRoam.utils.renderBP3Tag(string = feedback.selection.value.title, {tagRemove: true, tagAttribute: `data-tag="${feedback.selection.value.title}"`});
+                                let selectedTags = JSON.parse(selection.dataset.tags);
+                                selectedTags.push(feedback.selection.value.title);
+                                selection.dataset.tags = JSON.stringify(selectedTags);
+                                document.querySelector(`${selector}`).value = "";
+                            }
                         }
                     }
-                },
-                events: {
-                    input: {
-                        blur: (event) => {
-                            zoteroRoam.interface.citations.overlay.querySelector(`${zoteroRoam.config.tagSelection.selector}`).value = ``;
-                            zoteroRoam.tagSelection.autocomplete.close();
-                        },
-                        selection: (event) => {
-                            let feedback = event.detail;
-                            let selection = zoteroRoam.interface.citations.overlay.querySelector(".options-tags_selection");
-                            selection.innerHTML += zoteroRoam.utils.renderBP3Tag(string = feedback.selection.value.title, {tagRemove: true, tagAttribute: `data-tag="${feedback.selection.value.title}"`});
-                            let selectedTags = JSON.parse(selection.dataset.tags);
-                            selectedTags.push(feedback.selection.value.title);
-                            selection.dataset.tags = JSON.stringify(selectedTags);
-                            document.querySelector(`${zoteroRoam.config.tagSelection.selector}`).value = "";
-                        }
-                    }
-                }
+                });
             },
             /** tribute configuration for the inline tribute */
             tribute: {
@@ -616,7 +617,7 @@ var zoteroRoam = {};
             .options-tags-select{flex: 1 0 50%;}
             .options-tags_selection{flex: 1 0 50%;padding:0px 8px;}
             .options-tags_selection .bp3-tag{word-break:break-word;}
-            #zotero-roam-tags-autocomplete{box-shadow:none;background:none;}
+            .zotero-roam-tags-autocomplete{box-shadow:none;background:none;}
             .zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
             .zotero-roam-import-tags-list > li{padding:3px 5px;}
             li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;background:#f9fafb;}
@@ -2644,8 +2645,41 @@ var zoteroRoam = {};
             let optionsColl = document.createElement('div');
             optionsColl.classList.add("options-collections-list");
 
+            let optionsTags = document.createElement('div');
+            optionsTags.classList.add("options-tags");
+
+            let tagsSelect = document.createElement('div');
+            tagsSelect.classList.add("options-tags-select");
+            tagsSelect.classList.add("bp3-input-group");
+            tagsSelect.classList.add("bp3-small");
+
+            let tagsIcon = document.createElement('span');
+            tagsIcon.classList.add("bp3-icon");
+            tagsIcon.classList.add("bp3-icon-tag");
+            tagsIcon.classList.add("bp3-intent-primary");
+
+            let tagsSearchBar = document.createElement('input');
+            tagsSearchBar.id = "zotero-roam-tagselector_auxiliary";
+            tagsSearchBar.tabIndex = "1";
+            tagsSearchBar.type = "text";
+            tagsSearchBar.classList.add("zotero-roam-tags-autocomplete");
+            tagsSearchBar.classList.add("bp3-input");
+            tagsSearchBar.classList.add("bp3-fill");
+            tagsSearchBar.setAttribute("autocomplete", "off");
+
+            let tagsSelection = document.createElement('div');
+            tagsSelection.classList.add("options-tags_selection");
+            tagsSelection.setAttribute("data-tags", "[]");
+
+            tagsSelect.appendChild(tagsIcon);
+            tagsSelect.appendChild(tagsSearchBar);
+
+            optionsTags.appendChild(tagsSelect);
+            optionsTags.appendChild(tagsSelection);
+
             importOptions.appendChild(optionsLib);
             importOptions.appendChild(optionsColl);
+            importOptions.appendChild(optionsTags);
 
             // Attribute a role to the side panel
             dialogSidePanel.setAttribute('zr-import', 'weblinks');
@@ -2925,9 +2959,10 @@ var zoteroRoam = {};
             tagsIcon.classList.add("bp3-intent-primary");
 
             let tagsSearchBar = document.createElement('input');
-            tagsSearchBar.id = "zotero-roam-tags-autocomplete";
+            tagsSearchBar.id = "zotero-roam-tagselector_citations";
             tagsSearchBar.tabIndex = "1";
             tagsSearchBar.type = "text";
+            tagsSearchBar.classList.add("zotero-roam-tags-autocomplete");
             tagsSearchBar.classList.add("bp3-input");
             tagsSearchBar.classList.add("bp3-fill");
             tagsSearchBar.setAttribute("autocomplete", "off");
@@ -3702,6 +3737,7 @@ var zoteroRoam = {};
 
             if(currentImport == null){
                 zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
+                zoteroRoam.tagSelection[type == "citations" ? "cit_panel" : "aux_panel"].init();
                 zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                 zoteroRoam.interface.renderImportOptions(type = type);
             } else if(type == "citations" && importDiv.querySelector(`button[role="done"]`)){
@@ -3734,9 +3770,8 @@ var zoteroRoam = {};
                     items: [],
                     outcome: null
                 }
-                zoteroRoam.tagSelection.autocomplete.init();
                 zoteroRoam.interface.triggerImport(type = "citations", element);
-                importDiv.querySelector(".bp3-dialog").setAttribute("side-panel", "visible");
+                importDiv.closest(".bp3-dialog").setAttribute("side-panel", "visible");
             } else {
                 if(!zoteroRoam.citations.activeImport.items.includes(identifier)){
                     zoteroRoam.citations.activeImport.items.push(identifier);
@@ -3872,11 +3907,11 @@ var zoteroRoam = {};
             }
             importDiv.querySelector(`button[role="add"]`).setAttribute("disabled", "");
             
-            // temporarily conditional, while I figure out the issue of the tags selection autocomplete
-            if(type == "citations"){
-                importDiv.querySelector(".zotero-roam-import-tags-list").value = ``;
+            importDiv.querySelector(".zotero-roam-import-tags-list").value = ``;
                 importDiv.querySelector(".options-tags_selection").innerHTML = ``;
                 importDiv.querySelector(".options-tags_selection").dataset.tags = "[]";
+                
+            if(type == "citations"){
                 // Unique to citations
                 importDiv.querySelector(".import-selection-header").innerText = `Selected Items`;
                 importDiv.querySelector(".import-items").innerHTML = ``;
@@ -3947,11 +3982,17 @@ var zoteroRoam = {};
                     zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
                     zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
                 }
-                // Setup the tag selection autoComplete object
-                if(zoteroRoam.tagSelection.autocomplete == null){
-                    zoteroRoam.tagSelection.autocomplete = new autoComplete(zoteroRoam.config.tagSelection);
+                // Setup the tag selection autoComplete (citations panel)
+                if(zoteroRoam.tagSelection.cit_panel == null){
+                    zoteroRoam.tagSelection.cit_panel = zoteroRoam.config.tagSelection(selector = "#zotero-roam-tagselector_citations", index = "cit_panel");
                 } else {
-                    zoteroRoam.tagSelection.autocomplete.init();
+                    zoteroRoam.tagSelection.cit_panel.init();
+                }
+                // Setup the tag selection autoComplete (auxiliary panel)
+                if(zoteroRoam.tagSelection.aux_panel == null){
+                    zoteroRoam.tagSelection.aux_panel = zoteroRoam.config.tagSelection(selector = "#zotero-roam-tagselector_auxiliary", index = "aux_panel");
+                } else {
+                    zoteroRoam.tagSelection.aux_panel.init();
                 }
                 // Setup contextmenu event for the extension's icon
                 zoteroRoam.interface.icon.addEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
@@ -3998,8 +4039,11 @@ var zoteroRoam = {};
             if(zoteroRoam.citations.autocomplete !== null){
                 zoteroRoam.citations.autocomplete.unInit();
             }
-            if(zoteroRoam.tagSelection.autocomplete !== null){
-                zoteroRoam.tagSelection.autocomplete.unInit();
+            if(zoteroRoam.tagSelection.cit_panel !== null){
+                zoteroRoam.tagSelection.cit_panel.unInit();
+            }
+            if(zoteroRoam.tagSelection.aux_panel !== null){
+                zoteroRoam.tagSelection.aux_panel.unInit();
             }
 
             // Remove in-page menus
@@ -4290,7 +4334,6 @@ var zoteroRoam = {};
                         listDiv.classList.add('bp3-align-left');
                         listDiv.classList.add('bp3-vertical');
                         listDiv.innerHTML = zoteroRoam.utils.renderBP3Button_group(string = `${addedOn.length} item${addedOn.length > 1 ? "s" : ""} added`, {icon: "calendar", buttonClass: "zotero-roam-page-added-on", buttonAttribute: `data-title="${title}" data-keys=${JSON.stringify(itemKeys)}`});
-                        page.parentElement.style.overflow = "auto";
                         page.insertAdjacentElement('afterend', listDiv);
                     }
                 } else {
@@ -4318,7 +4361,6 @@ var zoteroRoam = {};
                         ${tagBtn}
                         ${abstractBtn}
                         `;
-                        page.parentElement.style.overflow = "auto";
                         page.insertAdjacentElement('afterend', listDiv);
                     }
                 }

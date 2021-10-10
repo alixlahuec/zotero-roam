@@ -59,11 +59,17 @@
                     zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
                     zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
                 }
-                // Setup the tag selection autoComplete object
-                if(zoteroRoam.tagSelection.autocomplete == null){
-                    zoteroRoam.tagSelection.autocomplete = new autoComplete(zoteroRoam.config.tagSelection);
+                // Setup the tag selection autoComplete (citations panel)
+                if(zoteroRoam.tagSelection.cit_panel == null){
+                    zoteroRoam.tagSelection.cit_panel = zoteroRoam.config.tagSelection(selector = "#zotero-roam-tagselector_citations", index = "cit_panel");
                 } else {
-                    zoteroRoam.tagSelection.autocomplete.init();
+                    zoteroRoam.tagSelection.cit_panel.init();
+                }
+                // Setup the tag selection autoComplete (auxiliary panel)
+                if(zoteroRoam.tagSelection.aux_panel == null){
+                    zoteroRoam.tagSelection.aux_panel = zoteroRoam.config.tagSelection(selector = "#zotero-roam-tagselector_auxiliary", index = "aux_panel");
+                } else {
+                    zoteroRoam.tagSelection.aux_panel.init();
                 }
                 // Setup contextmenu event for the extension's icon
                 zoteroRoam.interface.icon.addEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
@@ -110,8 +116,11 @@
             if(zoteroRoam.citations.autocomplete !== null){
                 zoteroRoam.citations.autocomplete.unInit();
             }
-            if(zoteroRoam.tagSelection.autocomplete !== null){
-                zoteroRoam.tagSelection.autocomplete.unInit();
+            if(zoteroRoam.tagSelection.cit_panel !== null){
+                zoteroRoam.tagSelection.cit_panel.unInit();
+            }
+            if(zoteroRoam.tagSelection.aux_panel !== null){
+                zoteroRoam.tagSelection.aux_panel.unInit();
             }
 
             // Remove in-page menus
