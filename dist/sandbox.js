@@ -3395,7 +3395,7 @@ var zoteroRoam = {};
             let itemsList = webItems.map(item => {
                 return `
                 <li class="zotero-roam-list-item zr-explo-list-item">
-                    <div class="bp3-menu-item" label="link-${j}">
+                    <div class="bp3-menu-item" label="link-${item.item_index}">
                         <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${item.item_index}`})}</span>
                         <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                             <span class="zotero-roam-citation-metadata-contents" style="padding-right:10px;">${item.type}${item.creators ? " | " + item.creators : ""}</span>
@@ -3795,7 +3795,7 @@ var zoteroRoam = {};
         renderImportWeblinks(){
             if(zoteroRoam.webImport.activeImport != null){
                 let selectedItems = Array.from(document.querySelectorAll(`[name="explo-weblink"]`)).filter(op => op.checked);
-                zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest.find(cit => cit.item_index == Number(i.getAttribute('value'))));
+                zoteroRoam.webImport.activeImport.items = selectedItems.map(i => zoteroRoam.webImport.activeImport.harvest.find(cit => cit.item_index == Number(i.getAttribute('value'))).data);
             }
         },
 
