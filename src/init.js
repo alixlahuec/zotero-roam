@@ -460,6 +460,7 @@ var zoteroRoam = {};
             page_checking: null,
             tag_checking: null,
             auto_update: null,
+            render_inline: null,
             editingObserver: null
         },
 

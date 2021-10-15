@@ -459,6 +459,27 @@
             }
         },
 
+        renderCitekeyRefs(){
+            let refCitekeys = document.querySelectorAll("span[data-link-title^='@']");
+            for(i=0;i<refCitekeys.length;i++){
+              let refCitekeyElement = refCitekeys[i];
+              let linkElement = refCitekeyElement.getElementsByClassName('rm-page-ref')[0];
+              let keyStatus = refCitekeyElement.getAttribute('data-zotero-bib');
+              let citekey = refCitekeyElement.getAttribute('data-link-title').slice(1);
+              
+              if(keyStatus == "inLibrary"){
+                let libItem = zoteroRoam.data.items.find(it => it.key == citekey);
+                if(libItem){
+                     linkElement.textContent = zoteroRoam.utils.formatItemReference(libItem, "inline"); 
+                } else if(linkElement.textContent != '@' + citekey){
+                      linkElement.textContent = '@' + citekey;  
+                }
+              } else if(linkElement.textContent != '@' + citekey){
+                linkElement.textContent = '@' + citekey;
+              }
+            }
+        },
+
         renderBacklinksItem(paper, type, uid = null){
             let icon = type == "reference" ? "citation" : "chat";
             if(uid){

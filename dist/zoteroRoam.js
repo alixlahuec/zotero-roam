@@ -460,6 +460,7 @@ var zoteroRoam = {};
             page_checking: null,
             tag_checking: null,
             auto_update: null,
+            render_inline: null,
             editingObserver: null
         },
 
@@ -802,6 +803,8 @@ var zoteroRoam = {};
                     popText = item.meta.parsedDate ? `${popText} (${new Date(item.meta.parsedDate).getUTCFullYear()})` : popText;
                     popText = `{{=: ${(popText.length > 0) ? popText : item.key} | {{embed: [[@${item.key}]]}} }}`
                     return popText;
+                case 'inline':
+                    return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``);
                 case 'zettlr':
                     return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + ` : ` + item.data.title;
                 case 'zettlr_accent':
@@ -1117,6 +1120,42 @@ var zoteroRoam = {};
             }
 
             return cleanText;
+        },
+
+        processQuery(query, props){
+            let components = query.split(/([\|\&]?)([^\&\|\(\)]+|\(.+\))([\|\&]?)/).filter(Boolean);
+            if(components.includes("|")){
+              return zoteroRoam.utils.eval_or(components.filter(c => c != "|"), props);
+            } else {
+              return zoteroRoam.utils.eval_and(components.filter(c => c!= "&"), props);
+            }
+        },
+
+        eval_and(terms, props){
+            let outcome = true;
+            for(let i=0;i<terms.length && outcome == true;i++){
+              outcome = zoteroRoam.utils.eval_term(terms[i], props);
+            }
+            return outcome;
+        },
+          
+        eval_or(terms, props){
+            let outcome = false;
+            for(let i=0;i<terms.length && outcome == false;i++){
+              outcome = zoteroRoam.utils.eval_term(terms[i], props);
+            }
+            return outcome;
+        },
+
+        eval_term(term, props){
+            if(term.startsWith("(") && term.endsWith(")")){
+              // If the term was a (grouping), strip the outer parentheses & send to processing
+              let clean_str = term.slice(1, -1);
+              return zoteroRoam.utils.processQuery(clean_str, props);
+            } else {
+              let outcome = props.includes(term);
+              return (term.startsWith("-") ? !outcome : outcome);
+            }
         },
 
         renderBP3Button_link(string, {linkClass = "", icon = "", iconModifier = "", target = "", linkAttribute = ""} = {}){
@@ -3963,6 +4002,11 @@ var zoteroRoam = {};
                     zoteroRoam.config.auto_update = setInterval(function(){zoteroRoam.extension.update(popup = false)}, 60000); // Update every 60s
                 }
 
+                // Render citekey refs as inline citations ?
+                if(zoteroRoam.config.userSettings.render_inline){
+                    zoteroRoam.config.render_inline = setInterval(function(){ zoteroRoam.inPage.renderCitekeyRefs()}, 1000); // continuous
+                }
+
                 // Setup the search autoComplete object
                 if(zoteroRoam.librarySearch.autocomplete == null){
                     zoteroRoam.librarySearch.autocomplete = new autoComplete(zoteroRoam.config.autoComplete);
@@ -3999,6 +4043,20 @@ var zoteroRoam = {};
                         zoteroRoam.interface.toggleSearchOverlay("show");
                     }
                 });
+
+                // Adding SmartBlocks command
+                window.roamjs.extension.smartblocks.registerCommand({
+                    text: 'ZOTERORANDOMCITEKEY',
+                    help: 'Return one or more Zotero citekeys, with optional tag query',
+                    handler: (context) => (nb = '1', query='') => {
+                      return zoteroRoam.data.items
+                        .filter(it => !['attachment', 'note', 'annotation'].includes(it.data.itemType) && zoteroRoam.utils.processQuery(query, it.data.tags.map(t => t.tag)))
+                        .map(it => it.key)
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, Number(nb) || 1)
+                    }
+                  });
+
                 /**
                  * Ready event
                  * 
@@ -4054,6 +4112,9 @@ var zoteroRoam = {};
             try { clearInterval(zoteroRoam.config.page_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.tag_checking) } catch(e){};
             try { clearInterval(zoteroRoam.config.auto_update) } catch(e){};
+            try { clearInterval(zoteroRoam.config.render_inline) } catch(e){};
+            // Clean up ref citekeys rendering once more
+            zoteroRoam.inPage.renderCitekeyRefs();
             try { zoteroRoam.config.editingObserver.disconnect() } catch(e){};
             window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
             window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
@@ -4623,6 +4684,27 @@ var zoteroRoam = {};
                     context: pageDiv.closest('.roam-article') ? "main" : "sidebar"
                 });
         
+            }
+        },
+
+        renderCitekeyRefs(){
+            let refCitekeys = document.querySelectorAll("span[data-link-title^='@']");
+            for(i=0;i<refCitekeys.length;i++){
+              let refCitekeyElement = refCitekeys[i];
+              let linkElement = refCitekeyElement.getElementsByClassName('rm-page-ref')[0];
+              let keyStatus = refCitekeyElement.getAttribute('data-zotero-bib');
+              let citekey = refCitekeyElement.getAttribute('data-link-title').slice(1);
+              
+              if(keyStatus == "inLibrary"){
+                let libItem = zoteroRoam.data.items.find(it => it.key == citekey);
+                if(libItem){
+                     linkElement.textContent = zoteroRoam.utils.formatItemReference(libItem, "inline"); 
+                } else if(linkElement.textContent != '@' + citekey){
+                      linkElement.textContent = '@' + citekey;  
+                }
+              } else if(linkElement.textContent != '@' + citekey){
+                linkElement.textContent = '@' + citekey;
+              }
             }
         },
 
