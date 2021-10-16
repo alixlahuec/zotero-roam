@@ -436,42 +436,6 @@
             return cleanText;
         },
 
-        processQuery(query, props){
-            let components = query.split(/([\|\&]?)([^\&\|\(\)]+|\(.+\))([\|\&]?)/).filter(Boolean);
-            if(components.includes("|")){
-              return zoteroRoam.utils.eval_or(components.filter(c => c != "|"), props);
-            } else {
-              return zoteroRoam.utils.eval_and(components.filter(c => c!= "&"), props);
-            }
-        },
-
-        eval_and(terms, props){
-            let outcome = true;
-            for(let i=0;i<terms.length && outcome == true;i++){
-              outcome = zoteroRoam.utils.eval_term(terms[i], props);
-            }
-            return outcome;
-        },
-          
-        eval_or(terms, props){
-            let outcome = false;
-            for(let i=0;i<terms.length && outcome == false;i++){
-              outcome = zoteroRoam.utils.eval_term(terms[i], props);
-            }
-            return outcome;
-        },
-
-        eval_term(term, props){
-            if(term.startsWith("(") && term.endsWith(")")){
-              // If the term was a (grouping), strip the outer parentheses & send to processing
-              let clean_str = term.slice(1, -1);
-              return zoteroRoam.utils.processQuery(clean_str, props);
-            } else {
-              let outcome = props.includes(term);
-              return (term.startsWith("-") ? !outcome : outcome);
-            }
-        },
-
         renderBP3Button_link(string, {linkClass = "", icon = "", iconModifier = "", target = "", linkAttribute = ""} = {}){
             let iconEl = icon ? `<span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${iconModifier}"></span>` : "";
             return `

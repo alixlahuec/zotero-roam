@@ -55,31 +55,45 @@
         },
 
         async importItemMetadata(title, uid, {popup = true} = {}){
+            let outcome = {};
             let citekey = title.replace("@", "");
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
-            let itemData = await zoteroRoam.handlers.formatData(item);
-            let outcome = {};
-            let pageUID = uid || "";
 
-            if(item && itemData.length > 0){
-                if(uid) {
-                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = itemData);
-                } else {
-                    pageUID = window.roamAlphaAPI.util.generateUID();
-                    window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
-                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+            let pageUID = uid || window.roamAlphaAPI.util.generateUID();
+            let page = {title: title, uid: pageUID};
+            if(pageUID != uid){
+                window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
+                page.new = true;
+            } else {
+                page.new = false;
+            }
+
+            if(item){
+                let import_settings = zoteroRoam.config.userSettings.metadata || {};
+                let import_type = import_settings.use || "function";
+                switch(import_type){
+                    case "smartblock":
+                        outcome = await zoteroRoam.smartblocks.use_smartblock_metadata(context = {item: item, page: page});
+                        break;
+                    case "function":
+                    default:
+                        let itemData = await zoteroRoam.handlers.formatData(item);
+                        outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                        break;
                 }
-                let msg = outcome.success ? `Metadata was successfully added.` : "The metadata array couldn't be properly processed.";
+
+                let msg = outcome.success ? "Metadata was successfully added." : "The metadata couldn't be properly processed.";
                 let intent = outcome.success ? "success" : "danger";
                 if(popup == true){
                     zoteroRoam.interface.popToast(message = msg, intent = intent);
                 } else {
                     console.log(msg);
                 }
+
             } else {
-                console.log(item);
-                console.log(itemData);
-                zoteroRoam.interface.popToast(message = "Something went wrong when formatting or importing the item's data.", intent = "danger");
+                outcome.success = null;
+                console.error(`Citekey ${citekey} yielded the following library item : ${item}`);
+                zoteroRoam.interface.popToast(message = "Item could not be found in the library", intent = "danger");
             }
             zoteroRoam.events.emit('metadata-added', {
                 success: outcome.success,
@@ -223,9 +237,15 @@
             let type = item.data.itemType;
             let funcName = zoteroRoam.funcmap.DEFAULT;
 
-            if(zoteroRoam.config.userSettings.funcmap){
+            let import_settings = zoteroRoam.config.userSettings.metadata || {};
+            let import_function = import_settings.function || false;
+            if(import_function){
+                funcName = import_function;
+            } else if(zoteroRoam.config.userSettings.funcmap){
+                // To be removed in v0.7
                 funcName = zoteroRoam.config.userSettings.funcmap[`${type}`] || zoteroRoam.config.userSettings.funcmap['DEFAULT'] || funcName;
             }
+
             try {
                 itemData = await zoteroRoam.utils.executeFunctionByName(funcName, window, item);
                 return itemData;
@@ -783,50 +803,7 @@
                         value: zoteroRoam.utils.formatItemReference(item, format) || item.key,
                         display: zoteroRoam.utils.formatItemReference(item, display)};
             });
-        },
-
-        // RETIRED
-        async waitForBlockUID(parent_uid, string) {
-            let top_block = null;
-            let found = false;
-            let tries = 0;
-            // As long as the top-block hasn't been matched in content, keep checking it
-            try {
-                do {
-                    top_block = zoteroRoam.utils.getTopBlockData(parent_uid);
-                    if (typeof (top_block.text) !== 'undefined' && top_block.text == string) {
-                        found = true;
-                        return top_block.uid;
-                    } else {
-                        // Keep track of attempts to avoid infinite search, and wait a bit before continuing
-                        tries = tries + 1;
-                        await zoteroRoam.utils.sleep(75);
-                    }
-                } while (tries < 50 && !found);
-                // If after 50 attempts there still isn't a match, throw an error
-                console.log(top_block);
-                throw new Error('The top block couldn\'t be matched');
-            } catch (e) {
-                console.error(e);
-            }
-        },
-
-        // RETIRED
-        async waitForPageUID(title) {
-            let found = false;
-            let tries = 0;
-            do {
-                let pageInfo = zoteroRoam.utils.lookForPage(title);
-                if(pageInfo.present == true){
-                    found = true;
-                    return pageInfo.uid;
-                } else {
-                    tries += 1;
-                    await zoteroRoam.utils.sleep(75);
-                }
-            } while (tries < 50 && !found);
-            // If after 50 attempts there still isn't a match, throw an error
-            throw new Error(`The page with title "${title}" couldn\'t be found`);
         }
+
     };
 })();

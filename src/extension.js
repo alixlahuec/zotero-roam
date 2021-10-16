@@ -90,18 +90,8 @@
                     }
                 });
 
-                // Adding SmartBlocks command
-                window.roamjs.extension.smartblocks.registerCommand({
-                    text: 'ZOTERORANDOMCITEKEY',
-                    help: 'Return one or more Zotero citekeys, with optional tag query',
-                    handler: (context) => (nb = '1', query='') => {
-                      return zoteroRoam.data.items
-                        .filter(it => !['attachment', 'note', 'annotation'].includes(it.data.itemType) && zoteroRoam.utils.processQuery(query, it.data.tags.map(t => t.tag)))
-                        .map(it => it.key)
-                        .sort(() => 0.5 - Math.random())
-                        .slice(0, Number(nb) || 1)
-                    }
-                  });
+                // Adding SmartBlocks commands
+                zoteroRoam.smartblocks.registerCommands();
 
                 /**
                  * Ready event
