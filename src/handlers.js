@@ -67,6 +67,7 @@
             } else {
                 page.new = false;
             }
+            let meta = null;
 
             if(item){
                 let import_settings = zoteroRoam.config.userSettings.metadata || {};
@@ -74,11 +75,16 @@
                 switch(import_type){
                     case "smartblock":
                         let obj = import_settings.smartblock;
+                        meta = {
+                            config: obj,
+                            context: {item: item, page: page}
+                        }
                         outcome = await zoteroRoam.smartblocks.use_smartblock_metadata(config = obj, context = {item: item, page: page});
                         break;
                     case "function":
                     default:
                         let itemData = await zoteroRoam.handlers.formatData(item);
+                        meta = itemData;
                         outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                         break;
                 }
@@ -101,7 +107,7 @@
                 uid: pageUID,
                 title: title,
                 item: item,
-                meta: itemData || null
+                meta: meta
             });
         },
 
