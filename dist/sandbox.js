@@ -1458,7 +1458,8 @@ var zoteroRoam = {};
                 let import_type = import_settings.use || "function";
                 switch(import_type){
                     case "smartblock":
-                        outcome = await zoteroRoam.smartblocks.use_smartblock_metadata(context = {item: item, page: page});
+                        let obj = import_settings.smartblock;
+                        outcome = await zoteroRoam.smartblocks.use_smartblock_metadata(config = obj, context = {item: item, page: page});
                         break;
                     case "function":
                     default:
@@ -1485,7 +1486,7 @@ var zoteroRoam = {};
                 uid: pageUID,
                 title: title,
                 item: item,
-                meta: itemData
+                meta: itemData || null
             });
         },
 
