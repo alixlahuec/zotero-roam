@@ -5423,8 +5423,12 @@ var zoteroRoam = {};
               let clean_str = term.slice(1, -1);
               return zoteroRoam.smartblocks.processQuery(clean_str, props);
             } else {
-              let outcome = props.includes(term);
-              return (term.startsWith("-") ? !outcome : outcome);
+                if(term.startsWith("-")){
+                    let clean_str = term.slice(1);
+                    return !props.includes(clean_str);
+                } else {
+                    return props.includes(term);
+                }
             }
         },
         registerCommands(){
