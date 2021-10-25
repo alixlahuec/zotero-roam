@@ -717,10 +717,12 @@
                     authorsLastNames: item.data.creators.map(c => c.lastName || c.name),
                     authorsString: item.data.creators.map(c => c.lastName || c.name).join(" "),
                     tagsString: item.data.tags.map(i => `#${i.tag}`).join(", "),
-                    location: zoteroRoam.utils.getItemPrefix(item)
+                    location: zoteroRoam.utils.getItemPrefix(item),
+                    itemType: item.data.itemType
                 }
 
                 simplifiedItem["_multiField"] = simplifiedItem.authorsString + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
+                simplifiedItem["inGraph"] = zoteroRoam.data.roamPages.find(p => p.title == item.key) ? true : false;
         
                 return simplifiedItem;
         

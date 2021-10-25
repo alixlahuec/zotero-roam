@@ -117,9 +117,9 @@ var zoteroRoam = {};
                             if(a.value.authors.length == 0){
                                 return 2;
                             } else if(a.value.authors.toLowerCase() < b.value.authors.toLowerCase() || b.value.authors.length == 0){
-                                return 0;
+                                return -1;
                             } else{
-                                return 1;
+                                return 0;
                             }
                         })
                     }
@@ -162,53 +162,42 @@ var zoteroRoam = {};
                     tag: 'li',
                     class: "zotero-roam-search_result",
                     id: "zotero-roam-search_result",
-                    highlight: "result_highlighted",
                     /**
                      * Controls the rendering of each search result
                      * @param {Element} item - The DOM Element corresponding to a given search result 
                      * @param {object} data - The search data associated with a given result
                      */
                     element: (item, data) => {
-                        let itemMetadata = `<span class="zotero-roam-search-item-metadata"> ${data.value.meta}</span>`;
+                        let itemMetadata = `<span class="zotero-roam-search-item-metadata zr-secondary"> ${data.value.meta}</span>`;
                         let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
                         let itemTitle = `<span class="zotero-roam-search-item-title" style="display:block;">${itemTitleContent}</span>`;
-                        
-                        let localTarget = data.value.location.startsWith("users") ? "library" : data.value.location;
-                        let keyEl = `
-                        <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                        <a href="zotero://select/${localTarget}/items/${data.value.itemKey}" destination="zotero">${data.value.key}</a>
-                        </span>
-                        `;
+
+                        let keyEl = ``;
+                        if(data.value.inGraph){
+                            item.setAttribute('in-graph', 'true');
+                            keyEl = `<span class="bp3-icon bp3-icon-symbol-circle"></span>`;
+                        } else {
+                            item.setAttribute('in-graph', 'false');
+                            keyEl = `<span class="bp3-icon bp3-icon-cross"></span>`;
+                        }
+
+                        item.setAttribute('data-item-type', data.value.itemType);
 
                         let itemYear = data.value.year ? ` (${data.value.year})` : "";
-            
                         // Prepare authors element, if there are any
-                        let itemAuthors = "";
-                        if(data.value.authors){
-                            // If the match is in the full list of authors, manually add the .result_highlighted class to the abbreviated authors span
-                            if(data.key == "authorsString" || data.key == "year"){
-                                itemAuthors = `<span class="zotero-roam-search-item-authors result_highlighted">${data.value.authors}${itemYear}</span>`;
-                            } else {
-                                itemAuthors = `<span class="zotero-roam-search-item-authors">${zoteroRoam.utils.renderBP3Tag(data.value.authors + itemYear, {modifier: "bp3-intent-primary"})}</span>`;
-                            }
-                        }
-                        // Prepare tags element, if there are any
-                        let itemTags = "";
-                        if(data.value.tagsString){
-                            let itemTagsContent = (data.key == "tagsString") ? data.match : data.value.tagsString;
-                            itemTags = `<span class="zotero-roam-search-item-tags bp3-text-muted" style="display:block;">${itemTagsContent}</span>`;
-                        }
+                        let itemAuthors = `<span class="zotero-roam-search-item-authors zr-highlight">${data.value.authors + itemYear}</span>`;
             
                         // Render the element's template
                         item.innerHTML = `<div label="${data.value.key}" class="bp3-menu-item bp3-popover-dismiss">
                                             <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-search-item-contents">
                                             ${itemTitle}
-                                            <span class="zotero-roam-citation-metadata-contents">
+                                            <span class="zr-details">
                                             ${itemAuthors}${itemMetadata}
-                                            ${itemTags}
                                             </span>
                                             </div>
+                                            <span class="bp3-menu-item-label">
                                             ${keyEl}
+                                            </span>
                                             </div>`;
               
                     }
@@ -507,6 +496,7 @@ var zoteroRoam = {};
             autoCompleteCSS.textContent = `
             .zotero-roam-search-backdrop, .zotero-roam-citations-search-backdrop {opacity:0.4;}
             .zotero-roam-dialog-overlay .bp3-dialog-container, .zotero-roam-dialog-small .bp3-dialog-container{justify-content:start;}
+            .zotero-roam-search-overlay .bp3-dialog{background:white;}
             .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(18vw + 9.5%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 40vw);}
@@ -533,10 +523,10 @@ var zoteroRoam = {};
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
             .zotero-roam-search-close{margin:0;padding:0;min-width:41px;}
             #zotero-roam-portal .panel-st{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
-            #zotero-roam-search-autocomplete{width:100%;margin-bottom:20px;padding: 0px 10px;}
+            #zotero-roam-search-autocomplete{width:100%;margin-bottom:5px;padding: 0px 10px;border-bottom: 1px #ececec solid;color: #717171;}
             #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;}
-            #zotero-roam-portal .quick-copy-element{margin:10px;font-weight:600;display:inline-block;}
-            #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;}
+            #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;}
+            #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;justify-content:space-between;align-items:baseline;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal .bp3-dark .side-panel{background-color:#30404d;}
             #zotero-roam-portal .side-panel > .side-panel-contents > *{padding:10px 20px;}
@@ -546,13 +536,14 @@ var zoteroRoam = {};
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
             #zotero-roam-search-results-list, .zotero-roam-citations-search-results-list {max-height:70vh;overflow-y:scroll;}
-            .zotero-roam-search-item-title{font-weight:600;font-size:0.9em;}
+            .zotero-roam-search-item-title{font-weight:500;font-size:0.9em;}
             .zotero-roam-search-item-tags{font-style:italic;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
-            .zotero-roam-citation-link a, .zotero-roam-citation-metadata-contents{font-size:0.85em;}
+            .zotero-roam-citation-link a {font-size:0.85em;}
             .zotero-roam-citations-results-count, .zotero-roam-library-results-count{padding: 6px 10px;color:#5c7080;}
             .bp3-dark .zotero-roam-citations-results-count, .zotero-roam-library-results-count{color:#95a8b7;}
             .zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu{padding:0px;}
+            .zotero-roam-search-results-list.bp3-menu{background:unset;}
             .zotero-roam-search_result, .zotero-roam-citations-search_result{padding:3px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
             .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#237d232e;}
@@ -654,6 +645,11 @@ var zoteroRoam = {};
             .zr-explo-title{flex:1 0 100%;}
             .zr-explo-title .bp3-checkbox{margin-bottom:0px;}
             .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
+            .zotero-roam-search-item-authors{padding-right: 8px;}
+            .zr-highlight {color: #206fe6;}
+            .zr-secondary {color: #7b7b7b;font-weight:300;}
+            [in-graph='true'] .bp3-menu-item-label .bp3-icon {color: #3DCC91;}
+            [in-graph='false'] .bp3-menu-item-label .bp3-icon {color: #F29D49;}
             `;
             document.head.append(autoCompleteCSS);
         }

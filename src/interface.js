@@ -378,6 +378,8 @@
             searchBar.tabIndex = "1";
             searchBar.type = "text";
             searchBar.classList.add("bp3-input");
+            searchBar.classList.add("bp3-fill");
+            searchBar.classList.add("bp3-large");
 
             headerLeft.appendChild(panelTitle);
             headerLeft.appendChild(panelSubtitle);
@@ -395,26 +397,8 @@
             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
             `;
 
-            let quickCopyElement = document.createElement('label');
-            quickCopyElement.classList.add("bp3-control");
-            quickCopyElement.classList.add("bp3-switch");
-            quickCopyElement.classList.add("bp3-text-small");
-            quickCopyElement.classList.add("quick-copy-element");
-
-            let quickCopyInput = document.createElement('input');
-            quickCopyInput.id = "zotero-roam-quick-copy-mode";
-            quickCopyInput.setAttribute("type", "checkbox");
-            quickCopyElement.appendChild(quickCopyInput);
-
-            let quickCopyIndicator = document.createElement('span');
-            quickCopyIndicator.classList.add("bp3-control-indicator");
-            quickCopyElement.appendChild(quickCopyIndicator);
-
-            quickCopyElement.innerHTML += `Quick Copy`;
-
             headerRight.appendChild(controlsTop);
-            headerRight.appendChild(quickCopyElement);
-
+            
             // ---
             
             headerContent.appendChild(headerLeft);
@@ -430,15 +414,6 @@
 
             let librarySearchDiv = document.createElement('div');
             librarySearchDiv.id = "zotero-roam-library-search-div";
-
-            let searchPaginationDiv = document.createElement('div');
-            searchPaginationDiv.classList.add("bp3-button-group");
-            searchPaginationDiv.classList.add("bp3-minimal");
-            searchPaginationDiv.innerHTML = `
-            <span class="zotero-roam-library-results-count"></span>
-            `;
-
-            librarySearchDiv.appendChild(searchPaginationDiv);
         
             let selectedItemDiv = document.createElement('div');
             selectedItemDiv.id = "zotero-roam-search-selected-item";
@@ -460,6 +435,14 @@
             let footerActions = document.createElement('div');
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
+            <div class="bp3-button-group bp3-minimal">
+                <span class="zotero-roam-library-results-count"></span>
+            </div>
+            <label class="bp3-control bp3-switch bp3-text-small quick-copy-element">
+                <input id="zotero-roam-quick-copy-mode" type="checkbox">
+                <span class="bp3-control-indicator"></span>
+                Quick Copy
+            </label>
             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
             <span class="bp3-popover2-target" tabindex="0">
                 <button type="button" class="zotero-roam-update-data bp3-button bp3-minimal">
@@ -876,6 +859,7 @@
             zoteroRoam.interface.search.overlay.style.display = command === "show" ? "block" : "none";
             if (command == "show") {
                 console.log("Opening the Search Panel")
+                zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
                 if(focus == true){
                     await zoteroRoam.utils.sleep(75);
                     zoteroRoam.interface.search.input.focus();
