@@ -178,7 +178,7 @@ var zoteroRoam = {};
                             keyEl = `<span class="bp3-icon bp3-icon-symbol-circle"></span>`;
                         } else {
                             item.setAttribute('in-graph', 'false');
-                            keyEl = `<span class="bp3-icon bp3-icon-cross"></span>`;
+                            keyEl = `<span class="bp3-icon bp3-icon-minus"></span>`;
                         }
 
                         item.setAttribute('data-item-type', data.value.itemType);
