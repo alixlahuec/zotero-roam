@@ -512,7 +512,7 @@ var zoteroRoam = {};
             .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents .item-rendered-notes p{font-weight:350;}
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:100%;justify-content:flex-end;}
-            #zotero-roam-portal .header-content{width:97.5%;margin:0;margin-left:2.5%;display:flex;}
+            #zotero-roam-portal .header-content{width:100%;margin:0;display:flex;flex-wrap:wrap;}
             #zotero-roam-portal h5.panel-tt{font-weight:600;display:inline-block;padding-right:15px;}
             #zotero-roam-portal h5.panel-tt[list-type="library"]{color:#137cbd;}
             #zotero-roam-portal h5.panel-tt[list-type="citations"]{color:#d9822b;}
@@ -522,13 +522,15 @@ var zoteroRoam = {};
             #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="references"]{color:#48aff0;}
             #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:5px;padding-left:20px;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
-            #zotero-roam-portal .header-bottom{flex: 1 0 95%;display:flex;justify-content:space-between;margin: 0 2.5%;margin-bottom:10px;align-items:baseline;}
+            .zotero-roam-search-overlay .header-right {position:absolute;right:0px;}
+            #zotero-roam-portal .header-bottom{flex: 1 0 95%;display:flex;justify-content:space-between;margin: 10px 2.5%;align-items:baseline;}
             .zr-search-scope {color:#137cbd;font-weight:500;flex:1 0 auto;}
+            .zotero-roam-search-close.bp3-large{margin:0px;margin-right:3px;}
             .zotero-roam-search-close{margin:0;padding:0;min-width:41px;}
             #zotero-roam-portal .panel-st{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
             #zotero-roam-search-autocomplete{border-bottom: 1px #ececec solid;color: #717171;flex:0 1 89%;}
             #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;}
-            #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;}
+            #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;padding-left:10px;}
             #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;justify-content:space-between;align-items:baseline;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal .bp3-dark .side-panel{background-color:#30404d;}
@@ -2714,11 +2716,6 @@ var zoteroRoam = {};
             headerContent.classList.add("bp3-input-group");
             headerContent.classList.add("header-content");
 
-            // Header (left)
-
-            let headerLeft = document.createElement('div');
-            headerLeft.classList.add("header-left");
-
             // Header (right)
 
             let headerRight = document.createElement('div');
@@ -2751,7 +2748,6 @@ var zoteroRoam = {};
             
             // ---
             
-            headerContent.appendChild(headerLeft);
             headerContent.appendChild(headerRight);
             headerContent.appendChild(headerBottom);
 
@@ -2786,7 +2782,7 @@ var zoteroRoam = {};
             let footerActions = document.createElement('div');
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
-            <div class="bp3-button-group bp3-minimal">
+            <div>
                 <span class="zotero-roam-library-results-count"></span>
                 <label class="bp3-control bp3-switch bp3-text-small quick-copy-element">
                 <input id="zotero-roam-quick-copy-mode" type="checkbox">
@@ -5093,7 +5089,7 @@ var zoteroRoam = {};
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
                 let spanSeqs = document.createElement('span');
-                spanSeqs.style = `font-style:italic;font-size:0.8em;margin:10px;`;
+                spanSeqs.style = `font-style:italic;font-size:0.8em;margin:3px;`;
                 spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}  `;
                 let searchTopControls = zoteroRoam.interface.search.overlay.querySelector(`.controls-top`);
                 searchTopControls.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);

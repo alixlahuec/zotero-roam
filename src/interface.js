@@ -357,11 +357,6 @@
             headerContent.classList.add("bp3-input-group");
             headerContent.classList.add("header-content");
 
-            // Header (left)
-
-            let headerLeft = document.createElement('div');
-            headerLeft.classList.add("header-left");
-
             // Header (right)
 
             let headerRight = document.createElement('div');
@@ -394,7 +389,6 @@
             
             // ---
             
-            headerContent.appendChild(headerLeft);
             headerContent.appendChild(headerRight);
             headerContent.appendChild(headerBottom);
 
@@ -429,7 +423,7 @@
             let footerActions = document.createElement('div');
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
-            <div class="bp3-button-group bp3-minimal">
+            <div>
                 <span class="zotero-roam-library-results-count"></span>
                 <label class="bp3-control bp3-switch bp3-text-small quick-copy-element">
                 <input id="zotero-roam-quick-copy-mode" type="checkbox">

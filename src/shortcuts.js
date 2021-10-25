@@ -180,7 +180,7 @@
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
                 let spanSeqs = document.createElement('span');
-                spanSeqs.style = `font-style:italic;font-size:0.8em;margin:10px;`;
+                spanSeqs.style = `font-style:italic;font-size:0.8em;margin:3px;`;
                 spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}  `;
                 let searchTopControls = zoteroRoam.interface.search.overlay.querySelector(`.controls-top`);
                 searchTopControls.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
