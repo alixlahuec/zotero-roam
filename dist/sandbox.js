@@ -125,6 +125,7 @@ var zoteroRoam = {};
                     }
                 },
                 selector: '#zotero-roam-search-autocomplete',
+                placeHolder: "Search by title, year, authors (last names), citekey, tags",
                 wrapper: false,
                 /** @returns {boolean} Indicates whether the search should be run */
                 trigger: (query) => {
@@ -519,11 +520,13 @@ var zoteroRoam = {};
             #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="library"]{color:#48aff0;}
             #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="citations"]{color:#ffb366;}
             #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="references"]{color:#48aff0;}
-            #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:10px;}
+            #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:5px;padding-left:20px;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
+            #zotero-roam-portal .header-bottom{flex: 1 0 95%;display:flex;justify-content:space-between;margin: 0 2.5%;margin-bottom:10px;align-items:baseline;}
+            .zr-search-scope {color:#137cbd;font-weight:500;flex:1 0 auto;}
             .zotero-roam-search-close{margin:0;padding:0;min-width:41px;}
             #zotero-roam-portal .panel-st{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
-            #zotero-roam-search-autocomplete{width:100%;margin-bottom:5px;padding: 0px 10px;border-bottom: 1px #ececec solid;color: #717171;}
+            #zotero-roam-search-autocomplete{border-bottom: 1px #ececec solid;color: #717171;flex:0 1 89%;}
             #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;}
             #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;}
             #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;justify-content:space-between;align-items:baseline;}
@@ -536,10 +539,11 @@ var zoteroRoam = {};
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
             #zotero-roam-search-results-list, .zotero-roam-citations-search-results-list {max-height:70vh;overflow-y:scroll;}
-            .zotero-roam-search-item-title{font-weight:500;font-size:0.9em;}
+            .zotero-roam-search-item-title{font-weight:500;}
             .zotero-roam-search-item-tags{font-style:italic;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
             .zotero-roam-citation-link a {font-size:0.85em;}
+            .zotero-roam-library-results-count{display:block;}
             .zotero-roam-citations-results-count, .zotero-roam-library-results-count{padding: 6px 10px;color:#5c7080;}
             .bp3-dark .zotero-roam-citations-results-count, .zotero-roam-library-results-count{color:#95a8b7;}
             .zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu{padding:0px;}
@@ -2103,7 +2107,7 @@ var zoteroRoam = {};
                 }
 
                 simplifiedItem["_multiField"] = simplifiedItem.authorsString + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
-                simplifiedItem["inGraph"] = zoteroRoam.data.roamPages.find(p => p.title == item.key.replace('@', '')) ? true : false;
+                simplifiedItem["inGraph"] = zoteroRoam.data.roamPages.find(p => p.title == '@' + item.key) ? true : false;
         
                 return simplifiedItem;
         
@@ -2715,29 +2719,6 @@ var zoteroRoam = {};
             let headerLeft = document.createElement('div');
             headerLeft.classList.add("header-left");
 
-            let panelTitle = document.createElement('h5');
-            panelTitle.classList.add("panel-tt");
-            panelTitle.setAttribute("list-type", "library");
-            panelTitle.innerText = "Zotero Library";
-
-            let panelSubtitle = document.createElement('p');
-            panelSubtitle.classList.add("bp3-text-muted");
-            panelSubtitle.classList.add("bp3-text-small");
-            panelSubtitle.classList.add("panel-st");
-            panelSubtitle.innerText = `Search by title, year, authors (last names), citekey, tags`;
-        
-            let searchBar = document.createElement('input');
-            searchBar.id = "zotero-roam-search-autocomplete";
-            searchBar.tabIndex = "1";
-            searchBar.type = "text";
-            searchBar.classList.add("bp3-input");
-            searchBar.classList.add("bp3-fill");
-            searchBar.classList.add("bp3-large");
-
-            headerLeft.appendChild(panelTitle);
-            headerLeft.appendChild(panelSubtitle);
-            headerLeft.appendChild(searchBar);
-
             // Header (right)
 
             let headerRight = document.createElement('div');
@@ -2746,16 +2727,33 @@ var zoteroRoam = {};
             let controlsTop = document.createElement('div');
             controlsTop.classList.add("controls-top");
             controlsTop.innerHTML = `
-            <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
+            <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button bp3-large">
             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
             `;
 
             headerRight.appendChild(controlsTop);
+
+            let headerBottom = document.createElement('div');
+            headerBottom.classList.add("header-bottom");
+
+            let searchScope = document.createElement('span');
+            searchScope.classList.add("zr-search-scope");
+            searchScope.innerHTML = `Zotero library <span class="bp3-icon bp3-icon-chevron-right"></span>`;
+
+            let searchBar = document.createElement('input');
+            searchBar.id = "zotero-roam-search-autocomplete";
+            searchBar.tabIndex = "1";
+            searchBar.type = "text";
+            searchBar.classList.add("bp3-input");
+
+            headerBottom.appendChild(searchScope);
+            headerBottom.appendChild(searchBar);
             
             // ---
             
             headerContent.appendChild(headerLeft);
             headerContent.appendChild(headerRight);
+            headerContent.appendChild(headerBottom);
 
             dialogMainPanel.appendChild(headerContent);
 
@@ -2790,12 +2788,12 @@ var zoteroRoam = {};
             footerActions.innerHTML = `
             <div class="bp3-button-group bp3-minimal">
                 <span class="zotero-roam-library-results-count"></span>
-            </div>
-            <label class="bp3-control bp3-switch bp3-text-small quick-copy-element">
+                <label class="bp3-control bp3-switch bp3-text-small quick-copy-element">
                 <input id="zotero-roam-quick-copy-mode" type="checkbox">
                 <span class="bp3-control-indicator"></span>
                 Quick Copy
             </label>
+            </div>
             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
             <span class="bp3-popover2-target" tabindex="0">
                 <button type="button" class="zotero-roam-update-data bp3-button bp3-minimal">
@@ -5103,7 +5101,7 @@ var zoteroRoam = {};
                 if(closeSeqText.length > 0){
                     let citationsSearchTopControls = zoteroRoam.interface.citations.overlay.querySelector(`.controls-top`);
                     let spanSeq = document.createElement('span');
-                    spanSeq.style = `font-style:italic;font-size:0.8em;margin:10px;`;
+                    spanSeq.style = `font-style:italic;font-size:0.8em;margin:6px;`;
                     spanSeq.innerHTML = `${closeSeqText}`;
                     citationsSearchTopControls.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
 

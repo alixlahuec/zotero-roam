@@ -362,29 +362,6 @@
             let headerLeft = document.createElement('div');
             headerLeft.classList.add("header-left");
 
-            let panelTitle = document.createElement('h5');
-            panelTitle.classList.add("panel-tt");
-            panelTitle.setAttribute("list-type", "library");
-            panelTitle.innerText = "Zotero Library";
-
-            let panelSubtitle = document.createElement('p');
-            panelSubtitle.classList.add("bp3-text-muted");
-            panelSubtitle.classList.add("bp3-text-small");
-            panelSubtitle.classList.add("panel-st");
-            panelSubtitle.innerText = `Search by title, year, authors (last names), citekey, tags`;
-        
-            let searchBar = document.createElement('input');
-            searchBar.id = "zotero-roam-search-autocomplete";
-            searchBar.tabIndex = "1";
-            searchBar.type = "text";
-            searchBar.classList.add("bp3-input");
-            searchBar.classList.add("bp3-fill");
-            searchBar.classList.add("bp3-large");
-
-            headerLeft.appendChild(panelTitle);
-            headerLeft.appendChild(panelSubtitle);
-            headerLeft.appendChild(searchBar);
-
             // Header (right)
 
             let headerRight = document.createElement('div');
@@ -393,16 +370,33 @@
             let controlsTop = document.createElement('div');
             controlsTop.classList.add("controls-top");
             controlsTop.innerHTML = `
-            <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
+            <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button bp3-large">
             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
             `;
 
             headerRight.appendChild(controlsTop);
+
+            let headerBottom = document.createElement('div');
+            headerBottom.classList.add("header-bottom");
+
+            let searchScope = document.createElement('span');
+            searchScope.classList.add("zr-search-scope");
+            searchScope.innerHTML = `Zotero library <span class="bp3-icon bp3-icon-chevron-right"></span>`;
+
+            let searchBar = document.createElement('input');
+            searchBar.id = "zotero-roam-search-autocomplete";
+            searchBar.tabIndex = "1";
+            searchBar.type = "text";
+            searchBar.classList.add("bp3-input");
+
+            headerBottom.appendChild(searchScope);
+            headerBottom.appendChild(searchBar);
             
             // ---
             
             headerContent.appendChild(headerLeft);
             headerContent.appendChild(headerRight);
+            headerContent.appendChild(headerBottom);
 
             dialogMainPanel.appendChild(headerContent);
 
@@ -437,12 +431,12 @@
             footerActions.innerHTML = `
             <div class="bp3-button-group bp3-minimal">
                 <span class="zotero-roam-library-results-count"></span>
-            </div>
-            <label class="bp3-control bp3-switch bp3-text-small quick-copy-element">
+                <label class="bp3-control bp3-switch bp3-text-small quick-copy-element">
                 <input id="zotero-roam-quick-copy-mode" type="checkbox">
                 <span class="bp3-control-indicator"></span>
                 Quick Copy
             </label>
+            </div>
             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
             <span class="bp3-popover2-target" tabindex="0">
                 <button type="button" class="zotero-roam-update-data bp3-button bp3-minimal">

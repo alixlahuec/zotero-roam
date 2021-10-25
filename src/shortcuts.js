@@ -188,7 +188,7 @@
                 if(closeSeqText.length > 0){
                     let citationsSearchTopControls = zoteroRoam.interface.citations.overlay.querySelector(`.controls-top`);
                     let spanSeq = document.createElement('span');
-                    spanSeq.style = `font-style:italic;font-size:0.8em;margin:10px;`;
+                    spanSeq.style = `font-style:italic;font-size:0.8em;margin:6px;`;
                     spanSeq.innerHTML = `${closeSeqText}`;
                     citationsSearchTopControls.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
 
