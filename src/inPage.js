@@ -482,11 +482,12 @@
 
         renderBacklinksItem(paper, type, uid = null){
             let icon = type == "reference" ? "citation" : "chat";
+            let accent_class = type == "reference" ? "zr-highlight" : "zr-highlight-2";
             if(uid){
                 return `
                 <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="true">
                 <div class="related_info">
-                <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}"><span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
+                <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}"><span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span></a>
                 </div>
                 <div class="related_state">
                 ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
@@ -496,7 +497,7 @@
                 return `
                 <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="false">
                 <div class="related_info">
-                <span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
+                <span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span>
                 </div>
                 <div class="related_state">
                 ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}

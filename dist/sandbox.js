@@ -526,6 +526,7 @@ var zoteroRoam = {};
             #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:5px;padding-left:20px;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
             .zotero-roam-search-overlay .header-right {position:absolute;right:0px;}
+            #zotero-roam-portal .zotero-roam-citations-search-overlay .header-bottom {margin-top:0px;}
             #zotero-roam-portal .header-bottom{flex: 1 0 95%;display:flex;justify-content:space-between;margin: 10px 2.5%;align-items:baseline;}
             .zr-search-scope {color:#137cbd;font-weight:500;flex:1 0 auto;}
             .zotero-roam-search-close.bp3-large{margin:0px;margin-right:3px;}
@@ -554,7 +555,7 @@ var zoteroRoam = {};
             .zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu{padding:0px;}
             .zotero-roam-search-results-list.bp3-menu{background:unset;}
             .zotero-roam-search_result, .zotero-roam-citations-search_result{padding:3px;}
-            .zotero-roam-citations-search_result[in-library="true"]{background-color:#e9f7e9;}
+            .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
             .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#237d232e;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}
             #zotero-roam-library-rendered, #zotero-roam-citations-pagination {width:95%;margin: 0 auto;}
@@ -796,7 +797,7 @@ var zoteroRoam = {};
             return notes.flat(1).map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
         },
 
-        formatItemReference(item, format){
+        formatItemReference(item, format, {accent_class = "zr-highlight"} = {}){
             switch(format){
                 case 'tag':
                     return `#[[@${item.key}]]`;
@@ -817,7 +818,7 @@ var zoteroRoam = {};
                 case 'zettlr':
                     return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + ` : ` + item.data.title;
                 case 'zettlr_accent':
-                    let accented = `<span class="zr-highlight">` + (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + `</span>`;
+                    let accented = `<span class="${accent_class}">` + (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + `</span>`;
                     return accented + ` : ` + item.data.title;
                 case 'citekey':
                 default:
@@ -3144,7 +3145,7 @@ var zoteroRoam = {};
                 `;
 
                 return `
-                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} ${cit.intent ? `data-intent="${JSON.stringify(cit.intent)}"` : ""}>
+                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} data-intent=${cit.intent ? JSON.stringify(cit.intent) : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
@@ -4631,11 +4632,12 @@ var zoteroRoam = {};
 
         renderBacklinksItem(paper, type, uid = null){
             let icon = type == "reference" ? "citation" : "chat";
+            let accent_class = type == "reference" ? "zr-highlight" : "zr-highlight-2";
             if(uid){
                 return `
                 <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="true">
                 <div class="related_info">
-                <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}"><span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span></a>
+                <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}"><span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span></a>
                 </div>
                 <div class="related_state">
                 ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
@@ -4645,7 +4647,7 @@ var zoteroRoam = {};
                 return `
                 <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="false">
                 <div class="related_info">
-                <span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent")}</span>
+                <span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span>
                 </div>
                 <div class="related_state">
                 ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}

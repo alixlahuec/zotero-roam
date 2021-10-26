@@ -101,7 +101,7 @@
             return notes.flat(1).map(b => zoteroRoam.utils.parseNoteBlock(b)).filter(b => b.trim());
         },
 
-        formatItemReference(item, format){
+        formatItemReference(item, format, {accent_class = "zr-highlight"} = {}){
             switch(format){
                 case 'tag':
                     return `#[[@${item.key}]]`;
@@ -122,7 +122,7 @@
                 case 'zettlr':
                     return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + ` : ` + item.data.title;
                 case 'zettlr_accent':
-                    let accented = `<span class="zr-highlight">` + (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + `</span>`;
+                    let accented = `<span class="${accent_class}">` + (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + `</span>`;
                     return accented + ` : ` + item.data.title;
                 case 'citekey':
                 default:

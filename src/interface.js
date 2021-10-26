@@ -778,7 +778,7 @@
                 `;
 
                 return `
-                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} ${cit.intent ? `data-intent="${JSON.stringify(cit.intent)}"` : ""}>
+                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} data-intent=${cit.intent ? JSON.stringify(cit.intent) : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
