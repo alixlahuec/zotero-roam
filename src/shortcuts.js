@@ -180,7 +180,7 @@
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
                 let spanSeqs = document.createElement('span');
-                spanSeqs.style = `font-style:italic;font-size:0.8em;margin:3px;`;
+                spanSeqs.style = `font-size:0.8em;margin:3px;`;
                 spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}  `;
                 let searchTopControls = zoteroRoam.interface.search.overlay.querySelector(`.controls-top`);
                 searchTopControls.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
@@ -188,7 +188,7 @@
                 if(closeSeqText.length > 0){
                     let citationsSearchTopControls = zoteroRoam.interface.citations.overlay.querySelector(`.controls-top`);
                     let spanSeq = document.createElement('span');
-                    spanSeq.style = `font-style:italic;font-size:0.8em;margin:6px;`;
+                    spanSeq.style = `font-size:0.8em;margin:6px;`;
                     spanSeq.innerHTML = `${closeSeqText}`;
                     citationsSearchTopControls.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
 

@@ -234,6 +234,7 @@
 
             let controlsTop = document.createElement('div');
             controlsTop.classList.add("controls-top");
+            controlsTop.classList.add("zr-auxiliary");
             controlsTop.innerHTML = `
             <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
@@ -364,6 +365,7 @@
 
             let controlsTop = document.createElement('div');
             controlsTop.classList.add("controls-top");
+            controlsTop.classList.add("zr-auxiliary");
             controlsTop.innerHTML = `
             <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button bp3-large">
             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
@@ -424,7 +426,7 @@
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
             <div>
-                <span class="zotero-roam-library-results-count"></span>
+                <span class="zotero-roam-library-results-count zr-auxiliary"></span>
                 <label class="bp3-control bp3-switch bp3-text-small quick-copy-element">
                 <input id="zotero-roam-quick-copy-mode" type="checkbox">
                 <span class="bp3-control-indicator"></span>
@@ -465,23 +467,8 @@
             let panelTitle = document.createElement('h5');
             panelTitle.classList.add("panel-tt");
             panelTitle.innerText = "Citing Papers";
-
-            let panelSubtitle = document.createElement('p');
-            panelSubtitle.classList.add("bp3-text-muted");
-            panelSubtitle.classList.add("bp3-text-small");
-            panelSubtitle.classList.add("panel-st");
-            panelSubtitle.innerText = `Search by title, year, authors (last names), publication`;
-
-
-            let searchBar = document.createElement('input');
-            searchBar.id = "zotero-roam-citations-autocomplete";
-            searchBar.tabIndex = "1";
-            searchBar.type = "text";
-            searchBar.classList.add("bp3-input");
             
             headerLeft.appendChild(panelTitle);
-            headerLeft.appendChild(panelSubtitle);
-            headerLeft.appendChild(searchBar);
 
             // Header (right)
             let headerRight = document.createElement('div');
@@ -489,6 +476,7 @@
 
             let controlsTop = document.createElement('div');
             controlsTop.classList.add("controls-top");
+            controlsTop.classList.add("zr-auxiliary");
             controlsTop.innerHTML = `
             <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
@@ -496,10 +484,22 @@
 
             headerRight.appendChild(controlsTop);
 
+            let headerBottom = document.createElement('div');
+            headerBottom.classList.add("header-bottom");
+
+            let searchBar = document.createElement('input');
+            searchBar.id = "zotero-roam-citations-autocomplete";
+            searchBar.tabIndex = "1";
+            searchBar.type = "text";
+            searchBar.classList.add("bp3-input");
+
+            headerBottom.appendChild(searchBar);
+
             // ---
 
             headerContent.appendChild(headerLeft);
             headerContent.appendChild(headerRight);
+            headerContent.appendChild(headerBottom);
             
             // ---
 
@@ -512,7 +512,7 @@
             pageControls.innerHTML = `
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
-            <span class="zotero-roam-citations-results-count"></span>
+            <span class="zotero-roam-citations-results-count zr-auxiliary"></span>
             `;
             pagination.appendChild(pageControls);
 
@@ -744,10 +744,10 @@
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let titleEl = `<span class="zotero-roam-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
+                let titleEl = `<span class="zotero-roam-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span class="bp3-icon bp3-icon-symbol-circle bp3-intent-success"></span>' : ''}</span>`;
                 // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-roam-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let origin = cit.authors + (cit.year ? " (" + cit.year + ")" : "");
-                let metaEl = `<span class="zotero-roam-citation-metadata-contents">${zoteroRoam.utils.renderBP3Tag(origin, {modifier: "bp3-intent-warning zotero-roam-citation-origin"})} ${cit.meta}</span>`;
+                let metaEl = `<span class="zotero-roam-citation-origin zr-highlight-2">${origin}</span><span class="zr-secondary">${cit.meta}</span>`;
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
                     let linksArray = [];
@@ -765,12 +765,12 @@
                             linksArray.push(`<span class="zotero-roam-citation-link" service="google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`);
                             break;
                     }
-                    linksEl += linksArray.join(" &#8226; ");
+                    linksEl += linksArray.join(" - ");
                 }
 
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : cit.url}</a>
+                <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
                 ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 ${cit.inLibrary ? "" : zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
@@ -778,7 +778,7 @@
                 `;
 
                 return `
-                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""}>
+                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} ${cit.intent ? `data-intent="${JSON.stringify(cit.intent)}"` : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}

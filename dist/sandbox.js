@@ -145,6 +145,7 @@ var zoteroRoam = {};
                     destination: "#zotero-roam-library-search-div",
                     position: "beforeend",
                     maxResults: 100,
+                    tabSelect: true,
                     /**
                      * Controls the rendering of the results list
                      * @param {Element} list - The DOM Element corresponding to the results list 
@@ -163,6 +164,7 @@ var zoteroRoam = {};
                     tag: 'li',
                     class: "zotero-roam-search_result",
                     id: "zotero-roam-search_result",
+                    highlight: "zr-search-match",
                     /**
                      * Controls the rendering of each search result
                      * @param {Element} item - The DOM Element corresponding to a given search result 
@@ -279,6 +281,7 @@ var zoteroRoam = {};
                     }
                 },
                 selector: '#zotero-roam-citations-autocomplete',
+                placeHolder: "Search by title, year, authors (last names), publication",
                 wrapper: false,
                 /** @returns {boolean} Indicates whether the search should be run */
                 trigger: (query) => {
@@ -424,7 +427,7 @@ var zoteroRoam = {};
                     display: 'citekey'
                 },
                 citations: {
-                    itemsPerPage: 20
+                    itemsPerPage: 100
                 },
                 notes: {
                     use: "text",
@@ -511,7 +514,7 @@ var zoteroRoam = {};
             .zotero-roam-dialog-small .bp3-dialog .side-panel-contents{width:18vw;}
             .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents .item-rendered-notes p{font-weight:350;}
             #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
-            #zotero-roam-portal .controls-top{display:flex;width:100%;justify-content:flex-end;}
+            #zotero-roam-portal .controls-top{display:flex;width:100%;justify-content:flex-end;font-weight:300;}
             #zotero-roam-portal .header-content{width:100%;margin:0;display:flex;flex-wrap:wrap;}
             #zotero-roam-portal h5.panel-tt{font-weight:600;display:inline-block;padding-right:15px;}
             #zotero-roam-portal h5.panel-tt[list-type="library"]{color:#137cbd;}
@@ -528,9 +531,10 @@ var zoteroRoam = {};
             .zotero-roam-search-close.bp3-large{margin:0px;margin-right:3px;}
             .zotero-roam-search-close{margin:0;padding:0;min-width:41px;}
             #zotero-roam-portal .panel-st{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
-            #zotero-roam-search-autocomplete{border-bottom: 1px #ececec solid;color: #717171;flex:0 1 89%;}
-            #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;}
-            #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;padding-left:10px;}
+            #zotero-roam-search-autocomplete{flex:0 1 89%;}
+            #zotero-roam-citations-autocomplete{flex:1 0 100%;}
+            #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;border-bottom: 1px #ececec solid;color: #717171;}
+            #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;}
             #zotero-roam-portal .bp3-dialog-footer-actions{margin:10px 2.5%;justify-content:space-between;align-items:baseline;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal .bp3-dark .side-panel{background-color:#30404d;}
@@ -545,9 +549,8 @@ var zoteroRoam = {};
             .zotero-roam-search-item-tags{font-style:italic;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
             .zotero-roam-citation-link a {font-size:0.85em;}
-            .zotero-roam-library-results-count{display:block;}
-            .zotero-roam-citations-results-count, .zotero-roam-library-results-count{padding: 6px 10px;color:#5c7080;}
-            .bp3-dark .zotero-roam-citations-results-count, .zotero-roam-library-results-count{color:#95a8b7;}
+            .zotero-roam-library-results-count{display:block;padding:6px 0;}
+            .zotero-roam-citations-results-count {padding: 6px 10px;}
             .zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu{padding:0px;}
             .zotero-roam-search-results-list.bp3-menu{background:unset;}
             .zotero-roam-search_result, .zotero-roam-citations-search_result{padding:3px;}
@@ -574,7 +577,8 @@ var zoteroRoam = {};
             .item-citekey-section .citekey-element{font-weight:bold;padding:0 10px;}
             .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
             a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
-            span.zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
+            .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
+            .controls-top .zotero-roam-sequence {background: unset;color: #c79f0c;}
             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}
             .zotero-roam-tribute ul {list-style-type:none;padding:0px;background-color: white;border:1px #e4e4e4 solid; border-radius:2px;}
             .zotero-roam-tribute ul li {padding: 2px 5px;font-weight:300;}
@@ -651,9 +655,12 @@ var zoteroRoam = {};
             .zr-explo-title{flex:1 0 100%;}
             .zr-explo-title .bp3-checkbox{margin-bottom:0px;}
             .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
-            .zotero-roam-search-item-authors{padding-right: 8px;}
+            .zotero-roam-search-item-authors, .zotero-roam-citation-origin {padding-right: 8px;}
             .zr-highlight {color: #206fe6;}
+            .zr-highlight-2 {color:#d9822b;}
             .zr-secondary {color: #7b7b7b;font-weight:300;}
+            .zr-auxiliary{color:#5c7080;}
+            .bp3-dark .zr-auxiliary{color:#95a8b7;}
             [in-graph='true'] .bp3-menu-item-label .bp3-icon {color: #3DCC91;}
             [in-graph='false'] .bp3-menu-item-label .bp3-icon {color: #F29D49;}
             `;
@@ -810,7 +817,7 @@ var zoteroRoam = {};
                 case 'zettlr':
                     return (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + ` : ` + item.data.title;
                 case 'zettlr_accent':
-                    let accented = `<strong>` + (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + `</strong>`;
+                    let accented = `<span class="zr-highlight">` + (item.meta.creatorSummary || ``) + (item.meta.parsedDate ? ` (${new Date(item.meta.parsedDate).getUTCFullYear()})` : ``) + `</span>`;
                     return accented + ` : ` + item.data.title;
                 case 'citekey':
                 default:
@@ -2593,6 +2600,7 @@ var zoteroRoam = {};
 
             let controlsTop = document.createElement('div');
             controlsTop.classList.add("controls-top");
+            controlsTop.classList.add("zr-auxiliary");
             controlsTop.innerHTML = `
             <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
@@ -2723,6 +2731,7 @@ var zoteroRoam = {};
 
             let controlsTop = document.createElement('div');
             controlsTop.classList.add("controls-top");
+            controlsTop.classList.add("zr-auxiliary");
             controlsTop.innerHTML = `
             <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button bp3-large">
             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
@@ -2783,7 +2792,7 @@ var zoteroRoam = {};
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
             <div>
-                <span class="zotero-roam-library-results-count"></span>
+                <span class="zotero-roam-library-results-count zr-auxiliary"></span>
                 <label class="bp3-control bp3-switch bp3-text-small quick-copy-element">
                 <input id="zotero-roam-quick-copy-mode" type="checkbox">
                 <span class="bp3-control-indicator"></span>
@@ -2824,23 +2833,8 @@ var zoteroRoam = {};
             let panelTitle = document.createElement('h5');
             panelTitle.classList.add("panel-tt");
             panelTitle.innerText = "Citing Papers";
-
-            let panelSubtitle = document.createElement('p');
-            panelSubtitle.classList.add("bp3-text-muted");
-            panelSubtitle.classList.add("bp3-text-small");
-            panelSubtitle.classList.add("panel-st");
-            panelSubtitle.innerText = `Search by title, year, authors (last names), publication`;
-
-
-            let searchBar = document.createElement('input');
-            searchBar.id = "zotero-roam-citations-autocomplete";
-            searchBar.tabIndex = "1";
-            searchBar.type = "text";
-            searchBar.classList.add("bp3-input");
             
             headerLeft.appendChild(panelTitle);
-            headerLeft.appendChild(panelSubtitle);
-            headerLeft.appendChild(searchBar);
 
             // Header (right)
             let headerRight = document.createElement('div');
@@ -2848,6 +2842,7 @@ var zoteroRoam = {};
 
             let controlsTop = document.createElement('div');
             controlsTop.classList.add("controls-top");
+            controlsTop.classList.add("zr-auxiliary");
             controlsTop.innerHTML = `
             <button type="button" aria-label="Close" class="zotero-roam-search-close bp3-button bp3-minimal bp3-dialog-close-button">
             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
@@ -2855,10 +2850,22 @@ var zoteroRoam = {};
 
             headerRight.appendChild(controlsTop);
 
+            let headerBottom = document.createElement('div');
+            headerBottom.classList.add("header-bottom");
+
+            let searchBar = document.createElement('input');
+            searchBar.id = "zotero-roam-citations-autocomplete";
+            searchBar.tabIndex = "1";
+            searchBar.type = "text";
+            searchBar.classList.add("bp3-input");
+
+            headerBottom.appendChild(searchBar);
+
             // ---
 
             headerContent.appendChild(headerLeft);
             headerContent.appendChild(headerRight);
+            headerContent.appendChild(headerBottom);
             
             // ---
 
@@ -2871,7 +2878,7 @@ var zoteroRoam = {};
             pageControls.innerHTML = `
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
             ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
-            <span class="zotero-roam-citations-results-count"></span>
+            <span class="zotero-roam-citations-results-count zr-auxiliary"></span>
             `;
             pagination.appendChild(pageControls);
 
@@ -3103,10 +3110,10 @@ var zoteroRoam = {};
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let titleEl = `<span class="zotero-roam-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span icon="endorsed" class="bp3-icon bp3-icon-endorsed bp3-intent-success"></span>' : ''}</span>`;
+                let titleEl = `<span class="zotero-roam-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span class="bp3-icon bp3-icon-symbol-circle bp3-intent-success"></span>' : ''}</span>`;
                 // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-roam-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let origin = cit.authors + (cit.year ? " (" + cit.year + ")" : "");
-                let metaEl = `<span class="zotero-roam-citation-metadata-contents">${zoteroRoam.utils.renderBP3Tag(origin, {modifier: "bp3-intent-warning zotero-roam-citation-origin"})} ${cit.meta}</span>`;
+                let metaEl = `<span class="zotero-roam-citation-origin zr-highlight-2">${origin}</span><span class="zr-secondary">${cit.meta}</span>`;
                 let linksEl = "";
                 for(var service of Object.keys(cit.links)){
                     let linksArray = [];
@@ -3124,12 +3131,12 @@ var zoteroRoam = {};
                             linksArray.push(`<span class="zotero-roam-citation-link" service="google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`);
                             break;
                     }
-                    linksEl += linksArray.join(" &#8226; ");
+                    linksEl += linksArray.join(" - ");
                 }
 
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : cit.url}</a>
+                <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
                 ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
                 ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
                 ${cit.inLibrary ? "" : zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
@@ -3137,7 +3144,7 @@ var zoteroRoam = {};
                 `;
 
                 return `
-                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""}>
+                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} ${cit.intent ? `data-intent="${JSON.stringify(cit.intent)}"` : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
@@ -5089,7 +5096,7 @@ var zoteroRoam = {};
             let closeSeqText = (zoteroRoam.shortcuts.sequences["closeSearchPanel"]) ? zoteroRoam.shortcuts.makeSequenceText("closeSearchPanel", pre = "Exit with ") : "";
             if(toggleSeqText.length > 0 | closeSeqText.length > 0){
                 let spanSeqs = document.createElement('span');
-                spanSeqs.style = `font-style:italic;font-size:0.8em;margin:3px;`;
+                spanSeqs.style = `font-size:0.8em;margin:3px;`;
                 spanSeqs.innerHTML = `${[toggleSeqText, closeSeqText].filter(Boolean).join(" / ")}  `;
                 let searchTopControls = zoteroRoam.interface.search.overlay.querySelector(`.controls-top`);
                 searchTopControls.insertBefore(spanSeqs, zoteroRoam.interface.search.closeButton);
@@ -5097,7 +5104,7 @@ var zoteroRoam = {};
                 if(closeSeqText.length > 0){
                     let citationsSearchTopControls = zoteroRoam.interface.citations.overlay.querySelector(`.controls-top`);
                     let spanSeq = document.createElement('span');
-                    spanSeq.style = `font-style:italic;font-size:0.8em;margin:6px;`;
+                    spanSeq.style = `font-size:0.8em;margin:6px;`;
                     spanSeq.innerHTML = `${closeSeqText}`;
                     citationsSearchTopControls.insertBefore(spanSeq, zoteroRoam.interface.citations.closeButton);
 
