@@ -734,7 +734,7 @@
 
             let page = zoteroRoam.citations.pagination.getCurrentPageData();
             // Indicate results shown
-            paginationDiv.querySelector(".zotero-roam-citations-results-count").innerHTML = `
+            paginationDiv.closest('.bp3-dialog').querySelector(".zotero-roam-citations-results-count").innerHTML = `
             <strong>${zoteroRoam.citations.pagination.startIndex}-${zoteroRoam.citations.pagination.startIndex + page.length - 1}</strong> / ${zoteroRoam.citations.pagination.data.length} ${zoteroRoam.citations.currentType}
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
