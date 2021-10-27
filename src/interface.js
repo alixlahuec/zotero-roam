@@ -506,16 +506,6 @@
             let pagination = document.createElement('div');
             pagination.id = "zotero-roam-citations-pagination";
             
-            let pageControls = document.createElement('div');
-            pageControls.classList.add("bp3-button-group");
-            pageControls.classList.add("bp3-minimal");
-            pageControls.innerHTML = `
-            ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
-            ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
-            <span class="zotero-roam-citations-results-count zr-auxiliary"></span>
-            `;
-            pagination.appendChild(pageControls);
-
             // ---
 
             dialogMainPanel.appendChild(headerContent);
@@ -596,6 +586,11 @@
             let footerActions = document.createElement('div');
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
+            <div class="bp3-button-group bp3-minimal">
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
+                <span class="zotero-roam-citations-results-count zr-auxiliary"></span>
+            </div>
             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
             `;
             dialogMainPanel.appendChild(footerActions);

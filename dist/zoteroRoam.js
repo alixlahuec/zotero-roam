@@ -500,7 +500,7 @@ var zoteroRoam = {};
             autoCompleteCSS.textContent = `
             .zotero-roam-search-backdrop, .zotero-roam-citations-search-backdrop {opacity:0.4;}
             .zotero-roam-dialog-overlay .bp3-dialog-container, .zotero-roam-dialog-small .bp3-dialog-container{justify-content:start;}
-            .zotero-roam-search-overlay .bp3-dialog{background:white;}
+            .zotero-roam-search-overlay .bp3-dialog, .zotero-roam-citations-search-overlay .bp3-dialog{background:white;}
             .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(18vw + 9.5%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 40vw);}
@@ -545,7 +545,7 @@ var zoteroRoam = {};
             span.result_highlighted{color:#146cb7;font-weight:500;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
-            #zotero-roam-search-results-list, .zotero-roam-citations-search-results-list {max-height:70vh;overflow-y:scroll;}
+            #zotero-roam-search-results-list, #zotero-roam-citations-search-results-list {max-height:70vh;overflow-y:scroll;background:unset;}
             .zotero-roam-search-item-title{font-weight:500;}
             .zotero-roam-search-item-tags{font-style:italic;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
@@ -553,7 +553,6 @@ var zoteroRoam = {};
             .zotero-roam-library-results-count{display:block;padding:6px 0;}
             .zotero-roam-citations-results-count {padding: 6px 10px;}
             .zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu{padding:0px;}
-            .zotero-roam-search-results-list.bp3-menu{background:unset;}
             .zotero-roam-search_result, .zotero-roam-citations-search_result{padding:3px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
             .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#237d232e;}
@@ -2873,16 +2872,6 @@ var zoteroRoam = {};
             let pagination = document.createElement('div');
             pagination.id = "zotero-roam-citations-pagination";
             
-            let pageControls = document.createElement('div');
-            pageControls.classList.add("bp3-button-group");
-            pageControls.classList.add("bp3-minimal");
-            pageControls.innerHTML = `
-            ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
-            ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
-            <span class="zotero-roam-citations-results-count zr-auxiliary"></span>
-            `;
-            pagination.appendChild(pageControls);
-
             // ---
 
             dialogMainPanel.appendChild(headerContent);
@@ -2963,6 +2952,11 @@ var zoteroRoam = {};
             let footerActions = document.createElement('div');
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
+            <div class="bp3-button-group bp3-minimal">
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
+                <span class="zotero-roam-citations-results-count zr-auxiliary"></span>
+            </div>
             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
             `;
             dialogMainPanel.appendChild(footerActions);
