@@ -433,9 +433,9 @@
                 Quick Copy
             </label>
             </div>
-            <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
+            <input class="bp3-input clipboard-copy-utility bp3-small" type="text" readonly style="opacity:0;">
             <span class="bp3-popover2-target" tabindex="0">
-                <button type="button" class="zotero-roam-update-data bp3-button bp3-minimal">
+                <button type="button" class="zotero-roam-update-data bp3-button bp3-minimal bp3-small">
                 <span icon="refresh" class="bp3-icon bp3-icon-refresh"></span>
                 <span class="bp3-button-text">Update Zotero data</span>
                 </button>
@@ -852,6 +852,7 @@
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");
             } else {
                 zoteroRoam.interface.clearSelectedItem();
+                try{zoteroRoam.librarySearch.autocomplete.close()}catch(e){};
                 document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
                 zoteroRoam.interface.search.input.value = "";
                 zoteroRoam.interface.search.overlay.querySelector('input.clipboard-copy-utility').value = "";
