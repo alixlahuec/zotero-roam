@@ -545,7 +545,7 @@ var zoteroRoam = {};
             span.result_highlighted{color:#146cb7;font-weight:500;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
-            #zotero-roam-search-results-list, .zotero-roam-citations-search-results-list {max-height:70vh;overflow-y:scroll;background:unset;padding:0px;}
+            #zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu {max-height:70vh;overflow-y:scroll;background:unset;padding:0px;}
             .zotero-roam-search-item-title{font-weight:500;}
             .zotero-roam-search-item-tags{font-style:italic;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
@@ -553,7 +553,7 @@ var zoteroRoam = {};
             .zotero-roam-library-results-count:empty {padding: 0px;}
             .zotero-roam-library-results-count{display:block;padding:6px 0;}
             .zotero-roam-citations-results-count {padding: 6px 10px;}
-            .zotero-roam-search_result, .zotero-roam-citations-search_result{padding:3px;}
+            .zotero-roam-search_result, .zotero-roam-citations-search_result{padding:3px 0px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
             .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#237d232e;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}
@@ -598,7 +598,7 @@ var zoteroRoam = {};
             .zotero-roam-page-menu-backlinks-list {width:100%;}
             .zotero-roam-page-menu-backlinks-list > ul{padding:1vw;display:flex;flex:1 0 50%;flex-direction:column;}
             .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
-            .zotero-roam-citations-search_result > .bp3-menu-item, .zotero-roam-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;user-select:initial;}
+            .zotero-roam-search_result > .bp3-menu-item, .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;user-select:initial;padding: 3px 0px;}
             .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
@@ -643,7 +643,6 @@ var zoteroRoam = {};
             .zotero-roam-page-related{opacity:0.6;float:right;margin-top:-40px;}
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .zotero-roam-item-timestamp{font-size:0.85em;}
-            .zotero-roam-list-item [in-graph="true"] .zotero-roam-search-item-title {color:#7AC07A;}
             .zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
             .zotero-roam-auxiliary-overlay .bp3-card{padding:5px;}
             .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;user-select:initial;}

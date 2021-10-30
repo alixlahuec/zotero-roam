@@ -773,7 +773,7 @@
                 `;
 
                 return `
-                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} data-intent=${cit.intent ? JSON.stringify(cit.intent) : ""}>
+                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} data-intent=${cit.intent ? JSON.stringify(cit.intent) : ""} ${cit.isInfluential ? 'is-influential="true"' : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
@@ -930,27 +930,28 @@
                     title: libItem.data.title || "",
                     inGraph: inGraph,
                     added: libItem.data.dateAdded,
+                    itemType: libItem.data.itemType,
                     timestamp: zoteroRoam.utils.makeTimestamp(libItem.data.dateAdded)
                 }
             }).sort((a,b) => (a[`${defaultSort}`].toLowerCase() < b[`${defaultSort}`].toLowerCase() ? -1 : 1));
             let itemsList = items.map(item => {
                 let actionsDiv = "";
                 if(!item.inGraph){
-                    actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "add", buttonClass: "bp3-minimal bp3-intent-success bp3-small zotero-roam-add-to-graph"});
+                    actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning bp3-small zotero-roam-add-to-graph"});
                 } else {
                     let pageUID = zoteroRoam.utils.lookForPage('@' + item.key).uid;
                     let pageURL = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`;
-                    actionsDiv = zoteroRoam.utils.renderBP3Button_link(string = "Go to page", {linkClass: "bp3-minimal bp3-small zotero-roam-list-item-go-to-page", target: pageURL, linkAttribute: `data-uid="${pageUID}"`});
+                    actionsDiv = zoteroRoam.utils.renderBP3Button_link(string = "Go to page", {linkClass: "bp3-minimal bp3-small bp3-intent-success zotero-roam-list-item-go-to-page", icon: "symbol-circle", target: pageURL, linkAttribute: `data-uid="${pageUID}"`});
                 }
                 return `
-                <li class="zotero-roam-list-item">
-                <div class="bp3-menu-item" label="${item.key}" in-graph="${item.inGraph}">
+                <li class="zotero-roam-list-item" in-graph="${item.inGraph}" data-item-type="${item.itemType}">
+                <div class="bp3-menu-item" label="${item.key}">
                     ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp">${item.timestamp}</span>` : ""}
                     <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                         <span class="zotero-roam-search-item-title" style="display:block;white-space:normal;">${item.title}</span>
-                        <span class="zotero-roam-citation-metadata-contents">${item.meta}</span>
-                        <span class="zotero-roam-list-item-key bp3-text-muted">[${item.key}]</span>
-                        ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal"}) : ""}
+                        <span class="zr-highlight">${item.meta}</span>
+                        <span class="zotero-roam-list-item-key zr-auxiliary">[${item.key}]</span>
+                        ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal bp3-small"}) : ""}
                         <span class="zotero-roam-citation-abstract" style="display:none;">${item.abstract}</span>
                     </div>
                     <span class="zotero-roam-list-item-actions">
