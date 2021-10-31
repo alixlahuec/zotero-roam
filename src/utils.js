@@ -297,23 +297,31 @@
         },
 
         multiwordMatch(query, string, highlight = []){
-            let terms = query.toLowerCase().split(" ");
+            let terms = Array.from(new Set(query.toLowerCase().split(" ")));
             let target = string.toLowerCase();
+            
             let output = string;
+            let finds = [];
         
             let match = false;
             for(let i = 0; i < terms.length; i++){
                 let loc = target.search(terms[i]);
                 if(loc >= 0){
                     match = true;
-                    target = target.replace(terms[i], "");
-                    if(highlight.length == 2){
-                        output = output.substring(0, loc) + highlight[0] + output.substring(loc, loc + terms[i].length) + highlight[1] + output.substring(loc + terms[i].length);
-                    }
+                    finds.push({loc: loc, end: loc + terms[i].length});
                 } else {
                     match = false;
                     break;
                 }
+            }
+
+            if(highlight.length == 2){
+                let [prefix, suffix] = highlight;
+                finds
+                .sort((a,b) => (a.loc > b.loc ? -1 : 1))
+                .forEach(find => {
+                    output = output.substring(0, find.loc) + prefix + output.substring(find.loc, find.end) + suffix + output.substring(find.end);
+                })
             }
         
             if(match){ return output };
