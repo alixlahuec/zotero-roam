@@ -106,14 +106,16 @@ var zoteroRoam = {};
                     cache: false,
                     /** @returns {Array} The results, filtered in the order of the 'keys' parameter above, and sorted by authors ascending */
                     filter: (list) => {
-                        // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
-                        // Records are sorted alphabetically (by key name) => _multiField should come last
-                        const filteredMatches = Array.from(new Set(list.map((item) => item.value.key))).map((citekey) => {
-                            return list.filter(item => item.value.key == citekey).sort((a,b) => {
-                                return zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == a.key) < zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == b.key) ? -1 : 1;
-                            })[0];
+                        // Records are ranked (by key name) => _multiField should come last
+                        var sortedMatches = list.sort((a,b) => {
+                            return zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == a.key) < zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == b.key) ? -1 : 1;
                         });
-                        return filteredMatches.sort((a,b) => {
+                        // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
+                        var filteredMatches = Array.from(new Set(sortedMatches.map((item) => item.value.key))).map((citekey) => {
+                            return sortedMatches.find(item => item.value.key == citekey);
+                        });
+                        return filteredMatches;
+                        /* .sort((a,b) => {
                             if(a.value.authors.length == 0){
                                 return 2;
                             } else if(a.value.authors.toLowerCase() < b.value.authors.toLowerCase() || b.value.authors.length == 0){
@@ -121,7 +123,7 @@ var zoteroRoam = {};
                             } else{
                                 return 0;
                             }
-                        })
+                        })*/
                     }
                 },
                 selector: '#zotero-roam-search-autocomplete',
@@ -672,6 +674,7 @@ var zoteroRoam = {};
             .bp3-dark .zr-auxiliary{color:#95a8b7;}
             [in-graph='true'] .bp3-menu-item-label .bp3-icon {color: #3DCC91;}
             [in-graph='false'] .bp3-menu-item-label .bp3-icon {color: #F29D49;}
+            .zr-search-match {background-color: #fbde0f40;padding: 2px;border-radius: 3px;}
             `;
             document.head.append(autoCompleteCSS);
         }
