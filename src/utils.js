@@ -296,22 +296,27 @@
             return arr1.filter(el => arr2.includes(el)).length > 0;
         },
 
-        multiwordMatch(query, string){
+        multiwordMatch(query, string, highlight = []){
             let terms = query.toLowerCase().split(" ");
             let target = string.toLowerCase();
+            let output = string;
         
             let match = false;
             for(let i = 0; i < terms.length; i++){
-                if(target.includes(terms[i])){
+                let loc = target.search(terms[i]);
+                if(loc >= 0){
                     match = true;
                     target = target.replace(terms[i], "");
-                } else{
+                    if(highlight.length == 2){
+                        output = output.substring(0, loc) + highlight[0] + output.substring(loc, loc + terms[i].length) + highlight[1] + output.substring(loc + terms[i].length);
+                    }
+                } else {
                     match = false;
                     break;
                 }
             }
         
-            if(match){ return string };
+            if(match){ return output };
         
         },
         

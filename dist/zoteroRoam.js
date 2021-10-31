@@ -137,7 +137,7 @@ var zoteroRoam = {};
                     }
                 },
                 searchEngine: (query, record) => {
-                    return zoteroRoam.utils.multiwordMatch(query, record);
+                    return zoteroRoam.utils.multiwordMatch(query, record, highlight = [`<span class="zr-search-match">`, `</span>`]);
                 },
                 resultsList: {
                     class: "zotero-roam-search-results-list",
@@ -164,16 +164,13 @@ var zoteroRoam = {};
                     tag: 'li',
                     class: "zotero-roam-search_result",
                     id: "zotero-roam-search_result",
-                    highlight: "zr-search-match",
+                    highlight: false,
                     /**
                      * Controls the rendering of each search result
                      * @param {Element} item - The DOM Element corresponding to a given search result 
                      * @param {object} data - The search data associated with a given result
                      */
                     element: (item, data) => {
-                        let itemMetadata = `<span class="zotero-roam-search-item-metadata zr-secondary"> ${data.value.meta}</span>`;
-                        let itemTitleContent = (data.key == "title") ? data.match : data.value.title;
-                        let itemTitle = `<span class="zotero-roam-search-item-title" style="display:block;">${itemTitleContent}</span>`;
 
                         let keyEl = ``;
                         if(data.value.inGraph){
@@ -186,22 +183,34 @@ var zoteroRoam = {};
 
                         item.setAttribute('data-item-type', data.value.itemType);
 
-                        let itemYear = data.value.year ? ` (${data.value.year})` : "";
-                        // Prepare authors element, if there are any
-                        let itemAuthors = `<span class="zotero-roam-search-item-authors zr-highlight">${data.value.authors + itemYear}</span>`;
+                        let {title, authors, meta} = data.value;
+                        authors += (data.value.year ? ` (${data.value.year})` : "");
+
+                        switch(data.key){
+                            case "title":
+                                title = data.match;
+                                break;
+                            case "authorsString":
+                            case "year":
+                                authors = `<span class="zr-search-match">${authors}</span>`;
+                                break;
+                            default:
+                                break;
+                        }
             
                         // Render the element's template
-                        item.innerHTML = `<div label="${data.value.key}" class="bp3-menu-item bp3-popover-dismiss">
-                                            <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-search-item-contents">
-                                            ${itemTitle}
-                                            <span class="zr-details">
-                                            ${itemAuthors}${itemMetadata}
-                                            </span>
-                                            </div>
-                                            <span class="bp3-menu-item-label">
-                                            ${keyEl}
-                                            </span>
-                                            </div>`;
+                        item.innerHTML = `
+                        <div label="${data.value.key}" class="bp3-menu-item">
+                            <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-search-item-contents">
+                            <span class="zotero-roam-search-item-title" style="display:block;">${title}</span>
+                                <span class="zr-details">
+                                    <span class="zotero-roam-search-item-authors zr-highlight">${authors}</span><span class="zotero-roam-search-item-metadata zr-secondary"> ${meta}</span>
+                                </span>
+                            </div>
+                            <span class="bp3-menu-item-label">
+                            ${keyEl}
+                            </span>
+                        </div>`;
               
                     }
                 },
@@ -991,22 +1000,27 @@ var zoteroRoam = {};
             return arr1.filter(el => arr2.includes(el)).length > 0;
         },
 
-        multiwordMatch(query, string){
+        multiwordMatch(query, string, highlight = []){
             let terms = query.toLowerCase().split(" ");
             let target = string.toLowerCase();
+            let output = string;
         
             let match = false;
             for(let i = 0; i < terms.length; i++){
-                if(target.includes(terms[i])){
+                let loc = target.search(terms[i]);
+                if(loc >= 0){
                     match = true;
                     target = target.replace(terms[i], "");
-                } else{
+                    if(highlight.length == 2){
+                        output = output.substring(0, loc) + highlight[0] + output.substring(loc, loc + terms[i].length) + highlight[1] + output.substring(loc + terms[i].length);
+                    }
+                } else {
                     match = false;
                     break;
                 }
             }
         
-            if(match){ return string };
+            if(match){ return output };
         
         },
         
