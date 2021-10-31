@@ -1028,7 +1028,8 @@ var zoteroRoam = {};
                 .sort((a,b) => (a.loc > b.loc ? -1 : 1))
                 .forEach(find => {
                     output = output.substring(0, find.loc) + prefix + output.substring(find.loc, find.end) + suffix + output.substring(find.end);
-                })
+                });
+                output = output.replaceAll(`${suffix} ${prefix}`, " ");
             }
         
             if(match){ return output };
