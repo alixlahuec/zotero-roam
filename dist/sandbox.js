@@ -272,7 +272,7 @@ var zoteroRoam = {};
                             return [];
                         } else {
                             let papersList = zoteroRoam.data.semantic.get(zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
-                            let doisInLib = new Map(zoteroRoam.data.items.filter(i => i.data.DOI).map(i => [zoteroRoam.utils.parseDOI(it.data.DOI), i.key]));
+                            let doisInLib = new Map(zoteroRoam.data.items.filter(i => i.data.DOI).map(i => [zoteroRoam.utils.parseDOI(i.data.DOI), i.key]));
                             papersList.forEach((paper, i) => {
                                 if(paper.doi && doisInLib.has(zoteroRoam.utils.parseDOI(paper.doi))){ 
                                     papersList[i].inLibrary = true;
@@ -3264,10 +3264,14 @@ var zoteroRoam = {};
             zoteroRoam.citations.currentType = type;
             // All citations -- paginated
             let fullData = zoteroRoam.data.semantic.get(doi)[`${type}`];
-            let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
+            let doisInLib = new Map(zoteroRoam.data.items.filter(i => i.data.DOI).map(i => [zoteroRoam.utils.parseDOI(i.data.DOI), i.key]));
             fullData.forEach((paper, i) => {
-                if(paper.doi && doisInLib.includes(paper.doi)){ fullData[i].inLibrary = true }
+                if(paper.doi && doisInLib.has(zoteroRoam.utils.parseDOI(paper.doi))){ 
+                    fullData[i].inLibrary = true;
+                    fullData[i].citekey = doisInLib.get(paper.doi)
+                }
             });
+            
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
             // Render HTML for pagination
             zoteroRoam.interface.renderCitationsPagination();

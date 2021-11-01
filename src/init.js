@@ -272,7 +272,7 @@ var zoteroRoam = {};
                             return [];
                         } else {
                             let papersList = zoteroRoam.data.semantic.get(zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
-                            let doisInLib = new Map(zoteroRoam.data.items.filter(i => i.data.DOI).map(i => [zoteroRoam.utils.parseDOI(it.data.DOI), i.key]));
+                            let doisInLib = new Map(zoteroRoam.data.items.filter(i => i.data.DOI).map(i => [zoteroRoam.utils.parseDOI(i.data.DOI), i.key]));
                             papersList.forEach((paper, i) => {
                                 if(paper.doi && doisInLib.has(zoteroRoam.utils.parseDOI(paper.doi))){ 
                                     papersList[i].inLibrary = true;
