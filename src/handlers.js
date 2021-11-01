@@ -310,28 +310,6 @@
             }
         },
 
-        /** No longer in use */
-        async checkForScitations(refSpan){
-            try {
-                let citekey = refSpan.parentElement.dataset.linkTitle.replace("@", ""); // I'll deal with tags later, or not at all
-                let item = zoteroRoam.data.items.find(i => i.key == citekey);
-                if(item) {
-                    if(item.data.DOI){
-                        let scitations = await zoteroRoam.handlers.requestScitations(item.data.DOI);
-                        if(scitations.simplified.length == 0){
-                            zoteroRoam.interface.popToast("This item has no available citing papers");
-                        } else {
-                            zoteroRoam.interface.popCitationsOverlay(item.data.DOI, citekey);
-                        }
-                    } else{
-                        zoteroRoam.interface.popToast("This item has no DOI (required for citations lookup).", "danger");
-                    }
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        },
-
         async checkForSemantic_citations(refSpan){
             try {
                 let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
@@ -505,8 +483,7 @@
         },
 
         async getSemantic(doi){
-            let dataIndex = zoteroRoam.data.semantic.findIndex(res => res.doi == doi);
-            if(dataIndex == -1){
+            if(!zoteroRoam.data.semantic.has(doi)){
                 let outcome = await zoteroRoam.handlers.requestSemantic(doi);
                 if(outcome.success == true){
                     let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
@@ -520,15 +497,15 @@
                             outcome.data.references[index].inLibrary = true;
                         }
                     })
-                    zoteroRoam.data.semantic.push(outcome.data);
-                    return outcome.data;
+                    zoteroRoam.data.semantic.set(doi, outcome.data);
                 } else {
                     console.log(outcome);
                     return {};
                 }
-            } else {
-                return zoteroRoam.data.semantic[dataIndex];
             }
+            
+            return zoteroRoam.data.semantic.get(doi);
+            
         },
 
         async requestSemantic(doi){

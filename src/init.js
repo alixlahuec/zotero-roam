@@ -78,7 +78,7 @@ var zoteroRoam = {};
         
         version: "0.6.65",
 
-        data: {items: [], collections: [], semantic: [], libraries: [], keys: [], roamPages: []},
+        data: {items: [], collections: [], semantic: new Map(), libraries: [], keys: [], roamPages: []},
         
         librarySearch: {autocomplete: null},
 
@@ -271,15 +271,18 @@ var zoteroRoam = {};
                         if(zoteroRoam.citations.currentDOI.length == 0){
                             return [];
                         } else {
-                            let papersList = zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
-                            let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
+                            let papersList = zoteroRoam.data.semantic.get(zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
+                            let doisInLib = new Map(zoteroRoam.data.items.filter(i => i.data.DOI).map(i => [zoteroRoam.utils.parseDOI(it.data.DOI), i.key]));
                             papersList.forEach((paper, i) => {
-                                if(paper.doi && zoteroRoam.utils.includes_anycase(doisInLib, paper.doi)){ papersList[i].inLibrary = true }
+                                if(paper.doi && doisInLib.has(zoteroRoam.utils.parseDOI(paper.doi))){ 
+                                    papersList[i].inLibrary = true;
+                                    papersList[i].citekey = doisInLib.get(paper.doi)
+                                }
                             });
                             return papersList;
                         }
                     },
-                    keys: ['year', 'title', 'authorsString', 'meta'],
+                    keys: ['title', 'authorsString', 'year', 'meta'],
                     /** @returns {Array} The results, filtered in the order of the 'keys' parameter above */
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
@@ -304,7 +307,7 @@ var zoteroRoam = {};
                     }
                 },
                 searchEngine: (query, record) => {
-                    return zoteroRoam.utils.multiwordMatch(query, record)
+                    return zoteroRoam.utils.multiwordMatch(query, record, highlight = [`<span class="zr-search-match">`, `</span>`])
                 },
                 resultsList: false,
                 events: {
@@ -564,7 +567,8 @@ var zoteroRoam = {};
             .zotero-roam-library-results-count:empty {padding: 0px;}
             .zotero-roam-library-results-count{display:block;padding:6px 0;}
             .zotero-roam-citations-results-count {padding: 6px 10px;}
-            .zotero-roam-search_result, .zotero-roam-citations-search_result{padding:3px 0px;}
+            .zotero-roam-search_result{padding:3px 0px;}
+            .zotero-roam-citations-search_result{padding:3px 6px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
             .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#237d232e;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}

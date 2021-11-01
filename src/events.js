@@ -154,15 +154,14 @@
                                 let doi = menu.dataset.doi;
                                 let citeObject = await zoteroRoam.handlers.getSemantic(doi);
                                 if(citeObject.data){
-                                    let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
-                                    let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                                    let citingDOIs = citeObject.citations.map(cit => zoteroRoam.utils.parseDOI(cit.doi)).filter(Boolean);
+                                    let citedDOIs = citeObject.references.map(ref => zoteroRoam.utils.parseDOI(ref.doi)).filter(Boolean);
                                     let allDOIs = [...citingDOIs, ...citedDOIs];
-                                    if(zoteroRoam.utils.includes_anycase(allDOIs, itemDOI)){
+                                    if(allDOIs.includes(itemDOI)){
                                         let doisInLib = zoteroRoam.data.items.filter(it => zoteroRoam.utils.parseDOI(it.data.DOI));
-                                        let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
-                                        papersInLib.forEach((paper, index) => {
-                                            let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
-                                            if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
+                                        let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI) == doi)).filter(Boolean);
+                                        papersInLib.forEach((it, index) => {
+                                            if(citingDOIs.includes(it.data.DOI)){
                                                 papersInLib[index].type = "citing";
                                             } else {
                                                 papersInLib[index].type = "cited";

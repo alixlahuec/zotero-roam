@@ -372,15 +372,14 @@
                     if(menu_defaults.includes("citingPapers") && itemDOI){
                         citeObject = await zoteroRoam.handlers.getSemantic(itemDOI);
                         if(citeObject.data){
-                            let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
-                            let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                            let citingDOIs = citeObject.citations.map(cit => zoteroRoam.utils.parseDOI(cit.doi)).filter(Boolean);
+                            let citedDOIs = citeObject.references.map(ref => zoteroRoam.utils.parseDOI(ref.doi)).filter(Boolean);
                             let allDOIs = [...citingDOIs, ...citedDOIs];
                             if(allDOIs.length > 0){
                                 let doisInLib = zoteroRoam.data.items.filter(it => zoteroRoam.utils.parseDOI(it.data.DOI));
-                                let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
+                                let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI) == doi)).filter(Boolean);
                                 papersInLib.forEach((paper, index) => {
-                                    let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI) || "";
-                                    if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
+                                    if(citingDOIs.includes(paper.data.DOI)){
                                         papersInLib[index].type = "citing";
                                     } else {
                                         papersInLib[index].type = "cited";

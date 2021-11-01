@@ -739,7 +739,7 @@
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let titleEl = `<span class="zotero-roam-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span class="bp3-icon bp3-icon-symbol-circle bp3-intent-success"></span>' : ''}</span>`;
+                let titleEl = `<span class="zotero-roam-search-item-title" style="display:block;">${cit.title}</span>`;
                 // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-roam-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let origin = cit.authors + (cit.year ? " (" + cit.year + ")" : "");
                 let metaEl = `<span class="zotero-roam-citation-origin zr-highlight-2">${origin}</span><span class="zr-secondary">${cit.meta}</span>`;
@@ -765,15 +765,25 @@
 
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
-                ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
-                ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
-                ${cit.inLibrary ? "" : zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
+                `;
+
+                if(cit.inLibrary){
+                    keyEl += ""; // Get citekey
+                } else {
+                    keyEl += `
+                    <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
+                    ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
+                    ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
+                    ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
+                    `;
+                }
+
+                keyEl += `
                 </span>
                 `;
 
                 return `
-                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} data-intent=${cit.intent ? JSON.stringify(cit.intent) : ""} ${cit.isInfluential ? 'is-influential="true"' : ""}>
+                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} data-intent=${cit.intent ? JSON.stringify(cit.intent) : ""} ${cit.isInfluential ? 'is-influential' : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
@@ -783,7 +793,7 @@
                 </span>
                 </div>
                 ${keyEl}
-                <span class="zotero-roam-citation-abstract" style="display:none;">${cit.abstract}</span>
+                <span class="zotero-roam-citation-abstract" style="display:none;">${cit.abstract || ""}</span>
                 </div></li>
                 `
             }).join("");
@@ -880,10 +890,10 @@
             zoteroRoam.citations.currentCitekey = citekey;
             zoteroRoam.citations.currentType = type;
             // All citations -- paginated
-            let fullData = zoteroRoam.data.semantic.find(item => item.doi == doi)[`${type}`];
+            let fullData = zoteroRoam.data.semantic.get(doi)[`${type}`];
             let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
             fullData.forEach((paper, i) => {
-                if(paper.doi && zoteroRoam.utils.includes_anycase(doisInLib, paper.doi)){ fullData[i].inLibrary = true }
+                if(paper.doi && doisInLib.includes(paper.doi)){ fullData[i].inLibrary = true }
             });
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
             // Render HTML for pagination

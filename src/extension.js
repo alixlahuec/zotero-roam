@@ -112,7 +112,7 @@
             zoteroRoam.interface.icon.setAttribute("status", "off");
             zoteroRoam.data.items = [];
             zoteroRoam.data.collections = [];
-            zoteroRoam.data.semantic = [];
+            zoteroRoam.data.semantic.clear();
             zoteroRoam.data.keys = [];
             zoteroRoam.data.libraries = zoteroRoam.data.libraries.map(lib => {
                 lib.version = "0";

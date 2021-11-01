@@ -78,7 +78,7 @@ var zoteroRoam = {};
         
         version: "0.6.65",
 
-        data: {items: [], collections: [], semantic: [], libraries: [], keys: [], roamPages: []},
+        data: {items: [], collections: [], semantic: new Map(), libraries: [], keys: [], roamPages: []},
         
         librarySearch: {autocomplete: null},
 
@@ -271,15 +271,18 @@ var zoteroRoam = {};
                         if(zoteroRoam.citations.currentDOI.length == 0){
                             return [];
                         } else {
-                            let papersList = zoteroRoam.data.semantic.find(it => it.doi == zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
-                            let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
+                            let papersList = zoteroRoam.data.semantic.get(zoteroRoam.citations.currentDOI)[`${zoteroRoam.citations.currentType}`];
+                            let doisInLib = new Map(zoteroRoam.data.items.filter(i => i.data.DOI).map(i => [zoteroRoam.utils.parseDOI(it.data.DOI), i.key]));
                             papersList.forEach((paper, i) => {
-                                if(paper.doi && zoteroRoam.utils.includes_anycase(doisInLib, paper.doi)){ papersList[i].inLibrary = true }
+                                if(paper.doi && doisInLib.has(zoteroRoam.utils.parseDOI(paper.doi))){ 
+                                    papersList[i].inLibrary = true;
+                                    papersList[i].citekey = doisInLib.get(paper.doi)
+                                }
                             });
                             return papersList;
                         }
                     },
-                    keys: ['year', 'title', 'authorsString', 'meta'],
+                    keys: ['title', 'authorsString', 'year', 'meta'],
                     /** @returns {Array} The results, filtered in the order of the 'keys' parameter above */
                     filter: (list) => {
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
@@ -304,7 +307,7 @@ var zoteroRoam = {};
                     }
                 },
                 searchEngine: (query, record) => {
-                    return zoteroRoam.utils.multiwordMatch(query, record)
+                    return zoteroRoam.utils.multiwordMatch(query, record, highlight = [`<span class="zr-search-match">`, `</span>`])
                 },
                 resultsList: false,
                 events: {
@@ -564,7 +567,8 @@ var zoteroRoam = {};
             .zotero-roam-library-results-count:empty {padding: 0px;}
             .zotero-roam-library-results-count{display:block;padding:6px 0;}
             .zotero-roam-citations-results-count {padding: 6px 10px;}
-            .zotero-roam-search_result, .zotero-roam-citations-search_result{padding:3px 0px;}
+            .zotero-roam-search_result{padding:3px 0px;}
+            .zotero-roam-citations-search_result{padding:3px 6px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
             .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#237d232e;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}
@@ -1047,7 +1051,7 @@ var zoteroRoam = {};
               // Clean up the DOI format if needed, to extract prefix + suffix only
                 let formatCheck = doi.match(/10\.([0-9]+?)\/(.+)/g);
                 if(formatCheck){
-                    return formatCheck[0];
+                    return formatCheck[0].toLowerCase();
                 } else {
                     return false;
                 }
@@ -1730,28 +1734,6 @@ var zoteroRoam = {};
             }
         },
 
-        /** No longer in use */
-        async checkForScitations(refSpan){
-            try {
-                let citekey = refSpan.parentElement.dataset.linkTitle.replace("@", ""); // I'll deal with tags later, or not at all
-                let item = zoteroRoam.data.items.find(i => i.key == citekey);
-                if(item) {
-                    if(item.data.DOI){
-                        let scitations = await zoteroRoam.handlers.requestScitations(item.data.DOI);
-                        if(scitations.simplified.length == 0){
-                            zoteroRoam.interface.popToast("This item has no available citing papers");
-                        } else {
-                            zoteroRoam.interface.popCitationsOverlay(item.data.DOI, citekey);
-                        }
-                    } else{
-                        zoteroRoam.interface.popToast("This item has no DOI (required for citations lookup).", "danger");
-                    }
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        },
-
         async checkForSemantic_citations(refSpan){
             try {
                 let citekey = refSpan.parentElement.dataset.linkTitle.replace('@', ""); // I'll deal with tags later, or not at all
@@ -1925,8 +1907,7 @@ var zoteroRoam = {};
         },
 
         async getSemantic(doi){
-            let dataIndex = zoteroRoam.data.semantic.findIndex(res => res.doi == doi);
-            if(dataIndex == -1){
+            if(!zoteroRoam.data.semantic.has(doi)){
                 let outcome = await zoteroRoam.handlers.requestSemantic(doi);
                 if(outcome.success == true){
                     let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
@@ -1940,15 +1921,15 @@ var zoteroRoam = {};
                             outcome.data.references[index].inLibrary = true;
                         }
                     })
-                    zoteroRoam.data.semantic.push(outcome.data);
-                    return outcome.data;
+                    zoteroRoam.data.semantic.set(doi, outcome.data);
                 } else {
                     console.log(outcome);
                     return {};
                 }
-            } else {
-                return zoteroRoam.data.semantic[dataIndex];
             }
+            
+            return zoteroRoam.data.semantic.get(doi);
+            
         },
 
         async requestSemantic(doi){
@@ -3131,7 +3112,7 @@ var zoteroRoam = {};
             `;
             // Grab current page data, generate corresponding HTML, then inject as contents of paginatedList
             paginatedList.innerHTML = page.map(cit => {
-                let titleEl = `<span class="zotero-roam-search-item-title" style="display:block;">${cit.title} ${cit.inLibrary ? '<span class="bp3-icon bp3-icon-symbol-circle bp3-intent-success"></span>' : ''}</span>`;
+                let titleEl = `<span class="zotero-roam-search-item-title" style="display:block;">${cit.title}</span>`;
                 // let keywordsEl = cit.keywords.length > 0 ? `<span class="zotero-roam-search-item-tags">${cit.keywords.map(w => "#" + w).join(", ")}</span>` : "";
                 let origin = cit.authors + (cit.year ? " (" + cit.year + ")" : "");
                 let metaEl = `<span class="zotero-roam-citation-origin zr-highlight-2">${origin}</span><span class="zr-secondary">${cit.meta}</span>`;
@@ -3157,15 +3138,25 @@ var zoteroRoam = {};
 
                 let keyEl = `
                 <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
-                ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
-                ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
-                ${cit.inLibrary ? "" : zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
+                `;
+
+                if(cit.inLibrary){
+                    keyEl += ""; // Get citekey
+                } else {
+                    keyEl += `
+                    <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
+                    ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
+                    ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-outlined", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
+                    ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-outlined bp3-intent-primary", icon: "inheritance"})}
+                    `;
+                }
+
+                keyEl += `
                 </span>
                 `;
 
                 return `
-                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} data-intent=${cit.intent ? JSON.stringify(cit.intent) : ""} ${cit.isInfluential ? 'is-influential="true"' : ""}>
+                <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} data-intent=${cit.intent ? JSON.stringify(cit.intent) : ""} ${cit.isInfluential ? 'is-influential' : ""}>
                 <div class="bp3-menu-item">
                 <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
                 ${titleEl}
@@ -3175,7 +3166,7 @@ var zoteroRoam = {};
                 </span>
                 </div>
                 ${keyEl}
-                <span class="zotero-roam-citation-abstract" style="display:none;">${cit.abstract}</span>
+                <span class="zotero-roam-citation-abstract" style="display:none;">${cit.abstract || ""}</span>
                 </div></li>
                 `
             }).join("");
@@ -3272,10 +3263,10 @@ var zoteroRoam = {};
             zoteroRoam.citations.currentCitekey = citekey;
             zoteroRoam.citations.currentType = type;
             // All citations -- paginated
-            let fullData = zoteroRoam.data.semantic.find(item => item.doi == doi)[`${type}`];
+            let fullData = zoteroRoam.data.semantic.get(doi)[`${type}`];
             let doisInLib = zoteroRoam.data.items.map(it => zoteroRoam.utils.parseDOI(it.data.DOI)).filter(Boolean);
             fullData.forEach((paper, i) => {
-                if(paper.doi && zoteroRoam.utils.includes_anycase(doisInLib, paper.doi)){ fullData[i].inLibrary = true }
+                if(paper.doi && doisInLib.includes(paper.doi)){ fullData[i].inLibrary = true }
             });
             zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
             // Render HTML for pagination
@@ -4020,7 +4011,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.icon.setAttribute("status", "off");
             zoteroRoam.data.items = [];
             zoteroRoam.data.collections = [];
-            zoteroRoam.data.semantic = [];
+            zoteroRoam.data.semantic.clear();
             zoteroRoam.data.keys = [];
             zoteroRoam.data.libraries = zoteroRoam.data.libraries.map(lib => {
                 lib.version = "0";
@@ -4544,15 +4535,14 @@ var zoteroRoam = {};
                     if(menu_defaults.includes("citingPapers") && itemDOI){
                         citeObject = await zoteroRoam.handlers.getSemantic(itemDOI);
                         if(citeObject.data){
-                            let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
-                            let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                            let citingDOIs = citeObject.citations.map(cit => zoteroRoam.utils.parseDOI(cit.doi)).filter(Boolean);
+                            let citedDOIs = citeObject.references.map(ref => zoteroRoam.utils.parseDOI(ref.doi)).filter(Boolean);
                             let allDOIs = [...citingDOIs, ...citedDOIs];
                             if(allDOIs.length > 0){
                                 let doisInLib = zoteroRoam.data.items.filter(it => zoteroRoam.utils.parseDOI(it.data.DOI));
-                                let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
+                                let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI) == doi)).filter(Boolean);
                                 papersInLib.forEach((paper, index) => {
-                                    let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI) || "";
-                                    if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
+                                    if(citingDOIs.includes(paper.data.DOI)){
                                         papersInLib[index].type = "citing";
                                     } else {
                                         papersInLib[index].type = "cited";
@@ -5343,15 +5333,14 @@ var zoteroRoam = {};
                                 let doi = menu.dataset.doi;
                                 let citeObject = await zoteroRoam.handlers.getSemantic(doi);
                                 if(citeObject.data){
-                                    let citingDOIs = citeObject.citations.filter(cit => cit.doi).map(cit => cit.doi);
-                                    let citedDOIs = citeObject.references.filter(ref => ref.doi).map(ref => ref.doi);
+                                    let citingDOIs = citeObject.citations.map(cit => zoteroRoam.utils.parseDOI(cit.doi)).filter(Boolean);
+                                    let citedDOIs = citeObject.references.map(ref => zoteroRoam.utils.parseDOI(ref.doi)).filter(Boolean);
                                     let allDOIs = [...citingDOIs, ...citedDOIs];
-                                    if(zoteroRoam.utils.includes_anycase(allDOIs, itemDOI)){
+                                    if(allDOIs.includes(itemDOI)){
                                         let doisInLib = zoteroRoam.data.items.filter(it => zoteroRoam.utils.parseDOI(it.data.DOI));
-                                        let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI).toLowerCase() == doi.toLowerCase())).filter(Boolean);
-                                        papersInLib.forEach((paper, index) => {
-                                            let cleanDOI = zoteroRoam.utils.parseDOI(paper.data.DOI);
-                                            if(zoteroRoam.utils.includes_anycase(citingDOIs, cleanDOI)){
+                                        let papersInLib = allDOIs.map(doi => doisInLib.find(it => zoteroRoam.utils.parseDOI(it.data.DOI) == doi)).filter(Boolean);
+                                        papersInLib.forEach((it, index) => {
+                                            if(citingDOIs.includes(it.data.DOI)){
                                                 papersInLib[index].type = "citing";
                                             } else {
                                                 papersInLib[index].type = "cited";

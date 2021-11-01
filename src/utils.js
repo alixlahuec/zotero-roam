@@ -340,7 +340,7 @@
               // Clean up the DOI format if needed, to extract prefix + suffix only
                 let formatCheck = doi.match(/10\.([0-9]+?)\/(.+)/g);
                 if(formatCheck){
-                    return formatCheck[0];
+                    return formatCheck[0].toLowerCase();
                 } else {
                     return false;
                 }
