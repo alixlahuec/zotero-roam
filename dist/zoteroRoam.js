@@ -78,7 +78,7 @@ var zoteroRoam = {};
         
         version: "0.6.65",
 
-        data: {items: [], collections: [], semantic: new Map(), libraries: [], keys: [], roamPages: []},
+        data: {items: [], collections: [], semantic: new Map(), libraries: new Map(), keys: [], roamPages: []},
         
         librarySearch: {autocomplete: null},
 
@@ -882,7 +882,7 @@ var zoteroRoam = {};
         },
 
         getLibraries(){
-            return zoteroRoam.data.libraries.map(lib => {
+            return Array.from(zoteroRoam.data.libraries.values()).map(lib => {
                 let keyAccess = zoteroRoam.data.keys.find(k => k.key == lib.apikey).access;
                 let [libType, libID] = lib.path.split("/");
                 let permissions = {};
@@ -1730,7 +1730,9 @@ var zoteroRoam = {};
                     }; 
                 });
                 let libList = Array.from(new Set(requests.map(rq => rq.library)));
-                zoteroRoam.data.libraries = libList.map(lib => { return {path: lib, version: "0", apikey: requests.find(rq => rq.library == lib).apikey} });
+                libList.forEach(libPath => {
+                    zoteroRoam.data.libraries.set(libPath, {path: libPath, version: "0", apikey: requests.find(rq => rq.library == libPath).apikey});
+                });
                 zoteroRoam.config.requests = requests;
             }
         },
@@ -2002,7 +2004,7 @@ var zoteroRoam = {};
                 })).flat(1);
                 requestsResults = zoteroRoam.handlers.extractCitekeys(requestsResults);
 
-                let currentLibs = zoteroRoam.data.libraries;
+                let currentLibs = Array.from(zoteroRoam.data.libraries.values());
                 // Collections data
                 if(collections == true){
                     currentLibs.forEach(lib => {
@@ -2015,11 +2017,12 @@ var zoteroRoam = {};
                         }));
                     });
                     collectionsResults = await Promise.all(collectionsCalls);
-                    collectionsResults = await Promise.all(collectionsResults.map( (cl, i) => {
+                    collectionsResults = await Promise.all(collectionsResults.map(req => {
                         // Update stored data on libraries
-                        let latestVersion = cl.headers.get('Last-Modified-Version');
-                        if(latestVersion){ zoteroRoam.data.libraries[i].version = latestVersion }
-                        return cl.json();
+                        let latestVersion = req.headers.get('Last-Modified-Version');
+                        let libPath = req.url.match(/(user|group)s\/([^\/]+)/g);
+                        if(latestVersion){ zoteroRoam.data.libraries.get(libPath).version = latestVersion }
+                        return req.json();
                     }));
                     collectionsResults = collectionsResults.flat(1);
                 }
@@ -2035,10 +2038,14 @@ var zoteroRoam = {};
                         }));
                     });
                     deletedResults = await Promise.all(deletedCalls);
-                    deletedResults = await Promise.all(deletedResults.map(res => res.json()));
+                    let libPaths = [];
+                    deletedResults = await Promise.all(deletedResults.map(req => {
+                        libPaths.push(req.url.match(/(user|group)s\/([^\/]+)/g));
+                        return req.json();
+                    }));
                     deletedResults = deletedResults.map((res, i) => {
                         return {
-                            path: zoteroRoam.data.libraries[i].path,
+                            path: libPaths[i],
                             items: res.items,
                             collections: res.collections
                         }
@@ -2289,7 +2296,6 @@ var zoteroRoam = {};
             data = (data.constructor === Array) ? data : [data];
             let outcome = {};
             try{
-                let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
                 let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -2304,7 +2310,7 @@ var zoteroRoam = {};
                     let reqResults = await req.json();
                     // Update the extension's information on library version
                     let latestVersion = req.headers.get('Last-Modified-Version');
-                    if(latestVersion){ zoteroRoam.data.libraries[libIndex].version = latestVersion }
+                    if(latestVersion){ zoteroRoam.data.libraries.get(library.path).version = latestVersion }
                     zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                     zoteroRoam.activeImport.currentLib = zoteroRoam.activeImport.libraries.find(lib => lib.path == zoteroRoam.activeImport.currentLib.path);
                     outcome = {
@@ -4019,10 +4025,9 @@ var zoteroRoam = {};
             zoteroRoam.data.collections = [];
             zoteroRoam.data.semantic.clear();
             zoteroRoam.data.keys = [];
-            zoteroRoam.data.libraries = zoteroRoam.data.libraries.map(lib => {
-                lib.version = "0";
-                return lib;
-            });
+            for(lib of zoteroRoam.data.libraries.keys()){
+                zoteroRoam.data.libraries.get(lib).version = "0";
+            }
 
             if(zoteroRoam.librarySearch.autocomplete !== null){
                 zoteroRoam.librarySearch.autocomplete.unInit();
@@ -4089,7 +4094,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
             let updateRequests = reqs.map(rq => {
-                let latest = zoteroRoam.data.libraries.find(lib => lib.path == rq.library).version;
+                let latest = zoteroRoam.data.libraries.get(rq.library).version;
                 let {apikey, dataURI, params: setParams, name, library} = rq;
                 let paramsQuery = new URLSearchParams(setParams);
                 paramsQuery.set('since', latest);

@@ -305,7 +305,9 @@
                     }; 
                 });
                 let libList = Array.from(new Set(requests.map(rq => rq.library)));
-                zoteroRoam.data.libraries = libList.map(lib => { return {path: lib, version: "0", apikey: requests.find(rq => rq.library == lib).apikey} });
+                libList.forEach(libPath => {
+                    zoteroRoam.data.libraries.set(libPath, {path: libPath, version: "0", apikey: requests.find(rq => rq.library == libPath).apikey});
+                });
                 zoteroRoam.config.requests = requests;
             }
         },
@@ -577,7 +579,7 @@
                 })).flat(1);
                 requestsResults = zoteroRoam.handlers.extractCitekeys(requestsResults);
 
-                let currentLibs = zoteroRoam.data.libraries;
+                let currentLibs = Array.from(zoteroRoam.data.libraries.values());
                 // Collections data
                 if(collections == true){
                     currentLibs.forEach(lib => {
@@ -590,11 +592,12 @@
                         }));
                     });
                     collectionsResults = await Promise.all(collectionsCalls);
-                    collectionsResults = await Promise.all(collectionsResults.map( (cl, i) => {
+                    collectionsResults = await Promise.all(collectionsResults.map(req => {
                         // Update stored data on libraries
-                        let latestVersion = cl.headers.get('Last-Modified-Version');
-                        if(latestVersion){ zoteroRoam.data.libraries[i].version = latestVersion }
-                        return cl.json();
+                        let latestVersion = req.headers.get('Last-Modified-Version');
+                        let libPath = req.url.match(/(user|group)s\/([^\/]+)/g);
+                        if(latestVersion){ zoteroRoam.data.libraries.get(libPath).version = latestVersion }
+                        return req.json();
                     }));
                     collectionsResults = collectionsResults.flat(1);
                 }
@@ -610,10 +613,14 @@
                         }));
                     });
                     deletedResults = await Promise.all(deletedCalls);
-                    deletedResults = await Promise.all(deletedResults.map(res => res.json()));
+                    let libPaths = [];
+                    deletedResults = await Promise.all(deletedResults.map(req => {
+                        libPaths.push(req.url.match(/(user|group)s\/([^\/]+)/g));
+                        return req.json();
+                    }));
                     deletedResults = deletedResults.map((res, i) => {
                         return {
-                            path: zoteroRoam.data.libraries[i].path,
+                            path: libPaths[i],
                             items: res.items,
                             collections: res.collections
                         }

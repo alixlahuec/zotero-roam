@@ -114,10 +114,9 @@
             zoteroRoam.data.collections = [];
             zoteroRoam.data.semantic.clear();
             zoteroRoam.data.keys = [];
-            zoteroRoam.data.libraries = zoteroRoam.data.libraries.map(lib => {
-                lib.version = "0";
-                return lib;
-            });
+            for(lib of zoteroRoam.data.libraries.keys()){
+                zoteroRoam.data.libraries.get(lib).version = "0";
+            }
 
             if(zoteroRoam.librarySearch.autocomplete !== null){
                 zoteroRoam.librarySearch.autocomplete.unInit();
@@ -184,7 +183,7 @@
             zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
             // For each request, get the latest version of any item that belongs to it
             let updateRequests = reqs.map(rq => {
-                let latest = zoteroRoam.data.libraries.find(lib => lib.path == rq.library).version;
+                let latest = zoteroRoam.data.libraries.get(rq.library).version;
                 let {apikey, dataURI, params: setParams, name, library} = rq;
                 let paramsQuery = new URLSearchParams(setParams);
                 paramsQuery.set('since', latest);

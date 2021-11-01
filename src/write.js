@@ -68,7 +68,6 @@
             data = (data.constructor === Array) ? data : [data];
             let outcome = {};
             try{
-                let libIndex = zoteroRoam.data.libraries.findIndex(lib => lib.path == library.path);
                 let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -83,7 +82,7 @@
                     let reqResults = await req.json();
                     // Update the extension's information on library version
                     let latestVersion = req.headers.get('Last-Modified-Version');
-                    if(latestVersion){ zoteroRoam.data.libraries[libIndex].version = latestVersion }
+                    if(latestVersion){ zoteroRoam.data.libraries.get(library.path).version = latestVersion }
                     zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                     zoteroRoam.activeImport.currentLib = zoteroRoam.activeImport.libraries.find(lib => lib.path == zoteroRoam.activeImport.currentLib.path);
                     outcome = {

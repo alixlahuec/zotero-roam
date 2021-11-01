@@ -170,7 +170,7 @@
         },
 
         getLibraries(){
-            return zoteroRoam.data.libraries.map(lib => {
+            return Array.from(zoteroRoam.data.libraries.values()).map(lib => {
                 let keyAccess = zoteroRoam.data.keys.find(k => k.key == lib.apikey).access;
                 let [libType, libID] = lib.path.split("/");
                 let permissions = {};
