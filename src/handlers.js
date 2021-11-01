@@ -595,7 +595,7 @@
                     collectionsResults = await Promise.all(collectionsResults.map(req => {
                         // Update stored data on libraries
                         let latestVersion = req.headers.get('Last-Modified-Version');
-                        let libPath = req.url.match(/(user|group)s\/([^\/]+)/g);
+                        let libPath = req.url.match(/(user|group)s\/([^\/]+)/g)[0];
                         if(latestVersion){ zoteroRoam.data.libraries.get(libPath).version = latestVersion }
                         return req.json();
                     }));
@@ -615,7 +615,7 @@
                     deletedResults = await Promise.all(deletedCalls);
                     let libPaths = [];
                     deletedResults = await Promise.all(deletedResults.map(req => {
-                        libPaths.push(req.url.match(/(user|group)s\/([^\/]+)/g));
+                        libPaths.push(req.url.match(/(user|group)s\/([^\/]+)/g)[0]);
                         return req.json();
                     }));
                     deletedResults = deletedResults.map((res, i) => {
