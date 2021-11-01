@@ -618,7 +618,7 @@ var zoteroRoam = {};
             .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
-            .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;}
+            .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;overflow-wrap:break-word;}
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
@@ -639,10 +639,12 @@ var zoteroRoam = {};
             .zotero-roam-tags-autocomplete{box-shadow:none;background:none;}
             .zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
             .zotero-roam-import-tags-list > li{padding:3px 5px;}
-            li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;background:#f9fafb;}
-            .bp3-dark li.import-items_selected, .bp3-dark li.related-item_listed{background:#2e2f3187;}
+            li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;}
+            li.import-items_selected{background:#f9fafb;}
+            .bp3-dark li.import-items_selected{background:#2e2f3187;}
             li.import-items_selected{padding:5px 0 5px 15px;}
-            li.related-item_listed{padding:0 0 0 15px;border-left-width:0px;background:#f1f1f1;}
+            li.related-item_listed{padding:0 0 0 15px;border-left-width:0px;}
+            .related-item_listed .related_info-wrapper{line-height:normal;}
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
             .selected_info, .related_info{flex: 0 1 90%;}

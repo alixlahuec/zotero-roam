@@ -297,7 +297,7 @@
         },
 
         multiwordMatch(query, string, highlight = []){
-            let terms = Array.from(new Set(query.toLowerCase().split(" ")));
+            let terms = Array.from(new Set(query.toLowerCase().split(" ").filter(Boolean)));
             let target = string.toLowerCase();
             
             let output = string;

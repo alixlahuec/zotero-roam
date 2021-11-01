@@ -618,7 +618,7 @@ var zoteroRoam = {};
             .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
-            .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;}
+            .zotero-roam-search-item-key{flex: 0 1 20%;text-align:right;overflow-wrap:break-word;}
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
@@ -639,10 +639,12 @@ var zoteroRoam = {};
             .zotero-roam-tags-autocomplete{box-shadow:none;background:none;}
             .zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
             .zotero-roam-import-tags-list > li{padding:3px 5px;}
-            li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;background:#f9fafb;}
-            .bp3-dark li.import-items_selected, .bp3-dark li.related-item_listed{background:#2e2f3187;}
+            li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;}
+            li.import-items_selected{background:#f9fafb;}
+            .bp3-dark li.import-items_selected{background:#2e2f3187;}
             li.import-items_selected{padding:5px 0 5px 15px;}
-            li.related-item_listed{padding:0 0 0 15px;border-left-width:0px;background:#f1f1f1;}
+            li.related-item_listed{padding:0 0 0 15px;border-left-width:0px;}
+            .related-item_listed .related_info-wrapper{line-height:normal;}
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
             .selected_info, .related_info{flex: 0 1 90%;}
@@ -1009,7 +1011,7 @@ var zoteroRoam = {};
         },
 
         multiwordMatch(query, string, highlight = []){
-            let terms = Array.from(new Set(query.toLowerCase().split(" ")));
+            let terms = Array.from(new Set(query.toLowerCase().split(" ").filter(Boolean)));
             let target = string.toLowerCase();
             
             let output = string;
@@ -4562,7 +4564,7 @@ var zoteroRoam = {};
                                 backlinksLib = "";
                                 backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
                                 backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
-                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `bp3-minimal ${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
             
                                 if(papersInLib.length > 0){
                                     backlinksLib += `
@@ -4670,7 +4672,7 @@ var zoteroRoam = {};
                 return `
                 <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="false">
                 <div class="related_info">
-                <span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span>
+                <span class="related_info-wrapper"><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span>
                 </div>
                 <div class="related_state">
                 ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
