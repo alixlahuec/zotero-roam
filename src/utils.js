@@ -387,7 +387,7 @@
 
         parseSemanticItem(item){
             let cleanItem = {
-                doi: item.doi,
+                doi: zoteroRoam.utils.parseDOI(item.doi),
                 intent: item.intent,
                 isInfluential: item.isInfluential,
                 links: {},

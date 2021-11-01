@@ -571,6 +571,7 @@ var zoteroRoam = {};
             .zotero-roam-citations-search_result{padding:3px 6px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
             .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#237d232e;}
+            [in-library="true"] .zotero-roam-search-item-key{color: #0D8050;font-size:0.8em;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}
             #zotero-roam-library-rendered, #zotero-roam-citations-pagination {width:95%;margin: 0 auto;}
             #zotero-roam-library-rendered[view="search"] #zotero-roam-search-selected-item{display:none;}

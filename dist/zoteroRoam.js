@@ -571,6 +571,7 @@ var zoteroRoam = {};
             .zotero-roam-citations-search_result{padding:3px 6px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
             .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#237d232e;}
+            [in-library="true"] .zotero-roam-search-item-key{color: #0D8050;font-size:0.8em;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}
             #zotero-roam-library-rendered, #zotero-roam-citations-pagination {width:95%;margin: 0 auto;}
             #zotero-roam-library-rendered[view="search"] #zotero-roam-search-selected-item{display:none;}
@@ -1098,7 +1099,7 @@ var zoteroRoam = {};
 
         parseSemanticItem(item){
             let cleanItem = {
-                doi: item.doi,
+                doi: zoteroRoam.utils.parseDOI(item.doi),
                 intent: item.intent,
                 isInfluential: item.isInfluential,
                 links: {},
@@ -3141,7 +3142,8 @@ var zoteroRoam = {};
                 `;
 
                 if(cit.inLibrary){
-                    keyEl += `<span class="zr-auxiliary">${cit.citekey}</span>`; // Get citekey
+                    keyEl += cit.citekey;
+                    // TODO: Add buttons to view item + go to Roam page (if exists)
                 } else {
                     keyEl += `
                     <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>

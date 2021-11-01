@@ -768,7 +768,8 @@
                 `;
 
                 if(cit.inLibrary){
-                    keyEl += `<span class="zr-auxiliary">${cit.citekey}</span>`; // Get citekey
+                    keyEl += cit.citekey;
+                    // TODO: Add buttons to view item + go to Roam page (if exists)
                 } else {
                     keyEl += `
                     <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
