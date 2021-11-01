@@ -655,7 +655,7 @@ var zoteroRoam = {};
             [item-type="reference"] .bp3-icon, [item-type="reference"] a {color:#7ec8de!important;}
             .bp3-dark [item-type="citation"] .bp3-icon, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
             [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#e09f26!important;}
-            .zotero-roam-page-related{opacity:0.6;float:right;margin-top:-40px;}
+            .zotero-roam-page-related{opacity:0.6;position:absolute;right:10px;top:10px;}
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .zotero-roam-item-timestamp{font-size:0.85em;}
             .zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
@@ -3141,7 +3141,7 @@ var zoteroRoam = {};
                 `;
 
                 if(cit.inLibrary){
-                    keyEl += ""; // Get citekey
+                    keyEl += `<span class="zr-auxiliary">${cit.citekey}</span>`; // Get citekey
                 } else {
                     keyEl += `
                     <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>

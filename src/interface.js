@@ -768,7 +768,7 @@
                 `;
 
                 if(cit.inLibrary){
-                    keyEl += ""; // Get citekey
+                    keyEl += `<span class="zr-auxiliary">${cit.citekey}</span>`; // Get citekey
                 } else {
                     keyEl += `
                     <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
