@@ -646,12 +646,18 @@ var zoteroRoam = {};
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
             .selected_info{flex: 0 1 90%;}
-            li.related-item_listed{display:flex;align-items:baseline;font-size:0.9rem;padding:3px 0px;}
-            .related_year{flex: 0 0 auto;}
-            .related_info{line-height:normal;padding: 0px 6px;flex: 1 2 90%;}
-            .related_state{flex: 1 0 auto;}
+            li.related-item_listed{display:flex;align-items:baseline;font-size:0.9rem;}
+            .related-sublist[list-type="references"] li:nth-child(even) {background-color:#e8f0ff;}
+            .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#fdfcf6;}
+            .related-item_listed[item-type="reference"]:hover {background-color:#e1ecff;}
+            .related-item_listed[item-type="citation"]:hover {background-color:#fff6e1;}
+            .related_year{flex: 0 0 auto;padding-left:10px;}
+            .related_info{line-height:normal;padding: 3px 10px;flex: 1 2 90%;}
+            .related_state{flex: 1 0 auto;font-size:0.85rem;}
+            [in-graph="true"] .related_state {align-self:stretch;text-align:right;}
+            [in-graph="true"] .related_state button {height:100%;}
             .selected_state{flex: 1 0 10%;text-align:center;}
-            [item-type="reference"] .related_year, [item-type="reference"] a {color:#7ec8de!important;}
+            [item-type="reference"] .related_year, [item-type="reference"] a {color:#136fce!important;}
             .bp3-dark [item-type="citation"] .related_year, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
             [item-type="citation"] .related_year, [item-type="citation"] a {color:#e09f26!important;}
             .zotero-roam-page-related{opacity:0.6;position:absolute;right:10px;top:10px;}
@@ -4659,7 +4665,7 @@ var zoteroRoam = {};
                 <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="true">
                     <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
                     <div class="related_info">
-                        <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
+                        <span class="zotero-roam-search-item-authors ${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
                         <a class="zotero-roam-search-item-title" href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}">
                             ${paper.data.title}
                         </a>
@@ -4673,11 +4679,11 @@ var zoteroRoam = {};
                 <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="false">
                 <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
                 <div class="related_info">
-                    <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
+                    <span class="zotero-roam-search-item-authors ${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
                     <span class="zotero-roam-search-item-title">${paper.data.title}</span>
                 </div>
                 <div class="related_state">
-                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal bp3-small ${intent} zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
+                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal bp3-small zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
                 </div>
                 </li>`
             }

@@ -487,7 +487,7 @@
                 <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="true">
                     <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
                     <div class="related_info">
-                        <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
+                        <span class="zotero-roam-search-item-authors ${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
                         <a class="zotero-roam-search-item-title" href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}">
                             ${paper.data.title}
                         </a>
@@ -501,11 +501,11 @@
                 <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="false">
                 <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
                 <div class="related_info">
-                    <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
+                    <span class="zotero-roam-search-item-authors ${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
                     <span class="zotero-roam-search-item-title">${paper.data.title}</span>
                 </div>
                 <div class="related_state">
-                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal bp3-small ${intent} zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
+                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal bp3-small zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
                 </div>
                 </li>`
             }
