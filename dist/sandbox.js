@@ -204,7 +204,7 @@ var zoteroRoam = {};
                         item.innerHTML = `
                         <div label="${data.value.key}" class="bp3-menu-item">
                             <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-search-item-contents">
-                            <span class="zotero-roam-search-item-title" style="display:block;">${title}</span>
+                            <span class="zotero-roam-search-item-title">${title}</span>
                                 <span class="zr-details">
                                     <span class="zotero-roam-search-item-authors zr-highlight">${authors}</span><span class="zotero-roam-search-item-metadata zr-secondary"> ${meta}</span>
                                 </span>
@@ -560,7 +560,7 @@ var zoteroRoam = {};
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
             #zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu {max-height:70vh;overflow-y:scroll;background:unset;padding:0px;}
-            .zotero-roam-search-item-title{font-weight:500;}
+            .zotero-roam-search-item-title{font-weight:500;display:block;}
             .zotero-roam-search-item-tags{font-style:italic;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
             .zotero-roam-citation-link a {font-size:0.85em;}
@@ -611,7 +611,7 @@ var zoteroRoam = {};
             .zotero-roam-page-menu-citations{display:flex;padding:5px;flex-wrap:wrap;padding-bottom:0px;border-top: 1px #f1f1f1 solid;}
             .bp3-dark .zotero-roam-page-menu-citations{border-top-color:#f1f1f12e;}
             .zotero-roam-page-menu-citations > button{flex: 1 0 33%;}
-            .zotero-roam-page-menu-backlinks-list {width:100%;display:flex;flex-direction:column;}
+            .zotero-roam-page-menu-backlinks-list {width:100%;display:flex;flex-direction:column;margin: 10px 0px;}
             .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
             .backlinks-list_divider{display: flex;align-items: center;margin: 10px 5px;}
             .backlinks-list_divider hr{flex: 0 1 100%;}
@@ -647,6 +647,7 @@ var zoteroRoam = {};
             .selected_origin{display:block;font-weight:300;}
             .selected_info{flex: 0 1 90%;}
             li.related-item_listed{display:flex;align-items:baseline;font-size:0.9rem;padding:3px 0px;}
+            .related_year{flex: 0 0 auto;}
             .related_info{line-height:normal;padding: 0px 6px;flex: 1 2 90%;}
             .related_state{flex: 1 0 auto;}
             .selected_state{flex: 1 0 10%;text-align:center;}
@@ -3340,7 +3341,7 @@ var zoteroRoam = {};
                 <div class="bp3-menu-item" label="${item.key}">
                     ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp">${item.timestamp}</span>` : ""}
                     <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
-                        <span class="zotero-roam-search-item-title" style="display:block;white-space:normal;">${item.title}</span>
+                        <span class="zotero-roam-search-item-title" style="white-space:normal;">${item.title}</span>
                         <span class="zr-highlight">${item.meta}</span>
                         <span class="zotero-roam-list-item-key zr-auxiliary">[${item.key}]</span>
                         ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal bp3-small"}) : ""}
@@ -4658,8 +4659,9 @@ var zoteroRoam = {};
                 <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="true">
                     <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
                     <div class="related_info">
-                        <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}">
-                            <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span> : ${paper.data.title}
+                        <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
+                        <a class="zotero-roam-search-item-title" href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}">
+                            ${paper.data.title}
                         </a>
                     </div>
                     <div class="related_state">
@@ -4671,7 +4673,8 @@ var zoteroRoam = {};
                 <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="false">
                 <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
                 <div class="related_info">
-                    <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span> : ${paper.data.title}
+                    <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span><span class="zr-secondary">${paper.data.publicationTitle || paper.data.bookTitle || ""}</span>
+                    <span class="zotero-roam-search-item-title">${paper.data.title}</span>
                 </div>
                 <div class="related_state">
                     ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal bp3-small ${intent} zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
@@ -4718,7 +4721,14 @@ var zoteroRoam = {};
                     if(!b.meta.parsedDate){
                         return -1;
                     } else {
-                        return new Date(a.meta.parsedDate).getUTCFullYear() < new Date(b.meta.parsedDate).getUTCFullYear() ? -1 : 1;
+                        let date_diff = new Date(a.meta.parsedDate).getUTCFullYear() - new Date(b.meta.parsedDate).getUTCFullYear();
+                        if(date_diff < 0){
+                            return -1;
+                        } else if(date_diff == 0){
+                            return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
+                        } else {
+                            return 1;
+                        }
                     }
                 }
             });
