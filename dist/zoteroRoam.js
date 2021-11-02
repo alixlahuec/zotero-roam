@@ -611,9 +611,11 @@ var zoteroRoam = {};
             .zotero-roam-page-menu-citations{display:flex;padding:5px;flex-wrap:wrap;padding-bottom:0px;border-top: 1px #f1f1f1 solid;}
             .bp3-dark .zotero-roam-page-menu-citations{border-top-color:#f1f1f12e;}
             .zotero-roam-page-menu-citations > button{flex: 1 0 33%;}
-            .zotero-roam-page-menu-backlinks-list {width:100%;}
-            .zotero-roam-page-menu-backlinks-list > ul{padding:1vw;display:flex;flex:1 0 50%;flex-direction:column;}
+            .zotero-roam-page-menu-backlinks-list {width:100%;display:flex;flex-direction:column;}
             .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
+            .backlinks-list_divider{display: flex;align-items: center;margin: 10px 5px;}
+            .backlinks-list_divider hr{flex: 0 1 100%;}
+            .related-sublist{margin: 0 10px;}
             .zotero-roam-search_result > .bp3-menu-item, .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;user-select:initial;padding: 3px 0px;}
             .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
@@ -643,21 +645,18 @@ var zoteroRoam = {};
             li.import-items_selected{background:#f9fafb;}
             .bp3-dark li.import-items_selected{background:#2e2f3187;}
             li.import-items_selected{padding:5px 0 5px 15px;}
-            li.related-item_listed{padding:0 0 0 15px;border-left-width:0px;}
-            .related-item_listed .related_info-wrapper{line-height:normal;}
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
-            .selected_info, .related_info{flex: 0 1 90%;}
-            .related_info{display:flex;}
-            .related_info > *{padding:6px 0px;font-size:0.9em;}
-            .related_info .bp3-icon{margin-right:5px;}
+            .selected_info{flex: 0 1 90%;}
+            .related-item_listed{align-items:baseline;padding: 5px 0px;}
+            .related_info{line-height:normal;padding: 3px 6px;}
             .selected_state, .related_state{flex: 1 0 10%;}
             .selected_state {text-align:center;}
             .related_state {text-align:right;align-self:stretch;}
             .related_state button {height:100%;}
-            [item-type="reference"] .bp3-icon, [item-type="reference"] a {color:#7ec8de!important;}
-            .bp3-dark [item-type="citation"] .bp3-icon, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
-            [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#e09f26!important;}
+            [item-type="reference"] .related_year, [item-type="reference"] a {color:#7ec8de!important;}
+            .bp3-dark [item-type="citation"] .related_year, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
+            [item-type="citation"] .related_year, [item-type="citation"] a {color:#e09f26!important;}
             .zotero-roam-page-related{opacity:0.6;position:absolute;right:10px;top:10px;}
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .zotero-roam-item-timestamp{font-size:0.85em;}
@@ -4569,7 +4568,7 @@ var zoteroRoam = {};
                                 if(papersInLib.length > 0){
                                     backlinksLib += `
                                     <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                    ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
+                                    ${zoteroRoam.inPage.renderBacklinksList_year(papersInLib, origin_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "")}
                                     </ul>
                                     `
                                 }
@@ -4655,14 +4654,43 @@ var zoteroRoam = {};
             }
         },
 
+        renderBacklinksItem_year(paper, type, uid = null){
+            let accent_class = type == "reference" ? "zr-highlight" : "zr-highlight-2";
+            if(uid){
+                return `
+                <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="true">
+                    <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
+                    <div class="related_info">
+                        <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}">
+                            <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span> : ${paper.title}
+                        </a>
+                    </div>
+                    <div class="related_state">
+                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
+                    </div>
+                </li>`;
+            } else {
+                return `
+                <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="false">
+                <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
+                <div class="related_info">
+                    <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span> : ${paper.title}
+                </div>
+                <div class="related_state">
+                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
+                </div>
+                </li>`
+            }
+        },
+
         renderBacklinksItem(paper, type, uid = null){
             let icon = type == "reference" ? "citation" : "chat";
             let accent_class = type == "reference" ? "zr-highlight" : "zr-highlight-2";
             if(uid){
                 return `
-                <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="true">
+                <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" in-graph="true">
                 <div class="related_info">
-                <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}"><span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span></a>
+                <a class="related_info-wrapper" href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}"><span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span></a>
                 </div>
                 <div class="related_state">
                 ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
@@ -4670,7 +4698,7 @@ var zoteroRoam = {};
                 </li>`;
             } else {
                 return `
-                <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="false">
+                <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" in-graph="false">
                 <div class="related_info">
                 <span class="related_info-wrapper"><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span>
                 </div>
@@ -4679,6 +4707,45 @@ var zoteroRoam = {};
                 </div>
                 </li>`
             }
+        },
+
+        renderBacklinksList_year(papers, origin_year){
+            let papersList = papers.sort((a,b) => {
+                if(!a.meta.parsedDate){
+                    if(!b.meta.parsedDate){
+                        return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    if(!b.meta.parsedDate){
+                        return -1;
+                    } else {
+                        return new Date(a.meta.parsedDate).getUTCFullYear() < new Date(b.meta.parsedDate).getUTCFullYear() ? -1 : 1;
+                    }
+                }
+            });
+            let referencesList = papersList.filter(p => p.type == "cited").map(p => {
+                let paperUID = zoteroRoam.utils.lookForPage('@' + p.key).uid || null;
+                return zoteroRoam.inPage.renderBacklinksItem_year(p, "reference", uid = paperUID);
+            });
+            let citationsList = papersList.filter(p => p.type == "citing").map(p => {
+                let paperUID = zoteroRoam.utils.lookForPage('@' + p.key).uid || null;
+                return zoteroRoam.inPage.renderBacklinksItem_year(p, "citation", uid = paperUID);
+            });
+
+            return `
+            <ul class="related-sublist bp3-list-unstyled" list-type="references">
+                ${referencesList.join("\n")}
+            </ul>
+            <span class="backlinks-list_divider">
+                <span class="bp3-tag bp3-minimal">${origin_year}</span>
+                <hr>
+            </span>
+            <ul class="related-sublist bp3-list-unstyled" list-type="citations">
+                ${citationsList.join("\n")}
+            </ul>
+            `;
         },
 
         renderBacklinksList(papers){

@@ -393,7 +393,7 @@
                                 if(papersInLib.length > 0){
                                     backlinksLib += `
                                     <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
-                                    ${zoteroRoam.inPage.renderBacklinksList(papersInLib)}
+                                    ${zoteroRoam.inPage.renderBacklinksList_year(papersInLib, origin_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "")}
                                     </ul>
                                     `
                                 }
@@ -479,14 +479,43 @@
             }
         },
 
+        renderBacklinksItem_year(paper, type, uid = null){
+            let accent_class = type == "reference" ? "zr-highlight" : "zr-highlight-2";
+            if(uid){
+                return `
+                <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="true">
+                    <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
+                    <div class="related_info">
+                        <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}">
+                            <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span> : ${paper.title}
+                        </a>
+                    </div>
+                    <div class="related_state">
+                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
+                    </div>
+                </li>`;
+            } else {
+                return `
+                <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="false">
+                <div class="related_year">${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}</div>
+                <div class="related_info">
+                    <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span> : ${paper.title}
+                </div>
+                <div class="related_state">
+                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
+                </div>
+                </li>`
+            }
+        },
+
         renderBacklinksItem(paper, type, uid = null){
             let icon = type == "reference" ? "citation" : "chat";
             let accent_class = type == "reference" ? "zr-highlight" : "zr-highlight-2";
             if(uid){
                 return `
-                <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="true">
+                <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" in-graph="true">
                 <div class="related_info">
-                <a href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}"><span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span></a>
+                <a class="related_info-wrapper" href="${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${uid}"><span><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span></a>
                 </div>
                 <div class="related_state">
                 ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
@@ -494,7 +523,7 @@
                 </li>`;
             } else {
                 return `
-                <li class="related-item_listed bp3-blockquote" item-type="${type}" data-key="@${paper.key}" in-graph="false">
+                <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" in-graph="false">
                 <div class="related_info">
                 <span class="related_info-wrapper"><span class="bp3-icon bp3-icon-${icon}"></span>${zoteroRoam.utils.formatItemReference(paper, "zettlr_accent", {accent_class: accent_class})}</span>
                 </div>
@@ -503,6 +532,45 @@
                 </div>
                 </li>`
             }
+        },
+
+        renderBacklinksList_year(papers, origin_year){
+            let papersList = papers.sort((a,b) => {
+                if(!a.meta.parsedDate){
+                    if(!b.meta.parsedDate){
+                        return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    if(!b.meta.parsedDate){
+                        return -1;
+                    } else {
+                        return new Date(a.meta.parsedDate).getUTCFullYear() < new Date(b.meta.parsedDate).getUTCFullYear() ? -1 : 1;
+                    }
+                }
+            });
+            let referencesList = papersList.filter(p => p.type == "cited").map(p => {
+                let paperUID = zoteroRoam.utils.lookForPage('@' + p.key).uid || null;
+                return zoteroRoam.inPage.renderBacklinksItem_year(p, "reference", uid = paperUID);
+            });
+            let citationsList = papersList.filter(p => p.type == "citing").map(p => {
+                let paperUID = zoteroRoam.utils.lookForPage('@' + p.key).uid || null;
+                return zoteroRoam.inPage.renderBacklinksItem_year(p, "citation", uid = paperUID);
+            });
+
+            return `
+            <ul class="related-sublist bp3-list-unstyled" list-type="references">
+                ${referencesList.join("\n")}
+            </ul>
+            <span class="backlinks-list_divider">
+                <span class="bp3-tag bp3-minimal">${origin_year}</span>
+                <hr>
+            </span>
+            <ul class="related-sublist bp3-list-unstyled" list-type="citations">
+                ${citationsList.join("\n")}
+            </ul>
+            `;
         },
 
         renderBacklinksList(papers){
