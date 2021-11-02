@@ -481,6 +481,7 @@
 
         renderBacklinksItem_year(paper, type, uid = null){
             let accent_class = type == "reference" ? "zr-highlight" : "zr-highlight-2";
+            let intent = type == "reference" ? "bp3-intent-primary" : "bp3-intent-warning";
             if(uid){
                 return `
                 <li class="related-item_listed" item-type="${type}" data-key="@${paper.key}" data-item-type="${paper.data.itemType}" data-item-year="${paper.meta.parsedDate ? new Date(paper.meta.parsedDate).getUTCFullYear() : ""}" in-graph="true">
@@ -491,7 +492,7 @@
                         </a>
                     </div>
                     <div class="related_state">
-                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-open-sidebar", icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
+                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: `bp3-minimal bp3-small ${intent} zotero-roam-page-menu-backlink-open-sidebar`, icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
                     </div>
                 </li>`;
             } else {
@@ -502,7 +503,7 @@
                     <span class="${accent_class}">${paper.meta.creatorSummary || ""}</span> : ${paper.data.title}
                 </div>
                 <div class="related_state">
-                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: "bp3-minimal bp3-small zotero-roam-page-menu-backlink-add-sidebar", icon: "add", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
+                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal bp3-small ${intent} zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
                 </div>
                 </li>`
             }

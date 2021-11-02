@@ -641,22 +641,18 @@ var zoteroRoam = {};
             .zotero-roam-tags-autocomplete{box-shadow:none;background:none;}
             .zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
             .zotero-roam-import-tags-list > li{padding:3px 5px;}
-            li.import-items_selected, li.related-item_listed{display:flex;justify-content:space-between;}
-            li.import-items_selected{background:#f9fafb;}
+            li.import-items_selected{display:flex;justify-content:space-between;background:#f9fafb;padding:5px 0 5px 15px;}
             .bp3-dark li.import-items_selected{background:#2e2f3187;}
-            li.import-items_selected{padding:5px 0 5px 15px;}
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
             .selected_info{flex: 0 1 90%;}
-            .related-item_listed{align-items:baseline;font-size:0.9rem;}
-            .related_info{line-height:normal;padding: 0px 6px;}
-            .selected_state, .related_state{flex: 1 0 10%;}
-            .selected_state {text-align:center;}
-            .related_state {text-align:right;align-self:stretch;}
-            .related_state button {height:100%;}
-            [item-type="reference"] .related_year, [item-type="reference"] .bp3-icon, [item-type="reference"] a {color:#7ec8de!important;}
-            .bp3-dark [item-type="citation"] .related_year, .bp3-dark [item-type="citation"] .bp3-icon, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
-            [item-type="citation"] .related_year, [item-type="citation"] .bp3-icon, [item-type="citation"] a {color:#e09f26!important;}
+            li.related-item_listed{display:flex;align-items:baseline;font-size:0.9rem;padding:3px 0px;}
+            .related_info{line-height:normal;padding: 0px 6px;flex: 1 2 90%;}
+            .related_state{flex: 1 0 auto;}
+            .selected_state{flex: 1 0 10%;text-align:center;}
+            [item-type="reference"] .related_year, [item-type="reference"] a {color:#7ec8de!important;}
+            .bp3-dark [item-type="citation"] .related_year, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
+            [item-type="citation"] .related_year, [item-type="citation"] a {color:#e09f26!important;}
             .zotero-roam-page-related{opacity:0.6;position:absolute;right:10px;top:10px;}
             .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .zotero-roam-item-timestamp{font-size:0.85em;}
