@@ -335,14 +335,22 @@ var zoteroRoam = {};
                     data: {
                         /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
                         src: async function(query){
-                            let roamPages = zoteroRoam.data.roamPages;
-                            let hasQuery = roamPages.findIndex(p => p.title == query);
-                            if(hasQuery == -1){
-                                return [{title: query, identity: "self"}, ...roamPages];
-                            } else {
-                                roamPages[hasQuery].identity = "self";
-                                return roamPages;
-                            }
+                            let roamPages = zoteroRoam.data.roamPages.keys();
+                            if(!roamPages.includes(query)){
+                                roamPages.push(query);
+                            };
+                            return roamPages.map(p => {
+                                if(p == query){
+                                    return {
+                                        title: p,
+                                        identity: "self"
+                                    }
+                                } else {
+                                    return {
+                                        title: p
+                                    }
+                                }
+                            });
                         },
                         keys: ['title'],
                         /** @returns {Array} The list of existing Roam pages, with the current query always at the top */

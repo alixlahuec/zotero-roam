@@ -131,11 +131,11 @@
         },
 
         getRoamPages(){
-            return roamAlphaAPI.q(`[:find [(pull ?e [:node/title])...] :where[?e :node/title ?t]]`);
+            return roamAlphaAPI.q(`[:find ?title ?uid :where[?e :node/title ?title][?e :block/uid ?uid]]`);
         },
 
         getAllRefPages(){
-            return roamAlphaAPI.q(`[:find [(pull ?e [:node/title :block/uid])...] :where[?e :node/title ?t][(clojure.string/starts-with? ?t "@")]]`);
+            return roamAlphaAPI.q(`[:find ?title ?uid :where[?e :node/title ?title][?e :block/uid ?uid][(clojure.string/starts-with? ?title "@")]]`);
         },
 
         getItemPrefix(item){

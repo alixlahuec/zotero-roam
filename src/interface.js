@@ -861,7 +861,7 @@
             zoteroRoam.interface.search.overlay.style.display = command === "show" ? "block" : "none";
             if (command == "show") {
                 console.log("Opening the Search Panel")
-                zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
+                zoteroRoam.data.roamPages = new Map(zoteroRoam.utils.getRoamPages());
                 if(focus == true){
                     await zoteroRoam.utils.sleep(75);
                     zoteroRoam.interface.search.input.focus();
@@ -939,13 +939,13 @@
             overlay.querySelector('.main-panel .header-left').innerHTML = `
             <h5 class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
             `;
-            let roamPages = zoteroRoam.utils.getAllRefPages();
+            let papersInGraph = new Map(zoteroRoam.utils.getAllRefPages());
             let defaultSort = type == "added-on" ? "timestamp" : "meta";
             let items = keys.map(k => {
                 let libItem = zoteroRoam.data.items.find(i => i.key == k);
                 let year = libItem.meta.parsedDate ? `(${new Date(libItem.meta.parsedDate).getUTCFullYear()})` : "";
                 let creator = libItem.meta.creatorSummary + " " || "";
-                let inGraph = roamPages.find(i => i.title == '@' + k) ? true : false;
+                let inGraph = papersInGraph.get('@' + k) || false;
                 return {
                     abstract: libItem.data.abstractNote || "",
                     key: k,
@@ -963,11 +963,10 @@
                     actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning bp3-small zotero-roam-add-to-graph"});
                 } else {
                     let itemKey = '@' + item.key;
-                    let pageUID = zoteroRoam.utils.lookForPage(itemKey).uid;
-                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}" data-citekey="${itemKey.slice(1)}"`});
+                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${item.inGraph}" data-citekey="${itemKey.slice(1)}"`});
                 }
                 return `
-                <li class="zotero-roam-list-item" in-graph="${item.inGraph}" data-item-type="${item.itemType}">
+                <li class="zotero-roam-list-item" in-graph="${item.inGraph ? true : false}" data-item-type="${item.itemType}">
                 <div class="bp3-menu-item" label="${item.key}">
                     ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp">${item.timestamp}</span>` : ""}
                     <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
@@ -1364,7 +1363,7 @@
             let currentImport = type == "citations" ? zoteroRoam.citations.activeImport : zoteroRoam.webImport.activeImport;
 
             if(currentImport == null){
-                zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
+                zoteroRoam.data.roamPages = new Map(zoteroRoam.utils.getRoamPages());
                 zoteroRoam.tagSelection[type == "citations" ? "cit_panel" : "aux_panel"].init();
                 zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                 zoteroRoam.interface.renderImportOptions(type = type);

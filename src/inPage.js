@@ -538,6 +538,7 @@
         },
 
         renderBacklinksList_year(papers, origin_year){
+            let papersInGraph = new Map(zoteroRoam.utils.getAllRefPages());
             let papersList = papers.sort((a,b) => {
                 if(!a.meta.parsedDate){
                     if(!b.meta.parsedDate){
@@ -561,11 +562,11 @@
                 }
             });
             let referencesList = papersList.filter(p => p.type == "cited").map(p => {
-                let paperUID = zoteroRoam.utils.lookForPage('@' + p.key).uid || null;
+                let paperUID = papersInGraph.get('@' + p.key) || null;
                 return zoteroRoam.inPage.renderBacklinksItem_year(p, "reference", uid = paperUID);
             });
             let citationsList = papersList.filter(p => p.type == "citing").map(p => {
-                let paperUID = zoteroRoam.utils.lookForPage('@' + p.key).uid || null;
+                let paperUID = papersInGraph.get('@' + p.key) || null;
                 return zoteroRoam.inPage.renderBacklinksItem_year(p, "citation", uid = paperUID);
             });
 

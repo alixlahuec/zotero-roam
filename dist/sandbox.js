@@ -335,14 +335,22 @@ var zoteroRoam = {};
                     data: {
                         /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
                         src: async function(query){
-                            let roamPages = zoteroRoam.data.roamPages;
-                            let hasQuery = roamPages.findIndex(p => p.title == query);
-                            if(hasQuery == -1){
-                                return [{title: query, identity: "self"}, ...roamPages];
-                            } else {
-                                roamPages[hasQuery].identity = "self";
-                                return roamPages;
-                            }
+                            let roamPages = zoteroRoam.data.roamPages.keys();
+                            if(!roamPages.includes(query)){
+                                roamPages.push(query);
+                            };
+                            return roamPages.map(p => {
+                                if(p == query){
+                                    return {
+                                        title: p,
+                                        identity: "self"
+                                    }
+                                } else {
+                                    return {
+                                        title: p
+                                    }
+                                }
+                            });
                         },
                         keys: ['title'],
                         /** @returns {Array} The list of existing Roam pages, with the current query always at the top */
@@ -845,11 +853,11 @@ var zoteroRoam = {};
         },
 
         getRoamPages(){
-            return roamAlphaAPI.q(`[:find [(pull ?e [:node/title])...] :where[?e :node/title ?t]]`);
+            return roamAlphaAPI.q(`[:find ?title ?uid :where[?e :node/title ?title][?e :block/uid ?uid]]`);
         },
 
         getAllRefPages(){
-            return roamAlphaAPI.q(`[:find [(pull ?e [:node/title :block/uid])...] :where[?e :node/title ?t][(clojure.string/starts-with? ?t "@")]]`);
+            return roamAlphaAPI.q(`[:find ?title ?uid :where[?e :node/title ?title][?e :block/uid ?uid][(clojure.string/starts-with? ?title "@")]]`);
         },
 
         getItemPrefix(item){
@@ -2134,7 +2142,7 @@ var zoteroRoam = {};
                 }
 
                 simplifiedItem["_multiField"] = simplifiedItem.authorsString + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
-                simplifiedItem["inGraph"] = zoteroRoam.data.roamPages.find(p => p.title == '@' + item.key) ? true : false;
+                simplifiedItem["inGraph"] = zoteroRoam.data.roamPages.has('@' + item.key) ? true : false;
         
                 return simplifiedItem;
         
@@ -3244,7 +3252,7 @@ var zoteroRoam = {};
             zoteroRoam.interface.search.overlay.style.display = command === "show" ? "block" : "none";
             if (command == "show") {
                 console.log("Opening the Search Panel")
-                zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
+                zoteroRoam.data.roamPages = new Map(zoteroRoam.utils.getRoamPages());
                 if(focus == true){
                     await zoteroRoam.utils.sleep(75);
                     zoteroRoam.interface.search.input.focus();
@@ -3322,13 +3330,13 @@ var zoteroRoam = {};
             overlay.querySelector('.main-panel .header-left').innerHTML = `
             <h5 class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
             `;
-            let roamPages = zoteroRoam.utils.getAllRefPages();
+            let papersInGraph = new Map(zoteroRoam.utils.getAllRefPages());
             let defaultSort = type == "added-on" ? "timestamp" : "meta";
             let items = keys.map(k => {
                 let libItem = zoteroRoam.data.items.find(i => i.key == k);
                 let year = libItem.meta.parsedDate ? `(${new Date(libItem.meta.parsedDate).getUTCFullYear()})` : "";
                 let creator = libItem.meta.creatorSummary + " " || "";
-                let inGraph = roamPages.find(i => i.title == '@' + k) ? true : false;
+                let inGraph = papersInGraph.get('@' + k) || false;
                 return {
                     abstract: libItem.data.abstractNote || "",
                     key: k,
@@ -3346,11 +3354,10 @@ var zoteroRoam = {};
                     actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning bp3-small zotero-roam-add-to-graph"});
                 } else {
                     let itemKey = '@' + item.key;
-                    let pageUID = zoteroRoam.utils.lookForPage(itemKey).uid;
-                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}" data-citekey="${itemKey.slice(1)}"`});
+                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${item.inGraph}" data-citekey="${itemKey.slice(1)}"`});
                 }
                 return `
-                <li class="zotero-roam-list-item" in-graph="${item.inGraph}" data-item-type="${item.itemType}">
+                <li class="zotero-roam-list-item" in-graph="${item.inGraph ? true : false}" data-item-type="${item.itemType}">
                 <div class="bp3-menu-item" label="${item.key}">
                     ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp">${item.timestamp}</span>` : ""}
                     <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
@@ -3747,7 +3754,7 @@ var zoteroRoam = {};
             let currentImport = type == "citations" ? zoteroRoam.citations.activeImport : zoteroRoam.webImport.activeImport;
 
             if(currentImport == null){
-                zoteroRoam.data.roamPages = zoteroRoam.utils.getRoamPages();
+                zoteroRoam.data.roamPages = new Map(zoteroRoam.utils.getRoamPages());
                 zoteroRoam.tagSelection[type == "citations" ? "cit_panel" : "aux_panel"].init();
                 zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                 zoteroRoam.interface.renderImportOptions(type = type);
@@ -4726,6 +4733,7 @@ var zoteroRoam = {};
         },
 
         renderBacklinksList_year(papers, origin_year){
+            let papersInGraph = new Map(zoteroRoam.utils.getAllRefPages());
             let papersList = papers.sort((a,b) => {
                 if(!a.meta.parsedDate){
                     if(!b.meta.parsedDate){
@@ -4749,11 +4757,11 @@ var zoteroRoam = {};
                 }
             });
             let referencesList = papersList.filter(p => p.type == "cited").map(p => {
-                let paperUID = zoteroRoam.utils.lookForPage('@' + p.key).uid || null;
+                let paperUID = papersInGraph.get('@' + p.key) || null;
                 return zoteroRoam.inPage.renderBacklinksItem_year(p, "reference", uid = paperUID);
             });
             let citationsList = papersList.filter(p => p.type == "citing").map(p => {
-                let paperUID = zoteroRoam.utils.lookForPage('@' + p.key).uid || null;
+                let paperUID = papersInGraph.get('@' + p.key) || null;
                 return zoteroRoam.inPage.renderBacklinksItem_year(p, "citation", uid = paperUID);
             });
 

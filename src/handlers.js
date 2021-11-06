@@ -707,7 +707,7 @@
                 }
 
                 simplifiedItem["_multiField"] = simplifiedItem.authorsString + " " + simplifiedItem.year + " " + simplifiedItem.title + " " + simplifiedItem.tagsString;
-                simplifiedItem["inGraph"] = zoteroRoam.data.roamPages.find(p => p.title == '@' + item.key) ? true : false;
+                simplifiedItem["inGraph"] = zoteroRoam.data.roamPages.has('@' + item.key) ? true : false;
         
                 return simplifiedItem;
         
