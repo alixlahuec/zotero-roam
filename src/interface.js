@@ -329,6 +329,14 @@
                         let itemKey = btn.closest('.bp3-menu-item').getAttribute('label');
                         console.log("Importing metadata...");
                         zoteroRoam.handlers.importItemMetadata(title = '@' + itemKey, uid = "", {popup: true});
+                    } else if(btn.classList.contains('zotero-roam-list-item-go-to-page')){
+                        let itemKey = btn.getAttribute('data-citekey');
+                        let pageUID = btn.getAttribute('data-uid');
+                        if(pageUID){
+                            console.log(`Navigating to @${itemKey} (${pageUID})`);
+                            zoteroRoam.interface.closeAuxiliaryOverlay();
+                            roamAlphaAPI.ui.mainWindow.openPage({page: {uid: pageUID}});
+                        }
                     }
                 } else {
                     let chck = e.target.closest('input[type="checkbox"]');
@@ -955,8 +963,7 @@
                     actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning bp3-small zotero-roam-add-to-graph"});
                 } else {
                     let pageUID = zoteroRoam.utils.lookForPage('@' + item.key).uid;
-                    let pageURL = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`;
-                    actionsDiv = zoteroRoam.utils.renderBP3Button_link(string = "Go to page", {linkClass: "bp3-minimal bp3-small bp3-intent-success zotero-roam-list-item-go-to-page", icon: "symbol-circle", target: pageURL, linkAttribute: `data-uid="${pageUID}"`});
+                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}"`});
                 }
                 return `
                 <li class="zotero-roam-list-item" in-graph="${item.inGraph}" data-item-type="${item.itemType}">

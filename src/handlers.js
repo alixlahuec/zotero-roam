@@ -125,6 +125,7 @@
                 } else {
                     pageUID = window.roamAlphaAPI.util.generateUID();
                     window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
+                    // TODO: Harmonize this with the metadata-added events, to remove repeating code
                     outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
                     try {
                         let inGraphDiv = document.querySelector(".item-in-graph");

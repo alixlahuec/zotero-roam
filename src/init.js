@@ -593,7 +593,6 @@ var zoteroRoam = {};
             .item-citekey-section{margin:10px 0px; overflow-wrap:break-word;}
             .item-citekey-section .citekey-element{font-weight:bold;padding:0 10px;}
             .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
-            a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
             .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
             .controls-top .zotero-roam-sequence {background: unset;color: #c79f0c;}
             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}

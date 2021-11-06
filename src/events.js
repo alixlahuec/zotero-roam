@@ -47,6 +47,9 @@
 
         defaultHooks(){
             document.addEventListener("zotero-roam:metadata-added", (e) => {
+                let itemKey = e.detail.title;
+                let pageUID = e.detail.uid;
+
                 // Update item-in-graph display, if applicable
                 try {
                     let inGraphDiv = document.querySelector(".item-in-graph");
@@ -55,25 +58,27 @@
                     }
                     let goToPageButton = document.querySelector(".item-go-to-page");
                     if(goToPageButton != null){
-                        goToPageButton.setAttribute("data-uid", e.detail.uid);
-                        goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.detail.uid}`);
+                        goToPageButton.setAttribute("data-uid", pageUID);
                         goToPageButton.removeAttribute("disabled");
                     }
                 } catch(e){};
                 // Update auxiliary dialog, if applicable
                 try {
-                    let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${e.detail.title.slice(1)}"]`);
+                    let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${itemKey.slice(1)}"]`);
                     if(auxItem != null){
                         auxItem.setAttribute('in-graph', 'true');
+                        // Remove the "Add to graph" button
                         auxItem.querySelector('.zotero-roam-add-to-graph').remove();
+                        // Insert the "Go to page" button
+                        auxItem.innerHTML += zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}"`});
                     }
                 } catch(e){};
                 // Update on-page menu backlink, if applicable
                 try {
-                    let backlinks = Array.from(document.querySelectorAll(`.related-item_listed[data-key="${e.detail.title}"][in-graph="false"]`));
+                    let backlinks = Array.from(document.querySelectorAll(`.related-item_listed[data-key="${itemKey}"][in-graph="false"]`));
                     if(backlinks.length > 0){
                         for(link of backlinks){
-                            link.outerHTML = zoteroRoam.inPage.renderBacklinksItem(paper = e.detail.item, type = link.getAttribute('item-type'), uid = e.detail.uid);
+                            link.outerHTML = zoteroRoam.inPage.renderBacklinksItem(paper = e.detail.item, type = link.getAttribute('item-type'), uid = pageUID);
                         }
                     }
                 } catch(e){};

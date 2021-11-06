@@ -593,7 +593,6 @@ var zoteroRoam = {};
             .item-citekey-section{margin:10px 0px; overflow-wrap:break-word;}
             .item-citekey-section .citekey-element{font-weight:bold;padding:0 10px;}
             .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
-            a.item-go-to-page[disabled]{pointer-events:none;opacity:0.5;}
             .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
             .controls-top .zotero-roam-sequence {background: unset;color: #c79f0c;}
             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}
@@ -1553,6 +1552,7 @@ var zoteroRoam = {};
                 } else {
                     pageUID = window.roamAlphaAPI.util.generateUID();
                     window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
+                    // TODO: Harmonize this with the metadata-added events, to remove repeating code
                     outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
                     try {
                         let inGraphDiv = document.querySelector(".item-in-graph");
@@ -2712,6 +2712,14 @@ var zoteroRoam = {};
                         let itemKey = btn.closest('.bp3-menu-item').getAttribute('label');
                         console.log("Importing metadata...");
                         zoteroRoam.handlers.importItemMetadata(title = '@' + itemKey, uid = "", {popup: true});
+                    } else if(btn.classList.contains('zotero-roam-list-item-go-to-page')){
+                        let itemKey = btn.getAttribute('data-citekey');
+                        let pageUID = btn.getAttribute('data-uid');
+                        if(pageUID){
+                            console.log(`Navigating to @${itemKey} (${pageUID})`);
+                            zoteroRoam.interface.closeAuxiliaryOverlay();
+                            roamAlphaAPI.ui.mainWindow.openPage({page: {uid: pageUID}});
+                        }
                     }
                 } else {
                     let chck = e.target.closest('input[type="checkbox"]');
@@ -3338,8 +3346,7 @@ var zoteroRoam = {};
                     actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning bp3-small zotero-roam-add-to-graph"});
                 } else {
                     let pageUID = zoteroRoam.utils.lookForPage('@' + item.key).uid;
-                    let pageURL = `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageUID}`;
-                    actionsDiv = zoteroRoam.utils.renderBP3Button_link(string = "Go to page", {linkClass: "bp3-minimal bp3-small bp3-intent-success zotero-roam-list-item-go-to-page", icon: "symbol-circle", target: pageURL, linkAttribute: `data-uid="${pageUID}"`});
+                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}"`});
                 }
                 return `
                 <li class="zotero-roam-list-item" in-graph="${item.inGraph}" data-item-type="${item.itemType}">
@@ -5324,6 +5331,9 @@ var zoteroRoam = {};
 
         defaultHooks(){
             document.addEventListener("zotero-roam:metadata-added", (e) => {
+                let itemKey = e.detail.title;
+                let pageUID = e.detail.uid;
+
                 // Update item-in-graph display, if applicable
                 try {
                     let inGraphDiv = document.querySelector(".item-in-graph");
@@ -5332,25 +5342,27 @@ var zoteroRoam = {};
                     }
                     let goToPageButton = document.querySelector(".item-go-to-page");
                     if(goToPageButton != null){
-                        goToPageButton.setAttribute("data-uid", e.detail.uid);
-                        goToPageButton.setAttribute("href", `https://roamresearch.com/${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${e.detail.uid}`);
+                        goToPageButton.setAttribute("data-uid", pageUID);
                         goToPageButton.removeAttribute("disabled");
                     }
                 } catch(e){};
                 // Update auxiliary dialog, if applicable
                 try {
-                    let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${e.detail.title.slice(1)}"]`);
+                    let auxItem = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-menu-item[label="${itemKey.slice(1)}"]`);
                     if(auxItem != null){
                         auxItem.setAttribute('in-graph', 'true');
+                        // Remove the "Add to graph" button
                         auxItem.querySelector('.zotero-roam-add-to-graph').remove();
+                        // Insert the "Go to page" button
+                        auxItem.innerHTML += zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}"`});
                     }
                 } catch(e){};
                 // Update on-page menu backlink, if applicable
                 try {
-                    let backlinks = Array.from(document.querySelectorAll(`.related-item_listed[data-key="${e.detail.title}"][in-graph="false"]`));
+                    let backlinks = Array.from(document.querySelectorAll(`.related-item_listed[data-key="${itemKey}"][in-graph="false"]`));
                     if(backlinks.length > 0){
                         for(link of backlinks){
-                            link.outerHTML = zoteroRoam.inPage.renderBacklinksItem(paper = e.detail.item, type = link.getAttribute('item-type'), uid = e.detail.uid);
+                            link.outerHTML = zoteroRoam.inPage.renderBacklinksItem(paper = e.detail.item, type = link.getAttribute('item-type'), uid = pageUID);
                         }
                     }
                 } catch(e){};
