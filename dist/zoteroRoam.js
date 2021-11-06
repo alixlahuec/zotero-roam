@@ -615,7 +615,6 @@ var zoteroRoam = {};
             .zotero-roam-page-menu-backlinks-total, .zotero-roam-page-menu-references-total {font-weight: 700;}
             .backlinks-list_divider{display: flex;align-items: center;margin: 10px 5px;}
             .backlinks-list_divider hr{flex: 0 1 100%;}
-            .related-sublist{margin: 0 10px;}
             .zotero-roam-search_result > .bp3-menu-item, .zotero-roam-citations-search_result > .bp3-menu-item {flex-wrap:wrap;justify-content:space-between;user-select:initial;padding: 3px 0px;}
             .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 2 77%;white-space:normal;}
@@ -3556,18 +3555,15 @@ var zoteroRoam = {};
                 openWebElement = zoteroRoam.utils.renderBP3Button_link(string = "Open in browser", {linkClass: "bp3-minimal bp3-fill bp3-align-left item-open-in-browser", icon: "share", iconModifier: "bp3-intent-primary", target: selectedItem.data.url, linkAttribute: `target="_blank"`});
             }
             
-            let goToPageModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
-            let goToPageSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
-            let pageURL = (pageInGraph.present == true) ? `${window.location.hash.match(/#\/app\/([^\/]+)/g)[0]}/page/${pageInGraph.uid}` : "javascript:void(0)";
-            let goToPage = `
-            <div class="bp3-button-group bp3-minimal bp3-fill bp3-align-left">
-            ${zoteroRoam.utils.renderBP3Button_link(string = "Go to Roam page" + goToPageSeq, {linkClass: "item-go-to-page", icon: "arrow-right", iconModifier: "bp3-intent-primary", target: pageURL, linkAttribute: goToPageModifier})}
-            </div>
-            `;
+
+            let goToModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : "disabled";
+            let goToSeq = (zoteroRoam.shortcuts.sequences["goToItemPage"]) ? zoteroRoam.shortcuts.makeSequenceText("goToItemPage", pre = " ") : "";
+            let goToText = `Go to Roam page  ${goToSeq}`;
+            let goToButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = goToText, {buttonClass: "item-go-to-page", divClass: "bp3-minimal bp3-fill bp3-align-left", icon: "arrow-right", modifier: "bp3-intent-primary", buttonModifier: `${goToModifier} data-citekey="${itemKey.slice(1)}"`});
 
             let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
             let importText = `Import metadata  ${importSeq}`;
-            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal bp3-fill bp3-align-left", icon: "add", modifier: "bp3-intent-primary" });
+            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal bp3-fill bp3-align-left", icon: "add", modifier: "bp3-intent-primary", buttonModifier: `data-citekey="${itemKey.slice(1)}"` });
 
             // Check for children items
             let infoChildren = zoteroRoam.formatting.getItemChildren(selectedItem, { pdf_as: "raw", notes_as: "raw" });
@@ -3611,7 +3607,7 @@ var zoteroRoam = {};
             <div class="item-actions">
                 <div class="bp3-card">
                     ${openWebElement}
-                    ${goToPage}
+                    ${goToButtonGroup}
                     ${importButtonGroup}
                 </div>
                 <div class="item-pdf-notes">
@@ -3626,6 +3622,12 @@ var zoteroRoam = {};
                 console.log("Importing metadata...");
                 zoteroRoam.handlers.importItemMetadata(itemKey, pageUID, {popup: true});
             });
+            document.querySelector("button.item-go-to-page").addEventListener("click", function(){
+                if(pageUID){
+                    console.log(`Navigating to ${itemKey} (${pageUID})`);
+                    roamAlphaAPI.ui.mainWindow.openPage({page: {uid: pageUID}});
+                }
+            })
 
             Array.from(document.querySelectorAll('.item-citekey-section .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", (e) => {
@@ -5077,9 +5079,12 @@ var zoteroRoam = {};
             goToItemPage: {
                 defaultShortcut: [],
                 execute(){
-                    let goToPageEl = document.querySelector("a.item-go-to-page");
+                    let goToPageEl = document.querySelector("button.item-go-to-page");
                     if(goToPageEl && zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true"){
-                        goToPageEl.click();
+                        let pageUID = goToPageEl.getAttribute('data-uid');
+                        let itemKey = '@' + goToPageEl.getAttribute('data-citekey');
+                        console.log(`Navigating to ${itemKey} (${pageUID})`);
+                        roamAlphaAPI.ui.mainWindow.openPage({page: {uid: pageUID}});
                     }
                 }
             },

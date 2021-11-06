@@ -54,9 +54,12 @@
             goToItemPage: {
                 defaultShortcut: [],
                 execute(){
-                    let goToPageEl = document.querySelector("a.item-go-to-page");
+                    let goToPageEl = document.querySelector("button.item-go-to-page");
                     if(goToPageEl && zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true"){
-                        goToPageEl.click();
+                        let pageUID = goToPageEl.getAttribute('data-uid');
+                        let itemKey = '@' + goToPageEl.getAttribute('data-citekey');
+                        console.log(`Navigating to ${itemKey} (${pageUID})`);
+                        roamAlphaAPI.ui.mainWindow.openPage({page: {uid: pageUID}});
                     }
                 }
             },
