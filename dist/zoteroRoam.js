@@ -3345,8 +3345,9 @@ var zoteroRoam = {};
                 if(!item.inGraph){
                     actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning bp3-small zotero-roam-add-to-graph"});
                 } else {
-                    let pageUID = zoteroRoam.utils.lookForPage('@' + item.key).uid;
-                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}"`});
+                    let itemKey = '@' + item.key;
+                    let pageUID = zoteroRoam.utils.lookForPage(itemKey).uid;
+                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}" data-citekey="${itemKey.slice(1)}"`});
                 }
                 return `
                 <li class="zotero-roam-list-item" in-graph="${item.inGraph}" data-item-type="${item.itemType}">
@@ -5354,7 +5355,7 @@ var zoteroRoam = {};
                         // Remove the "Add to graph" button
                         auxItem.querySelector('.zotero-roam-add-to-graph').remove();
                         // Insert the "Go to page" button
-                        auxItem.innerHTML += zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}"`});
+                        auxItem.innerHTML += zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${pageUID}" data-citekey="${itemKey.slice(1)}"`});
                     }
                 } catch(e){};
                 // Update on-page menu backlink, if applicable
