@@ -651,15 +651,15 @@ var zoteroRoam = {};
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
             .selected_info{flex: 0 1 90%;}
-            li.related-item_listed{display:flex;align-items:end;font-size:0.9rem;padding:3px 0px;}
+            li.related-item_listed{display:flex;align-items:flex-start;font-size:0.9rem;padding:3px 0px;}
             .related-sublist[list-type="references"] li:nth-child(even) {background-color:#e8f0ff;}
             .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#fdfcf6;}
             .related-item_listed[item-type="reference"]:hover {background-color:#e1ecff;}
             .related-item_listed[item-type="citation"]:hover {background-color:#fff6e1;}
             .related_year{flex: 0 0 auto;padding-left:10px;}
             .related_info{line-height:normal;padding: 0px 10px;flex: 1 2 90%;}
-            .related_year, .related_info{line-height:normal;}
-            .related_state{flex: 1 1 auto;font-size:0.85rem;}
+            .related_year, .related_info{line-height:normal;font-size:1em;}
+            .related_state{flex: 1 2 auto;font-size:0.85rem;}
             .related_state button.bp3-button{padding:0px 0px;overflow-wrap:anywhere;}
             [in-graph="true"] .related_state {align-self:stretch;text-align:right;}
             [in-graph="true"] .related_state button {height:100%;}
@@ -707,6 +707,7 @@ var zoteroRoam = {};
                 #zotero-roam-search-selected-item .selected-item-header .copy-buttons{display:none;}
                 #zotero-roam-search-selected-item .selected-item-header{flex-direction:column-reverse;}
                 #zotero-roam-search-selected-item .selected-item-body{flex-direction:column;}
+                .zotero-roam-page-menu-actions .bp3-button, .zotero-roam-page-menu-citations .bp3-button{font-size:0.85em;}
             }
             `;
             document.head.append(autoCompleteCSS);
