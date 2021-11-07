@@ -517,7 +517,7 @@ var zoteroRoam = {};
             autoCompleteCSS.textContent = `
             .zotero-roam-search-backdrop, .zotero-roam-citations-search-backdrop {opacity:0.4;}
             .zotero-roam-dialog-overlay .bp3-dialog-container, .zotero-roam-dialog-small .bp3-dialog-container{justify-content:start;}
-            .zotero-roam-search-overlay .bp3-dialog, .zotero-roam-citations-search-overlay .bp3-dialog{background:white;}
+            .zotero-roam-search-overlay .bp3-dialog:not(.bp3-dark), .zotero-roam-citations-search-overlay .bp3-dialog:not(.bp3-dark){background:white;}
             .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(18vw + 9.5%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 40vw);}
@@ -540,7 +540,7 @@ var zoteroRoam = {};
             #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="library"]{color:#48aff0;}
             #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="citations"]{color:#ffb366;}
             #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="references"]{color:#48aff0;}
-            #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:5px;padding-left:20px;}
+            #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:5px;padding-left:min(20px, 2vw);overflow-wrap:anywhere;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
             .zotero-roam-search-overlay .header-right {position:absolute;right:0px;}
             #zotero-roam-portal .zotero-roam-citations-search-overlay .header-bottom {margin-top:0px;}
@@ -551,7 +551,8 @@ var zoteroRoam = {};
             #zotero-roam-portal .panel-st{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
             #zotero-roam-search-autocomplete{flex:0 1 89%;}
             #zotero-roam-citations-autocomplete{flex:1 0 100%;}
-            #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;border-bottom: 1px #ececec solid;color: #717171;}
+            #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;}
+            :not(.bp3-dark) #zotero-roam-search-autocomplete, :not(.bp3-dark) #zotero-roam-citations-autocomplete{border-bottom: 1px #ececec solid;color: #717171;}
             #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;}
             #zotero-roam-portal .clipboard-copy-utility{width:10px;height:5px;}
             #zotero-roam-portal .bp3-dialog-footer-actions{padding:5px 2.5%;justify-content:space-between;align-items:flex-end;transition:0.2s;}
@@ -564,10 +565,10 @@ var zoteroRoam = {};
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
             #zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu {max-height:70vh;overflow-y:scroll;background:unset;padding:0px;}
-            #zotero-roam-search-results-list::-webkit-scrollbar{width: 5px;}
-            #zotero-roam-search-results-list::-webkit-scrollbar:hover{background:#ececec;}
+            #zotero-roam-search-results-list::-webkit-scrollbar, .zotero-roam-citations-search-results-list::-webkit-scrollbar{width: 5px;}
+            #zotero-roam-search-results-list::-webkit-scrollbar:hover, .zotero-roam-citations-search-results-list::-webkit-scrollbar:hover{background:#ececec;}
             .zotero-roam-search-item-title{font-weight:500;display:block;}
-            .zotero-roam-citation-link{padding: 0 5px;}
+            .zotero-roam-citation-link{padding-right: 10px;}
             .zotero-roam-citation-link a {font-size:0.85em;}
             .zotero-roam-library-results-count:empty {padding: 0px;}
             .zotero-roam-library-results-count{display:block;padding:min(6px, 0.2em) 0;}
@@ -575,12 +576,13 @@ var zoteroRoam = {};
             .zotero-roam-search_result{padding:3px 0px;}
             .zotero-roam-citations-search_result{padding:3px 6px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
-            .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#237d232e;}
+            .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#5863582e;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}
             #zotero-roam-library-rendered, #zotero-roam-citations-pagination {width:97%;margin: 0 auto;}
             #zotero-roam-library-rendered[view="search"] #zotero-roam-search-selected-item{display:none;}
             #zotero-roam-library-rendered[view="item"] #zotero-roam-library-search-div{display:none;}
-            #zotero-roam-library-rendered[view="search"][has-results] + .bp3-dialog-footer-actions{box-shadow: 0px -4px 10px 0px #d6d6d6;}
+            #zotero-roam-library-rendered[view="search"][has-results] + .bp3-dialog-footer-actions, #zotero-roam-citations-pagination + .bp3-dialog-footer-actions{box-shadow: 0px -4px 10px 0px #d6d6d6;}
+            .bp3-dark #zotero-roam-library-rendered[view="search"][has-results] + .bp3-dialog-footer-actions, .bp3-dark #zotero-roam-citations-pagination + .bp3-dialog-footer-actions{box-shadow: 0px -4px 10px 0px #171717;}
             #zotero-roam-library-rendered[view="item"] + .bp3-dialog-footer-actions{opacity:0;}
             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
             .selected-item-header{margin-bottom:20px;}
@@ -625,7 +627,7 @@ var zoteroRoam = {};
             .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 1 97%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
-            .zotero-roam-search-item-key{flex: 1 0 20%;text-align:right;overflow-wrap:break-word;font-size:0.8em;}
+            .zotero-roam-search-item-key{flex: 1 0 20%;text-align:right;overflow-wrap:anywhere;font-size:0.8em;}
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{overflow-wrap:break-word;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
@@ -653,7 +655,9 @@ var zoteroRoam = {};
             .selected_info{flex: 0 1 90%;}
             li.related-item_listed{display:flex;align-items:flex-start;font-size:0.9rem;padding:3px 0px;}
             .related-sublist[list-type="references"] li:nth-child(even) {background-color:#e8f0ff;}
+            .bp3-dark .related-sublist[list-type-"references"] li:nth-child(even) {background-color:#2d3a52;}
             .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#fdfcf6;}
+            .bp3-dark .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#52452d;}
             .related-item_listed[item-type="reference"]:hover {background-color:#e1ecff;}
             .related-item_listed[item-type="citation"]:hover {background-color:#fff6e1;}
             .related_year{flex: 0 0 auto;padding-left:10px;}
@@ -665,6 +669,7 @@ var zoteroRoam = {};
             [in-graph="true"] .related_state button {height:100%;}
             .selected_state{flex: 1 0 10%;text-align:center;}
             [item-type="reference"] .related_year, [item-type="reference"] a {color:#136fce!important;}
+            .bp3-dark [item-type="reference"] .related_year, .bp3-dark [item-type="reference"] a {color:#3fb8ff!important;}
             .bp3-dark [item-type="citation"] .related_year, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
             [item-type="citation"] .related_year, [item-type="citation"] a {color:#e09f26!important;}
             .zotero-roam-page-related{opacity:0.6;position:absolute;right:10px;top:10px;}
@@ -688,6 +693,7 @@ var zoteroRoam = {};
             .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
             .zotero-roam-search-item-authors, .zotero-roam-citation-origin {padding-right: 8px;}
             .zr-highlight {color: #206fe6;}
+            .bp3-dark .zr-highlight{color:#3fb8ff;}
             .zr-highlight-2 {color:#d9822b;}
             .zr-secondary {color: #7b7b7b;font-weight:300;}
             .zr-auxiliary{color:#5c7080;}
@@ -708,6 +714,9 @@ var zoteroRoam = {};
                 #zotero-roam-search-selected-item .selected-item-header{flex-direction:column-reverse;}
                 #zotero-roam-search-selected-item .selected-item-body{flex-direction:column;}
                 .zotero-roam-page-menu-actions .bp3-button, .zotero-roam-page-menu-citations .bp3-button{font-size:0.85em;}
+                .zotero-roam-citations-search_result > .bp3-menu-item{flex-direction:column;}
+                .zotero-roam-citations-search_result .zotero-roam-citation-copy-doi, .zotero-roam-citations-search_result .zotero-roam-citation-add-import{display:none;}
+                .zotero-roam-search-item-key{text-align:left;}
             }
             `;
             document.head.append(autoCompleteCSS);
@@ -4603,7 +4612,7 @@ var zoteroRoam = {};
                                 backlinksLib = "";
                                 backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
                                 backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
-                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `${papersInLib.length > 0 ? "" : "bp3-disabled"} zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `${papersInLib.length > 0 ? "" : "bp3-disabled"} bp3-minimal zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
             
                                 if(papersInLib.length > 0){
                                     backlinksLib += `
