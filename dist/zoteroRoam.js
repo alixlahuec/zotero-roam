@@ -659,8 +659,8 @@ var zoteroRoam = {};
             .related_year{flex: 0 0 auto;padding-left:10px;}
             .related_info{line-height:normal;padding: 0px 10px;flex: 1 2 90%;}
             .related_year, .related_info{line-height:normal;}
-            .related_state{flex: 1 0 auto;font-size:0.85rem;}
-            .related_state button{padding:0px 0px;overflow-wrap:anywhere;}
+            .related_state{flex: 1 1 auto;font-size:0.85rem;}
+            .related_state button.bp3-button{padding:0px 0px;overflow-wrap:anywhere;}
             [in-graph="true"] .related_state {align-self:stretch;text-align:right;}
             [in-graph="true"] .related_state button {height:100%;}
             .selected_state{flex: 1 0 10%;text-align:center;}
@@ -703,6 +703,10 @@ var zoteroRoam = {};
                 .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel, .zotero-roam-dialog-small .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:min(20vw, 30px)!important;}
                 #zotero-roam-portal .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
                 .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents, .zotero-roam-dialog-small .bp3-dialog .side-panel-contents{width:min(20vw, 30px);}
+                #zotero-roam-search-selected-item .item-citekey-section{margin:0px 0px;}
+                #zotero-roam-search-selected-item .selected-item-header .copy-buttons{display:none;}
+                #zotero-roam-search-selected-item .selected-item-header{flex-direction:column-reverse;}
+                #zotero-roam-search-selected-item .selected-item-body{flex-direction:column;}
             }
             `;
             document.head.append(autoCompleteCSS);
