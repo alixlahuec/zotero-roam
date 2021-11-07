@@ -868,6 +868,7 @@
                 }
                 document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
                 zoteroRoam.interface.search.input.value = "";
+                document.getElementById('zotero-roam-library-rendered').removeAttribute('has-results');
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");
             } else {
                 zoteroRoam.interface.clearSelectedItem();

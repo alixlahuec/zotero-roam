@@ -124,6 +124,7 @@ var zoteroRoam = {};
                 trigger: (query) => {
                     if(query.length == 0){
                         document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
+                        document.getElementById('zotero-roam-library-rendered').removeAttribute('has-results');
                         return false;
                     } else {
                         return true;
@@ -202,7 +203,7 @@ var zoteroRoam = {};
                                 </span>
                             </div>
                             <span class="bp3-menu-item-label">
-                            <span class="zr-secondary" style="font-size:0.8em;">@${data.value.key}</span>
+                            <span>@${data.value.key}</span>
                             ${keyEl}
                             </span>
                         </div>`;
@@ -562,6 +563,8 @@ var zoteroRoam = {};
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
             #zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu {max-height:70vh;overflow-y:scroll;background:unset;padding:0px;}
+            #zotero-roam-search-results-list::-webkit-scrollbar{width: 5px;}
+            #zotero-roam-search-results-list::-webkit-scrollbar:hover{background:#ececec;}
             .zotero-roam-search-item-title{font-weight:500;display:block;}
             .zotero-roam-citation-link{padding: 0 5px;}
             .zotero-roam-citation-link a {font-size:0.85em;}
@@ -680,7 +683,7 @@ var zoteroRoam = {};
             .zr-secondary {color: #7b7b7b;font-weight:300;}
             .zr-auxiliary{color:#5c7080;}
             .bp3-dark .zr-auxiliary{color:#95a8b7;}
-            [in-graph='true'] .bp3-menu-item-label .bp3-icon {color: #3DCC91;}
+            [in-graph='true'] .bp3-menu-item-label > * {color: #21b377;}
             [in-graph='false'] .bp3-menu-item-label .bp3-icon {color: #F29D49;}
             .zr-search-match {background-color: #fbde0f40;padding: 2px;border-radius: 3px;}
             `;
@@ -3252,6 +3255,7 @@ var zoteroRoam = {};
                 }
                 document.querySelector(".zotero-roam-library-results-count").innerHTML = ``;
                 zoteroRoam.interface.search.input.value = "";
+                document.getElementById('zotero-roam-library-rendered').removeAttribute('has-results');
                 zoteroRoam.interface.search.overlay.setAttribute("overlay-visible", "true");
             } else {
                 zoteroRoam.interface.clearSelectedItem();
