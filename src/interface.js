@@ -794,7 +794,7 @@
                 return `
                 <li class="zotero-roam-citations-search_result" ${cit.inLibrary ? 'in-library="true"' : ""} data-intent=${cit.intent ? JSON.stringify(cit.intent) : ""} ${cit.isInfluential ? 'is-influential' : ""}>
                 <div class="bp3-menu-item">
-                <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-citation-metadata">
+                <div class="bp3-text-overflow-ellipsis zotero-roam-citation-metadata">
                 ${titleEl}
                 ${metaEl}
                 <span class="zotero-roam-citation-links-list">
