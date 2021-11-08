@@ -330,7 +330,7 @@ var zoteroRoam = {};
                     data: {
                         /** @returns The list of existing Roam pages, with an artificial entry for the current query in case it doesn't exist */
                         src: async function(query){
-                            let roamPages = zoteroRoam.data.roamPages.keys();
+                            let roamPages = Array.from(zoteroRoam.data.roamPages.keys());
                             if(!roamPages.includes(query)){
                                 roamPages.push(query);
                             };
@@ -552,6 +552,7 @@ var zoteroRoam = {};
             #zotero-roam-search-autocomplete{flex:0 1 89%;}
             #zotero-roam-citations-autocomplete{flex:1 0 100%;}
             #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;}
+            #zotero-roam-search-autocomplete:focus, #zotero-roam-citations-autocomplete:focus, #zotero-roam-tagselector_citations:focus{box-shadow:none;}
             :not(.bp3-dark) #zotero-roam-search-autocomplete, :not(.bp3-dark) #zotero-roam-citations-autocomplete{border-bottom: 1px #ececec solid;color: #717171;}
             #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;}
             #zotero-roam-portal .clipboard-copy-utility{width:10px;height:5px;}
@@ -629,13 +630,13 @@ var zoteroRoam = {};
             .zotero-roam-citation-links-list{display:block;}
             .zotero-roam-search-item-key{flex: 1 0 20%;text-align:right;overflow-wrap:anywhere;font-size:0.8em;}
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
-            .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{overflow-wrap:break-word;}
+            .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{overflow-wrap:break-word;font-size:0.85em;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-abstract{font-size:0.88em;padding:5px 10px;flex:0 1 100%;background-color:#f5f8fa;white-space:break-spaces;}
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
             .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
             .options-library-list, .options-collections-list{flex:1 0 50%;}
-            .options-collections-list {max-height: 50vh;overflow-y:scroll;}
+            .options-collections-list {max-height: 50vh;overflow-y:scroll;padding-top:2px;}
             .options-collections-list::-webkit-scrollbar {width:0.2em;}
             .options-collections-list label{font-weight:400;margin-left:40px;font-size:0.8em;margin-bottom:0px;}
             .options-collections-list label[data-option-depth="0"]{margin-left:0px;}
@@ -662,9 +663,10 @@ var zoteroRoam = {};
             .related-item_listed[item-type="citation"]:hover {background-color:#fff6e1;}
             .related_year{flex: 0 0 auto;padding-left:10px;}
             .related_info{line-height:normal;padding: 0px 10px;flex: 1 2 90%;}
-            .related_year, .related_info{line-height:normal;font-size:1em;}
-            .related_state{flex: 1 2 auto;font-size:0.85rem;}
-            .related_state button.bp3-button{padding:0px 0px;overflow-wrap:anywhere;}
+            .related_year, .related_info{font-size:0.9em;}
+            .related_info > *:not(.zotero-roam-search-item-title), .related_year{line-height:2em;}
+            .related_state{flex: 1 0 auto;overflow-wrap:anywhere;}
+            .related_state button.bp3-button{padding:0px 0px;font-size:0.85em;}
             [in-graph="true"] .related_state {align-self:stretch;text-align:right;}
             [in-graph="true"] .related_state button {height:100%;}
             .selected_state{flex: 1 0 10%;text-align:center;}
@@ -717,6 +719,7 @@ var zoteroRoam = {};
                 .zotero-roam-citations-search_result > .bp3-menu-item{flex-direction:column;}
                 .zotero-roam-citations-search_result .zotero-roam-citation-copy-doi, .zotero-roam-citations-search_result .zotero-roam-citation-add-import{display:none;}
                 .zotero-roam-search-item-key{text-align:left;}
+                .related_state{flex: 1 2 auto;}
             }
             `;
             document.head.append(autoCompleteCSS);
