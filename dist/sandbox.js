@@ -551,11 +551,11 @@ var zoteroRoam = {};
             #zotero-roam-portal .panel-st{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
             #zotero-roam-search-autocomplete{flex:0 1 89%;}
             #zotero-roam-citations-autocomplete{flex:1 0 100%;}
-            #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;}
+            #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;box-shadow:none;}
             #zotero-roam-search-autocomplete:focus, #zotero-roam-citations-autocomplete:focus, #zotero-roam-tagselector_citations:focus{box-shadow:none;}
             :not(.bp3-dark) #zotero-roam-search-autocomplete, :not(.bp3-dark) #zotero-roam-citations-autocomplete{border-bottom: 1px #ececec solid;color: #717171;}
             #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;}
-            #zotero-roam-portal .clipboard-copy-utility{width:10px;height:5px;}
+            #zotero-roam-portal .clipboard-copy-utility{width:10px;height:5px;padding:0px;}
             #zotero-roam-portal .bp3-dialog-footer-actions{padding:5px 2.5%;justify-content:space-between;align-items:flex-end;transition:0.2s;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal .bp3-dark .side-panel{background-color:#30404d;}
@@ -700,8 +700,8 @@ var zoteroRoam = {};
             .zr-secondary {color: #7b7b7b;font-weight:300;}
             .zr-auxiliary{color:#5c7080;}
             .bp3-dark .zr-auxiliary{color:#95a8b7;}
-            [in-graph='true'] .bp3-menu-item-label > * {color: #21b377;}
-            [in-graph='false'] .bp3-menu-item-label .bp3-icon {color: #F29D49;}
+            [in-graph='true'] .bp3-menu-item-label > *, [in-graph='true'] .citekey-element {color: #21b377;}
+            [in-graph='false'] .bp3-menu-item-label .bp3-icon, [in-graph='false'] .citekey-element {color: #F29D49;}
             .zr-search-match {background-color: #fbde0f40;padding: 2px;border-radius: 3px;}
             @media (max-width:600px){
                 .zotero-roam-page-menu-header{flex-direction:column-reverse;}
@@ -3557,18 +3557,16 @@ var zoteroRoam = {};
 
             // Information about the item
             let pageInGraph = zoteroRoam.utils.lookForPage(itemKey);
-            let iconName = (pageInGraph.present == true) ? "tick" : "cross";
-            let iconIntent = (pageInGraph.present == true) ? "success" : "danger";
-            let itemInfo = (pageInGraph.present == true) ? `In the graph` : "Not in the graph";
+            let iconEl = (pageInGraph.present == true) ? `<span class="bp3-icon bp3-icon-symbol-circle"></span>` : `<span class="bp3-icon bp3-icon-minus"></span>`;
+            let itemInfo = ``;
             if(pageInGraph.present == true){
                 try{
                     let nbChildren = window.roamAlphaAPI.q('[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]', pageInGraph.uid)[0][0];
-                    itemInfo = itemInfo + ` (<b>${nbChildren}</b> direct children)`;
+                    itemInfo = `<b>${nbChildren}</b> direct child${nbChildren > 1 ? "ren" : ""}`;
                 } catch(e){};
             }
             let itemInGraph = `
             <div class="item-in-graph">
-            <span class="bp3-icon-${iconName} bp3-icon bp3-intent-${iconIntent}"></span>
             <span> ${itemInfo}</span></div>
             `;
             
@@ -3579,8 +3577,8 @@ var zoteroRoam = {};
                 <h4 class="item-title" tabindex="0">${selectedItem.data.title || ""}${itemYear}</h4>
                 <p class="item-metadata-string">${divAuthors}${zoteroRoam.utils.makeMetaString(selectedItem)}</p>
                 </div>
-            <div class="item-citekey-section">
-                <div class="bp3-fill citekey-element">${itemKey}</div>
+            <div class="item-citekey-section" in-graph="${pageInGraph.present || false}">
+                <div class="bp3-fill citekey-element">${iconEl}${itemKey}</div>
                 <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
                     <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
                     <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
