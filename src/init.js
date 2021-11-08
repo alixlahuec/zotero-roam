@@ -313,7 +313,7 @@ var zoteroRoam = {};
                                 zoteroRoam.interface.renderCitationsPagination();
                             } else {
                                 let paginationDiv = document.querySelector("#zotero-roam-citations-pagination");
-                                paginationDiv.querySelector(".zotero-roam-citations-results-count").innerHTML = `
+                                paginationDiv.closest('.main-panel').querySelector(".zotero-roam-citations-results-count").innerHTML = `
                                 <strong>No results</strong> for ${event.detail.query}
                                 `;
                                 zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: []});
@@ -392,6 +392,9 @@ var zoteroRoam = {};
                                 } catch(e){};
                             }
                         }
+                    },
+                    resultItem: {
+                        class: "zotero-roam-tagselector_option"
                     },
                     events: {
                         input: {
@@ -560,13 +563,13 @@ var zoteroRoam = {};
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal .bp3-dark .side-panel{background-color:#30404d;}
             #zotero-roam-portal .side-panel > .side-panel-contents > *{padding:10px 20px;}
-            li[aria-selected="true"] > .bp3-menu-item{background-color:#e7f3f7;}
+            li[aria-selected="true"] > .bp3-menu-item, .zotero-roam-tagselector_option[aria-selected="true"]{background-color:#e7f3f7;}
             .bp3-dark li[aria-selected="true"]{background-color:#191919;}
             span.result_highlighted{color:#146cb7;font-weight:500;}
             .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
-            #zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu {max-height:70vh;overflow-y:scroll;background:unset;padding:0px;}
-            #zotero-roam-search-results-list::-webkit-scrollbar, .zotero-roam-citations-search-results-list::-webkit-scrollbar{width: 5px;}
+            #zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu {max-height:70vh;overflow-y:scroll;background:unset;padding:0px;padding-bottom:10px;}
+            #zotero-roam-search-results-list::-webkit-scrollbar, .zotero-roam-citations-search-results-list::-webkit-scrollbar, .zotero-roam-import-tags-list::-webkit-scrollbar{width: 5px;}
             #zotero-roam-search-results-list::-webkit-scrollbar:hover, .zotero-roam-citations-search-results-list::-webkit-scrollbar:hover{background:#ececec;}
             .zotero-roam-search-item-title{font-weight:500;display:block;}
             .zotero-roam-citation-link{padding-right: 10px;}
@@ -599,7 +602,8 @@ var zoteroRoam = {};
             .bp3-dark .item-actions > .bp3-card{background-color:#2b3135;}
             .item-in-graph{padding: 0 10px;}
             .item-citekey-section{margin:10px 0px; overflow-wrap:break-word;}
-            .item-citekey-section .citekey-element{font-weight:bold;padding:0 10px;}
+            .item-citekey-section .citekey-element{padding:0 10px;}
+            .item-citekey-section .bp3-icon{margin-right:10px;}
             .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
             .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
             .controls-top .zotero-roam-sequence {background: unset;color: #c79f0c;}
@@ -701,7 +705,7 @@ var zoteroRoam = {};
             .zr-auxiliary{color:#5c7080;}
             .bp3-dark .zr-auxiliary{color:#95a8b7;}
             [in-graph='true'] .bp3-menu-item-label > *, [in-graph='true'] .citekey-element {color: #21b377;}
-            [in-graph='false'] .bp3-menu-item-label .bp3-icon, [in-graph='false'] .citekey-element {color: #F29D49;}
+            [in-graph='false'] .bp3-menu-item-label .bp3-icon, [in-graph='false'] .citekey-element .bp3-icon {color: #F29D49;}
             .zr-search-match {background-color: #fbde0f40;padding: 2px;border-radius: 3px;}
             @media (max-width:600px){
                 .zotero-roam-page-menu-header{flex-direction:column-reverse;}
