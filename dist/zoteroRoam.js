@@ -2497,14 +2497,14 @@ var zoteroRoam = {};
                     } else if(overlay.classList.contains('zotero-roam-auxiliary-overlay')){
                         zoteroRoam.interface.closeAuxiliaryOverlay();
                     }
-                } else if(e.target.closest('.item-actions')){
+                } else if(e.target.closest('.item-actions button')){
                     let btn = e.target.closest('button');
                     let uid = btn.getAttribute('data-uid');
                     let itemKey = '@' + btn.getAttribute('data-citekey');
-                    if(btn.classList.includes('item-go-to-page') && uid){
+                    if(btn.classList.contains('item-go-to-page') && uid){
                         console.log(`Navigating to ${itemKey} (${uid})`);
                         roamAlphaAPI.ui.mainWindow.openPage({page: {uid: uid}});
-                    } else if(btn.classList.includes('item-add-metadata')){
+                    } else if(btn.classList.contains('item-add-metadata')){
                         console.log("Importing metadata...");
                         zoteroRoam.handlers.importItemMetadata(itemKey, uid, {popup: true});
                     }
