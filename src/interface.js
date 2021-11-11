@@ -71,16 +71,13 @@
                         zoteroRoam.interface.closeAuxiliaryOverlay();
                     }
                 } else if(e.target.closest('.item-actions')){
-                    let goToBtn = e.target.closest('.item-go-to-page[data-uid]');
-                    if(goToBtn){
-                        let uid = goToBtn.getAttribute('data-uid');
+                    let btn = e.target.closest('button');
+                    let uid = btn.getAttribute('data-uid');
+                    let itemKey = '@' + btn.getAttribute('data-citekey');
+                    if(btn.classList.includes('item-go-to-page') && uid){
                         console.log(`Navigating to ${itemKey} (${uid})`);
                         roamAlphaAPI.ui.mainWindow.openPage({page: {uid: uid}});
-                    }
-                    let addMetaBtn = e.target.closest('.item-add-metadata');
-                    if(addMetaBtn){
-                        let uid = addMetaBtn.getAttribute('data-uid');
-                        let itemKey = '@' + addMetaBtn.getAttribute('data-citekey');
+                    } else if(btn.classList.includes('item-add-metadata')){
                         console.log("Importing metadata...");
                         zoteroRoam.handlers.importItemMetadata(itemKey, uid, {popup: true});
                     }
@@ -1198,7 +1195,7 @@
             let goToText = `Go to Roam page  ${goToSeq}`;
             let goToButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = goToText, {buttonClass: "item-go-to-page", divClass: "bp3-minimal bp3-fill bp3-align-left", icon: "arrow-right", modifier: "bp3-intent-primary", buttonModifier: `${goToModifier} data-citekey="${itemKey.slice(1)}"`});
 
-            let importModifier = `data-uid=${(pageInGraph.present == true) ? pageInGraph.uid : ""}`;
+            let importModifier = (pageInGraph.present == true) ? `data-uid="${pageInGraph.uid}"` : `data-uid=""`;
             let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
             let importText = `Import metadata  ${importSeq}`;
             let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal bp3-fill bp3-align-left", icon: "add", modifier: "bp3-intent-primary", buttonModifier: `${importModifier} data-citekey="${itemKey.slice(1)}"` });
