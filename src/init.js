@@ -619,7 +619,7 @@ var zoteroRoam = {};
             .zotero-roam-page-menu hr{margin:2px 0;}
             .scite-badge{padding-top:5px;min-width:25%;}
             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
-            .zotero-roam-page-menu-actions.bp3-button-group .bp3-button {flex: 1 1 auto;}
+            .zotero-roam-page-menu-actions.bp3-button-group .bp3-button {flex: 0 1 auto;}
             .zotero-roam-page-menu-pdf-link, .item-pdf-link{font-weight:600;text-align:left!important;}
             .zotero-roam-page-menu-citations{display:flex;padding:5px;flex-wrap:wrap;padding-bottom:0px;border-top: 1px #f1f1f1 solid;}
             .zotero-roam-page-menu-citations:empty{padding:0px;}

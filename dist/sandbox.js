@@ -619,7 +619,7 @@ var zoteroRoam = {};
             .zotero-roam-page-menu hr{margin:2px 0;}
             .scite-badge{padding-top:5px;min-width:25%;}
             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
-            .zotero-roam-page-menu-actions.bp3-button-group .bp3-button {flex: 1 1 auto;}
+            .zotero-roam-page-menu-actions.bp3-button-group .bp3-button {flex: 0 1 auto;}
             .zotero-roam-page-menu-pdf-link, .item-pdf-link{font-weight:600;text-align:left!important;}
             .zotero-roam-page-menu-citations{display:flex;padding:5px;flex-wrap:wrap;padding-bottom:0px;border-top: 1px #f1f1f1 solid;}
             .zotero-roam-page-menu-citations:empty{padding:0px;}
@@ -2497,6 +2497,20 @@ var zoteroRoam = {};
                     } else if(overlay.classList.contains('zotero-roam-auxiliary-overlay')){
                         zoteroRoam.interface.closeAuxiliaryOverlay();
                     }
+                } else if(e.target.closest('.item-actions')){
+                    let goToBtn = e.target.closest('.item-go-to-page[data-uid]');
+                    if(goToBtn){
+                        let uid = goToBtn.getAttribute('data-uid');
+                        console.log(`Navigating to ${itemKey} (${uid})`);
+                        roamAlphaAPI.ui.mainWindow.openPage({page: {uid: uid}});
+                    }
+                    let addMetaBtn = e.target.closest('.item-add-metadata');
+                    if(addMetaBtn){
+                        let uid = addMetaBtn.getAttribute('data-uid');
+                        let itemKey = '@' + addMetaBtn.getAttribute('data-citekey');
+                        console.log("Importing metadata...");
+                        zoteroRoam.handlers.importItemMetadata(itemKey, uid, {popup: true});
+                    }
                 } else if(e.target.closest('[zr-import]')){
                     zoteroRoam.interface.handleImportPanelClicks(e);
                 }
@@ -3611,9 +3625,10 @@ var zoteroRoam = {};
             let goToText = `Go to Roam page  ${goToSeq}`;
             let goToButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = goToText, {buttonClass: "item-go-to-page", divClass: "bp3-minimal bp3-fill bp3-align-left", icon: "arrow-right", modifier: "bp3-intent-primary", buttonModifier: `${goToModifier} data-citekey="${itemKey.slice(1)}"`});
 
+            let importModifier = `data-uid=${(pageInGraph.present == true) ? pageInGraph.uid : ""}`;
             let importSeq = (zoteroRoam.shortcuts.sequences["importMetadata"]) ? zoteroRoam.shortcuts.makeSequenceText("importMetadata", pre = " ") : "";
             let importText = `Import metadata  ${importSeq}`;
-            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal bp3-fill bp3-align-left", icon: "add", modifier: "bp3-intent-primary", buttonModifier: `data-citekey="${itemKey.slice(1)}"` });
+            let importButtonGroup = zoteroRoam.utils.renderBP3ButtonGroup(string = importText, { buttonClass: "item-add-metadata", divClass: "bp3-minimal bp3-fill bp3-align-left", icon: "add", modifier: "bp3-intent-primary", buttonModifier: `${importModifier} data-citekey="${itemKey.slice(1)}"` });
 
             // Check for children items
             let infoChildren = zoteroRoam.formatting.getItemChildren(selectedItem, { pdf_as: "raw", notes_as: "raw" });
@@ -3665,20 +3680,6 @@ var zoteroRoam = {};
                 </div>
             </div>
             `;
-
-            // Add event listeners to action buttons
-            let pageUID = (pageInGraph.uid) ? pageInGraph.uid : "";
-            document.querySelector("button.item-add-metadata").addEventListener("click", function(){
-                console.log("Importing metadata...");
-                zoteroRoam.handlers.importItemMetadata(itemKey, pageUID, {popup: true});
-            });
-            document.querySelector("button.item-go-to-page").addEventListener("click", function(e){
-                let pageUID = e.target.getAttribute('data-uid');
-                if(pageUID){
-                    console.log(`Navigating to ${itemKey} (${pageUID})`);
-                    roamAlphaAPI.ui.mainWindow.openPage({page: {uid: pageUID}});
-                }
-            })
 
             Array.from(document.querySelectorAll('.item-citekey-section .copy-buttons a.bp3-button[format]')).forEach(btn => {
                 btn.addEventListener("click", (e) => {
