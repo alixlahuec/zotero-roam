@@ -79,7 +79,7 @@
                             config: obj,
                             context: {item: item, page: page}
                         }
-                        outcome = await zoteroRoam.smartblocks.use_smartblock_metadata(config = obj, context = {item: item, page: page});
+                        outcome = await zoteroRoam.smartblocks.use_smartblock_metadata(config = obj, context = {item: item, page: page, uid: pageUID});
                         break;
                     case "function":
                     default:

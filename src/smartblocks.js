@@ -65,7 +65,7 @@
         // Extension-triggered Smartblocks
         async use_smartblock_metadata(config, context){
             let obj = config;
-            obj.targetName = '@' + context.item.key;
+            obj.targetUid = context.uid;
             if(!obj.variables){ obj.variables = {} };
             Object.keys(context).forEach(k => {
                 obj.variables[`${k}`] = context[`${k}`];

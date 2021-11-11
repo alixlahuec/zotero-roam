@@ -1245,7 +1245,8 @@
                 console.log("Importing metadata...");
                 zoteroRoam.handlers.importItemMetadata(itemKey, pageUID, {popup: true});
             });
-            document.querySelector("button.item-go-to-page").addEventListener("click", function(){
+            document.querySelector("button.item-go-to-page").addEventListener("click", function(e){
+                let pageUID = e.target.getAttribute('data-uid');
                 if(pageUID){
                     console.log(`Navigating to ${itemKey} (${pageUID})`);
                     roamAlphaAPI.ui.mainWindow.openPage({page: {uid: pageUID}});

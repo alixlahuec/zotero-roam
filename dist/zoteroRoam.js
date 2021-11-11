@@ -615,14 +615,14 @@ var zoteroRoam = {};
             .zotero-roam-page-doi{margin:10px;display:block;font-weight:600;letter-spacing:0.3mm;}
             .zotero-roam-page-menu{justify-content:space-between;border-width:0px;padding:5px;border-radius:5px;background-color: #f8f8f9;box-shadow:none;}
             .zotero-roam-page-menu-header{display:flex;}
-            .zotero-roam-page-menu-actions{flex-wrap:wrap;}
+            .zotero-roam-page-menu-actions{flex-wrap:wrap;flex: 1 1 auto;}
             .zotero-roam-page-menu hr{margin:2px 0;}
             .scite-badge{padding-top:5px;min-width:25%;}
             .scite-badge[style*='position: fixed; right: 1%;'] {display: none!important;}
-            .zotero-roam-page-menu-actions.bp3-button-group .bp3-button {flex: 1 0 33%;}
-            .zotero-roam-page-menu-actions.bp3-button-group .bp3-button.zotero-roam-page-menu-pdf-link{flex:0 1 100%;}
+            .zotero-roam-page-menu-actions.bp3-button-group .bp3-button {flex: 1 1 auto;}
             .zotero-roam-page-menu-pdf-link, .item-pdf-link{font-weight:600;text-align:left!important;}
             .zotero-roam-page-menu-citations{display:flex;padding:5px;flex-wrap:wrap;padding-bottom:0px;border-top: 1px #f1f1f1 solid;}
+            .zotero-roam-page-menu-citations:empty{padding:0px;}
             .bp3-dark .zotero-roam-page-menu-citations{border-top-color:#f1f1f12e;}
             .zotero-roam-page-menu-citations > button{flex: 1 0 33%;}
             .zotero-roam-page-menu-backlinks-list {width:100%;display:flex;flex-direction:column;margin: 10px 0px;}
@@ -1550,7 +1550,7 @@ var zoteroRoam = {};
                             config: obj,
                             context: {item: item, page: page}
                         }
-                        outcome = await zoteroRoam.smartblocks.use_smartblock_metadata(config = obj, context = {item: item, page: page});
+                        outcome = await zoteroRoam.smartblocks.use_smartblock_metadata(config = obj, context = {item: item, page: page, uid: pageUID});
                         break;
                     case "function":
                     default:
@@ -3672,7 +3672,8 @@ var zoteroRoam = {};
                 console.log("Importing metadata...");
                 zoteroRoam.handlers.importItemMetadata(itemKey, pageUID, {popup: true});
             });
-            document.querySelector("button.item-go-to-page").addEventListener("click", function(){
+            document.querySelector("button.item-go-to-page").addEventListener("click", function(e){
+                let pageUID = e.target.getAttribute('data-uid');
                 if(pageUID){
                     console.log(`Navigating to ${itemKey} (${pageUID})`);
                     roamAlphaAPI.ui.mainWindow.openPage({page: {uid: pageUID}});
@@ -5594,7 +5595,7 @@ var zoteroRoam = {};
         // Extension-triggered Smartblocks
         async use_smartblock_metadata(config, context){
             let obj = config;
-            obj.targetName = '@' + context.item.key;
+            obj.targetUid = context.uid;
             if(!obj.variables){ obj.variables = {} };
             Object.keys(context).forEach(k => {
                 obj.variables[`${k}`] = context[`${k}`];
