@@ -76,7 +76,7 @@ var zoteroRoam = {};
             }
         },
         
-        version: "0.6.90",
+        version: "0.6.91",
 
         data: {items: [], collections: [], semantic: new Map(), libraries: new Map(), keys: [], roamPages: []},
         
@@ -605,7 +605,7 @@ var zoteroRoam = {};
             .item-citekey-section{margin:10px 0px; overflow-wrap:break-word;}
             .item-citekey-section .citekey-element{padding:0 10px;display:flex;align-items:baseline;overflow-wrap:anywhere;}
             .item-citekey-section .bp3-icon{margin-right:10px;}
-            .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;}
+            .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;line-height:normal;}
             .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
             .controls-top .zotero-roam-sequence {background: unset;color: #c79f0c;}
             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}
@@ -3596,10 +3596,10 @@ var zoteroRoam = {};
             <div class="item-citekey-section" in-graph="${pageInGraph.present || false}">
                 <div class="bp3-fill citekey-element">${iconEl}${itemKey}</div>
                 <div class="bp3-button-group bp3-fill bp3-minimal copy-buttons">
-                    <a class="bp3-button bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
-                    <a class="bp3-button bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
-                    <a class="bp3-button bp3-intent-primary" format="tag">#@ ${(zoteroRoam.shortcuts.sequences["copyTag"]) ? zoteroRoam.shortcuts.makeSequenceText("copyTag") : ""}</a>
-                    <a class="bp3-button bp3-intent-primary" format="page-reference">[[@]] ${(zoteroRoam.shortcuts.sequences["copyPageRef"]) ? zoteroRoam.shortcuts.makeSequenceText("copyPageRef") : ""}</a>
+                    <a class="bp3-button bp3-small bp3-intent-primary" format="citekey">Copy @citekey ${(zoteroRoam.shortcuts.sequences["copyCitekey"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitekey") : ""}</a>
+                    <a class="bp3-button bp3-small bp3-intent-primary" format="citation">[Citation]([[@]]) ${(zoteroRoam.shortcuts.sequences["copyCitation"]) ? zoteroRoam.shortcuts.makeSequenceText("copyCitation") : ""}</a>
+                    <a class="bp3-button bp3-small bp3-intent-primary" format="tag">#@ ${(zoteroRoam.shortcuts.sequences["copyTag"]) ? zoteroRoam.shortcuts.makeSequenceText("copyTag") : ""}</a>
+                    <a class="bp3-button bp3-small bp3-intent-primary" format="page-reference">[[@]] ${(zoteroRoam.shortcuts.sequences["copyPageRef"]) ? zoteroRoam.shortcuts.makeSequenceText("copyPageRef") : ""}</a>
                 </div>
                 ${itemInGraph}
             </div>
