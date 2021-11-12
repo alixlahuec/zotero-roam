@@ -594,6 +594,7 @@ var zoteroRoam = {};
             .selected-item-body{flex-wrap:wrap;}
             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
             .item-abstract{padding:15px;background-color: #f5f8fa;font-weight:350;border-left-width:6px;}
+            .item-abstract:empty{padding:0;margin:0;}
             .bp3-dark .item-abstract, .bp3-dark  .zotero-roam-citation-abstract{background-color:#2b3135;}
             .item-metadata-string{font-size:0.85em;}
             .item-pdf-notes{margin-top: 25px;}
@@ -697,6 +698,7 @@ var zoteroRoam = {};
             .zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}
             .zr-explo-title{flex:1 0 100%;}
             .zr-explo-title .bp3-checkbox{margin-bottom:0px;}
+            .zr-explo-publication, .zr-explo-abstract{display:block;font-size:0.85em;white-space:break-spaces;}
             .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
             .zotero-roam-search-item-authors, .zotero-roam-citation-origin {padding-right: 8px;}
             .zr-highlight {color: #206fe6;}

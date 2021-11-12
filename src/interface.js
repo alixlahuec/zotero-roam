@@ -231,7 +231,6 @@
             let dialogSidePanel = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-dialog-body .side-panel-contents`);
 
             let dialogCard = document.createElement('div');
-            dialogCard.classList.add("bp3-card");
 
             let headerContent = document.createElement('div');
             headerContent.classList.add("bp3-input-group");
@@ -1033,9 +1032,9 @@
                     <div class="bp3-menu-item" label="link-${item.item_index}">
                         <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${item.item_index}`})}</span>
                         <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
-                            <span class="zotero-roam-citation-metadata-contents" style="padding-right:10px;">${item.type}${item.creators ? " | " + item.creators : ""}</span>
-                            ${item.publication ? `<span class="bp3-text-disabled" style="font-size:0.85em;display:block;white-space:break-spaces;">${item.publication}</span>` : ""}
-                            <span style="display:block;font-size:0.8em;white-space:break-spaces;" class="bp3-text-muted">${item.abstract}</span>
+                            <span class="zr-explo-metadata">${item.type}${item.creators ? " | " + item.creators : ""}</span>
+                            ${item.publication ? `<span class="zr-explo-publication bp3-text-disabled">${item.publication}</span>` : ""}
+                            <span class="zr-explo-abstract bp3-text-muted">${item.abstract}</span>
                         </div>
                     </div>
                 </li>

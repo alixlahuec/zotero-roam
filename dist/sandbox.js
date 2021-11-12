@@ -594,6 +594,7 @@ var zoteroRoam = {};
             .selected-item-body{flex-wrap:wrap;}
             .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
             .item-abstract{padding:15px;background-color: #f5f8fa;font-weight:350;border-left-width:6px;}
+            .item-abstract:empty{padding:0;margin:0;}
             .bp3-dark .item-abstract, .bp3-dark  .zotero-roam-citation-abstract{background-color:#2b3135;}
             .item-metadata-string{font-size:0.85em;}
             .item-pdf-notes{margin-top: 25px;}
@@ -697,6 +698,7 @@ var zoteroRoam = {};
             .zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}
             .zr-explo-title{flex:1 0 100%;}
             .zr-explo-title .bp3-checkbox{margin-bottom:0px;}
+            .zr-explo-publication, .zr-explo-abstract{display:block;font-size:0.85em;white-space:break-spaces;}
             .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
             .zotero-roam-search-item-authors, .zotero-roam-citation-origin {padding-right: 8px;}
             .zr-highlight {color: #206fe6;}
@@ -2353,25 +2355,26 @@ var zoteroRoam = {};
                     }
                 });
                 if(req.ok == true){
-                    // If the request returned a successful API response, log the data & update global info
-                    let reqResults = await req.json();
-                    // Update the extension's information on library version
-                    let latestVersion = req.headers.get('Last-Modified-Version');
-                    if(latestVersion){ zoteroRoam.data.libraries.get(library.path).version = latestVersion }
+                    // If the request returned a successful API response, update the data store
+                    await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.library == library.path));
+                    // Then update current library information
                     zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                     zoteroRoam.activeImport.currentLib = zoteroRoam.activeImport.libraries.find(lib => lib.path == zoteroRoam.activeImport.currentLib.path);
+                    
+                    let reqResults = await req.json();
                     outcome = {
                         success: true,
                         data: reqResults
                     }
+
                 } else {
-                    // If the API response is a 412 error (Precondition Failed), update data + try again once
                     if(req.status == 412 && retry == true){
+                        // If the API response is a 412 error (Precondition Failed), update the data store
                         await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.library == library.path));
-                        // Update the lib data for the active import
+                        // Then update current library information
                         zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                         zoteroRoam.activeImport.currentLib = zoteroRoam.activeImport.libraries.find(lib => lib.path == zoteroRoam.activeImport.currentLib.path);
-
+                        // Then try again (only once)
                         outcome = await zoteroRoam.write.importItems(data, library = zoteroRoam.activeImport.currentLib, retry = false);
                     } else {
                         console.log(`The request for ${req.url} returned a code of ${req.status} (${req.statusText}).`);
@@ -2658,7 +2661,6 @@ var zoteroRoam = {};
             let dialogSidePanel = document.querySelector(`.zotero-roam-auxiliary-overlay .bp3-dialog-body .side-panel-contents`);
 
             let dialogCard = document.createElement('div');
-            dialogCard.classList.add("bp3-card");
 
             let headerContent = document.createElement('div');
             headerContent.classList.add("bp3-input-group");
@@ -3460,9 +3462,9 @@ var zoteroRoam = {};
                     <div class="bp3-menu-item" label="link-${item.item_index}">
                         <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${item.item_index}`})}</span>
                         <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
-                            <span class="zotero-roam-citation-metadata-contents" style="padding-right:10px;">${item.type}${item.creators ? " | " + item.creators : ""}</span>
-                            ${item.publication ? `<span class="bp3-text-disabled" style="font-size:0.85em;display:block;white-space:break-spaces;">${item.publication}</span>` : ""}
-                            <span style="display:block;font-size:0.8em;white-space:break-spaces;" class="bp3-text-muted">${item.abstract}</span>
+                            <span class="zr-explo-metadata">${item.type}${item.creators ? " | " + item.creators : ""}</span>
+                            ${item.publication ? `<span class="zr-explo-publication bp3-text-disabled">${item.publication}</span>` : ""}
+                            <span class="zr-explo-abstract bp3-text-muted">${item.abstract}</span>
                         </div>
                     </div>
                 </li>
@@ -4508,8 +4510,8 @@ var zoteroRoam = {};
 
                 // Open the dialog before harvesting the metadata, show loading state
                 let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
-                overlay.querySelector('.main-panel .header-left').innerHTML = ``;
-                overlay.querySelector('.main-panel .rendered-div').innerHTML = `<p>Parsing links...</p>`;
+                overlay.querySelector('.main-panel .header-left').innerHTML = `<p>Parsing links...</p>`;
+                overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
                 overlay.querySelector('.bp3-dialog').setAttribute('side-panel', 'visible');
                 zoteroRoam.interface.triggerImport(type = "weblinks");
                 overlay.style.display = "block";
@@ -4529,7 +4531,7 @@ var zoteroRoam = {};
                 if(successes.length > 0){
                     zoteroRoam.interface.fillWebImportDialog(successes);
                 } else {
-                    overlay.querySelector('.main-panel .rendered-div').innerHTML = `<p>No data successfully retrieved</p>`;
+                    overlay.querySelector('.main-panel .header-left').innerHTML = `<p>No data successfully retrieved</p>`;
                 }
             }
         },

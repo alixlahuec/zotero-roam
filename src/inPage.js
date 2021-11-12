@@ -279,8 +279,8 @@
 
                 // Open the dialog before harvesting the metadata, show loading state
                 let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
-                overlay.querySelector('.main-panel .header-left').innerHTML = ``;
-                overlay.querySelector('.main-panel .rendered-div').innerHTML = `<p>Parsing links...</p>`;
+                overlay.querySelector('.main-panel .header-left').innerHTML = `<p>Parsing links...</p>`;
+                overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
                 overlay.querySelector('.bp3-dialog').setAttribute('side-panel', 'visible');
                 zoteroRoam.interface.triggerImport(type = "weblinks");
                 overlay.style.display = "block";
@@ -300,7 +300,7 @@
                 if(successes.length > 0){
                     zoteroRoam.interface.fillWebImportDialog(successes);
                 } else {
-                    overlay.querySelector('.main-panel .rendered-div').innerHTML = `<p>No data successfully retrieved</p>`;
+                    overlay.querySelector('.main-panel .header-left').innerHTML = `<p>No data successfully retrieved</p>`;
                 }
             }
         },

@@ -78,25 +78,26 @@
                     }
                 });
                 if(req.ok == true){
-                    // If the request returned a successful API response, log the data & update global info
-                    let reqResults = await req.json();
-                    // Update the extension's information on library version
-                    let latestVersion = req.headers.get('Last-Modified-Version');
-                    if(latestVersion){ zoteroRoam.data.libraries.get(library.path).version = latestVersion }
+                    // If the request returned a successful API response, update the data store
+                    await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.library == library.path));
+                    // Then update current library information
                     zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                     zoteroRoam.activeImport.currentLib = zoteroRoam.activeImport.libraries.find(lib => lib.path == zoteroRoam.activeImport.currentLib.path);
+                    
+                    let reqResults = await req.json();
                     outcome = {
                         success: true,
                         data: reqResults
                     }
+
                 } else {
-                    // If the API response is a 412 error (Precondition Failed), update data + try again once
                     if(req.status == 412 && retry == true){
+                        // If the API response is a 412 error (Precondition Failed), update the data store
                         await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.library == library.path));
-                        // Update the lib data for the active import
+                        // Then update current library information
                         zoteroRoam.activeImport.libraries = zoteroRoam.utils.getLibraries();
                         zoteroRoam.activeImport.currentLib = zoteroRoam.activeImport.libraries.find(lib => lib.path == zoteroRoam.activeImport.currentLib.path);
-
+                        // Then try again (only once)
                         outcome = await zoteroRoam.write.importItems(data, library = zoteroRoam.activeImport.currentLib, retry = false);
                     } else {
                         console.log(`The request for ${req.url} returned a code of ${req.status} (${req.statusText}).`);
