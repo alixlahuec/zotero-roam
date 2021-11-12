@@ -100,10 +100,10 @@
                                     let btnKeys = JSON.parse(btn.getAttribute('data-keys'));
                                     if(!btnKeys.includes(item.key)){
                                         if(!btnKeys.includes(item.data.key)){
-                                            btn.setAttribute('data-keys', JSON.stringify(btnKeys.push(item.key)));
+                                            btn.setAttribute('data-keys', JSON.stringify([...btnKeys, item.key]));
                                         } else {
                                             // Special case where the item's citekey was updated
-                                            btn.setAttribute('data-keys', JSON.stringify(btnKeys.filter(k => k != item.data.key).push(item.key)));
+                                            btn.setAttribute('data-keys', JSON.stringify([...btnKeys.filter(k => k != item.data.key), item.key]));
                                         }
                                         let newKeysCount = JSON.parse(btn.getAttribute('data-keys')).length;
                                         btn.querySelector('.bp3-button-text').innerText =  `${newKeysCount} item${newKeysCount == 1 ? "" : "s"} added`

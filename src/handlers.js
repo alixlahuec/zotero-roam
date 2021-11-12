@@ -246,7 +246,7 @@
             let funcName = zoteroRoam.funcmap.DEFAULT;
 
             let import_settings = zoteroRoam.config.userSettings.metadata || {};
-            let import_function = import_settings.function || false;
+            let import_function = import_settings.func || false;
             if(import_function){
                 funcName = import_function;
             } else if(zoteroRoam.config.userSettings.funcmap){
