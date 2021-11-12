@@ -4510,7 +4510,16 @@ var zoteroRoam = {};
 
                 // Open the dialog before harvesting the metadata, show loading state
                 let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
-                overlay.querySelector('.main-panel .header-left').innerHTML = `<p>Parsing links...</p>`;
+                overlay.querySelector('.main-panel .header-left').innerHTML = `
+                <div class="bp3-spinner">
+                    <div class="bp3-spinner-animation">
+                        <svg width="20" height="20" stroke-width="8.00" viewBox="1.00 1.00 98.00 98.00">
+                            <path class="bp3-spinner-track" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"></path>
+                            <path class="bp3-spinner-head" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90" pathLength="280" stroke-dasharray="280 280" stroke-dashoffset="210"></path>
+                        </svg>
+                    </div>
+                </div>
+                <p>Parsing links...</p>`;
                 overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
                 overlay.querySelector('.bp3-dialog').setAttribute('side-panel', 'visible');
                 zoteroRoam.interface.triggerImport(type = "weblinks");
