@@ -638,7 +638,7 @@ var zoteroRoam = {};
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{overflow-wrap:break-word;font-size:0.85em;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
-            .zotero-roam-citation-abstract{font-size:0.88em;padding:5px 10px;flex:0 1 100%;background-color:#f5f8fa;white-space:break-spaces;}
+            .zotero-roam-citation-abstract{font-size:0.85em;padding:5px 10px;flex:0 1 100%;background-color:#f5f8fa;white-space:break-spaces;margin-top:5px;border-radius:5px;}
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
             .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
             .options-library-list, .options-collections-list{flex:1 0 50%;}
@@ -686,14 +686,14 @@ var zoteroRoam = {};
             .roam-body.mobile + #zotero-roam-portal .quick-copy-element{display:none;}
             .roam-body.mobile + #zotero-roam-portal .bp3-dialog-footer-actions{flex-direction:column;align-items:center;}
             .bp3-dialog-footer-actions button.zotero-roam-update-data{margin-left:0px;}
-            .zotero-roam-item-timestamp{font-size:0.85em;}
+            .zotero-roam-item-timestamp{font-size:0.85em;margin-right:20px;}
             .zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
-            .zotero-roam-auxiliary-overlay .bp3-card{padding:5px;}
             .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;user-select:initial;}
-            .zotero-roam-list-item-actions{text-align:right;flex: 0 0 20%;}
+            .zotero-roam-list-item-actions{text-align:right;flex: 0 0 15%;}
             .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions button, .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions a{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
-            .zotero-roam-auxiliary-overlay .bp3-card ul.bp3-list-unstyled {padding:15px 0;}
+            .zotero-roam-auxiliary-overlay .main-panel{padding:10px;}
+            .zotero-roam-auxiliary-overlay .main-panel ul.bp3-list-unstyled {padding:15px 0;}
             .zotero-roam-explo-import{position:absolute;right:0px;opacity:0.7;z-index:10;}
             .zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}
             .zr-explo-title{flex:1 0 100%;}

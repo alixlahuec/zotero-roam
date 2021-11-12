@@ -257,7 +257,7 @@
 
             let renderedDiv = document.createElement('div');
             renderedDiv.classList.add("rendered-div");
-            renderedDiv.style = `width:95%;margin:0 auto;`;
+            renderedDiv.style = `width:96%;margin:0 auto;`;
 
             dialogCard.appendChild(headerContent);
             dialogCard.appendChild(renderedDiv);
@@ -985,7 +985,7 @@
                         <span class="zr-highlight">${item.meta}</span>
                         <span class="zotero-roam-list-item-key zr-auxiliary">[${item.key}]</span>
                         ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal bp3-small"}) : ""}
-                        <span class="zotero-roam-citation-abstract" style="display:none;">${item.abstract}</span>
+                        <span class="zotero-roam-citation-abstract zr-auxiliary" style="display:none;">${item.abstract}</span>
                     </div>
                     <span class="zotero-roam-list-item-actions">
                         ${actionsDiv}
