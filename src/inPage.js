@@ -287,8 +287,7 @@
                             <path class="bp3-spinner-head" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90" pathLength="280" stroke-dasharray="280 280" stroke-dashoffset="210"></path>
                         </svg>
                     </div>
-                </div>
-                <p>Parsing links...</p>`;
+                </div>`;
                 overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
                 overlay.querySelector('.bp3-dialog').setAttribute('side-panel', 'visible');
                 zoteroRoam.interface.triggerImport(type = "weblinks");

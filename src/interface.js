@@ -7,7 +7,7 @@
             div: null,
             class: "zotero-roam-context-menu",
             overlay: {div: null, class: "zotero-roam-context-overlay"},
-            options: {list: [], class: "zotero-roam-context-menu-option", labels: ["Import Zotero data to page", "Convert to citation", "Check for citing papers", "View item information"]},
+            options: {list: [], class: "zotero-roam-context-menu-option", labels: ["View item information", "Add metadata", "Check for citing papers", "Convert to citation"]},
             visible: false,
             position({top, left}){
                 zoteroRoam.interface.contextMenu.div.style.left = `${left}px`;
@@ -19,7 +19,7 @@
             div: null,
             class: "zotero-roam-icon-context-menu",
             overlay: {div: null, class: "zotero-roam-icon-context-overlay"},
-            options: {list: [], class: "zotero-roam-icon-context-menu-option", labels: ["Update Zotero data", "Search in dataset..."]},
+            options: {list: [], class: "zotero-roam-icon-context-menu-option", labels: ["Update Zotero data", "Search in library"]},
             visible: false,
             position({top, left}){
                 zoteroRoam.interface.iconContextMenu.div.style.left = (left >= 0.9*window.innerWidth) ? `calc(${left}px - 10%)` : `${left}px`;
@@ -114,7 +114,40 @@
 
             let backdropStyle = `z-index:25;`;
             let containerStyle = `width: auto; position: fixed;z-index:25;`;
-            let menuOptions = config.options.labels.map(op => `<li class="${config.options.class} zotero-roam-cm-option"><a class="bp3-menu-item bp3-popover-dismiss"><div class="bp3-fill bp3-text-overflow-ellipsis">${op}</div></a></li>`).join("");
+            let menuOptions = config.options.labels.map(op => {
+                let icon = '';
+                let intent = '';
+                let divider = '';
+                switch(op){
+                    case "Add metadata":
+                        icon = 'bp3-icon-add';
+                        intent = 'bp3-intent-primary'
+                        break;
+                    case "View item information":
+                        icon = 'bp3-icon-info-sign';
+                        break;
+                    case "Check for citing papers":
+                        icon = 'bp3-icon-chat';
+                        intent = 'bp3-intent-warning';
+                        break;
+                    case "Convert to citation":
+                        divider = `<li class="bp3-menu-divider"></li>`;
+                        break;
+                    case "Update Zotero data":
+                        icon = 'bp3-icon-refresh';
+                        break;
+                    case "Search in library":
+                        icon = 'bp3-icon-search';
+                        break;
+                }
+                return `
+                ${divider}
+                <li class="${config.options.class} zotero-roam-cm-option">
+                    <a class="bp3-menu-item bp3-popover-dismiss ${icon} ${intent}">
+                        <div class="bp3-fill bp3-text-overflow-ellipsis">${op}</div>
+                    </a>
+                </li>`;
+            }).join("");
 
             var overlayDiv = document.createElement("div");
             overlayDiv.classList.add("bp3-overlay");
@@ -835,7 +868,7 @@
                     if(op){
                         let action = op.innerText;
                         switch(action){
-                            case "Import Zotero data to page":
+                            case "Add metadata":
                                 // The DOM element with class "rm-page-ref" is the target of mouse events -- but it's its parent that has the information about the citekey + the page UID
                                 let citekey = target.parentElement.dataset.linkTitle;
                                 let pageUID = target.parentElement.dataset.linkUid;
@@ -853,7 +886,7 @@
                             case "Update Zotero data":
                                 zoteroRoam.extension.update();
                                 break;
-                            case "Search in dataset...":
+                            case "Search in library":
                                 zoteroRoam.interface.toggleSearchOverlay("show");
                                 break;
                         }
