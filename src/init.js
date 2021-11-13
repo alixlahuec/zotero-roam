@@ -710,6 +710,7 @@ var zoteroRoam = {};
             [in-graph='true'] .bp3-menu-item-label > *, [in-graph='true'] .citekey-element {color: #21b377;}
             [in-graph='false'] .bp3-menu-item-label .bp3-icon, [in-graph='false'] .citekey-element .bp3-icon {color: #F29D49;}
             .zr-search-match {background-color: #fbde0f40;padding: 2px;border-radius: 3px;}
+            .zotero-roam-cm-option .bp3-menu-item, .zotero-roam-cm-option .bp3-menu-item::before {font-size: 0.95rem;}
             @media (max-width:600px){
                 .zotero-roam-page-menu-header{flex-direction:column-reverse;}
                 .zotero-roam-dialog-overlay .bp3-dialog, .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(min(20vw, 30px) + 2.5%);padding-bottom:0px;box-shadow:none;}

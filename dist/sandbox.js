@@ -710,6 +710,7 @@ var zoteroRoam = {};
             [in-graph='true'] .bp3-menu-item-label > *, [in-graph='true'] .citekey-element {color: #21b377;}
             [in-graph='false'] .bp3-menu-item-label .bp3-icon, [in-graph='false'] .citekey-element .bp3-icon {color: #F29D49;}
             .zr-search-match {background-color: #fbde0f40;padding: 2px;border-radius: 3px;}
+            .zotero-roam-cm-option .bp3-menu-item, .zotero-roam-cm-option .bp3-menu-item::before {font-size: 0.95rem;}
             @media (max-width:600px){
                 .zotero-roam-page-menu-header{flex-direction:column-reverse;}
                 .zotero-roam-dialog-overlay .bp3-dialog, .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(min(20vw, 30px) + 2.5%);padding-bottom:0px;box-shadow:none;}
@@ -2590,7 +2591,7 @@ var zoteroRoam = {};
                 <div class="bp3-popover bp3-minimal ${zoteroRoam.config.params.theme ? zoteroRoam.config.params.theme : ""}">
                     <div class="bp3-popover-content">
                         <div>
-                            <ul class="bp3-menu bp3-text-small">
+                            <ul class="bp3-menu">
                                 ${menuOptions}
                             </ul>
                         </div>
@@ -3540,7 +3541,7 @@ var zoteroRoam = {};
 
         async popContextMenu(e){
             zoteroRoam.interface.popContextOverlay(e, "contextMenu");
-            await zoteroRoam.utils.sleep(200);
+            await zoteroRoam.utils.sleep(120);
             try{
                 // Hide default Roam context menu
                 document.querySelector('body > .bp3-context-menu+.bp3-portal').style.display = "none";

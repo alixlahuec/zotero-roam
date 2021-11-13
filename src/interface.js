@@ -160,7 +160,7 @@
                 <div class="bp3-popover bp3-minimal ${zoteroRoam.config.params.theme ? zoteroRoam.config.params.theme : ""}">
                     <div class="bp3-popover-content">
                         <div>
-                            <ul class="bp3-menu bp3-text-small">
+                            <ul class="bp3-menu">
                                 ${menuOptions}
                             </ul>
                         </div>
@@ -1110,7 +1110,7 @@
 
         async popContextMenu(e){
             zoteroRoam.interface.popContextOverlay(e, "contextMenu");
-            await zoteroRoam.utils.sleep(200);
+            await zoteroRoam.utils.sleep(120);
             try{
                 // Hide default Roam context menu
                 document.querySelector('body > .bp3-context-menu+.bp3-portal').style.display = "none";
