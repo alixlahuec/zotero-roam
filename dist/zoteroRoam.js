@@ -518,63 +518,58 @@ var zoteroRoam = {};
         addExtensionCSS(){
             let autoCompleteCSS = document.createElement('style');
             autoCompleteCSS.textContent = `
-            .zotero-roam-search-backdrop, .zotero-roam-citations-search-backdrop {opacity:0.4;}
+            #zotero-roam-portal .bp3-overlay-backdrop{opacity:0.4;}
+            #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
+            #zotero-roam-portal .bp3-dialog-footer-actions{padding:5px 2.5%;justify-content:space-between;align-items:flex-end;transition:0.2s;}
+            #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
+            #zotero-roam-portal [side-panel="hidden"] .side-panel{flex-basis:0%;}
+            #zotero-roam-portal [side-panel="hidden"] .side-panel-contents{display: none;}
+            #zotero-roam-portal .bp3-dark .side-panel{background-color:#30404d;}
+            #zotero-roam-portal .side-panel > .side-panel-contents > *{padding:10px 20px;}
             .zotero-roam-dialog-overlay .bp3-dialog-container, .zotero-roam-dialog-small .bp3-dialog-container{justify-content:start;}
             .zotero-roam-search-overlay .bp3-dialog:not(.bp3-dark), .zotero-roam-citations-search-overlay .bp3-dialog:not(.bp3-dark){background:white;}
             .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;box-shadow:none;}
-            .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(18vw + 9.5%);padding-bottom:0px;box-shadow:none;}
-            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"]{width:calc(95% - 40vw);}
-            .zotero-roam-dialog-small .bp3-dialog[side-panel="hidden"]{width:calc(55% - 10vw);}
-            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"]{width:calc(95% - 20vw);}
-            .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:20vw!important;}
-            .zotero-roam-dialog-small .bp3-dialog[side-panel="visible"]{width:calc(50% + 8vw);}
-            .zotero-roam-dialog-small .bp3-dialog[side-panel="visible"] .side-panel{flex-basis:18vw!important;}
-            #zotero-roam-portal .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
+            .zotero-roam-dialog-overlay [side-panel="hidden"]{width:calc(95% - 40vw);}
+            .zotero-roam-dialog-overlay [side-panel="visible"]{width:calc(95% - 20vw);}
+            .zotero-roam-dialog-overlay [side-panel="visible"] .side-panel{flex-basis:20vw!important;}
+            .zotero-roam-citations-search-overlay .main-panel{width:100%;}
             .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents{width:20vw;}
+            .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(18vw + 9.5%);padding-bottom:0px;box-shadow:none;}
+            .zotero-roam-dialog-small [side-panel="hidden"]{width:calc(55% - 10vw);}
+            .zotero-roam-dialog-small [side-panel="visible"]{width:calc(50% + 8vw);}
+            .zotero-roam-dialog-small [side-panel="visible"] .side-panel{flex-basis:18vw!important;}
             .zotero-roam-dialog-small .bp3-dialog .side-panel-contents{width:18vw;}
-            .zotero-roam-dialog-overlay .bp3-dialog .side-panel-contents .item-rendered-notes p{font-weight:350;}
-            #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .controls-top{display:flex;width:100%;justify-content:flex-end;font-weight:300;}
             #zotero-roam-portal .header-content{width:100%;margin:0;display:flex;flex-wrap:wrap;}
-            #zotero-roam-portal h5.panel-tt{font-weight:600;display:inline-block;padding-right:15px;}
-            #zotero-roam-portal h5.panel-tt[list-type="library"]{color:#137cbd;}
-            #zotero-roam-portal h5.panel-tt[list-type="citations"]{color:#d9822b;}
-            #zotero-roam-portal h5.panel-tt[list-type="references"]{color:#137cbd;}
-            #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="library"]{color:#48aff0;}
-            #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="citations"]{color:#ffb366;}
-            #zotero-roam-portal .bp3-dark h5.panel-tt[list-type="references"]{color:#48aff0;}
+            h5.panel-tt{font-weight:600;display:inline-block;padding-right:15px;}
+            h5.panel-tt[list-type="library"], h5.panel-tt[list-type="references"], .zr-search-scope{color:#137cbd;}
+            h5.panel-tt[list-type="citations"]{color:#d9822b;}
+            .bp3-dark h5.panel-tt[list-type="library"], .bp3-dark h5.panel-tt[list-type="references"], .bp3-dark .zr-search-scope{color:#48aff0;}
+            .bp3-dark h5.panel-tt[list-type="citations"]{color:#ffb366;}
             #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:5px;padding-left:min(20px, 2vw);overflow-wrap:anywhere;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
             .zotero-roam-search-overlay .header-right {position:absolute;right:0px;}
             #zotero-roam-portal .zotero-roam-citations-search-overlay .header-bottom {margin-top:0px;}
             #zotero-roam-portal .header-bottom{flex: 1 0 95%;display:flex;justify-content:space-between;margin: min(20px, 3vh) 2.5%;align-items:baseline;}
-            .zr-search-scope {color:#137cbd;font-weight:500;flex:1 0 auto;}
-            .zotero-roam-search-close.bp3-large{margin:0px;margin-right:3px;}
+            .zr-search-scope {font-weight:500;flex:1 0 auto;}
+            .zotero-roam-search-close.bp3-large{margin-right:3px;}
             .zotero-roam-search-close{margin:0;padding:0;min-width:41px;}
-            #zotero-roam-portal .panel-st{padding-bottom:10px;display:inline-block;margin-bottom:0px;}
             #zotero-roam-search-autocomplete{flex:0 1 89%;}
             #zotero-roam-citations-autocomplete{flex:1 0 100%;}
             #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;box-shadow:none;}
             #zotero-roam-search-autocomplete:focus, #zotero-roam-citations-autocomplete:focus, #zotero-roam-tagselector_citations:focus{box-shadow:none;}
             :not(.bp3-dark) #zotero-roam-search-autocomplete, :not(.bp3-dark) #zotero-roam-citations-autocomplete{border-bottom: 1px #ececec solid;color: #717171;}
+            .bp3-dark #zotero-roam-search-autocomplete, .bp3-dark #zotero-roam-citations-autocomplete{border-bottom: 1px #2f4d75 solid;}
             #zotero-roam-portal .quick-copy-element{margin:0px;font-weight:600;}
             #zotero-roam-portal .clipboard-copy-utility{width:10px;height:5px;padding:0px;}
-            #zotero-roam-portal .bp3-dialog-footer-actions{padding:5px 2.5%;justify-content:space-between;align-items:flex-end;transition:0.2s;}
-            #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
-            #zotero-roam-portal .bp3-dark .side-panel{background-color:#30404d;}
-            #zotero-roam-portal .side-panel > .side-panel-contents > *{padding:10px 20px;}
             li[aria-selected="true"] > .bp3-menu-item, .zotero-roam-tagselector_option[aria-selected="true"]{background-color:#e7f3f7;}
             .bp3-dark li[aria-selected="true"]{background-color:#191919;}
-            span.result_highlighted{color:#146cb7;font-weight:500;}
-            .zotero-roam-citations-search-overlay .main-panel{width:100%;}
-            [side-panel="hidden"] .side-panel-contents{display: none;}
             #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}
             #zotero-roam-search-results-list.bp3-menu, .zotero-roam-citations-search-results-list.bp3-menu {max-height:70vh;overflow-y:scroll;background:unset;padding:0px;padding-bottom:10px;}
             #zotero-roam-search-results-list::-webkit-scrollbar, .zotero-roam-citations-search-results-list::-webkit-scrollbar, .zotero-roam-import-tags-list::-webkit-scrollbar{width: 5px;}
             #zotero-roam-search-results-list::-webkit-scrollbar:hover, .zotero-roam-citations-search-results-list::-webkit-scrollbar:hover{background:#ececec;}
             .zotero-roam-search-item-title{font-weight:500;display:block;}
             .zotero-roam-citation-link{padding-right: 10px;}
-            .zotero-roam-citation-link a {font-size:0.85em;}
             .zotero-roam-library-results-count:empty {padding: 0px;}
             .zotero-roam-library-results-count{display:block;padding:min(6px, 0.2em) 0;}
             .zotero-roam-citations-results-count {padding: 6px 10px;}
@@ -584,29 +579,30 @@ var zoteroRoam = {};
             .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#5863582e;}
             .zotero-roam-page-control > span[icon]{margin-right:0px;}
             #zotero-roam-library-rendered, #zotero-roam-citations-pagination {width:97%;margin: 0 auto;}
-            #zotero-roam-library-rendered[view="search"] #zotero-roam-search-selected-item{display:none;}
-            #zotero-roam-library-rendered[view="item"] #zotero-roam-library-search-div{display:none;}
+            #zotero-roam-library-rendered[view="search"] #zotero-roam-search-selected-item, #zotero-roam-library-rendered[view="item"] #zotero-roam-library-search-div{display:none;}
             #zotero-roam-library-rendered[view="search"][has-results] + .bp3-dialog-footer-actions, #zotero-roam-citations-pagination + .bp3-dialog-footer-actions{box-shadow: 0px -4px 10px 0px #d6d6d6;}
             .bp3-dark #zotero-roam-library-rendered[view="search"][has-results] + .bp3-dialog-footer-actions, .bp3-dark #zotero-roam-citations-pagination + .bp3-dialog-footer-actions{box-shadow: 0px -4px 10px 0px #171717;}
             #zotero-roam-library-rendered[view="item"] + .bp3-dialog-footer-actions{opacity:0;}
             .selected-item-header, .selected-item-body{display:flex;justify-content:space-around;}
-            .selected-item-header{margin-bottom:20px;}
             .selected-item-body{flex-wrap:wrap;}
-            .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;}
-            .item-abstract{padding:15px;background-color: #f5f8fa;font-weight:350;border-left-width:6px;}
-            .item-abstract:empty{padding:0;margin:0;}
-            .bp3-dark .item-abstract, .bp3-dark  .zotero-roam-citation-abstract{background-color:#2b3135;}
-            .item-metadata-string{font-size:0.85em;}
-            .item-pdf-notes{margin-top: 25px;}
-            .item-actions-additional{flex: 0 1 95%;margin-top:25px;}
-            .item-citekey-section, .item-actions{flex:0 1 30%;}
+            .item-basic-metadata, .item-additional-metadata, .zotero-roam-citation-abstract{background:#f5f8fa;}
+            .bp3-dark .item-basic-metadata, .bp3-dark .item-additional-metadata, .bp3-dark .zotero-roam-citation-abstract{background-color:#2b3135;}
+            .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;padding: 0px 20px;}
+            .item-citekey-section, .item-actions{flex:0 1 33%;}
+            .item-abstract{padding:15px;}
+            .item-abstract, .item-additional-metadata{padding-top:0px;}
+            .item-pdf-notes, .item-actions-additional{margin-top: 25px;}
+            .item-actions-additional{flex: 0 1 95%;}
             .item-actions > .bp3-card{background-color: #eff8ff;box-shadow:none;}
             .bp3-dark .item-actions > .bp3-card{background-color:#2b3135;}
             .item-in-graph{padding: 0 10px;}
             .item-citekey-section{margin:10px 0px; overflow-wrap:break-word;}
             .item-citekey-section .citekey-element{padding:0 10px;display:flex;align-items:baseline;overflow-wrap:anywhere;}
             .item-citekey-section .bp3-icon{margin-right:10px;}
-            .item-citekey-section .copy-buttons .bp3-button{font-size:0.7em;flex-wrap:wrap;line-height:normal;}
+            .copy-buttons > .bp3-button{font-size:0.7em;margin:5px;}
+            .copy-buttons > .bp3-button, .copy-buttons > .bp3-button:hover{border: 1px #f1f7ff solid;}
+            .bp3-dark .copy-buttons > .bp3-button, .bp3-dark .copy-buttons > .bp3-button{border: 1px #2f4d75 solid;}
+            .item-rendered-notes p{font-weight:350;}
             .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
             .controls-top .zotero-roam-sequence {background: unset;color: #c79f0c;}
             .zotero-roam-tribute {max-width:800px;max-height:300px;overflow:scroll;margin-top:5px;}
@@ -636,9 +632,10 @@ var zoteroRoam = {};
             .zotero-roam-citation-links-list{display:block;}
             .zotero-roam-search-item-key{flex: 1 0 20%;text-align:right;overflow-wrap:anywhere;font-size:0.8em;}
             .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
-            .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{overflow-wrap:break-word;font-size:0.85em;}
+            .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{overflow-wrap:break-word;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
-            .zotero-roam-citation-abstract{font-size:0.85em;padding:5px 10px;flex:0 1 100%;background-color:#f5f8fa;white-space:break-spaces;margin-top:5px;border-radius:5px;}
+            .zotero-roam-citation-abstract, .item-abstract{white-space:break-spaces;}
+            .zotero-roam-citation-abstract{padding:5px 10px;flex:0 1 100%;margin-top:5px;border-radius:5px;}
             .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
             .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
             .options-library-list, .options-collections-list{flex:1 0 50%;}
@@ -660,7 +657,7 @@ var zoteroRoam = {};
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
             .selected_info{flex: 0 1 90%;}
-            li.related-item_listed{display:flex;align-items:flex-start;font-size:0.9rem;padding:3px 0px;}
+            li.related-item_listed{display:flex;align-items:flex-start;font-size:0.9rem;padding:0px;}
             .related-sublist[list-type="references"] li:nth-child(even) {background-color:#e8f0ff;}
             .bp3-dark .related-sublist[list-type-"references"] li:nth-child(even) {background-color:#2d3a52;}
             .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#fdfcf6;}
@@ -669,10 +666,11 @@ var zoteroRoam = {};
             .related-item_listed[item-type="citation"]:hover {background-color:#fff6e1;}
             .related_year{flex: 0 0 auto;padding-left:10px;}
             .related_info{line-height:normal;padding: 0px 10px;flex: 1 2 90%;}
-            .related_year, .related_info{font-size:0.9em;}
+            .related_year, .related_info{font-size:0.9em;padding:3px 0px;}
             .related_info > *:not(.zotero-roam-search-item-title), .related_year{line-height:2em;}
             .related_state{flex: 1 0 auto;overflow-wrap:anywhere;}
-            .related_state button.bp3-button{padding:0px 0px;font-size:0.85em;}
+            .related_state button.bp3-button{padding:0px 0px;}
+            .related_state button.bp3-button, .related_state button.bp3-button:hover{border-radius:0px;}
             [in-graph="true"] .related_state {align-self:stretch;text-align:right;}
             [in-graph="true"] .related_state button {height:100%;}
             .selected_state{flex: 1 0 10%;text-align:center;}
@@ -681,24 +679,24 @@ var zoteroRoam = {};
             .bp3-dark [item-type="citation"] .related_year, .bp3-dark [item-type="citation"] a {color:#bf7326!important}
             [item-type="citation"] .related_year, [item-type="citation"] a {color:#e09f26!important;}
             .zotero-roam-page-related{opacity:0.6;position:absolute;right:10px;top:10px;}
+            .roam-log-page{position:relative;}
             .roam-body.mobile .zotero-roam-page-menu-header .scite-badge{margin:0 auto;}
-            .roam-body.mobile .zotero-roam-page-related{float:none;margin-top:0px;}
             .roam-body.mobile + #zotero-roam-portal .quick-copy-element{display:none;}
             .roam-body.mobile + #zotero-roam-portal .bp3-dialog-footer-actions{flex-direction:column;align-items:center;}
             .bp3-dialog-footer-actions button.zotero-roam-update-data{margin-left:0px;}
-            .zotero-roam-item-timestamp{font-size:0.85em;margin-right:20px;}
+            .zotero-roam-item-timestamp{margin-right:20px;}
             .zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
             .zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;user-select:initial;}
             .zotero-roam-list-item-actions{text-align:right;flex: 0 0 15%;}
             .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions button, .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions a{opacity:0.6;}
-            .zotero-roam-list-item-key {padding:0 5px;font-size:0.85em;}
+            .zotero-roam-list-item-key {padding:0 5px;}
             .zotero-roam-auxiliary-overlay .main-panel{padding:10px;}
             .zotero-roam-auxiliary-overlay .main-panel ul.bp3-list-unstyled {padding:15px 0;}
             .zotero-roam-explo-import{position:absolute;right:0px;opacity:0.7;z-index:10;}
             .zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}
             .zr-explo-title{flex:1 0 100%;}
             .zr-explo-title .bp3-checkbox{margin-bottom:0px;}
-            .zr-explo-publication, .zr-explo-abstract{display:block;font-size:0.85em;white-space:break-spaces;}
+            .zr-explo-publication, .zr-explo-abstract{display:block;white-space:break-spaces;}
             .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
             .zotero-roam-search-item-authors, .zotero-roam-citation-origin {padding-right: 8px;}
             .zr-highlight {color: #206fe6;}
@@ -711,6 +709,7 @@ var zoteroRoam = {};
             [in-graph='false'] .bp3-menu-item-label .bp3-icon, [in-graph='false'] .citekey-element .bp3-icon {color: #F29D49;}
             .zr-search-match {background-color: #fbde0f40;padding: 2px;border-radius: 3px;}
             .zotero-roam-cm-option .bp3-menu-item, .zotero-roam-cm-option .bp3-menu-item::before {font-size: 0.95rem;}
+            .zr-text-small{font-size:0.85em;}
             @media (max-width:600px){
                 .zotero-roam-page-menu-header{flex-direction:column-reverse;}
                 .zotero-roam-dialog-overlay .bp3-dialog, .zotero-roam-dialog-small .bp3-dialog{margin-left: calc(min(20vw, 30px) + 2.5%);padding-bottom:0px;box-shadow:none;}
@@ -3230,16 +3229,16 @@ var zoteroRoam = {};
                     let linksArray = [];
                     switch(service){
                         case "scite":
-                            linksArray.push(`<span class="zotero-roam-citation-link" service="scite"><a href="${cit.links[service]}" target="_blank">Scite</a></span>`);
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="scite"><a href="${cit.links[service]}" target="_blank" class="zr-text-small">Scite</a></span>`);
                             break;
                         case "connectedPapers":
-                            linksArray.push(`<span class="zotero-roam-citation-link" service="connected-papers"><a href="${cit.links[service]}" target="_blank">Connected Papers</a></span>`);
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="connected-papers"><a href="${cit.links[service]}" target="_blank" class="zr-text-small">Connected Papers</a></span>`);
                             break;
                         case "semanticScholar":
-                            linksArray.push(`<span class="zotero-roam-citation-link" service="semantic-scholar"><a href="${cit.links[service]}" target="_blank">Semantic Scholar</a></span>`);
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="semantic-scholar"><a href="${cit.links[service]}" target="_blank" class="zr-text-small">Semantic Scholar</a></span>`);
                             break;
                         case "googleScholar":
-                            linksArray.push(`<span class="zotero-roam-citation-link" service="google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`);
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="google-scholar"><a href="${cit.links[service]}" target="_blank" class="zr-text-small">Google Scholar</a></span>`);
                             break;
                     }
                     linksEl += linksArray.join(" - ");
@@ -3254,10 +3253,10 @@ var zoteroRoam = {};
                     // TODO: Add buttons to view item + go to Roam page (if exists)
                 } else {
                     keyEl += `
-                    <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
-                    ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
-                    ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-minimal", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
-                    ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-minimal bp3-intent-primary", icon: "inheritance"})}
+                    <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zr-text-small zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
+                    ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract zr-text-small bp3-minimal"}) : ""}
+                    ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi zr-text-small bp3-small bp3-minimal", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
+                    ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import zr-text-small bp3-small bp3-minimal bp3-intent-primary", icon: "inheritance"})}
                     `;
                 }
 
@@ -3435,21 +3434,21 @@ var zoteroRoam = {};
             let itemsList = items.map(item => {
                 let actionsDiv = "";
                 if(!item.inGraph){
-                    actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning bp3-small zotero-roam-add-to-graph"});
+                    actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning zr-text-small bp3-small zotero-roam-add-to-graph"});
                 } else {
                     let itemKey = '@' + item.key;
-                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${item.inGraph}" data-citekey="${itemKey.slice(1)}"`});
+                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal zr-text-small bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${item.inGraph}" data-citekey="${itemKey.slice(1)}"`});
                 }
                 return `
                 <li class="zotero-roam-list-item" in-graph="${item.inGraph ? true : false}" data-item-type="${item.itemType}">
                 <div class="bp3-menu-item" label="${item.key}">
-                    ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp">${item.timestamp}</span>` : ""}
+                    ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp zr-text-small">${item.timestamp}</span>` : ""}
                     <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                         <span class="zotero-roam-search-item-title" style="white-space:normal;">${item.title}</span>
                         <span class="zr-highlight">${item.meta}</span>
-                        <span class="zotero-roam-list-item-key zr-auxiliary">[${item.key}]</span>
+                        <span class="zotero-roam-list-item-key zr-text-small zr-auxiliary">[${item.key}]</span>
                         ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal bp3-small"}) : ""}
-                        <span class="zotero-roam-citation-abstract zr-auxiliary" style="display:none;">${item.abstract}</span>
+                        <span class="zotero-roam-citation-abstract zr-text-small zr-auxiliary" style="display:none;">${item.abstract}</span>
                     </div>
                     <span class="zotero-roam-list-item-actions">
                         ${actionsDiv}
@@ -3497,8 +3496,8 @@ var zoteroRoam = {};
                         <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${item.item_index}`})}</span>
                         <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                             <span class="zr-explo-metadata">${item.type}${item.creators ? " | " + item.creators : ""}</span>
-                            ${item.publication ? `<span class="zr-explo-publication bp3-text-disabled">${item.publication}</span>` : ""}
-                            <span class="zr-explo-abstract bp3-text-muted">${item.abstract}</span>
+                            ${item.publication ? `<span class="zr-explo-publication zr-text-small bp3-text-disabled">${item.publication}</span>` : ""}
+                            <span class="zr-explo-abstract zr-text-small bp3-text-muted">${item.abstract}</span>
                         </div>
                     </div>
                 </li>
@@ -3562,22 +3561,25 @@ var zoteroRoam = {};
             let selectedItem = zoteroRoam.data.items.find(it => it.key == itemKey.slice(1));
 
             let itemYear = (selectedItem.meta.parsedDate) ? ` (${(new Date(selectedItem.meta.parsedDate)).getUTCFullYear().toString()})` : "";
+            let itemAuthors = selectedItem.data.creators.length > 0 ? `<span class="zotero-roam-search-item-authors zr-highlight">${selectedItem.meta.creatorSummary || ""}${itemYear}</span>` : ``;
+            let itemMeta = zoteroRoam.utils.makeMetaString(selectedItem);
+            if(itemMeta.length > 2){
+                itemMeta = `<span class="zr-secondary">${itemMeta}</span>`;
+            } else {
+                itemMeta = ``;
+            }
 
             // Generate list of authors as bp3 tags or Roam page references
             let infoAuthors = selectedItem.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")});
             let infoRolesAuthors = selectedItem.data.creators.map(c => c.creatorType);
             let divAuthors = "";
             if(infoAuthors.length > 0){
+                divAuthors = `<strong>Contributors : </strong>`;
                 for(i=0; i < infoAuthors.length; i++){
                     let authorInGraph = zoteroRoam.utils.lookForPage(title = infoAuthors[i]);
                     let authorElem = (authorInGraph.present == true) ? zoteroRoam.utils.renderPageReference(title = infoAuthors[i], uid = authorInGraph.uid) : zoteroRoam.utils.renderBP3Tag(string = infoAuthors[i], {modifier: "bp3-intent-primary item-creator-tag"});
-                    let authorRole = (infoRolesAuthors[i] && infoRolesAuthors[i] != "author") ? (` (${infoRolesAuthors[i]})`) : "";
+                    let authorRole = (infoRolesAuthors[i] && infoRolesAuthors[i] != "author") ? (` (${infoRolesAuthors[i]}) `) : " ";
                     divAuthors = divAuthors + authorElem + authorRole;
-                    if(i < infoAuthors.length - 2){
-                        divAuthors = divAuthors + ", ";
-                    } else if(i == infoAuthors.length - 2){
-                        divAuthors = divAuthors + " & ";
-                    }
                 }
             }
 
@@ -3626,8 +3628,8 @@ var zoteroRoam = {};
             let headerDiv = document.querySelector(".selected-item-header");
             headerDiv.innerHTML = `
             <div class="item-basic-metadata">
-                <h4 class="item-title" tabindex="0">${selectedItem.data.title || ""}${itemYear}</h4>
-                <p class="item-metadata-string">${divAuthors}${zoteroRoam.utils.makeMetaString(selectedItem)}</p>
+                <h4 class="item-title" tabindex="0">${selectedItem.data.title || ""}</h4>
+                ${itemAuthors}${itemMeta}
                 </div>
             <div class="item-citekey-section" in-graph="${pageInGraph.present || false}">
                 <div class="bp3-fill citekey-element">${iconEl}${itemKey}</div>
@@ -3698,7 +3700,8 @@ var zoteroRoam = {};
 
             bodyDiv.innerHTML = `
             <div class="item-additional-metadata">
-                <p class="item-abstract bp3-running-text bp3-text-small bp3-blockquote">${selectedItem.data.abstractNote}</p>
+                <p class="item-abstract zr-text-small bp3-running-text">${selectedItem.data.abstractNote}</p>
+                <p class="item-creators">${divAuthors}</p>
                 <p class="item-tags">${divTags}</p>
                 <p class="item-collections">${divCollections}</p>
             </div>
@@ -4766,7 +4769,7 @@ var zoteroRoam = {};
                         </a>
                     </div>
                     <div class="related_state">
-                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: `bp3-minimal bp3-small ${intent} zotero-roam-page-menu-backlink-open-sidebar`, icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
+                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: `bp3-minimal zr-text-small ${intent} zotero-roam-page-menu-backlink-open-sidebar`, icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
                     </div>
                 </li>`;
             } else {
@@ -4778,7 +4781,7 @@ var zoteroRoam = {};
                     <span class="zotero-roam-search-item-title">${paper.data.title}</span>
                 </div>
                 <div class="related_state">
-                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal bp3-small zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
+                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal zr-text-small zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
                 </div>
                 </li>`
             }

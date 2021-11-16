@@ -799,16 +799,16 @@
                     let linksArray = [];
                     switch(service){
                         case "scite":
-                            linksArray.push(`<span class="zotero-roam-citation-link" service="scite"><a href="${cit.links[service]}" target="_blank">Scite</a></span>`);
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="scite"><a href="${cit.links[service]}" target="_blank" class="zr-text-small">Scite</a></span>`);
                             break;
                         case "connectedPapers":
-                            linksArray.push(`<span class="zotero-roam-citation-link" service="connected-papers"><a href="${cit.links[service]}" target="_blank">Connected Papers</a></span>`);
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="connected-papers"><a href="${cit.links[service]}" target="_blank" class="zr-text-small">Connected Papers</a></span>`);
                             break;
                         case "semanticScholar":
-                            linksArray.push(`<span class="zotero-roam-citation-link" service="semantic-scholar"><a href="${cit.links[service]}" target="_blank">Semantic Scholar</a></span>`);
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="semantic-scholar"><a href="${cit.links[service]}" target="_blank" class="zr-text-small">Semantic Scholar</a></span>`);
                             break;
                         case "googleScholar":
-                            linksArray.push(`<span class="zotero-roam-citation-link" service="google-scholar"><a href="${cit.links[service]}" target="_blank">Google Scholar</a></span>`);
+                            linksArray.push(`<span class="zotero-roam-citation-link" service="google-scholar"><a href="${cit.links[service]}" target="_blank" class="zr-text-small">Google Scholar</a></span>`);
                             break;
                     }
                     linksEl += linksArray.join(" - ");
@@ -823,10 +823,10 @@
                     // TODO: Add buttons to view item + go to Roam page (if exists)
                 } else {
                     keyEl += `
-                    <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
-                    ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-minimal"}) : ""}
-                    ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi bp3-small bp3-minimal", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
-                    ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import bp3-small bp3-minimal bp3-intent-primary", icon: "inheritance"})}
+                    <a href="${cit.doi ? "https://doi.org/" + cit.doi : cit.url}" target="_blank" class="bp3-text-muted zr-text-small zotero-roam-citation-identifier-link">${cit.doi ? cit.doi : "Semantic Scholar"}</a>
+                    ${cit.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract zr-text-small bp3-minimal"}) : ""}
+                    ${!cit.doi ? "" : zoteroRoam.utils.renderBP3Button_group("Copy DOI", {buttonClass: "zotero-roam-citation-copy-doi zr-text-small bp3-small bp3-minimal", buttonAttribute: 'data-doi="' + cit.doi + '"'})}
+                    ${zoteroRoam.utils.renderBP3Button_group("Add to Zotero", {buttonClass: "zotero-roam-citation-add-import zr-text-small bp3-small bp3-minimal bp3-intent-primary", icon: "inheritance"})}
                     `;
                 }
 
@@ -1004,21 +1004,21 @@
             let itemsList = items.map(item => {
                 let actionsDiv = "";
                 if(!item.inGraph){
-                    actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning bp3-small zotero-roam-add-to-graph"});
+                    actionsDiv = zoteroRoam.utils.renderBP3Button_group("Add to Roam", {icon: "minus", buttonClass: "bp3-minimal bp3-intent-warning zr-text-small bp3-small zotero-roam-add-to-graph"});
                 } else {
                     let itemKey = '@' + item.key;
-                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${item.inGraph}" data-citekey="${itemKey.slice(1)}"`});
+                    actionsDiv = zoteroRoam.utils.renderBP3ButtonGroup("Go to page", {buttonClass: "zotero-roam-list-item-go-to-page", divClass: "bp3-minimal zr-text-small bp3-small", icon: "symbol-circle", modifier: "bp3-intent-success", buttonModifier: `data-uid="${item.inGraph}" data-citekey="${itemKey.slice(1)}"`});
                 }
                 return `
                 <li class="zotero-roam-list-item" in-graph="${item.inGraph ? true : false}" data-item-type="${item.itemType}">
                 <div class="bp3-menu-item" label="${item.key}">
-                    ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp">${item.timestamp}</span>` : ""}
+                    ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp zr-text-small">${item.timestamp}</span>` : ""}
                     <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                         <span class="zotero-roam-search-item-title" style="white-space:normal;">${item.title}</span>
                         <span class="zr-highlight">${item.meta}</span>
-                        <span class="zotero-roam-list-item-key zr-auxiliary">[${item.key}]</span>
+                        <span class="zotero-roam-list-item-key zr-text-small zr-auxiliary">[${item.key}]</span>
                         ${item.abstract ? zoteroRoam.utils.renderBP3Button_group("Show Abstract", {buttonClass: "zotero-roam-citation-toggle-abstract bp3-intent-primary bp3-minimal bp3-small"}) : ""}
-                        <span class="zotero-roam-citation-abstract zr-auxiliary" style="display:none;">${item.abstract}</span>
+                        <span class="zotero-roam-citation-abstract zr-text-small zr-auxiliary" style="display:none;">${item.abstract}</span>
                     </div>
                     <span class="zotero-roam-list-item-actions">
                         ${actionsDiv}
@@ -1066,8 +1066,8 @@
                         <span class="zr-explo-title">${zoteroRoam.utils.renderBP3_option(string = `<a target="_blank" href="${item.url}">${item.title}</a>`, type = "checkbox", depth = 0, {varName: "explo-weblink", optValue: `${item.item_index}`})}</span>
                         <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
                             <span class="zr-explo-metadata">${item.type}${item.creators ? " | " + item.creators : ""}</span>
-                            ${item.publication ? `<span class="zr-explo-publication bp3-text-disabled">${item.publication}</span>` : ""}
-                            <span class="zr-explo-abstract bp3-text-muted">${item.abstract}</span>
+                            ${item.publication ? `<span class="zr-explo-publication zr-text-small bp3-text-disabled">${item.publication}</span>` : ""}
+                            <span class="zr-explo-abstract zr-text-small bp3-text-muted">${item.abstract}</span>
                         </div>
                     </div>
                 </li>
@@ -1131,22 +1131,25 @@
             let selectedItem = zoteroRoam.data.items.find(it => it.key == itemKey.slice(1));
 
             let itemYear = (selectedItem.meta.parsedDate) ? ` (${(new Date(selectedItem.meta.parsedDate)).getUTCFullYear().toString()})` : "";
+            let itemAuthors = selectedItem.data.creators.length > 0 ? `<span class="zotero-roam-search-item-authors zr-highlight">${selectedItem.meta.creatorSummary || ""}${itemYear}</span>` : ``;
+            let itemMeta = zoteroRoam.utils.makeMetaString(selectedItem);
+            if(itemMeta.length > 2){
+                itemMeta = `<span class="zr-secondary">${itemMeta}</span>`;
+            } else {
+                itemMeta = ``;
+            }
 
             // Generate list of authors as bp3 tags or Roam page references
             let infoAuthors = selectedItem.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")});
             let infoRolesAuthors = selectedItem.data.creators.map(c => c.creatorType);
             let divAuthors = "";
             if(infoAuthors.length > 0){
+                divAuthors = `<strong>Contributors : </strong>`;
                 for(i=0; i < infoAuthors.length; i++){
                     let authorInGraph = zoteroRoam.utils.lookForPage(title = infoAuthors[i]);
                     let authorElem = (authorInGraph.present == true) ? zoteroRoam.utils.renderPageReference(title = infoAuthors[i], uid = authorInGraph.uid) : zoteroRoam.utils.renderBP3Tag(string = infoAuthors[i], {modifier: "bp3-intent-primary item-creator-tag"});
-                    let authorRole = (infoRolesAuthors[i] && infoRolesAuthors[i] != "author") ? (` (${infoRolesAuthors[i]})`) : "";
+                    let authorRole = (infoRolesAuthors[i] && infoRolesAuthors[i] != "author") ? (` (${infoRolesAuthors[i]}) `) : " ";
                     divAuthors = divAuthors + authorElem + authorRole;
-                    if(i < infoAuthors.length - 2){
-                        divAuthors = divAuthors + ", ";
-                    } else if(i == infoAuthors.length - 2){
-                        divAuthors = divAuthors + " & ";
-                    }
                 }
             }
 
@@ -1195,8 +1198,8 @@
             let headerDiv = document.querySelector(".selected-item-header");
             headerDiv.innerHTML = `
             <div class="item-basic-metadata">
-                <h4 class="item-title" tabindex="0">${selectedItem.data.title || ""}${itemYear}</h4>
-                <p class="item-metadata-string">${divAuthors}${zoteroRoam.utils.makeMetaString(selectedItem)}</p>
+                <h4 class="item-title" tabindex="0">${selectedItem.data.title || ""}</h4>
+                ${itemAuthors}${itemMeta}
                 </div>
             <div class="item-citekey-section" in-graph="${pageInGraph.present || false}">
                 <div class="bp3-fill citekey-element">${iconEl}${itemKey}</div>
@@ -1267,7 +1270,8 @@
 
             bodyDiv.innerHTML = `
             <div class="item-additional-metadata">
-                <p class="item-abstract bp3-running-text bp3-text-small bp3-blockquote">${selectedItem.data.abstractNote}</p>
+                <p class="item-abstract zr-text-small bp3-running-text">${selectedItem.data.abstractNote}</p>
+                <p class="item-creators">${divAuthors}</p>
                 <p class="item-tags">${divTags}</p>
                 <p class="item-collections">${divCollections}</p>
             </div>
