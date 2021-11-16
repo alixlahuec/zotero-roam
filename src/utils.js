@@ -142,33 +142,6 @@
             return `${item.library.type}s/${item.library.id}`;
         },
 
-        // RETIRED
-        // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
-        // Note: The case where the parent doesn't have children isn't handled here. It shouldn't be a problem because the context in which it is called is that of looking to add grandchildren blocks, essentially
-        // I.e this only gets called if the block with UID equal to parent_uid has a child that also has a child/children
-        getTopBlockData(parent_uid) {
-            // Look for the UID and string contents of the top-child of a parent
-            let top_block = window.roamAlphaAPI.q('[:find ?bUID ?bText :in $ ?pUID :where[?b :block/uid ?bUID][?b :block/string ?bText][?b :block/order 0][?p :block/children ?b][?p :block/uid ?pUID]]', parent_uid);
-            if (typeof (top_block) === 'undefined' || top_block == null || top_block.length == 0) {
-                // If there were no results or a problem with the results, return false
-                // This will keep the loop in waitForBlockUID() going
-                // Though if there's a systematic error it won't go on infinitely because waitForBlockUID() will eventually throw an error
-                return false;
-            } else {
-                // If the search returned a block's info, return it for matching
-                // If there's any problem with the values returned, make sure to catch any error
-                try {
-                    let top_block_data = {
-                        uid: top_block[0][0],
-                        text: top_block[0][1]
-                    }
-                    return top_block_data;
-                } catch(e) {
-                    console.error(e);
-                }
-            }
-        },
-
         getLibraries(){
             return Array.from(zoteroRoam.data.libraries.values()).map(lib => {
                 let keyAccess = zoteroRoam.data.keys.find(k => k.key == lib.apikey).access;

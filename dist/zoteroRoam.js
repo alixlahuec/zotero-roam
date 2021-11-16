@@ -557,6 +557,7 @@ var zoteroRoam = {};
             #zotero-roam-search-autocomplete{flex:0 1 89%;}
             #zotero-roam-citations-autocomplete{flex:1 0 100%;}
             #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;box-shadow:none;}
+            #zotero-roam-search-autocomplete::placeholder, #zotero-roam-citations-autocomplete::placeholder{opacity:0.6;}
             #zotero-roam-search-autocomplete:focus, #zotero-roam-citations-autocomplete:focus, #zotero-roam-tagselector_citations:focus{box-shadow:none;}
             :not(.bp3-dark) #zotero-roam-search-autocomplete, :not(.bp3-dark) #zotero-roam-citations-autocomplete{border-bottom: 1px #ececec solid;color: #717171;}
             .bp3-dark #zotero-roam-search-autocomplete, .bp3-dark #zotero-roam-citations-autocomplete{border-bottom: 1px #2f4d75 solid;}
@@ -587,21 +588,24 @@ var zoteroRoam = {};
             .selected-item-body{flex-wrap:wrap;}
             .item-basic-metadata, .item-additional-metadata, .zotero-roam-citation-abstract{background:#f5f8fa;}
             .bp3-dark .item-basic-metadata, .bp3-dark .item-additional-metadata, .bp3-dark .zotero-roam-citation-abstract{background-color:#2b3135;}
-            .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;padding: 0px 20px;}
+            .item-basic-metadata, .item-additional-metadata{flex: 0 1 60%;padding: 20px;}
+            .item-basic-metadata{padding-top:10px;}
+            h4.item-title{margin-bottom:5px;}
             .item-citekey-section, .item-actions{flex:0 1 33%;}
-            .item-abstract{padding:15px;}
-            .item-abstract, .item-additional-metadata{padding-top:0px;}
+            .item-abstract{padding:15px;border-top: 1px #e6e6e6 solid;border-bottom: 1px #e6e6e6 solid;}
+            .bp3-dark .item-abstract{border-top-color: #4a4a4a;border-bottom-color: #4a4a4a;}
+            .item-additional-metadata{padding-top:0px;}
+            .item-additional-metadata p strong ~ span {margin:3px;}
             .item-pdf-notes, .item-actions-additional{margin-top: 25px;}
             .item-actions-additional{flex: 0 1 95%;}
             .item-actions > .bp3-card{background-color: #eff8ff;box-shadow:none;}
             .bp3-dark .item-actions > .bp3-card{background-color:#2b3135;}
-            .item-in-graph{padding: 0 10px;}
             .item-citekey-section{margin:10px 0px; overflow-wrap:break-word;}
             .item-citekey-section .citekey-element{padding:0 10px;display:flex;align-items:baseline;overflow-wrap:anywhere;}
             .item-citekey-section .bp3-icon{margin-right:10px;}
-            .copy-buttons > .bp3-button{font-size:0.7em;margin:5px;}
-            .copy-buttons > .bp3-button, .copy-buttons > .bp3-button:hover{border: 1px #f1f7ff solid;}
-            .bp3-dark .copy-buttons > .bp3-button, .bp3-dark .copy-buttons > .bp3-button{border: 1px #2f4d75 solid;}
+            .copy-buttons > a.bp3-button{font-size:0.7em;margin:5px;}
+            .copy-buttons > a.bp3-button, .copy-buttons > a.bp3-button:hover{border: 1px #f1f7ff solid;}
+            .bp3-dark .copy-buttons > a.bp3-button, .bp3-dark .copy-buttons > a.bp3-button{border: 1px #2f4d75 solid;}
             .item-rendered-notes p{font-weight:350;}
             .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
             .controls-top .zotero-roam-sequence {background: unset;color: #c79f0c;}
@@ -900,33 +904,6 @@ var zoteroRoam = {};
 
         getItemPrefix(item){
             return `${item.library.type}s/${item.library.id}`;
-        },
-
-        // RETIRED
-        // This grabs the block UID and text of the top-child of a parent element, given the parent's UID
-        // Note: The case where the parent doesn't have children isn't handled here. It shouldn't be a problem because the context in which it is called is that of looking to add grandchildren blocks, essentially
-        // I.e this only gets called if the block with UID equal to parent_uid has a child that also has a child/children
-        getTopBlockData(parent_uid) {
-            // Look for the UID and string contents of the top-child of a parent
-            let top_block = window.roamAlphaAPI.q('[:find ?bUID ?bText :in $ ?pUID :where[?b :block/uid ?bUID][?b :block/string ?bText][?b :block/order 0][?p :block/children ?b][?p :block/uid ?pUID]]', parent_uid);
-            if (typeof (top_block) === 'undefined' || top_block == null || top_block.length == 0) {
-                // If there were no results or a problem with the results, return false
-                // This will keep the loop in waitForBlockUID() going
-                // Though if there's a systematic error it won't go on infinitely because waitForBlockUID() will eventually throw an error
-                return false;
-            } else {
-                // If the search returned a block's info, return it for matching
-                // If there's any problem with the values returned, make sure to catch any error
-                try {
-                    let top_block_data = {
-                        uid: top_block[0][0],
-                        text: top_block[0][1]
-                    }
-                    return top_block_data;
-                } catch(e) {
-                    console.error(e);
-                }
-            }
         },
 
         getLibraries(){
@@ -2511,6 +2488,14 @@ var zoteroRoam = {};
                         console.log("Importing metadata...");
                         zoteroRoam.handlers.importItemMetadata(itemKey, uid, {popup: true});
                     }
+                } else if(e.target.closest('.item-additional-metadata')){
+                    let refLink = e.target.closest('[data-link-uid]');
+                    let tagLink = e.target.closest('[data-tag]');
+                    if(refLink){
+                        window.roamAlphaAPI.ui.mainWindow.openPage({page: {uid: refLink.getAttribute('data-link-uid')}});
+                    } else if(tagLink){
+                        window.roamAlphaAPI.ui.mainWindow.openPage({page: {title: tagLink.getAttribute('data-tag')}});
+                    }
                 } else if(e.target.closest('[zr-import]')){
                     zoteroRoam.interface.handleImportPanelClicks(e);
                 }
@@ -2888,7 +2873,6 @@ var zoteroRoam = {};
         
             let selectedItemDiv = document.createElement('div');
             selectedItemDiv.id = "zotero-roam-search-selected-item";
-            selectedItemDiv.classList.add("bp3-card");
         
             let selectedItemMetadata = document.createElement('div');
             selectedItemMetadata.classList.add("selected-item-header");
@@ -3568,6 +3552,21 @@ var zoteroRoam = {};
             } else {
                 itemMeta = ``;
             }
+            let itemWeb = ``;
+            if(selectedItem.data.DOI){
+                let clean_doi = zoteroRoam.utils.parseDOI(selectedItem.data.DOI);
+                if(clean_doi){
+                    itemWeb = `
+                    <span class="item-weblink zr-secondary" style="display:block;">
+                        <a href="https://doi.org/${clean_doi}" target="_blank">${clean_doi}</a>
+                    </span>`;
+                }
+            } else if(selectedItem.data.url){
+                itemWeb = `
+                <span class="item-weblink zr-secondary" style="display:block;">
+                    <a href="${selectedItem.data.url}" target="_blank">${selectedItem.data.url}</a>
+                </span>`;
+            }
 
             // Generate list of authors as bp3 tags or Roam page references
             let infoAuthors = selectedItem.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")});
@@ -3612,24 +3611,13 @@ var zoteroRoam = {};
             // Information about the item
             let pageInGraph = zoteroRoam.utils.lookForPage(itemKey);
             let iconEl = (pageInGraph.present == true) ? `<span class="bp3-icon bp3-icon-symbol-circle"></span>` : `<span class="bp3-icon bp3-icon-minus"></span>`;
-            let itemInfo = ``;
-            if(pageInGraph.present == true){
-                try{
-                    let nbChildren = window.roamAlphaAPI.q('[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]', pageInGraph.uid)[0][0];
-                    itemInfo = `<b>${nbChildren}</b> direct child${nbChildren > 1 ? "ren" : ""}`;
-                } catch(e){};
-            }
-            let itemInGraph = `
-            <div class="item-in-graph">
-            <span> ${itemInfo}</span></div>
-            `;
             
             // Render the header section
             let headerDiv = document.querySelector(".selected-item-header");
             headerDiv.innerHTML = `
             <div class="item-basic-metadata">
                 <h4 class="item-title" tabindex="0">${selectedItem.data.title || ""}</h4>
-                ${itemAuthors}${itemMeta}
+                ${itemAuthors}${itemMeta}${itemWeb}
                 </div>
             <div class="item-citekey-section" in-graph="${pageInGraph.present || false}">
                 <div class="bp3-fill citekey-element">${iconEl}${itemKey}</div>
@@ -3639,7 +3627,6 @@ var zoteroRoam = {};
                     <a class="bp3-button bp3-small bp3-intent-primary" format="tag">#@ ${(zoteroRoam.shortcuts.sequences["copyTag"]) ? zoteroRoam.shortcuts.makeSequenceText("copyTag") : ""}</a>
                     <a class="bp3-button bp3-small bp3-intent-primary" format="page-reference">[[@]] ${(zoteroRoam.shortcuts.sequences["copyPageRef"]) ? zoteroRoam.shortcuts.makeSequenceText("copyPageRef") : ""}</a>
                 </div>
-                ${itemInGraph}
             </div>
             `;
 
@@ -5033,25 +5020,38 @@ var zoteroRoam = {};
             }
         },
 
-        getItemRelated(item, return_as = "citekeys"){
-            if(item.data.relations){
-                let relatedItems = [];
-                for(rel of Object.values(item.data.relations)){
-                    for(match of rel.matchAll(/http:\/\/zotero.org\/(.*)\/items\/(.+)/g)){
-                        relatedItems.push({lib: match[1], key: match[2]});
-                    }
-                }
-                let itemsData = relatedItems.map((it) => {
-                    return zoteroRoam.data.items.find(el => el.data.key == it.key && `${el.library.type}s/${el.library.id}` == it.lib) || false;
-                }).filter(Boolean);
+        getItemRelated(item, {return_as = "citekeys", brackets = true} = {}){
+            if(item.data.relations && item.data.relations['dc:relation']){
+                let relatedItems = item.data.relations['dc:relation'];
+                if(relatedItems.constructor === String){ relatedItems = [relatedItems] };
+                
+                let output = [];
+                let relRegex = /(users|groups)\/([^\/]+)\/items\/(.+)/g;
+                
+                relatedItems.forEach(itemURI => {
+                  let [uri, libType, libID, itemKey] = Array.from(itemURI.matchAll(relRegex))[0];
+                  libType = libType.slice(0,-1);
+                  libID = new Number(libID);
+                  let libItem = null;
+                  for(let j = 0; j < zoteroRoam.data.items.length;j++){
+                      let elem = zoteroRoam.data.items[j];
+                      if(elem.library.type == libType && elem.library.id == libID && elem.data.key == itemKey){
+                          libItem = elem;
+                          break;
+                      }
+                  }
+                  if(libItem){ output.push(libItem) };
+                });
+                
                 switch(return_as){
-                    case "raw":
-                        return itemsData;
-                    case "citekeys":
-                        return itemsData.map(el => "[[@" + el.key + "]]");
+                  case "raw":
+                    return output;
+                  case "citekeys":
+                  default:
+                    return brackets ? output.map(i => `[[@${i.key}]]`) : output.map(i => i.key);
                 }
-            } else{
-                return [];
+            } else {
+              return [];
             }
         },
 

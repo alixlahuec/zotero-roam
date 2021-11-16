@@ -81,6 +81,14 @@
                         console.log("Importing metadata...");
                         zoteroRoam.handlers.importItemMetadata(itemKey, uid, {popup: true});
                     }
+                } else if(e.target.closest('.item-additional-metadata')){
+                    let refLink = e.target.closest('[data-link-uid]');
+                    let tagLink = e.target.closest('[data-tag]');
+                    if(refLink){
+                        window.roamAlphaAPI.ui.mainWindow.openPage({page: {uid: refLink.getAttribute('data-link-uid')}});
+                    } else if(tagLink){
+                        window.roamAlphaAPI.ui.mainWindow.openPage({page: {title: tagLink.getAttribute('data-tag')}});
+                    }
                 } else if(e.target.closest('[zr-import]')){
                     zoteroRoam.interface.handleImportPanelClicks(e);
                 }
@@ -458,7 +466,6 @@
         
             let selectedItemDiv = document.createElement('div');
             selectedItemDiv.id = "zotero-roam-search-selected-item";
-            selectedItemDiv.classList.add("bp3-card");
         
             let selectedItemMetadata = document.createElement('div');
             selectedItemMetadata.classList.add("selected-item-header");
@@ -1138,6 +1145,21 @@
             } else {
                 itemMeta = ``;
             }
+            let itemWeb = ``;
+            if(selectedItem.data.DOI){
+                let clean_doi = zoteroRoam.utils.parseDOI(selectedItem.data.DOI);
+                if(clean_doi){
+                    itemWeb = `
+                    <span class="item-weblink zr-secondary" style="display:block;">
+                        <a href="https://doi.org/${clean_doi}" target="_blank">${clean_doi}</a>
+                    </span>`;
+                }
+            } else if(selectedItem.data.url){
+                itemWeb = `
+                <span class="item-weblink zr-secondary" style="display:block;">
+                    <a href="${selectedItem.data.url}" target="_blank">${selectedItem.data.url}</a>
+                </span>`;
+            }
 
             // Generate list of authors as bp3 tags or Roam page references
             let infoAuthors = selectedItem.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")});
@@ -1182,24 +1204,13 @@
             // Information about the item
             let pageInGraph = zoteroRoam.utils.lookForPage(itemKey);
             let iconEl = (pageInGraph.present == true) ? `<span class="bp3-icon bp3-icon-symbol-circle"></span>` : `<span class="bp3-icon bp3-icon-minus"></span>`;
-            let itemInfo = ``;
-            if(pageInGraph.present == true){
-                try{
-                    let nbChildren = window.roamAlphaAPI.q('[:find (count ?chld) :in $ ?uid :where[?p :block/uid ?uid][?p :block/children ?chld]]', pageInGraph.uid)[0][0];
-                    itemInfo = `<b>${nbChildren}</b> direct child${nbChildren > 1 ? "ren" : ""}`;
-                } catch(e){};
-            }
-            let itemInGraph = `
-            <div class="item-in-graph">
-            <span> ${itemInfo}</span></div>
-            `;
             
             // Render the header section
             let headerDiv = document.querySelector(".selected-item-header");
             headerDiv.innerHTML = `
             <div class="item-basic-metadata">
                 <h4 class="item-title" tabindex="0">${selectedItem.data.title || ""}</h4>
-                ${itemAuthors}${itemMeta}
+                ${itemAuthors}${itemMeta}${itemWeb}
                 </div>
             <div class="item-citekey-section" in-graph="${pageInGraph.present || false}">
                 <div class="bp3-fill citekey-element">${iconEl}${itemKey}</div>
@@ -1209,7 +1220,6 @@
                     <a class="bp3-button bp3-small bp3-intent-primary" format="tag">#@ ${(zoteroRoam.shortcuts.sequences["copyTag"]) ? zoteroRoam.shortcuts.makeSequenceText("copyTag") : ""}</a>
                     <a class="bp3-button bp3-small bp3-intent-primary" format="page-reference">[[@]] ${(zoteroRoam.shortcuts.sequences["copyPageRef"]) ? zoteroRoam.shortcuts.makeSequenceText("copyPageRef") : ""}</a>
                 </div>
-                ${itemInGraph}
             </div>
             `;
 

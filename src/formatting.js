@@ -100,25 +100,38 @@
             }
         },
 
-        getItemRelated(item, return_as = "citekeys"){
-            if(item.data.relations){
-                let relatedItems = [];
-                for(rel of Object.values(item.data.relations)){
-                    for(match of rel.matchAll(/http:\/\/zotero.org\/(.*)\/items\/(.+)/g)){
-                        relatedItems.push({lib: match[1], key: match[2]});
-                    }
-                }
-                let itemsData = relatedItems.map((it) => {
-                    return zoteroRoam.data.items.find(el => el.data.key == it.key && `${el.library.type}s/${el.library.id}` == it.lib) || false;
-                }).filter(Boolean);
+        getItemRelated(item, {return_as = "citekeys", brackets = true} = {}){
+            if(item.data.relations && item.data.relations['dc:relation']){
+                let relatedItems = item.data.relations['dc:relation'];
+                if(relatedItems.constructor === String){ relatedItems = [relatedItems] };
+                
+                let output = [];
+                let relRegex = /(users|groups)\/([^\/]+)\/items\/(.+)/g;
+                
+                relatedItems.forEach(itemURI => {
+                  let [uri, libType, libID, itemKey] = Array.from(itemURI.matchAll(relRegex))[0];
+                  libType = libType.slice(0,-1);
+                  libID = new Number(libID);
+                  let libItem = null;
+                  for(let j = 0; j < zoteroRoam.data.items.length;j++){
+                      let elem = zoteroRoam.data.items[j];
+                      if(elem.library.type == libType && elem.library.id == libID && elem.data.key == itemKey){
+                          libItem = elem;
+                          break;
+                      }
+                  }
+                  if(libItem){ output.push(libItem) };
+                });
+                
                 switch(return_as){
-                    case "raw":
-                        return itemsData;
-                    case "citekeys":
-                        return itemsData.map(el => "[[@" + el.key + "]]");
+                  case "raw":
+                    return output;
+                  case "citekeys":
+                  default:
+                    return brackets ? output.map(i => `[[@${i.key}]]`) : output.map(i => i.key);
                 }
-            } else{
-                return [];
+            } else {
+              return [];
             }
         },
 
