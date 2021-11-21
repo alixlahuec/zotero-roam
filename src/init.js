@@ -78,7 +78,7 @@ var zoteroRoam = {};
         
         version: "0.6.91",
 
-        data: {items: [], collections: [], semantic: new Map(), libraries: new Map(), keys: [], roamPages: []},
+        data: {items: [], collections: [], semantic: new Map(), libraries: new Map(), keys: [], roamPages: [], tags: {}},
         
         librarySearch: {autocomplete: null},
 

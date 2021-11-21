@@ -181,25 +181,22 @@
          * @param {string} params - The params for the request
          * @returns {Object} The data received from the API, if successful
          */
-        async fetchData(apiKey, dataURI, params){
+        async fetchZoteroData(apiKey, dataURI, params){
             let requestURL = `https://api.zotero.org/${dataURI}?${params}`;
             let results = [];
-            // Make initial call to API, to know total number of results
-            try{
-                let response = await fetch(requestURL, {
-                    method: 'GET',
-                    headers: {
-                        'Zotero-API-Version': 3,
-                        'Zotero-API-Key': apiKey
-                    }
-                });
-                if(response.ok == true){
-                    let totalResults = response.headers.get('Total-Results');
-                    let paramsQuery = new URLSearchParams(params);
-                    let startIndex = (paramsQuery.has('start')) ? (Number(paramsQuery.get('start'))) : 0;
-                    let limitParam = (paramsQuery.has('limit')) ? (Number(paramsQuery.get('limit'))) : 100;
+            let req = null;
 
-                    results = await response.json();
+            try{
+                // Make initial call to API, to know total number of results
+                req = await fetch(requestURL, {method: 'GET', headers: {'Zotero-API-Version': 3,'Zotero-API-Key': apiKey}});
+
+                if(req.ok == true){
+                    let totalResults = req.headers.get('Total-Results');
+                    let paramsQuery = new URLSearchParams(params);
+                    let startIndex = Number(paramsQuery.get('start') || "0");
+                    let limitParam = Number(paramsQuery.get('limit') || "100");
+
+                    results = await req.json();
 
                     let traversed = startIndex + results.length;
                     if(traversed < totalResults){
@@ -228,13 +225,14 @@
                         results.push(...processedResults);
                     }
                 } else {
-                    console.log(`The request for ${response.url} returned a code of ${response.status}`);
+                    console.log(`The request for ${req.url} returned a code of ${req.status}`);
                 }
             } catch(e) {
                 console.error(e);
                 zoteroRoam.interface.popToast("The extension encountered an error while requesting Zotero data. Please check the console for details.", "danger");
             } finally {
                 return{
+                    req: req,
                     data: results
                 }
             }
@@ -560,17 +558,20 @@
 
         async requestData(requests, update = false, collections = true) {
             let dataCalls = [];
+            let tagCalls = [];
+            let tagResults = [];
             let collectionsCalls = [];
             let collectionsResults = [];
             let deletedCalls = [];
             let deletedResults = [];
+            let currentLibs = Array.from(zoteroRoam.data.libraries.values());
             if(requests.length == 0){
                 throw new Error("No data requests were added to the config object - check for upstream problems");
             }
             try{
                 // Items data
                 requests.forEach( rq => {
-                    dataCalls.push(zoteroRoam.handlers.fetchData(apiKey = rq.apikey, dataURI = rq.dataURI, params = rq.params));
+                    dataCalls.push(zoteroRoam.handlers.fetchZoteroData(apiKey = rq.apikey, dataURI = rq.dataURI, params = rq.params));
                 });
                 let requestsResults = await Promise.all(dataCalls);
                 requestsResults = requestsResults.map( (res, i) => res.data.map(item => { 
@@ -580,55 +581,54 @@
                 })).flat(1);
                 requestsResults = zoteroRoam.handlers.extractCitekeys(requestsResults);
 
-                let currentLibs = Array.from(zoteroRoam.data.libraries.values());
+                // Tags data
+                currentLibs.forEach(lib => {
+                    zoteroRoam.data.tags[`${lib.path}`] = new Map();
+                    tagCalls.push(zoteroRoam.handlers.fetchZoteroData(lib.apikey, `${lib.path}/tags`, 'limit=100'));
+                });
+                tagResults = await Promise.all(tagCalls);
+
+                tagResults.forEach((res, j) => {
+                    res.data.reduce(
+                        function(map,t){
+                            if(map.has(t.tag)){
+                                map.set(t.tag, [map.get(t.tag),t]);
+                            } else{
+                                map.set(t.tag,t)
+                            } 
+                            return map;
+                        }, 
+                        zoteroRoam.data.tags[`${currentLibs[j].path}`]);
+                });
+                
                 // Collections data
                 if(collections == true){
-                    currentLibs.forEach(lib => {
-                        collectionsCalls.push(fetch(`https://api.zotero.org/${lib.path}/collections?since=${lib.version}&limit=100`, {
-                            method: 'GET',
-                            headers: {
-                                'Zotero-API-Version': 3,
-                                'Zotero-API-Key': lib.apikey
-                            }
-                        }));
-                    });
+                    for(const lib of currentLibs){ collectionsCalls.push(zoteroRoam.handlers.fetchZoteroData(lib.apikey, `${lib.path}/collections`, `since=${lib.version}&limit=100`)) }
                     collectionsResults = await Promise.all(collectionsCalls);
-                    collectionsResults = await Promise.all(collectionsResults.map(req => {
-                        // Update stored data on libraries
+                    
+                    collectionsResults = collectionsResults.map(coll => {
+                        let {req, data} = coll;
+                        // Update version data for libraries
                         let latestVersion = req.headers.get('Last-Modified-Version');
                         let libPath = req.url.match(/(user|group)s\/([^\/]+)/g)[0];
                         if(latestVersion){ zoteroRoam.data.libraries.get(libPath).version = latestVersion }
-                        return req.json();
-                    }));
-                    collectionsResults = collectionsResults.flat(1);
+
+                        return data;
+                    }).flat(1);
+
                 }
                 // Deleted data
                 if(update == true){
-                    currentLibs.forEach(lib => {
-                        deletedCalls.push(fetch(`https://api.zotero.org/${lib.path}/deleted?since=${lib.version}`, {
-                            method: 'GET',
-                            headers: {
-                                'Zotero-API-Version': 3,
-                                'Zotero-API-Key': lib.apikey
-                            }
-                        }));
-                    });
+                    for(lib in currentLibs){ deletedCalls.push(zoteroRoam.handlers.fetchZoteroData(lib.apikey, `${lib.path}/deleted`, `since=${lib.version}`)) }
                     deletedResults = await Promise.all(deletedCalls);
-                    let libPaths = [];
-                    deletedResults = await Promise.all(deletedResults.map(req => {
-                        libPaths.push(req.url.match(/(user|group)s\/([^\/]+)/g)[0]);
-                        return req.json();
+
+                    let toDelete = new Map(deletedResults.map(del => {
+                        let {req, data} = del;
+                        return [req.url.match(/(user|group)s\/([^\/]+)/g)[0], {items: data.items, collections: data.collections}];
                     }));
-                    deletedResults = deletedResults.map((res, i) => {
-                        return {
-                            path: libPaths[i],
-                            items: res.items,
-                            collections: res.collections
-                        }
-                    });
                     // Remove deleted items & collections from extension dataset
-                    zoteroRoam.data.items = zoteroRoam.data.items.filter(it => !deletedResults.find(res => res.path == zoteroRoam.utils.getItemPrefix(it)).items.includes(it.data.key));
-                    zoteroRoam.data.collections = zoteroRoam.data.collections.filter(cl => !deletedResults.find(res => res.path == zoteroRoam.utils.getItemPrefix(cl)).collections.includes(cl.key));
+                    zoteroRoam.data.items = zoteroRoam.data.items.filter(it => !toDelete.get(zoteroRoam.utils.getItemPrefix(it)).items.includes(it.data.key));
+                    zoteroRoam.data.collections = zoteroRoam.data.collections.filter(cl => !toDelete.get(zoteroRoam.utils.getItemPrefix(cl)).collections.includes(cl.key));
                 }
                 
                 return {

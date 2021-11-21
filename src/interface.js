@@ -61,7 +61,7 @@
             document.addEventListener("click", (e) => {
                 if(e.target.closest('.zotero-roam-page-div') || e.target.closest('.zotero-roam-page-related') || e.target.closest('.zotero-roam-explo-import')){
                     zoteroRoam.inPage.handleClicks(e.target);
-                } else if(e.target.closest('.zotero-roam-overlay-close') || e.target.closest('bp3-overlay-backdrop')){
+                } else if(e.target.closest('.zotero-roam-overlay-close') || e.target.closest('.bp3-overlay-backdrop')){
                     let overlay = e.target.closest('.zotero-roam-dialog-overlay') || e.target.closest('.zotero-roam-dialog-small');
                     if(overlay){
                         if(overlay.classList.contains('zotero-roam-citations-search-overlay')){
