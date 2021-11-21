@@ -178,7 +178,7 @@ var zoteroRoam = {};
 
                         item.setAttribute('data-item-type', data.value.itemType);
 
-                        let {title, authors, meta} = data.value;
+                        let {title, authors, publication} = data.value;
                         authors += (data.value.year ? ` (${data.value.year})` : "");
 
                         switch(data.key){
