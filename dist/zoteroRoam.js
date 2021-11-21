@@ -2070,7 +2070,7 @@ var zoteroRoam = {};
                 }
                 // Deleted data
                 if(update == true){
-                    for(lib in currentLibs){ deletedCalls.push(zoteroRoam.handlers.fetchZoteroData(lib.apikey, `${lib.path}/deleted`, `since=${lib.version}`)) }
+                    for(const lib of currentLibs){ deletedCalls.push(zoteroRoam.handlers.fetchZoteroData(lib.apikey, `${lib.path}/deleted`, `since=${lib.version}`)) }
                     deletedResults = await Promise.all(deletedCalls);
 
                     let toDelete = new Map(deletedResults.map(del => {
