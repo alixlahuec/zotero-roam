@@ -21,6 +21,8 @@
                 execute(){
                     if(zoteroRoam.interface.citations.overlay.getAttribute("overlay-visible") == "true"){
                         zoteroRoam.interface.closeCitationsOverlay();
+                    } else if(document.querySelector('.zotero-roam-auxiliary-overlay').getAttribute("overlay-visible") == "true"){
+                        zoteroRoam.interface.closeAuxiliaryOverlay();
                     } else{
                         let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
                         zoteroRoam.interface.toggleSearchOverlay(cmd);

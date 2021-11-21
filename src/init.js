@@ -199,7 +199,7 @@ var zoteroRoam = {};
                             <div class="bp3-text-overflow-ellipsis zotero-roam-search-item-contents">
                             <span class="zotero-roam-search-item-title">${title}</span>
                                 <span class="zr-details">
-                                    <span class="zotero-roam-search-item-authors zr-highlight">${authors}</span><span class="zotero-roam-search-item-metadata zr-secondary"> ${meta}</span>
+                                    <span class="zotero-roam-search-item-authors zr-highlight">${authors}</span><span class="zotero-roam-search-item-metadata zr-secondary"> ${publication}</span>
                                 </span>
                             </div>
                             <span class="bp3-menu-item-label zotero-roam-search-item-key">
@@ -547,13 +547,14 @@ var zoteroRoam = {};
             .bp3-dark h5.panel-tt[list-type="library"], .bp3-dark h5.panel-tt[list-type="references"], .bp3-dark .zr-search-scope{color:#48aff0;}
             .bp3-dark h5.panel-tt[list-type="citations"]{color:#ffb366;}
             #zotero-roam-portal .header-left{flex: 0 1 66%;padding-top:5px;padding-left:min(20px, 2vw);overflow-wrap:anywhere;}
+            #zotero-roam-portal .header-left .bp3-spinner{width:fit-content;}
             #zotero-roam-portal .header-right{flex: 0 1 34%;}
             .zotero-roam-search-overlay .header-right {position:absolute;right:0px;}
             #zotero-roam-portal .zotero-roam-citations-search-overlay .header-bottom {margin-top:0px;}
             #zotero-roam-portal .header-bottom{flex: 1 0 95%;display:flex;justify-content:space-between;margin: min(20px, 3vh) 2.5%;align-items:baseline;}
             .zr-search-scope {font-weight:500;flex:1 0 auto;}
-            .zotero-roam-search-close.bp3-large{margin-right:3px;}
-            .zotero-roam-search-close{margin:0;padding:0;min-width:41px;}
+            .zotero-roam-overlay-close.bp3-large{margin-right:3px;}
+            .zotero-roam-overlay-close{margin:0;padding:0;min-width:41px;}
             #zotero-roam-search-autocomplete{flex:0 1 89%;}
             #zotero-roam-citations-autocomplete{flex:1 0 100%;}
             #zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;box-shadow:none;}
@@ -661,16 +662,16 @@ var zoteroRoam = {};
             .selected_title{font-weight:500;}
             .selected_origin{display:block;font-weight:300;}
             .selected_info{flex: 0 1 90%;}
-            li.related-item_listed{display:flex;align-items:flex-start;font-size:0.9rem;padding:0px;}
+            .related-item_listed{display:flex;align-items:flex-start;padding:0px;}
             .related-sublist[list-type="references"] li:nth-child(even) {background-color:#e8f0ff;}
             .bp3-dark .related-sublist[list-type-"references"] li:nth-child(even) {background-color:#2d3a52;}
             .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#fdfcf6;}
             .bp3-dark .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#52452d;}
             .related-item_listed[item-type="reference"]:hover {background-color:#e1ecff;}
             .related-item_listed[item-type="citation"]:hover {background-color:#fff6e1;}
-            .related_year{flex: 0 0 auto;padding-left:10px;}
-            .related_info{line-height:normal;padding: 0px 10px;flex: 1 2 90%;}
-            .related_year, .related_info{font-size:0.9em;padding:3px 0px;}
+            .related_year, .related_info{font-size:0.9em;padding: 0px 0px 6px 10px;}
+            .related_year{flex: 0 0 auto;}
+            .related_info{line-height:normal;flex: 1 2 90%;}
             .related_info > *:not(.zotero-roam-search-item-title), .related_year{line-height:2em;}
             .related_state{flex: 1 0 auto;overflow-wrap:anywhere;}
             .related_state button.bp3-button{padding:0px 0px;}
@@ -694,7 +695,7 @@ var zoteroRoam = {};
             .zotero-roam-list-item-actions{text-align:right;flex: 0 0 15%;}
             .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions button, .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions a{opacity:0.6;}
             .zotero-roam-list-item-key {padding:0 5px;}
-            .zotero-roam-auxiliary-overlay .main-panel{padding:10px;}
+            .zotero-roam-auxiliary-overlay .main-panel{padding:0px 10px;}
             .zotero-roam-auxiliary-overlay .main-panel ul.bp3-list-unstyled {padding:15px 0;}
             .zotero-roam-explo-import{position:absolute;right:0px;opacity:0.7;z-index:10;}
             .zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}

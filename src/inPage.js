@@ -400,7 +400,7 @@
             
                                 if(papersInLib.length > 0){
                                     backlinksLib += `
-                                    <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled bp3-text-small" style="display:none;">
+                                    <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled" style="display:none;">
                                     ${zoteroRoam.inPage.renderBacklinksList_year(papersInLib, origin_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "")}
                                     </ul>
                                     `

@@ -696,6 +696,7 @@
                     authors: `${item.meta.creatorSummary || ""}`,
                     year: `${(item.meta.parsedDate) ? (new Date(item.meta.parsedDate)).getUTCFullYear().toString() : ""}`,
                     meta: `${zoteroRoam.utils.makeMetaString(item)}`,
+                    publication: `${item.data.publicationTitle || item.data.bookTitle || item.data.university || ""}`,
                     tags: item.data.tags.map(t => t.tag),
                     authorsFull: item.data.creators.map(c => {return (c.name) ? c.name : [c.firstName, c.lastName].filter(Boolean).join(" ")}),
                     authorsRoles: item.data.creators.map(c => c.creatorType),
