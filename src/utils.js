@@ -135,7 +135,11 @@
         },
 
         getAllRefPages(){
-            return roamAlphaAPI.q(`[:find ?title ?uid :where[?e :node/title ?title][?e :block/uid ?uid][(clojure.string/starts-with? ?title "@")]]`);
+            return roamAlphaAPI.q(`[:find ?title ?uid :where[?e :node/title ?title][(clojure.string/starts-with? ?title "@")][?e :block/uid ?uid]]`);
+        },
+
+        getSelectPages(keys){
+            return roamAlphaAPI.q(`[:find ?title :in $ [?k ...] :where[?e :node/title ?title][(clojure.string/starts-with? ?title ?k)]]`, keys).flat(1);
         },
 
         getItemPrefix(item){
@@ -578,11 +582,11 @@
                 }
             } else {
                 // Multi-word query
-                let searchArray = queryWords;
+                let searchArray = queryWords.map(w => zoteroRoam.utils.escapeRegExp(w));
                 if(search_compounds == true){
                     if(isHyphenated){
                         // For each hyphenated term, replace hyphen by inclusive match (hyphen, space, nothing)
-                        searchArray = queryWords.map(w => {
+                        searchArray = searchArray.map(w => {
                             if(w.includes("-")){
                                 return w.replace('-', '(?: |-)?');
                             } else {
@@ -592,7 +596,7 @@
                     } else if(!isHyphenated && word_order == "strict"){
                         // If strict mode :
                         // Join the search Array by inclusive match pattern (hyphen, space, nothing)
-                        searchArray = [queryWords.join('(?: |-)?')]; // keeping Array form so that the logic can be the same later on       
+                        searchArray = [searchArray.join('(?: |-)?')]; // keeping Array form so that the logic can be the same later on       
                     }
                     // If loose mode :
                     // No special action necessary, should use searchArray = queryWords as defined above (default)
@@ -605,7 +609,7 @@
                     let searchArrayReg = searchArray.map(t => '(?:\\W|^)' + t + '(?:\\W|$)');
                     let match = true;
                     searchArrayReg.forEach(exp => {
-                        let regex = new RegExp(zoteroRoam.utils.escapeRegExp(exp), 'g');
+                        let regex = new RegExp(exp, 'g');
                         if(!target.match(regex)){
                             match = false;
                             return;
@@ -614,10 +618,10 @@
                     return match;
                 } else {
                     if(match == "exact"){
-                        let searchReg = new RegExp('^' + zoteroRoam.utils.escapeRegExp(searchArray.join(" ")) + '$', 'g');
+                        let searchReg = new RegExp('^' + searchArray.join(" ") + '$', 'g');
                         return target.match(searchReg) ? true : false;
                     } else {
-                        let searchReg = new RegExp('(?:\\W|^)' + zoteroRoam.utils.escapeRegExp(searchArray.join(" ")) + '(?:\\W|$)', 'g');
+                        let searchReg = new RegExp('(?:\\W|^)' + searchArray.join(" ") + '(?:\\W|$)', 'g');
                         return target.match(searchReg) ? true : false;
                     }
                 }
