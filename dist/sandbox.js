@@ -1331,10 +1331,13 @@ var zoteroRoam = {};
                 }
                 // Then carry on with the search op
                 if(match == "partial"){
-                    let searchReg = new RegExp(searchString, 'g');
+                    let searchReg = new RegExp(zoteroRoam.utils.escapeRegExp(searchString), 'g');
+                    return target.match(searchReg) ? true : false;
+                } else if(match == "exact"){
+                    let searchReg = new RegExp('^' + zoteroRoam.utils.escapeRegExp(searchString) + '$', 'g');
                     return target.match(searchReg) ? true : false;
                 } else {
-                    let searchReg = new RegExp('(?:\\W|^)' + searchString + '(?:\\W|$)', 'g');
+                    let searchReg = new RegExp('(?:\\W|^)' + zoteroRoam.utils.escapeRegExp(searchString) + '(?:\\W|$)', 'g');
                     return target.match(searchReg) ? true : false;
                 }
             } else {
@@ -1366,7 +1369,7 @@ var zoteroRoam = {};
                     let searchArrayReg = searchArray.map(t => '(?:\\W|^)' + t + '(?:\\W|$)');
                     let match = true;
                     searchArrayReg.forEach(exp => {
-                        let regex = new RegExp(exp, 'g');
+                        let regex = new RegExp(zoteroRoam.utils.escapeRegExp(exp), 'g');
                         if(!target.match(regex)){
                             match = false;
                             return;
@@ -1374,8 +1377,13 @@ var zoteroRoam = {};
                     });
                     return match;
                 } else {
-                    let searchReg = new RegExp('(?:\\W|^)' + searchArray.join(" ") + '(?:\\W|$)', 'g');
-                    return target.match(searchReg) ? true : false;
+                    if(match == "exact"){
+                        let searchReg = new RegExp('^' + zoteroRoam.utils.escapeRegExp(searchArray.join(" ")) + '$', 'g');
+                        return target.match(searchReg) ? true : false;
+                    } else {
+                        let searchReg = new RegExp('(?:\\W|^)' + zoteroRoam.utils.escapeRegExp(searchArray.join(" ")) + '(?:\\W|$)', 'g');
+                        return target.match(searchReg) ? true : false;
+                    }
                 }
             }
         
