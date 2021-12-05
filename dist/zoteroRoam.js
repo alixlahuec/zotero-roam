@@ -1309,8 +1309,9 @@ var zoteroRoam = {};
             let query = string;
             let target = text;
         
-            // If search is case-insensitive, and the query is not an acronym, transform query & target to lowercase
-            if(any_case == true && !query.match(/[A-Z]{2}/g)){
+            // If search is case-insensitive, transform query & target to lowercase
+            // Acronym RegExp was not functioning for tag management, retired it for now: !query.match(/[A-Z]{2}/g
+            if(any_case == true){
                 query = string.toLowerCase();
                 target = text.toLowerCase();
             }
