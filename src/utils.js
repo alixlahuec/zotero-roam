@@ -257,7 +257,7 @@
             }).flat(1);
         },
 
-        sortTags_usage(token, {count_roam = true} = {}){
+        getTagUsage(token, {count_roam = true} = {}){
             return token.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? token.roam.length : 0);
         },
 
@@ -265,7 +265,7 @@
             switch(by){
                 case "usage":
                     return tagList.sort((a,b) => {
-                        return zoteroRoam.utils.sortTags_usage(a) < zoteroRoam.utils.sortTags_usage(b) ? -1 : 1;
+                        return zoteroRoam.utils.getTagUsage(a) > zoteroRoam.utils.getTagUsage(b) ? -1 : 1;
                     });
                 case "roam":
                     return tagList.sort((a,b) => a.roam.length < b.roam.length ? -1 : 1);
@@ -280,27 +280,37 @@
               let is_singleton = tk.zotero.length == 1 && (tk.roam.length == 0 || (tk.roam.length == 1 && tk.zotero[0].tag == tk.roam[0].title));
               let label = tk.token;
               let elemList = ``;
+              let primary_action = "Merge";
+              let primary_icon = "git-merge";
 
               if(is_singleton){
                   label = tk.zotero[0].tag;
-                  elemList += tk.roam.map(pg => `<span data-tag="${pg.title}" data-uid="${pg.uid}">${pg.title}</span>`).join("\n");
-                  elemList += tk.zotero.map(el => `<span data-tag="${el.tag}" data-tag-type="${el.type || ''}">${el.tag}</span>`).join("\n");
+                  primary_action = "Edit";
+                  primary_icon = "edit";
+              } else {
+                  elemList = `
+                  <div role="taglist" class="zr-text-small">
+                  ${tk.roam.map(pg => `<span data-tag="${pg.title}" data-uid="${pg.uid}">${pg.title}</span>`).join("\n")}
+                  ${tk.zotero.map(el => `<span data-tag="${el.tag}" data-tag-type="${el.type || ''}">${el.tag} (${el.meta.numItems})</span>`).join("\n")}
+                  </div>
+                  `
               }
 
               return `
-              <li role="option" class="zotero-roam-search_result" data-token="${tk.token}">
+              <li role="option" class="zotero-roam-list-item" data-token="${tk.token}">
                 <div class="bp3-menu-item">
-                    <div class="bp3-text-overflow-ellipsis zotero-roam-search-item-contents">
-                        <span class="zotero-roam-search-item-title">${label}</span>
+                    <div class="bp3-text-overflow-ellipsis">
+                        <span role="title">${label}</span>
+                        <span class="zr-auxiliary">${zoteroRoam.utils.getTagUsage(tk, {count_roam: false})} items</span>
+                        ${elemList}
                     </div>
-                    <span class="bp3-menu-item-label zotero-roam-search-item-key">
-                        <div class="bp3-button-group bp3-minimal bp3-small bp3-active">
-                            <a class="bp3-button bp3-intent-primary"><span class="bp3-button-text">Edit/Merge</span></a>
+                    <span class="bp3-menu-item-label zotero-roam-list-item-key">
+                        <div class="bp3-button-group bp3-minimal bp3-active zr-text-small">
+                            <a class="bp3-button bp3-intent-primary bp3-icon-${primary_icon}"><span class="bp3-button-text">${primary_action}</span></a>
                             <a class="bp3-button bp3-intent-danger"><span class="bp3-button-text">Delete</span></a>
                         </div>
                     </span>
                 </div>
-                <div>${elemList}</div>
               </li>
               `
           }).join("\n");
