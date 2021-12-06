@@ -18,6 +18,41 @@
             return blockUID;
         },
 
+        categorizeTags(zdata, tagMap, rdata){
+            let output = [];
+          
+            zdata = zdata.sort((a,b) => a > b ? -1 : 1);
+            rdata = rdata.sort((a,b) => a.title > b.title ? -1 : 1);
+          
+            for(let elem of zdata){
+              let in_table = output.findIndex(tk => zoteroRoam.utils.searchEngine(elem, tk.token, {match: "exact"}));
+              let z_item = tagMap.get(elem)
+              if(in_table == -1){
+                output.push({
+                  token: elem.toLowerCase(), 
+                  zotero: z_item.constructor === Array ? z_item : [z_item], 
+                  roam: []
+                });
+              } else {
+                if(z_item.constructor === Array){
+                  output[in_table].zotero.push(...z_item);
+                } else {
+                  output[in_table].zotero.push(z_item);
+                }
+              }
+            }
+          
+            output = output.sort((a,b) => a.token < b.token ? -1 : 1);
+          
+            for(let elem of rdata){
+              let in_table = output.findIndex(token => zoteroRoam.utils.searchEngine(elem.title, token.token, {match: "exact"}));
+              if(in_table >= 0){
+                output[in_table].roam.push(elem)
+              }
+            }
+            return(output);
+        },
+
         // From Darren Cook on SO : https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
         // Escape special characters in user input so that RegExp can be generated :
         escapeRegExp(string) {
@@ -139,7 +174,7 @@
         },
 
         getSelectPages(keys){
-            return roamAlphaAPI.q(`[:find ?title :in $ [?k ...] :where[?e :node/title ?title][(clojure.string/starts-with? ?title ?k)]]`, keys).flat(1);
+            return roamAlphaAPI.q(`[:find (pull ?e [:node/title :block/uid]) :in $ [?k ...] :where[?e :node/title ?title][(clojure.string/starts-with? ?title ?k)]]`, keys).flat(1);
         },
 
         getItemPrefix(item){
@@ -181,7 +216,7 @@
 
         lookForPage(title){
             let pageInfo = null;
-            let pageSearch = window.roamAlphaAPI.q('[:find ?uid :in $ ?title :where[?p :block/uid ?uid][?p :node/title ?title]]', title);
+            let pageSearch = window.roamAlphaAPI.q('[:find ?uid :in $ ?title :where[?p :node/title ?title][?p :block/uid ?uid]]', title);
             if(pageSearch.length > 0){
                 pageInfo = {
                     present: true,
@@ -198,6 +233,77 @@
         makeTimestamp(date){
             let d = date.constructor === Date ? date : new Date(date);
             return `${d.getHours()}:${('0' + d.getMinutes()).slice(-2)}`;
+        },
+
+        makeDictionary(arr){
+            return arr.reduce((dict, elem) => {
+              let initial = elem.charAt(0).toLowerCase();
+              if(dict[initial]){
+                dict[initial].push(elem);
+              } else {
+                dict[initial] = [elem];
+              }
+              return dict;
+            }, {});
+        },
+
+        makeTagList(tagMap){
+            let zdict = zoteroRoam.utils.makeDictionary(Array.from(tagMap.keys()));
+            let zkeys = Object.keys(zdict).sort((a,b) => a < b ? -1 : 1);
+          
+            return zkeys.map(key => {
+              let rdata = zoteroRoam.utils.getSelectPages(Array.from(new Set([key, key.toUpperCase()])));
+              return zoteroRoam.utils.categorizeTags(zdict[key], tagMap, rdata);
+            }).flat(1);
+        },
+
+        sortTags_usage(token, {count_roam = true} = {}){
+            return token.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? token.roam.length : 0);
+        },
+
+        sortTagList(tagList, by = "alphabetical"){
+            switch(by){
+                case "usage":
+                    return tagList.sort((a,b) => {
+                        return zoteroRoam.utils.sortTags_usage(a) < zoteroRoam.utils.sortTags_usage(b) ? -1 : 1;
+                    });
+                case "roam":
+                    return tagList.sort((a,b) => a.roam.length < b.roam.length ? -1 : 1);
+                case "alphabetical":
+                default:
+                    return tagList;
+            }
+        },
+
+        renderTagList(tagList){
+          return tagList.map(tk => {
+              let is_singleton = tk.zotero.length == 1 && (tk.roam.length == 0 || (tk.roam.length == 1 && tk.zotero[0].tag == tk.roam[0].title));
+              let label = tk.token;
+              let elemList = ``;
+
+              if(is_singleton){
+                  label = tk.zotero[0].tag;
+                  elemList += tk.roam.map(pg => `<span data-tag="${pg.title}" data-uid="${pg.uid}">${pg.title}</span>`).join("\n");
+                  elemList += tk.zotero.map(el => `<span data-tag="${el.tag}" data-tag-type="${el.type || ''}">${el.tag}</span>`).join("\n");
+              }
+
+              return `
+              <li role="option" class="zotero-roam-search_result" data-token="${tk.token}">
+                <div class="bp3-menu-item">
+                    <div class="bp3-text-overflow-ellipsis zotero-roam-search-item-contents">
+                        <span class="zotero-roam-search-item-title">${label}</span>
+                    </div>
+                    <span class="bp3-menu-item-label zotero-roam-search-item-key">
+                        <div class="bp3-button-group bp3-minimal bp3-small bp3-active">
+                            <a class="bp3-button bp3-intent-primary"><span class="bp3-button-text">Edit/Merge</span></a>
+                            <a class="bp3-button bp3-intent-danger"><span class="bp3-button-text">Delete</span></a>
+                        </div>
+                    </span>
+                </div>
+                <div>${elemList}</div>
+              </li>
+              `
+          }).join("\n");
         },
 
         makeDNP(date, {brackets = true} = {}){
