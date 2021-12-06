@@ -268,7 +268,7 @@
                         return zoteroRoam.utils.getTagUsage(a) > zoteroRoam.utils.getTagUsage(b) ? -1 : 1;
                     });
                 case "roam":
-                    return tagList.sort((a,b) => a.roam.length < b.roam.length ? -1 : 1);
+                    return tagList.sort((a,b) => a.roam.length > b.roam.length ? -1 : 1);
                 case "alphabetical":
                 default:
                     return tagList;
@@ -299,13 +299,13 @@
               return `
               <li role="option" class="zotero-roam-list-item" data-token="${tk.token}">
                 <div class="bp3-menu-item">
-                    <div class="bp3-text-overflow-ellipsis">
+                    <div style="flex:1 1 80%;">
                         <span role="title">${label}</span>
                         <span class="zr-auxiliary">${zoteroRoam.utils.getTagUsage(tk, {count_roam: false})} items</span>
                         ${elemList}
                     </div>
                     <span class="bp3-menu-item-label zotero-roam-list-item-key">
-                        <div class="bp3-button-group bp3-minimal bp3-active zr-text-small">
+                        <div class="bp3-button-group bp3-minimal bp3-small bp3-active zr-text-small">
                             <a class="bp3-button bp3-intent-primary bp3-icon-${primary_icon}"><span class="bp3-button-text">${primary_action}</span></a>
                             <a class="bp3-button bp3-intent-danger"><span class="bp3-button-text">Delete</span></a>
                         </div>

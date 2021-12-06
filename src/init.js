@@ -704,13 +704,13 @@ var zoteroRoam = {};
             .zr-explo-publication, .zr-explo-abstract{display:block;white-space:break-spaces;}
             .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
             .zotero-roam-search-item-authors, .zotero-roam-citation-origin {padding-right: 8px;}
-            [data-token]{background:white;padding:5px 10px;display:flex;align-items:baseline;border-bottom:1px #f5f5f5 solid;}
+            [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
             [data-token]:last-child{border-bottom:1px white solid;}
-            [data-token] .bp3-menu-item {justify-content:space-between;}
-            [data-token] [role="title"] {font-weight:600;}
+            [data-token] .bp3-menu-item {justify-content:space-between;align-items:baseline;width:100%;}
+            [data-token] [role="title"] {font-weight:600;margin-right:15px;}
             [data-token] [role="title"]::before {content: '# '}
             [data-token] [role="taglist"] {margin:5px;}
-            [data-token] [data-tag] {padding: 3px 8px;margin-right: 5px;border-radius: 3px;display:inline-block;}
+            [data-token] [data-tag] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
             [data-token] [data-tag-type] {color: #e1881a;background-color: #fff5e7;}
             [data-token] [data-uid] {color: #48a5e7;background-color: #e7f5ff;}
             [data-token] .bp3-active {opacity:0.6;}

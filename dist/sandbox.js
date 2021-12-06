@@ -704,13 +704,13 @@ var zoteroRoam = {};
             .zr-explo-publication, .zr-explo-abstract{display:block;white-space:break-spaces;}
             .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
             .zotero-roam-search-item-authors, .zotero-roam-citation-origin {padding-right: 8px;}
-            [data-token]{background:white;padding:5px 10px;display:flex;align-items:baseline;border-bottom:1px #f5f5f5 solid;}
+            [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
             [data-token]:last-child{border-bottom:1px white solid;}
-            [data-token] .bp3-menu-item {justify-content:space-between;}
-            [data-token] [role="title"] {font-weight:600;}
+            [data-token] .bp3-menu-item {justify-content:space-between;align-items:baseline;width:100%;}
+            [data-token] [role="title"] {font-weight:600;margin-right:15px;}
             [data-token] [role="title"]::before {content: '# '}
             [data-token] [role="taglist"] {margin:5px;}
-            [data-token] [data-tag] {padding: 3px 8px;margin-right: 5px;border-radius: 3px;display:inline-block;}
+            [data-token] [data-tag] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
             [data-token] [data-tag-type] {color: #e1881a;background-color: #fff5e7;}
             [data-token] [data-uid] {color: #48a5e7;background-color: #e7f5ff;}
             [data-token] .bp3-active {opacity:0.6;}
@@ -1044,7 +1044,7 @@ var zoteroRoam = {};
                         return zoteroRoam.utils.getTagUsage(a) > zoteroRoam.utils.getTagUsage(b) ? -1 : 1;
                     });
                 case "roam":
-                    return tagList.sort((a,b) => a.roam.length < b.roam.length ? -1 : 1);
+                    return tagList.sort((a,b) => a.roam.length > b.roam.length ? -1 : 1);
                 case "alphabetical":
                 default:
                     return tagList;
@@ -1075,13 +1075,13 @@ var zoteroRoam = {};
               return `
               <li role="option" class="zotero-roam-list-item" data-token="${tk.token}">
                 <div class="bp3-menu-item">
-                    <div class="bp3-text-overflow-ellipsis">
+                    <div style="flex:1 1 80%;">
                         <span role="title">${label}</span>
                         <span class="zr-auxiliary">${zoteroRoam.utils.getTagUsage(tk, {count_roam: false})} items</span>
                         ${elemList}
                     </div>
                     <span class="bp3-menu-item-label zotero-roam-list-item-key">
-                        <div class="bp3-button-group bp3-minimal bp3-active zr-text-small">
+                        <div class="bp3-button-group bp3-minimal bp3-small bp3-active zr-text-small">
                             <a class="bp3-button bp3-intent-primary bp3-icon-${primary_icon}"><span class="bp3-button-text">${primary_action}</span></a>
                             <a class="bp3-button bp3-intent-danger"><span class="bp3-button-text">Delete</span></a>
                         </div>
