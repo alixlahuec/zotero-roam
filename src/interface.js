@@ -199,10 +199,12 @@
         async popToast(message, intent = "primary"){
             let toastOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toast-overlay');
             toastOverlay.innerHTML = zoteroRoam.utils.renderBP3Toast(string = message, {toastClass: `bp3-intent-${intent}`});
+            toastOverlay.setAttribute('role', 'alert');
 
             toastOverlay.querySelector('.bp3-toast').style.opacity = "1";
             await zoteroRoam.utils.sleep(700);
             toastOverlay.querySelector('.bp3-toast').style.top = "-100px";
+            toastOverlay.removeAttribute('role');
 
         },
 
