@@ -97,6 +97,7 @@
                 } else if(e.target.closest('[zr-import]')){
                     zoteroRoam.interface.handleImportPanelClicks(e);
                 } else if(e.target.closest('.zotero-roam-page-control')){
+                    let control = e.target.closest('.zotero-roam-page-control');
                     zoteroRoam.interface.changePage(pagination = control.getAttribute('pagination'), goto = control.getAttribute("goto"));
                 }
             })

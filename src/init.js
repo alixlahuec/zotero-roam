@@ -718,7 +718,8 @@ var zoteroRoam = {};
             .zotero-roam-dashboard-overlay .main-section {flex: 1 0 80%;padding-left:15px;padding-bottom:15px;}
             .zotero-roam-dashboard-overlay .side-section .bp3-tab-list {width: 100%;}
             .zotero-roam-dashboard-overlay .bp3-tab-panel {display: flex;flex-wrap: wrap;justify-content: space-between;margin-top: 0px;}
-            .zr-tab-panel-header {display:flex;justify-content:space-between;align-items:flex-start;flex: 0 0 100%;}
+            .zr-tab-panel-header, .zr-tab-panel-description {flex: 0 0 100%;}
+            .zr-tab-panel-header {display:flex;justify-content:space-between;align-items:flex-start;}
             .zr-tab-panel-description {padding-top:15px;}
             .zr-tab-panel-contents {padding-left:15px;padding-right:15px;}
             .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;}
