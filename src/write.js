@@ -63,31 +63,33 @@
             }
         },
 
-        async editTags(tags, library, into){
+        async editTags(tags, library, into) {
             let tagList = tags.filter(t => t.tag != into || (t.tag == into && t.meta.type == 1));
             let itemList = [];
-          
+
             let libItems = zoteroRoam.data.items.filter(i => i.library.type + 's/' + i.library.id == library.path);
             libItems.forEach(i => {
-              let itemTags = i.data.tags;
-              let matched = false;
-              
-              for(let elem of tagList){
-                let has_tag = itemTags.find(t => t.tag == elem.tag && t.meta.type == elem.meta.type);
-                if(has_tag){
-                  itemTags[has_tag] = {tag: into, type: 0};
-                  matched = true;
+                let itemTags = i.data.tags;
+                let matched = false;
+
+                if (itemTags.length > 0) {
+                    for (let elem of tagList) {
+                        let has_tag = itemTags.find(t => t.tag == elem.tag && t.type == elem.meta.type);
+                        if (has_tag) {
+                            itemTags[has_tag] = { tag: into, type: 0 };
+                            matched = true;
+                        }
+                    }
+    
+                    if (matched) {
+                        itemList.push({
+                            key: i.data.key,
+                            tags: itemTags
+                        })
+                    }
                 }
-              }
-          
-              if(matched){
-                itemList.push({
-                  key: i.data.key,
-                  tags: itemTags
-                })
-              }
             });
-          
+
             return await zoteroRoam.write.postItemData(library, itemList);
         },
 
