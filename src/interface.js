@@ -716,7 +716,7 @@
         },
 
         fillDashboardOverlay(){
-            let dialogMainPanel = document.querySelector('.zotero-roam-dashboard .main-panel');
+            let dialogMainPanel = document.querySelector('.zotero-roam-dashboard-overlay .main-panel');
             let tabs = [
                 {name: 'tag-manager', icon: 'tag', title: 'Tag Manager', description: 'Rename, merge, and delete tags'}
             ];
@@ -773,7 +773,7 @@
             dialogMainPanel.appendChild(sideSection);
             dialogMainPanel.appendChild(mainSection);
 
-            let tagManager = document.querySelector('.zotero-roam-dashboard .bp3-tab-panel[name="tag-manager"]');
+            let tagManager = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"]');
             tagManager.innerHTML += `
             <div class="zr-tag-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
