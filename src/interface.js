@@ -742,7 +742,7 @@
                 </li>`
             });
 
-            bp3TabsList.appendChild(tabs);
+            bp3TabsList.appendChild(tabList);
             sideSection.appendChild(bp3TabsList);
 
             // Main Section
