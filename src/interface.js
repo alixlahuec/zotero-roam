@@ -566,6 +566,8 @@
             searchBar.tabIndex = "1";
             searchBar.type = "text";
             searchBar.classList.add("bp3-input");
+            // ARIA Labelling
+            searchBar.setAttribute('aria-controls', 'zotero-roam-citations-pagination');
 
             headerBottom.appendChild(searchBar);
 
@@ -661,8 +663,8 @@
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
             <div class="bp3-button-group bp3-minimal">
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous" aria-controls="zotero-roam-citations-pagination"'})}
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" aria-controls="zotero-roam-citations-pagination"'})}
                 <span class="zotero-roam-citations-results-count zr-auxiliary"></span>
             </div>
             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
