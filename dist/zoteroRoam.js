@@ -1322,7 +1322,7 @@ var zoteroRoam = {};
         renderBP3Button_link(string, {linkClass = "", icon = "", iconModifier = "", target = "", linkAttribute = ""} = {}){
             let iconEl = icon ? `<span icon="${icon}" class="bp3-icon bp3-icon-${icon} ${iconModifier}"></span>` : "";
             return `
-            <a class="bp3-button ${linkClass}" href="${target}" ${linkAttribute}>
+            <a role="button" class="bp3-button ${linkClass}" href="${target}" ${linkAttribute}>
             ${iconEl}
             <span class="bp3-button-text">${string}</span>
             </a>
@@ -2425,70 +2425,93 @@ var zoteroRoam = {};
             }
         },
 
-        async postItemData(library, itemList){
+        async postItemData(library, dataList) {
             let outcome = {};
             try {
-              let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
-                method: 'POST',
-                body: JSON.stringify(itemList),
-                headers: {
-                  'Zotero-API-Version': 3, 
-                  'Zotero-API-Key': library.apikey
-                },
-              });
-              if(req.ok == true){
-                let response = await req.json();
-                outcome = {
-                  success: true,
-                  data: response
+                let req = await fetch(`https://api.zotero.org/${library.path}/items`,
+                    {
+                        method: 'POST',
+                        body: JSON.stringify(dataList),
+                        headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey, 'If-Unmodified-Since-Version': library.version },
+                    });
+                if (req.ok == true) {
+                    let response = await req.json();
+                    outcome = {
+                        success: true,
+                        data: response
+                    }
+                } else {
+                    outcome = {
+                        success: false,
+                        response: req
+                    }
                 }
-              } else {
+
+            } catch (e) {
                 outcome = {
-                  success: false,
-                  response: req
+                    success: null,
+                    error: e
                 }
-              }
-              
-            } catch(e){
-              outcome = {
-                success: null,
-                error: e
-              }
             } finally {
-              return outcome;
+                return outcome;
             }
         },
 
-        async editTags(tags, library, into) {
-            let tagList = tags.filter(t => t.tag != into || (t.tag == into && t.meta.type == 1));
-            let itemList = [];
-
+        async editTags(library, tags, into) {
+            let tagNames = Array.from(new Set(tags.map(t => t.tag)));
+            let dataList = [];
             let libItems = zoteroRoam.data.items.filter(i => i.library.type + 's/' + i.library.id == library.path);
             libItems.forEach(i => {
                 let itemTags = i.data.tags;
-                let matched = false;
-
                 if (itemTags.length > 0) {
-                    for (let elem of tagList) {
-                        let has_tag = itemTags.find(t => t.tag == elem.tag && t.type == elem.meta.type);
-                        if (has_tag) {
-                            itemTags[has_tag] = { tag: into, type: 0 };
-                            matched = true;
-                        }
+                    // If the item already has the target tag, with type 0 (explicit or implicit) - remove it from the array before the filtering :
+                    let has_clean_tag = itemTags.findIndex(i => i.tag == into && (i.type == 0 || !i.type));
+                    if (has_clean_tag > -1) {
+                        itemTags.splice(has_clean_tag, 1);
                     }
-    
-                    if (matched) {
-                        itemList.push({
+                    // Compare the lengths of the tag arrays, before vs. after filtering out the tags to be renamed
+                    let cleanTags = itemTags.filter(t => !tagNames.includes(t.tag));
+                    if (cleanTags.length < itemTags.length) {
+                        // If they do not match (aka, there are tags to be removed/renamed), insert the target tag & add to the dataList
+                        cleanTags.push({ tag: into, type: 0 });
+                        dataList.push({
                             key: i.data.key,
-                            tags: itemTags
+                            tags: cleanTags
                         })
                     }
                 }
             });
 
-            return await zoteroRoam.write.postItemData(library, itemList);
+            return await zoteroRoam.write.postItemData(library, dataList);
+
         },
 
+        async deleteTags(library, tags) {
+            let tagList = tags.constructor === String ? encodeURIComponent(tags) : tags.map(t => encodeURIComponent(t)).join("||");
+            let outcome = {};
+            try {
+                let req = await fetch(`https://api.zotero.org/${library.path}/tags?tag=${tagList}`,
+                    {
+                        method: 'DELETE',
+                        headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey, 'If-Unmodified-Since-Version': library.version }
+                    });
+
+                outcome = {
+                    success: req.ok,
+                    response: req
+                }
+
+            } catch (e) {
+                outcome = {
+                    success: null,
+                    error: e
+                }
+            } finally {
+                return outcome;
+            }
+        },
+
+        // Not in use (playground)
         // TODO: Rewrite to support tag types
         async editItemTags(item, {add = [], remove = []} = {}){
             let currentTags = item.data.tags.map(t => t.tag);
@@ -2499,6 +2522,7 @@ var zoteroRoam = {};
             return patchReq;
         },
 
+        // Not in use (playground)
         // TODO: Rewrite to support tag types
         async toggleTags(item, tags = []){
             let itemTags = item.data.tags.map(t => t.tag);
@@ -2662,6 +2686,9 @@ var zoteroRoam = {};
             // Create small dialog overlay
             zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "align-self:start;transition:0.5s;", useBackdrop = true, commonTag = "zotero-roam-dialog-small");
             zoteroRoam.interface.fillAuxiliaryOverlay();
+            // Create dashboard overlay
+            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-dashboard");
+            zoteroRoam.interface.fillDashboardOverlay();
             // Create toast overlay
             zoteroRoam.interface.createToastOverlay();
         },
@@ -2814,10 +2841,12 @@ var zoteroRoam = {};
         async popToast(message, intent = "primary"){
             let toastOverlay = zoteroRoam.interface.portal.div.querySelector('.zotero-roam-toast-overlay');
             toastOverlay.innerHTML = zoteroRoam.utils.renderBP3Toast(string = message, {toastClass: `bp3-intent-${intent}`});
+            toastOverlay.setAttribute('role', 'alert');
 
             toastOverlay.querySelector('.bp3-toast').style.opacity = "1";
             await zoteroRoam.utils.sleep(700);
             toastOverlay.querySelector('.bp3-toast').style.top = "-100px";
+            toastOverlay.removeAttribute('role');
 
         },
 
@@ -2854,6 +2883,7 @@ var zoteroRoam = {};
             dialogDiv.classList.add("bp3-dialog");
             if(zoteroRoam.config.params.theme){ dialogDiv.classList.add(zoteroRoam.config.params.theme) };
             dialogDiv.setAttribute("side-panel", "hidden");
+            dialogDiv.setAttribute('role', 'dialog');
             dialogDiv.style = dialogCSS;
             
             let dialogBody = document.createElement("div");
@@ -2896,6 +2926,9 @@ var zoteroRoam = {};
 
             let headerLeft = document.createElement('div');
             headerLeft.classList.add("header-left");
+            
+            // ARIA Labelling
+            dialogMainPanel.closest('[role="dialog"]').setAttribute('aria-labelledby', 'zr-related-dialogtitle');
 
             let headerRight = document.createElement('div');
             headerRight.classList.add("header-right");
@@ -3053,6 +3086,10 @@ var zoteroRoam = {};
             headerBottom.classList.add("header-bottom");
 
             let searchScope = document.createElement('span');
+            // ARIA Labelling
+            searchScope.id = "zr-library-search-dialogtitle";
+            dialogMainPanel.closest('[role="dialog"]').setAttribute('aria-labelledby', 'zr-library-search-dialogtitle');
+            
             searchScope.classList.add("zr-search-scope");
             searchScope.innerHTML = `Zotero library <span class="bp3-icon bp3-icon-chevron-right"></span>`;
 
@@ -3140,6 +3177,10 @@ var zoteroRoam = {};
             headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
+            // ARIA Labelling
+            panelTitle.id = 'zr-citations-search-dialogtitle';
+            dialogMainPanel.closest('[role="dialog"]').setAttribute('aria-labelledby', 'zr-citations-search-dialogtitle');
+            
             panelTitle.classList.add("panel-tt");
             panelTitle.innerText = "Citing Papers";
             
@@ -3167,6 +3208,8 @@ var zoteroRoam = {};
             searchBar.tabIndex = "1";
             searchBar.type = "text";
             searchBar.classList.add("bp3-input");
+            // ARIA Labelling
+            searchBar.setAttribute('aria-controls', 'zotero-roam-citations-pagination');
 
             headerBottom.appendChild(searchBar);
 
@@ -3262,8 +3305,8 @@ var zoteroRoam = {};
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
             <div class="bp3-button-group bp3-minimal">
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous"'})}
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next"'})}
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous" aria-controls="zotero-roam-citations-pagination"'})}
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" aria-controls="zotero-roam-citations-pagination"'})}
                 <span class="zotero-roam-citations-results-count zr-auxiliary"></span>
             </div>
             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
@@ -3308,6 +3351,100 @@ var zoteroRoam = {};
                 }
 
             });
+
+        },
+
+        fillDashboardOverlay(){
+            let dialogMainPanel = document.querySelector('.zotero-roam-dashboard .main-panel');
+            let tabs = [
+                {name: 'tag-manager', icon: 'tag', title: 'Tag Manager', description: 'Rename, merge, and delete tags'}
+            ];
+            
+            // Side Section
+
+            let sideSection = document.createElement('div');
+            sideSection.classList.add('side-section');
+
+            let bp3TabsList = document.createElement('div');
+            bp3TabsList.classList.add('bp3-tabs');
+            bp3TabsList.classList.add('bp3-vertical');
+
+            let tabList = document.createElement('ul');
+            tabList.classList.add('bp3-tab-list');
+            tabList.setAttribute('role', 'tablist');
+
+            tabs.forEach((tab, i) => {
+                tabList.innerHTML += `
+                <li class="bp3-tab" role="tab" name="${tab.name}" ${i == 0 ? 'aria-selected="true"' : ''}>
+                    <span class="bp3-icon bp3-icon-${tab.icon}"></span>
+                    ${tab.title}
+                </li>`
+            });
+
+            bp3TabsList.appendChild(tabs);
+            sideSection.appendChild(bp3TabsList);
+
+            // Main Section
+
+            let mainSection = document.createElement('div');
+            mainSection.classList.add('main-section');
+            
+            let controlsTop = document.createElement('div');
+            controlsTop.classList.add("controls-top");
+            controlsTop.classList.add("zr-auxiliary");
+            controlsTop.innerHTML = `
+            <button type="button" aria-label="Close" class="zotero-roam-overlay-close bp3-button bp3-minimal bp3-dialog-close-button bp3-large">
+            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
+            `;
+
+            mainSection.appendChild(controlsTop);
+
+            tabs.forEach((tab, i) => {
+                mainSection.innerHTML += `
+                <div class="bp3-tab-panel" role="tabpanel" name="${tab.name}" ${i == 0 ? '' : 'aria-hidden="true"'}>
+                    <h3 class="zr-highlight">${tab.title}</h3>
+                    <span class="zr-auxiliary">${tab.description}</span>
+                </div>
+                `;
+            });
+
+
+            dialogMainPanel.appendChild(sideSection);
+            dialogMainPanel.appendChild(mainSection);
+
+            let tagManager = document.querySelector('.zotero-roam-dashboard .bp3-tab-panel[name="tag-manager"]');
+            tagManager.innerHTML += `
+            <div class="zr-tag-panel-toolbar">
+                <div class="bp3-button-group bp3-minimal">
+                    <a class="bp3-button bp3-icon-sort-alphabetical bp3-active" tabindex="0" role="button">Name</a>
+                    <a class="bp3-button bp3-icon-sort-desc" tabindex="0" role="button">Most Used</a>
+                </div>
+                <div class="bp3-control-group">
+                    <div class="bp3-html-select bp3-minimal">
+                        <select>
+                            <option selected value="contains">Contains...</option>
+                            <option value="starts">Starts with...</option>
+                        </select>
+                        <span class="bp3-icon bp3-icon-caret-down"></span>
+                    </div>
+                    <input type="text" class="bp3-input" />
+                </div>
+            </div>
+            <div class="bp3-overlay zr-tag-panel-popover" zr-panel="tag-manager" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
+                <div class="bp3-dialog-container bp3-overlay-content">
+                    <div class="bp3-dialog" role="dialog">
+                        <div class="bp3-dialog-body"></div>
+                        <div class="bp3-dialog-footer"></div>
+                    </div>
+                </div>
+            </div>
+            <ul class="zr-tag-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
+            </ul>
+            <div class="zr-tag-stats">
+                <span class="zr-stats-zotero"></span>
+                <span class="zr-stats-roam"></span>
+            </div>
+            `;
 
         },
 
@@ -3605,7 +3742,7 @@ var zoteroRoam = {};
             let relation = (type == "added-on") ? `item${suffix} added on` : (type == "tagged-with" ? `item${suffix} tagged with` : `abstract${suffix} mentioning`);
             // Fill the dialog
             overlay.querySelector('.main-panel .header-left').innerHTML = `
-            <h5 class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
+            <h5 id="zr-related-dialogtitle" class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
             `;
             let papersInGraph = new Map(zoteroRoam.utils.getAllRefPages());
             let defaultSort = type == "added-on" ? "timestamp" : "meta";
@@ -4860,13 +4997,13 @@ var zoteroRoam = {};
                                     }
                                 });
                                 backlinksLib = "";
-                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
-                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
-                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `${papersInLib.length > 0 ? "" : "bp3-disabled"} bp3-minimal zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" aria-label="Show available references" ${citedDOIs.length > 0 ? "" : "disabled aria-disabled='true'"}`});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" aria-label="Show available citing papers" ${citingDOIs.length > 0 ? "" : "disabled aria-disabled='true'"}`});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `${papersInLib.length > 0 ? "" : "bp3-disabled"} bp3-minimal zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed", buttonAttribute: `aria-label="Show related items present in Zotero library" aria-controls="zr-backlinks-list-${itemCitekey}" ${papersInLib.length > 0 ? "" : "aria-disabled='true'"}`});
             
                                 if(papersInLib.length > 0){
                                     backlinksLib += `
-                                    <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled" style="display:none;">
+                                    <ul id="zr-backlinks-list-${itemCitekey}" class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled" style="display:none;">
                                     ${zoteroRoam.inPage.renderBacklinksList_year(papersInLib, origin_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "")}
                                     </ul>
                                     `
@@ -4967,7 +5104,7 @@ var zoteroRoam = {};
                         </a>
                     </div>
                     <div class="related_state">
-                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: `bp3-minimal zr-text-small ${intent} zotero-roam-page-menu-backlink-open-sidebar`, icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
+                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: `bp3-minimal zr-text-small ${intent} zotero-roam-page-menu-backlink-open-sidebar`, icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar" aria-label="Open @${paper.key} in the sidebar"`})}
                     </div>
                 </li>`;
             } else {
@@ -4979,7 +5116,7 @@ var zoteroRoam = {};
                     <span class="zotero-roam-search-item-title">${paper.data.title}</span>
                 </div>
                 <div class="related_state">
-                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal zr-text-small zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
+                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal zr-text-small zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" aria-label="Add & open @${paper.key} in the sidebar"`})}
                 </div>
                 </li>`
             }

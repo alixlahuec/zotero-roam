@@ -47,6 +47,9 @@
             // Create small dialog overlay
             zoteroRoam.interface.createOverlay(divClass = "zotero-roam-auxiliary", dialogCSS = "align-self:start;transition:0.5s;", useBackdrop = true, commonTag = "zotero-roam-dialog-small");
             zoteroRoam.interface.fillAuxiliaryOverlay();
+            // Create dashboard overlay
+            zoteroRoam.interface.createOverlay(divClass = "zotero-roam-dashboard");
+            zoteroRoam.interface.fillDashboardOverlay();
             // Create toast overlay
             zoteroRoam.interface.createToastOverlay();
         },
@@ -709,6 +712,100 @@
                 }
 
             });
+
+        },
+
+        fillDashboardOverlay(){
+            let dialogMainPanel = document.querySelector('.zotero-roam-dashboard .main-panel');
+            let tabs = [
+                {name: 'tag-manager', icon: 'tag', title: 'Tag Manager', description: 'Rename, merge, and delete tags'}
+            ];
+            
+            // Side Section
+
+            let sideSection = document.createElement('div');
+            sideSection.classList.add('side-section');
+
+            let bp3TabsList = document.createElement('div');
+            bp3TabsList.classList.add('bp3-tabs');
+            bp3TabsList.classList.add('bp3-vertical');
+
+            let tabList = document.createElement('ul');
+            tabList.classList.add('bp3-tab-list');
+            tabList.setAttribute('role', 'tablist');
+
+            tabs.forEach((tab, i) => {
+                tabList.innerHTML += `
+                <li class="bp3-tab" role="tab" name="${tab.name}" ${i == 0 ? 'aria-selected="true"' : ''}>
+                    <span class="bp3-icon bp3-icon-${tab.icon}"></span>
+                    ${tab.title}
+                </li>`
+            });
+
+            bp3TabsList.appendChild(tabs);
+            sideSection.appendChild(bp3TabsList);
+
+            // Main Section
+
+            let mainSection = document.createElement('div');
+            mainSection.classList.add('main-section');
+            
+            let controlsTop = document.createElement('div');
+            controlsTop.classList.add("controls-top");
+            controlsTop.classList.add("zr-auxiliary");
+            controlsTop.innerHTML = `
+            <button type="button" aria-label="Close" class="zotero-roam-overlay-close bp3-button bp3-minimal bp3-dialog-close-button bp3-large">
+            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
+            `;
+
+            mainSection.appendChild(controlsTop);
+
+            tabs.forEach((tab, i) => {
+                mainSection.innerHTML += `
+                <div class="bp3-tab-panel" role="tabpanel" name="${tab.name}" ${i == 0 ? '' : 'aria-hidden="true"'}>
+                    <h3 class="zr-highlight">${tab.title}</h3>
+                    <span class="zr-auxiliary">${tab.description}</span>
+                </div>
+                `;
+            });
+
+
+            dialogMainPanel.appendChild(sideSection);
+            dialogMainPanel.appendChild(mainSection);
+
+            let tagManager = document.querySelector('.zotero-roam-dashboard .bp3-tab-panel[name="tag-manager"]');
+            tagManager.innerHTML += `
+            <div class="zr-tag-panel-toolbar">
+                <div class="bp3-button-group bp3-minimal">
+                    <a class="bp3-button bp3-icon-sort-alphabetical bp3-active" tabindex="0" role="button">Name</a>
+                    <a class="bp3-button bp3-icon-sort-desc" tabindex="0" role="button">Most Used</a>
+                </div>
+                <div class="bp3-control-group">
+                    <div class="bp3-html-select bp3-minimal">
+                        <select>
+                            <option selected value="contains">Contains...</option>
+                            <option value="starts">Starts with...</option>
+                        </select>
+                        <span class="bp3-icon bp3-icon-caret-down"></span>
+                    </div>
+                    <input type="text" class="bp3-input" />
+                </div>
+            </div>
+            <div class="bp3-overlay zr-tag-panel-popover" zr-panel="tag-manager" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
+                <div class="bp3-dialog-container bp3-overlay-content">
+                    <div class="bp3-dialog" role="dialog">
+                        <div class="bp3-dialog-body"></div>
+                        <div class="bp3-dialog-footer"></div>
+                    </div>
+                </div>
+            </div>
+            <ul class="zr-tag-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
+            </ul>
+            <div class="zr-tag-stats">
+                <span class="zr-stats-zotero"></span>
+                <span class="zr-stats-roam"></span>
+            </div>
+            `;
 
         },
 

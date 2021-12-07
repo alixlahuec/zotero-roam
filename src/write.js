@@ -29,70 +29,93 @@
             }
         },
 
-        async postItemData(library, itemList){
+        async postItemData(library, dataList) {
             let outcome = {};
             try {
-              let req = await fetch(`https://api.zotero.org/${library.path}/items`, {
-                method: 'POST',
-                body: JSON.stringify(itemList),
-                headers: {
-                  'Zotero-API-Version': 3, 
-                  'Zotero-API-Key': library.apikey
-                },
-              });
-              if(req.ok == true){
-                let response = await req.json();
-                outcome = {
-                  success: true,
-                  data: response
+                let req = await fetch(`https://api.zotero.org/${library.path}/items`,
+                    {
+                        method: 'POST',
+                        body: JSON.stringify(dataList),
+                        headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey, 'If-Unmodified-Since-Version': library.version },
+                    });
+                if (req.ok == true) {
+                    let response = await req.json();
+                    outcome = {
+                        success: true,
+                        data: response
+                    }
+                } else {
+                    outcome = {
+                        success: false,
+                        response: req
+                    }
                 }
-              } else {
+
+            } catch (e) {
                 outcome = {
-                  success: false,
-                  response: req
+                    success: null,
+                    error: e
                 }
-              }
-              
-            } catch(e){
-              outcome = {
-                success: null,
-                error: e
-              }
             } finally {
-              return outcome;
+                return outcome;
             }
         },
 
-        async editTags(tags, library, into) {
-            let tagList = tags.filter(t => t.tag != into || (t.tag == into && t.meta.type == 1));
-            let itemList = [];
-
+        async editTags(library, tags, into) {
+            let tagNames = Array.from(new Set(tags.map(t => t.tag)));
+            let dataList = [];
             let libItems = zoteroRoam.data.items.filter(i => i.library.type + 's/' + i.library.id == library.path);
             libItems.forEach(i => {
                 let itemTags = i.data.tags;
-                let matched = false;
-
                 if (itemTags.length > 0) {
-                    for (let elem of tagList) {
-                        let has_tag = itemTags.find(t => t.tag == elem.tag && t.type == elem.meta.type);
-                        if (has_tag) {
-                            itemTags[has_tag] = { tag: into, type: 0 };
-                            matched = true;
-                        }
+                    // If the item already has the target tag, with type 0 (explicit or implicit) - remove it from the array before the filtering :
+                    let has_clean_tag = itemTags.findIndex(i => i.tag == into && (i.type == 0 || !i.type));
+                    if (has_clean_tag > -1) {
+                        itemTags.splice(has_clean_tag, 1);
                     }
-    
-                    if (matched) {
-                        itemList.push({
+                    // Compare the lengths of the tag arrays, before vs. after filtering out the tags to be renamed
+                    let cleanTags = itemTags.filter(t => !tagNames.includes(t.tag));
+                    if (cleanTags.length < itemTags.length) {
+                        // If they do not match (aka, there are tags to be removed/renamed), insert the target tag & add to the dataList
+                        cleanTags.push({ tag: into, type: 0 });
+                        dataList.push({
                             key: i.data.key,
-                            tags: itemTags
+                            tags: cleanTags
                         })
                     }
                 }
             });
 
-            return await zoteroRoam.write.postItemData(library, itemList);
+            return await zoteroRoam.write.postItemData(library, dataList);
+
         },
 
+        async deleteTags(library, tags) {
+            let tagList = tags.constructor === String ? encodeURIComponent(tags) : tags.map(t => encodeURIComponent(t)).join("||");
+            let outcome = {};
+            try {
+                let req = await fetch(`https://api.zotero.org/${library.path}/tags?tag=${tagList}`,
+                    {
+                        method: 'DELETE',
+                        headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey, 'If-Unmodified-Since-Version': library.version }
+                    });
+
+                outcome = {
+                    success: req.ok,
+                    response: req
+                }
+
+            } catch (e) {
+                outcome = {
+                    success: null,
+                    error: e
+                }
+            } finally {
+                return outcome;
+            }
+        },
+
+        // Not in use (playground)
         // TODO: Rewrite to support tag types
         async editItemTags(item, {add = [], remove = []} = {}){
             let currentTags = item.data.tags.map(t => t.tag);
@@ -103,6 +126,7 @@
             return patchReq;
         },
 
+        // Not in use (playground)
         // TODO: Rewrite to support tag types
         async toggleTags(item, tags = []){
             let itemTags = item.data.tags.map(t => t.tag);
