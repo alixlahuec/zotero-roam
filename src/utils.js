@@ -340,7 +340,7 @@
                 by: by
             }
             // Create a Pagination and render its contents
-            zoteroRoam.tagManager.pagination = new Pagination({data: zoteroRoam.tagManager.lists[libPath].data, itemsPerPage: 50, render: 'zoteroRoam.interface.renderTagList'});
+            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: zoteroRoam.tagManager.lists[libPath].data, itemsPerPage: 50, render: 'zoteroRoam.interface.renderTagList'});
             zoteroRoam.tagManager.pagination.renderResults();
         },
 
