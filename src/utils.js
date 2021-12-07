@@ -276,7 +276,7 @@
         },
 
         renderTagList(tagList = zoteroRoam.tagManager.pagination.getCurrentPageData()) {
-            let datalist = document.querySelector('.zr-tag-panel-datalist[zr-panel="tag-manager"]');
+            let datalist = document.querySelector('.zr-tab-panel-datalist[zr-panel="tag-manager"]');
 
             // TODO: Add detection of sort, then match with zoteroRoam.tagManager.activeDisplay.by
             // If discrepant, sort tagList and update zoteroRoam.tagManager.activeDisplay.by (and, at later stage, include the Pagination step)
@@ -340,7 +340,7 @@
                 by: by
             }
             // Create a Pagination and render its contents
-            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: zoteroRoam.tagManager.lists[libPath].data, itemsPerPage: 50, render: 'zoteroRoam.interface.renderTagList'});
+            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: zoteroRoam.tagManager.lists[libPath].data, itemsPerPage: 50, render: 'zoteroRoam.utils.renderTagList'});
             zoteroRoam.tagManager.pagination.renderResults();
         },
 

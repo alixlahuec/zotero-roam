@@ -722,7 +722,6 @@
             ];
             
             // Side Section
-
             let sideSection = document.createElement('div');
             sideSection.classList.add('side-section');
 
@@ -746,23 +745,19 @@
             sideSection.appendChild(bp3TabsList);
 
             // Main Section
-
             let mainSection = document.createElement('div');
             mainSection.classList.add('main-section');
-            
-            let controlsTop = document.createElement('div');
-            controlsTop.classList.add("controls-top");
-            controlsTop.classList.add("zr-auxiliary");
-            controlsTop.innerHTML = `
-            <button type="button" aria-label="Close" class="zotero-roam-overlay-close bp3-button bp3-minimal bp3-dialog-close-button bp3-large">
-            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
-            `;
-
-            mainSection.appendChild(controlsTop);
 
             tabs.forEach((tab, i) => {
                 mainSection.innerHTML += `
                 <div class="bp3-tab-panel" role="tabpanel" name="${tab.name}" ${i == 0 ? '' : 'aria-hidden="true"'}>
+                    <div class="zr-tab-panel-header">
+                        <span class="zr-auxiliary">${tab.description}</span>
+                        <div class="controls-top zr-auxiliary">
+                            <button type="button" aria-label="Close" class="zotero-roam-overlay-close bp3-button bp3-minimal bp3-dialog-close-button bp3-large">
+                            <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
+                        </div>
+                    </div>
                 </div>
                 `;
             });
@@ -789,7 +784,7 @@
                     <input type="text" class="bp3-input" spellcheck='false' autocomplete='off' />
                 </div>
             </div>
-            <div class="bp3-overlay zr-tag-panel-popover" zr-panel="tag-manager" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
+            <div class="bp3-overlay zr-tab-panel-popover" zr-panel="tag-manager" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
                 <div class="bp3-dialog-container bp3-overlay-content">
                     <div class="bp3-dialog" role="dialog">
                         <div class="bp3-dialog-body"></div>
