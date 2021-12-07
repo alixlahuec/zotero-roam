@@ -394,13 +394,13 @@
                                     }
                                 });
                                 backlinksLib = "";
-                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citedDOIs.length > 0 ? "" : "disabled"}`});
-                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" ${citingDOIs.length > 0 ? "" : "disabled"}`});
-                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `${papersInLib.length > 0 ? "" : "bp3-disabled"} bp3-minimal zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed"});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.references.length > 0 ? citeObject.references.length : "No"} references`, {buttonClass: "bp3-minimal bp3-intent-primary zotero-roam-page-menu-references-total", icon: "citation", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" aria-label="Show available references" ${citedDOIs.length > 0 ? "" : "disabled aria-disabled='true'"}`});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${citeObject.citations.length > 0 ? citeObject.citations.length : "No"} citing papers`, {buttonClass: "bp3-minimal bp3-intent-warning zotero-roam-page-menu-backlinks-total", icon: "chat", buttonAttribute: `data-doi="${itemDOI}" data-citekey="${itemCitekey}" aria-label="Show available citing papers" ${citingDOIs.length > 0 ? "" : "disabled aria-disabled='true'"}`});
+                                backlinksLib += zoteroRoam.utils.renderBP3Button_group(string = `${papersInLib.length > 0 ? papersInLib.length : "No"} related library items`, {buttonClass: `${papersInLib.length > 0 ? "" : "bp3-disabled"} bp3-minimal zotero-roam-page-menu-backlinks-button`, icon: "caret-down bp3-icon-standard rm-caret rm-caret-closed", buttonAttribute: `aria-label="Show related items present in Zotero library" aria-controls="zr-backlinks-list-${itemCitekey}" ${papersInLib.length > 0 ? "" : "aria-disabled='true'"}`});
             
                                 if(papersInLib.length > 0){
                                     backlinksLib += `
-                                    <ul class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled" style="display:none;">
+                                    <ul id="zr-backlinks-list-${itemCitekey}" class="zotero-roam-page-menu-backlinks-list bp3-list-unstyled" style="display:none;">
                                     ${zoteroRoam.inPage.renderBacklinksList_year(papersInLib, origin_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "")}
                                     </ul>
                                     `
@@ -501,7 +501,7 @@
                         </a>
                     </div>
                     <div class="related_state">
-                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: `bp3-minimal zr-text-small ${intent} zotero-roam-page-menu-backlink-open-sidebar`, icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar"`})}
+                        ${zoteroRoam.utils.renderBP3Button_group(string = "", {buttonClass: `bp3-minimal zr-text-small ${intent} zotero-roam-page-menu-backlink-open-sidebar`, icon: "inheritance", buttonAttribute: `data-uid="${uid}" title="Open in sidebar" aria-label="Open @${paper.key} in the sidebar"`})}
                     </div>
                 </li>`;
             } else {
@@ -513,7 +513,7 @@
                     <span class="zotero-roam-search-item-title">${paper.data.title}</span>
                 </div>
                 <div class="related_state">
-                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal zr-text-small zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar"`})}
+                    ${zoteroRoam.utils.renderBP3Button_group(string = `@${paper.key}`, {buttonClass: `bp3-minimal zr-text-small zotero-roam-page-menu-backlink-add-sidebar`, icon: "plus", buttonAttribute: `data-title="@${paper.key}" title="Add & open in sidebar" aria-label="Add & open @${paper.key} in the sidebar"`})}
                 </div>
                 </li>`
             }
