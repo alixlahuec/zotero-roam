@@ -239,6 +239,7 @@
             dialogDiv.classList.add("bp3-dialog");
             if(zoteroRoam.config.params.theme){ dialogDiv.classList.add(zoteroRoam.config.params.theme) };
             dialogDiv.setAttribute("side-panel", "hidden");
+            dialogDiv.setAttribute('role', 'dialog');
             dialogDiv.style = dialogCSS;
             
             let dialogBody = document.createElement("div");
@@ -281,6 +282,9 @@
 
             let headerLeft = document.createElement('div');
             headerLeft.classList.add("header-left");
+            
+            // ARIA Labelling
+            dialogMainPanel.closest('[role="dialog"]').setAttribute('aria-labelledby', 'zr-related-dialogtitle');
 
             let headerRight = document.createElement('div');
             headerRight.classList.add("header-right");
@@ -438,6 +442,10 @@
             headerBottom.classList.add("header-bottom");
 
             let searchScope = document.createElement('span');
+            // ARIA Labelling
+            searchScope.id = "zr-library-search-dialogtitle";
+            dialogMainPanel.closest('[role="dialog"]').setAttribute('aria-labelledby', 'zr-library-search-dialogtitle');
+            
             searchScope.classList.add("zr-search-scope");
             searchScope.innerHTML = `Zotero library <span class="bp3-icon bp3-icon-chevron-right"></span>`;
 
@@ -525,6 +533,10 @@
             headerLeft.classList.add("header-left");
 
             let panelTitle = document.createElement('h5');
+            // ARIA Labelling
+            panelTitle.id = 'zr-citations-search-dialogtitle';
+            dialogMainPanel.closest('[role="dialog"]').setAttribute('aria-labelledby', 'zr-citations-search-dialogtitle');
+            
             panelTitle.classList.add("panel-tt");
             panelTitle.innerText = "Citing Papers";
             
@@ -990,7 +1002,7 @@
             let relation = (type == "added-on") ? `item${suffix} added on` : (type == "tagged-with" ? `item${suffix} tagged with` : `abstract${suffix} mentioning`);
             // Fill the dialog
             overlay.querySelector('.main-panel .header-left').innerHTML = `
-            <h5 class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
+            <h5 id="zr-related-dialogtitle" class="panel-tt" list-type="${type}">${keys.length} ${relation} ${title}</h5>
             `;
             let papersInGraph = new Map(zoteroRoam.utils.getAllRefPages());
             let defaultSort = type == "added-on" ? "timestamp" : "meta";
