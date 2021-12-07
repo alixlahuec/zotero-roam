@@ -1,7 +1,7 @@
 ;(()=>{
     zoteroRoam.events = {
         /**
-         * Signals the extensiom has loaded successfully
+         * Signals the extension has loaded successfully
          * @event zotero-roam:ready
          */
         'ready': {},
@@ -85,6 +85,7 @@
             });
 
             document.addEventListener("zotero-roam:update", async function(e){
+                // Refresh DOM elements on the page
                 let updatedItems = e.detail.data ? e.detail.data.items : [];
                 if(updatedItems.length > 0){
                     for(item of updatedItems){
@@ -193,8 +194,16 @@
                         
                     }
                 }
+                // Refresh tag lists
+                zoteroRoam.utils.refreshTagLists();
                 // --- Deleted items
-            })
+            });
+
+            document.addEventListener("zotero-roam:ready", (e) => {
+                // Create tag lists
+                zoteroRoam.utils.refreshTagLists();
+                zoteroRoam.utils.updateTagPagination(libPath = Array.from(zoteroRoam.data.libraries.keys())[0]);
+            });
         }
     }
 })();

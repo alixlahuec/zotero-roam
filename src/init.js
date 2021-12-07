@@ -41,9 +41,11 @@ var zoteroRoam = {};
          * @param {Object} obj - An object containing pagination settings
          * @param {Array} obj.data - The dataset to be paginated
          * @param {Integer} obj.itemsPerPage - The number of items for each page
+         * @param {String} obj.render - The function to use to render results
          */
         Pagination: function(obj){
             this.data = obj.data;
+            this.renderFunction = obj.render;
             this.itemsPerPage = obj.itemsPerPage || zoteroRoam.config.params.citations.itemsPerPage;
             this.currentPage = 1;
             this.nbPages = Math.ceil(this.data.length / this.itemsPerPage);
@@ -65,14 +67,18 @@ var zoteroRoam = {};
                 this.currentPage -= 1;
                 if(this.currentPage < 1){ this.currentPage = 1};
                 this.updateStartIndex();
-                zoteroRoam.interface.renderCitationsPagination();
+                this.renderResults();
             }
 
             this.nextPage = function(){
                 this.currentPage += 1;
                 if(this.currentPage > this.nbPages){ this.currentPage = this.nbPages};
                 this.updateStartIndex();
-                zoteroRoam.interface.renderCitationsPagination();
+                this.renderResults();
+            }
+
+            this.renderResults = function(){
+                zoteroRoam.utils.executeFunctionByName(this.renderFunction, window);
             }
         },
         
@@ -89,6 +95,8 @@ var zoteroRoam = {};
         webImport: {currentBlock: null, activeImport: null},
         
         tagSelection: {cit_panel: null, aux_panel: null},
+
+        tagManager: {lists: {}, pagination: null, activeDisplay: {library: null, by: 'alphabetical'}},
         
         config: {
             /** autoComplete configuration for the library search panel */
@@ -309,14 +317,14 @@ var zoteroRoam = {};
                     input: {
                         results: (event) => {
                             if(event.detail.results.length > 0){
-                                zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: event.detail.results.map(res => res.value)});
+                                zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: event.detail.results.map(res => res.value), render: 'zoteroRoam.interface.renderCitationsPagination'});
                                 zoteroRoam.interface.renderCitationsPagination();
                             } else {
                                 let paginationDiv = document.querySelector("#zotero-roam-citations-pagination");
                                 paginationDiv.closest('.main-panel').querySelector(".zotero-roam-citations-results-count").innerHTML = `
                                 <strong>No results</strong> for ${event.detail.query}
                                 `;
-                                zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: []});
+                                zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: [], render: 'zoteroRoam.interface.renderCitationsPagination'});
                                 let paginatedList = paginationDiv.querySelector("ul");
                                 paginatedList.innerHTML = ``;
                             }
@@ -704,15 +712,25 @@ var zoteroRoam = {};
             .zr-explo-publication, .zr-explo-abstract{display:block;white-space:break-spaces;}
             .zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
             .zotero-roam-search-item-authors, .zotero-roam-citation-origin {padding-right: 8px;}
+            .zotero-roam-dashboard-overlay .main-panel {display: flex;}
+            .zotero-roam-dashboard-overlay .side-section, .zotero-roam-dashboard-overlay .main-section {padding:15px;}
+            .zotero-roam-dashboard-overlay .side-section {flex: 1 0 20%;}
+            .zotero-roam-dashboard-overlay .main-section {flex: 1 0 80%;}
+            .zotero-roam-dashboard-overlay .side-section .bp3-tab-list {width: 100%;}
+            .zotero-roam-dashboard .bp3-tab-panel {display: flex;flex-wrap: wrap;justify-content: space-between;margin-top: 0px;}
+            .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;}
+            .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button, .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button::before, .zr-tab-panel-toolbar > .bp3-control-group select {font-size: 0.9em;}
+            .zr-tab-panel-toolbar {box-shadow: none;opacity:0.5;}
+            .zr-tab-panel-datalist {flex: 0 0 100%;}
             [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
             [data-token]:last-child{border-bottom:1px white solid;}
             [data-token] .bp3-menu-item {justify-content:space-between;align-items:baseline;width:100%;}
             [data-token] [role="title"] {font-weight:600;margin-right:15px;}
             [data-token] [role="title"]::before {content: '# '}
             [data-token] [role="taglist"] {margin:5px;}
-            [data-token] [data-tag] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
-            [data-token] [data-tag-type] {color: #e1881a;background-color: #fff5e7;}
-            [data-token] [data-uid] {color: #48a5e7;background-color: #e7f5ff;}
+            [data-tag-source] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
+            [data-tag-source="zotero"] {color: #e1881a;background-color: #fff5e7;}
+            [data-tag-source="roam"] {color: #48a5e7;background-color: #e7f5ff;}
             [data-token] .bp3-active {opacity:0.6;}
             [data-token]:hover .bp3-active {opacity:1;transition:0.3s;}
             .zr-highlight {color: #206fe6;}

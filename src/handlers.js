@@ -304,8 +304,9 @@
                     }; 
                 });
                 let libList = Array.from(new Set(requests.map(rq => rq.library)));
-                libList.forEach(libPath => {
+                libList.forEach((libPath, i) => {
                     zoteroRoam.data.libraries.set(libPath, {path: libPath, version: "0", apikey: requests.find(rq => rq.library == libPath).apikey});
+                    zoteroRoam.tagManager.lists[libPath] = {data: [], lastUpdated: "0"}
                 });
                 zoteroRoam.config.requests = requests;
             }

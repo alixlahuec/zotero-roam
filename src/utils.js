@@ -275,33 +275,38 @@
             }
         },
 
-        renderTagList(tagList){
-          return tagList.map(tk => {
-              let is_singleton = tk.zotero.length == 1 && (tk.roam.length == 0 || (tk.roam.length == 1 && tk.zotero[0].tag == tk.roam[0].title));
-              let label = tk.token;
-              let elemList = ``;
-              let primary_action = "Merge";
-              let primary_icon = "git-merge";
+        renderTagList(tagList = zoteroRoam.tagManager.pagination.getCurrentPageData()) {
+            let datalist = document.querySelector('.zr-tag-panel-datalist[zr-panel="tag-manager"]');
 
-              if(is_singleton){
-                  label = tk.zotero[0].tag;
-                  primary_action = "Edit";
-                  primary_icon = "edit";
-              } else {
-                  elemList = `
+            // TODO: Add detection of sort, then match with zoteroRoam.tagManager.activeDisplay.by
+            // If discrepant, sort tagList and update zoteroRoam.tagManager.activeDisplay.by (and, at later stage, include the Pagination step)
+
+            datalist.innerHTML = tagList.map(tk => {
+                let is_singleton = tk.zotero.length == 1 && (tk.roam.length == 0 || (tk.roam.length == 1 && tk.zotero[0].tag == tk.roam[0].title));
+                let label = tk.token;
+                let elemList = ``;
+                let primary_action = "Merge";
+                let primary_icon = "git-merge";
+
+                if (is_singleton) {
+                    label = tk.zotero[0].tag;
+                    primary_action = "Edit";
+                    primary_icon = "edit";
+                } else {
+                    elemList = `
                   <div role="taglist" class="zr-text-small">
-                  ${tk.roam.map(pg => `<span data-tag="${pg.title}" data-uid="${pg.uid}">${pg.title}</span>`).join("\n")}
-                  ${tk.zotero.map(el => `<span data-tag="${el.tag}" data-tag-type="${el.type || ''}">${el.tag} (${el.meta.numItems})</span>`).join("\n")}
+                  ${tk.roam.map(pg => `<span data-tag-source="roam" data-tag="${pg.title}" data-uid="${pg.uid}">${pg.title}</span>`).join("\n")}
+                  ${tk.zotero.map(el => `<span data-tag-source="zotero" data-tag="${el.tag}" data-tag-type="${el.type || ''}">${el.tag} (${el.meta.numItems})</span>`).join("\n")}
                   </div>
                   `
-              }
+                }
 
-              return `
+                return `
               <li role="option" class="zotero-roam-list-item" data-token="${tk.token}">
                 <div class="bp3-menu-item">
                     <div style="flex:1 1 80%;">
                         <span role="title">${label}</span>
-                        <span class="zr-auxiliary">${zoteroRoam.utils.getTagUsage(tk, {count_roam: false})} items</span>
+                        <span class="zr-auxiliary">${zoteroRoam.utils.getTagUsage(tk, { count_roam: false })} items</span>
                         ${elemList}
                     </div>
                     <span class="bp3-menu-item-label zotero-roam-list-item-key">
@@ -312,8 +317,31 @@
                     </span>
                 </div>
               </li>
-              `
-          }).join("\n");
+              `;
+            }).join("\n");
+        },
+
+        refreshTagLists(paths = Object.keys(zoteroRoam.data.tags)){
+            paths.forEach(libPath => {
+                let latest_lib = zoteroRoam.data.libraries.get(libPath).version;
+                let latest_tagList = zoteroRoam.tagManager.lists[libPath].lastUpdated;
+                if(Number(latest_lib) > Number(latest_tagList)){
+                    // Only if the library's latest version has increased, refresh the tag list for that library
+                    zoteroRoam.tagManager.lists[libPath].data = zoteroRoam.utils.makeTagList(zoteroRoam.data.tags[libPath]);
+                    zoteroRoam.tagManager.lists[libPath].lastUpdated = latest_lib;
+                }
+            });
+        },
+
+        updateTagPagination(libPath, by = "alphabetical"){
+            // Set parameters of active display
+            zoteroRoam.tagManager.activeDisplay = {
+                library: zoteroRoam.data.libraries.get(libPath),
+                by: by
+            }
+            // Create a Pagination and render its contents
+            zoteroRoam.tagManager.pagination = new Pagination({data: zoteroRoam.tagManager.lists[libPath].data, itemsPerPage: 50, render: 'zoteroRoam.interface.renderTagList'});
+            zoteroRoam.tagManager.pagination.renderResults();
         },
 
         makeDNP(date, {brackets = true} = {}){

@@ -718,7 +718,7 @@
         fillDashboardOverlay(){
             let dialogMainPanel = document.querySelector('.zotero-roam-dashboard-overlay .main-panel');
             let tabs = [
-                {name: 'tag-manager', icon: 'tag', title: 'Tag Manager', description: 'Rename, merge, and delete tags'}
+                {name: 'tag-manager', icon: 'tag', title: 'Tag Manager', description: 'Rename, merge, and delete tags - harmonize tags between <span data-tag-source="roam">Roam</span> and <span data-tag-source="zotero">Zotero</span>'}
             ];
             
             // Side Section
@@ -763,8 +763,6 @@
             tabs.forEach((tab, i) => {
                 mainSection.innerHTML += `
                 <div class="bp3-tab-panel" role="tabpanel" name="${tab.name}" ${i == 0 ? '' : 'aria-hidden="true"'}>
-                    <h3 class="zr-highlight">${tab.title}</h3>
-                    <span class="zr-auxiliary">${tab.description}</span>
                 </div>
                 `;
             });
@@ -775,7 +773,7 @@
 
             let tagManager = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"]');
             tagManager.innerHTML += `
-            <div class="zr-tag-panel-toolbar">
+            <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
                     <a class="bp3-button bp3-icon-sort-alphabetical bp3-active" tabindex="0" role="button">Name</a>
                     <a class="bp3-button bp3-icon-sort-desc" tabindex="0" role="button">Most Used</a>
@@ -788,7 +786,7 @@
                         </select>
                         <span class="bp3-icon bp3-icon-caret-down"></span>
                     </div>
-                    <input type="text" class="bp3-input" />
+                    <input type="text" class="bp3-input" spellcheck='false' autocomplete='off' />
                 </div>
             </div>
             <div class="bp3-overlay zr-tag-panel-popover" zr-panel="tag-manager" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
@@ -799,7 +797,7 @@
                     </div>
                 </div>
             </div>
-            <ul class="zr-tag-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
+            <ul class="zr-tab-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
             </ul>
             <div class="zr-tag-stats">
                 <span class="zr-stats-zotero"></span>
@@ -1074,7 +1072,7 @@
                 }
             });
             
-            zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData});
+            zoteroRoam.citations.pagination = new zoteroRoam.Pagination({data: fullData, render: 'zoteroRoam.interface.renderCitationsPagination'});
             // Render HTML for pagination
             zoteroRoam.interface.renderCitationsPagination();
             // Setup autocomplete
