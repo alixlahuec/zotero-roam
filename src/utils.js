@@ -276,7 +276,7 @@
         },
 
         renderTagList(tagList = zoteroRoam.tagManager.pagination.getCurrentPageData()) {
-            let datalist = document.querySelector('.zr-tab-panel-datalist[zr-panel="tag-manager"]');
+            let datalist = document.getElementById('zr-tag-manager-pagination');
 
             // TODO: Add detection of sort, then match with zoteroRoam.tagManager.activeDisplay.by
             // If discrepant, sort tagList and update zoteroRoam.tagManager.activeDisplay.by (and, at later stage, include the Pagination step)
@@ -287,6 +287,7 @@
                 let elemList = ``;
                 let primary_action = "Merge";
                 let primary_icon = "git-merge";
+                let usage = zoteroRoam.utils.getTagUsage(tk, { count_roam: false });
 
                 if (is_singleton) {
                     label = tk.zotero[0].tag;
@@ -302,22 +303,22 @@
                 }
 
                 return `
-              <li role="option" class="zotero-roam-list-item" data-token="${tk.token}">
-                <div class="bp3-menu-item">
-                    <div style="flex:1 1 80%;">
-                        <span role="title">${label}</span>
-                        <span class="zr-auxiliary">${zoteroRoam.utils.getTagUsage(tk, { count_roam: false })} items</span>
-                        ${elemList}
-                    </div>
-                    <span class="bp3-menu-item-label zotero-roam-list-item-key">
-                        <div class="bp3-button-group bp3-minimal bp3-small bp3-active zr-text-small">
-                            <a class="bp3-button bp3-intent-primary bp3-icon-${primary_icon}"><span class="bp3-button-text">${primary_action}</span></a>
-                            <a class="bp3-button bp3-intent-danger"><span class="bp3-button-text">Delete</span></a>
+                <li role="option" class="zotero-roam-list-item" data-token="${tk.token}">
+                    <div class="bp3-menu-item">
+                        <div style="flex:1 1 80%;">
+                            <span role="title">${label}</span>
+                            <span class="zr-auxiliary zr-text-small">${usage} item${usage > 1 ? 's' : ''}</span>
+                            ${elemList}
                         </div>
-                    </span>
-                </div>
-              </li>
-              `;
+                        <span class="bp3-menu-item-label zotero-roam-list-item-key">
+                            <div class="bp3-button-group bp3-minimal bp3-small bp3-active zr-text-small">
+                                <a class="bp3-button bp3-intent-primary bp3-icon-${primary_icon}"><span class="bp3-button-text">${primary_action}</span></a>
+                                <a class="bp3-button bp3-intent-danger"><span class="bp3-button-text">Delete</span></a>
+                            </div>
+                        </span>
+                    </div>
+                </li>
+                `;
             }).join("\n");
         },
 
@@ -340,7 +341,7 @@
                 by: by
             }
             // Create a Pagination and render its contents
-            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: zoteroRoam.tagManager.lists[libPath].data, itemsPerPage: 50, render: 'zoteroRoam.utils.renderTagList'});
+            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: zoteroRoam.tagManager.lists[libPath].data, itemsPerPage: 30, render: 'zoteroRoam.utils.renderTagList'});
             zoteroRoam.tagManager.pagination.renderResults();
         },
 

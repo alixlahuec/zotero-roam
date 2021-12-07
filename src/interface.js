@@ -96,6 +96,8 @@
                     }
                 } else if(e.target.closest('[zr-import]')){
                     zoteroRoam.interface.handleImportPanelClicks(e);
+                } else if(e.target.closest('.zotero-roam-page-control')){
+                    zoteroRoam.interface.changePage(pagination = control.getAttribute('pagination'), goto = control.getAttribute("goto"));
                 }
             })
         },
@@ -666,8 +668,8 @@
             footerActions.classList.add("bp3-dialog-footer-actions");
             footerActions.innerHTML = `
             <div class="bp3-button-group bp3-minimal">
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous" aria-controls="zotero-roam-citations-pagination"'})}
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" aria-controls="zotero-roam-citations-pagination"'})}
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous" pagination="citations" aria-controls="zotero-roam-citations-pagination"'})}
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" pagination="citations" aria-controls="zotero-roam-citations-pagination"'})}
                 <span class="zotero-roam-citations-results-count zr-auxiliary"></span>
             </div>
             <input class="bp3-input clipboard-copy-utility" type="text" readonly style="opacity:0;">
@@ -679,11 +681,6 @@
             zoteroRoam.interface.citations.overlay = document.querySelector(`.${divClass}-overlay`);
             zoteroRoam.interface.citations.input = document.querySelector("#zotero-roam-citations-autocomplete");
             zoteroRoam.interface.citations.closeButton = document.querySelector(`.${divClass}-overlay button.zotero-roam-overlay-close`);
-
-            // Rigging page controls
-            Array.from(zoteroRoam.interface.citations.overlay.querySelectorAll(".zotero-roam-page-control")).forEach(control => {
-                control.addEventListener("click", (e) => { zoteroRoam.interface.changePage(goto = control.getAttribute("goto")) });
-            });
 
             // Rigging pagination div
             pagination.addEventListener("click", function(e){
@@ -718,7 +715,7 @@
         fillDashboardOverlay(){
             let dialogMainPanel = document.querySelector('.zotero-roam-dashboard-overlay .main-panel');
             let tabs = [
-                {name: 'tag-manager', icon: 'tag', title: 'Tag Manager', description: 'Rename, merge, and delete tags - harmonize tags between <span data-tag-source="roam">Roam</span> and <span data-tag-source="zotero">Zotero</span>'}
+                {name: 'tag-manager', icon: 'tag', title: 'Tag Manager', description: 'Rename, merge, and delete tags between <span data-tag-source="roam">Roam</span> and <span data-tag-source="zotero">Zotero</span>'}
             ];
             
             // Side Section
@@ -752,11 +749,13 @@
                 mainSection.innerHTML += `
                 <div class="bp3-tab-panel" role="tabpanel" name="${tab.name}" ${i == 0 ? '' : 'aria-hidden="true"'}>
                     <div class="zr-tab-panel-header">
-                        <span class="zr-auxiliary">${tab.description}</span>
-                        <div class="controls-top zr-auxiliary">
+                        <span class="zr-tab-panel-description zr-auxiliary">${tab.description}</span>
+                        <div class="zr-auxiliary">
                             <button type="button" aria-label="Close" class="zotero-roam-overlay-close bp3-button bp3-minimal bp3-dialog-close-button bp3-large">
                             <span icon="small-cross" class="bp3-icon bp3-icon-small-cross"></span></button>
                         </div>
+                    </div>
+                    <div class="zr-tab-panel-contents">
                     </div>
                 </div>
                 `;
@@ -766,7 +765,7 @@
             dialogMainPanel.appendChild(sideSection);
             dialogMainPanel.appendChild(mainSection);
 
-            let tagManager = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"]');
+            let tagManager = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-contents');
             tagManager.innerHTML += `
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
@@ -792,8 +791,13 @@
                     </div>
                 </div>
             </div>
-            <ul class="zr-tab-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
+            <ul id="zr-tag-manager-pagination" class="zr-tab-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
             </ul>
+            <div class="bp3-button-group bp3-minimal">
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
+                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
+                <span class="zotero-roam-tag-list-count zr-auxiliary"></span>
+            </div>
             <div class="zr-tag-stats">
                 <span class="zr-stats-zotero"></span>
                 <span class="zr-stats-roam"></span>
@@ -1038,16 +1042,17 @@
             }
         },
 
-        changePage(goto){
-            if(zoteroRoam.citations.pagination !== null){
-                if(zoteroRoam.citations.pagination.nbPages > 0){
+        changePage(pagination, goto){
+            let pag = pagination == "citations" ? zoteroRoam.citations.pagination : zoteroRoam.tagManager.pagination;
+            if(pag !== null){
+                if(pag.nbPages > 0){
                     switch(goto){
-                    case "previous":
-                        zoteroRoam.citations.pagination.previousPage();
-                        break;
-                    case "next":
-                        zoteroRoam.citations.pagination.nextPage();
-                        break;
+                        case "previous":
+                            pag.previousPage();
+                            break;
+                        case "next":
+                            pag.nextPage();
+                            break;
                     }
                 }
             }
