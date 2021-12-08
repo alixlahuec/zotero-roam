@@ -1070,10 +1070,10 @@ var zoteroRoam = {};
             }).reduce((out, tk) => {
                 out.nTags += tk.nTags;
                 out.nAuto += tk.nAuto;
-                out.nRoam += in_roam;
+                out.nRoam += tk.in_roam;
                 return out;
             }, 
-            {nTags: 0, nAuto: 0, nRoam})
+            {nTags: 0, nAuto: 0, nRoam: 0})
         },
 
         sortTagList(tagList, by = "alphabetical"){
