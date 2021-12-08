@@ -18,11 +18,11 @@
             return blockUID;
         },
 
-        categorizeTags(zdata, tagMap, rdata){
+        categorizeTags(z_data, tagMap, r_data){
             let output = [];
           
-            zdata = zdata.sort((a,b) => a > b ? -1 : 1);
-            rdata = rdata.sort((a,b) => a.title > b.title ? -1 : 1);
+            let zdata = [...z_data].sort((a,b) => a > b ? -1 : 1);
+            let rdata = [...r_data].sort((a,b) => a.title > b.title ? -1 : 1);
           
             for(let elem of zdata){
               let in_table = output.findIndex(tk => zoteroRoam.utils.searchEngine(elem, tk.token, {match: "exact"}));
@@ -252,8 +252,8 @@
             let zkeys = Object.keys(zdict).sort((a,b) => a < b ? -1 : 1);
           
             return zkeys.map(key => {
-              let rdata = zoteroRoam.utils.getSelectPages(Array.from(new Set([key, key.toUpperCase()])));
-              return zoteroRoam.utils.categorizeTags(zdict[key], tagMap, rdata);
+              let r_data = zoteroRoam.utils.getSelectPages(Array.from(new Set([key, key.toUpperCase()])));
+              return zoteroRoam.utils.categorizeTags(zdict[key], tagMap, r_data);
             }).flat(1);
         },
 
@@ -278,16 +278,17 @@
         },
 
         sortTagList(tagList, by = "alphabetical"){
+            let arr = [...tagList];
             switch(by){
                 case "usage":
-                    return tagList.sort((a,b) => {
+                    return arr.sort((a,b) => {
                         return zoteroRoam.utils.getTagUsage(a) > zoteroRoam.utils.getTagUsage(b) ? -1 : 1;
                     });
                 case "roam":
-                    return tagList.sort((a,b) => a.roam.length > b.roam.length ? -1 : 1);
+                    return arr.sort((a,b) => a.roam.length > b.roam.length ? -1 : 1);
                 case "alphabetical":
                 default:
-                    return tagList;
+                    return arr;
             }
         },
 
@@ -847,7 +848,7 @@
         sortCollectionsList(arr){
             if(arr.length > 0){
                 // Sort collections A-Z
-                arr = arr.sort((a,b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
+                arr = [...arr].sort((a,b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
                 let orderedArray = [];
                 let topColls = arr.filter(cl => !cl.data.parentCollection);
                 topColls.forEach((cl, i) => { topColls[i].depth = 0 });

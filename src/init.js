@@ -115,7 +115,7 @@ var zoteroRoam = {};
                     /** @returns {Array} The results, filtered in the order of the 'keys' parameter above, and sorted by authors ascending */
                     filter: (list) => {
                         // Records are ranked (by key name) => _multiField should come last
-                        var sortedMatches = list.sort((a,b) => {
+                        var sortedMatches = [...list].sort((a,b) => {
                             return zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == a.key) < zoteroRoam.config.autoComplete.data.keys.findIndex(key => key == b.key) ? -1 : 1;
                         });
                         // Make sure to return only one result per item in the dataset, by gathering all indices & returning only the first match for that index
@@ -358,7 +358,7 @@ var zoteroRoam = {};
                         keys: ['title'],
                         /** @returns {Array} The list of existing Roam pages, with the current query always at the top */
                         filter: (list) => {
-                            return list.sort((a,b) => {
+                            return [...list].sort((a,b) => {
                                 if(a.value.identity && a.value.identity == "self"){
                                     return -1000;
                                 } else {
