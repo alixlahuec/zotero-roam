@@ -793,7 +793,7 @@
                     ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
                     <span class="zotero-roam-tag-list-count zr-auxiliary"></span>
                 </div>
-                <span class="zr-tag-stats"></span>
+                <span class="zr-tag-stats zr-auxiliary zr-text-small"></span>
             </div>
             `;
 

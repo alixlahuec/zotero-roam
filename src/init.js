@@ -582,7 +582,7 @@ var zoteroRoam = {};
             .zotero-roam-citation-link{padding-right: 10px;}
             .zotero-roam-library-results-count:empty {padding: 0px;}
             .zotero-roam-library-results-count{display:block;padding:min(6px, 0.2em) 0;}
-            .zotero-roam-citations-results-count {padding: 6px 10px;}
+            .zotero-roam-citations-results-count, .zotero-roam-tag-list-count {padding: 6px 10px;}
             .zotero-roam-search_result{padding:3px 0px;}
             .zotero-roam-citations-search_result{padding:3px 6px;}
             .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
@@ -726,7 +726,7 @@ var zoteroRoam = {};
             .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button, .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button::before {font-size: 0.9em;}
             .zr-tab-panel-toolbar [aria-pressed], .zr-tab-panel-toolbar [aria-pressed]::before {font-weight: bold;color: #3081e4;}
             .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;}
-            .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;}
+            .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;align-items:baseline;}
             [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
             [data-token]:last-child{border-bottom:1px white solid;}
             [data-token] .bp3-menu-item {justify-content:space-between;align-items:baseline;width:100%;}
