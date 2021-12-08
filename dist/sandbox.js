@@ -2764,6 +2764,9 @@ var zoteroRoam = {};
                             zoteroRoam.interface.toggleSearchOverlay("hide");
                         } else if(overlay.classList.contains('zotero-roam-auxiliary-overlay')){
                             zoteroRoam.interface.closeAuxiliaryOverlay();
+                        } else {
+                            overlay.setAttribute('overlay-visible', 'false');
+                            overlay.style.display = "none";
                         }
                     }
                 } else if(e.target.closest('.item-actions button')){
