@@ -811,7 +811,7 @@
                     let tabpanel = toolbar.closest('.bp3-tab-panel').getAttribute('name');
                     if(tabpanel == "tag-manager"){
                         // Sort by:
-                        let sort = toolbar.querySelector('.zr-datalist-sort_option input[checked]').getAttribute('value');
+                        let sort = Array.from(toolbar.querySelectorAll('.zr-datalist-sort_option input')).find(op => op.checked == true).value;
                         // Add other elements as they are added to the options - e.g, library path
 
                         // Refresh the tag manager datalist, if applicable
