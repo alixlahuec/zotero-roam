@@ -96,7 +96,7 @@ var zoteroRoam = {};
         
         tagSelection: {cit_panel: null, aux_panel: null},
 
-        tagManager: {lists: {}, pagination: null, activeDisplay: {library: null, by: 'alphabetical'}},
+        tagManager: {lists: {}, pagination: null, activeDisplay: {library: null, by: 'usage'}},
         
         config: {
             /** autoComplete configuration for the library search panel */
@@ -718,14 +718,14 @@ var zoteroRoam = {};
             .zotero-roam-dashboard-overlay .main-section {flex: 1 0 80%;padding-left:15px;padding-bottom:15px;}
             .zotero-roam-dashboard-overlay .side-section .bp3-tab-list {width: 100%;}
             .zotero-roam-dashboard-overlay .bp3-tab-panel {display: flex;flex-wrap: wrap;justify-content: space-between;margin-top: 0px;}
-            .zr-tab-panel-header, .zr-tab-panel-description {flex: 0 0 100%;}
+            .zr-tab-panel-header, .zr-tab-panel-contents {flex: 0 0 100%;}
             .zr-tab-panel-header {display:flex;justify-content:space-between;align-items:flex-start;}
             .zr-tab-panel-description {padding-top:15px;}
-            .zr-tab-panel-contents {padding-left:15px;padding-right:15px;}
+            .zr-tab-panel-contents {padding-right:15px;}
             .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;}
             .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button, .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button::before, .zr-tab-panel-toolbar > .bp3-control-group select {font-size: 0.9em;}
-            .zr-tab-panel-toolbar {box-shadow: none;opacity:0.5;}
-            .zr-tab-panel-datalist {flex: 0 0 100%;}
+            .zr-tab-panel-toolbar input.bp3-input {box-shadow: none;opacity:0.75;}
+            .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;}
             [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
             [data-token]:last-child{border-bottom:1px white solid;}
             [data-token] .bp3-menu-item {justify-content:space-between;align-items:baseline;width:100%;}
@@ -1090,7 +1090,7 @@ var zoteroRoam = {};
                 if (is_singleton) {
                     label = tk.zotero[0].tag;
                     primary_action = "Edit";
-                    primary_icon = "edit";
+                    primary_icon = false;
                 } else {
                     elemList = `
                   <div role="taglist" class="zr-text-small">
@@ -1110,8 +1110,8 @@ var zoteroRoam = {};
                         </div>
                         <span class="bp3-menu-item-label zotero-roam-list-item-key">
                             <div class="bp3-button-group bp3-minimal bp3-small bp3-active zr-text-small">
-                                <a class="bp3-button bp3-intent-primary bp3-icon-${primary_icon}"><span class="bp3-button-text">${primary_action}</span></a>
-                                <a class="bp3-button bp3-intent-danger"><span class="bp3-button-text">Delete</span></a>
+                                <a class="bp3-button bp3-intent-primary ${primary_icon ? 'bp3-icon-' + primary_icon : ''}" zr-action="${primary_action}"><span class="bp3-button-text">${primary_action}</span></a>
+                                <a class="bp3-button bp3-intent-danger" zr-action="Delete"><span class="bp3-button-text">Delete</span></a>
                             </div>
                         </span>
                     </div>
@@ -1132,14 +1132,15 @@ var zoteroRoam = {};
             });
         },
 
-        updateTagPagination(libPath, by = "alphabetical"){
+        updateTagPagination(libPath, by = "usage"){
             // Set parameters of active display
             zoteroRoam.tagManager.activeDisplay = {
                 library: zoteroRoam.data.libraries.get(libPath),
                 by: by
             }
+            let dataset = by == "alphabetical" ? zoteroRoam.tagManager.lists[libPath].data : zoteroRoam.utils.sortTagList(zoteroRoam.tagManager.lists[libPath].data, by = by);
             // Create a Pagination and render its contents
-            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: zoteroRoam.tagManager.lists[libPath].data, itemsPerPage: 30, render: 'zoteroRoam.utils.renderTagList'});
+            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: dataset, itemsPerPage: 30, render: 'zoteroRoam.utils.renderTagList'});
             zoteroRoam.tagManager.pagination.renderResults();
         },
 
@@ -2764,9 +2765,8 @@ var zoteroRoam = {};
                             zoteroRoam.interface.toggleSearchOverlay("hide");
                         } else if(overlay.classList.contains('zotero-roam-auxiliary-overlay')){
                             zoteroRoam.interface.closeAuxiliaryOverlay();
-                        } else {
-                            overlay.setAttribute('overlay-visible', 'false');
-                            overlay.style.display = "none";
+                        } else if(overlay.classList.contains('zotero-roam-dashboard-overlay')){
+                            zoteroRoam.interface.toggleDashboardOverlay();
                         }
                     }
                 } else if(e.target.closest('.item-actions button')){
@@ -3464,8 +3464,8 @@ var zoteroRoam = {};
             tagManager.innerHTML += `
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
-                    <a class="bp3-button bp3-icon-sort-alphabetical bp3-active" tabindex="0" role="button">Name</a>
-                    <a class="bp3-button bp3-icon-sort-desc" tabindex="0" role="button">Most Used</a>
+                    <a class="bp3-button bp3-icon-sort-desc bp3-active" tabindex="0" role="button" zr-sort="usage">Most Used</a>
+                    <a class="bp3-button bp3-icon-sort-alphabetical" tabindex="0" role="button" zr-sort="alphabetical">Name</a>
                 </div>
                 <div class="bp3-control-group">
                     <div class="bp3-html-select bp3-minimal">
@@ -3911,6 +3911,17 @@ var zoteroRoam = {};
             zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = "";
             zoteroRoam.interface.clearImportPanel(action = "close", type = "citations");
             zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "false");
+        },
+
+        toggleDashboardOverlay(){
+            let overlay = document.querySelector('.zotero-roam-dashboard-overlay');
+            if(overlay.getAttribute('overlay-visible') == 'false'){
+                overlay.setAttribute('overlay-visible', 'true');
+                overlay.style.display = "block";
+            } else {
+                overlay.setAttribute('overlay-visible', 'false');
+                overlay.style.display = "none";
+            }
         },
 
         popContextOverlay(e, elementKey){
@@ -5530,12 +5541,14 @@ var zoteroRoam = {};
                 execute(){
                     let openOverlay = document.querySelector(`.bp3-overlay[overlay-visible="true"]`) || false;
                     if(openOverlay){
-                        if(Array.from(openOverlay.classList).includes(`${zoteroRoam.interface.search.overlayClass}-overlay`)){
+                        if(openOverlay.classList.contains(`${zoteroRoam.interface.search.overlayClass}-overlay`)){
                             zoteroRoam.interface.toggleSearchOverlay("hide");
-                        } else if(Array.from(openOverlay.classList).includes(`${zoteroRoam.interface.citations.overlayClass}-overlay`)){
+                        } else if(openOverlay.classList.contains(`${zoteroRoam.interface.citations.overlayClass}-overlay`)){
                             zoteroRoam.interface.closeCitationsOverlay();
-                        } else if(Array.from(openOverlay.classList).includes("zotero-roam-auxiliary-overlay")){
+                        } else if(openOverlay.classList.contains("zotero-roam-auxiliary-overlay")){
                             zoteroRoam.interface.closeAuxiliaryOverlay();
+                        } else if(openOverlay.classList.contains('zotero-roam-dashboard-overlay')){
+                            zoteroRoam.interface.toggleDashboardOverlay();
                         }
                     }
                 }
@@ -5547,6 +5560,8 @@ var zoteroRoam = {};
                         zoteroRoam.interface.closeCitationsOverlay();
                     } else if(document.querySelector('.zotero-roam-auxiliary-overlay').getAttribute("overlay-visible") == "true"){
                         zoteroRoam.interface.closeAuxiliaryOverlay();
+                    } else if(document,querySelector('.zotero-roam-dashboard-overlay').getAttribute("overlay-visible") == "true"){
+                        zoteroRoam.interface.toggleDashboardOverlay();
                     } else{
                         let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
                         zoteroRoam.interface.toggleSearchOverlay(cmd);

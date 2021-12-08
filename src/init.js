@@ -96,7 +96,7 @@ var zoteroRoam = {};
         
         tagSelection: {cit_panel: null, aux_panel: null},
 
-        tagManager: {lists: {}, pagination: null, activeDisplay: {library: null, by: 'alphabetical'}},
+        tagManager: {lists: {}, pagination: null, activeDisplay: {library: null, by: 'usage'}},
         
         config: {
             /** autoComplete configuration for the library search panel */
@@ -718,14 +718,14 @@ var zoteroRoam = {};
             .zotero-roam-dashboard-overlay .main-section {flex: 1 0 80%;padding-left:15px;padding-bottom:15px;}
             .zotero-roam-dashboard-overlay .side-section .bp3-tab-list {width: 100%;}
             .zotero-roam-dashboard-overlay .bp3-tab-panel {display: flex;flex-wrap: wrap;justify-content: space-between;margin-top: 0px;}
-            .zr-tab-panel-header, .zr-tab-panel-description {flex: 0 0 100%;}
+            .zr-tab-panel-header, .zr-tab-panel-contents {flex: 0 0 100%;}
             .zr-tab-panel-header {display:flex;justify-content:space-between;align-items:flex-start;}
             .zr-tab-panel-description {padding-top:15px;}
-            .zr-tab-panel-contents {padding-left:15px;padding-right:15px;}
+            .zr-tab-panel-contents {padding-right:15px;}
             .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;}
             .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button, .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button::before, .zr-tab-panel-toolbar > .bp3-control-group select {font-size: 0.9em;}
-            .zr-tab-panel-toolbar {box-shadow: none;opacity:0.5;}
-            .zr-tab-panel-datalist {flex: 0 0 100%;}
+            .zr-tab-panel-toolbar input.bp3-input {box-shadow: none;opacity:0.75;}
+            .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;}
             [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
             [data-token]:last-child{border-bottom:1px white solid;}
             [data-token] .bp3-menu-item {justify-content:space-between;align-items:baseline;width:100%;}

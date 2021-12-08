@@ -6,12 +6,14 @@
                 execute(){
                     let openOverlay = document.querySelector(`.bp3-overlay[overlay-visible="true"]`) || false;
                     if(openOverlay){
-                        if(Array.from(openOverlay.classList).includes(`${zoteroRoam.interface.search.overlayClass}-overlay`)){
+                        if(openOverlay.classList.contains(`${zoteroRoam.interface.search.overlayClass}-overlay`)){
                             zoteroRoam.interface.toggleSearchOverlay("hide");
-                        } else if(Array.from(openOverlay.classList).includes(`${zoteroRoam.interface.citations.overlayClass}-overlay`)){
+                        } else if(openOverlay.classList.contains(`${zoteroRoam.interface.citations.overlayClass}-overlay`)){
                             zoteroRoam.interface.closeCitationsOverlay();
-                        } else if(Array.from(openOverlay.classList).includes("zotero-roam-auxiliary-overlay")){
+                        } else if(openOverlay.classList.contains("zotero-roam-auxiliary-overlay")){
                             zoteroRoam.interface.closeAuxiliaryOverlay();
+                        } else if(openOverlay.classList.contains('zotero-roam-dashboard-overlay')){
+                            zoteroRoam.interface.toggleDashboardOverlay();
                         }
                     }
                 }
@@ -23,6 +25,8 @@
                         zoteroRoam.interface.closeCitationsOverlay();
                     } else if(document.querySelector('.zotero-roam-auxiliary-overlay').getAttribute("overlay-visible") == "true"){
                         zoteroRoam.interface.closeAuxiliaryOverlay();
+                    } else if(document,querySelector('.zotero-roam-dashboard-overlay').getAttribute("overlay-visible") == "true"){
+                        zoteroRoam.interface.toggleDashboardOverlay();
                     } else{
                         let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
                         zoteroRoam.interface.toggleSearchOverlay(cmd);

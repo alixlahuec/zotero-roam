@@ -73,9 +73,8 @@
                             zoteroRoam.interface.toggleSearchOverlay("hide");
                         } else if(overlay.classList.contains('zotero-roam-auxiliary-overlay')){
                             zoteroRoam.interface.closeAuxiliaryOverlay();
-                        } else {
-                            overlay.setAttribute('overlay-visible', 'false');
-                            overlay.style.display = "none";
+                        } else if(overlay.classList.contains('zotero-roam-dashboard-overlay')){
+                            zoteroRoam.interface.toggleDashboardOverlay();
                         }
                     }
                 } else if(e.target.closest('.item-actions button')){
@@ -773,8 +772,8 @@
             tagManager.innerHTML += `
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
-                    <a class="bp3-button bp3-icon-sort-alphabetical bp3-active" tabindex="0" role="button">Name</a>
-                    <a class="bp3-button bp3-icon-sort-desc" tabindex="0" role="button">Most Used</a>
+                    <a class="bp3-button bp3-icon-sort-desc bp3-active" tabindex="0" role="button" zr-sort="usage">Most Used</a>
+                    <a class="bp3-button bp3-icon-sort-alphabetical" tabindex="0" role="button" zr-sort="alphabetical">Name</a>
                 </div>
                 <div class="bp3-control-group">
                     <div class="bp3-html-select bp3-minimal">
@@ -1220,6 +1219,17 @@
             zoteroRoam.interface.citations.overlay.querySelector('input.clipboard-copy-utility').value = "";
             zoteroRoam.interface.clearImportPanel(action = "close", type = "citations");
             zoteroRoam.interface.citations.overlay.setAttribute("overlay-visible", "false");
+        },
+
+        toggleDashboardOverlay(){
+            let overlay = document.querySelector('.zotero-roam-dashboard-overlay');
+            if(overlay.getAttribute('overlay-visible') == 'false'){
+                overlay.setAttribute('overlay-visible', 'true');
+                overlay.style.display = "block";
+            } else {
+                overlay.setAttribute('overlay-visible', 'false');
+                overlay.style.display = "none";
+            }
         },
 
         popContextOverlay(e, elementKey){

@@ -292,7 +292,7 @@
                 if (is_singleton) {
                     label = tk.zotero[0].tag;
                     primary_action = "Edit";
-                    primary_icon = "edit";
+                    primary_icon = false;
                 } else {
                     elemList = `
                   <div role="taglist" class="zr-text-small">
@@ -312,8 +312,8 @@
                         </div>
                         <span class="bp3-menu-item-label zotero-roam-list-item-key">
                             <div class="bp3-button-group bp3-minimal bp3-small bp3-active zr-text-small">
-                                <a class="bp3-button bp3-intent-primary bp3-icon-${primary_icon}"><span class="bp3-button-text">${primary_action}</span></a>
-                                <a class="bp3-button bp3-intent-danger"><span class="bp3-button-text">Delete</span></a>
+                                <a class="bp3-button bp3-intent-primary ${primary_icon ? 'bp3-icon-' + primary_icon : ''}" zr-action="${primary_action}"><span class="bp3-button-text">${primary_action}</span></a>
+                                <a class="bp3-button bp3-intent-danger" zr-action="Delete"><span class="bp3-button-text">Delete</span></a>
                             </div>
                         </span>
                     </div>
@@ -334,14 +334,15 @@
             });
         },
 
-        updateTagPagination(libPath, by = "alphabetical"){
+        updateTagPagination(libPath, by = "usage"){
             // Set parameters of active display
             zoteroRoam.tagManager.activeDisplay = {
                 library: zoteroRoam.data.libraries.get(libPath),
                 by: by
             }
+            let dataset = by == "alphabetical" ? zoteroRoam.tagManager.lists[libPath].data : zoteroRoam.utils.sortTagList(zoteroRoam.tagManager.lists[libPath].data, by = by);
             // Create a Pagination and render its contents
-            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: zoteroRoam.tagManager.lists[libPath].data, itemsPerPage: 30, render: 'zoteroRoam.utils.renderTagList'});
+            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: dataset, itemsPerPage: 30, render: 'zoteroRoam.utils.renderTagList'});
             zoteroRoam.tagManager.pagination.renderResults();
         },
 
