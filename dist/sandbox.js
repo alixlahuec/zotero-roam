@@ -1101,7 +1101,7 @@ var zoteroRoam = {};
                 }
 
                 return `
-                <li role="option" class="zotero-roam-list-item" data-token="${tk.token}">
+                <li role="option" class="zotero-roam-list-item" data-token="${tk.token}" in-graph="${tk.roam.length > 0 ? true : false}">
                     <div class="bp3-menu-item">
                         <div style="flex:1 1 80%;">
                             <span role="title">${label}</span>
@@ -2236,7 +2236,14 @@ var zoteroRoam = {};
                     res.data.reduce(
                         function(map,t){
                             if(map.has(t.tag)){
-                                map.set(t.tag, [map.get(t.tag),t]);
+                                let entry = map.get(t.tag);
+                                if(entry.constructor === Array){
+                                    if(!entry.find(el => el.tag == t.tag && el.meta.type == t.meta.type)){
+                                        map.set(t.tag, [...entry, t]);
+                                    }
+                                } else {
+                                    map.set(t.tag, [entry, t]);
+                                }
                             } else{
                                 map.set(t.tag,t)
                             } 

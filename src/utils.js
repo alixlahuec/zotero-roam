@@ -303,7 +303,7 @@
                 }
 
                 return `
-                <li role="option" class="zotero-roam-list-item" data-token="${tk.token}">
+                <li role="option" class="zotero-roam-list-item" data-token="${tk.token}" in-graph="${tk.roam.length > 0 ? true : false}">
                     <div class="bp3-menu-item">
                         <div style="flex:1 1 80%;">
                             <span role="title">${label}</span>
