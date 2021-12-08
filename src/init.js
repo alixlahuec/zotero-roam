@@ -723,9 +723,11 @@ var zoteroRoam = {};
             .zr-tab-panel-description {padding-top:15px;}
             .zr-tab-panel-contents {padding-right:30px;}
             .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;border-bottom: 1px #cccccc solid;}
-            .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button, .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button::before {font-size: 0.9em;}
-            .zr-tab-panel-toolbar [aria-pressed], .zr-tab-panel-toolbar [aria-pressed]::before {font-weight: bold;color: #3081e4;}
-            .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;}
+            .zr-tab-panel-toolbar > .bp3-button-group > span {font-size: 0.9em;}
+            .zr-datalist-sort_option label {width: auto;display: inline-block;text-align: center;cursor: pointer;}
+            .zr-datalist-sort_option input {appearance: none;outline: none;cursor: pointer;padding: 4px;background: none;margin: 0px;}
+            .zr-datalist-sort_option input:checked, .zr-datalist-sort_option input:checked ~ span, .zr-datalist-sort_option input:checked ~ label {color: #3081e4;}
+            .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;border-radius:0px;}
             .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;align-items:baseline;}
             [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
             [data-token]:last-child{border-bottom:1px white solid;}

@@ -772,8 +772,16 @@
             tagManager.innerHTML += `
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
-                    <a class="bp3-button bp3-icon-sort-desc" aria-label="Sort by usage (descending)" aria-pressed="true" tabindex="0" role="button" zr-sort="usage">Most Used</a>
-                    <a class="bp3-button bp3-icon-sort-alphabetical" aria-label="Sort alphabetically (A to Z)" tabindex="0" role="button" zr-sort="alphabetical">Name</a>
+                    <span class="zr-datalist-sort_option">
+                        <input type="radio" value="usage" name="zr-tag-manager-sort" id="zr-tag-manager-sort_usage" checked="true" />
+                        <span class="bp3-icon bp3-icon-sort-desc"></span>
+                        <label for="zr-tag-manager-sort_usage">Most Used</label>
+                    </span>
+                    <span class="zr-datalist-sort_option">
+                        <input type="radio" value="alphabetical" name="zr-tag-manager-sort" id="zr-tag-manager-sort_name">
+                        <span class="bp3-icon bp3-icon-sort-alphabetical"></span>
+                        <label for="zr-tag-manager-sort_name">Name</label>
+                    </span>
                 </div>
             </div>
             </div>
@@ -796,6 +804,23 @@
                 <span class="zr-tag-stats zr-auxiliary zr-text-small"></span>
             </div>
             `;
+
+            dialogMainPanel.addEventListener('click', (e) => {
+                let toolbar = e.target.closest('.zr-tab-panel-toolbar');
+                if(toolbar){
+                    let tabpanel = toolbar.closest('.bp3-tab-panel').getAttribute('name');
+                    if(tabpanel == "tag-manager"){
+                        // Sort by:
+                        let sort = toolbar.querySelector('.zr-datalist-sort_option input[checked]').getAttribute('value');
+                        // Add other elements as they are added to the options - e.g, library path
+
+                        // Refresh the tag manager datalist, if applicable
+                        if(zoteroRoam.tagManager.activeDisplay.by != sort){
+                            zoteroRoam.utils.updateTagPagination(libPath = zoteroRoam.tagManager.activeDisplay.library.path, {by: sort});
+                        }
+                    }
+                }
+            })
 
         },
 

@@ -723,9 +723,11 @@ var zoteroRoam = {};
             .zr-tab-panel-description {padding-top:15px;}
             .zr-tab-panel-contents {padding-right:30px;}
             .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;border-bottom: 1px #cccccc solid;}
-            .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button, .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button::before {font-size: 0.9em;}
-            .zr-tab-panel-toolbar [aria-pressed], .zr-tab-panel-toolbar [aria-pressed]::before {font-weight: bold;color: #3081e4;}
-            .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;}
+            .zr-tab-panel-toolbar > .bp3-button-group > span {font-size: 0.9em;}
+            .zr-datalist-sort_option label {width: auto;display: inline-block;text-align: center;cursor: pointer;}
+            .zr-datalist-sort_option input {appearance: none;outline: none;cursor: pointer;padding: 4px;background: none;margin: 0px;}
+            .zr-datalist-sort_option input:checked, .zr-datalist-sort_option input:checked ~ span, .zr-datalist-sort_option input:checked ~ label {color: #3081e4;}
+            .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;border-radius:0px;}
             .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;align-items:baseline;}
             [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
             [data-token]:last-child{border-bottom:1px white solid;}
@@ -1105,7 +1107,7 @@ var zoteroRoam = {};
             document.querySelector(".zotero-roam-tag-list-count").innerHTML = `
             <strong>${zoteroRoam.tagManager.pagination.startIndex}-${zoteroRoam.tagManager.pagination.startIndex + tagList.length - 1}</strong> / ${totalListLength} entries
             `;
-            document.querySelector('.zr-tag-stats').innerHTML = `Zotero has ${tagList_stats.nTags} tags (${tagList_stats.nAuto} / ${Math.round(tagList_stats.nAuto / tagList_stats.nTags*100)} automatic) - Matched in ${totalListLength} groups - ${tagList_stats.nRoam} are in Roam (${Math.round(tagList_stats.nRoam / totalListLength *100)}%)`
+            document.querySelector('.zr-tag-stats').innerHTML = `Zotero has ${tagList_stats.nTags} tags (${tagList_stats.nAuto} / ${Math.round(tagList_stats.nAuto / tagList_stats.nTags*100)}% automatic) - Matched in ${totalListLength} groups - ${tagList_stats.nRoam} are in Roam (${Math.round(tagList_stats.nRoam / totalListLength *100)}%)`
 
             datalist.innerHTML = tagList.map(tk => {
                 let is_singleton = tk.zotero.length == 1 && (tk.roam.length == 0 || (tk.roam.length == 1 && tk.zotero[0].tag == tk.roam[0].title));
@@ -1160,7 +1162,7 @@ var zoteroRoam = {};
             });
         },
 
-        updateTagPagination(libPath, by = "usage"){
+        updateTagPagination(libPath, {by = "usage"} = {}){
             // Set parameters of active display
             zoteroRoam.tagManager.activeDisplay = {
                 library: zoteroRoam.data.libraries.get(libPath),
@@ -3499,8 +3501,16 @@ var zoteroRoam = {};
             tagManager.innerHTML += `
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
-                    <a class="bp3-button bp3-icon-sort-desc" aria-label="Sort by usage (descending)" aria-pressed="true" tabindex="0" role="button" zr-sort="usage">Most Used</a>
-                    <a class="bp3-button bp3-icon-sort-alphabetical" aria-label="Sort alphabetically (A to Z)" tabindex="0" role="button" zr-sort="alphabetical">Name</a>
+                    <span class="zr-datalist-sort_option">
+                        <input type="radio" value="usage" name="zr-tag-manager-sort" id="zr-tag-manager-sort_usage" checked="true" />
+                        <span class="bp3-icon bp3-icon-sort-desc"></span>
+                        <label for="zr-tag-manager-sort_usage">Most Used</label>
+                    </span>
+                    <span class="zr-datalist-sort_option">
+                        <input type="radio" value="alphabetical" name="zr-tag-manager-sort" id="zr-tag-manager-sort_name">
+                        <span class="bp3-icon bp3-icon-sort-alphabetical"></span>
+                        <label for="zr-tag-manager-sort_name">Name</label>
+                    </span>
                 </div>
             </div>
             </div>
@@ -3523,6 +3533,23 @@ var zoteroRoam = {};
                 <span class="zr-tag-stats zr-auxiliary zr-text-small"></span>
             </div>
             `;
+
+            dialogMainPanel.addEventListener('click', (e) => {
+                let toolbar = e.target.closest('.zr-tab-panel-toolbar');
+                if(toolbar){
+                    let tabpanel = toolbar.closest('.bp3-tab-panel').getAttribute('name');
+                    if(tabpanel == "tag-manager"){
+                        // Sort by:
+                        let sort = toolbar.querySelector('.zr-datalist-sort_option input[checked]').getAttribute('value');
+                        // Add other elements as they are added to the options - e.g, library path
+
+                        // Refresh the tag manager datalist, if applicable
+                        if(zoteroRoam.tagManager.activeDisplay.by != sort){
+                            zoteroRoam.utils.updateTagPagination(libPath = zoteroRoam.tagManager.activeDisplay.library.path, {by: sort});
+                        }
+                    }
+                }
+            })
 
         },
 

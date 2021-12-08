@@ -306,7 +306,7 @@
             document.querySelector(".zotero-roam-tag-list-count").innerHTML = `
             <strong>${zoteroRoam.tagManager.pagination.startIndex}-${zoteroRoam.tagManager.pagination.startIndex + tagList.length - 1}</strong> / ${totalListLength} entries
             `;
-            document.querySelector('.zr-tag-stats').innerHTML = `Zotero has ${tagList_stats.nTags} tags (${tagList_stats.nAuto} / ${Math.round(tagList_stats.nAuto / tagList_stats.nTags*100)} automatic) - Matched in ${totalListLength} groups - ${tagList_stats.nRoam} are in Roam (${Math.round(tagList_stats.nRoam / totalListLength *100)}%)`
+            document.querySelector('.zr-tag-stats').innerHTML = `Zotero has ${tagList_stats.nTags} tags (${tagList_stats.nAuto} / ${Math.round(tagList_stats.nAuto / tagList_stats.nTags*100)}% automatic) - Matched in ${totalListLength} groups - ${tagList_stats.nRoam} are in Roam (${Math.round(tagList_stats.nRoam / totalListLength *100)}%)`
 
             datalist.innerHTML = tagList.map(tk => {
                 let is_singleton = tk.zotero.length == 1 && (tk.roam.length == 0 || (tk.roam.length == 1 && tk.zotero[0].tag == tk.roam[0].title));
@@ -361,7 +361,7 @@
             });
         },
 
-        updateTagPagination(libPath, by = "usage"){
+        updateTagPagination(libPath, {by = "usage"} = {}){
             // Set parameters of active display
             zoteroRoam.tagManager.activeDisplay = {
                 library: zoteroRoam.data.libraries.get(libPath),
