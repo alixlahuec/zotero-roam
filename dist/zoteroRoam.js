@@ -721,11 +721,12 @@ var zoteroRoam = {};
             .zr-tab-panel-header, .zr-tab-panel-contents {flex: 0 0 100%;}
             .zr-tab-panel-header {display:flex;justify-content:space-between;align-items:flex-start;}
             .zr-tab-panel-description {padding-top:15px;}
-            .zr-tab-panel-contents {padding-right:15px;}
-            .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;}
-            .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button, .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button::before, .zr-tab-panel-toolbar > .bp3-control-group select {font-size: 0.9em;}
-            .zr-tab-panel-toolbar input.bp3-input {box-shadow: none;opacity:0.75;}
-            .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;}
+            .zr-tab-panel-contents {padding-right:30px;}
+            .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;border-bottom: 1px #cccccc solid;}
+            .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button, .zr-tab-panel-toolbar > .bp3-button-group > .bp3-button::before {font-size: 0.9em;}
+            .zr-tab-panel-toolbar [aria-pressed], .zr-tab-panel-toolbar [aria-pressed]::before {font-weight: bold;color: #3081e4;}
+            .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;}
+            .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;}
             [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
             [data-token]:last-child{border-bottom:1px white solid;}
             [data-token] .bp3-menu-item {justify-content:space-between;align-items:baseline;width:100%;}
@@ -1055,8 +1056,24 @@ var zoteroRoam = {};
             }).flat(1);
         },
 
-        getTagUsage(token, {count_roam = true} = {}){
+        getTagUsage(token, {count_roam = false} = {}){
             return token.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? token.roam.length : 0);
+        },
+
+        getTagListStats(tagListData){
+            return tagListData.map(t => {
+                return {
+                    nTags: t.zotero.length,
+                    nAuto: t.zotero.length == 0 ? 0 : t.zotero.filter(tag => tag.meta.type == 1).length,
+                    in_roam: t.roam.length > 0 ? 1 : 0
+                }
+            }).reduce((out, tk) => {
+                out.nTags += tk.nTags;
+                out.nAuto += tk.nAuto;
+                out.nRoam += in_roam;
+                return out;
+            }, 
+            {nTags: 0, nAuto: 0, nRoam})
         },
 
         sortTagList(tagList, by = "alphabetical"){
@@ -1073,11 +1090,22 @@ var zoteroRoam = {};
             }
         },
 
-        renderTagList(tagList = zoteroRoam.tagManager.pagination.getCurrentPageData()) {
+        renderTagList() {
             let datalist = document.getElementById('zr-tag-manager-pagination');
 
             // TODO: Add detection of sort, then match with zoteroRoam.tagManager.activeDisplay.by
             // If discrepant, sort tagList and update zoteroRoam.tagManager.activeDisplay.by (and, at later stage, include the Pagination step)
+
+            let tagList = zoteroRoam.tagManager.pagination.getCurrentPageData();
+            let tagList_stats = zoteroRoam.utils.getTagListStats(zoteroRoam.tagManager.pagination.data);
+
+            let totalListLength = zoteroRoam.tagManager.pagination.data.length;
+
+            // Indicate results shown
+            document.querySelector(".zotero-roam-tag-list-count").innerHTML = `
+            <strong>${zoteroRoam.tagManager.pagination.startIndex}-${zoteroRoam.tagManager.pagination.startIndex + tagList.length - 1}</strong> / ${totalListLength} entries
+            `;
+            document.querySelector('.zr-tag-stats').innerHTML = `<strong>Zotero: ${tagList_stats.nTags} tags (raw)</strong>, matched in ${totalListLength} groups - ${tagList_stats.nAuto} were automatic, ${tagList_stats.nRoam} are in Roam`
 
             datalist.innerHTML = tagList.map(tk => {
                 let is_singleton = tk.zotero.length == 1 && (tk.roam.length == 0 || (tk.roam.length == 1 && tk.zotero[0].tag == tk.roam[0].title));
@@ -1085,7 +1113,7 @@ var zoteroRoam = {};
                 let elemList = ``;
                 let primary_action = "Merge";
                 let primary_icon = "git-merge";
-                let usage = zoteroRoam.utils.getTagUsage(tk, { count_roam: false });
+                let usage = zoteroRoam.utils.getTagUsage(tk);
 
                 if (is_singleton) {
                     label = tk.zotero[0].tag;
@@ -3471,19 +3499,10 @@ var zoteroRoam = {};
             tagManager.innerHTML += `
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
-                    <a class="bp3-button bp3-icon-sort-desc bp3-active" tabindex="0" role="button" zr-sort="usage">Most Used</a>
-                    <a class="bp3-button bp3-icon-sort-alphabetical" tabindex="0" role="button" zr-sort="alphabetical">Name</a>
+                    <a class="bp3-button bp3-icon-sort-desc" aria-label="Sort by usage (descending)" aria-pressed="true" tabindex="0" role="button" zr-sort="usage">Most Used</a>
+                    <a class="bp3-button bp3-icon-sort-alphabetical" aria-label="Sort alphabetically (A to Z)" tabindex="0" role="button" zr-sort="alphabetical">Name</a>
                 </div>
-                <div class="bp3-control-group">
-                    <div class="bp3-html-select bp3-minimal">
-                        <select>
-                            <option selected value="contains">Contains...</option>
-                            <option value="starts">Starts with...</option>
-                        </select>
-                        <span class="bp3-icon bp3-icon-caret-down"></span>
-                    </div>
-                    <input type="text" class="bp3-input" spellcheck='false' autocomplete='off' />
-                </div>
+            </div>
             </div>
             <div class="bp3-overlay zr-tab-panel-popover" zr-panel="tag-manager" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
                 <div class="bp3-dialog-container bp3-overlay-content">
@@ -3495,14 +3514,13 @@ var zoteroRoam = {};
             </div>
             <ul id="zr-tag-manager-pagination" class="zr-tab-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
             </ul>
-            <div class="bp3-button-group bp3-minimal">
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
-                <span class="zotero-roam-tag-list-count zr-auxiliary"></span>
-            </div>
-            <div class="zr-tag-stats">
-                <span class="zr-stats-zotero"></span>
-                <span class="zr-stats-roam"></span>
+            <div class="zr-tab-panel-datalist-footer">
+                <div class="bp3-button-group bp3-minimal">
+                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
+                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
+                    <span class="zotero-roam-tag-list-count zr-auxiliary"></span>
+                </div>
+                <span class="zr-tag-stats"></span>
             </div>
             `;
 

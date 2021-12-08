@@ -772,19 +772,10 @@
             tagManager.innerHTML += `
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
-                    <a class="bp3-button bp3-icon-sort-desc bp3-active" tabindex="0" role="button" zr-sort="usage">Most Used</a>
-                    <a class="bp3-button bp3-icon-sort-alphabetical" tabindex="0" role="button" zr-sort="alphabetical">Name</a>
+                    <a class="bp3-button bp3-icon-sort-desc" aria-label="Sort by usage (descending)" aria-pressed="true" tabindex="0" role="button" zr-sort="usage">Most Used</a>
+                    <a class="bp3-button bp3-icon-sort-alphabetical" aria-label="Sort alphabetically (A to Z)" tabindex="0" role="button" zr-sort="alphabetical">Name</a>
                 </div>
-                <div class="bp3-control-group">
-                    <div class="bp3-html-select bp3-minimal">
-                        <select>
-                            <option selected value="contains">Contains...</option>
-                            <option value="starts">Starts with...</option>
-                        </select>
-                        <span class="bp3-icon bp3-icon-caret-down"></span>
-                    </div>
-                    <input type="text" class="bp3-input" spellcheck='false' autocomplete='off' />
-                </div>
+            </div>
             </div>
             <div class="bp3-overlay zr-tab-panel-popover" zr-panel="tag-manager" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
                 <div class="bp3-dialog-container bp3-overlay-content">
@@ -796,14 +787,13 @@
             </div>
             <ul id="zr-tag-manager-pagination" class="zr-tab-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
             </ul>
-            <div class="bp3-button-group bp3-minimal">
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
-                ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
-                <span class="zotero-roam-tag-list-count zr-auxiliary"></span>
-            </div>
-            <div class="zr-tag-stats">
-                <span class="zr-stats-zotero"></span>
-                <span class="zr-stats-roam"></span>
+            <div class="zr-tab-panel-datalist-footer">
+                <div class="bp3-button-group bp3-minimal">
+                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-left", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="previous" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
+                    ${zoteroRoam.utils.renderBP3Button_group(string = "", {icon: "chevron-right", buttonClass: "zotero-roam-page-control", buttonAttribute: 'goto="next" pagination="tagManager" aria-controls="zr-tag-manager-pagination"'})}
+                    <span class="zotero-roam-tag-list-count zr-auxiliary"></span>
+                </div>
+                <span class="zr-tag-stats"></span>
             </div>
             `;
 

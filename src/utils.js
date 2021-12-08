@@ -257,8 +257,24 @@
             }).flat(1);
         },
 
-        getTagUsage(token, {count_roam = true} = {}){
+        getTagUsage(token, {count_roam = false} = {}){
             return token.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? token.roam.length : 0);
+        },
+
+        getTagListStats(tagListData){
+            return tagListData.map(t => {
+                return {
+                    nTags: t.zotero.length,
+                    nAuto: t.zotero.length == 0 ? 0 : t.zotero.filter(tag => tag.meta.type == 1).length,
+                    in_roam: t.roam.length > 0 ? 1 : 0
+                }
+            }).reduce((out, tk) => {
+                out.nTags += tk.nTags;
+                out.nAuto += tk.nAuto;
+                out.nRoam += in_roam;
+                return out;
+            }, 
+            {nTags: 0, nAuto: 0, nRoam})
         },
 
         sortTagList(tagList, by = "alphabetical"){
@@ -275,11 +291,22 @@
             }
         },
 
-        renderTagList(tagList = zoteroRoam.tagManager.pagination.getCurrentPageData()) {
+        renderTagList() {
             let datalist = document.getElementById('zr-tag-manager-pagination');
 
             // TODO: Add detection of sort, then match with zoteroRoam.tagManager.activeDisplay.by
             // If discrepant, sort tagList and update zoteroRoam.tagManager.activeDisplay.by (and, at later stage, include the Pagination step)
+
+            let tagList = zoteroRoam.tagManager.pagination.getCurrentPageData();
+            let tagList_stats = zoteroRoam.utils.getTagListStats(zoteroRoam.tagManager.pagination.data);
+
+            let totalListLength = zoteroRoam.tagManager.pagination.data.length;
+
+            // Indicate results shown
+            document.querySelector(".zotero-roam-tag-list-count").innerHTML = `
+            <strong>${zoteroRoam.tagManager.pagination.startIndex}-${zoteroRoam.tagManager.pagination.startIndex + tagList.length - 1}</strong> / ${totalListLength} entries
+            `;
+            document.querySelector('.zr-tag-stats').innerHTML = `<strong>Zotero: ${tagList_stats.nTags} tags (raw)</strong>, matched in ${totalListLength} groups - ${tagList_stats.nAuto} were automatic, ${tagList_stats.nRoam} are in Roam`
 
             datalist.innerHTML = tagList.map(tk => {
                 let is_singleton = tk.zotero.length == 1 && (tk.roam.length == 0 || (tk.roam.length == 1 && tk.zotero[0].tag == tk.roam[0].title));
@@ -287,7 +314,7 @@
                 let elemList = ``;
                 let primary_action = "Merge";
                 let primary_icon = "git-merge";
-                let usage = zoteroRoam.utils.getTagUsage(tk, { count_roam: false });
+                let usage = zoteroRoam.utils.getTagUsage(tk);
 
                 if (is_singleton) {
                     label = tk.zotero[0].tag;
