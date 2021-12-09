@@ -3592,14 +3592,14 @@ var zoteroRoam = {};
             if(entry.roam.length > 0){
                 htmlContents += `<div class="col-half">`;
                 htmlContents += `<h4>Roam</h4>`;
-                htmlContents += entry.roam.map(pg => renderBP3_option(string = pg.title, type="checkbox", depth=0, {varName: "zr-tagselect", optValue:pg.title, modifier: 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n");
+                htmlContents += entry.roam.map(pg => zoteroRoam.utils.renderBP3_option(string = pg.title, type="checkbox", depth=0, {varName: "zr-tagselect", optValue:pg.title, modifier: 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n");
                 htmlContents += `</div>`;
             }
             // Zotero elements
             htmlContents += `
             <div class="col-half">
             <h4>Zotero</h4>
-            ${entry.zotero.map(t => renderBP3_option(t.tag, "checkbox", 0, {varName: "zr-tagselect", optValue: t.tag, modifier: 'checked', labelModifier: `data-tag-source="zotero" data-tag-type="${t.meta.type}"`})).join("\n")}
+            ${entry.zotero.map(t => zoteroRoam.utils.renderBP3_option(t.tag, "checkbox", 0, {varName: "zr-tagselect", optValue: t.tag, modifier: 'checked', labelModifier: `data-tag-source="zotero" data-tag-type="${t.meta.type}"`})).join("\n")}
             </div>
             `;
 
