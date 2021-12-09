@@ -813,26 +813,27 @@
             dialogMainPanel.addEventListener('click', (e) => {
                 let tabpanel = e.target.closest('.bp3-tab-panel');
                 if(tabpanel){
-                    tabpanel = tabpanel.getAttribute('name');
+                    let panelName = tabpanel.getAttribute('name');
                     
-                    if(tabpanel == "tag-manager"){
+                    if(panelName == "tag-manager"){
                         let toolbar = e.target.closest('.zr-tab-panel-toolbar');
                         let datalist_item = e.target.closest('.zr-datalist-item');
                         let popover = e.target.closest('.zr-tab-panel-popover');
                         if(toolbar){
-                            if(tabpanel == "tag-manager"){
-                                // Sort by:
-                                let sort = Array.from(toolbar.querySelectorAll('.zr-datalist-sort_option input')).find(op => op.checked == true).value;
-                                // Add other elements as they are added to the options - e.g, library path
-    
-                                // Refresh the tag manager datalist, if applicable
-                                if(zoteroRoam.tagManager.activeDisplay.by != sort){
-                                    zoteroRoam.utils.updateTagPagination(libPath = zoteroRoam.tagManager.activeDisplay.library.path, {by: sort});
-                                }
+                            // Sort by:
+                            let sort = Array.from(toolbar.querySelectorAll('.zr-datalist-sort_option input')).find(op => op.checked == true).value;
+                            // Add other elements as they are added to the options - e.g, library path
+
+                            // Refresh the tag manager datalist, if applicable
+                            if(zoteroRoam.tagManager.activeDisplay.by != sort){
+                                zoteroRoam.utils.updateTagPagination(libPath = zoteroRoam.tagManager.activeDisplay.library.path, {by: sort});
                             }
                         } else if(datalist_item){
                             let btn = e.target.closest('button[zr-action]');
-                            zoteroRoam.interface.showTagActionsPopover(token = datalist_item.getAttribute('data-token'), action = btn.getAttribute('zr-action'));
+                            if(btn){
+                                zoteroRoam.interface.showTagActionsPopover(token = datalist_item.getAttribute('data-token'), action = btn.getAttribute('zr-action'));
+                            }
+                            
                         } else if(popover){
                             // Add handlers for delete/edit operations here, once ready
                         }
