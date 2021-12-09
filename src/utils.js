@@ -323,7 +323,7 @@
                     primary_icon = false;
                 } else {
                     elemList = `
-                  <div role="taglist" class="zr-text-small">
+                  <div zr-role="taglist" class="zr-text-small">
                   ${tk.roam.map(pg => `<span data-tag-source="roam" data-tag="${pg.title}" data-uid="${pg.uid}">${pg.title}</span>`).join("\n")}
                   ${tk.zotero.map(el => `<span data-tag-source="zotero" data-tag="${el.tag}" data-tag-type="${el.type || ''}">${el.tag} (${el.meta.numItems})</span>`).join("\n")}
                   </div>
@@ -331,17 +331,17 @@
                 }
 
                 return `
-                <li role="option" class="zotero-roam-list-item" data-token="${tk.token}" in-graph="${tk.roam.length > 0 ? true : false}">
+                <li role="option" class="zr-datalist-item" data-token="${tk.token}" in-graph="${tk.roam.length > 0 ? true : false}">
                     <div class="bp3-menu-item">
                         <div style="flex:1 1 80%;">
-                            <span role="title">${label}</span>
+                            <span zr-role="title">${label}</span>
                             <span class="zr-auxiliary zr-text-small">${usage} item${usage > 1 ? 's' : ''}</span>
                             ${elemList}
                         </div>
-                        <span class="bp3-menu-item-label zotero-roam-list-item-key">
-                            <div class="bp3-button-group bp3-minimal bp3-small bp3-active zr-text-small">
-                                <a class="bp3-button bp3-intent-primary ${primary_icon ? 'bp3-icon-' + primary_icon : ''}" zr-action="${primary_action}"><span class="bp3-button-text">${primary_action}</span></a>
-                                <a class="bp3-button bp3-intent-danger" zr-action="Delete"><span class="bp3-button-text">Delete</span></a>
+                        <span class="bp3-menu-item-label">
+                            <div class="bp3-button-group bp3-minimal zr-text-small">
+                                ${zoteroRoam.utils.renderBP3Button_group(primary_action, {buttonClass: 'bp3-intent-primary', icon: primary_icon, buttonAttribute: `zr-action="${primary_action}"`})}
+                                ${zoteroRoam.utils.renderBP3Button_group("Delete", {buttonClass: 'bp3-intent-danger', buttonAttribute: `zr-action="Delete"`})}
                             </div>
                         </span>
                     </div>
@@ -642,9 +642,9 @@
             }).join("\n");
         },
 
-        renderBP3_option(string, type, depth, {varName, optClass = "", modifier = "", optValue = ""} = {}){
+        renderBP3_option(string, type, depth, {varName, optClass = "", modifier = "", labelModifier = "", optValue = ""} = {}){
             return `
-            <label class="bp3-control bp3-${type} ${optClass}" data-option-depth="${depth}">
+            <label class="bp3-control bp3-${type} ${optClass}" data-option-depth="${depth}" ${labelModifier}>
                 <input type="${type}" name="${varName}" value="${optValue}" ${modifier} />
                 <span class="bp3-control-indicator"></span>
                 ${string}

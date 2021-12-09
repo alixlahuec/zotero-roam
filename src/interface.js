@@ -778,14 +778,19 @@
                         <label for="zr-tag-manager-sort_usage">Most Used</label>
                     </span>
                     <span class="zr-datalist-sort_option">
-                        <input type="radio" value="alphabetical" name="zr-tag-manager-sort" id="zr-tag-manager-sort_name">
+                        <input type="radio" value="alphabetical" name="zr-tag-manager-sort" id="zr-tag-manager-sort_alphabetical">
                         <span class="bp3-icon bp3-icon-sort-alphabetical"></span>
-                        <label for="zr-tag-manager-sort_name">Name</label>
+                        <label for="zr-tag-manager-sort_alphabetical">Name</label>
+                    </span>
+                    <span class="zr-datalist-sort_option">
+                        <input type="radio" value="roam" name="zr-tag-manager-sort" id="zr-tag-manager-sort_roam">
+                        <span class="bp3-icon bp3-icon-star"></span>
+                        <label for="zr-tag-manager-sort_roam">In Roam</label>
                     </span>
                 </div>
             </div>
             </div>
-            <div class="bp3-overlay zr-tab-panel-popover" zr-panel="tag-manager" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
+            <div class="bp3-overlay zr-tab-panel-popover" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
                 <div class="bp3-dialog-container bp3-overlay-content">
                     <div class="bp3-dialog" role="dialog">
                         <div class="bp3-dialog-body"></div>
@@ -793,7 +798,7 @@
                     </div>
                 </div>
             </div>
-            <ul id="zr-tag-manager-pagination" class="zr-tab-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
+            <ul id="zr-tag-manager-pagination" class="zr-tab-panel-datalist bp3-menu" role="listbox">
             </ul>
             <div class="zr-tab-panel-datalist-footer">
                 <div class="bp3-button-group bp3-minimal">
@@ -806,22 +811,97 @@
             `;
 
             dialogMainPanel.addEventListener('click', (e) => {
-                let toolbar = e.target.closest('.zr-tab-panel-toolbar');
-                if(toolbar){
-                    let tabpanel = toolbar.closest('.bp3-tab-panel').getAttribute('name');
-                    if(tabpanel == "tag-manager"){
-                        // Sort by:
-                        let sort = Array.from(toolbar.querySelectorAll('.zr-datalist-sort_option input')).find(op => op.checked == true).value;
-                        // Add other elements as they are added to the options - e.g, library path
+                let tabpanel = toolbar.closest('.bp3-tab-panel').getAttribute('name');
 
-                        // Refresh the tag manager datalist, if applicable
-                        if(zoteroRoam.tagManager.activeDisplay.by != sort){
-                            zoteroRoam.utils.updateTagPagination(libPath = zoteroRoam.tagManager.activeDisplay.library.path, {by: sort});
+                if(tabpanel == "tag-manager"){
+                    let toolbar = e.target.closest('.zr-tab-panel-toolbar');
+                    let datalist_item = e.target.closest('.zr-datalist-item');
+                    let popover = e.target.closest('.zr-tab-panel-popover');
+                    if(toolbar){
+                        if(tabpanel == "tag-manager"){
+                            // Sort by:
+                            let sort = Array.from(toolbar.querySelectorAll('.zr-datalist-sort_option input')).find(op => op.checked == true).value;
+                            // Add other elements as they are added to the options - e.g, library path
+
+                            // Refresh the tag manager datalist, if applicable
+                            if(zoteroRoam.tagManager.activeDisplay.by != sort){
+                                zoteroRoam.utils.updateTagPagination(libPath = zoteroRoam.tagManager.activeDisplay.library.path, {by: sort});
+                            }
+                        }
+                    } else if(datalist_item){
+                        let btn = e.target.closest('button[zr-action]');
+                        zoteroRoam.interface.showTagActionsPopover(token = datalist_item.getAttribute('data-token'), action = btn.getAttribute('zr-action'));
+                    } else if(popover){
+                        // Add handlers for delete/edit operations here, once ready
+                    }
+
+                    if(!popover){
+                        let actionsPopover = tabpanel.querySelector('.zr-tab-panel-popover');
+                        if(actionsPopover.getAttribute('overlay-visible') == 'true'){
+                            actionsPopover.querySelector('.bp3-dialog-body').innerHTML = ``;
+                            actionsPopover.querySelector('.bp3-dialog-footer').innerHTML = ``;
+                            actionsPopover.style.display = "none";
+                            actionsPopover.setAttribute('overlay-visible', 'hidden');
                         }
                     }
                 }
             })
 
+        },
+
+        showTagActionsPopover(token, action = "Edit"){
+            let entry = zoteroRoam.tagManager.pagination.data.find(el => el.token == token);
+            let popover = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover');
+            
+            let htmlContents = ``;
+            
+            // Roam elements
+            if(entry.roam.length > 0){
+                htmlContents += `<div class="col-half">`;
+                htmlContents += `<h4>Roam</h4>`;
+                htmlContents += entry.roam.map(pg => renderBP3_option(string = pg.title, type="checkbox", depth=0, {varName: "zr-tagselect", optValue:pg.title, modifier: 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n");
+                htmlContents += `</div>`;
+            }
+            // Zotero elements
+            htmlContents += `
+            <div class="col-half">
+            <h4>Zotero</h4>
+            ${entry.zotero.map(t => renderBP3_option(t.tag, "checkbox", 0, {varName: "zr-tagselect", optValue: t.tag, modifier: 'checked', labelModifier: `data-tag-source="zotero" data-tag-type="${t.meta.type}"`})).join("\n")}
+            </div>
+            `;
+
+            // Action button
+            let action_label = "Delete";
+            let action_intent = "danger";
+            let action_icon = "trash";
+            let inputElem = ``;
+
+            if(action != "Delete"){
+                action_label = "Edit/Merge";
+                action_intent = "primary";
+                action_icon = "arrow-right";
+                inputElem = `
+                <div class="bp3-input-group">
+                    <span class="bp3-icon bp3-icon-tag"></span>
+                <input type="text" class="bp3-input" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                </div>
+                `;
+                }
+            
+            let htmlFooter = `
+            <div class="zr-tab-panel-popover-footer">
+                ${inputElem}
+                <div class="bp3-button-group bp3-minimal bp3-small">
+                    ${zoteroRoam.utils.renderBP3Button_group(action_label, {buttonClass: `bp3-active bp3-intent-${action_intent}`, icon: action_icon, buttonAttribute: `zr-command="${action}"`})}
+                </div>
+            </div>
+            `;
+            
+            popover.querySelector('.bp3-dialog-body').innerHTML = htmlContents;
+            popover.querySelector('.bp3-dialog-footer').innerHTML = htmlFooter;
+            
+            popover.style.display = "block";
+            popover.setAttribute('overlay-visible', 'true');
         },
 
         async handleImportPanelClicks(e){

@@ -640,7 +640,7 @@ var zoteroRoam = {};
             .backlinks-list_divider{display: flex;align-items: center;margin: 10px 5px;}
             .backlinks-list_divider hr{flex: 0 1 100%;}
             .zotero-roam-search_result > .bp3-menu-item, .zotero-roam-citations-search_result > .bp3-menu-item {justify-content:space-between;user-select:initial;padding: 3px 10px;}
-            .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover{background-color:unset;cursor:unset;}
+            .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover, .zr-datalist-item > .bp3-menu-item:hover {background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 1 97%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
             .zotero-roam-search-item-key{flex: 1 0 20%;text-align:right;overflow-wrap:anywhere;font-size:0.8em;}
@@ -729,17 +729,17 @@ var zoteroRoam = {};
             .zr-datalist-sort_option input:checked, .zr-datalist-sort_option input:checked ~ span, .zr-datalist-sort_option input:checked ~ label {color: #3081e4;}
             .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;border-radius:0px;}
             .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;align-items:baseline;}
-            [data-token]{background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
-            [data-token]:last-child{border-bottom:1px white solid;}
-            [data-token] .bp3-menu-item {justify-content:space-between;align-items:baseline;width:100%;}
-            [data-token] [role="title"] {font-weight:600;margin-right:15px;}
-            [data-token] [role="title"]::before {content: '# '}
-            [data-token] [role="taglist"] {margin:5px;}
+            .zr-datalist-item {background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
+            .zr-datalist-item:last-child{border-bottom:1px white solid;}
+            .zr-datalist-item .bp3-menu-item {justify-content:space-between;align-items:baseline;width:100%;}
+            .zr-datalist-item [zr-role="title"] {font-weight:600;margin-right:15px;}
+            .zr-datalist-item [zr-role="title"]::before {content: '# '}
+            .zr-datalist-item [zr-role="taglist"] {margin:5px;}
             [data-tag-source] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
             [data-tag-source="zotero"] {color: #e1881a;background-color: #fff5e7;}
             [data-tag-source="roam"] {color: #48a5e7;background-color: #e7f5ff;}
-            [data-token] .bp3-active {opacity:0.6;}
-            [data-token]:hover .bp3-active {opacity:1;transition:0.3s;}
+            .zr-datalist-item .bp3-menu-item-label > .bp3-button-group {opacity:0.6;}
+            .zr-datalist-item:hover .bp3-menu-item-label > .bp3-button-group {opacity:1;transition:0.3s;}
             .zr-highlight {color: #206fe6;}
             .bp3-dark .zr-highlight{color:#3fb8ff;}
             .zr-highlight-2 {color:#d9822b;}
@@ -1124,7 +1124,7 @@ var zoteroRoam = {};
                     primary_icon = false;
                 } else {
                     elemList = `
-                  <div role="taglist" class="zr-text-small">
+                  <div zr-role="taglist" class="zr-text-small">
                   ${tk.roam.map(pg => `<span data-tag-source="roam" data-tag="${pg.title}" data-uid="${pg.uid}">${pg.title}</span>`).join("\n")}
                   ${tk.zotero.map(el => `<span data-tag-source="zotero" data-tag="${el.tag}" data-tag-type="${el.type || ''}">${el.tag} (${el.meta.numItems})</span>`).join("\n")}
                   </div>
@@ -1132,17 +1132,17 @@ var zoteroRoam = {};
                 }
 
                 return `
-                <li role="option" class="zotero-roam-list-item" data-token="${tk.token}" in-graph="${tk.roam.length > 0 ? true : false}">
+                <li role="option" class="zr-datalist-item" data-token="${tk.token}" in-graph="${tk.roam.length > 0 ? true : false}">
                     <div class="bp3-menu-item">
                         <div style="flex:1 1 80%;">
-                            <span role="title">${label}</span>
+                            <span zr-role="title">${label}</span>
                             <span class="zr-auxiliary zr-text-small">${usage} item${usage > 1 ? 's' : ''}</span>
                             ${elemList}
                         </div>
-                        <span class="bp3-menu-item-label zotero-roam-list-item-key">
-                            <div class="bp3-button-group bp3-minimal bp3-small bp3-active zr-text-small">
-                                <a class="bp3-button bp3-intent-primary ${primary_icon ? 'bp3-icon-' + primary_icon : ''}" zr-action="${primary_action}"><span class="bp3-button-text">${primary_action}</span></a>
-                                <a class="bp3-button bp3-intent-danger" zr-action="Delete"><span class="bp3-button-text">Delete</span></a>
+                        <span class="bp3-menu-item-label">
+                            <div class="bp3-button-group bp3-minimal zr-text-small">
+                                ${zoteroRoam.utils.renderBP3Button_group(primary_action, {buttonClass: 'bp3-intent-primary', icon: primary_icon, buttonAttribute: `zr-action="${primary_action}"`})}
+                                ${zoteroRoam.utils.renderBP3Button_group("Delete", {buttonClass: 'bp3-intent-danger', buttonAttribute: `zr-action="Delete"`})}
                             </div>
                         </span>
                     </div>
@@ -1443,9 +1443,9 @@ var zoteroRoam = {};
             }).join("\n");
         },
 
-        renderBP3_option(string, type, depth, {varName, optClass = "", modifier = "", optValue = ""} = {}){
+        renderBP3_option(string, type, depth, {varName, optClass = "", modifier = "", labelModifier = "", optValue = ""} = {}){
             return `
-            <label class="bp3-control bp3-${type} ${optClass}" data-option-depth="${depth}">
+            <label class="bp3-control bp3-${type} ${optClass}" data-option-depth="${depth}" ${labelModifier}>
                 <input type="${type}" name="${varName}" value="${optValue}" ${modifier} />
                 <span class="bp3-control-indicator"></span>
                 ${string}
@@ -3508,14 +3508,19 @@ var zoteroRoam = {};
                         <label for="zr-tag-manager-sort_usage">Most Used</label>
                     </span>
                     <span class="zr-datalist-sort_option">
-                        <input type="radio" value="alphabetical" name="zr-tag-manager-sort" id="zr-tag-manager-sort_name">
+                        <input type="radio" value="alphabetical" name="zr-tag-manager-sort" id="zr-tag-manager-sort_alphabetical">
                         <span class="bp3-icon bp3-icon-sort-alphabetical"></span>
-                        <label for="zr-tag-manager-sort_name">Name</label>
+                        <label for="zr-tag-manager-sort_alphabetical">Name</label>
+                    </span>
+                    <span class="zr-datalist-sort_option">
+                        <input type="radio" value="roam" name="zr-tag-manager-sort" id="zr-tag-manager-sort_roam">
+                        <span class="bp3-icon bp3-icon-star"></span>
+                        <label for="zr-tag-manager-sort_roam">In Roam</label>
                     </span>
                 </div>
             </div>
             </div>
-            <div class="bp3-overlay zr-tab-panel-popover" zr-panel="tag-manager" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
+            <div class="bp3-overlay zr-tab-panel-popover" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
                 <div class="bp3-dialog-container bp3-overlay-content">
                     <div class="bp3-dialog" role="dialog">
                         <div class="bp3-dialog-body"></div>
@@ -3523,7 +3528,7 @@ var zoteroRoam = {};
                     </div>
                 </div>
             </div>
-            <ul id="zr-tag-manager-pagination" class="zr-tab-panel-datalist bp3-menu" role="listbox" zr-panel="tag-manager">
+            <ul id="zr-tag-manager-pagination" class="zr-tab-panel-datalist bp3-menu" role="listbox">
             </ul>
             <div class="zr-tab-panel-datalist-footer">
                 <div class="bp3-button-group bp3-minimal">
@@ -3536,22 +3541,97 @@ var zoteroRoam = {};
             `;
 
             dialogMainPanel.addEventListener('click', (e) => {
-                let toolbar = e.target.closest('.zr-tab-panel-toolbar');
-                if(toolbar){
-                    let tabpanel = toolbar.closest('.bp3-tab-panel').getAttribute('name');
-                    if(tabpanel == "tag-manager"){
-                        // Sort by:
-                        let sort = Array.from(toolbar.querySelectorAll('.zr-datalist-sort_option input')).find(op => op.checked == true).value;
-                        // Add other elements as they are added to the options - e.g, library path
+                let tabpanel = toolbar.closest('.bp3-tab-panel').getAttribute('name');
 
-                        // Refresh the tag manager datalist, if applicable
-                        if(zoteroRoam.tagManager.activeDisplay.by != sort){
-                            zoteroRoam.utils.updateTagPagination(libPath = zoteroRoam.tagManager.activeDisplay.library.path, {by: sort});
+                if(tabpanel == "tag-manager"){
+                    let toolbar = e.target.closest('.zr-tab-panel-toolbar');
+                    let datalist_item = e.target.closest('.zr-datalist-item');
+                    let popover = e.target.closest('.zr-tab-panel-popover');
+                    if(toolbar){
+                        if(tabpanel == "tag-manager"){
+                            // Sort by:
+                            let sort = Array.from(toolbar.querySelectorAll('.zr-datalist-sort_option input')).find(op => op.checked == true).value;
+                            // Add other elements as they are added to the options - e.g, library path
+
+                            // Refresh the tag manager datalist, if applicable
+                            if(zoteroRoam.tagManager.activeDisplay.by != sort){
+                                zoteroRoam.utils.updateTagPagination(libPath = zoteroRoam.tagManager.activeDisplay.library.path, {by: sort});
+                            }
+                        }
+                    } else if(datalist_item){
+                        let btn = e.target.closest('button[zr-action]');
+                        zoteroRoam.interface.showTagActionsPopover(token = datalist_item.getAttribute('data-token'), action = btn.getAttribute('zr-action'));
+                    } else if(popover){
+                        // Add handlers for delete/edit operations here, once ready
+                    }
+
+                    if(!popover){
+                        let actionsPopover = tabpanel.querySelector('.zr-tab-panel-popover');
+                        if(actionsPopover.getAttribute('overlay-visible') == 'true'){
+                            actionsPopover.querySelector('.bp3-dialog-body').innerHTML = ``;
+                            actionsPopover.querySelector('.bp3-dialog-footer').innerHTML = ``;
+                            actionsPopover.style.display = "none";
+                            actionsPopover.setAttribute('overlay-visible', 'hidden');
                         }
                     }
                 }
             })
 
+        },
+
+        showTagActionsPopover(token, action = "Edit"){
+            let entry = zoteroRoam.tagManager.pagination.data.find(el => el.token == token);
+            let popover = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover');
+            
+            let htmlContents = ``;
+            
+            // Roam elements
+            if(entry.roam.length > 0){
+                htmlContents += `<div class="col-half">`;
+                htmlContents += `<h4>Roam</h4>`;
+                htmlContents += entry.roam.map(pg => renderBP3_option(string = pg.title, type="checkbox", depth=0, {varName: "zr-tagselect", optValue:pg.title, modifier: 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n");
+                htmlContents += `</div>`;
+            }
+            // Zotero elements
+            htmlContents += `
+            <div class="col-half">
+            <h4>Zotero</h4>
+            ${entry.zotero.map(t => renderBP3_option(t.tag, "checkbox", 0, {varName: "zr-tagselect", optValue: t.tag, modifier: 'checked', labelModifier: `data-tag-source="zotero" data-tag-type="${t.meta.type}"`})).join("\n")}
+            </div>
+            `;
+
+            // Action button
+            let action_label = "Delete";
+            let action_intent = "danger";
+            let action_icon = "trash";
+            let inputElem = ``;
+
+            if(action != "Delete"){
+                action_label = "Edit/Merge";
+                action_intent = "primary";
+                action_icon = "arrow-right";
+                inputElem = `
+                <div class="bp3-input-group">
+                    <span class="bp3-icon bp3-icon-tag"></span>
+                <input type="text" class="bp3-input" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                </div>
+                `;
+                }
+            
+            let htmlFooter = `
+            <div class="zr-tab-panel-popover-footer">
+                ${inputElem}
+                <div class="bp3-button-group bp3-minimal bp3-small">
+                    ${zoteroRoam.utils.renderBP3Button_group(action_label, {buttonClass: `bp3-active bp3-intent-${action_intent}`, icon: action_icon, buttonAttribute: `zr-command="${action}"`})}
+                </div>
+            </div>
+            `;
+            
+            popover.querySelector('.bp3-dialog-body').innerHTML = htmlContents;
+            popover.querySelector('.bp3-dialog-footer').innerHTML = htmlFooter;
+            
+            popover.style.display = "block";
+            popover.setAttribute('overlay-visible', 'true');
         },
 
         async handleImportPanelClicks(e){
