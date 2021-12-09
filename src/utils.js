@@ -651,6 +651,15 @@
             </label>
             `;
         },
+
+        renderBP3_minimalradio(label, {varName, optValue, icon = "", modifier = ""} = {}){
+            let iconEl = icon ? `<span class="bp3-icon bp3-icon-${icon}"></span>` : '';
+            return `
+            <input type="radio" value="${optValue}" name="${varName}" id="${varName}_${optValue}" ${modifier} />
+            ${iconEl}
+            <label for="${varName}_${optValue}">${label}</label>
+            `
+        },
         
         renderBP3Tag(string, {modifier = "", icon = "", tagRemove = false, tagAttribute = ""} = {}){
             let tagRem = tagRemove ? `<button class="bp3-tag-remove"></button>` : "";

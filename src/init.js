@@ -535,8 +535,8 @@ var zoteroRoam = {};
             #zotero-roam-portal .bp3-dark .side-panel{background-color:#30404d;}
             #zotero-roam-portal .side-panel > .side-panel-contents > *{padding:10px 20px;}
             .zotero-roam-dialog-overlay .bp3-dialog-container, .zotero-roam-dialog-small .bp3-dialog-container{justify-content:start;}
-            .zotero-roam-search-overlay .bp3-dialog:not(.bp3-dark), .zotero-roam-citations-search-overlay .bp3-dialog:not(.bp3-dark){background:white;}
-            .zotero-roam-dialog-overlay .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;box-shadow:none;}
+            .zotero-roam-search-overlay .bp3-dialog:not(.bp3-dark), .zotero-roam-citations-search-overlay .bp3-dialog:not(.bp3-dark), .zr-tab-panel-popover .bp3-dialog:not(.bp3-dark){background:white;}
+            .zotero-roam-dialog-overlay > .bp3-dialog-container > .bp3-dialog{margin-left: calc(20vw + 2.5%);padding-bottom:0px;box-shadow:none;}
             .zotero-roam-dialog-overlay [side-panel="hidden"]{width:calc(95% - 40vw);}
             .zotero-roam-dialog-overlay [side-panel="visible"]{width:calc(95% - 20vw);}
             .zotero-roam-dialog-overlay [side-panel="visible"] .side-panel{flex-basis:20vw!important;}
@@ -724,10 +724,12 @@ var zoteroRoam = {};
             .zr-tab-panel-contents {padding-right:30px;}
             .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;border-bottom: 1px #cccccc solid;}
             .zr-tab-panel-toolbar > .bp3-button-group > span {font-size: 0.9em;}
-            .zr-datalist-sort_option label {width: auto;display: inline-block;text-align: center;cursor: pointer;}
+            .zr-datalist-sort_option label {width: auto;display: inline-block;text-align: center;cursor: pointer;font-weight:500;}
             .zr-datalist-sort_option input, .zr-datalist-sort_option input:focus {appearance: none;outline: none;cursor: pointer;padding: 4px;background: none;margin: 0px;}
             .zr-datalist-sort_option input:checked, .zr-datalist-sort_option input:checked ~ span, .zr-datalist-sort_option input:checked ~ label {color: #3081e4;}
-            .zr-tab-panel-popover .bp3-dialog {background:white;box-shadow:none;border: 1px #ececec solid;padding-bottom:0px;}
+            .zr-datalist-sort_option .bp3-icon {padding: 0px 5px;}
+            .zr-datalist-sort_option input:checked ~ label {font-weight:600;}
+            .zr-tab-panel-popover .bp3-dialog {box-shadow:none;border: 1px #ececec solid;padding-bottom:0px;}
             .zr-tab-panel-popover .bp3-dialog-body {display: flex;flex-wrap: wrap;align-items: baseline;margin-bottom: 0px;}
             .zr-tab-panel-popover .bp3-dialog-footer {justify-content: right;display: flex;margin-bottom: 10px;}
             .zr-tab-panel-popover-footer {display: flex;flex: 0 1 auto;text-align: right;align-items: baseline;}
