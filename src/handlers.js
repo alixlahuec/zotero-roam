@@ -442,24 +442,48 @@
         },
 
         // TODO: Set event emitter or logging, input checking/error handling
-        async modifySelectedTags(action, divClass = "zr-tab-panel-popover"){
-            let selection = document.querySelectorAll(`.${divClass} input[name="zr-tag-select"]`).filter(op => op.checked == true);
-            let into = action == 'Delete' ? null :  document.querySelector(`.${divClass} input[name="zr-tag-rename"]`).value;
+        async modifySelectedTags(action, div = '.bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover'){
+            let selection = Array.from(document.querySelectorAll(`${div} input[name="zr-tag-select"]`)).filter(op => op.checked == true);
+            let into = action == 'Delete' ? null :  document.querySelector(`${div} input[name="zr-tag-rename"]`).value;
             let library = zoteroRoam.tagManager.activeDisplay.library;
 
-            let tags = selection.reduce((obj, op) => {
-                let tag_elem = op.closest('[data-tag-source]');
+            let tags = {};
+
+            if(selection.length == 1){
+                let tag_elem = selection[0].closest('[data-tag-source]');
                 if(tag_elem.getAttribute('data-tag-source') == 'roam'){
                     if(action == 'Delete'){
-                        obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});    
+                        tags = {
+                            roam: [{page: {uid: tag_elem.getAttribute('data-uid')}}],
+                            zotero: []
+                        }
                     } else {
-                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
+                        tags ={
+                            roam: [{page: {uid: tag_elem.getAttribute('data-uid'), title: into}}],
+                            zotero: []
+                        }
                     }
-                } else if(tag_elem.getAttribute('data-tag-source' == 'zotero')){
-                    obj.zotero.push(op.value);
+                } else if(tag_elem.getAttribute('data-tag-source') == 'zotero'){
+                    tags = {
+                        roam: [],
+                        zotero: [selection[0].value]
+                    }
                 }
-                return obj;
-            }, {roam: [], zotero: []});
+            } else {
+                tags = selection.reduce((obj, op) => {
+                    let tag_elem = op.closest('[data-tag-source]');
+                    if(tag_elem.getAttribute('data-tag-source') == 'roam'){
+                        if(action == 'Delete'){
+                            obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});    
+                        } else {
+                            obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
+                        }
+                    } else if(tag_elem.getAttribute('data-tag-source' == 'zotero')){
+                        obj.zotero.push(op.value);
+                    }
+                    return obj;
+                }, {roam: [], zotero: []});
+            }
 
             switch(action){
                 case 'Edit':
