@@ -2148,44 +2148,20 @@ var zoteroRoam = {};
             let into = action == 'Delete' ? null :  document.querySelector(`${div} input[name="zr-tag-rename"]`).value;
             let library = zoteroRoam.tagManager.activeDisplay.library;
 
-            let tags = {};
-
-            if(selection.length == 1){
-                let tag_elem = selection[0].closest('[data-tag-source]');
+            let tags = selection.reduce((obj, op) => {
+                let tag_elem = op.closest('[data-tag-source]');
                 if(tag_elem.getAttribute('data-tag-source') == 'roam'){
                     if(action == 'Delete'){
-                        tags = {
-                            roam: [{page: {uid: tag_elem.getAttribute('data-uid')}}],
-                            zotero: []
-                        }
+                        obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});    
                     } else {
-                        tags ={
-                            roam: [{page: {uid: tag_elem.getAttribute('data-uid'), title: into}}],
-                            zotero: []
-                        }
+                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
                     }
                 } else if(tag_elem.getAttribute('data-tag-source') == 'zotero'){
-                    tags = {
-                        roam: [],
-                        zotero: [selection[0].value]
-                    }
+                    obj.zotero.push(op.value);
                 }
-            } else {
-                tags = selection.reduce((obj, op) => {
-                    let tag_elem = op.closest('[data-tag-source]');
-                    if(tag_elem.getAttribute('data-tag-source') == 'roam'){
-                        if(action == 'Delete'){
-                            obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});    
-                        } else {
-                            obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
-                        }
-                    } else if(tag_elem.getAttribute('data-tag-source' == 'zotero')){
-                        obj.zotero.push(op.value);
-                    }
-                    return obj;
-                }, {roam: [], zotero: []});
-            }
-
+                return obj;
+            }, {roam: [], zotero: []});
+            
             switch(action){
                 case 'Edit':
                 case 'Merge':
