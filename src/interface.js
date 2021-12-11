@@ -875,7 +875,7 @@
             htmlContents += `
             <div class="col-half">
             <h4>Zotero</h4>
-            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + ` (${consolidatedTags.get(elem).join(" + ")})`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
+            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + `<span class="zr-secondary">(${consolidatedTags.get(elem).join(" + ")})</span>`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
             </div>
             `;
 
