@@ -527,7 +527,7 @@ var zoteroRoam = {};
             let cssElem = document.createElement('style');
             cssElem.textContent = `
             #zotero-roam-portal .bp3-overlay-backdrop{opacity:0.4;}
-            #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
+            #zotero-roam-portal > .bp3-dialog-container > .bp3-dialog .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .bp3-dialog-footer-actions{padding:5px 2.5%;justify-content:space-between;align-items:flex-end;transition:0.2s;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal [side-panel="hidden"] .side-panel{flex-basis:0%;}
@@ -735,7 +735,7 @@ var zoteroRoam = {};
             .zr-tab-panel-popover-footer {display: flex;flex: 0 1 auto;text-align: right;align-items: baseline;}
             .zr-tab-panel-popover-footer > * {margin: 10px 20px;}
             .zr-tab-panel-popover .col-half {flex: 1 0 50%;display: flex;flex-wrap: wrap;}
-            .zr-tab-panel-popover h4 {flex: 0 0 100%;margin: 0px;margin-bottom: 10px;}
+            .zr-tab-panel-popover h4 {flex: 0 0 100%;margin: 0px;margin-bottom: 10px;font-size:15px;}
             .zr-tab-panel-popover[overlay-visible="true"] + .zr-tab-panel-datalist {opacity: 0.7;}
             .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;border-radius:0px;}
             .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;align-items:baseline;}
@@ -746,7 +746,7 @@ var zoteroRoam = {};
             .zr-datalist-item [zr-role="title"]::before {content: '# '}
             .zr-datalist-item [zr-role="taglist"] {margin:5px;}
             [zr-role="taglist"] [data-tag-source] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
-            label[data-tag-source] {color: #5e5e5e;margin-right:15px;}
+            label[data-tag-source] {color: #5e5e5e;margin-right:15px;font-weight:400;}
             [data-tag-source="roam"] input:checked ~.bp3-control-indicator {background-color: #48a5e7;box-shadow: none;}
             [data-tag-source="zotero"] input:checked ~ .bp3-control-indicator {background-color: #e1881a;box-shadow: none;}
             [zr-role="taglist"] [data-tag-source="zotero"] {color: #e1881a;background-color: #fff5e7;}
@@ -2137,6 +2137,68 @@ var zoteroRoam = {};
 
         },
 
+        // TODO: Set event emitter or logging, input checking/error handling
+        async modifySelectedTags(action, divClass = "zr-tab-panel-popover"){
+            let selection = document.querySelectorAll(`.${divClass} input[name="zr-tag-select"]`).filter(op => op.checked == true);
+            let into = action == 'Delete' ? null :  document.querySelector(`.${divClass} input[name="zr-tag-rename"]`).value;
+            let library = zoteroRoam.tagManager.activeDisplay.library;
+
+            let tags = selection.reduce((obj, op) => {
+                let tag_elem = op.closest('[data-tag-source]');
+                if(tag_elem.getAttribute('data-tag-source') == 'roam'){
+                    if(action == 'Delete'){
+                        obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});    
+                    } else {
+                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
+                    }
+                } else if(tag_elem.getAttribute('data-tag-source' == 'zotero')){
+                    obj.zotero.push(op.value);
+                }
+                return obj;
+            }, {roam: [], zotero: []});
+
+            switch(action){
+                case 'Edit':
+                case 'Merge':
+                    await zoteroRoam.handlers.renameSelectedTags(library, tags, into);
+                    break;
+                case 'Delete':
+                    await zoteroRoam.handlers.deleteSelectedTags(library, tags);
+            }
+        },
+
+        // TODO: Set event emitter ?
+        async deleteSelectedTags(library, tags){
+            if(tags.zotero.length > 0){
+                let req = await zoteroRoam.write.deleteTags(library, tags.zotero);
+                if(req.success == true){
+                    tags.roam.forEach(page => window.roamAlphaAPI.deletePage(page));
+                    console.log(req.response);
+                    await zoteroRoam.extension.update();
+                } else {
+                    console.log(req);
+                }
+            } else {
+                tags.roam.forEach(page => window.roamAlphaAPI.deletePage(page));
+            }
+        },
+
+        // TODO: Set event emitter ?
+        async renameSelectedTags(library, tags, into){
+            if(tags.zotero.length > 0){
+                let req = await zoteroRoam.write.editTags(library, tags.zotero, into);
+                if(req.success == true){
+                    tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
+                    console.log(req.data);
+                    await zoteroRoam.extension.update();
+                } else {
+                    console.log(req);
+                }
+            } else {
+                tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
+            }
+        },
+
         async requestCitoid(query, { format = "zotero", has_relation = false, tag_with = [], collections = []} = {}){
             let outcome = {};
 
@@ -2600,7 +2662,7 @@ var zoteroRoam = {};
         },
 
         async deleteTags(library, tags) {
-            let tagList = tags.constructor === String ? encodeURIComponent(tags) : tags.map(t => encodeURIComponent(t)).join("||");
+            let tagList = tags.constructor === String ? encodeURIComponent(tags) : Array.from(new Set(tags)).map(t => encodeURIComponent(t)).join("||");
             let outcome = {};
             try {
                 let req = await fetch(`https://api.zotero.org/${library.path}/tags?tag=${tagList}`,
@@ -3607,16 +3669,27 @@ var zoteroRoam = {};
             
             // Roam elements
             if(entry.roam.length > 0){
-                htmlContents += `<div class="col-half">`;
-                htmlContents += `<h4>Roam</h4>`;
-                htmlContents += entry.roam.map(pg => zoteroRoam.utils.renderBP3_option(string = pg.title, type="checkbox", depth=0, {varName: "zr-tagselect", optValue:pg.title, modifier: 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n");
-                htmlContents += `</div>`;
+                htmlContents += `
+                <div class="col-half">
+                <h4>Roam</h4>
+                ${entry.roam.map(pg => zoteroRoam.utils.renderBP3_option(string = pg.title, type = "checkbox", depth = 0, 
+                {varName: "zr-tag-select", optValue: pg.title, modifier: action == 'Delete' ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n")}
+                </div>
+                `;
             }
             // Zotero elements
+            let consolidatedTags = entry.zotero.reduce((map, elem) => {
+                if(map.has(elem.tag)){
+                    map.set(elem.tag, [...map.get(elem.tag), elem.meta.numItems]);
+                } else {
+                    map.set(elem.tag, [elem.meta.numItems]);
+                }
+                return map;
+            }, new Map());
             htmlContents += `
             <div class="col-half">
             <h4>Zotero</h4>
-            ${entry.zotero.map(t => zoteroRoam.utils.renderBP3_option(t.tag, "checkbox", 0, {varName: "zr-tagselect", optValue: t.tag, modifier: 'checked', labelModifier: `data-tag-source="zotero" data-tag-type="${t.meta.type}"`})).join("\n")}
+            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + ` (${consolidatedTags.get(elem).join(" + ")})`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
             </div>
             `;
 
@@ -3633,7 +3706,7 @@ var zoteroRoam = {};
                 inputElem = `
                 <div class="bp3-input-group">
                     <span class="bp3-icon bp3-icon-tag"></span>
-                <input type="text" class="bp3-input" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                <input type="text" class="bp3-input" name="zr-tag-rename" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
                 </div>
                 `;
                 }

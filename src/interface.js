@@ -855,16 +855,27 @@
             
             // Roam elements
             if(entry.roam.length > 0){
-                htmlContents += `<div class="col-half">`;
-                htmlContents += `<h4>Roam</h4>`;
-                htmlContents += entry.roam.map(pg => zoteroRoam.utils.renderBP3_option(string = pg.title, type="checkbox", depth=0, {varName: "zr-tagselect", optValue:pg.title, modifier: 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n");
-                htmlContents += `</div>`;
+                htmlContents += `
+                <div class="col-half">
+                <h4>Roam</h4>
+                ${entry.roam.map(pg => zoteroRoam.utils.renderBP3_option(string = pg.title, type = "checkbox", depth = 0, 
+                {varName: "zr-tag-select", optValue: pg.title, modifier: action == 'Delete' ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n")}
+                </div>
+                `;
             }
             // Zotero elements
+            let consolidatedTags = entry.zotero.reduce((map, elem) => {
+                if(map.has(elem.tag)){
+                    map.set(elem.tag, [...map.get(elem.tag), elem.meta.numItems]);
+                } else {
+                    map.set(elem.tag, [elem.meta.numItems]);
+                }
+                return map;
+            }, new Map());
             htmlContents += `
             <div class="col-half">
             <h4>Zotero</h4>
-            ${entry.zotero.map(t => zoteroRoam.utils.renderBP3_option(t.tag, "checkbox", 0, {varName: "zr-tagselect", optValue: t.tag, modifier: 'checked', labelModifier: `data-tag-source="zotero" data-tag-type="${t.meta.type}"`})).join("\n")}
+            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + ` (${consolidatedTags.get(elem).join(" + ")})`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
             </div>
             `;
 
@@ -881,7 +892,7 @@
                 inputElem = `
                 <div class="bp3-input-group">
                     <span class="bp3-icon bp3-icon-tag"></span>
-                <input type="text" class="bp3-input" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                <input type="text" class="bp3-input" name="zr-tag-rename" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
                 </div>
                 `;
                 }

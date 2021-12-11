@@ -527,7 +527,7 @@ var zoteroRoam = {};
             let cssElem = document.createElement('style');
             cssElem.textContent = `
             #zotero-roam-portal .bp3-overlay-backdrop{opacity:0.4;}
-            #zotero-roam-portal .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
+            #zotero-roam-portal > .bp3-dialog-container > .bp3-dialog .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .bp3-dialog-footer-actions{padding:5px 2.5%;justify-content:space-between;align-items:flex-end;transition:0.2s;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal [side-panel="hidden"] .side-panel{flex-basis:0%;}
@@ -735,7 +735,7 @@ var zoteroRoam = {};
             .zr-tab-panel-popover-footer {display: flex;flex: 0 1 auto;text-align: right;align-items: baseline;}
             .zr-tab-panel-popover-footer > * {margin: 10px 20px;}
             .zr-tab-panel-popover .col-half {flex: 1 0 50%;display: flex;flex-wrap: wrap;}
-            .zr-tab-panel-popover h4 {flex: 0 0 100%;margin: 0px;margin-bottom: 10px;}
+            .zr-tab-panel-popover h4 {flex: 0 0 100%;margin: 0px;margin-bottom: 10px;font-size:15px;}
             .zr-tab-panel-popover[overlay-visible="true"] + .zr-tab-panel-datalist {opacity: 0.7;}
             .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;border-radius:0px;}
             .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;align-items:baseline;}
@@ -746,7 +746,7 @@ var zoteroRoam = {};
             .zr-datalist-item [zr-role="title"]::before {content: '# '}
             .zr-datalist-item [zr-role="taglist"] {margin:5px;}
             [zr-role="taglist"] [data-tag-source] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
-            label[data-tag-source] {color: #5e5e5e;margin-right:15px;}
+            label[data-tag-source] {color: #5e5e5e;margin-right:15px;font-weight:400;}
             [data-tag-source="roam"] input:checked ~.bp3-control-indicator {background-color: #48a5e7;box-shadow: none;}
             [data-tag-source="zotero"] input:checked ~ .bp3-control-indicator {background-color: #e1881a;box-shadow: none;}
             [zr-role="taglist"] [data-tag-source="zotero"] {color: #e1881a;background-color: #fff5e7;}

@@ -441,6 +441,68 @@
 
         },
 
+        // TODO: Set event emitter or logging, input checking/error handling
+        async modifySelectedTags(action, divClass = "zr-tab-panel-popover"){
+            let selection = document.querySelectorAll(`.${divClass} input[name="zr-tag-select"]`).filter(op => op.checked == true);
+            let into = action == 'Delete' ? null :  document.querySelector(`.${divClass} input[name="zr-tag-rename"]`).value;
+            let library = zoteroRoam.tagManager.activeDisplay.library;
+
+            let tags = selection.reduce((obj, op) => {
+                let tag_elem = op.closest('[data-tag-source]');
+                if(tag_elem.getAttribute('data-tag-source') == 'roam'){
+                    if(action == 'Delete'){
+                        obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});    
+                    } else {
+                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
+                    }
+                } else if(tag_elem.getAttribute('data-tag-source' == 'zotero')){
+                    obj.zotero.push(op.value);
+                }
+                return obj;
+            }, {roam: [], zotero: []});
+
+            switch(action){
+                case 'Edit':
+                case 'Merge':
+                    await zoteroRoam.handlers.renameSelectedTags(library, tags, into);
+                    break;
+                case 'Delete':
+                    await zoteroRoam.handlers.deleteSelectedTags(library, tags);
+            }
+        },
+
+        // TODO: Set event emitter ?
+        async deleteSelectedTags(library, tags){
+            if(tags.zotero.length > 0){
+                let req = await zoteroRoam.write.deleteTags(library, tags.zotero);
+                if(req.success == true){
+                    tags.roam.forEach(page => window.roamAlphaAPI.deletePage(page));
+                    console.log(req.response);
+                    await zoteroRoam.extension.update();
+                } else {
+                    console.log(req);
+                }
+            } else {
+                tags.roam.forEach(page => window.roamAlphaAPI.deletePage(page));
+            }
+        },
+
+        // TODO: Set event emitter ?
+        async renameSelectedTags(library, tags, into){
+            if(tags.zotero.length > 0){
+                let req = await zoteroRoam.write.editTags(library, tags.zotero, into);
+                if(req.success == true){
+                    tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
+                    console.log(req.data);
+                    await zoteroRoam.extension.update();
+                } else {
+                    console.log(req);
+                }
+            } else {
+                tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
+            }
+        },
+
         async requestCitoid(query, { format = "zotero", has_relation = false, tag_with = [], collections = []} = {}){
             let outcome = {};
 

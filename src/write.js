@@ -91,7 +91,7 @@
         },
 
         async deleteTags(library, tags) {
-            let tagList = tags.constructor === String ? encodeURIComponent(tags) : tags.map(t => encodeURIComponent(t)).join("||");
+            let tagList = tags.constructor === String ? encodeURIComponent(tags) : Array.from(new Set(tags)).map(t => encodeURIComponent(t)).join("||");
             let outcome = {};
             try {
                 let req = await fetch(`https://api.zotero.org/${library.path}/tags?tag=${tagList}`,
