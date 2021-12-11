@@ -875,7 +875,7 @@
             htmlContents += `
             <div class="col-half">
             <h4>Zotero</h4>
-            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + `<span class="zr-secondary">(${consolidatedTags.get(elem).join(" + ")})</span>`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
+            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + ` <span class="zr-secondary zr-text-small">(${consolidatedTags.get(elem).join(" + ")})</span>`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
             </div>
             `;
 
@@ -1331,6 +1331,13 @@
                 overlay.setAttribute('overlay-visible', 'true');
                 overlay.style.display = "block";
             } else {
+                let popover = overlay.querySelector('.zr-tab-panel-popover[overlay-visible="true"]');
+                if(popover){
+                    popover.querySelector('.bp3-dialog-body').innerHTML = ``;
+                    popover.querySelector('.bp3-dialog-footer').innerHTML = ``;
+                    popover.style.display = "none";
+                    popover.setAttribute('overlay-visible', 'hidden');
+                }
                 overlay.setAttribute('overlay-visible', 'false');
                 overlay.style.display = "none";
             }

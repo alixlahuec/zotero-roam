@@ -358,6 +358,11 @@
                     // Only if the library's latest version has increased, refresh the tag list for that library
                     zoteroRoam.tagManager.lists[libPath].data = zoteroRoam.utils.makeTagList(zoteroRoam.data.tags[libPath]);
                     zoteroRoam.tagManager.lists[libPath].lastUpdated = latest_lib;
+                    // And if it's the library in current display, refresh the datalist
+                    let current_lib = zoteroRoam.tagManager.activeDisplay.library;
+                    if(current_lib.path == libPath){
+                        zoteroRoam.utils.updateTagPagination(current_lib.path, {by: zoteroRoam.tagManager.activeDisplay.by});
+                    }
                 }
             });
         },

@@ -62,7 +62,7 @@
         },
 
         async editTags(library, tags, into) {
-            let tagNames = Array.from(new Set(tags.map(t => t.tag)));
+            let tagNames = Array.from(new Set(tags));
             let dataList = [];
             let libItems = zoteroRoam.data.items.filter(i => i.library.type + 's/' + i.library.id == library.path);
             libItems.forEach(i => {

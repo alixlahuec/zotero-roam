@@ -1172,6 +1172,11 @@ var zoteroRoam = {};
                     // Only if the library's latest version has increased, refresh the tag list for that library
                     zoteroRoam.tagManager.lists[libPath].data = zoteroRoam.utils.makeTagList(zoteroRoam.data.tags[libPath]);
                     zoteroRoam.tagManager.lists[libPath].lastUpdated = latest_lib;
+                    // And if it's the library in current display, refresh the datalist
+                    let current_lib = zoteroRoam.tagManager.activeDisplay.library;
+                    if(current_lib.path == libPath){
+                        zoteroRoam.utils.updateTagPagination(current_lib.path, {by: zoteroRoam.tagManager.activeDisplay.by});
+                    }
                 }
             });
         },
@@ -2657,7 +2662,7 @@ var zoteroRoam = {};
         },
 
         async editTags(library, tags, into) {
-            let tagNames = Array.from(new Set(tags.map(t => t.tag)));
+            let tagNames = Array.from(new Set(tags));
             let dataList = [];
             let libItems = zoteroRoam.data.items.filter(i => i.library.type + 's/' + i.library.id == library.path);
             libItems.forEach(i => {
@@ -3713,7 +3718,7 @@ var zoteroRoam = {};
             htmlContents += `
             <div class="col-half">
             <h4>Zotero</h4>
-            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + `<span class="zr-secondary">(${consolidatedTags.get(elem).join(" + ")})</span>`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
+            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + ` <span class="zr-secondary zr-text-small">(${consolidatedTags.get(elem).join(" + ")})</span>`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
             </div>
             `;
 
@@ -4169,6 +4174,13 @@ var zoteroRoam = {};
                 overlay.setAttribute('overlay-visible', 'true');
                 overlay.style.display = "block";
             } else {
+                let popover = overlay.querySelector('.zr-tab-panel-popover[overlay-visible="true"]');
+                if(popover){
+                    popover.querySelector('.bp3-dialog-body').innerHTML = ``;
+                    popover.querySelector('.bp3-dialog-footer').innerHTML = ``;
+                    popover.style.display = "none";
+                    popover.setAttribute('overlay-visible', 'hidden');
+                }
                 overlay.setAttribute('overlay-visible', 'false');
                 overlay.style.display = "none";
             }
