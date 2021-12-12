@@ -1162,6 +1162,15 @@ var zoteroRoam = {};
                 </li>
                 `;
             }).join("\n");
+
+            let popover = document.querySelector('.bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover[overlay-visible="true"]');
+            if(popover){
+                popover.querySelector('.bp3-dialog-body').innerHTML = ``;
+                popover.querySelector('.bp3-dialog-footer').innerHTML = ``;
+                popover.style.display = "none";
+                popover.setAttribute('overlay-visible', 'hidden');
+            }
+
         },
 
         refreshTagLists(paths = Object.keys(zoteroRoam.data.tags)){
@@ -1182,14 +1191,23 @@ var zoteroRoam = {};
         },
 
         updateTagPagination(libPath, {by = "usage"} = {}){
+            let {currentLib = library, currentSort = by} = zoteroRoam.tagManager.activeDisplay;
+            let isSameQuery = (libPath == currentLib.path && by == currentSort) ? true : false;
             // Set parameters of active display
             zoteroRoam.tagManager.activeDisplay = {
                 library: zoteroRoam.data.libraries.get(libPath),
                 by: by
             }
             let dataset = by == "alphabetical" ? zoteroRoam.tagManager.lists[libPath].data : zoteroRoam.utils.sortTagList(zoteroRoam.tagManager.lists[libPath].data, by = by);
-            // Create a Pagination and render its contents
-            zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: dataset, itemsPerPage: 30, render: 'zoteroRoam.utils.renderTagList'});
+            if(isSameQuery){
+                // If it's the same query, only update the data store
+                zoteroRoam.tagManager.pagination.data = dataset;
+            } else {
+                // If it's a different library/sort, create a new Pagination and render its contents
+                zoteroRoam.tagManager.pagination = new zoteroRoam.Pagination({data: dataset, itemsPerPage: 30, render: 'zoteroRoam.utils.renderTagList'});
+            }
+
+            // In all cases, refresh the display
             zoteroRoam.tagManager.pagination.renderResults();
         },
 
@@ -4059,7 +4077,7 @@ var zoteroRoam = {};
                 <li class="zotero-roam-list-item" in-graph="${item.inGraph ? true : false}" data-item-type="${item.itemType}">
                 <div class="bp3-menu-item" label="${item.key}">
                     ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp zr-text-small">${item.timestamp}</span>` : ""}
-                    <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
+                    <div class="bp3-fill zotero-roam-item-contents">
                         <span class="zotero-roam-search-item-title" style="white-space:normal;">${item.title}</span>
                         <span class="zr-highlight">${item.meta}</span>
                         <span class="zotero-roam-list-item-key zr-text-small zr-auxiliary">[${item.key}]</span>

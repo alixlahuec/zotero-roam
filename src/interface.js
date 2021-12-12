@@ -1240,7 +1240,7 @@
                 <li class="zotero-roam-list-item" in-graph="${item.inGraph ? true : false}" data-item-type="${item.itemType}">
                 <div class="bp3-menu-item" label="${item.key}">
                     ${type == "added-on" ? `<span class="bp3-menu-item-label zotero-roam-item-timestamp zr-text-small">${item.timestamp}</span>` : ""}
-                    <div class="bp3-text-overflow-ellipsis bp3-fill zotero-roam-item-contents">
+                    <div class="bp3-fill zotero-roam-item-contents">
                         <span class="zotero-roam-search-item-title" style="white-space:normal;">${item.title}</span>
                         <span class="zr-highlight">${item.meta}</span>
                         <span class="zotero-roam-list-item-key zr-text-small zr-auxiliary">[${item.key}]</span>
