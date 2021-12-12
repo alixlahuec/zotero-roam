@@ -1191,8 +1191,8 @@ var zoteroRoam = {};
         },
 
         updateTagPagination(libPath, {by = "usage"} = {}){
-            let {currentLib = library, currentSort = by} = zoteroRoam.tagManager.activeDisplay;
-            let isSameQuery = (libPath == currentLib.path && by == currentSort) ? true : false;
+            let {library: currentLib, by: currentSort} = zoteroRoam.tagManager.activeDisplay;
+            let isSameQuery = (currentLib && libPath == currentLib.path && by == currentSort) ? true : false;
             // Set parameters of active display
             zoteroRoam.tagManager.activeDisplay = {
                 library: zoteroRoam.data.libraries.get(libPath),
