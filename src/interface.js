@@ -770,6 +770,9 @@
 
             let tagManager = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-contents');
             tagManager.innerHTML += `
+            <div class="zr-loading-overlay bp3-dialog" style="display:none;">
+            ${zoteroRoam.utils.renderBP3Spinner()}
+            </div>
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
                     <span class="zr-datalist-sort_option">
@@ -812,7 +815,12 @@
                     if(panelName == "tag-manager"){
                         let popover = e.target.closest('.zr-tab-panel-popover');
                         if(popover){
-                            // Add handlers for delete/edit operations here, once ready
+                            let btn = e.target.closest('button[zr-command]');
+                            if(btn){
+                                zoteroRoam.handlers.modifySelectedTags(action = btn.getAttribute('zr-command'));
+                                btn.classList.add('bp3-disabled');
+                                btn.setAttribute('aria-disabled', 'true');
+                            }
                         } else {
                             let actionsPopover = tabpanel.querySelector('.zr-tab-panel-popover');
                             if(actionsPopover.getAttribute('overlay-visible') == 'true'){

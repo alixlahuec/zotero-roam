@@ -527,7 +527,7 @@ var zoteroRoam = {};
             let cssElem = document.createElement('style');
             cssElem.textContent = `
             #zotero-roam-portal .bp3-overlay-backdrop{opacity:0.4;}
-            #zotero-roam-portal > .bp3-dialog-container > .bp3-dialog .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
+            #zotero-roam-portal > .bp3-overlay > .bp3-dialog-container > .bp3-dialog > .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .bp3-dialog-footer-actions{padding:5px 2.5%;justify-content:space-between;align-items:flex-end;transition:0.2s;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal [side-panel="hidden"] .side-panel{flex-basis:0%;}
@@ -721,7 +721,7 @@ var zoteroRoam = {};
             .zr-tab-panel-header, .zr-tab-panel-contents {flex: 0 0 100%;}
             .zr-tab-panel-header {display:flex;justify-content:space-between;align-items:flex-start;}
             .zr-tab-panel-description {padding-top:15px;}
-            .zr-tab-panel-contents {padding-right:30px;}
+            .zr-tab-panel-contents {padding-right:30px;position:relative;}
             .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;border-bottom: 1px #cccccc solid;}
             .zr-tab-panel-toolbar > .bp3-button-group > span {font-size: 0.9em;}
             .zr-datalist-sort_option label {width: auto;display: inline-block;text-align: center;cursor: pointer;font-weight:500;}
@@ -753,6 +753,8 @@ var zoteroRoam = {};
             [zr-role="taglist"] [data-tag-source="roam"] {color: #48a5e7;background-color: #e7f5ff;}
             .zr-datalist-item .bp3-menu-item-label > .bp3-button-group {opacity:0.6;}
             .zr-datalist-item:hover .bp3-menu-item-label > .bp3-button-group {opacity:1;transition:0.3s;}
+            .zr-loading-overlay {position: absolute;width: 100%;height: 100%;display: flex;align-items: center;justify-content: center;background: #ffffffa6;z-index: 5;}
+            .zr-loading-overlay.bp3-dialog {box-shadow:none;margin:0px;padding:0px;opacity:0.7;}
             .zr-highlight {color: #206fe6;}
             .bp3-dark .zr-highlight{color:#3fb8ff;}
             .zr-highlight-2 {color:#d9822b;}
@@ -1177,14 +1179,23 @@ var zoteroRoam = {};
             paths.forEach(libPath => {
                 let latest_lib = zoteroRoam.data.libraries.get(libPath).version;
                 let latest_tagList = zoteroRoam.tagManager.lists[libPath].lastUpdated;
+
+                let {library: currentLib, by: currentSort} = zoteroRoam.tagManager.activeDisplay;
+                
                 if(Number(latest_lib) > Number(latest_tagList)){
-                    // Only if the library's latest version has increased, refresh the tag list for that library
+                    // If the library in current display has updated, initiate loading overlay:
+                    if(currentLib && currentLib.path == libPath){
+                        document.querySelector('.bp3-tab-panel[name="tag-manager"] .zr-tab-panel-contents .zr-loading-overlay').style.display = "flex";
+                    }
+
+                    // Refresh the tag list for the library
                     zoteroRoam.tagManager.lists[libPath].data = zoteroRoam.utils.makeTagList(zoteroRoam.data.tags[libPath]);
                     zoteroRoam.tagManager.lists[libPath].lastUpdated = latest_lib;
-                    // And if it's the library in current display, refresh the datalist
-                    let current_lib = zoteroRoam.tagManager.activeDisplay.library;
-                    if(current_lib && current_lib.path == libPath){
-                        zoteroRoam.utils.updateTagPagination(current_lib.path, {by: zoteroRoam.tagManager.activeDisplay.by});
+                    
+                    // If the library in current display has updated, refresh the datalist & terminate loading:
+                    if(currentLib && currentLib.path == libPath){
+                        zoteroRoam.utils.updateTagPagination(currentLib.path, {by: currentSort});
+                        document.querySelector('.bp3-tab-panel[name="tag-manager"] .zr-tab-panel-contents .zr-loading-overlay').style.display = "none";
                     }
                 }
             });
@@ -1495,6 +1506,19 @@ var zoteroRoam = {};
             <input type="radio" value="${optValue}" name="${varName}" id="${varName}_${optValue}" ${modifier} />
             ${iconEl}
             <label for="${varName}_${optValue}">${label}</label>
+            `
+        },
+
+        renderBP3Spinner(){
+            return `
+            <div class="bp3-spinner">
+                <div class="bp3-spinner-animation">
+                    <svg width="20" height="20" stroke-width="8.00" viewBox="1.00 1.00 98.00 98.00">
+                        <path class="bp3-spinner-track" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"></path>
+                        <path class="bp3-spinner-head" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90" pathLength="280" stroke-dasharray="280 280" stroke-dashoffset="210"></path>
+                    </svg>
+                </div>
+            </div>
             `
         },
         
@@ -2197,7 +2221,7 @@ var zoteroRoam = {};
                 if(req.success == true){
                     tags.roam.forEach(page => window.roamAlphaAPI.deletePage(page));
                     console.log(req.response);
-                    await zoteroRoam.extension.update();
+                    await zoteroRoam.extension.update(popup = "false", reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
                 } else {
                     console.log(req);
                 }
@@ -2213,7 +2237,7 @@ var zoteroRoam = {};
                 if(req.success == true){
                     tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
                     console.log(req.data);
-                    await zoteroRoam.extension.update();
+                    await zoteroRoam.extension.update(popup = "false", reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
                 } else {
                     console.log(req);
                 }
@@ -3607,6 +3631,9 @@ var zoteroRoam = {};
 
             let tagManager = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-contents');
             tagManager.innerHTML += `
+            <div class="zr-loading-overlay bp3-dialog" style="display:none;">
+            ${zoteroRoam.utils.renderBP3Spinner()}
+            </div>
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
                     <span class="zr-datalist-sort_option">
@@ -3649,7 +3676,12 @@ var zoteroRoam = {};
                     if(panelName == "tag-manager"){
                         let popover = e.target.closest('.zr-tab-panel-popover');
                         if(popover){
-                            // Add handlers for delete/edit operations here, once ready
+                            let btn = e.target.closest('button[zr-command]');
+                            if(btn){
+                                zoteroRoam.handlers.modifySelectedTags(action = btn.getAttribute('zr-command'));
+                                btn.classList.add('bp3-disabled');
+                                btn.setAttribute('aria-disabled', 'true');
+                            }
                         } else {
                             let actionsPopover = tabpanel.querySelector('.zr-tab-panel-popover');
                             if(actionsPopover.getAttribute('overlay-visible') == 'true'){
@@ -5203,15 +5235,7 @@ var zoteroRoam = {};
 
                 // Open the dialog before harvesting the metadata, show loading state
                 let overlay = document.querySelector('.zotero-roam-auxiliary-overlay');
-                overlay.querySelector('.main-panel .header-left').innerHTML = `
-                <div class="bp3-spinner">
-                    <div class="bp3-spinner-animation">
-                        <svg width="20" height="20" stroke-width="8.00" viewBox="1.00 1.00 98.00 98.00">
-                            <path class="bp3-spinner-track" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"></path>
-                            <path class="bp3-spinner-head" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90" pathLength="280" stroke-dasharray="280 280" stroke-dashoffset="210"></path>
-                        </svg>
-                    </div>
-                </div>`;
+                overlay.querySelector('.main-panel .header-left').innerHTML = `${zoteroRoam.utils.renderBP3Spinner()}`;
                 overlay.querySelector('.main-panel .rendered-div').innerHTML = ``;
                 overlay.querySelector('.bp3-dialog').setAttribute('side-panel', 'visible');
                 zoteroRoam.interface.triggerImport(type = "weblinks");

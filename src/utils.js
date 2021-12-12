@@ -363,14 +363,23 @@
             paths.forEach(libPath => {
                 let latest_lib = zoteroRoam.data.libraries.get(libPath).version;
                 let latest_tagList = zoteroRoam.tagManager.lists[libPath].lastUpdated;
+
+                let {library: currentLib, by: currentSort} = zoteroRoam.tagManager.activeDisplay;
+                
                 if(Number(latest_lib) > Number(latest_tagList)){
-                    // Only if the library's latest version has increased, refresh the tag list for that library
+                    // If the library in current display has updated, initiate loading overlay:
+                    if(currentLib && currentLib.path == libPath){
+                        document.querySelector('.bp3-tab-panel[name="tag-manager"] .zr-tab-panel-contents .zr-loading-overlay').style.display = "flex";
+                    }
+
+                    // Refresh the tag list for the library
                     zoteroRoam.tagManager.lists[libPath].data = zoteroRoam.utils.makeTagList(zoteroRoam.data.tags[libPath]);
                     zoteroRoam.tagManager.lists[libPath].lastUpdated = latest_lib;
-                    // And if it's the library in current display, refresh the datalist
-                    let current_lib = zoteroRoam.tagManager.activeDisplay.library;
-                    if(current_lib && current_lib.path == libPath){
-                        zoteroRoam.utils.updateTagPagination(current_lib.path, {by: zoteroRoam.tagManager.activeDisplay.by});
+                    
+                    // If the library in current display has updated, refresh the datalist & terminate loading:
+                    if(currentLib && currentLib.path == libPath){
+                        zoteroRoam.utils.updateTagPagination(currentLib.path, {by: currentSort});
+                        document.querySelector('.bp3-tab-panel[name="tag-manager"] .zr-tab-panel-contents .zr-loading-overlay').style.display = "none";
                     }
                 }
             });
@@ -681,6 +690,19 @@
             <input type="radio" value="${optValue}" name="${varName}" id="${varName}_${optValue}" ${modifier} />
             ${iconEl}
             <label for="${varName}_${optValue}">${label}</label>
+            `
+        },
+
+        renderBP3Spinner(){
+            return `
+            <div class="bp3-spinner">
+                <div class="bp3-spinner-animation">
+                    <svg width="20" height="20" stroke-width="8.00" viewBox="1.00 1.00 98.00 98.00">
+                        <path class="bp3-spinner-track" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"></path>
+                        <path class="bp3-spinner-head" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90" pathLength="280" stroke-dasharray="280 280" stroke-dashoffset="210"></path>
+                    </svg>
+                </div>
+            </div>
             `
         },
         

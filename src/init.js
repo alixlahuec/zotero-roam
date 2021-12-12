@@ -527,7 +527,7 @@ var zoteroRoam = {};
             let cssElem = document.createElement('style');
             cssElem.textContent = `
             #zotero-roam-portal .bp3-overlay-backdrop{opacity:0.4;}
-            #zotero-roam-portal > .bp3-dialog-container > .bp3-dialog .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
+            #zotero-roam-portal > .bp3-overlay > .bp3-dialog-container > .bp3-dialog > .bp3-dialog-body{flex-wrap:nowrap;display:flex;margin:0px;}
             #zotero-roam-portal .bp3-dialog-footer-actions{padding:5px 2.5%;justify-content:space-between;align-items:flex-end;transition:0.2s;}
             #zotero-roam-portal .side-panel{background-color:white;transition:0.5s;font-size:0.8em;overflow:auto;border-radius: 0 6px 6px 0;}
             #zotero-roam-portal [side-panel="hidden"] .side-panel{flex-basis:0%;}
@@ -721,7 +721,7 @@ var zoteroRoam = {};
             .zr-tab-panel-header, .zr-tab-panel-contents {flex: 0 0 100%;}
             .zr-tab-panel-header {display:flex;justify-content:space-between;align-items:flex-start;}
             .zr-tab-panel-description {padding-top:15px;}
-            .zr-tab-panel-contents {padding-right:30px;}
+            .zr-tab-panel-contents {padding-right:30px;position:relative;}
             .zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;border-bottom: 1px #cccccc solid;}
             .zr-tab-panel-toolbar > .bp3-button-group > span {font-size: 0.9em;}
             .zr-datalist-sort_option label {width: auto;display: inline-block;text-align: center;cursor: pointer;font-weight:500;}
@@ -753,6 +753,8 @@ var zoteroRoam = {};
             [zr-role="taglist"] [data-tag-source="roam"] {color: #48a5e7;background-color: #e7f5ff;}
             .zr-datalist-item .bp3-menu-item-label > .bp3-button-group {opacity:0.6;}
             .zr-datalist-item:hover .bp3-menu-item-label > .bp3-button-group {opacity:1;transition:0.3s;}
+            .zr-loading-overlay {position: absolute;width: 100%;height: 100%;display: flex;align-items: center;justify-content: center;background: #ffffffa6;z-index: 5;}
+            .zr-loading-overlay.bp3-dialog {box-shadow:none;margin:0px;padding:0px;opacity:0.7;}
             .zr-highlight {color: #206fe6;}
             .bp3-dark .zr-highlight{color:#3fb8ff;}
             .zr-highlight-2 {color:#d9822b;}
