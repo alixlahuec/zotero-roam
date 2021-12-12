@@ -32,25 +32,51 @@
         async postItemData(library, dataList) {
             let outcome = {};
             try {
-                let req = await fetch(`https://api.zotero.org/${library.path}/items`,
+                if(dataList.length > 50){
+                    let nbCalls = Math.ceil(dataList.length / 50);
+                    let reqs = [];
+                    let output = {success: [], failed: []};
+
+                    for(i=0;i<nbCalls;i++){
+                        reqs.push(zoteroRoam.write.postItemData(library, dataList.slice(i*50, (i+1)*50)));
+                    }
+
+                    let results = await Promise.all(reqs);
+                    output.success = await Promise.all(results.filter(req => req.ok == true).map(req => req.json()));
+                    output.failed = results.filter(req => !req.ok);
+
+                    if(output.success.length == nbCalls){
+                        outcome = {
+                            success: true,
+                            data: output.success
+                        }
+                    } else {
+                        outcome = {
+                            success: false,
+                            response: output
+                        }
+                    }
+
+                } else {
+                    let req = await fetch(`https://api.zotero.org/${library.path}/items`,
                     {
                         method: 'POST',
                         body: JSON.stringify(dataList),
                         headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey, 'If-Unmodified-Since-Version': library.version },
                     });
-                if (req.ok == true) {
-                    let response = await req.json();
-                    outcome = {
-                        success: true,
-                        data: response
-                    }
-                } else {
-                    outcome = {
-                        success: false,
-                        response: req
+                    if (req.ok == true) {
+                        let response = await req.json();
+                        outcome = {
+                            success: true,
+                            data: response
+                        }
+                    } else {
+                        outcome = {
+                            success: false,
+                            response: req
+                        }
                     }
                 }
-
             } catch (e) {
                 outcome = {
                     success: null,

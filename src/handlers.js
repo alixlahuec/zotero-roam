@@ -478,7 +478,7 @@
                 if(req.success == true){
                     tags.roam.forEach(page => window.roamAlphaAPI.deletePage(page));
                     console.log(req.response);
-                    await zoteroRoam.extension.update(popup = "false", reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
+                    await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
                 } else {
                     console.log(req);
                 }
@@ -494,7 +494,7 @@
                 if(req.success == true){
                     tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
                     console.log(req.data);
-                    await zoteroRoam.extension.update(popup = "false", reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
+                    await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
                 } else {
                     console.log(req);
                 }

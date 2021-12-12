@@ -753,7 +753,7 @@ var zoteroRoam = {};
             [zr-role="taglist"] [data-tag-source="roam"] {color: #48a5e7;background-color: #e7f5ff;}
             .zr-datalist-item .bp3-menu-item-label > .bp3-button-group {opacity:0.6;}
             .zr-datalist-item:hover .bp3-menu-item-label > .bp3-button-group {opacity:1;transition:0.3s;}
-            .zr-loading-overlay {position: absolute;width: 100%;height: 100%;display: flex;align-items: center;justify-content: center;background: #ffffffa6;z-index: 5;}
+            .zr-loading-overlay {position: absolute;width: 100%;height: 100%;display: flex;align-items: center;justify-content: center;z-index: 5;}
             .zr-loading-overlay.bp3-dialog {box-shadow:none;margin:0px;padding:0px;opacity:0.7;}
             .zr-highlight {color: #206fe6;}
             .bp3-dark .zr-highlight{color:#3fb8ff;}
@@ -2221,7 +2221,7 @@ var zoteroRoam = {};
                 if(req.success == true){
                     tags.roam.forEach(page => window.roamAlphaAPI.deletePage(page));
                     console.log(req.response);
-                    await zoteroRoam.extension.update(popup = "false", reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
+                    await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
                 } else {
                     console.log(req);
                 }
@@ -2237,7 +2237,7 @@ var zoteroRoam = {};
                 if(req.success == true){
                     tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
                     console.log(req.data);
-                    await zoteroRoam.extension.update(popup = "false", reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
+                    await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
                 } else {
                     console.log(req);
                 }
@@ -2650,25 +2650,51 @@ var zoteroRoam = {};
         async postItemData(library, dataList) {
             let outcome = {};
             try {
-                let req = await fetch(`https://api.zotero.org/${library.path}/items`,
+                if(dataList.length > 50){
+                    let nbCalls = Math.ceil(dataList.length / 50);
+                    let reqs = [];
+                    let output = {success: [], failed: []};
+
+                    for(i=0;i<nbCalls;i++){
+                        reqs.push(zoteroRoam.write.postItemData(library, dataList.slice(i*50, (i+1)*50)));
+                    }
+
+                    let results = await Promise.all(reqs);
+                    output.success = await Promise.all(results.filter(req => req.ok == true).map(req => req.json()));
+                    output.failed = results.filter(req => !req.ok);
+
+                    if(output.success.length == nbCalls){
+                        outcome = {
+                            success: true,
+                            data: output.success
+                        }
+                    } else {
+                        outcome = {
+                            success: false,
+                            response: output
+                        }
+                    }
+
+                } else {
+                    let req = await fetch(`https://api.zotero.org/${library.path}/items`,
                     {
                         method: 'POST',
                         body: JSON.stringify(dataList),
                         headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey, 'If-Unmodified-Since-Version': library.version },
                     });
-                if (req.ok == true) {
-                    let response = await req.json();
-                    outcome = {
-                        success: true,
-                        data: response
-                    }
-                } else {
-                    outcome = {
-                        success: false,
-                        response: req
+                    if (req.ok == true) {
+                        let response = await req.json();
+                        outcome = {
+                            success: true,
+                            data: response
+                        }
+                    } else {
+                        outcome = {
+                            success: false,
+                            response: req
+                        }
                     }
                 }
-
             } catch (e) {
                 outcome = {
                     success: null,
@@ -3761,7 +3787,7 @@ var zoteroRoam = {};
                 inputElem = `
                 <div class="bp3-input-group">
                     <span class="bp3-icon bp3-icon-tag"></span>
-                <input type="text" class="bp3-input" name="zr-tag-rename" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                <input type="text" class="bp3-input" name="zr-tag-rename" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
                 </div>
                 `;
                 }

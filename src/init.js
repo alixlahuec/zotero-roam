@@ -753,7 +753,7 @@ var zoteroRoam = {};
             [zr-role="taglist"] [data-tag-source="roam"] {color: #48a5e7;background-color: #e7f5ff;}
             .zr-datalist-item .bp3-menu-item-label > .bp3-button-group {opacity:0.6;}
             .zr-datalist-item:hover .bp3-menu-item-label > .bp3-button-group {opacity:1;transition:0.3s;}
-            .zr-loading-overlay {position: absolute;width: 100%;height: 100%;display: flex;align-items: center;justify-content: center;background: #ffffffa6;z-index: 5;}
+            .zr-loading-overlay {position: absolute;width: 100%;height: 100%;display: flex;align-items: center;justify-content: center;z-index: 5;}
             .zr-loading-overlay.bp3-dialog {box-shadow:none;margin:0px;padding:0px;opacity:0.7;}
             .zr-highlight {color: #206fe6;}
             .bp3-dark .zr-highlight{color:#3fb8ff;}

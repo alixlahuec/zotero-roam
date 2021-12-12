@@ -900,7 +900,7 @@
                 inputElem = `
                 <div class="bp3-input-group">
                     <span class="bp3-icon bp3-icon-tag"></span>
-                <input type="text" class="bp3-input" name="zr-tag-rename" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                <input type="text" class="bp3-input" name="zr-tag-rename" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
                 </div>
                 `;
                 }
