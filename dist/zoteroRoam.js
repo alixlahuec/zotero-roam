@@ -2647,30 +2647,22 @@ var zoteroRoam = {};
             }
         },
 
-        async postItemData(library, dataList, retry = true) {
+        async postItemData(library, dataList) {
             let outcome = {};
             try {
                 if(dataList.length > 50){
                     let nbCalls = Math.ceil(dataList.length / 50);
                     let output = {success: [], failed: []};
 
-                    let {path, version, apikey} = library;
+                    let dataCalls = [];
 
                     for(i=0;i<nbCalls;i++){
-                        let req = await zoteroRoam.write.postItemData({path: path, version: version, apikey: apikey}, dataList.slice(i*50, (i+1)*50));
-                        if(req.success == true){
-                            output.success.push(req.data);
-                            if(req.data.successful.length > 0){
-                                version = req.data.successful[0].version;
-                            }
-                        } else {
-                            output.failed.push(req);
-                            let latest = req.response.headers.get('Last-Modified-Version');
-                            if(latest){
-                                version = latest;
-                            }
-                        }
+                        dataCalls.push(zoteroRoam.write.postItemData(library, dataList.slice(i*50, (i+1)*50)));
                     }
+
+                    let dataResults = await Promise.all(dataCalls);
+                    output.success = dataResults.filter(req => req.success == true);
+                    output.failed = dataResults.filter(req => !req.success);
 
                     if(output.success.length == nbCalls){
                         outcome = {
@@ -2689,7 +2681,7 @@ var zoteroRoam = {};
                     {
                         method: 'POST',
                         body: JSON.stringify(dataList),
-                        headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey, 'If-Unmodified-Since-Version': library.version },
+                        headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey },
                     });
                     if (req.ok == true) {
                         let response = await req.json();
@@ -2698,16 +2690,10 @@ var zoteroRoam = {};
                             data: response
                         }
                     } else {
-                        if(req.status == 412 && retry == true){
-                            let {path, version, apikey} = library;
-                            let latest = req.headers.get('Last-Modified-Version');
-                            outcome = await zoteroRoam.write.postItemData({path: path, version: latest, apikey: apikey}, dataList, retry = false);
-                        } else {
-                            outcome = {
-                                success: false,
-                                response: req
-                            }
-                        }
+                        outcome = {
+                            success: false,
+                            response: req
+                        }                        
                     }
                 }
             } catch (e) {
@@ -2739,6 +2725,7 @@ var zoteroRoam = {};
                         cleanTags.push({ tag: into, type: 0 });
                         dataList.push({
                             key: i.data.key,
+                            version: i.version,
                             tags: cleanTags
                         })
                     }
@@ -4939,12 +4926,12 @@ var zoteroRoam = {};
                     } else {
                         zoteroRoam.data.collections[inStore] = collection;
                     }
-                })
+                });
                 
                 let updatedItems = updateResults.data.items;
                 if(updatedItems.length == 0){
                     if(popup) {
-                        zoteroRoam.interface.popToast("No new items were found since the data was last loaded. Data on collections was refreshed.", "primary");
+                        zoteroRoam.interface.popToast(`No new items were found since the data was last loaded. Data on collections was refreshed.`, "primary");
                     };
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 } else {

@@ -205,12 +205,12 @@
                     } else {
                         zoteroRoam.data.collections[inStore] = collection;
                     }
-                })
+                });
                 
                 let updatedItems = updateResults.data.items;
                 if(updatedItems.length == 0){
                     if(popup) {
-                        zoteroRoam.interface.popToast("No new items were found since the data was last loaded. Data on collections was refreshed.", "primary");
+                        zoteroRoam.interface.popToast(`No new items were found since the data was last loaded. Data on collections was refreshed.`, "primary");
                     };
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 } else {

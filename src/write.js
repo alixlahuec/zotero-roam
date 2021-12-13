@@ -29,30 +29,22 @@
             }
         },
 
-        async postItemData(library, dataList, retry = true) {
+        async postItemData(library, dataList) {
             let outcome = {};
             try {
                 if(dataList.length > 50){
                     let nbCalls = Math.ceil(dataList.length / 50);
                     let output = {success: [], failed: []};
 
-                    let {path, version, apikey} = library;
+                    let dataCalls = [];
 
                     for(i=0;i<nbCalls;i++){
-                        let req = await zoteroRoam.write.postItemData({path: path, version: version, apikey: apikey}, dataList.slice(i*50, (i+1)*50));
-                        if(req.success == true){
-                            output.success.push(req.data);
-                            if(req.data.successful.length > 0){
-                                version = req.data.successful[0].version;
-                            }
-                        } else {
-                            output.failed.push(req);
-                            let latest = req.response.headers.get('Last-Modified-Version');
-                            if(latest){
-                                version = latest;
-                            }
-                        }
+                        dataCalls.push(zoteroRoam.write.postItemData(library, dataList.slice(i*50, (i+1)*50)));
                     }
+
+                    let dataResults = await Promise.all(dataCalls);
+                    output.success = dataResults.filter(req => req.success == true);
+                    output.failed = dataResults.filter(req => !req.success);
 
                     if(output.success.length == nbCalls){
                         outcome = {
@@ -71,7 +63,7 @@
                     {
                         method: 'POST',
                         body: JSON.stringify(dataList),
-                        headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey, 'If-Unmodified-Since-Version': library.version },
+                        headers: { 'Zotero-API-Version': 3, 'Zotero-API-Key': library.apikey },
                     });
                     if (req.ok == true) {
                         let response = await req.json();
@@ -80,16 +72,10 @@
                             data: response
                         }
                     } else {
-                        if(req.status == 412 && retry == true){
-                            let {path, version, apikey} = library;
-                            let latest = req.headers.get('Last-Modified-Version');
-                            outcome = await zoteroRoam.write.postItemData({path: path, version: latest, apikey: apikey}, dataList, retry = false);
-                        } else {
-                            outcome = {
-                                success: false,
-                                response: req
-                            }
-                        }
+                        outcome = {
+                            success: false,
+                            response: req
+                        }                        
                     }
                 }
             } catch (e) {
@@ -121,6 +107,7 @@
                         cleanTags.push({ tag: into, type: 0 });
                         dataList.push({
                             key: i.data.key,
+                            version: i.version,
                             tags: cleanTags
                         })
                     }
