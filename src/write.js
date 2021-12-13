@@ -82,7 +82,7 @@
                     } else {
                         if(req.status == 412 && retry == true){
                             let {path, version, apikey} = library;
-                            let latest = req.response.headers.get('Last-Modified-Version');
+                            let latest = req.headers.get('Last-Modified-Version');
                             outcome = await zoteroRoam.write.postItemData({path: path, version: latest, apikey: apikey}, dataList, retry = false);
                         } else {
                             outcome = {
