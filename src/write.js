@@ -29,21 +29,30 @@
             }
         },
 
-        async postItemData(library, dataList) {
+        async postItemData(library, dataList, retry = true) {
             let outcome = {};
             try {
                 if(dataList.length > 50){
                     let nbCalls = Math.ceil(dataList.length / 50);
-                    let reqs = [];
                     let output = {success: [], failed: []};
 
-                    for(i=0;i<nbCalls;i++){
-                        reqs.push(zoteroRoam.write.postItemData(library, dataList.slice(i*50, (i+1)*50)));
-                    }
+                    let {path, version, apikey} = library;
 
-                    let results = await Promise.all(reqs);
-                    output.success = await Promise.all(results.filter(req => req.ok == true).map(req => req.json()));
-                    output.failed = results.filter(req => !req.ok);
+                    for(i=0;i<nbCalls;i++){
+                        let req = await zoteroRoam.write.postItemData({path: path, version: version, apikey: apikey}, dataList.slice(i*50, (i+1)*50));
+                        if(req.success == true){
+                            output.success.push(req.data);
+                            if(req.data.successful.length > 0){
+                                version = req.data.successful[0].version;
+                            }
+                        } else {
+                            output.failed.push(req);
+                            let latest = req.response.headers.get('Last-Modified-Version');
+                            if(latest){
+                                version = latest;
+                            }
+                        }
+                    }
 
                     if(output.success.length == nbCalls){
                         outcome = {
@@ -71,9 +80,15 @@
                             data: response
                         }
                     } else {
-                        outcome = {
-                            success: false,
-                            response: req
+                        if(req.status == 412 && retry == true){
+                            let {path, version, apikey} = library;
+                            let latest = req.response.headers.get('Last-Modified-Version');
+                            outcome = await zoteroRoam.write.postItemData({path: path, version: latest, apikey: apikey}, dataList, retry = false);
+                        } else {
+                            outcome = {
+                                success: false,
+                                response: req
+                            }
                         }
                     }
                 }
