@@ -448,8 +448,8 @@
             switch(action){
                 case 'Edit':
                 case 'Merge':
-                    let entryList = Array.from(document.querySelectorAll(`${div} .zr-tag-entry[data-entry-index]`));
-                    for(entry of entryList){
+                    let editList = Array.from(document.querySelectorAll(`${div} .zr-tag-entry[data-entry-index]`));
+                    for(entry of editList){
                         let into = entry.querySelector(`input[name*="zr-tag-rename_"]`).value;
                         let tagList = Array.from(entry.querySelectorAll(`input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
                         let tags = tagList.reduce((obj, entry) => {
@@ -466,8 +466,8 @@
                     }
                     break;
                 case 'Delete':
-                    let entryList = Array.from(document.querySelectorAll(`${div} input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
-                    let tags = entryList.reduce((obj, entry) => {
+                    let deleteList = Array.from(document.querySelectorAll(`${div} input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
+                    let tags = deleteList.reduce((obj, entry) => {
                         let tag_elem = op.closest('[data-tag-source]');
                         if(tag_elem.getAttribute('data-tag-source') == 'roam'){
                             obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});
