@@ -737,9 +737,10 @@ var zoteroRoam = {};
             .zr-tab-panel-popover .bp3-dialog {box-shadow:none;border: 1px #ececec solid;padding-bottom:0px;margin: 30px auto;width:80%;}
             .zr-tab-panel-popover .bp3-dialog-header {display:flex;padding:0px;}
             .zr-tab-panel-popover .bp3-dialog-header h4 {font-size:14px;text-align:center;}
-            .zr-tab-panel-popover .bp3-dialog-body {display: flex;flex-wrap: wrap;align-items: baseline;margin-bottom: 0px;}
-            .zr-tab-panel-popover .bp3-dialog-body .zr-tag-entry {display:flex;flex: 0 0 100%;justify-content:space-between;}
-            .zr-tag-column_input input {box-shadow:none;}
+            .zr-tab-panel-popover .bp3-dialog-body {display: flex;flex-wrap: wrap;align-items: baseline;margin: 15px 0px;}
+            .zr-tab-panel-popover .bp3-dialog-body .zr-tag-entry {display:flex;flex: 0 0 100%;justify-content:space-around;}
+            .zr-tag-column_input input {box-shadow:none;font-weight:bold;text-overflow:ellipsis;}
+            .zr-tag-column_input input::placeholder {font-weight:normal;}
             .zr-tab-panel-popover .bp3-dialog-footer {display:flex;justify-content:flex-end;margin-bottom: 10px;}
             .zr-tab-panel-popover-footer {display: flex;flex: 0 1 auto;text-align: right;align-items: baseline;}
             .zr-tab-panel-popover-footer > * {margin: 10px 20px;}
@@ -753,7 +754,7 @@ var zoteroRoam = {};
             .zr-datalist-item [zr-role="title"]::before {content: '# '}
             .zr-datalist-item [zr-role="taglist"] {margin:5px;}
             [zr-role="taglist"] [data-tag-source] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
-            label[data-tag-source] {color: #b3b3b3;background:#f9f9f9;border: 1px #e9e9e9 solid;font-weight:400;padding-top:4px;padding-bottom:4px;padding-right:15px;border-radius:5px;}
+            label[data-tag-source] {color: #b3b3b3;background:#f9f9f9;border: 1px #e9e9e9 solid;font-weight:400;padding-top:4px;padding-bottom:4px;padding-right:15px;border-radius:5px;max-width:fit-content;}
             [data-tag-source] .bp3-control-indicator {margin-left: -15px!important;border-radius:10px!important;}
             [data-tag-source="roam"] input:checked ~ .bp3-control-indicator {background-color: #48a5e7;box-shadow: none;}
             [data-tag-source="roam"] input:checked ~ .zr-tag-name {color: #48a5e7;}
@@ -3832,11 +3833,13 @@ var zoteroRoam = {};
             let popover = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover');
             // Layout variables
             let col_flex = `0 0 48%`;
+            let header_flex = `0 0 50%`;
             let action_label = "Delete tags";
             let action_intent = "danger";
             let action_icon = "trash";
             if(action != "Delete"){
                 col_flex = `0 0 33%`;
+                header_flex = `0 0 35%`;
                 action_label = "Modify tags";
                 action_intent = "primary";
                 action_icon = "arrow-right";
@@ -3844,8 +3847,8 @@ var zoteroRoam = {};
 
             // Header
             popover.querySelector('.bp3-dialog-header').innerHTML = `
-            <h4 style="flex:${col_flex};">Roam</h4>
-            <h4 style="flex:${col_flex};">Zotero</h4>
+            <h4 style="flex:${header_flex};">Roam</h4>
+            <h4 style="flex:${header_flex};">Zotero</h4>
             `;
 
             // Body
@@ -3861,7 +3864,7 @@ var zoteroRoam = {};
                     {varName: `zr-tag-select_${index}`, optValue: pg.title, optClass: "zr-text-small", modifier: action == "Delete" ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`}))
                     .join("\n");
                 } else {
-                    roamList = `<span class="zr-secondary zr-text-small">No tags in Roam</span>`;
+                    roamList = `<span class="zr-secondary zr-text-small" style="display:block;width:100%;text-align:center;">No tags in Roam</span>`;
                 }
 
                 let consolidatedTags = entry.zotero.reduce((map, elem) => {
@@ -6381,6 +6384,15 @@ var zoteroRoam = {};
                     }
                 }
                 // Refresh tag lists
+                let dashboardPopover = document.querySelector(`.zotero-roam-dashboard-overlay .zr-tab-panel-popover[overlay-visible="true"]`);
+                if(dashboardPopover){
+                    // If there is a visible popover in the dashboard, clear it
+                    dashboardPopover.querySelector('.bp3-dialog-header').innerHTML = ``;
+                    dashboardPopover.querySelector('.bp3-dialog-body').innerHTML = ``;
+                    dashboardPopover.querySelector('.bp3-dialog-footer').innerHTML = ``;
+                    dashboardPopover.style.display = "none";
+                    dashboardPopover.setAttribute('overlay-visible', 'hidden');
+                }
                 zoteroRoam.utils.refreshTagLists();
                 // --- Deleted items
             });

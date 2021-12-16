@@ -195,6 +195,15 @@
                     }
                 }
                 // Refresh tag lists
+                let dashboardPopover = document.querySelector(`.zotero-roam-dashboard-overlay .zr-tab-panel-popover[overlay-visible="true"]`);
+                if(dashboardPopover){
+                    // If there is a visible popover in the dashboard, clear it
+                    dashboardPopover.querySelector('.bp3-dialog-header').innerHTML = ``;
+                    dashboardPopover.querySelector('.bp3-dialog-body').innerHTML = ``;
+                    dashboardPopover.querySelector('.bp3-dialog-footer').innerHTML = ``;
+                    dashboardPopover.style.display = "none";
+                    dashboardPopover.setAttribute('overlay-visible', 'hidden');
+                }
                 zoteroRoam.utils.refreshTagLists();
                 // --- Deleted items
             });

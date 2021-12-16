@@ -861,11 +861,13 @@
             let popover = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover');
             // Layout variables
             let col_flex = `0 0 48%`;
+            let header_flex = `0 0 50%`;
             let action_label = "Delete tags";
             let action_intent = "danger";
             let action_icon = "trash";
             if(action != "Delete"){
                 col_flex = `0 0 33%`;
+                header_flex = `0 0 35%`;
                 action_label = "Modify tags";
                 action_intent = "primary";
                 action_icon = "arrow-right";
@@ -873,8 +875,8 @@
 
             // Header
             popover.querySelector('.bp3-dialog-header').innerHTML = `
-            <h4 style="flex:${col_flex};">Roam</h4>
-            <h4 style="flex:${col_flex};">Zotero</h4>
+            <h4 style="flex:${header_flex};">Roam</h4>
+            <h4 style="flex:${header_flex};">Zotero</h4>
             `;
 
             // Body
@@ -890,7 +892,7 @@
                     {varName: `zr-tag-select_${index}`, optValue: pg.title, optClass: "zr-text-small", modifier: action == "Delete" ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`}))
                     .join("\n");
                 } else {
-                    roamList = `<span class="zr-secondary zr-text-small">No tags in Roam</span>`;
+                    roamList = `<span class="zr-secondary zr-text-small" style="display:block;width:100%;text-align:center;">No tags in Roam</span>`;
                 }
 
                 let consolidatedTags = entry.zotero.reduce((map, elem) => {
