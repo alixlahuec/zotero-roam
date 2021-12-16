@@ -214,26 +214,12 @@
                     };
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 } else {
-                    let newItems = zoteroRoam.handlers.extractCitekeys(updatedItems);
-                    let nbNewItems = newItems.length;
-                    let nbModifiedItems = 0;
-
-                    updatedItems.forEach(item => {
-                        let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => libItem.data.key == item.data.key & libItem.requestLabel == item.requestLabel);
-                        if(duplicateIndex == -1){
-                            zoteroRoam.data.items.push(item);
-                        } else {
-                            zoteroRoam.data.items[duplicateIndex] = item;
-                            nbModifiedItems += 1;
-                            nbNewItems -= 1;
-                        }
-                    });
-
+                    let updateStats = zoteroRoam.handlers.incorporateUpdates(updatedItems);
                     zoteroRoam.inPage.checkCitekeys(update = true);
                     if(popup) {
-                        zoteroRoam.interface.popToast(`${nbNewItems} new items and ${nbModifiedItems} modified items were added.`, "primary");
+                        zoteroRoam.interface.popToast(`${updateStats.new} new items and ${updateStats.modified} modified items were added.`, "primary");
                     } else{
-                        console.log(`${nbNewItems} new items and ${nbModifiedItems} modified items were added.`);
+                        console.log(`${updateStats.new} new items and ${updateStats.modified} modified items were added.`);
                     };
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 }

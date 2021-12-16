@@ -790,6 +790,7 @@
             <div class="bp3-overlay zr-tab-panel-popover" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
                 <div class="bp3-dialog-container bp3-overlay-content">
                     <div class="bp3-dialog ${zoteroRoam.config.params.theme || ''}" role="dialog">
+                        <div class="bp3-dialog-header"></div>
                         <div class="bp3-dialog-body"></div>
                         <div class="bp3-dialog-footer"></div>
                     </div>
@@ -824,6 +825,7 @@
                         } else {
                             let actionsPopover = tabpanel.querySelector('.zr-tab-panel-popover');
                             if(actionsPopover.getAttribute('overlay-visible') == 'true'){
+                                actionsPopover.querySelector('.bp3-dialog-header').innerHTML = ``;
                                 actionsPopover.querySelector('.bp3-dialog-body').innerHTML = ``;
                                 actionsPopover.querySelector('.bp3-dialog-footer').innerHTML = ``;
                                 actionsPopover.style.display = "none";
@@ -845,7 +847,7 @@
                             } else if(datalist_item){
                                 let btn = e.target.closest('button[zr-action]');
                                 if(btn){
-                                    zoteroRoam.interface.showTagActionsPopover(token = datalist_item.getAttribute('data-token'), action = btn.getAttribute('zr-action'));
+                                    zoteroRoam.interface.showTagActionsPopover(tokens = [datalist_item.getAttribute('data-token')], action = btn.getAttribute('zr-action'));
                                 }
                             }
                         }
@@ -855,67 +857,82 @@
 
         },
 
-        showTagActionsPopover(token, action = "Edit"){
-            let entry = zoteroRoam.tagManager.pagination.data.find(el => el.token == token);
+        showTagActionsPopover(tokens, action = "Edit"){
             let popover = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover');
-            
-            let htmlContents = ``;
-            
-            // Roam elements
-            if(entry.roam.length > 0){
-                htmlContents += `
-                <div class="col-half">
-                <h4>Roam</h4>
-                ${entry.roam.map(pg => zoteroRoam.utils.renderBP3_option(string = pg.title, type = "checkbox", depth = 0, 
-                {varName: "zr-tag-select", optValue: pg.title, modifier: action == 'Delete' ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n")}
-                </div>
-                `;
-            }
-            // Zotero elements
-            let consolidatedTags = entry.zotero.reduce((map, elem) => {
-                if(map.has(elem.tag)){
-                    map.set(elem.tag, [...map.get(elem.tag), elem.meta.numItems]);
-                } else {
-                    map.set(elem.tag, [elem.meta.numItems]);
-                }
-                return map;
-            }, new Map());
-            htmlContents += `
-            <div class="col-half">
-            <h4>Zotero</h4>
-            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + ` <span class="zr-secondary zr-text-small">(${consolidatedTags.get(elem).join(" + ")})</span>`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
-            </div>
-            `;
-
-            // Action button
-            let action_label = "Delete";
+            // Layout variables
+            let col_flex = `0 0 50%`;
+            let action_label = "Delete tags";
             let action_intent = "danger";
             let action_icon = "trash";
-            let inputElem = ``;
-
             if(action != "Delete"){
-                action_label = "Edit/Merge";
+                col_flex = `0 0 35%`;
+                action_label = "Modify tags";
                 action_intent = "primary";
                 action_icon = "arrow-right";
-                inputElem = `
-                <div class="bp3-input-group">
-                    <span class="bp3-icon bp3-icon-tag"></span>
-                <input type="text" class="bp3-input" name="zr-tag-rename" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+            }
+
+            // Header
+            popover.querySelector('.bp3-dialog-header').innerHTML = `
+            <h4 style="flex:${col_flex};">Roam</h4>
+            <h4 style="flex:${col_flex};">Zotero</h4>
+            `;
+
+            // Body
+            popover.querySelector('.bp3-dialog-body').innerHTML = `
+            ${tokens.map((tk, index) => {
+                let entry = zoteroRoam.tagManager.pagination.data.find(el => el.token == tk);
+                let roamList = ``;
+                let zoteroList = ``;
+                let inputColumn = ``;
+
+                if(entry.roam.length > 0){
+                    roamList = entry.roam.map(pg => zoteroRoam.utils.renderBP3_option(string = `<span class="zr-tag-name">${pg.title}</span>`, type = "checkbox", depth = 0,
+                    {varName: `zr-tag-select_${index}`, optValue: pg.title, optClass: "zr-text-small", modifier: action == "Delete" ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`}))
+                    .join("\n");
+                } else {
+                    roamList - `<span class="zr-secondary zr-text-small">No tags in Roam</span>`;
+                }
+
+                let consolidatedTags = entry.zotero.reduce((map, elem) => {
+                    return (map.has(elem.tag)) ? map.set(elem.tag, [...map.get(elem.tag), elem.meta.numItems]) : map.set(elem.tag, [elem.meta.numItems]);
+                }, new Map());
+                zoteroList = Array.from(consolidatedTags.keys())
+                .map(elem => zoteroRoam.utils.renderBP3_option(`<span class="zr-tag-name">${elem} <span class="zr-secondary zr-text-small">(${consolidatedTags.get(elem).join(" + ")})</span></span>`, "checkbox", 0, 
+                {varName: `zr-tag-select_${index}`, optValue: elem, optClass: "zr-text-small", modifier: 'checked', labelModifier: `data-tag-source="zotero"`}))
+                .join("\n");
+
+                if(action != "Delete"){
+                    inputColumn = `
+                    <div class="bp3-input-group zr-tag-column_input" style="flex: 0 0 30%;">
+                        <span class="bp3-icon bp3-icon-fork"></span>
+                        <input type="text" class="bp3-input" name="zr-tag-rename_${index}" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                    </div>
+                    `;
+                }
+
+                return `
+                <div class="zr-tag-entry" data-entry-index="${index}">
+                    <div class="zr-tag-column_roam" style="flex:${col_flex};">
+                        ${roamList}
+                    </div>
+                    <div class="zr-tag-column_zotero" style="flex:${col_flex};">
+                        ${zoteroList}
+                    </div>
+                    ${inputColumn}
                 </div>
                 `;
-                }
-            
-            let htmlFooter = `
+
+            }).join("\n")}
+            `;
+
+            // Footer
+            popover.querySelector('.bp3-dialog-footer').innerHTML = `
             <div class="zr-tab-panel-popover-footer">
-                ${inputElem}
                 <div class="bp3-button-group bp3-minimal bp3-small">
                     ${zoteroRoam.utils.renderBP3Button_group(action_label, {buttonClass: `bp3-active bp3-intent-${action_intent}`, icon: action_icon, buttonAttribute: `zr-command="${action}"`})}
                 </div>
             </div>
             `;
-            
-            popover.querySelector('.bp3-dialog-body').innerHTML = htmlContents;
-            popover.querySelector('.bp3-dialog-footer').innerHTML = htmlFooter;
             
             popover.style.display = "block";
             popover.setAttribute('overlay-visible', 'true');

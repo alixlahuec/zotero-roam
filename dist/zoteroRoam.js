@@ -735,12 +735,13 @@ var zoteroRoam = {};
             .zr-datalist-sort_option input:checked, .zr-datalist-sort_option input:checked ~ span, .zr-datalist-sort_option input:checked ~ label {color: #3081e4;}
             .zr-datalist-sort_option .bp3-icon {padding-right:5px;}
             .zr-tab-panel-popover .bp3-dialog {box-shadow:none;border: 1px #ececec solid;padding-bottom:0px;margin: 30px auto;}
+            .zr-tab-panel-popover .bp3-dialog-header {display:flex;}
+            .zr-tab-panel-popover .bp3-dialog-header [class*="zr-tag-column_"] {align-items: center;justify-content:center;}
+            .zr-tab-panel-popover .bp3-dialog-header h4 {font-size:15px;}
             .zr-tab-panel-popover .bp3-dialog-body {display: flex;flex-wrap: wrap;align-items: baseline;margin-bottom: 0px;}
-            .zr-tab-panel-popover .bp3-dialog-footer {justify-content: right;display: flex;margin-bottom: 10px;}
+            .zr-tab-panel-popover .bp3-dialog-footer {display:flex;justify-content: right;margin-bottom: 10px;}
             .zr-tab-panel-popover-footer {display: flex;flex: 0 1 auto;text-align: right;align-items: baseline;}
             .zr-tab-panel-popover-footer > * {margin: 10px 20px;}
-            .zr-tab-panel-popover .col-half {flex: 1 0 50%;display: flex;flex-wrap: wrap;}
-            .zr-tab-panel-popover h4 {flex: 0 0 100%;margin: 0px;margin-bottom: 10px;font-size:15px;}
             .zr-tab-panel-popover[overlay-visible="true"] + .zr-tab-panel-datalist {opacity: 0.7;}
             .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;border-radius:0px;}
             .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;align-items:baseline;}
@@ -751,9 +752,10 @@ var zoteroRoam = {};
             .zr-datalist-item [zr-role="title"]::before {content: '# '}
             .zr-datalist-item [zr-role="taglist"] {margin:5px;}
             [zr-role="taglist"] [data-tag-source] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
-            label[data-tag-source] {color: #5e5e5e;margin-right:15px;font-weight:400;}
-            [data-tag-source="roam"] input:checked ~.bp3-control-indicator {background-color: #48a5e7;box-shadow: none;}
-            [data-tag-source="zotero"] input:checked ~ .bp3-control-indicator {background-color: #e1881a;box-shadow: none;}
+            label[data-tag-source] {color: #b3b3b3;background:#f9f9f9;border: 1px #e9e9e9 solid;font-weight:400;padding-top:4px;padding-bottom:4px;padding-right:15px;border-radius:5px;}
+            [data-tag-source] .bp3-control-indicator {margin-left: -15px!important;border-radius:10px!important;}
+            [data-tag-source="roam"] input:checked ~ .bp3-control-indicator, [data-tag-source="roam"] input:checked ~ .zr-tag-name {background-color: #48a5e7;box-shadow: none;}
+            [data-tag-source="zotero"] input:checked ~ .bp3-control-indicator, [data-tag-source="zotero"] input:checked ~ .zr-tag-name {background-color: #e1881a;box-shadow: none;}
             [zr-role="taglist"] [data-tag-source="zotero"] {color: #e1881a;background-color: #fff5e7;}
             [zr-role="taglist"] [data-tag-source="roam"] {color: #48a5e7;background-color: #e7f5ff;}
             .zr-datalist-item .bp3-menu-item-label > .bp3-button-group {opacity:0.6;}
@@ -2218,32 +2220,44 @@ var zoteroRoam = {};
 
         // TODO: Set event emitter or logging, input checking/error handling
         async modifySelectedTags(action, div = '.bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover'){
-            let selection = Array.from(document.querySelectorAll(`${div} input[name="zr-tag-select"]`)).filter(op => op.checked == true);
-            let into = action == 'Delete' ? null :  document.querySelector(`${div} input[name="zr-tag-rename"]`).value;
             let library = zoteroRoam.tagManager.activeDisplay.library;
-
-            let tags = selection.reduce((obj, op) => {
-                let tag_elem = op.closest('[data-tag-source]');
-                if(tag_elem.getAttribute('data-tag-source') == 'roam'){
-                    if(action == 'Delete'){
-                        obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});    
-                    } else {
-                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
-                    }
-                } else if(tag_elem.getAttribute('data-tag-source') == 'zotero'){
-                    obj.zotero.push(op.value);
-                }
-                return obj;
-            }, {roam: [], zotero: []});
             
             switch(action){
                 case 'Edit':
                 case 'Merge':
-                    await zoteroRoam.handlers.renameSelectedTags(library, tags, into);
+                    let entryList = Array.from(document.querySelectorAll(`${div} .zr-tag-entry[data-entry-index]`));
+                    for(entry of entryList){
+                        let into = entry.querySelector(`input[name*="zr-tag-rename_"]`).value;
+                        let tagList = Array.from(entry.querySelectorAll(`input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
+                        let tags = tagList.reduce((obj, entry) => {
+                            let tag_elem = op.closest('[data-tag-source]');
+                            if(tag_elem.getAttribute('data-tag-source') == 'roam'){
+    	                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
+                            } else if(tag_elem.getAttribute('data-tag-source') == 'zotero'){
+                                obj.zotero.push(op.value);
+                            }
+                            return obj;
+                        }, {roam: [], zotero: []});
+
+                        await zoteroRoam.handlers.renameSelectedTags(library, tags, into);
+                    }
                     break;
                 case 'Delete':
+                    let entryList = Array.from(document.querySelectorAll(`${div} input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
+                    let tags = entryList.reduce((obj, entry) => {
+                        let tag_elem = op.closest('[data-tag-source]');
+                        if(tag_elem.getAttribute('data-tag-source') == 'roam'){
+                            obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});
+                        } else if(tag_elem.getAttribute('data-tag-source') == 'zotero'){
+                            obj.zotero.push(op.value);
+                        }
+                        return obj;
+                    }, {roam: [], zotero: []});
+
                     await zoteroRoam.handlers.deleteSelectedTags(library, tags);
             }
+
+            await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${library.path}/`)));
         },
 
         // TODO: Set event emitter ?
@@ -2267,9 +2281,12 @@ var zoteroRoam = {};
             if(tags.zotero.length > 0){
                 let req = await zoteroRoam.write.editTags(library, tags.zotero, into);
                 if(req.success == true){
-                    tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
                     console.log(req.data);
-                    await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
+                    let updatedItems = req.data.successful;
+                    if(updatedItems.length > 0){
+                        zoteroRoam.handlers.incorporateUpdates(updatedItems);
+                    }
+                    tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
                 } else {
                     console.log(req);
                 }
@@ -2526,6 +2543,36 @@ var zoteroRoam = {};
             let childrenOutput = await childrenRequest.json();
             
             return childrenOutput;
+        },
+
+        incorporateUpdates(updatedItems){
+            let newItems = zoteroRoam.handlers.extractCitekeys(updatedItems);
+            let nbNewItems = newItems.length;
+            let nbModifiedItems = 0;
+
+            updatedItems.forEach(item => {
+                let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => libItem.data.key == item.data.key && libItem.library.id == item.library.id && libItem.library.type == item.library.type);
+                if(duplicateIndex == -1){
+                    let libPath = item.library.type + "s/" + item.library.id;
+                    let req = zoteroRoam.config.requests.findIndex(req => req.library == libPath);
+                    item.requestIndex = req;
+                    item.requestLabel = req.name;
+                    zoteroRoam.data.items.push(item);
+                } else {
+                    let {requestIndex, requestLabel} = zoteroRoam.data.items[duplicateIndex];
+                    item.requestIndex = requestIndex;
+                    item.requestLabel = requestLabel;
+                    zoteroRoam.data.items[duplicateIndex] = item;
+                    nbModifiedItems += 1;
+                    nbNewItems -= 1;
+                }
+            });
+
+            return {
+                new: nbNewItems,
+                modified: nbModifiedItems,
+                items: updatedItems
+            }
         },
 
         simplifyDataArray(arr){
@@ -3711,6 +3758,7 @@ var zoteroRoam = {};
             <div class="bp3-overlay zr-tab-panel-popover" overlay-visible="hidden" style="flex: 0 1 100%;position: relative;display:none;">
                 <div class="bp3-dialog-container bp3-overlay-content">
                     <div class="bp3-dialog ${zoteroRoam.config.params.theme || ''}" role="dialog">
+                        <div class="bp3-dialog-header"></div>
                         <div class="bp3-dialog-body"></div>
                         <div class="bp3-dialog-footer"></div>
                     </div>
@@ -3745,6 +3793,7 @@ var zoteroRoam = {};
                         } else {
                             let actionsPopover = tabpanel.querySelector('.zr-tab-panel-popover');
                             if(actionsPopover.getAttribute('overlay-visible') == 'true'){
+                                actionsPopover.querySelector('.bp3-dialog-header').innerHTML = ``;
                                 actionsPopover.querySelector('.bp3-dialog-body').innerHTML = ``;
                                 actionsPopover.querySelector('.bp3-dialog-footer').innerHTML = ``;
                                 actionsPopover.style.display = "none";
@@ -3766,7 +3815,7 @@ var zoteroRoam = {};
                             } else if(datalist_item){
                                 let btn = e.target.closest('button[zr-action]');
                                 if(btn){
-                                    zoteroRoam.interface.showTagActionsPopover(token = datalist_item.getAttribute('data-token'), action = btn.getAttribute('zr-action'));
+                                    zoteroRoam.interface.showTagActionsPopover(tokens = [datalist_item.getAttribute('data-token')], action = btn.getAttribute('zr-action'));
                                 }
                             }
                         }
@@ -3776,67 +3825,82 @@ var zoteroRoam = {};
 
         },
 
-        showTagActionsPopover(token, action = "Edit"){
-            let entry = zoteroRoam.tagManager.pagination.data.find(el => el.token == token);
+        showTagActionsPopover(tokens, action = "Edit"){
             let popover = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover');
-            
-            let htmlContents = ``;
-            
-            // Roam elements
-            if(entry.roam.length > 0){
-                htmlContents += `
-                <div class="col-half">
-                <h4>Roam</h4>
-                ${entry.roam.map(pg => zoteroRoam.utils.renderBP3_option(string = pg.title, type = "checkbox", depth = 0, 
-                {varName: "zr-tag-select", optValue: pg.title, modifier: action == 'Delete' ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`})).join("\n")}
-                </div>
-                `;
-            }
-            // Zotero elements
-            let consolidatedTags = entry.zotero.reduce((map, elem) => {
-                if(map.has(elem.tag)){
-                    map.set(elem.tag, [...map.get(elem.tag), elem.meta.numItems]);
-                } else {
-                    map.set(elem.tag, [elem.meta.numItems]);
-                }
-                return map;
-            }, new Map());
-            htmlContents += `
-            <div class="col-half">
-            <h4>Zotero</h4>
-            ${Array.from(consolidatedTags.keys()).map(elem => zoteroRoam.utils.renderBP3_option(elem + ` <span class="zr-secondary zr-text-small">(${consolidatedTags.get(elem).join(" + ")})</span>`, "checkbox", 0, {varName: "zr-tag-select", optValue: elem, modifier: 'checked', labelModifier: `data-tag-source="zotero"`})).join("\n")}
-            </div>
-            `;
-
-            // Action button
-            let action_label = "Delete";
+            // Layout variables
+            let col_flex = `0 0 50%`;
+            let action_label = "Delete tags";
             let action_intent = "danger";
             let action_icon = "trash";
-            let inputElem = ``;
-
             if(action != "Delete"){
-                action_label = "Edit/Merge";
+                col_flex = `0 0 35%`;
+                action_label = "Modify tags";
                 action_intent = "primary";
                 action_icon = "arrow-right";
-                inputElem = `
-                <div class="bp3-input-group">
-                    <span class="bp3-icon bp3-icon-tag"></span>
-                <input type="text" class="bp3-input" name="zr-tag-rename" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+            }
+
+            // Header
+            popover.querySelector('.bp3-dialog-header').innerHTML = `
+            <h4 style="flex:${col_flex};">Roam</h4>
+            <h4 style="flex:${col_flex};">Zotero</h4>
+            `;
+
+            // Body
+            popover.querySelector('.bp3-dialog-body').innerHTML = `
+            ${tokens.map((tk, index) => {
+                let entry = zoteroRoam.tagManager.pagination.data.find(el => el.token == tk);
+                let roamList = ``;
+                let zoteroList = ``;
+                let inputColumn = ``;
+
+                if(entry.roam.length > 0){
+                    roamList = entry.roam.map(pg => zoteroRoam.utils.renderBP3_option(string = `<span class="zr-tag-name">${pg.title}</span>`, type = "checkbox", depth = 0,
+                    {varName: `zr-tag-select_${index}`, optValue: pg.title, optClass: "zr-text-small", modifier: action == "Delete" ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`}))
+                    .join("\n");
+                } else {
+                    roamList - `<span class="zr-secondary zr-text-small">No tags in Roam</span>`;
+                }
+
+                let consolidatedTags = entry.zotero.reduce((map, elem) => {
+                    return (map.has(elem.tag)) ? map.set(elem.tag, [...map.get(elem.tag), elem.meta.numItems]) : map.set(elem.tag, [elem.meta.numItems]);
+                }, new Map());
+                zoteroList = Array.from(consolidatedTags.keys())
+                .map(elem => zoteroRoam.utils.renderBP3_option(`<span class="zr-tag-name">${elem} <span class="zr-secondary zr-text-small">(${consolidatedTags.get(elem).join(" + ")})</span></span>`, "checkbox", 0, 
+                {varName: `zr-tag-select_${index}`, optValue: elem, optClass: "zr-text-small", modifier: 'checked', labelModifier: `data-tag-source="zotero"`}))
+                .join("\n");
+
+                if(action != "Delete"){
+                    inputColumn = `
+                    <div class="bp3-input-group zr-tag-column_input" style="flex: 0 0 30%;">
+                        <span class="bp3-icon bp3-icon-fork"></span>
+                        <input type="text" class="bp3-input" name="zr-tag-rename_${index}" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                    </div>
+                    `;
+                }
+
+                return `
+                <div class="zr-tag-entry" data-entry-index="${index}">
+                    <div class="zr-tag-column_roam" style="flex:${col_flex};">
+                        ${roamList}
+                    </div>
+                    <div class="zr-tag-column_zotero" style="flex:${col_flex};">
+                        ${zoteroList}
+                    </div>
+                    ${inputColumn}
                 </div>
                 `;
-                }
-            
-            let htmlFooter = `
+
+            }).join("\n")}
+            `;
+
+            // Footer
+            popover.querySelector('.bp3-dialog-footer').innerHTML = `
             <div class="zr-tab-panel-popover-footer">
-                ${inputElem}
                 <div class="bp3-button-group bp3-minimal bp3-small">
                     ${zoteroRoam.utils.renderBP3Button_group(action_label, {buttonClass: `bp3-active bp3-intent-${action_intent}`, icon: action_icon, buttonAttribute: `zr-command="${action}"`})}
                 </div>
             </div>
             `;
-            
-            popover.querySelector('.bp3-dialog-body').innerHTML = htmlContents;
-            popover.querySelector('.bp3-dialog-footer').innerHTML = htmlFooter;
             
             popover.style.display = "block";
             popover.setAttribute('overlay-visible', 'true');
@@ -4967,26 +5031,12 @@ var zoteroRoam = {};
                     };
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 } else {
-                    let newItems = zoteroRoam.handlers.extractCitekeys(updatedItems);
-                    let nbNewItems = newItems.length;
-                    let nbModifiedItems = 0;
-
-                    updatedItems.forEach(item => {
-                        let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => libItem.data.key == item.data.key & libItem.requestLabel == item.requestLabel);
-                        if(duplicateIndex == -1){
-                            zoteroRoam.data.items.push(item);
-                        } else {
-                            zoteroRoam.data.items[duplicateIndex] = item;
-                            nbModifiedItems += 1;
-                            nbNewItems -= 1;
-                        }
-                    });
-
+                    let updateStats = zoteroRoam.handlers.incorporateUpdates(updatedItems);
                     zoteroRoam.inPage.checkCitekeys(update = true);
                     if(popup) {
-                        zoteroRoam.interface.popToast(`${nbNewItems} new items and ${nbModifiedItems} modified items were added.`, "primary");
+                        zoteroRoam.interface.popToast(`${updateStats.new} new items and ${updateStats.modified} modified items were added.`, "primary");
                     } else{
-                        console.log(`${nbNewItems} new items and ${nbModifiedItems} modified items were added.`);
+                        console.log(`${updateStats.new} new items and ${updateStats.modified} modified items were added.`);
                     };
                     zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
                 }

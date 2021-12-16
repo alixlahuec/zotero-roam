@@ -443,32 +443,44 @@
 
         // TODO: Set event emitter or logging, input checking/error handling
         async modifySelectedTags(action, div = '.bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover'){
-            let selection = Array.from(document.querySelectorAll(`${div} input[name="zr-tag-select"]`)).filter(op => op.checked == true);
-            let into = action == 'Delete' ? null :  document.querySelector(`${div} input[name="zr-tag-rename"]`).value;
             let library = zoteroRoam.tagManager.activeDisplay.library;
-
-            let tags = selection.reduce((obj, op) => {
-                let tag_elem = op.closest('[data-tag-source]');
-                if(tag_elem.getAttribute('data-tag-source') == 'roam'){
-                    if(action == 'Delete'){
-                        obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});    
-                    } else {
-                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
-                    }
-                } else if(tag_elem.getAttribute('data-tag-source') == 'zotero'){
-                    obj.zotero.push(op.value);
-                }
-                return obj;
-            }, {roam: [], zotero: []});
             
             switch(action){
                 case 'Edit':
                 case 'Merge':
-                    await zoteroRoam.handlers.renameSelectedTags(library, tags, into);
+                    let entryList = Array.from(document.querySelectorAll(`${div} .zr-tag-entry[data-entry-index]`));
+                    for(entry of entryList){
+                        let into = entry.querySelector(`input[name*="zr-tag-rename_"]`).value;
+                        let tagList = Array.from(entry.querySelectorAll(`input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
+                        let tags = tagList.reduce((obj, entry) => {
+                            let tag_elem = op.closest('[data-tag-source]');
+                            if(tag_elem.getAttribute('data-tag-source') == 'roam'){
+    	                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
+                            } else if(tag_elem.getAttribute('data-tag-source') == 'zotero'){
+                                obj.zotero.push(op.value);
+                            }
+                            return obj;
+                        }, {roam: [], zotero: []});
+
+                        await zoteroRoam.handlers.renameSelectedTags(library, tags, into);
+                    }
                     break;
                 case 'Delete':
+                    let entryList = Array.from(document.querySelectorAll(`${div} input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
+                    let tags = entryList.reduce((obj, entry) => {
+                        let tag_elem = op.closest('[data-tag-source]');
+                        if(tag_elem.getAttribute('data-tag-source') == 'roam'){
+                            obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});
+                        } else if(tag_elem.getAttribute('data-tag-source') == 'zotero'){
+                            obj.zotero.push(op.value);
+                        }
+                        return obj;
+                    }, {roam: [], zotero: []});
+
                     await zoteroRoam.handlers.deleteSelectedTags(library, tags);
             }
+
+            await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${library.path}/`)));
         },
 
         // TODO: Set event emitter ?
@@ -492,9 +504,12 @@
             if(tags.zotero.length > 0){
                 let req = await zoteroRoam.write.editTags(library, tags.zotero, into);
                 if(req.success == true){
-                    tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
                     console.log(req.data);
-                    await zoteroRoam.extension.update(popup = false, reqs = zoteroRoam.config.requests.filter(rq => rq.dataURI.startsWith(`${zoteroRoam.tagManager.activeDisplay.library.path}/`)));
+                    let updatedItems = req.data.successful;
+                    if(updatedItems.length > 0){
+                        zoteroRoam.handlers.incorporateUpdates(updatedItems);
+                    }
+                    tags.roam.forEach(page => window.roamAlphaAPI.updatePage(page));
                 } else {
                     console.log(req);
                 }
@@ -751,6 +766,36 @@
             let childrenOutput = await childrenRequest.json();
             
             return childrenOutput;
+        },
+
+        incorporateUpdates(updatedItems){
+            let newItems = zoteroRoam.handlers.extractCitekeys(updatedItems);
+            let nbNewItems = newItems.length;
+            let nbModifiedItems = 0;
+
+            updatedItems.forEach(item => {
+                let duplicateIndex = zoteroRoam.data.items.findIndex(libItem => libItem.data.key == item.data.key && libItem.library.id == item.library.id && libItem.library.type == item.library.type);
+                if(duplicateIndex == -1){
+                    let libPath = item.library.type + "s/" + item.library.id;
+                    let req = zoteroRoam.config.requests.findIndex(req => req.library == libPath);
+                    item.requestIndex = req;
+                    item.requestLabel = req.name;
+                    zoteroRoam.data.items.push(item);
+                } else {
+                    let {requestIndex, requestLabel} = zoteroRoam.data.items[duplicateIndex];
+                    item.requestIndex = requestIndex;
+                    item.requestLabel = requestLabel;
+                    zoteroRoam.data.items[duplicateIndex] = item;
+                    nbModifiedItems += 1;
+                    nbNewItems -= 1;
+                }
+            });
+
+            return {
+                new: nbNewItems,
+                modified: nbModifiedItems,
+                items: updatedItems
+            }
         },
 
         simplifyDataArray(arr){
