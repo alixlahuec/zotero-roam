@@ -61,7 +61,7 @@
                 defaultShortcut: [],
                 execute(){
                     let goToPageEl = document.querySelector("button.item-go-to-page");
-                    if(goToPageEl && zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true"){
+                    if(goToPageEl && !goToPageEl.disabled && zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true"){
                         let pageUID = goToPageEl.getAttribute('data-uid');
                         let itemKey = '@' + goToPageEl.getAttribute('data-citekey');
                         console.log(`Navigating to ${itemKey} (${pageUID})`);

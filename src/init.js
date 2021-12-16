@@ -82,7 +82,7 @@ var zoteroRoam = {};
             }
         },
         
-        version: "0.6.95",
+        version: "0.6.96",
 
         data: {items: [], collections: [], semantic: new Map(), libraries: new Map(), keys: [], roamPages: [], tags: {}},
         
@@ -643,8 +643,11 @@ var zoteroRoam = {};
             .zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover, .zr-datalist-item > .bp3-menu-item:hover {background-color:unset;cursor:unset;}
             .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 1 97%;white-space:normal;}
             .zotero-roam-citation-links-list{display:block;}
-            .zotero-roam-search-item-key{flex: 1 0 20%;text-align:right;overflow-wrap:anywhere;font-size:0.8em;}
-            .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;}
+            .zotero-roam-citations-search_result .zotero-roam-search-item-key {flex-wrap:wrap;}
+            .zotero-roam-search_result .zotero-roam-search-item-key {flex-wrap:nowrap;}
+            .zotero-roam-search_result .zotero-roam-search-item-key .bp3-icon {padding:6px;}
+            .zotero-roam-search-item-key{flex: 1 0 20%;text-align:right;overflow-wrap:anywhere;font-size:0.8em;display:flex;align-items:center;justify-content:flex-end;}
+            .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;flex: 0 0 100%;}
             .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{overflow-wrap:break-word;}
             .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
             .zotero-roam-citation-abstract, .item-abstract{white-space:break-spaces;}
