@@ -452,7 +452,7 @@
                     for(entry of editList){
                         let into = entry.querySelector(`input[name*="zr-tag-rename_"]`).value;
                         let tagList = Array.from(entry.querySelectorAll(`input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
-                        let tags = tagList.reduce((obj, entry) => {
+                        let tags = tagList.reduce((obj, op) => {
                             let tag_elem = op.closest('[data-tag-source]');
                             if(tag_elem.getAttribute('data-tag-source') == 'roam'){
     	                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
@@ -467,7 +467,7 @@
                     break;
                 case 'Delete':
                     let deleteList = Array.from(document.querySelectorAll(`${div} input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
-                    let tags = deleteList.reduce((obj, entry) => {
+                    let tags = deleteList.reduce((obj, op) => {
                         let tag_elem = op.closest('[data-tag-source]');
                         if(tag_elem.getAttribute('data-tag-source') == 'roam'){
                             obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});

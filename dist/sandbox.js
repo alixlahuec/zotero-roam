@@ -734,15 +734,16 @@ var zoteroRoam = {};
             .zr-datalist-sort_option input, .zr-datalist-sort_option input:focus {appearance: none;outline: none;cursor: pointer;padding: 0px;background: none;margin: 0px;}
             .zr-datalist-sort_option input:checked, .zr-datalist-sort_option input:checked ~ span, .zr-datalist-sort_option input:checked ~ label {color: #3081e4;}
             .zr-datalist-sort_option .bp3-icon {padding-right:5px;}
-            .zr-tab-panel-popover .bp3-dialog {box-shadow:none;border: 1px #ececec solid;padding-bottom:0px;margin: 30px auto;}
-            .zr-tab-panel-popover .bp3-dialog-header {display:flex;}
-            .zr-tab-panel-popover .bp3-dialog-header [class*="zr-tag-column_"] {align-items: center;justify-content:center;}
-            .zr-tab-panel-popover .bp3-dialog-header h4 {font-size:15px;}
+            .zr-tab-panel-popover .bp3-dialog {box-shadow:none;border: 1px #ececec solid;padding-bottom:0px;margin: 30px auto;width:80%;}
+            .zr-tab-panel-popover .bp3-dialog-header {display:flex;padding:0px;}
+            .zr-tab-panel-popover .bp3-dialog-header h4 {font-size:14px;text-align:center;}
             .zr-tab-panel-popover .bp3-dialog-body {display: flex;flex-wrap: wrap;align-items: baseline;margin-bottom: 0px;}
-            .zr-tab-panel-popover .bp3-dialog-footer {display:flex;justify-content: right;margin-bottom: 10px;}
+            .zr-tab-panel-popover .bp3-dialog-body .zr-tag-entry {display:flex;flex: 0 0 100%;justify-content:space-between;}
+            .zr-tag-column_input input {box-shadow:none;}
+            .zr-tab-panel-popover .bp3-dialog-footer {display:flex;justify-content:flex-end;margin-bottom: 10px;}
             .zr-tab-panel-popover-footer {display: flex;flex: 0 1 auto;text-align: right;align-items: baseline;}
             .zr-tab-panel-popover-footer > * {margin: 10px 20px;}
-            .zr-tab-panel-popover[overlay-visible="true"] + .zr-tab-panel-datalist {opacity: 0.7;}
+            .zr-tab-panel-popover[overlay-visible="true"] + .zr-tab-panel-datalist {opacity: 0.4;}
             .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;border-radius:0px;}
             .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;align-items:baseline;}
             .zr-datalist-item {background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
@@ -754,8 +755,10 @@ var zoteroRoam = {};
             [zr-role="taglist"] [data-tag-source] {padding: 3px 8px;margin: 3px 5px;margin-left:0px;border-radius: 3px;display:inline-block;}
             label[data-tag-source] {color: #b3b3b3;background:#f9f9f9;border: 1px #e9e9e9 solid;font-weight:400;padding-top:4px;padding-bottom:4px;padding-right:15px;border-radius:5px;}
             [data-tag-source] .bp3-control-indicator {margin-left: -15px!important;border-radius:10px!important;}
-            [data-tag-source="roam"] input:checked ~ .bp3-control-indicator, [data-tag-source="roam"] input:checked ~ .zr-tag-name {background-color: #48a5e7;box-shadow: none;}
-            [data-tag-source="zotero"] input:checked ~ .bp3-control-indicator, [data-tag-source="zotero"] input:checked ~ .zr-tag-name {background-color: #e1881a;box-shadow: none;}
+            [data-tag-source="roam"] input:checked ~ .bp3-control-indicator {background-color: #48a5e7;box-shadow: none;}
+            [data-tag-source="roam"] input:checked ~ .zr-tag-name {color: #48a5e7;}
+            [data-tag-source="zotero"] input:checked ~ .bp3-control-indicator {background-color: #e1881a;box-shadow: none;}
+            [data-tag-source="zotero"] input:checked ~ .zr-tag-name {color: #e1881a;}
             [zr-role="taglist"] [data-tag-source="zotero"] {color: #e1881a;background-color: #fff5e7;}
             [zr-role="taglist"] [data-tag-source="roam"] {color: #48a5e7;background-color: #e7f5ff;}
             .zr-datalist-item .bp3-menu-item-label > .bp3-button-group {opacity:0.6;}
@@ -2229,7 +2232,7 @@ var zoteroRoam = {};
                     for(entry of editList){
                         let into = entry.querySelector(`input[name*="zr-tag-rename_"]`).value;
                         let tagList = Array.from(entry.querySelectorAll(`input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
-                        let tags = tagList.reduce((obj, entry) => {
+                        let tags = tagList.reduce((obj, op) => {
                             let tag_elem = op.closest('[data-tag-source]');
                             if(tag_elem.getAttribute('data-tag-source') == 'roam'){
     	                        obj.roam.push({page: {title: into, uid: tag_elem.getAttribute('data-uid')}});
@@ -2244,7 +2247,7 @@ var zoteroRoam = {};
                     break;
                 case 'Delete':
                     let deleteList = Array.from(document.querySelectorAll(`${div} input[name*="zr-tag-select_"]`)).filter(op => op.checked == true);
-                    let tags = deleteList.reduce((obj, entry) => {
+                    let tags = deleteList.reduce((obj, op) => {
                         let tag_elem = op.closest('[data-tag-source]');
                         if(tag_elem.getAttribute('data-tag-source') == 'roam'){
                             obj.roam.push({page: {uid: tag_elem.getAttribute('data-uid')}});
@@ -3828,12 +3831,12 @@ var zoteroRoam = {};
         showTagActionsPopover(tokens, action = "Edit"){
             let popover = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover');
             // Layout variables
-            let col_flex = `0 0 50%`;
+            let col_flex = `0 0 48%`;
             let action_label = "Delete tags";
             let action_intent = "danger";
             let action_icon = "trash";
             if(action != "Delete"){
-                col_flex = `0 0 35%`;
+                col_flex = `0 0 33%`;
                 action_label = "Modify tags";
                 action_intent = "primary";
                 action_icon = "arrow-right";
@@ -3858,7 +3861,7 @@ var zoteroRoam = {};
                     {varName: `zr-tag-select_${index}`, optValue: pg.title, optClass: "zr-text-small", modifier: action == "Delete" ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`}))
                     .join("\n");
                 } else {
-                    roamList - `<span class="zr-secondary zr-text-small">No tags in Roam</span>`;
+                    roamList = `<span class="zr-secondary zr-text-small">No tags in Roam</span>`;
                 }
 
                 let consolidatedTags = entry.zotero.reduce((map, elem) => {
@@ -3871,9 +3874,9 @@ var zoteroRoam = {};
 
                 if(action != "Delete"){
                     inputColumn = `
-                    <div class="bp3-input-group zr-tag-column_input" style="flex: 0 0 30%;">
+                    <div class="bp3-input-group zr-tag-column_input" style="flex: 0 0 28%;">
                         <span class="bp3-icon bp3-icon-fork"></span>
-                        <input type="text" class="bp3-input" name="zr-tag-rename_${index}" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                        <input type="text" class="bp3-input zr-text-small" name="zr-tag-rename_${index}" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
                     </div>
                     `;
                 }

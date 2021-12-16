@@ -860,12 +860,12 @@
         showTagActionsPopover(tokens, action = "Edit"){
             let popover = document.querySelector('.zotero-roam-dashboard-overlay .bp3-tab-panel[name="tag-manager"] .zr-tab-panel-popover');
             // Layout variables
-            let col_flex = `0 0 50%`;
+            let col_flex = `0 0 48%`;
             let action_label = "Delete tags";
             let action_intent = "danger";
             let action_icon = "trash";
             if(action != "Delete"){
-                col_flex = `0 0 35%`;
+                col_flex = `0 0 33%`;
                 action_label = "Modify tags";
                 action_intent = "primary";
                 action_icon = "arrow-right";
@@ -890,7 +890,7 @@
                     {varName: `zr-tag-select_${index}`, optValue: pg.title, optClass: "zr-text-small", modifier: action == "Delete" ? '' : 'checked', labelModifier: `data-tag-source="roam" data-uid="${pg.uid}"`}))
                     .join("\n");
                 } else {
-                    roamList - `<span class="zr-secondary zr-text-small">No tags in Roam</span>`;
+                    roamList = `<span class="zr-secondary zr-text-small">No tags in Roam</span>`;
                 }
 
                 let consolidatedTags = entry.zotero.reduce((map, elem) => {
@@ -903,9 +903,9 @@
 
                 if(action != "Delete"){
                     inputColumn = `
-                    <div class="bp3-input-group zr-tag-column_input" style="flex: 0 0 30%;">
+                    <div class="bp3-input-group zr-tag-column_input" style="flex: 0 0 28%;">
                         <span class="bp3-icon bp3-icon-fork"></span>
-                        <input type="text" class="bp3-input" name="zr-tag-rename_${index}" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
+                        <input type="text" class="bp3-input zr-text-small" name="zr-tag-rename_${index}" spellcheck="false" placeholder="Rename tag(s) as ..." ${entry.roam.length > 0 ? 'value="' + entry.roam[0].title + '"' : ""}" />
                     </div>
                     `;
                 }
