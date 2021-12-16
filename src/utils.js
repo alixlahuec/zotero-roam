@@ -307,7 +307,7 @@
             document.querySelector(".zotero-roam-tag-list-count").innerHTML = `
             <strong>${zoteroRoam.tagManager.pagination.startIndex}-${zoteroRoam.tagManager.pagination.startIndex + tagList.length - 1}</strong> / ${totalListLength} entries
             `;
-            document.querySelector('.zr-tag-stats').innerHTML = `Zotero has ${tagList_stats.nTags} tags (${tagList_stats.nAuto} / ${Math.round(tagList_stats.nAuto / tagList_stats.nTags*100)}% automatic) - Matched in ${totalListLength} groups - ${tagList_stats.nRoam} are in Roam (${Math.round(tagList_stats.nRoam / totalListLength *100)}%)`
+            document.querySelector('.zr-tag-stats').innerHTML = `<span>Zotero has ${tagList_stats.nTags} tags (${tagList_stats.nAuto} / ${Math.round(tagList_stats.nAuto / tagList_stats.nTags*100)}% automatic), matched in ${totalListLength} groups</span><span>${tagList_stats.nRoam} are in Roam (${Math.round(tagList_stats.nRoam / totalListLength *100)}%)</span>`
 
             datalist.innerHTML = tagList.map(tk => {
                 let is_singleton = tk.zotero.length == 1 && (tk.roam.length == 0 || (tk.roam.length == 1 && tk.zotero[0].tag == tk.roam[0].title));
@@ -388,6 +388,16 @@
         updateTagPagination(libPath, {by = "usage"} = {}){
             let {library: currentLib, by: currentSort} = zoteroRoam.tagManager.activeDisplay;
             let isSameQuery = (currentLib && libPath == currentLib.path && by == currentSort) ? true : false;
+            let isFirstSetup = currentLib == null ? true : false;
+
+            if(isFirstSetup){
+                // If it's the first time a library is set, add the select element to the toolbar:
+                let toolbar = document.querySelector('.bp3-tab-panel[name="tag-manager"] .zr-tab-panel-toolbar');
+                if(!toolbar.querySelector('.bp3-html-select')){
+                    let libs = Array.from(zoteroRoam.data.libraries.keys()).filter(k => k != libPath).map(k => { return {value: k, label: k} });
+                    toolbar.innerHTML += zoteroRoam.utils.renderBP3HTMLSelect([{value: libPath, label: libPath}, ...libs], {varName: "", divClass: "bp3-minimal zr-text-small"});
+                }
+            }
             // Set parameters of active display
             zoteroRoam.tagManager.activeDisplay = {
                 library: zoteroRoam.data.libraries.get(libPath),
@@ -684,13 +694,28 @@
             `;
         },
 
-        renderBP3_minimalradio(label, {varName, optValue, icon = "", modifier = ""} = {}){
+        renderBP3_minimalradio(label, {varName, optValue, icon = "", modifier = "", labelClass = ""} = {}){
             let iconEl = icon ? `<span class="bp3-icon bp3-icon-${icon}"></span>` : '';
             return `
             <input type="radio" value="${optValue}" name="${varName}" id="${varName}_${optValue}" ${modifier} />
             ${iconEl}
-            <label for="${varName}_${optValue}">${label}</label>
+            <label for="${varName}_${optValue}" class="${labelClass}">${label}</label>
             `
+        },
+
+        renderBP3HTMLSelect(arr, {varName, icon = "double-caret-vertical", modifier = "", divClass = ""} = {}){
+            return `
+            <div class="bp3-html-select ${divClass}">
+                <select name="${varName}" ${modifier}>
+                    ${arr.map((op, i) => zoteroRoam.utils.renderBP3HTMLSelect_option(op, {selected: i == 0 ? true : false})).join("\n")}
+                </select>
+                ${icon ? `<span class="bp3-icon bp3-icon-${icon}"></span>` : ``}
+            </div>
+            `;
+        },
+
+        renderBP3HTMLSelect_option(op, {selected = false} = {}){
+            return `<option value="${op.value}" ${selected ? 'selected' : ''}>${op.label}</option>`;
         },
 
         renderBP3Spinner(){

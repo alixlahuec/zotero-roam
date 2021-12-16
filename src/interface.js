@@ -776,13 +776,13 @@
             <div class="zr-tab-panel-toolbar">
                 <div class="bp3-button-group bp3-minimal">
                     <span class="zr-datalist-sort_option">
-                        ${zoteroRoam.utils.renderBP3_minimalradio(label = "Most Used", {varName: 'zr-tag-manager-sort', optValue: 'usage', icon: 'sort-desc', modifier: 'checked="true"'})}
+                        ${zoteroRoam.utils.renderBP3_minimalradio(label = "Most Used", {varName: 'zr-tag-manager-sort', optValue: 'usage', icon: 'sort-desc', modifier: 'checked="true"', labelClass: "zr-text-small"})}
                     </span>
                     <span class="zr-datalist-sort_option">
-                        ${zoteroRoam.utils.renderBP3_minimalradio(label = "Name", {varName: 'zr-tag-manager-sort', optValue: 'alphabetical', icon: 'sort-alphabetical'})}
+                        ${zoteroRoam.utils.renderBP3_minimalradio(label = "Name", {varName: 'zr-tag-manager-sort', optValue: 'alphabetical', icon: 'sort-alphabetical', labelClass: "zr-text-small"})}
                     </span>
                     <span class="zr-datalist-sort_option">
-                        ${zoteroRoam.utils.renderBP3_minimalradio(label = "In Roam", {varName: 'zr-tag-manager-sort', optValue: 'roam', icon: 'star'})}
+                        ${zoteroRoam.utils.renderBP3_minimalradio(label = "In Roam", {varName: 'zr-tag-manager-sort', optValue: 'roam', icon: 'star', labelClass: "zr-text-small"})}
                     </span>
                 </div>
             </div>

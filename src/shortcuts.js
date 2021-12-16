@@ -25,7 +25,7 @@
                         zoteroRoam.interface.closeCitationsOverlay();
                     } else if(document.querySelector('.zotero-roam-auxiliary-overlay').getAttribute("overlay-visible") == "true"){
                         zoteroRoam.interface.closeAuxiliaryOverlay();
-                    } else if(document,querySelector('.zotero-roam-dashboard-overlay').getAttribute("overlay-visible") == "true"){
+                    } else if(document.querySelector('.zotero-roam-dashboard-overlay').getAttribute("overlay-visible") == "true"){
                         zoteroRoam.interface.toggleDashboardOverlay();
                     } else{
                         let cmd = zoteroRoam.interface.search.overlay.getAttribute("overlay-visible") == "true" ? "hide" : "show";
