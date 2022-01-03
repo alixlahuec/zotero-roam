@@ -44,6 +44,9 @@
                             throw new Error('All array items should be of type String or Object');
                         }
                     };
+                    return {
+                        success: true
+                    }
                 } catch(e) {
                     console.error(e);
                     return {

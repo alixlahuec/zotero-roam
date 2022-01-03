@@ -82,7 +82,7 @@ var zoteroRoam = {};
             }
         },
         
-        version: "0.6.96",
+        version: "0.6.97",
 
         data: {items: [], collections: [], semantic: new Map(), libraries: new Map(), keys: [], roamPages: [], tags: {}},
         

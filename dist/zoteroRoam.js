@@ -82,7 +82,7 @@ var zoteroRoam = {};
             }
         },
         
-        version: "0.6.96",
+        version: "0.6.97",
 
         data: {items: [], collections: [], semantic: new Map(), libraries: new Map(), keys: [], roamPages: [], tags: {}},
         
@@ -1840,6 +1840,9 @@ var zoteroRoam = {};
                             throw new Error('All array items should be of type String or Object');
                         }
                     };
+                    return {
+                        success: true
+                    }
                 } catch(e) {
                     console.error(e);
                     return {
