@@ -830,7 +830,7 @@ var zoteroRoam = {};
 ;(()=>{
     zoteroRoam.utils = {
 
-        addBlock(uid, blockString, order = 0, opts = {}) {
+        async addBlock(uid, blockString, order = 0, opts = {}) {
             let blockUID = window.roamAlphaAPI.util.generateUID();
             let blockContents = {
                 'string': blockString,
@@ -843,7 +843,7 @@ var zoteroRoam = {};
                     }
                 }
             }
-            window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': blockContents });
+            await window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': blockContents });
             return blockUID;
         },
 
@@ -1797,7 +1797,7 @@ var zoteroRoam = {};
 ;(()=>{
     zoteroRoam.handlers = {
 
-        addBlockObject(parent_uid, object) {
+        async addBlockObject(parent_uid, object) {
             let {string: blockString, children: blockChildren, ...opts} = object;
             // If the Object doesn't have a string property, throw an error
             if(typeof(blockString) === 'undefined'){
@@ -1805,16 +1805,16 @@ var zoteroRoam = {};
                 throw new Error('All blocks passed as an Object must have a string property');
             } else {
                 // Otherwise add the block
-                let blockUID = zoteroRoam.utils.addBlock(uid = parent_uid, blockString = blockString, order = 0, opts);
+                let blockUID = await zoteroRoam.utils.addBlock(uid = parent_uid, blockString = blockString, order = 0, opts);
                 // If the Object has a `children` property
                 if(typeof(blockChildren) !== 'undefined'){
                     // Go through each child element 1-by-1
                     // If a child has children itself, the recursion should ensure everything gets added where it should
                     for(let j = blockChildren.length - 1; j >= 0; j--){
                         if(blockChildren[j].constructor === Object){
-                            zoteroRoam.handlers.addBlockObject(blockUID, blockChildren[j]);
+                            await zoteroRoam.handlers.addBlockObject(blockUID, blockChildren[j]);
                         } else if(blockChildren[j].constructor === String){
-                            zoteroRoam.utils.addBlock(uid = blockUID, blockString = blockChildren[j], order = 0);
+                            await zoteroRoam.utils.addBlock(uid = blockUID, blockString = blockChildren[j], order = 0);
                         } else {
                             throw new Error('All children array items should be of type String or Object');
                         }
@@ -1823,29 +1823,33 @@ var zoteroRoam = {};
             }
         },
 
-        addMetadataArray(page_uid, arr){
+        async addMetadataArray(page_uid, arr){
             if(arr.length > 0){
-                // Go through the array items in reverse order, because each block gets added to the top so have to start with the 'last' block
-                for(k = arr.length - 1; k >= 0; k--){
-                    // If the element is an Object, pass it to addBlockObject to recursively process its contents
-                    if(arr[k].constructor === Object){
-                        zoteroRoam.handlers.addBlockObject(page_uid, arr[k]);
-                    } else if(arr[k].constructor === String) {
-                        // If the element is a simple String, add the corresponding block & move on
-                        zoteroRoam.utils.addBlock(uid = page_uid, blockString = arr[k], order = 0);
-                    } else {
-                        // If the element is of any other type, throw an error
-                        console.log(arr[k]);
-                        throw new Error('All array items should be of type String or Object');
+                try{
+                    // Go through the array items in reverse order, because each block gets added to the top so have to start with the 'last' block
+                    for(k = arr.length - 1; k >= 0; k--){
+                        // If the element is an Object, pass it to addBlockObject to recursively process its contents
+                        if(arr[k].constructor === Object){
+                            await zoteroRoam.handlers.addBlockObject(page_uid, arr[k]);
+                        } else if(arr[k].constructor === String) {
+                            // If the element is a simple String, add the corresponding block & move on
+                            await zoteroRoam.utils.addBlock(uid = page_uid, blockString = arr[k], order = 0);
+                        } else {
+                            // If the element is of any other type, throw an error
+                            console.log(arr[k]);
+                            throw new Error('All array items should be of type String or Object');
+                        }
+                    };
+                } catch(e) {
+                    console.error(e);
+                    return {
+                        success: false
                     }
-                };
-                return {
-                    success: true
                 }
             } else {
                 console.log("The metadata array was empty ; nothing was done.");
                 return {
-                    success: false
+                    success: null
                 }
             }
         },
@@ -1881,7 +1885,7 @@ var zoteroRoam = {};
                     default:
                         let itemData = await zoteroRoam.handlers.formatData(item);
                         meta = itemData;
-                        outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
+                        outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = itemData);
                         break;
                 }
 
@@ -1907,7 +1911,7 @@ var zoteroRoam = {};
             });
         },
 
-        addItemNotes(title, uid, {popup = true} = {}){
+        async addItemNotes(title, uid, {popup = true} = {}){
             let citekey = title.startsWith("@") ? title.slice(1) : title;
             let item = zoteroRoam.data.items.find(i => i.key == citekey);
 
@@ -1917,12 +1921,12 @@ var zoteroRoam = {};
 
                 let pageUID = uid || "";
                 if(uid){
-                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = [{string: "[[Notes]]", children: itemNotes}]);
+                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = uid, arr = [{string: "[[Notes]]", children: itemNotes}]);
                 } else {
                     pageUID = window.roamAlphaAPI.util.generateUID();
                     window.roamAlphaAPI.createPage({'page': {'title': title, 'uid': pageUID}});
                     // TODO: Harmonize this with the metadata-added events, to remove repeating code
-                    outcome = zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
+                    outcome = await zoteroRoam.handlers.addMetadataArray(page_uid = pageUID, arr = [{string: "[[Notes]]", children: itemNotes}]);
                     try {
                         let inGraphDiv = document.querySelector(".item-in-graph");
                         if(inGraphDiv != null){

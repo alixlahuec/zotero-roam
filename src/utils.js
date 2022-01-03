@@ -1,7 +1,7 @@
 ;(()=>{
     zoteroRoam.utils = {
 
-        addBlock(uid, blockString, order = 0, opts = {}) {
+        async addBlock(uid, blockString, order = 0, opts = {}) {
             let blockUID = window.roamAlphaAPI.util.generateUID();
             let blockContents = {
                 'string': blockString,
@@ -14,7 +14,7 @@
                     }
                 }
             }
-            window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': blockContents });
+            await window.roamAlphaAPI.createBlock({ 'location': { 'parent-uid': uid, 'order': order }, 'block': blockContents });
             return blockUID;
         },
 
