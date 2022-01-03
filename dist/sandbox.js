@@ -1321,7 +1321,7 @@ var zoteroRoam = {};
         matchUnnested(target, term, finds, start = 0){
             let loc = target.indexOf(term, start);
             if(loc >= 0){
-                let is_nested = finds.find(f => loc >= f.loc && loc <= f.end);
+                let is_nested = finds.find(f => loc >= f.loc && loc < f.end);
                 if(is_nested){
                     return zoteroRoam.utils.matchUnnested(target, term, finds, start = is_nested.end);
                 } else {
@@ -1358,7 +1358,8 @@ var zoteroRoam = {};
                 .forEach(find => {
                     output = output.substring(0, find.loc) + prefix + output.substring(find.loc, find.end) + suffix + output.substring(find.end);
                 });
-                output = output.replaceAll(`${suffix} ${prefix}`, " ");
+                output = output.replaceAll(`${suffix} ?${prefix}`, " ");
+                output = output.replaceAll(`${suffix}${prefix}`, '');
             }
         
             if(match){ return output };
