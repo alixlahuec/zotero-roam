@@ -675,7 +675,7 @@ var zoteroRoam = {};
             .selected_info{flex: 0 1 90%;}
             .related-item_listed{display:flex;align-items:flex-start;padding:0px;}
             .related-sublist[list-type="references"] li:nth-child(even) {background-color:#e8f0ff;}
-            .bp3-dark .related-sublist[list-type-"references"] li:nth-child(even) {background-color:#2d3a52;}
+            .bp3-dark .related-sublist[list-type="references"] li:nth-child(even) {background-color:#2d3a52;}
             .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#fdfcf6;}
             .bp3-dark .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#52452d;}
             .related-item_listed[item-type="reference"]:hover {background-color:#e1ecff;}

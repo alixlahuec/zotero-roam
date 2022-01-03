@@ -675,7 +675,7 @@ var zoteroRoam = {};
             .selected_info{flex: 0 1 90%;}
             .related-item_listed{display:flex;align-items:flex-start;padding:0px;}
             .related-sublist[list-type="references"] li:nth-child(even) {background-color:#e8f0ff;}
-            .bp3-dark .related-sublist[list-type-"references"] li:nth-child(even) {background-color:#2d3a52;}
+            .bp3-dark .related-sublist[list-type="references"] li:nth-child(even) {background-color:#2d3a52;}
             .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#fdfcf6;}
             .bp3-dark .related-sublist[list-type="citations"] li:nth-child(even) {background-color:#52452d;}
             .related-item_listed[item-type="reference"]:hover {background-color:#e1ecff;}
@@ -1318,8 +1318,22 @@ var zoteroRoam = {};
             return arr1.filter(el => arr2.includes(el)).length > 0;
         },
 
+        matchUnnested(target, term, finds, start = 0){
+            let loc = target.indexOf(term, start);
+            if(loc >= 0){
+                let is_nested = finds.find(f => loc >= f.loc && loc <= f.end);
+                if(is_nested){
+                    return zoteroRoam.utils.matchUnnested(target, term, finds, start = is_nested.end);
+                } else {
+                    return { loc, end: loc + term.length };
+                }
+            } else {
+                return false;
+            }
+        },
+
         multiwordMatch(query, string, highlight = []){
-            let terms = Array.from(new Set(query.toLowerCase().split(" ").filter(Boolean)));
+            let terms = Array.from(new Set(query.toLowerCase().split(" ").filter(Boolean))).sort((a,b) => a.length > b.length ? -1 : 1);
             let target = string.toLowerCase();
             
             let output = string;
@@ -1327,10 +1341,10 @@ var zoteroRoam = {};
         
             let match = false;
             for(let i = 0; i < terms.length; i++){
-                let loc = target.search(terms[i]);
-                if(loc >= 0){
+                let isPresent = zoteroRoam.utils.matchUnnested(target, terms[i], finds);
+                if(isPresent){
                     match = true;
-                    finds.push({loc: loc, end: loc + terms[i].length});
+                    finds.push(isPresent);
                 } else {
                     match = false;
                     break;
@@ -6274,7 +6288,7 @@ var zoteroRoam = {};
             });
 
             document.addEventListener("zotero-roam:update", async function(e){
-                // Refresh DOM elements on the page
+                // If any items have been modified
                 let updatedItems = e.detail.data ? e.detail.data.items : [];
                 if(updatedItems.length > 0){
                     for(item of updatedItems){
@@ -6382,18 +6396,20 @@ var zoteroRoam = {};
                         }
                         
                     }
+                    // Refresh tag lists
+                    let dashboardPopover = document.querySelector(`.zotero-roam-dashboard-overlay .zr-tab-panel-popover[overlay-visible="true"]`);
+                    if(dashboardPopover){
+                        // If there is a visible popover in the dashboard, clear it
+                        dashboardPopover.querySelector('.bp3-dialog-header').innerHTML = ``;
+                        dashboardPopover.querySelector('.bp3-dialog-body').innerHTML = ``;
+                        dashboardPopover.querySelector('.bp3-dialog-footer').innerHTML = ``;
+                        dashboardPopover.style.display = "none";
+                        dashboardPopover.setAttribute('overlay-visible', 'hidden');
+                    }
+                    let reqList = Array.from(new Set(e.detail.requests.map(req => req.library)));
+                    zoteroRoam.utils.refreshTagLists(reqList);
                 }
-                // Refresh tag lists
-                let dashboardPopover = document.querySelector(`.zotero-roam-dashboard-overlay .zr-tab-panel-popover[overlay-visible="true"]`);
-                if(dashboardPopover){
-                    // If there is a visible popover in the dashboard, clear it
-                    dashboardPopover.querySelector('.bp3-dialog-header').innerHTML = ``;
-                    dashboardPopover.querySelector('.bp3-dialog-body').innerHTML = ``;
-                    dashboardPopover.querySelector('.bp3-dialog-footer').innerHTML = ``;
-                    dashboardPopover.style.display = "none";
-                    dashboardPopover.setAttribute('overlay-visible', 'hidden');
-                }
-                zoteroRoam.utils.refreshTagLists();
+
                 // --- Deleted items
             });
 

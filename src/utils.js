@@ -489,8 +489,22 @@
             return arr1.filter(el => arr2.includes(el)).length > 0;
         },
 
+        matchUnnested(target, term, finds, start = 0){
+            let loc = target.indexOf(term, start);
+            if(loc >= 0){
+                let is_nested = finds.find(f => loc >= f.loc && loc <= f.end);
+                if(is_nested){
+                    return zoteroRoam.utils.matchUnnested(target, term, finds, start = is_nested.end);
+                } else {
+                    return { loc, end: loc + term.length };
+                }
+            } else {
+                return false;
+            }
+        },
+
         multiwordMatch(query, string, highlight = []){
-            let terms = Array.from(new Set(query.toLowerCase().split(" ").filter(Boolean)));
+            let terms = Array.from(new Set(query.toLowerCase().split(" ").filter(Boolean))).sort((a,b) => a.length > b.length ? -1 : 1);
             let target = string.toLowerCase();
             
             let output = string;
@@ -498,10 +512,10 @@
         
             let match = false;
             for(let i = 0; i < terms.length; i++){
-                let loc = target.search(terms[i]);
-                if(loc >= 0){
+                let isPresent = zoteroRoam.utils.matchUnnested(target, terms[i], finds);
+                if(isPresent){
                     match = true;
-                    finds.push({loc: loc, end: loc + terms[i].length});
+                    finds.push(isPresent);
                 } else {
                     match = false;
                     break;
