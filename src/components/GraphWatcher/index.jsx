@@ -265,10 +265,13 @@ const CitekeyMenu = React.memo(props => {
 
 function DNPMenu(props){
     const { added } = props;
+    const hasAddedItems = added.length > 0;
 
     return (
         <>
-            <Button minimal={true} icon="calendar">{added.length} item{added.length > 1 ? 's' : ''} added</Button>
+            {hasAddedItems 
+            ? <Button minimal={true} icon="calendar">{pluralize(added.length, 'item', ' added')}</Button>
+            : null}
         </>
     )
 }
@@ -281,10 +284,10 @@ function TagMenu(props){
     return (
         <>
             {hasTaggedItems
-            ? <Button minimal={true} icon="manual">{tagged.length} tagged item{tagged.length > 1 ? 's' : ''}</Button>
+            ? <Button minimal={true} icon="manual">{pluralize(tagged.length, 'tagged item')}</Button>
             : null}
             {hasAbstracts
-            ? <Button minimal={true} icon="manually-entered-data">{inAbstract.length} abstract{inAbstract.length > 1 ? 's' : ''}</Button>
+            ? <Button minimal={true} icon="manually-entered-data">{pluralize(inAbstract.length, 'abstract')}</Button>
             : null}
         </>
     )

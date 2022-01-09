@@ -124,7 +124,7 @@ const ExtensionIcon = React.memo(props => {
         <Tooltip2 popoverClassName="zr-icon-tooltip" 
         usePortal={false} 
         content={tooltipContent}
-        position="bottom"
+        placement='auto'
         interactionKind='hover' 
         hoverOpenDelay={450} 
         hoverCloseDelay={450} 

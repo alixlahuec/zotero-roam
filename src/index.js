@@ -2,6 +2,8 @@ import ReactDOM from 'react-dom';
 import { analyzeUserRequests, setupPortals } from './utils';
 import { Toast } from '@blueprintjs/core';
 import App from './components/App';
+
+import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./index.css";
 
 var zoteroRoam = {};

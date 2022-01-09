@@ -171,10 +171,10 @@ function setupPortals(slotID, portalID){
         }
     }
 
-    let topbar = document.querySelector('.rm-topbar');
+    let roamSearchbar = document.querySelector('.rm-topbar .rm-find-or-create-wrapper');
     let extensionSlot = document.createElement('span');
     extensionSlot.id = slotID;
-    topbar.appendChild(extensionSlot);
+    roamSearchbar.insertAdjacentElement('afterend', extensionSlot);
 
     // Portal for the extension's overlays
     try{ document.getElementById(portalID).remove() } catch(e){ };
