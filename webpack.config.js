@@ -11,11 +11,6 @@ module.exports = {
         extensions: ['.js', '.jsx']
     },
     mode: 'production',
-    optimization: {
-        splitChunks: {
-            chunks: 'all'
-        }
-    },
     module: {
         rules: [
             {
