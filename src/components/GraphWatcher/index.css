@@ -1,0 +1,7 @@
+.zr-page-menu--citekey {
+    max-width: 850px;
+}
+
+button[class*='zr-page-menu-show--'] {
+    flex: 1 0 33%;
+}

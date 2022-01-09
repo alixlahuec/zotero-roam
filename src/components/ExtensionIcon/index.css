@@ -1,0 +1,48 @@
+#zotero-roam-icon[status="on"][data-status="ready"] {
+  background-color: #60f06042;
+}
+#zotero-roam-icon[data-status="loading"] > .bp3-icon {
+  color: #f7c99b;
+}
+#zotero-roam-icon[data-status="error"] > .bp3-icon {
+  color: #b71c1c;
+}
+
+.zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-arrow-fill {
+  fill: black;
+}
+.zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-content {
+  background-color: black;
+}
+
+.zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-content a {
+  color: #79b0f3;
+}
+
+.zr-icon-tooltip-footer,
+li.zr-queries-status {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0px;
+  align-items: baseline;
+}
+.zr-queries-status [zr-role="entry"] {
+  font-weight: 500;
+  color: #c5c5c5;
+}
+.zr-queries-status [zr-role="timestamp"] {
+  margin-left: 14px;
+  margin-right: 8px;
+  color: #bbbbbb;
+}
+.zr-queries-status [zr-role="status"] {
+  display: flex;
+  align-items: center;
+}
+.zr-queries-status [zr-role="status"] > button {
+  min-height: 16px;
+}
+
+.zr-version-tag {
+  margin-left: 10px;
+}

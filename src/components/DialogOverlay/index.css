@@ -1,0 +1,37 @@
+.bp3-dialog[class*="zr-dialog-overlay--"] {
+    align-self: baseline;
+    transition: all 0.5s ease 0s;
+    margin-left: calc(20vw + 2.5%);
+    padding-bottom: 0px;
+    box-shadow: none;
+}
+
+.bp3-dialog[class*="zr-dialog-overlay--"]:not(.bp3-dark) {
+    background: white;
+}
+
+.bp3-dialog[class*="zr-dialog-overlay--"] > .bp3-dialog-body {
+    flex-wrap:nowrap;
+    display:flex;
+    margin:0px;
+}
+
+/* SIDE PANEL */
+
+.bp3-dialog[class*="zr-dialog-overlay--"]:not(.bp3-dark) .side-panel {
+    background: white;
+}
+.bp3-dialog[class*="zr-dialog-overlay--"] .side-panel {
+    transition:0.5s;
+    font-size:0.8em;
+    overflow:auto;
+    border-radius: 0 6px 6px 0;
+}
+
+.bp3-dialog[class*="zr-dialog-overlay--"] .side-panel-contents {
+    width:20vw;
+}
+
+@media (max-width: 600px){
+    .bp3-dialog[class*="zr-dialog-overlay--"] {margin-left: calc(min(20vw, 30px) + 2.5%);}
+}
