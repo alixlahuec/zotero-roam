@@ -152,7 +152,7 @@ function RelatedItemsBar(props) {
             icon: isBacklinksListOpen ? 'caret-down' : 'caret-right',
             text: pluralize(backlinks_matched.length, 'related library item')
         }
-    }, [backlinks_matched.length > 0]);
+    }, [backlinks_matched.length > 0, isBacklinksListOpen]);
 
     return (
         <div className="zotero-roam-page-menu-citations">

@@ -2,6 +2,13 @@
     max-width: 850px;
 }
 
+.zr-page-menu--dnp, .zr-page-menu--tag {
+    opacity:0.6;
+    position:absolute;
+    right:10px;
+    top:40px
+}
+
 button[class*='zr-page-menu-show--'] {
     flex: 1 0 33%;
 }

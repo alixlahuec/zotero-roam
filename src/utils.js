@@ -1,5 +1,4 @@
 import ReactDOM from 'react-dom';
-import { Classes } from '@blueprintjs/core';
 import './typedefs';
 
 function analyzeUserRequests(reqs){
@@ -148,17 +147,35 @@ function pluralize(num, string, suffix = "") {
 /** Converts a Roam Daily Note title into a JavaScript date
  * @param {String} string - Daily Note Page (DNP) title 
  * @param {{as_date: Boolean}} config - Additional settings 
- * @returns The corresponding date, either as a Date or a Unix timestamp
+ * @returns The corresponding date, either as a Date or an Array (YYYY,M,DD)
  */
 function readDNP(string, { as_date = true } = {}){
     let [match, mm, dd, yy] = Array.from(string.matchAll(/(.+) ([0-9]+).{2}, ([0-9]{4})/g))[0];
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     
-    let parsedDate = [parseInt(yy), months.findIndex(month => month == mm), parseInt(dd)];
+    let parsedDate = [parseInt(yy), months.findIndex(month => month == mm) + 1, parseInt(dd)];
     
     return as_date ? new Date([...parsedDate]) : parsedDate;
 }
 
+/** Injects external scripts into the page
+ * @param {{id: String, src: String}[]} deps - List of scripts to inject 
+ */
+function setupDependencies(deps){
+    deps.forEach(dep => {
+        let { id, src } = dep;
+        try { document.getElementById(id).remove() } catch(e){ };
+        let script = document.createElement('script');
+        script.src = src;
+        script.type = 'application/javascript';
+        script.async = true;
+        document.getElementsByTagName('head')[0].appendChild(script);
+    })
+}
+/** Injects DOM elements to be used as React portals by the extension
+ * @param {String} slotID - The id to be given to the extension's icon's slot in the topbar 
+ * @param {String} portalID - The id to be given to the extension's designated div portal for overlays etc.
+ */
 function setupPortals(slotID, portalID){
     // Topbar slot for the extension's icon
     let exists = document.getElementById(slotID);
@@ -180,7 +197,6 @@ function setupPortals(slotID, portalID){
     try{ document.getElementById(portalID).remove() } catch(e){ };
     let zrPortal = document.createElement('div');
     zrPortal.id = portalID;
-    zrPortal.classList.add(Classes.PORTAL);
     document.getElementById('app').appendChild(zrPortal);
 }
 
@@ -224,6 +240,7 @@ export {
     parseDOI,
     pluralize,
     readDNP,
+    setupDependencies,
     setupPortals,
     sortItemsByYear
 }

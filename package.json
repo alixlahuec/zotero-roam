@@ -14,8 +14,8 @@
         "email": "alix.lahuec@mail.mcgill.ca"
     },
     "main": ".src/index.js",
-    "browser": "dist/main.js",
-    "unpkg": "dist/main.js",
+    "browser": "dist/zoteroRoam.min.js",
+    "unpkg": "dist/zoteroRoam.min.js",
     "scripts": {
         "dev": "webpack serve",
         "build": "webpack"

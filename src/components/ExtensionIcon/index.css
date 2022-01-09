@@ -23,7 +23,6 @@
 li.zr-queries-status {
   display: flex;
   justify-content: space-between;
-  padding: 4px 0px;
   align-items: baseline;
 }
 .zr-queries-status [zr-role="entry"] {

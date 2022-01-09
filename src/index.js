@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { analyzeUserRequests, setupPortals } from './utils';
+import { analyzeUserRequests, setupDependencies, setupPortals } from './utils';
 import { Toast } from '@blueprintjs/core';
 import App from './components/App';
 
@@ -29,6 +29,10 @@ var zoteroRoam = {};
 
     try {
         zoteroRoam.config.requests = analyzeUserRequests(dataRequests);
+        setupDependencies([
+            { id: 'scite-badge', src: 'https://cdn.scite.ai/badge/scite-badge-latest.min.js'} // Scite.ai Badge
+        ]);
+
         ReactDOM.render(
             <App
                 extension={{ version, extensionPortal }}
