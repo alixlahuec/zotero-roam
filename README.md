@@ -5,7 +5,7 @@
 ![jsDelivr hits (npm scoped)](https://img.shields.io/jsdelivr/npm/hm/@alixlahuec/zotero-roam?style=flat-square)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/greenmeen/zotero-roam)
 ![GitHub](https://img.shields.io/github/license/greenmeen/zotero-roam)
-![Maintenance](https://img.shields.io/maintenance/yes/2021?style=flat-square)
+![Maintenance](https://img.shields.io/maintenance/yes/2022?style=flat-square)
 
 Read the extension documentation [on GitBook](https://app.gitbook.com/@alix-lahuec/s/zotero-roam/). 
 
