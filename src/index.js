@@ -12,7 +12,7 @@ var zoteroRoam = {};
     const extensionSlot = "zotero-roam-slot";
     const extensionPortal = "zotero-roam-portal";
     
-    setupPortals(slotID = extensionSlot, portalID = extensionPortal);
+    setupPortals(extensionSlot, extensionPortal);
 
     let {
         dataRequests = [],
