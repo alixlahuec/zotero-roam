@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Button, ButtonGroup, Classes, Icon, InputGroup, MenuItem, Switch, Tag } from '@blueprintjs/core';
+import { Button, ButtonGroup, Classes, Icon, InputGroup, Menu, MenuItem, Switch, Tag } from '@blueprintjs/core';
 import { QueryList } from '@blueprintjs/select';
 import DialogOverlay from '../DialogOverlay';
 import { useQueryClient } from 'react-query';
@@ -285,7 +285,7 @@ const SearchPanel = React.memo(props => {
     } else {
       if(quickCopyActive){
         // Mode: Quick Copy
-        copyToClipboard(item.key);
+        copyToClipboard('@' + item.key);
         handleClose();
       } else {
         searchbar.current.blur();
@@ -300,9 +300,22 @@ const SearchPanel = React.memo(props => {
     debouncedCallback(query);
   };
 
-  function listRenderer(listProps) {
-    let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
+  function itemListRenderer(listProps) {
+    const { query, filteredItems, renderItem, itemsParentRef } = listProps;
 
+    const nbFilteredResults = filteredItems.length;
+    const maxedOut = nbFilteredResults == results_limit;
+    const hasNoResults = query.length > 0 && nbFilteredResults == 0 && !selectedItem;
+    const isInitial = query.length == 0;
+
+    const menuContent = !hasNoResults && !isInitial
+      ? <Menu ulRef={itemsParentRef}>
+          {listRenderer(query, filteredItems, renderItem)}
+      </Menu>
+      : null;
+
+    const resultsShown = nbFilteredResults > 0 ? (maxedOut ? `Only showing the first ${results_limit} results` : `${nbFilteredResults} results`) : null;
+    
     return (
       <div className="zr-querylist">
         <div className="header-bottom">
@@ -324,21 +337,26 @@ const SearchPanel = React.memo(props => {
         </div>
         {!selectedItem
         ? <>
-          <div
-            id="zotero-roam-library-rendered"
-            onKeyDown={handleKeyDown}
-            onKeyUp={handleKeyUp}
-          >
-            {listProps.itemList}
+          <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+            {menuContent}
           </div>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-            <Switch checked={false} label='Quick Copy' checked={quickCopyActive} onChange={toggleQuickCopy} />
+            <span className={['zr-auxiliary', 'zr-querylist-results-count'].join(' ')}>{resultsShown}</span>
+            <Switch className='zr-quick-copy' label='Quick Copy' checked={quickCopyActive} onChange={toggleQuickCopy} />
             <Tag className="zr-extension-info" minimal={true}>{version}</Tag>
           </div>
         </>
         : <SelectedItem item={selectedItem} />}
       </div>
-    );
+    )
+  }
+
+  function listRenderer(query, items, renderItem) {
+    return (
+      items.length == 0
+      ? null
+      : items.map(item => renderItem(item))
+    )
   };
 
   return (
@@ -362,7 +380,7 @@ const SearchPanel = React.memo(props => {
             initialContent={null}
             items={items}
             itemListPredicate={searchEngine}
-            renderer={listRenderer}
+            itemListRenderer={itemListRenderer}
             itemRenderer={listItemRenderer}
             onItemSelect={handleItemSelect}
             onQueryChange={handleQueryChange}

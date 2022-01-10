@@ -382,17 +382,17 @@ function TagMenuFactory(props){
     // Select to reduce dataset size :
     // - for tag matching, only top-level items that have any tags
     // - for abstract matching, only items that have an abstract
-    const with_tags = useMemo(() => {
+    const with_tags_or_abstract = useMemo(() => {
         return items
-        .filter(it => it.data.tags.length > 0)
+        .filter(it => it.data.abstractNote || it.data.tags.length > 0)
         .map(it => {
             return {
                 itemData: it,
+                abstract: it.data.abstractNote || "",
                 tagList: it.data.tags.map(t => t.tag)
             }
-        });
+        })
     }, [items]);
-    const with_abstract = useMemo(() => items.filter(it => it.data.abstractNote), [items]);
 
     const tagPortals = useMemo(() => {
         if(!items){
@@ -400,15 +400,22 @@ function TagMenuFactory(props){
         } else {
             return menus.map(menu => {
                 let title = menu.getAttribute('data-title');
-                let tagged = with_tags.filter(i => i.tagList.includes(title)).map(i => i.itemData);
-                let inAbstract = with_abstract.filter(i => i.data.abstractNote.includes(title));
-                return { div: menu, tagged, inAbstract }
+                let results = with_tags_or_abstract.reduce((obj, item) => {
+                    if(item.abstract.includes(title)){
+                        obj.with_abstract.push(item.itemData);
+                    }
+                    if(item.tagList.includes(title)){
+                        obj.with_tags.push(item.itemData);
+                    }
+                }, { with_tags: [], with_abstract: []});
+                
+                return { div: menu, ...results }
             })
-            .filter(menu => menu.tagged || menu.inAbstract)
+            .filter(menu => menu.with_tags.length > 0 || menu.with_tags.length > 0)
             .map((menu,i) => {
-                let { tagged, inAbstract, div } = menu;
+                let { with_tags, with_abstract, div } = menu;
                 return (
-                    createPortal(<TagMenu key={i} tagged={tagged} inAbstract={inAbstract} />, div)
+                    createPortal(<TagMenu key={i} tagged={with_tags} inAbstract={with_abstract} />, div)
                 )
             });
         }

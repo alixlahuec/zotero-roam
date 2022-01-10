@@ -2,8 +2,6 @@
 
 #zotero-roam-portal .bp3-overlay-backdrop{opacity:0.4;}
 
-#zotero-roam-portal .bp3-dialog-footer-actions{padding:5px 2.5%;justify-content:space-between;align-items:flex-end;transition:0.2s;}
-
 #zotero-roam-portal [side-panel="hidden"] .side-panel-contents{display: none;}
 #zotero-roam-portal .bp3-dark .side-panel{background-color:#30404d;}
 #zotero-roam-portal .side-panel > .side-panel-contents > *{padding:10px 20px;}

@@ -16,6 +16,13 @@
     margin:0px;
 }
 
+.bp3-dialog[class*="zr-dialog-overlay--"] .bp3-dialog-footer-actions{
+    padding:5px 2.5%;
+    justify-content:space-between;
+    align-items:baseline;
+    transition:0.2s;
+}
+
 /* SIDE PANEL */
 
 .bp3-dialog[class*="zr-dialog-overlay--"]:not(.bp3-dark) .side-panel {
