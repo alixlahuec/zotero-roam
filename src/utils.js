@@ -64,6 +64,36 @@ function copyToClipboard(text){
     }
 }
 
+// From Darren Cook on SO : https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+// Escape special characters in user input so that RegExp can be generated :
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+function formatItemReference(item, format){
+    const citekey = '@' + item.key;
+    const pub_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "";
+    const pub_summary = [item.meta.creatorSummary || "", pub_year ? `(${pub_year})` : ""].filter(Boolean).join(" ");
+
+    switch(format){
+        case 'inline':
+            return pub_summary;
+        case 'tag':
+            return `#[[${citekey}]]`;
+        case 'pageref':
+            return `[[${citekey}]]`;
+        case 'citation':
+            return `[${pub_summary || item.key}]([[${citekey}]])`
+        case 'popover':
+            return `{{=: ${pub_summary || item.key} | {{embed: [[${citekey}]]}} }}`;
+        case 'zettlr':
+            return [pub_summary, item.data.title].join(" : ");
+        case 'citekey':
+        default:
+            return citekey;
+    }
+}
+
 /** Creates a local link to a specific Zotero item, which opens in the standalone app.
  * @param {ZoteroItem|Object} item - The targeted Zotero item
  * @param {{format: String, text: String}} config - Additional settings
@@ -233,6 +263,8 @@ function sortItemsByYear(arr) {
 export {
     analyzeUserRequests,
     copyToClipboard,
+    escapeRegExp,
+    formatItemReference,
     getLocalLink,
     getWebLink,
     makeTimestamp,

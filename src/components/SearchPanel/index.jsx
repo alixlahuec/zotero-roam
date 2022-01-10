@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Button, ButtonGroup, Classes, Icon, InputGroup, Menu, MenuItem, Switch, Tag } from '@blueprintjs/core';
+import { Button, ButtonGroup, Classes, Icon, InputGroup, MenuItem, Switch, Tag } from '@blueprintjs/core';
 import { QueryList } from '@blueprintjs/select';
 import DialogOverlay from '../DialogOverlay';
 import { useQueryClient } from 'react-query';
@@ -11,6 +11,8 @@ const results_limit = 50;
 
 const dialogLabel="zr-library-search-dialogtitle";
 const dialogClass="search-library";
+const resultClass = Classes.TEXT_OVERFLOW_ELLIPSIS + " zotero-roam-search-item-contents";
+const resultKeyClass = Classes.MENU_ITEM_LABEL + " zotero-roam-search-item-key";
 
 // Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 function useDebounceCallback(callback, timeout) {
@@ -155,42 +157,12 @@ function SelectedItem(props) {
 }
 
 function listItemRenderer(item, itemProps) {
-  let { handleClick, modifiers } = itemProps;
-  let itemClass = Classes.TEXT_OVERFLOW_ELLIPSIS + " zotero-roam-search-item-contents";
-  let keyClass = Classes.MENU_ITEM_LABEL + " zotero-roam-search-item-key";
-  
-  let passedProps = { item, handleClick, modifiers, itemClass, keyClass };
+  let { handleClick, modifiers, query } = itemProps;
+  let passedProps = { item, handleClick, modifiers, query };
   let { location, key } = item;
 
   return <SearchResult key={[location, key].join('-')} {...passedProps} />;
 }
-
-const SearchResult = React.memo(props => {
-  const { item, handleClick, modifiers, itemClass, keyClass } = props;
-  const { authors, inGraph, itemType, key, location, publication, title, year} = item;
-
-  return <MenuItem
-    onClick={handleClick}
-    className="zotero-roam-search_result"
-    role="option"
-    aria-selected={modifiers.active}
-    data-item-type={itemType}
-    in-graph={inGraph.toString()}
-    labelElement={<span>{key}</span>}
-    labelClassName={keyClass}
-    tagName="div"
-    text={
-      <>
-        <span className="zotero-roam-search-item-title">{title}</span>
-        <span className="zr-details">
-          <span className="zotero-roam-search-item-authors zr-highlight">{authors + " (" + year + ")"}</span>
-          <span className="zr-secondary">{publication}</span>
-        </span>
-      </>
-    }
-    textClassName={itemClass}
-  />
-})
 
 function searchEngine(query, items) {
   if(query.length < query_threshold){
@@ -247,6 +219,33 @@ function simplifyRequestData(arr){
   });
 }
 
+const SearchResult = React.memo(props => {
+  const { item, handleClick, modifiers, query } = props;
+  const { authors, inGraph, itemType, key, location, publication, title, year} = item;
+
+  return <MenuItem
+    onClick={handleClick}
+    className="zotero-roam-search_result"
+    role="option"
+    aria-selected={modifiers.active}
+    data-item-type={itemType}
+    in-graph={inGraph.toString()}
+    labelElement={<span>{key}</span>}
+    labelClassName={resultKeyClass}
+    tagName="div"
+    text={
+      <>
+        <span className="zotero-roam-search-item-title">{title}</span>
+        <span className="zr-details">
+          <span className="zotero-roam-search-item-authors zr-highlight">{authors + " (" + year + ")"}</span>
+          <span className="zr-secondary">{publication}</span>
+        </span>
+      </>
+    }
+    textClassName={resultClass}
+  />
+})
+
 const SearchPanel = React.memo(props => {
   const { isOpen, isSidePanelOpen } = props.panelState;
   const { handleChange, portalTarget, version } = props;
@@ -300,22 +299,9 @@ const SearchPanel = React.memo(props => {
     debouncedCallback(query);
   };
 
-  function itemListRenderer(listProps) {
-    const { query, filteredItems, renderItem, itemsParentRef } = listProps;
+  function listRenderer(listProps) {
+    let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
 
-    const nbFilteredResults = filteredItems.length;
-    const maxedOut = nbFilteredResults == results_limit;
-    const hasNoResults = query.length > 0 && nbFilteredResults == 0 && !selectedItem;
-    const isInitial = query.length == 0;
-
-    const menuContent = !hasNoResults && !isInitial
-      ? <Menu ulRef={itemsParentRef}>
-          {listRenderer(query, filteredItems, renderItem)}
-      </Menu>
-      : null;
-
-    const resultsShown = nbFilteredResults > 0 ? (maxedOut ? `Only showing the first ${results_limit} results` : `${nbFilteredResults} results`) : null;
-    
     return (
       <div className="zr-querylist">
         <div className="header-bottom">
@@ -335,28 +321,22 @@ const SearchPanel = React.memo(props => {
             inputRef={searchbar}
           />
         </div>
-        {!selectedItem
-        ? <>
-          <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
-            {menuContent}
+        {selectedItem ? <SelectedItem item={selectedItem} />
+        : <>
+          <div
+            id="zotero-roam-library-rendered"
+            onKeyDown={handleKeyDown}
+            onKeyUp={handleKeyUp}
+          >
+            {listProps.itemList}
           </div>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-            <span className={['zr-auxiliary', 'zr-querylist-results-count'].join(' ')}>{resultsShown}</span>
             <Switch className='zr-quick-copy' label='Quick Copy' checked={quickCopyActive} onChange={toggleQuickCopy} />
             <Tag className="zr-extension-info" minimal={true}>{version}</Tag>
           </div>
-        </>
-        : <SelectedItem item={selectedItem} />}
+        </>}
       </div>
-    )
-  }
-
-  function listRenderer(query, items, renderItem) {
-    return (
-      items.length == 0
-      ? null
-      : items.map(item => renderItem(item))
-    )
+    );
   };
 
   return (
@@ -380,7 +360,7 @@ const SearchPanel = React.memo(props => {
             initialContent={null}
             items={items}
             itemListPredicate={searchEngine}
-            itemListRenderer={itemListRenderer}
+            renderer={listRenderer}
             itemRenderer={listItemRenderer}
             onItemSelect={handleItemSelect}
             onQueryChange={handleQueryChange}

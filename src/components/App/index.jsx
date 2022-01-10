@@ -33,6 +33,7 @@ class App extends Component {
     render() {
         let { extension, dataRequests, apiKeys, libraries, userSettings } = this.props;
         let { version, extensionPortal } = extension;
+        let { autocomplete } = userSettings;
         let { status, searchPanel } = this.state;
 
         return (
@@ -43,7 +44,7 @@ class App extends Component {
                 openSearchPanel={this.openSearchPanel}
                 />
                 {status == 'on'
-                ? <GraphWatcher dataRequests={dataRequests} />
+                ? <GraphWatcher dataRequests={dataRequests} autocomplete={autocomplete} />
                 : null}
                 <SearchPanel panelState={searchPanel}
                 portalTarget={extensionPortal}

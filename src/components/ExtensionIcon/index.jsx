@@ -8,7 +8,7 @@ import './index.css';
 function QueriesStatusIcon(props) {
     let { queries } = props;
     let updated = queries.map(q => q.dataUpdatedAt).filter(Boolean);
-    let timestamp = updated ? <span zr-role="timestamp">{makeTimestamp(Math.max(...updated))}</span> : null;
+    let timestamp = updated.length > 0 ? <span zr-role="timestamp">{makeTimestamp(Math.max(...updated))}</span> : null;
 
     let isFetching = queries.some(q => q.isFetching);
     let isSuccess = queries.every(q => q.isSuccess);

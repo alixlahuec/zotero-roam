@@ -1,8 +1,10 @@
 import React, { PureComponent, useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from '@blueprintjs/core';
-import { getLocalLink, getWebLink, parseDOI, pluralize, readDNP, sortItemsByYear } from '../../utils';
-import { queryItems, querySemantic } from '../../queries';
+import Tribute from "tributejs";
+
+import { escapeRegExp, getLocalLink, getWebLink, parseDOI, pluralize, readDNP, sortItemsByYear } from '../../utils';
+import { queryItems, getItems, querySemantic } from '../../queries';
 import ButtonLink from '../ButtonLink';
 import SciteBadge from '../SciteBadge';
 import './index.css';
@@ -18,6 +20,23 @@ const showClasses = ['references', 'citations', 'backlinks'].reduce((obj, elem) 
     obj[elem] = showPrefix + elem;
     return obj;
 }, {});
+
+const tributeConfig = {
+    selectClass: 'zotero-roam-tribute-selected',
+    containerClass: 'zotero-roam-tribute',
+    lookup: 'display',
+    menuItemLimit: 15,
+    menuItemTemplate: (item) => {
+        return item.original.display;
+    },
+    requireLeadingSpace: true,
+    selectTemplate: (item) => {
+        return item.original.value;
+    },
+    searchOpts: {
+        skip: true
+    }
+}
 
 function addPageMenus(){
     let newPages = Array.from(document.querySelectorAll('h1.rm-title-display'))
@@ -432,6 +451,7 @@ class GraphWatcher extends PureComponent {
             dnpMenus: [],
             tagMenus: []
         }
+        this.checkEditingMode = this.checkEditingMode.bind(this);
         this.updatePageElements = this.updatePageElements.bind(this);
     }
 
@@ -439,6 +459,11 @@ class GraphWatcher extends PureComponent {
         // From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
         this._isMounted = true;
 
+        if(this.props.autocomplete.trigger){
+            this.editingObserver = new MutationObserver(this.checkEditingMode);
+            this.editingObserver.observe(document, { childList: true, subtree: true});
+        }
+        
         // The watcher adds empty <div>s to relevant page elements
         // The contents of the <div>s will be managed by rendering portals
         this.watcher = setInterval(
@@ -457,6 +482,7 @@ class GraphWatcher extends PureComponent {
     componentWillUmmount() {
         // From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
         this._isMounted = false;
+        try { this.editingObserver.disconnect() } catch(e){};
         clearInterval(this.watcher);
         Array.from(document.querySelectorAll(`[class*=${menuPrefix}]`)).forEach(div => div.remove());
     }
@@ -470,6 +496,48 @@ class GraphWatcher extends PureComponent {
         {dnpMenus ? <DNPMenuFactory menus={dnpMenus} dataRequests={dataRequests} /> : null}
         {tagMenus ? <TagMenuFactory menus={tagMenus} dataRequests={dataRequests} /> : null}
         </>
+    }
+
+    // Detect if a block is currently being edited
+    checkEditingMode(){
+        const { trigger, display = "citekey", format = "citation" } = this.props.autocomplete;
+        const values = (text, cb) => {
+            let formattedLib = getItems(format, display);
+            cb(formattedLib.filter(item => item[tributeConfig.lookup].toLowerCase().includes(text.toLowerCase())));
+        }
+
+        let textArea = document.querySelector("textarea.rm-block-input");
+        if (!textArea || textArea.getAttribute("zotero-tribute") != null) return;
+
+        document.querySelectorAll('.zotero-roam-tribute').forEach(d=>d.remove());
+
+        textArea.setAttribute("zotero-tribute", "active");
+
+        var tribute = new Tribute({trigger, values, ...tributeConfig});
+        tribute.attach(textArea);
+
+        textArea.addEventListener('tribute-replaced', (e) => {
+            let item = e.detail.item;
+            if(item.original.source == "zotero"){
+                let textArea = document.querySelector('textarea.rm-block-input');
+                let trigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
+                let triggerPos = e.detail.context.mentionPosition;
+
+                let replacement = e.detail.item.original.value;
+                let blockContents = e.target.defaultValue;
+
+                let escapedTrigger = escapeRegExp(trigger);
+                let triggerRegex = new RegExp(escapedTrigger, 'g');
+                let newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
+
+                var setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+                setValue.call(textArea, newText);
+
+                var ev = new Event('input', { bubbles: true });
+                textArea.dispatchEvent(ev); 
+            }
+        });
+
     }
 
     updatePageElements(){
