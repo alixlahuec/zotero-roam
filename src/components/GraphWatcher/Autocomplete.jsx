@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Tribute from "tributejs";
 
 import { escapeRegExp } from "../../utils";
 import { getItems } from "../../queries";
 
+const tributeClass = 'zotero-roam-tribute';
+
 const tributeConfig = {
     selectClass: 'zotero-roam-tribute-selected',
-    containerClass: 'zotero-roam-tribute',
+    containerClass: tributeClass,
     lookup: 'display',
     menuItemLimit: 15,
     menuItemTemplate: (item) => {
@@ -43,7 +45,7 @@ const Autocomplete = React.memo(props => {
         let textArea = document.querySelector("textarea.rm-block-input");
         if (!textArea || textArea.getAttribute("zotero-tribute") != null) return;
 
-        document.querySelectorAll('.zotero-roam-tribute').forEach(d=>d.remove());
+        document.querySelectorAll(`.${tributeClass}`).forEach(d=>d.remove());
 
         textArea.setAttribute("zotero-tribute", "active");
 
