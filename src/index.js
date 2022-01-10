@@ -18,11 +18,13 @@ var zoteroRoam = {};
 
     let {
         dataRequests = [],
+        autocomplete = {},
         autoload = false
     } = window.zoteroRoam_settings;
 
     zoteroRoam.config = {
         userSettings: {
+            autocomplete,
             autoload
         }
     };
