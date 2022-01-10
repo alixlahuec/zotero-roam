@@ -46,6 +46,14 @@ const addPageMenus = () => {
     }
 }
 
+const findPageMenus = () => {
+    return {
+        citekeyMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.citekey}]`)),
+        dnpMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.dnp}]`)),
+        tagMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.tag}]`))
+    }
+}
+
 function findBacklinks(datastore, semantic){
     // Note: DOIs from the Semantic Scholar queries are sanitized at fetch
     let citedDOIs = semantic.references.map(ref => { return { _doi: ref.doi, _type: 'cited' } });
@@ -426,6 +434,7 @@ function TagMenuFactory(props){
 
 export {
     addPageMenus,
+    findPageMenus,
     CitekeyMenuFactory,
     DNPMenuFactory,
     TagMenuFactory

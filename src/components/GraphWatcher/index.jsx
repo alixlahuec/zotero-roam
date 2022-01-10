@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
 
 import { 
-    addPageMenus, 
+    addPageMenus,
+    findPageMenus,
     CitekeyMenuFactory, 
     DNPMenuFactory, 
     TagMenuFactory 
@@ -62,11 +63,7 @@ class GraphWatcher extends PureComponent {
         // TODO: Add other page elems (explo, etc)
         this.setState((prevState) => {
             let update = {};
-            const currentElems = {
-                citekeyMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.citekey}]`)),
-                dnpMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.dnp}]`)),
-                tagMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.tag}]`))
-            }
+            const currentElems = findPageMenus()
             for(let key of Object.keys(currentElems)){
                 let prev = prevState[key];
                 let current = currentElems[key];
