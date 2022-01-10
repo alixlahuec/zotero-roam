@@ -6,9 +6,7 @@ import {
     DNPMenuFactory, 
     TagMenuFactory 
 } from './Menus';
-
 import Autocomplete from './Autocomplete';
-
 import './index.css';
 
 class GraphWatcher extends PureComponent {

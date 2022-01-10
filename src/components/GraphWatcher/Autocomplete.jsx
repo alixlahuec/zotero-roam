@@ -74,6 +74,8 @@ const Autocomplete = React.memo(props => {
             }
         });
     }, [config]);
+
+    return null;
 })
 
 export default Autocomplete;
