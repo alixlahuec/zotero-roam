@@ -82,19 +82,6 @@ const queryItems = (reqs, opts = {}) => {
     return useQueries(queriesDefs);
 }
 
-const getItems = (format = "citekey", display = "citekey") => {
-    const client = useQueryClient();
-    const items = client.getQueriesData('items').map((res) => res[1]?.data || []).flat(1);
-    // For debugging
-    console.log(items);
-    return items.filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType)).map(item => {
-        return {key: item.key,
-                source: "zotero",
-                value: formatItemReference(item, format) || item.key,
-                display: formatItemReference(item, display)} || item.key;
-    });
-}
-
 /** Uses permission React queries for specific API keys. By default, `staleTime = 1 hour` and `refetchInterval = 1 hour`.
  * @param {String[]} keys - The targeted Zotero API keys 
  * @param {Object} opts - Optional configuration to use with the queries 
@@ -484,7 +471,6 @@ async function fetchCitoid(query) {
 
 export {
     queryItems,
-    getItems,
     queryPermissions,
     queryTags,
     queryCollections,

@@ -55,7 +55,7 @@ class GraphWatcher extends PureComponent {
         {citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} dataRequests={dataRequests} /> : null}
         {dnpMenus ? <DNPMenuFactory menus={dnpMenus} dataRequests={dataRequests} /> : null}
         {tagMenus ? <TagMenuFactory menus={tagMenus} dataRequests={dataRequests} /> : null}
-        {autocomplete.trigger ? <Autocomplete config={autocomplete} /> : null}
+        {autocomplete.trigger ? <Autocomplete config={autocomplete} dataRequests={dataRequests} /> : null}
         </>
     }
 

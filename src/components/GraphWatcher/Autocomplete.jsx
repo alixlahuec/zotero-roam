@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import Tribute from "tributejs";
 
 import { escapeRegExp } from "../../utils";
-import { getItems } from "../../queries";
+import { queryItems } from "../../queries";
 
 const tributeClass = 'zotero-roam-tribute';
 
@@ -23,11 +23,35 @@ const tributeConfig = {
     }
 }
 
+const getItems = (reqs, format = "citekey", display = "citekey") => {
+    const itemQueries = queryItems(reqs, { 
+        select: (datastore) => {
+            return datastore.data
+            .filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType))
+            .map(item => {
+                return {
+                    key: item.key,
+                    source: "zotero",
+                    value: formatItemReference(item, format) || item.key,
+                    display: formatItemReference(item, display) || item.key
+                }
+            })
+        },
+        notifyOnChangeProps: ['data'] 
+    });
+    const data = itemQueries.map(q => q.data || []).flat(1);
+    
+    // For debugging
+    console.log(data);
+
+    return data;
+}
+
 const Autocomplete = React.memo(props => {
-    const { config } = props;
+    const { config, dataRequests } = props;
     const { trigger, display = "citekey", format = "citation" } = config;
 
-    const formattedLib = getItems(format, display);
+    const formattedLib = getItems(dataRequests, format, display);
     const tributeFactory = {
         trigger,
         ...tributeConfig,
