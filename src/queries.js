@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { useQueries, useQuery, useQueryClient } from 'react-query';
-import { formatItemReference, parseDOI } from './utils';
+import { parseDOI } from './utils';
 import './typedefs';
 
 const zoteroClient = axios.create({

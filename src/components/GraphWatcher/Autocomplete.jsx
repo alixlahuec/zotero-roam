@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import Tribute from "tributejs";
 
-import { escapeRegExp } from "../../utils";
+import { formatItemReference, escapeRegExp } from "../../utils";
 import { queryItems } from "../../queries";
 
 const tributeClass = 'zotero-roam-tribute';
