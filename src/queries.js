@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { useQueries, useQuery, useQueryClient } from 'react-query';
-import { parseDOI } from './utils';
+import { formatItemReference, parseDOI } from './utils';
 import './typedefs';
 
 const zoteroClient = axios.create({
@@ -85,11 +85,13 @@ const queryItems = (reqs, opts = {}) => {
 const getItems = (format = "citekey", display = "citekey") => {
     const client = useQueryClient();
     const items = client.getQueriesData('items').map((res) => res[1]?.data || []).flat(1);
+    // For debugging
+    console.log(items);
     return items.filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType)).map(item => {
         return {key: item.key,
                 source: "zotero",
                 value: formatItemReference(item, format) || item.key,
-                display: formatItemReference(item, display)};
+                display: formatItemReference(item, display)} || item.key;
     });
 }
 

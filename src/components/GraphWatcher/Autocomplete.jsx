@@ -28,13 +28,16 @@ const Autocomplete = React.memo(props => {
     const { trigger, display = "citekey", format = "citation" } = config;
 
     const formattedLib = getItems(format, display);
+    const tributeFactory = {
+        trigger,
+        ...tributeConfig,
+        values: (text,cb) => {
+            cb(formattedLib.filter(item => item[tributeConfig.lookup].toLowerCase().includes(text.toLowerCase())))
+        }
+    }
 
     // Detect if a block is currently being edited
     const checkEditingMode = useCallback(() => {
-        const values = (text, cb) => {
-            cb(formattedLib.filter(item => item[tributeConfig.lookup].toLowerCase().includes(text.toLowerCase())));
-        }
-
         let textArea = document.querySelector("textarea.rm-block-input");
         if (!textArea || textArea.getAttribute("zotero-tribute") != null) return;
 
@@ -42,7 +45,7 @@ const Autocomplete = React.memo(props => {
 
         textArea.setAttribute("zotero-tribute", "active");
 
-        var tribute = new Tribute({trigger, values, ...tributeConfig});
+        var tribute = new Tribute(tributeFactory);
         tribute.attach(textArea);
 
         textArea.addEventListener('tribute-replaced', (e) => {
@@ -66,7 +69,7 @@ const Autocomplete = React.memo(props => {
                 textArea.dispatchEvent(ev); 
             }
         });
-    }, [trigger, formattedLib]);
+    }, [tributeFactory]);
 
     useEffect(() => {
         const editingObserver = new MutationObserver(checkEditingMode);
