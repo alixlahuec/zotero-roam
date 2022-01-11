@@ -87,8 +87,8 @@ function formatItemReference(item, format, {accent_class = "zr-highlight"} = {})
         case 'popover':
             return `{{=: ${pub_summary || item.key} | {{embed: [[${citekey}]]}} }}`;
         case 'zettlr':
-            let zettlr_accent = pub_summary ? `<span class="${accent_class}">${pub_summary}</span>` : "";
-            return [zettlr_accent, item.data.title].join(" : ");
+            let zettlr_accent = `<span class="${accent_class}">${pub_summary || item.key}</span>`;
+            return [zettlr_accent, item.data.title].filter(Boolean).join(" : ");
         case 'citekey':
         default:
             return citekey;

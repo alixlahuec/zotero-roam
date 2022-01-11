@@ -1,0 +1,26 @@
+.zotero-roam-tribute {
+    max-width:450px;
+    max-height:300px;
+    overflow-y:scroll;
+    margin-top:8px;
+    border: 1px #efefef solid;
+    background-color: white;
+    border-radius: 3px;
+}
+
+.zotero-roam-tribute ul {
+    list-style-type:none;
+    padding:0px;
+    margin-bottom: 0px;
+}
+
+.zotero-roam-tribute ul li {
+    padding: 3px 8px;
+    font-size: 0.85em;
+    line-height: 1.5em;
+    display: flex;
+}
+
+.zotero-roam-tribute-selected {
+    background-color: #eaf3fc;
+}

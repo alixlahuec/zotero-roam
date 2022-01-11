@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
 import Tribute from "tributejs";
 
-import { formatItemReference, escapeRegExp } from "../../utils";
-import { queryItems } from "../../queries";
+import { formatItemReference, escapeRegExp } from "../../../utils";
+import { queryItems } from "../../../queries";
+import './index.css';
 
 const tributeClass = 'zotero-roam-tribute';
 
@@ -13,9 +14,15 @@ const tributeConfig = {
     menuShowMinLength: 1,
     menuItemLimit: 25,
     menuItemTemplate: (item) => {
-        return item.original.display;
+        let { itemType, display } = item.original;
+        return `
+        <span data-item-type="${itemType}"></span>
+        <span>${display}</span>
+        `;
     },
-    noMatchTemplate: null,
+    noMatchTemplate: function () {
+        return '<span style:"visibility: hidden;"></span>';
+    },
     requireLeadingSpace: false,
     selectTemplate: (item) => {
         return item.original.value;
@@ -29,23 +36,23 @@ const getItems = (reqs, format = "citekey", display = "citekey") => {
     const itemQueries = queryItems(reqs, { 
         select: (datastore) => {
             return datastore.data
+            ? datastore.data
             .filter(item => !['attachment', 'note', 'annotation'].includes(item.data.itemType))
             .map(item => {
                 return {
                     key: item.key,
+                    itemType: item.data.itemType,
                     source: "zotero",
                     value: formatItemReference(item, format, {accent_class: "zr-highlight"}) || item.key,
                     display: formatItemReference(item, display, {accent_class: "zr-highlight"}) || item.key
                 }
             })
+            : []
         },
         notifyOnChangeProps: ['data'] 
     });
     const data = itemQueries.map(q => q.data || []).flat(1);
     
-    // For debugging
-    console.log(data);
-
     return data;
 }
 
@@ -53,7 +60,7 @@ const Autocomplete = React.memo(props => {
     const { config, dataRequests } = props;
     const { trigger, display = "citekey", format = "citation" } = config;
 
-    const formattedLib = getItems(dataRequests, format, display);
+    const formattedLib = getItems(dataRequests, format, display) || [];
     const tributeFactory = {
         trigger,
         ...tributeConfig,
@@ -103,6 +110,7 @@ const Autocomplete = React.memo(props => {
 
         return () => {
             editingObserver.disconnect();
+            try { document.querySelector(`.${tributeClass}`).remove() } catch(e){ };
         }
     }, [checkEditingMode]);
 

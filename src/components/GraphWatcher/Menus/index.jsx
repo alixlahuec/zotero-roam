@@ -2,10 +2,11 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from '@blueprintjs/core';
 
-import { getLocalLink, getWebLink, parseDOI, pluralize, readDNP, sortItemsByYear } from '../../utils';
-import { queryItems, querySemantic } from '../../queries';
-import ButtonLink from '../ButtonLink';
-import SciteBadge from '../SciteBadge';
+import { getLocalLink, getWebLink, parseDOI, pluralize, readDNP, sortItemsByYear } from '../../../utils';
+import { queryItems, querySemantic } from '../../../queries';
+import ButtonLink from '../../ButtonLink';
+import SciteBadge from '../../SciteBadge';
+import './index.css';
 
 const menuPrefix = 'zr-page-menu--';
 const menuClasses = ['citekey', 'dnp', 'tag'].reduce((obj, elem) => {
