@@ -25,20 +25,13 @@ const tributeConfig = {
 
 const Autocomplete = React.memo(props => {
     const { config } = props;
-    useEffect(() => {
-        const editingObserver = new MutationObserver(checkEditingMode);
-        editingObserver.observe(document, { childList: true, subtree: true});
+    const { trigger, display = "citekey", format = "citation" } = config;
 
-        return () => {
-            editingObserver.disconnect();
-        }
-    }, [config]);
+    const formattedLib = getItems(format, display);
 
     // Detect if a block is currently being edited
     const checkEditingMode = useCallback(() => {
-        const { trigger, display = "citekey", format = "citation" } = config;
         const values = (text, cb) => {
-            let formattedLib = getItems(format, display);
             cb(formattedLib.filter(item => item[tributeConfig.lookup].toLowerCase().includes(text.toLowerCase())));
         }
 
@@ -56,13 +49,13 @@ const Autocomplete = React.memo(props => {
             let item = e.detail.item;
             if(item.original.source == "zotero"){
                 let textArea = document.querySelector('textarea.rm-block-input');
-                let trigger = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
+                let triggerString = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
                 let triggerPos = e.detail.context.mentionPosition;
 
                 let replacement = e.detail.item.original.value;
                 let blockContents = e.target.defaultValue;
 
-                let escapedTrigger = escapeRegExp(trigger);
+                let escapedTrigger = escapeRegExp(triggerString);
                 let triggerRegex = new RegExp(escapedTrigger, 'g');
                 let newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
 
@@ -73,7 +66,16 @@ const Autocomplete = React.memo(props => {
                 textArea.dispatchEvent(ev); 
             }
         });
-    }, [config]);
+    }, [trigger, formattedLib]);
+
+    useEffect(() => {
+        const editingObserver = new MutationObserver(checkEditingMode);
+        editingObserver.observe(document, { childList: true, subtree: true});
+
+        return () => {
+            editingObserver.disconnect();
+        }
+    }, [checkEditingMode]);
 
     return null;
 })
