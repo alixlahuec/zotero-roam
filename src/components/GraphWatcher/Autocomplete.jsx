@@ -10,11 +10,13 @@ const tributeConfig = {
     selectClass: 'zotero-roam-tribute-selected',
     containerClass: tributeClass,
     lookup: 'display',
-    menuItemLimit: 15,
+    menuShowMinLength: 1,
+    menuItemLimit: 25,
     menuItemTemplate: (item) => {
         return item.original.display;
     },
-    requireLeadingSpace: true,
+    noMatchTemplate: null,
+    requireLeadingSpace: false,
     selectTemplate: (item) => {
         return item.original.value;
     },
@@ -32,8 +34,8 @@ const getItems = (reqs, format = "citekey", display = "citekey") => {
                 return {
                     key: item.key,
                     source: "zotero",
-                    value: formatItemReference(item, format) || item.key,
-                    display: formatItemReference(item, display) || item.key
+                    value: formatItemReference(item, format, {accent_class: "zr-highlight"}) || item.key,
+                    display: formatItemReference(item, display, {accent_class: "zr-highlight"}) || item.key
                 }
             })
         },

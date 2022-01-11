@@ -70,7 +70,7 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-function formatItemReference(item, format){
+function formatItemReference(item, format, {accent_class = "zr-highlight"} = {}){
     const citekey = '@' + item.key;
     const pub_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "";
     const pub_summary = [item.meta.creatorSummary || "", pub_year ? `(${pub_year})` : ""].filter(Boolean).join(" ");
@@ -87,7 +87,8 @@ function formatItemReference(item, format){
         case 'popover':
             return `{{=: ${pub_summary || item.key} | {{embed: [[${citekey}]]}} }}`;
         case 'zettlr':
-            return [pub_summary, item.data.title].join(" : ");
+            let zettlr_accent = pub_summary ? `<span class="${accent_class}">${pub_summary}</span>` : "";
+            return [zettlr_accent, item.data.title].join(" : ");
         case 'citekey':
         default:
             return citekey;
