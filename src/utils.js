@@ -1,6 +1,10 @@
 import ReactDOM from "react-dom";
 import "./typedefs";
 
+/** Generates a data requests configuration object
+ * @param {Array} reqs - Data requests provided by the user
+ * @returns {{dataRequests: Array, apiKeys: Array, libraries: Array}} A configuration object for the extension to use
+ */
 function analyzeUserRequests(reqs){
 	if(reqs.length == 0){
 		throw new Error("At least one data request must be specified for the extension to function.");
@@ -64,12 +68,21 @@ function copyToClipboard(text){
 	}
 }
 
-// From Darren Cook on SO : https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
-// Escape special characters in user input so that RegExp can be generated :
+/** Escapes special characters in a string, so that it can be used as RegExp.
+ * From Darren Cook on SO : https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+ * @param {String} string - The original string to escape
+ * @returns {String} The escaped string
+ */
 function escapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
+/** Converts an item into a given string format
+ * @param {ZoteroItem|Object} item - The item to convert 
+ * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} format - The format to convert into 
+ * @param {{accent_class: String}} config - Additional parameters 
+ * @returns {String} The formatted reference
+ */
 function formatItemReference(item, format, {accent_class = "zr-highlight"} = {}){
 	const citekey = "@" + item.key;
 	const pub_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "";
@@ -125,6 +138,39 @@ function getWebLink(item, {format = "markdown", text = "Web library"} = {}){
 	case "target":
 	default:
 		return target;
+	}
+}
+
+/** Converts a date into Roam DNP format
+ * @param {Date|*} date - The date to parse and convert 
+ * @param {{brackets: Boolean}} config - Additional parameters 
+ * @returns 
+ */
+function makeDNP(date, {brackets = true} = {}){
+	if(date.constructor !== Date){ date = new Date(date); }
+	let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	let dateString = `${months[date.getMonth()]} ${makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
+	if(brackets){
+		return `[[${dateString}]]`;
+	} else{
+		return dateString;
+	}
+}
+
+/** Converts a number into ordinal format
+ * @param {Integer} i - The number to convert
+ * @returns {String} The number in ordinal format
+ */
+function makeOrdinal(i) {
+	let j = i % 10;
+	if (j == 1 & i != 11) {
+		return i + "st";
+	} else if (j == 2 & i != 12) {
+		return i + "nd";
+	} else if (j == 3 & i != 13) {
+		return i + "rd";
+	} else {
+		return i + "th";
 	}
 }
 
@@ -276,6 +322,7 @@ export {
 	formatItemReference,
 	getLocalLink,
 	getWebLink,
+	makeDNP,
 	makeTimestamp,
 	matchArrays,
 	parseDOI,
