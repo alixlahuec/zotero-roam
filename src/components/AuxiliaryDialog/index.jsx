@@ -97,7 +97,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 					{dialogContents}
 				</div>
 			</Dialog>,
-			portalTarget)
+			document.getElementById(portalTarget))
 	);
 });
 AuxiliaryDialog.propTypes = {

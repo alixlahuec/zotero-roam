@@ -83,8 +83,20 @@ function DialogOverlay(props) {
 					<SidePanel style={sidePanelStyle} contents={sidePanel} />
 				</div>
 			</Dialog>,
-			portalTarget)
+			document.getElementById(portalTarget))
 	);
 }
+DialogOverlay.propTypes = {
+	ariaLabelledBy: PropTypes.string,
+	className: PropTypes.string,
+	isOpen: PropTypes.bool,
+	isSidePanelOpen: PropTypes.bool,
+	lazy: PropTypes.bool,
+	mainPanel: PropTypes.node,
+	onClose: PropTypes.func,
+	onOpening: PropTypes.func,
+	portalTarget: PropTypes.string,
+	sidePanel: PropTypes.node
+};
 
 export default DialogOverlay;

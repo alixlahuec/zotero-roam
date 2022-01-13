@@ -393,7 +393,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					query={query}
 				/>
 			</>}
-			portalTarget={document.getElementById(portalTarget)}
+			portalTarget={portalTarget}
 			sidePanel=""
 		/>
 	);
