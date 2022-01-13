@@ -542,6 +542,7 @@ function TagMenuFactory(props){
 					if(item.tagList.includes(title)){
 						obj.with_tags.push(item.itemData);
 					}
+					return obj;
 				}, { with_tags: [], with_abstract: []});
                 
 				return { div: menu, tag: title, ...results };
