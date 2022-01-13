@@ -1,0 +1,133 @@
+.zr-dialog-overlay--search-library .header-right {position:absolute;right:0px;}
+
+#zotero-roam-search-autocomplete{
+    flex:0 1 89%;
+    background: unset;
+}
+
+label.zr-quick-copy {
+    font-weight: 300;
+}
+
+.zr-extension-info {
+    opacity: 0.5;
+  }
+
+/* QueryList */
+
+#zotero-roam-library-rendered .bp3-menu {
+    max-height: 70vh;
+    overflow-y: scroll;
+    background: unset;
+    padding: 0px;
+    padding-bottom: 10px;
+}
+
+#zotero-roam-library-rendered .bp3-menu::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* SelectedItem */
+
+#zotero-roam-search-selected-item {
+    width: 97%;
+    margin: 20px auto;
+}
+
+.selected-item-header, 
+.selected-item-body{ display:flex;justify-content:space-around; }
+.selected-item-body{ flex-wrap:wrap; }
+
+.item-basic-metadata, 
+.item-additional-metadata{ flex: 0 1 60%;padding: 20px;}
+.item-basic-metadata{ padding-top:10px; }
+.item-additional-metadata{ padding-top:0px; }
+
+h4.item-title{
+    margin-bottom:5px;
+}
+
+.item-citekey-section, 
+.item-actions{
+    flex:0 1 33%;
+}
+
+.item-abstract{
+    padding:15px;
+    border-top: 1px #e6e6e6 solid;
+    border-bottom: 1px #e6e6e6 solid;
+}
+
+.bp3-dark .item-abstract{
+    border-top-color: #4a4a4a;
+    border-bottom-color: #4a4a4a;
+}
+
+.item-additional-metadata p strong ~ span {
+    margin:3px;
+}
+
+.item-pdf-notes, 
+.item-actions-additional{
+    margin-top: 25px;
+}
+
+.item-actions-additional{
+    flex: 0 1 95%;
+}
+
+.item-actions > .bp3-card{ background-color: #eff8ff;box-shadow:none; }
+.bp3-dark .item-actions > .bp3-card{ background-color:#2b3135; }
+
+.item-citekey-section{
+    margin:10px 0px;
+    overflow-wrap:break-word;
+}
+
+.item-citekey-section .bp3-icon{
+    margin-right:10px;
+}
+
+.item-citekey-section .citekey-element{
+    padding:6px 10px;
+    display:flex;
+    align-items:center;
+    overflow-wrap:anywhere;
+}
+
+/* To prevent weird resizing of flex container on smaller displays */
+.copy-buttons {
+    flex-wrap: wrap;
+}
+/**/
+
+.copy-buttons > .bp3-button{ font-size:0.7em;margin:5px; }
+.copy-buttons > .bp3-button, 
+.copy-buttons > .bp3-button:hover{ border: 1px #f1f7ff solid; }
+.bp3-dark .copy-buttons > a.bp3-button{ border: 1px #2f4d75 solid; }
+
+.item-rendered-notes p{
+    font-weight:350;
+}
+
+/* To prevent weird resizing of flex container on smaller displays */
+.item-weblink {
+    overflow-wrap: anywhere;
+}
+/**/
+
+/* SMALLER DISPLAYS */
+
+.roam-body.mobile + #zotero-roam-portal .zr-quick-copy{ display:none; }
+
+@media (max-width:900px){
+    .selected-item-header{flex-direction:column-reverse;}
+    .selected-item-body{flex-direction:column;}
+}
+
+@media (max-width:600px){
+    #zotero-roam-search-selected-item .item-citekey-section{margin:0px 0px;}
+    #zotero-roam-search-selected-item .selected-item-header .copy-buttons{display:none;}
+    #zotero-roam-search-selected-item .selected-item-header{flex-direction:column-reverse;}
+    #zotero-roam-search-selected-item .selected-item-body{flex-direction:column;}
+}

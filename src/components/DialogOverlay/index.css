@@ -39,6 +39,12 @@
     width:20vw;
 }
 
+/* SMALLER DISPLAYS */
+
+@media (max-width:900px){
+    .side-panel-contents{width:min(20vw, 30px);}
+}
+
 @media (max-width: 600px){
     .bp3-dialog[class*="zr-dialog-overlay--"] {margin-left: calc(min(20vw, 30px) + 2.5%);}
 }

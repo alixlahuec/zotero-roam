@@ -1,0 +1,12 @@
+.bp3-dialog[class*="zr-auxiliary-dialog--"] {
+    width: calc(55% - 10vw);
+    margin-left: calc(18vw + 9.5%);
+    padding-bottom:0px;
+    box-shadow:none;
+}
+
+/* SMALLER DISPLAYS */
+
+@media (max-width:600px){
+    .bp3-dialog[class*="zr-auxiliary-dialog--"] { width:calc(95% - min(40vw, 60px)); }
+}
