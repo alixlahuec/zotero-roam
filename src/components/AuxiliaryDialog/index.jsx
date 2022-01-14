@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Classes, Dialog } from "@blueprintjs/core";
@@ -53,9 +53,8 @@ function RelatedByAdded(props){
 			<h5>{pluralize(sortedItems.length, "item", ` added on ${dnp}`)}</h5>
 			<ul className={ Classes.LIST_UNSTYLED }>
 				{sortedItems.map(it => {
-					let location = it.library.type + "s/" + it.library.id;
 					return (
-						<RelatedItem key={[location, it.key].join("-")} item={it} type="added" />
+						<RelatedItem key={[it.location, it.key].join("-")} item={it} type="added" />
 					);
 				})}
 			</ul>
@@ -82,16 +81,22 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 				intent: "success",
 				className: "zotero-roam-list-item-go-to-page",
 				"data-citekey": item.key,
-				"data-uid": item.inGraph
+				"data-uid": item.inGraph,
+				text: "Go to Roam page"
 			};
 		} else {
 			return {
 				icon: "minus",
 				intent: "warning",
-				className: "zotero-roam-add-to-graph"
+				className: "zotero-roam-add-to-graph",
+				text: "Add to Roam"
 			};
 		}
 	}, [item.inGraph]);
+
+	useEffect(() => {
+		setAbstractVisible(allAbstractsShown);
+	}, [allAbstractsShown]);
 
 	return (
 		<li className="zotero-roam-list-item" data-item-type={item.itemType}>
@@ -142,7 +147,7 @@ function RelatedByTags(props){
 	return (
 		<>
 			<h5>{pluralize(sortedItems.length, "item", ` tagged with ${tag}`)}</h5>
-			<Button minimal={true} intent="primary" onClick={toggleAbstracts}>`${isShowingAllAbstracts ? "Hide" : "Show"} all abstracts`</Button>
+			<Button minimal={true} intent="primary" onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
 			<ul className={ Classes.LIST_UNSTYLED }>
 				{sortedItems.map(it => {
 					return (
