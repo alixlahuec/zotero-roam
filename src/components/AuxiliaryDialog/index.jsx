@@ -17,6 +17,7 @@ function simplifyRelatedItems(items){
 		return {
 			abstract: item.data.abstractNote || "",
 			key: item.key,
+			location: item.library.type + "s/" + item.library.id,
 			meta: [creator, pub_year].filter(Boolean).join(" "),
 			title: item.data.title || "",
 			added: item.data.dateAdded,
@@ -144,9 +145,8 @@ function RelatedByTags(props){
 			<Button minimal={true} intent="primary" onClick={toggleAbstracts}>`${isShowingAllAbstracts ? "Hide" : "Show"} all abstracts`</Button>
 			<ul className={ Classes.LIST_UNSTYLED }>
 				{sortedItems.map(it => {
-					let location = it.library.type + "s/" + it.library.id;
 					return (
-						<RelatedItem key={[location, it.key].join("-")} allAbstractsShown={isShowingAllAbstracts} item={it} type="tagged" />
+						<RelatedItem key={[it.location, it.key].join("-")} allAbstractsShown={isShowingAllAbstracts} item={it} type="tagged" />
 					);
 				})}
 			</ul>
