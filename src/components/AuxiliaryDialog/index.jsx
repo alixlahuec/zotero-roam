@@ -63,7 +63,8 @@ function RelatedByAdded(props){
 }
 RelatedByAdded.propTypes = {
 	items: PropTypes.array,
-	date: PropTypes.date
+	date: PropTypes.date,
+	onClose: PropTypes.func,
 };
 
 const RelatedItem = React.memo(function RelatedItem(props) {
@@ -104,7 +105,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 					</span>
 					: null}
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
-					<div className={ Classes.FILL }>
+					<div className={ Classes.FILL } style={{display: "flex"}}>
 						<div className="zr-related-item-contents--metadata">
 							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 							<span className="zr-highlight">{item.meta}</span>
@@ -113,10 +114,10 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 							<Button className="zr-text-small" minimal={true} small={true} {...buttonProps} />
 						</span>
 					</div>
-					<div className={ Classes.FILL }>
+					<div className={ [Classes.FILL, "zr-related-item--abstract"].join(" ") } style={{borderRadius: "6px", marginTop: "5px"}}>
 						{item.abstract
-							? <Button className={ Classes.ACTIVE }
-								zr-role="toggle-abstract"
+							? <Button className={ [Classes.ACTIVE, "zr-text-small"].join(" ") }
+								zr-role="abstract-toggle"
 								icon={isAbstractVisible ? "chevron-down" : "chevron-right"}
 								onClick={toggleAbstract} 
 								intent="primary" 
@@ -124,7 +125,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 								small={true}>Abstract</Button>
 							: null}
 						{item.abstract && isAbstractVisible
-							? <span className="zotero-roam-citation-abstract zr-text-small zr-auxiliary">{item.abstract}</span>
+							? <span zr-role="abstract-text" className="zr-text-small zr-auxiliary">{item.abstract}</span>
 							: null}
 					</div>
 				</div>
@@ -139,7 +140,7 @@ RelatedItem.propTypes = {
 };
 
 function RelatedByTags(props){
-	const { items, tag } = props;
+	const { items, tag, onClose } = props;
 	const [isShowingAllAbstracts, setShowingAllAbstracts] = useState(false);
 
 	const toggleAbstracts = useCallback(() => {
@@ -152,21 +153,31 @@ function RelatedByTags(props){
 
 	return (
 		<>
-			<h5>{pluralize(sortedItems.length, "item", ` tagged with ${tag}`)}</h5>
-			<Button className={ [Classes.ACTIVE, "zr-text-small"].join(" ") } zr-role="toggle-abstracts" icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
-			<ul className={ Classes.LIST_UNSTYLED }>
-				{sortedItems.map(it => {
-					return (
-						<RelatedItem key={[it.location, it.key].join("-")} allAbstractsShown={isShowingAllAbstracts} item={it} type="tagged" />
-					);
-				})}
-			</ul>
+			<div className="header-content">
+				<div className="header-left">
+					<h5>{pluralize(sortedItems.length, "item", ` tagged with ${tag}`)}</h5>
+					<Button className={ [Classes.ACTIVE, "zr-text-small"].join(" ") } zr-role="toggle-abstracts" icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
+				</div>
+				<div className={["header-right", "zr-auxiliary"].join(" ")}>
+					<Button icon="small-cross" minimal={true} onClick={onClose} />
+				</div>
+			</div>
+			<div className="rendered-div">
+				<ul className={ Classes.LIST_UNSTYLED }>
+					{sortedItems.map(it => {
+						return (
+							<RelatedItem key={[it.location, it.key].join("-")} allAbstractsShown={isShowingAllAbstracts} item={it} type="tagged" />
+						);
+					})}
+				</ul>
+			</div>
 		</>
 	);
 }
 RelatedByTags.propTypes ={
 	items: PropTypes.array,
-	tag: PropTypes.string
+	tag: PropTypes.string,
+	onClose: PropTypes.func,
 };
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
@@ -184,18 +195,20 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 
 	const dialogContents = useMemo(() => {
 		let formattedItems = simplifyRelatedItems(items);
+		let panelProps = { onClose };
+
 		if(show.type == "with_tag"){
 			return (
-				<RelatedByTags items={formattedItems} tag={show.tag} />
+				<RelatedByTags items={formattedItems} tag={show.tag} {...panelProps} />
 			);
 		} else if(show.type == "added_on"){
 			return (
-				<RelatedByAdded items={formattedItems} date={show.date} />
+				<RelatedByAdded items={formattedItems} date={show.date} {...panelProps} />
 			);
 		} else {
 			return null;
 		}
-	}, [show.tag, show.type, items]);
+	}, [show.tag, show.type, items, onClose]);
 
 	return (
 		createPortal(

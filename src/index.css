@@ -54,7 +54,7 @@ li[aria-selected="true"] > .bp3-menu-item, .zotero-roam-tagselector_option[aria-
 #zotero-roam-library-rendered[view="search"][has-results] + .bp3-dialog-footer-actions, #zotero-roam-citations-pagination + .bp3-dialog-footer-actions{box-shadow: 0px -4px 10px 0px #d6d6d6;}
 .bp3-dark #zotero-roam-library-rendered[view="search"][has-results] + .bp3-dialog-footer-actions, .bp3-dark #zotero-roam-citations-pagination + .bp3-dialog-footer-actions{box-shadow: 0px -4px 10px 0px #171717;}
 
-.item-basic-metadata, .item-additional-metadata, .zotero-roam-citation-abstract{background:#f5f8fa;}
+.item-basic-metadata, .item-additional-metadata {background:#f5f8fa;}
 .bp3-dark .item-basic-metadata, .bp3-dark .item-additional-metadata, .bp3-dark .zotero-roam-citation-abstract{background-color:#2b3135;}
 
 .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}

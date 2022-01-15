@@ -1,6 +1,6 @@
 .bp3-dialog[class*="zr-auxiliary-dialog--"] {
     align-self: baseline;
-    width: max(60%, 600px);
+    width: max(55%, 550px);
     margin: 10vh auto;
     max-height: 80vh;
     overflow-y: scroll;
@@ -10,9 +10,16 @@
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="toggle-abstracts"] {
     background: #d6e0e6;
+    margin: 0px 15px;
 }
-.bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="toggle-abstract"] {
-    background: #daeaf4;
+.bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="abstract-toggle"] {
+    background: none!important;
+}
+.bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="abstract-text"] {
+    display: block;
+    padding:5px 10px;
+    line-height: 1.4em;
+    text-align: justify;
 }
 
 .zotero-roam-item-timestamp{margin-right:20px;}
@@ -23,12 +30,8 @@
 .zr-related-item-contents--actions button .bp3-button-text {overflow-wrap: anywhere;}
 .zr-related-item-contents--actions .bp3-button-group {display: block;}
 
-.zotero-roam-citation-abstract{
-    display: block;
-    padding:5px 10px;
-    flex:0 1 100%;
-    margin-top:5px;
-    border-radius:5px;
+.zr-related-item--abstract {
+    background: #e8ecf6;
 }
 
 
