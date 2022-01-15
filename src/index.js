@@ -7,7 +7,7 @@ import { App, getItems } from "./components/App";
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./index.css";
 
-var zoteroRoam = {};
+window.zoteroRoam = {};
 
 (()=>{
 
@@ -23,17 +23,17 @@ var zoteroRoam = {};
 		autoload = false
 	} = window.zoteroRoam_settings;
 
-	zoteroRoam.config = {
+	window.zoteroRoam.config = {
 		userSettings: {
 			autocomplete,
 			autoload
 		}
 	};
 
-	zoteroRoam.getItems = getItems;
+	window.zoteroRoam.getItems = getItems;
 
 	try {
-		zoteroRoam.config.requests = analyzeUserRequests(dataRequests);
+		window.zoteroRoam.config.requests = analyzeUserRequests(dataRequests);
 		setupDependencies([
 			{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"} // Scite.ai Badge
 		]);
@@ -41,8 +41,8 @@ var zoteroRoam = {};
 		ReactDOMRender(
 			<App
 				extension={{ version, extensionPortal }}
-				{...zoteroRoam.config.requests}
-				userSettings={zoteroRoam.config.userSettings}
+				{...window.zoteroRoam.config.requests}
+				userSettings={window.zoteroRoam.config.userSettings}
 			/>,
 			document.getElementById(extensionSlot)
 		);

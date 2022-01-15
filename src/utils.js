@@ -43,6 +43,34 @@ function analyzeUserRequests(reqs){
 	}
 }
 
+/** Compares two Zotero items by publication year then alphabetically, to determine sort order
+ * @param {ZoteroItem|Object} a - The first item to compare
+ * @param {ZoteroItem|Object} b - The second item to compare
+ * @returns {(0|1)} The comparison outcome
+ */
+function compareItemsByYear(a, b) {
+	if(!a.meta.parsedDate){
+		if(!b.meta.parsedDate){
+			return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
+		} else {
+			return 1;
+		}
+	} else {
+		if(!b.meta.parsedDate){
+			return -1;
+		} else {
+			let date_diff = new Date(a.meta.parsedDate).getUTCFullYear() - new Date(b.meta.parsedDate).getUTCFullYear();
+			if(date_diff < 0){
+				return -1;
+			} else if(date_diff == 0){
+				return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
+			} else {
+				return 1;
+			}
+		}
+	}
+}
+
 /** Copies a portion of text to the user's clipboard
  * @param {String} text - The text to copy 
  * @returns {{success: Boolean|null}} The outcome of the operation
@@ -285,38 +313,9 @@ function setupPortals(slotID, portalID){
 	document.getElementById("app").appendChild(zrPortal);
 }
 
-/** Sorts an array of Zotero items by publication year then alphabetically
- * @param {ZoteroItem[]|Object[]} arr - The items to sort
- * @returns {ZoteroItem[]|Object[]} The array, sorted by `meta.parsedDate` then `meta.creatorSummary`
- */
-function sortItemsByYear(arr) {
-	let [...papers] = arr;
-	return papers.sort((a,b) => {
-		if(!a.meta.parsedDate){
-			if(!b.meta.parsedDate){
-				return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
-			} else {
-				return 1;
-			}
-		} else {
-			if(!b.meta.parsedDate){
-				return -1;
-			} else {
-				let date_diff = new Date(a.meta.parsedDate).getUTCFullYear() - new Date(b.meta.parsedDate).getUTCFullYear();
-				if(date_diff < 0){
-					return -1;
-				} else if(date_diff == 0){
-					return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
-				} else {
-					return 1;
-				}
-			}
-		}
-	});
-}
-
 export {
 	analyzeUserRequests,
+	compareItemsByYear,
 	copyToClipboard,
 	escapeRegExp,
 	formatItemReference,
@@ -329,6 +328,5 @@ export {
 	pluralize,
 	readDNP,
 	setupDependencies,
-	setupPortals,
-	sortItemsByYear
+	setupPortals
 };

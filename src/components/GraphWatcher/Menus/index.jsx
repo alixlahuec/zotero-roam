@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
 
-import { getLocalLink, getWebLink, parseDOI, pluralize, readDNP, sortItemsByYear } from "../../../utils";
+import { compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize, readDNP } from "../../../utils";
 import { queryItems, querySemantic } from "../../../queries";
 import ButtonLink from "../../ButtonLink";
 import SciteBadge from "../../SciteBadge";
@@ -46,30 +46,115 @@ const findPageMenus = () => {
 	};
 };
 
-/** Matches citation data obtained from Semantic Scholar against Zotero items, to identify in-library backlinks
- * @param {ZoteroItem[]|Object[]} datastore - The list of Zotero items to match against 
- * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to scan 
- * @returns {ZoteroItem[]|Object[]} The list of items present in both datasets, if any
+/** Formats the metadata of a Semantic Scholar entry
+ * @param {Object} item - The Semantic Scholar entry to format 
+ * @returns {{
+ * authors: String, 
+ * doi: String, 
+ * intent: String[], 
+ * isInfluential: Boolean,
+ * links: Object,
+ * meta: String,
+ * title: String,
+ * url: String,
+ * year: String
+ * }[]} The formatted entry
  */
-function findBacklinks(datastore, semantic){
-	// Note: DOIs from the Semantic Scholar queries are sanitized at fetch
-	let citedDOIs = semantic.references.map(ref => { return { _doi: ref.doi, _type: "cited" }; });
-	let citingDOIs = semantic.citations.map(cit => { return { _doi: cit.doi, _type: "citing" }; });
+function cleanSemanticItem(item){
+	let cleanItem = {
+		authors: "",
+		doi: parseDOI(item.doi),
+		intent: item.intent,
+		isInfluential: item.isInfluential,
+		links: {},
+		meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
+		title: item.title,
+		url: item.url || "",
+		year: item.year ? item.year.toString() : ""
+	};
 
-	return [...citedDOIs, ...citingDOIs]
-		.map(elem => {
-			let found = datastore.find(it => parseDOI(it.data.DOI) == elem._doi);
-			if(found){
-				return {...elem, ...found};
-			} else {
-				return false;
-			}
-		})
-		.filter(Boolean);
+	// Parse authors data
+	cleanItem.authorsLastNames = item.authors.map(a => {
+		let components = a.name.replaceAll(".", " ").split(" ").filter(Boolean);
+		if(components.length == 1){
+			return components[0];
+		} else {
+			return components.slice(1).filter(c => c.length > 1).join(" ");
+		}
+	});
+	cleanItem.authorsString = cleanItem.authorsLastNames.join(" ");
+	switch(cleanItem.authorsLastNames.length){
+	case 0:
+		break;
+	case 1:
+		cleanItem.authors = cleanItem.authorsLastNames[0];
+		break;
+	case 2:
+		cleanItem.authors = cleanItem.authorsLastNames[0] + " & " + cleanItem.authorsLastNames[1];
+		break;
+	case 3:
+		cleanItem.authors = cleanItem.authorsLastNames[0] + ", " + cleanItem.authorsLastNames[1] + " & " + cleanItem.authorsLastNames[2];
+		break;
+	default:
+		cleanItem.authors = cleanItem.authorsLastNames[0] + " et al.";
+	}
+
+	// Parse external links
+	if(item.paperId){
+		cleanItem.links["semanticScholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
+	}
+	if(item.arxivId){
+		cleanItem.links["arxiv"] = `https://arxiv.org/abs/${item.arxivId}`;
+	}
+	if(item.doi){
+		cleanItem.links["connectedPapers"] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
+		cleanItem.links["googleScholar"] = `https://scholar.google.com/scholar?q=${item.doi}`;
+	}
+
+	return cleanItem;
+}
+
+/** Formats a list of Semantic Scholar entries for display
+ * @param {ZoteroItem[]|Object[]} datastore - The list of Zotero items to match against 
+ * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to format 
+ * @returns {{
+ * citations: Object[], 
+ * references: Object[],
+ * backlinks: Object[]}} The formatted list
+ */
+function cleanSemantic(datastore, semantic){
+	// Note: DOIs from the Semantic Scholar queries are sanitized at fetch
+	let { citations, references } = semantic;
+
+	let clean_citations = citations.map((cit) => {
+		let cleanProps = cleanSemanticItem(cit);
+		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == cit.doi) || false;
+		return {
+			...cleanProps,
+			inLibrary,
+			_type: "citing"
+		};
+	});
+
+	let clean_references = references.map((ref) => {
+		let cleanProps = cleanSemanticItem(ref);
+		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == ref.doi) || false;
+		return {
+			...cleanProps,
+			inLibrary,
+			_type: "cited"
+		};
+	});
+
+	return {
+		citations: clean_citations,
+		references: clean_references,
+		backlinks: [...clean_references, ...clean_citations].filter(item => item.inLibrary)
+	};
 }
 
 function BacklinksItem(props) {
-	const { _doi, _type, ...item } = props.entry;
+	const { _type, inLibrary: item } = props.entry;
 	const { key, data, meta } = item;
 	const pub_year = meta.parsedDate ? new Date(meta.parsedDate).getUTCFullYear() : "";
 	const pub_type = _type == "cited" ? "reference" : "citation";
@@ -100,10 +185,7 @@ function BacklinksItem(props) {
 	);
 }
 BacklinksItem.propTypes = {
-	entry: PropTypes.shape({
-		_doi: PropTypes.string,
-		_type: PropTypes.oneOf(["cited", "citing"])
-	})
+	entry: PropTypes.object
 };
 
 const Backlinks = React.memo(function Backlinks(props) {
@@ -112,18 +194,19 @@ const Backlinks = React.memo(function Backlinks(props) {
 	if(items.length == 0){
 		return null;
 	} else {
-		const sortedItems = sortItemsByYear(items);
+		let [...itemList] = items;
+		const sortedItems = itemList.sort((a,b) => compareItemsByYear(a.inLibrary, b.inLibrary));
 		const references = sortedItems.filter(it => it._type == "cited");
 		const citations = sortedItems.filter(it => it._type == "citing");
 
 		const refList = references.length > 0 
 			? <ul className={Classes.LIST_UNSTYLED} list-type="references">
-				{references.map((ref) => <BacklinksItem key={ref._doi} entry={ref} />)}
+				{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} />)}
 			</ul> 
 			: null;
 		const citList = citations.length > 0 
 			? <ul className={Classes.LIST_UNSTYLED} list-type="citations">
-				{citations.map((cit) => <BacklinksItem key={cit._doi} entry={cit} />)}
+				{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} />)}
 			</ul> 
 			: null;
 		const separator = <span className="backlinks-list_divider"><Tag minimal={true} multiline={true}>{origin}</Tag><hr /></span>;
@@ -188,16 +271,13 @@ function RelatedItemsBar(props) {
 	const refCount = data.references?.length || null;
 	const citCount = data.citations?.length || null;
 
-	const backlinks_matched = useMemo(() => {
-		return (
-			refCount + citCount > 0 
-				? findBacklinks(itemsWithDOIs, data) 
-				: []
-		);
-	}, [refCount + citCount > 0, data]);
+	const cleanSemanticData = useMemo(() => {
+		let { citations = [], references = [] } = data;
+		return cleanSemantic(itemsWithDOIs, { citations, references });
+	}, [data, itemsWithDOIs]);
 
 	const showBacklinksButtonProps = useMemo(() => {
-		return backlinks_matched.length == 0
+		return cleanSemanticData.backlinks.length == 0
 			? {
 				disabled: true,
 				icon: null,
@@ -205,9 +285,9 @@ function RelatedItemsBar(props) {
 			}
 			: {
 				icon: isBacklinksListOpen ? "caret-down" : "caret-right",
-				text: pluralize(backlinks_matched.length, "related library item")
+				text: pluralize(cleanSemanticData.backlinks.length, "related library item")
 			};
-	}, [backlinks_matched.length > 0, isBacklinksListOpen]);
+	}, [cleanSemanticData.backlinks.length > 0, isBacklinksListOpen]);
 
 	return (
 		<div className="zotero-roam-page-menu-citations">
@@ -227,12 +307,12 @@ function RelatedItemsBar(props) {
 						? <AuxiliaryDialog className="citations" 
 							ariaLabelledBy={"zr-aux-dialog--" + title}
 							show={isShowing} 
-							items={(isShowing.type == "is_reference" ? data.references : data.citations) || []}
+							items={(isShowing.type == "is_reference" ? cleanSemanticData.references : cleanSemanticData.citations) || []}
 							isOpen={isDialogOpen} 
 							portalTarget={extensionPortal} 
 							onClose={closeDialog} />
 						: null}
-					<Backlinks items={backlinks_matched} origin={origin} isOpen={isBacklinksListOpen} />
+					<Backlinks items={cleanSemanticData.backlinks} origin={origin} isOpen={isBacklinksListOpen} />
 				</>
 			}
 		</div>
