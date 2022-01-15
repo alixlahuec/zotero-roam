@@ -79,7 +79,6 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 			return {
 				icon: "symbol-circle",
 				intent: "success",
-				className: "zotero-roam-list-item-go-to-page",
 				"data-citekey": item.key,
 				"data-uid": item.inGraph,
 				text: "Go to @" + item.key
@@ -87,7 +86,6 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 		} else {
 			return {
 				icon: "plus",
-				className: "zotero-roam-add-to-graph",
 				text: "@" + item.key
 			};
 		}
@@ -105,26 +103,31 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 						{item.timestamp}
 					</span>
 					: null}
-				<div className={[Classes.FILL, "zotero-roam-item-contents"].join(" ")}>
-					<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
-					<span className="zr-highlight">{item.meta}</span>
-					{item.abstract
-						? <Button className={[Classes.ACTIVE, "zotero-roam-citation-toggle-abstract"].join(" ")}
-							icon={isAbstractVisible ? "chevron-down" : "chevron-right"}
-							onClick={toggleAbstract} 
-							intent="primary" 
-							minimal={true} 
-							small={true}>
-							Abstract
-						</Button>
-						: null}
-					{item.abstract && isAbstractVisible
-						? <span className="zotero-roam-citation-abstract zr-text-small zr-auxiliary">{item.abstract}</span>
-						: null}
+				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
+					<div className={ Classes.FILL }>
+						<div className="zr-related-item-contents--metadata">
+							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
+							<span className="zr-highlight">{item.meta}</span>
+						</div>
+						<span className="zr-related-item-contents--actions">
+							<Button className="zr-text-small" minimal={true} small={true} {...buttonProps} />
+						</span>
+					</div>
+					<div className={ Classes.FILL }>
+						{item.abstract
+							? <Button className={ Classes.ACTIVE }
+								zr-role="toggle-abstract"
+								icon={isAbstractVisible ? "chevron-down" : "chevron-right"}
+								onClick={toggleAbstract} 
+								intent="primary" 
+								minimal={true} 
+								small={true}>Abstract</Button>
+							: null}
+						{item.abstract && isAbstractVisible
+							? <span className="zotero-roam-citation-abstract zr-text-small zr-auxiliary">{item.abstract}</span>
+							: null}
+					</div>
 				</div>
-				<span className="zotero-roam-list-item-actions">
-					<Button className="zr-text-small" minimal={true} small={true} {...buttonProps} />
-				</span>
 			</div>
 		</li>
 	);
@@ -150,7 +153,7 @@ function RelatedByTags(props){
 	return (
 		<>
 			<h5>{pluralize(sortedItems.length, "item", ` tagged with ${tag}`)}</h5>
-			<Button className={ Classes.ACTIVE } icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
+			<Button className={ [Classes.ACTIVE, "zr-text-small"].join(" ") } zr-role="toggle-abstracts" icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
 			<ul className={ Classes.LIST_UNSTYLED }>
 				{sortedItems.map(it => {
 					return (
