@@ -74,7 +74,7 @@ li[aria-selected="true"] > .bp3-menu-item, .zotero-roam-tagselector_option[aria-
 .zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{overflow-wrap:break-word;}
 .zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
 .zotero-roam-citation-abstract, .item-abstract{white-space:break-spaces;}
-.zotero-roam-citation-abstract{padding:5px 10px;flex:0 1 100%;margin-top:5px;border-radius:5px;}
+
 .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
 .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
 .options-library-list, .options-collections-list{flex:1 0 50%;}
@@ -99,19 +99,10 @@ li.import-items_selected{display:flex;justify-content:space-between;background:#
 
 .selected_state{flex: 1 0 10%;text-align:center;}
 
-.zotero-roam-page-related{opacity:0.6;position:absolute;right:10px;top:10px;}
 .roam-log-page{position:relative;}
 
 .roam-body.mobile + #zotero-roam-portal .bp3-dialog-footer-actions{flex-direction:column;align-items:center;}
 
-.zotero-roam-item-timestamp{margin-right:20px;}
-.zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
-.zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;user-select:initial;}
-.zotero-roam-list-item-actions{text-align:right;flex: 0 0 15%;}
-.zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions button, .zotero-roam-auxiliary-overlay .zotero-roam-list-item-actions a{opacity:0.6;}
-.zotero-roam-list-item-key {padding:0 5px;}
-.zotero-roam-auxiliary-overlay .main-panel{padding:0px 10px;}
-.zotero-roam-auxiliary-overlay .main-panel ul.bp3-list-unstyled {padding:15px 0;}
 .zotero-roam-explo-import{position:absolute;right:0px;opacity:0.7;z-index:10;}
 .zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}
 .zr-explo-title{flex:1 0 100%;}
@@ -185,7 +176,7 @@ label[data-tag-source] {color: #b3b3b3;background:#f9f9f9;border: 1px #e9e9e9 so
 .zr-text-small, .zr-text-small .bp3-button[class*='bp3-icon-']::before, .zr-text-small select, .zr-text-small button {font-size:0.85rem;}
 @media (max-width:600px){
 
-    .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"], .zotero-roam-dialog-small .bp3-dialog[side-panel="hidden"]{width:calc(95% - min(40vw, 60px));}
+    .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] {width:calc(95% - min(40vw, 60px));}
     .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] {width:calc(95% - min(20vw, 30px));}
     .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel {flex-basis:min(20vw, 30px)!important;}
     #zotero-roam-portal .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}

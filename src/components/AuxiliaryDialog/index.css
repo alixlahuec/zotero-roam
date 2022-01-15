@@ -1,9 +1,27 @@
 .bp3-dialog[class*="zr-auxiliary-dialog--"] {
-    width: calc(55% - 10vw);
-    margin-left: calc(18vw + 9.5%);
+    align-self: baseline;
+    width: max(60%, 600px);
+    margin-left: min(20%, 200px);
     padding-bottom:0px;
-    box-shadow:none;
+    box-shadow: none;
 }
+
+.zotero-roam-item-timestamp{margin-right:20px;}
+.zotero-roam-list-item .zotero-roam-item-contents{flex:0 1 100%;}
+.zotero-roam-list-item > .bp3-menu-item{flex-wrap:nowrap;user-select:initial;}
+.zotero-roam-list-item-actions{text-align:right;flex: 1 0 25%;}
+.zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{opacity:0.6;}
+.zotero-roam-list-item-actions button .bp3-button-text {overflow-wrap: anywhere;}
+.zotero-roam-list-item-actions .bp3-button-group {display: block;}
+
+.zotero-roam-citation-abstract{
+    display: block;
+    padding:5px 10px;
+    flex:0 1 100%;
+    margin-top:5px;
+    border-radius:5px;
+}
+
 
 /* SMALLER DISPLAYS */
 

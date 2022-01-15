@@ -1,6 +1,5 @@
 .bp3-dialog[class*="zr-dialog-overlay--"] {
     align-self: baseline;
-    transition: all 0.5s ease 0s;
     margin-left: calc(20vw + 2.5%);
     padding-bottom: 0px;
     box-shadow: none;

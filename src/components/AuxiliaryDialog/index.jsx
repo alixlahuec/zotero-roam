@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
-import { Button, ButtonGroup, Classes, Dialog } from "@blueprintjs/core";
+import { Button, Classes, Dialog } from "@blueprintjs/core";
 
 import "./index.css";
 import { makeDNP, makeTimestamp, pluralize } from "../../utils";
@@ -41,7 +41,7 @@ function RelatedByAdded(props){
 	const { items, date } = props;
 
 	const dnp = useMemo(() => {
-		return makeDNP(date);
+		return makeDNP(date, {brackets: false});
 	}, [date]);
 
 	const sortedItems = useMemo(() => {
@@ -82,14 +82,13 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 				className: "zotero-roam-list-item-go-to-page",
 				"data-citekey": item.key,
 				"data-uid": item.inGraph,
-				text: "Go to Roam page"
+				text: "Go to @" + item.key
 			};
 		} else {
 			return {
-				icon: "minus",
-				intent: "warning",
+				icon: "plus",
 				className: "zotero-roam-add-to-graph",
-				text: "Add to Roam"
+				text: "@" + item.key
 			};
 		}
 	}, [item.inGraph]);
@@ -109,18 +108,22 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 				<div className={[Classes.FILL, "zotero-roam-item-contents"].join(" ")}>
 					<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 					<span className="zr-highlight">{item.meta}</span>
-					<span className="zotero-roam-list-item-key zr-text-small zr-auxiliary">[{item.key}]</span>
 					{item.abstract
-						? <Button className="zotero-roam-citation-toggle-abstract" onClick={toggleAbstract} intent="primary" minimal={true} small={true}>{isAbstractVisible ? "Hide" : "Show"} Abstract</Button>
+						? <Button className={[Classes.ACTIVE, "zotero-roam-citation-toggle-abstract"].join(" ")}
+							icon={isAbstractVisible ? "chevron-down" : "chevron-right"}
+							onClick={toggleAbstract} 
+							intent="primary" 
+							minimal={true} 
+							small={true}>
+							Abstract
+						</Button>
 						: null}
 					{item.abstract && isAbstractVisible
 						? <span className="zotero-roam-citation-abstract zr-text-small zr-auxiliary">{item.abstract}</span>
 						: null}
 				</div>
 				<span className="zotero-roam-list-item-actions">
-					<ButtonGroup minimal={true} className="zr-text-small">
-						<Button small={true} {...buttonProps} />
-					</ButtonGroup>
+					<Button className="zr-text-small" minimal={true} small={true} {...buttonProps} />
 				</span>
 			</div>
 		</li>
@@ -147,7 +150,7 @@ function RelatedByTags(props){
 	return (
 		<>
 			<h5>{pluralize(sortedItems.length, "item", ` tagged with ${tag}`)}</h5>
-			<Button minimal={true} intent="primary" onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
+			<Button className={ Classes.ACTIVE } icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
 			<ul className={ Classes.LIST_UNSTYLED }>
 				{sortedItems.map(it => {
 					return (
