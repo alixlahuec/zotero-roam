@@ -147,14 +147,24 @@ Backlinks.propTypes = {
 
 function RelatedItemsBar(props) {
 	const { doi, title, origin, items, dialogProps } = props;
-	const { isDialogOpen, openDialog, closeDialog, extensionPortal } = dialogProps;
+	const { extensionPortal } = dialogProps;
 	const { isLoading, isError, data = {}, error } = querySemantic(doi);
+	
 	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
+	const [isDialogOpen, setDialogOpen] = useState(false);
 	const [isShowing, setShowing] = useState({title, type: "is_reference"});
 
 	const toggleBacklinks = useCallback(() => {
 		setBacklinksListOpen(!isBacklinksListOpen);
 	}, [isBacklinksListOpen]);
+
+	const openDialog = useCallback(() => {
+		setDialogOpen(true);
+	}, []);
+
+	const closeDialog = useCallback(() => {
+		setDialogOpen(false);
+	}, []);
 
 	const showReferences = useCallback(() => {
 		openDialog();
@@ -234,9 +244,6 @@ RelatedItemsBar.propTypes = {
 	origin: PropTypes.string,
 	items: PropTypes.array,
 	dialogProps: PropTypes.shape({
-		isDialogOpen: PropTypes.bool,
-		openDialog: PropTypes.func,
-		closeDialog: PropTypes.func,
 		extensionPortal: PropTypes.string
 	})
 };
@@ -244,19 +251,10 @@ RelatedItemsBar.propTypes = {
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	const { item, itemList, extensionPortal } = props;
 	const { items, pdfs, notes } = itemList;
-	const [isDialogOpen, setDialogOpen] = useState(false);
 
 	const doi = parseDOI(item.data.DOI);
 	const has_pdfs = pdfs.filter(pdf => pdf.data.parentItem == item.data.key && pdf.library.id == item.library.id);
 	const has_notes = notes.filter(note => note.data.parentItem == item.data.key && note.library.id == item.library.id);
-
-	const openDialog = useCallback(() => {
-		setDialogOpen(true);
-	}, []);
-
-	const closeDialog = useCallback(() => {
-		setDialogOpen(false);
-	}, []);
 
 	const doiHeader = useMemo(() => {
 		return doi 
@@ -318,10 +316,10 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				title={"@" + item.key}
 				origin={item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : ""} 
 				items={items}
-				dialogProps={{isDialogOpen, openDialog, closeDialog, extensionPortal}}
+				dialogProps={{ extensionPortal}}
 			/>
 			: null;
-	}, [doi, item.key, item.meta.parsedDate, items]);
+	}, [doi, item.key, item.meta.parsedDate, items, extensionPortal]);
 
 	return (
 		<>

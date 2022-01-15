@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { QueryClient, QueryClientProvider } from "react-query";
+
 import ExtensionIcon from "../ExtensionIcon";
 import GraphWatcher from "../GraphWatcher";
 import SearchPanel from "../SearchPanel";
@@ -15,6 +16,10 @@ const queryClient = new QueryClient({
 		}
 	}
 });
+
+const getItems = () => {
+	return queryClient.getQueriesData(["items"]);	
+};
 
 class App extends Component {
 	constructor(props){
@@ -108,4 +113,7 @@ App.propTypes = {
 	userSettings: PropTypes.object
 };
 
-export default App;
+export {
+	App,
+	getItems
+};

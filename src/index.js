@@ -2,7 +2,7 @@ import React from "react";
 import { render as ReactDOMRender } from "react-dom";
 import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
 import { Toast } from "@blueprintjs/core";
-import App from "./components/App";
+import { App, getItems } from "./components/App";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./index.css";
@@ -29,6 +29,8 @@ var zoteroRoam = {};
 			autoload
 		}
 	};
+
+	zoteroRoam.getItems = getItems;
 
 	try {
 		zoteroRoam.config.requests = analyzeUserRequests(dataRequests);
