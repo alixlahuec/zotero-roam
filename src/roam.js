@@ -8,7 +8,7 @@ function findRoamPage(title){
 }
 
 function getCitekeyPages(){
-	return new Map(window.roamAlphaAPI.q("[:find ?title ?uid :where[?e :node/title ?title][(clojure.string/starts-with? ?title '@')][?e :block/uid ?uid]]"));
+	return new Map(window.roamAlphaAPI.q("[:find ?title ?uid :where[?e :node/title ?title][(clojure.string/starts-with? ?title \"@\")][?e :block/uid ?uid]]"));
 }
 
 export {

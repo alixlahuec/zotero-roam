@@ -180,7 +180,7 @@ label[data-tag-source] {color: #b3b3b3;background:#f9f9f9;border: 1px #e9e9e9 so
     .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel {flex-basis:min(20vw, 30px)!important;}
     #zotero-roam-portal .bp3-dialog[side-panel="hidden"] .side-panel{flex-basis:0%;}
 
-    .zotero-roam-page-menu-actions .bp3-button, .zotero-roam-page-menu-citations .bp3-button{font-size:0.85em;}
+    .zotero-roam-page-menu-citations .bp3-button{font-size:0.85em;}
     .zotero-roam-citations-search_result > .bp3-menu-item{flex-direction:column;}
     .zotero-roam-citations-search_result .zotero-roam-citation-copy-doi, .zotero-roam-citations-search_result .zotero-roam-citation-add-import{display:none;}
     .zotero-roam-search-item-key{text-align:left;}

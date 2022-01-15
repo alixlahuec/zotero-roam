@@ -200,12 +200,12 @@ const Backlinks = React.memo(function Backlinks(props) {
 		const citations = sortedItems.filter(it => it._type == "citing");
 
 		const refList = references.length > 0 
-			? <ul className={Classes.LIST_UNSTYLED} list-type="references">
+			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="references">
 				{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} />)}
 			</ul> 
 			: null;
 		const citList = citations.length > 0 
-			? <ul className={Classes.LIST_UNSTYLED} list-type="citations">
+			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="citations">
 				{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} />)}
 			</ul> 
 			: null;
@@ -213,7 +213,7 @@ const Backlinks = React.memo(function Backlinks(props) {
 
 		return (
 			<Collapse isOpen={isOpen} keepChildrenMounted={true}>
-				<ul className={Classes.LIST_UNSTYLED + " zotero-roam-page-menu-backlinks-list "}>
+				<ul className={[ Classes.LIST_UNSTYLED, "zr-citekey-menu--backlinks"].join(" ")}>
 					{refList}
 					{separator}
 					{citList}
@@ -338,7 +338,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 
 	const doiHeader = useMemo(() => {
 		return doi 
-			? <span className="zotero-roam-page-doi" data-doi={doi}><a href={"https://doi.org/" + doi} target="_blank" className={Classes.TEXT_MUTED} rel="noreferrer">{doi}</a></span> 
+			? <span className="zr-citekey-doi" data-doi={doi}><a href={"https://doi.org/" + doi} target="_blank" className={Classes.TEXT_MUTED} rel="noreferrer">{doi}</a></span> 
 			: null;
 	}, [doi]);
     
@@ -352,7 +352,8 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 					let location = pdf.library.type == "group" ? `groups/${pdf.library.id}` : "library";
 					let href = (["linked_file", "imported_file", "imported_url"].includes(pdf.data.linkMode)) ? `zotero://open-pdf/${location}/items/${pdf.data.key}` : pdf.data.url;
 					return (
-						<ButtonLink linkClass={[Classes.MINIMAL, "zotero-roam-page-menu-pdf-link"]} 
+						<ButtonLink linkClass={ Classes.MINIMAL }
+							zr-role="pdf-link"
 							key={pdf.key}
 							href={href}
 							icon="paperclip"
@@ -404,9 +405,9 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	return (
 		<>
 			{doiHeader}
-			<Card elevation={0} className='zotero-roam-page-menu'>
-				<div className="zotero-roam-page-menu-header">
-					<ButtonGroup className='zotero-roam-page-menu-actions' minimal={true}>
+			<Card elevation={0} className="zr-citekey-menu">
+				<div className="zr-citekey-menu--header">
+					<ButtonGroup className="zr-citekey-menu--actions" minimal={true}>
 						<Button icon="add">Add metadata</Button>
 						{importNotes}
 						<Button icon="info-sign">View item information</Button>
