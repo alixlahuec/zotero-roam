@@ -150,7 +150,7 @@ function RelatedItemsBar(props) {
 	const { isDialogOpen, openDialog, closeDialog, extensionPortal } = dialogProps;
 	const { isLoading, isError, data = {}, error } = querySemantic(doi);
 	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
-	const [isShowing, setShowing] = useState({});
+	const [isShowing, setShowing] = useState({title, type: "is_reference"});
 
 	const toggleBacklinks = useCallback(() => {
 		setBacklinksListOpen(!isBacklinksListOpen);
@@ -217,7 +217,7 @@ function RelatedItemsBar(props) {
 						? <AuxiliaryDialog className="citations" 
 							ariaLabelledBy={"zr-aux-dialog--" + title}
 							show={isShowing} 
-							items={isShowing.type == "is_reference" ? data.references : data.citations}
+							items={(isShowing.type == "is_reference" ? data.references : data.citations) || []}
 							isOpen={isDialogOpen} 
 							portalTarget={extensionPortal} 
 							onClose={closeDialog} />
