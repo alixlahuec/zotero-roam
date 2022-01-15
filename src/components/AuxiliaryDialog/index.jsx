@@ -4,11 +4,11 @@ import PropTypes from "prop-types";
 import { Button, Classes, Dialog } from "@blueprintjs/core";
 
 import "./index.css";
-import { makeDNP, makeTimestamp, pluralize } from "../../utils";
+import { makeTimestamp, pluralize } from "../../utils";
 
 /** Formats a list of items for display in AuxiliaryDialog
  * @param {Object[]} items - The list of items to format 
- * @returns {Object[]} - The formatted array
+ * @returns {Object[]} The formatted array
  */
 function simplifyRelatedItems(items){
 	return items.map(item => {
@@ -28,43 +28,87 @@ function simplifyRelatedItems(items){
 	});
 }
 
-/** Sorts a list of items by a given key, in ascending order
+/** Sorts a list of items, as produced by {@link simplifyRelatedItems}, on a given key, in ascending order
  * @param {Object[]} items - The list of items to sort 
  * @param {String} sort - The key to sort items on 
- * @returns {Object[]} - The sorted array
+ * @returns {Object[]} The sorted array
  */
 function sortItems(items, sort = "meta"){
 	return items.sort((a,b) => (a[`${sort}`].toLowerCase() < b[`${sort}`].toLowerCase() ? -1 : 1));
 }
 
-function RelatedByAdded(props){
-	const { items, date } = props;
+function RelatedBy(props){
+	const { items, by, sort, title, onClose, ariaLabelledBy } = props;
+	const [isShowingAllAbstracts, setShowingAllAbstracts] = useState(false);
 
-	const dnp = useMemo(() => {
-		return makeDNP(date, {brackets: false});
-	}, [date]);
+	const toggleAbstracts = useCallback(() => {
+		setShowingAllAbstracts(!isShowingAllAbstracts);
+	}, [isShowingAllAbstracts]);
 
 	const sortedItems = useMemo(() => {
-		return sortItems(items, "added");
+		return sortItems(items, sort);
 	}, [items]);
+
+	const relationship = useMemo(() => {
+		switch(by){
+		case "added_on":
+			return {
+				string: "item",
+				suffix: " added on " + title
+			};
+		case "has_abstract":
+			return {
+				string: "abstract",
+				suffix: " containing " + title
+			};
+		case "has_tag":
+			return {
+				string: "item",
+				suffix: " tagged with " + title
+			};
+		case "is_citation":
+			return {
+				string: "item",
+				suffix: " citing " + title
+			};
+		case "is_reference":
+			return {
+				string: "item",
+				suffix: " referenced by " + title
+			};
+		}
+	}, [by]);
 
 	return (
 		<>
-			<h5>{pluralize(sortedItems.length, "item", ` added on ${dnp}`)}</h5>
-			<ul className={ Classes.LIST_UNSTYLED }>
-				{sortedItems.map(it => {
-					return (
-						<RelatedItem key={[it.location, it.key].join("-")} item={it} type="added" />
-					);
-				})}
-			</ul>
+			<div className="header-content">
+				<div className="header-left">
+					<h5 id={ariaLabelledBy} className="panel-tt">{pluralize(sortedItems.length, relationship.string, relationship.suffix)}</h5>
+					<Button className={ [Classes.ACTIVE, "zr-text-small"].join(" ") } zr-role="toggle-abstracts" icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
+				</div>
+				<div className={["header-right", "zr-auxiliary"].join(" ")}>
+					<Button icon="small-cross" minimal={true} onClick={onClose} />
+				</div>
+			</div>
+			<div className="rendered-div">
+				<ul className={ Classes.LIST_UNSTYLED }>
+					{sortedItems.map(it => {
+						return (
+							<RelatedItem key={[it.location, it.key].join("-")} allAbstractsShown={isShowingAllAbstracts} item={it} type={by} />
+						);
+					})}
+				</ul>
+			</div>
 		</>
 	);
 }
-RelatedByAdded.propTypes = {
+RelatedBy.propTypes = {
 	items: PropTypes.array,
-	date: PropTypes.date,
+	by: PropTypes.oneOf(["added_on", "has_abstract", "has_tag", "is_citation", "is_reference"]),
+	sort: PropTypes.oneOf(["added", "meta"]),
+	title: PropTypes.string,
 	onClose: PropTypes.func,
+	ariaLabelledBy: PropTypes.string,
 };
 
 const RelatedItem = React.memo(function RelatedItem(props) {
@@ -99,7 +143,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 	return (
 		<li className="zotero-roam-list-item" data-item-type={item.itemType}>
 			<div className={ Classes.MENU_ITEM } label={item.key}>
-				{type == "added"
+				{type == "added_on"
 					? <span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zotero-roam-item-timestamp"].join(" ")}>
 						{item.timestamp}
 					</span>
@@ -135,49 +179,8 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 });
 RelatedItem.propTypes = {
 	item: PropTypes.object,
-	type: PropTypes.oneOf(["tagged", "added"]),
+	type: PropTypes.oneOf(["added_on", "has_abstract", "has_tag", "is_citation", "is_reference"]),
 	allAbstractsShown: PropTypes.bool,
-};
-
-function RelatedByTags(props){
-	const { items, tag, onClose } = props;
-	const [isShowingAllAbstracts, setShowingAllAbstracts] = useState(false);
-
-	const toggleAbstracts = useCallback(() => {
-		setShowingAllAbstracts(!isShowingAllAbstracts);
-	}, [isShowingAllAbstracts]);
-
-	const sortedItems = useMemo(() => {
-		return sortItems(items, "meta");
-	}, [items]);
-
-	return (
-		<>
-			<div className="header-content">
-				<div className="header-left">
-					<h5>{pluralize(sortedItems.length, "item", ` tagged with ${tag}`)}</h5>
-					<Button className={ [Classes.ACTIVE, "zr-text-small"].join(" ") } zr-role="toggle-abstracts" icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
-				</div>
-				<div className={["header-right", "zr-auxiliary"].join(" ")}>
-					<Button icon="small-cross" minimal={true} onClick={onClose} />
-				</div>
-			</div>
-			<div className="rendered-div">
-				<ul className={ Classes.LIST_UNSTYLED }>
-					{sortedItems.map(it => {
-						return (
-							<RelatedItem key={[it.location, it.key].join("-")} allAbstractsShown={isShowingAllAbstracts} item={it} type="tagged" />
-						);
-					})}
-				</ul>
-			</div>
-		</>
-	);
-}
-RelatedByTags.propTypes ={
-	items: PropTypes.array,
-	tag: PropTypes.string,
-	onClose: PropTypes.func,
 };
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
@@ -195,20 +198,20 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 
 	const dialogContents = useMemo(() => {
 		let formattedItems = simplifyRelatedItems(items);
-		let panelProps = { onClose };
+		let { title, type } = show;
+		let panelProps = { 
+			ariaLabelledBy, 
+			onClose,
+			items: formattedItems,
+			by: type,
+			title: title,
+			sort: type == "added_on" ? "added" : "meta"
+		};
 
-		if(show.type == "with_tag"){
-			return (
-				<RelatedByTags items={formattedItems} tag={show.tag} {...panelProps} />
-			);
-		} else if(show.type == "added_on"){
-			return (
-				<RelatedByAdded items={formattedItems} date={show.date} {...panelProps} />
-			);
-		} else {
-			return null;
-		}
-	}, [show.tag, show.type, items, onClose]);
+		return (
+			<RelatedBy {...panelProps} />
+		);
+	}, [show.type, show.title, items, onClose]);
 
 	return (
 		createPortal(
@@ -236,7 +239,10 @@ AuxiliaryDialog.propTypes = {
 	items: PropTypes.array,
 	onClose: PropTypes.func,
 	portalTarget: PropTypes.string,
-	show: PropTypes.object
+	show: PropTypes.shape({
+		title: PropTypes.string,
+		type: PropTypes.oneOf(["added_on", "has_abstract", "has_tag", "is_citation", "is_reference"])
+	})
 };
 
 export default AuxiliaryDialog;

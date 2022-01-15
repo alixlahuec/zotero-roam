@@ -137,7 +137,7 @@ Backlinks.propTypes = {
 };
 
 function RelatedItemsBar(props) {
-	const { doi, origin, items, dialogProps } = props;
+	const { doi, title, origin, items, dialogProps } = props;
 	const { isDialogOpen, openDialog, closeDialog, extensionPortal } = dialogProps;
 	const { isLoading, isError, data = {}, error } = querySemantic(doi);
 	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
@@ -150,18 +150,18 @@ function RelatedItemsBar(props) {
 	const showReferences = useCallback(() => {
 		openDialog();
 		setShowing({
-			doi,
+			title,
 			type: "is_reference"
 		});
-	}, [doi]);
+	}, [title]);
 
 	const showCitations = useCallback(() => {
 		openDialog();
 		setShowing({
-			doi,
+			title,
 			type: "is_citation"
 		});
-	}, [doi]);
+	}, [title]);
 
 	// Only select items with valid DOIs to reduce dataset size
 	const itemsWithDOIs = useMemo(() => items.filter(it => parseDOI(it.data.DOI)), [items]);
@@ -199,6 +199,7 @@ function RelatedItemsBar(props) {
 					</ButtonGroup>
 					{refCount + citCount > 0
 						? <AuxiliaryDialog className="citations" 
+							ariaLabelledBy={"zr-aux-dialog--" + title}
 							show={isShowing} 
 							items={isShowing.type == "is_reference" ? data.references : data.citations}
 							isOpen={isDialogOpen} 
@@ -213,6 +214,7 @@ function RelatedItemsBar(props) {
 }
 RelatedItemsBar.propTypes = {
 	doi: PropTypes.string,
+	title: PropTypes.string,
 	origin: PropTypes.string,
 	items: PropTypes.array,
 	dialogProps: PropTypes.shape({
@@ -296,13 +298,14 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
     
 	const relatedBar = useMemo(() => {
 		return doi
-			? <RelatedItemsBar doi={doi} 
+			? <RelatedItemsBar doi={doi}
+				title={"@" + item.key}
 				origin={item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : ""} 
 				items={items}
 				dialogProps={{isDialogOpen, openDialog, closeDialog, extensionPortal}}
 			/>
 			: null;
-	}, [doi, item.meta.parsedDate, items]);
+	}, [doi, item.key, item.meta.parsedDate, items]);
 
 	return (
 		<>
@@ -331,7 +334,7 @@ CitekeyMenu.propTypes = {
 };
 
 function DNPMenu(props){
-	const { added, date, extensionPortal } = props;
+	const { added, date, title, extensionPortal } = props;
 	const [isDialogOpen, setDialogOpen] = useState(false);
 
 	const hasAddedItems = added.length > 0;
@@ -339,6 +342,7 @@ function DNPMenu(props){
 	const isShowing = useMemo(() => {
 		return {
 			date,
+			title,
 			type: "added_on"
 		};
 	}, [date]);
@@ -371,6 +375,7 @@ function DNPMenu(props){
 DNPMenu.propTypes = {
 	added: PropTypes.array,
 	date: PropTypes.date,
+	title: PropTypes.string,
 	extensionPortal: PropTypes.string
 };
 
@@ -385,7 +390,7 @@ function TagMenu(props){
 	const showTagged = useCallback(() => {
 		setDialogOpen(true);
 		setShowing({
-			tag,
+			title: tag,
 			type: "with_tag"
 		});
 	}, [tag]);
@@ -393,7 +398,7 @@ function TagMenu(props){
 	const showAbstracts = useCallback(() => {
 		setDialogOpen(true);
 		setShowing({
-			tag,
+			title: tag,
 			type: "with_abstract"
 		});
 	}, [tag]);
@@ -489,15 +494,16 @@ function DNPMenuFactory(props){
 			return null;
 		} else {
 			return menus.map(menu => {
+				let title = menu.getAttribute("data-title");
 				let dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date"))).toDateString();
 				let added = items.filter(it => new Date(it.data.dateAdded).toDateString() == dnp_date);
-				return { div: menu, added, date: dnp_date};
+				return { div: menu, added, date: dnp_date, title};
 			})
 				.filter(menu => menu.added)
 				.map((menu, i) => {
-					let { added, date, div } = menu;
+					let { added, date, div, title } = menu;
 					return (
-						createPortal(<DNPMenu key={i} date={date} added={added} extensionPortal={extensionPortal} />, div)
+						createPortal(<DNPMenu key={i} date={date} title={title} added={added} extensionPortal={extensionPortal} />, div)
 					);
 				});
 		}
