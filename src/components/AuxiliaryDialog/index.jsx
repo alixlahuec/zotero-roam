@@ -5,6 +5,7 @@ import { Button, Classes, Dialog } from "@blueprintjs/core";
 
 import "./index.css";
 import { makeTimestamp, pluralize } from "../../utils";
+import { getCitekeyPages } from "../../roam";
 
 /** Formats a list of items for display in AuxiliaryDialog
  * @param {Object[]} items - The list of items to format 
@@ -89,6 +90,8 @@ function RelatedBy(props){
 		}
 	}, [type]);
 
+	const roamCitekeys = getCitekeyPages();
+
 	return (
 		<>
 			<div className="header-content">
@@ -106,12 +109,14 @@ function RelatedBy(props){
 				<ul className={ Classes.LIST_UNSTYLED }>
 					{["added_on", "has_abstract", "has_tag"].includes(type)
 						? sortedItems.map(it => {
+							let inGraph = roamCitekeys.has("@" + it.key) ? roamCitekeys.get("@" + it.key) : false;
 							return (
-								<RelatedItem key={[it.location, it.key].join("-")} allAbstractsShown={isShowingAllAbstracts} item={it} type={type} />
+								<RelatedItem key={[it.location, it.key].join("-")} inGraph={inGraph} allAbstractsShown={isShowingAllAbstracts} item={it} type={type} />
 							);})
 						: sortedItems.map(it => {
+							let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
 							return (
-								<RelatedSemantic key={it.doi} item={it} type={type} />
+								<RelatedSemantic key={it.doi} item={it} type={type} inGraph={inGraph} />
 							);
 						})
 					}
@@ -130,7 +135,7 @@ RelatedBy.propTypes = {
 };
 
 const RelatedItem = React.memo(function RelatedItem(props) {
-	const { item, type, allAbstractsShown } = props;
+	const { item, type, inGraph, allAbstractsShown } = props;
 	const [isAbstractVisible, setAbstractVisible] = useState(allAbstractsShown);
 
 	const toggleAbstract = useCallback(() => {
@@ -138,12 +143,12 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 	}, [isAbstractVisible]);
 
 	const buttonProps = useMemo(() => {
-		if(item.inGraph){
+		if(inGraph){
 			return {
 				icon: "symbol-circle",
 				intent: "success",
 				"data-citekey": item.key,
-				"data-uid": item.inGraph,
+				"data-uid": inGraph,
 				text: "Go to @" + item.key
 			};
 		} else {
@@ -152,7 +157,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 				text: "@" + item.key
 			};
 		}
-	}, [item.inGraph]);
+	}, [inGraph]);
 
 	useEffect(() => {
 		setAbstractVisible(allAbstractsShown);
@@ -198,11 +203,12 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 RelatedItem.propTypes = {
 	item: PropTypes.object,
 	type: PropTypes.oneOf(["added_on", "has_abstract", "has_tag", "is_citation", "is_reference"]),
+	inGraph: PropTypes.oneOf([PropTypes.string, false]),
 	allAbstractsShown: PropTypes.bool,
 };
 
 const RelatedSemantic = React.memo(function RelatedSemantic(props) {
-	const { item, type } = props;
+	const { item, type, inGraph } = props;
 	const { inLibrary } = item;
 
 	return (
@@ -214,9 +220,9 @@ const RelatedSemantic = React.memo(function RelatedSemantic(props) {
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{display: "flex"}}>
 						<div className="zr-related-item-contents--metadata">
-							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 							<span className="zr-highlight">{item.authors}</span>
 							<span className="zr-secondary">{item.meta}</span>
+							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 						</div>
 						<span className="zr-related-item-contents--actions">
 							{item.url
@@ -224,9 +230,11 @@ const RelatedSemantic = React.memo(function RelatedSemantic(props) {
 									className={[ Classes.TEXT_MUTED, "zr-text-small", "zotero-roam-citation-identifier-link"].join("")} 
 								>{item.doi || "Semantic Scholar"}</a>
 								: null}
-							{inLibrary
-								? <Button icon="symbol-circle" intent="success" className="zr-text-small" minimal={true} small={true} text={"Go to " + inLibrary.key} />
-								: <Button icon="inheritance" intent="primary" className={["zotero-roam-citation-add-import", "zr-text-small"].join(" ")} minimal={true} small={true} text="Add to Zotero" />}
+							{inGraph
+								? <Button icon="symbol-circle" intent="success" className="zr-text-small" minimal={true} small={true} text="Go to page" />
+								: inLibrary
+									? <Button icon="plus" className="zr-text-small" minimal={true} small={true} text={"@" + inLibrary.key} />
+									: <Button icon="inheritance" intent="primary" className={["zotero-roam-citation-add-import", "zr-text-small"].join(" ")} minimal={true} small={true} text="Add to Zotero" />}
 						</span>
 					</div>
 				</div>
@@ -248,7 +256,8 @@ RelatedSemantic.propTypes = {
 		year: PropTypes.string,
 		_type: PropTypes.oneOf(["cited", "citing"]),
 		inLibrary: PropTypes.oneOf([PropTypes.object, false])
-	})
+	}),
+	inGraph: PropTypes.oneOf([PropTypes.string, false])
 };
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
