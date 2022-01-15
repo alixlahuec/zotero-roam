@@ -63,7 +63,7 @@ li[aria-selected="true"] > .bp3-menu-item, .zotero-roam-tagselector_option[aria-
 .backlinks-list_divider{display: flex;align-items: center;margin: 10px 5px;}
 .backlinks-list_divider hr{flex: 0 1 100%;}
 .zotero-roam-search_result > .bp3-menu-item, .zotero-roam-citations-search_result > .bp3-menu-item {justify-content:space-between;user-select:initial;padding: 3px 10px;}
-.zotero-roam-citations-search_result > .bp3-menu-item:hover, .zotero-roam-list-item > .bp3-menu-item:hover, .zr-datalist-item > .bp3-menu-item:hover {background-color:unset;cursor:unset;}
+.zotero-roam-citations-search_result > .bp3-menu-item:hover, .zr-related-item > .bp3-menu-item:hover, .zr-datalist-item > .bp3-menu-item:hover {background-color:unset;cursor:unset;}
 .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 1 97%;white-space:normal;}
 .zotero-roam-citation-links-list{display:block;}
 .zotero-roam-citations-search_result .zotero-roam-search-item-key {flex-wrap:wrap;}
@@ -71,9 +71,8 @@ li[aria-selected="true"] > .bp3-menu-item, .zotero-roam-tagselector_option[aria-
 .zotero-roam-search_result .zotero-roam-search-item-key .bp3-icon {padding:6px;}
 .zotero-roam-search-item-key{flex: 1 0 20%;text-align:right;overflow-wrap:anywhere;font-size:0.8em;display:flex;align-items:center;justify-content:flex-end;}
 .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;flex: 0 0 100%;}
-.zotero-roam-search-item-key a, .zotero-roam-search-item-key button, .zotero-roam-list-item-actions button, .zotero-roam-list-item-actions a{overflow-wrap:break-word;}
-.zotero-roam-citation-toggle-abstract{font-size:0.8em;overflow-wrap:break-word;}
-.zotero-roam-citation-abstract, .item-abstract{white-space:break-spaces;}
+.zotero-roam-search-item-key a, .zotero-roam-search-item-key button{overflow-wrap:break-word;}
+.item-abstract{white-space:break-spaces;}
 
 .import-header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px!important;margin-bottom:20px;}
 .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
@@ -185,7 +184,6 @@ label[data-tag-source] {color: #b3b3b3;background:#f9f9f9;border: 1px #e9e9e9 so
     .zotero-roam-citations-search_result > .bp3-menu-item{flex-direction:column;}
     .zotero-roam-citations-search_result .zotero-roam-citation-copy-doi, .zotero-roam-citations-search_result .zotero-roam-citation-add-import{display:none;}
     .zotero-roam-search-item-key{text-align:left;}
-    .related_state{flex: 1 2 auto;}
 }
 
 /* Supplemental */

@@ -141,10 +141,10 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 	}, [allAbstractsShown]);
 
 	return (
-		<li className="zotero-roam-list-item" data-item-type={item.itemType}>
+		<li className="zr-related-item" data-item-type={item.itemType}>
 			<div className={ Classes.MENU_ITEM } label={item.key}>
 				{type == "added_on"
-					? <span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zotero-roam-item-timestamp"].join(" ")}>
+					? <span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zr-related-item--timestamp"].join(" ")}>
 						{item.timestamp}
 					</span>
 					: null}
@@ -158,7 +158,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 							<Button className="zr-text-small" minimal={true} small={true} {...buttonProps} />
 						</span>
 					</div>
-					<div className={ [Classes.FILL, "zr-related-item--abstract"].join(" ") } style={{borderRadius: "6px", marginTop: "5px"}}>
+					<div className="zr-related-item--abstract">
 						{item.abstract
 							? <Button className={ [Classes.ACTIVE, "zr-text-small"].join(" ") }
 								zr-role="abstract-toggle"

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
@@ -46,6 +46,11 @@ const findPageMenus = () => {
 	};
 };
 
+/** Matches citation data obtained from Semantic Scholar against Zotero items, to identify in-library backlinks
+ * @param {ZoteroItem[]|Object[]} datastore - The list of Zotero items to match against 
+ * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to scan 
+ * @returns {ZoteroItem[]|Object[]} The list of items present in both datasets, if any
+ */
 function findBacklinks(datastore, semantic){
 	// Note: DOIs from the Semantic Scholar queries are sanitized at fetch
 	let citedDOIs = semantic.references.map(ref => { return { _doi: ref.doi, _type: "cited" }; });
@@ -69,20 +74,24 @@ function BacklinksItem(props) {
 	const pub_year = meta.parsedDate ? new Date(meta.parsedDate).getUTCFullYear() : "";
 	const pub_type = _type == "cited" ? "reference" : "citation";
 
+	useEffect(() => {
+		console.log(props);
+	}, [props]);
+
 	return (
-		<li className="related-item_listed" 
+		<li className="zr-backlink-item" 
 			data-backlink-type={pub_type} 
 			data-key={"@" + key} 
 			data-item-type={data.itemType} 
 			data-item-year={pub_year}
 		>
-			<div className="related_year">{pub_year}</div>
-			<div className="related_info">
-				<span className="zotero-roam-search-item-authors zr-highlight">{meta.creatorSummary || ""}</span>
-				<span className="zr-secondary">{data.publicationTitle || data.bookTitle || data.university || ""}</span>
-				<span className="zotero-roam-search-item-title">{data.title}</span>
+			<div className="zr-backlink-item--year">{pub_year}</div>
+			<div className="zr-backlink-item--info">
+				<span zr-role="item-authors" className="zotero-roam-search-item-authors zr-highlight">{meta.creatorSummary || ""}</span>
+				<span zr-role="item-publication" className="zr-secondary">{data.publicationTitle || data.bookTitle || data.university || ""}</span>
+				<span zr-role="item-title" className="zotero-roam-search-item-title">{data.title}</span>
 			</div>
-			<div className="related_state">
+			<div className="zr-backlink-item--state">
 				<Button className="zr-text-small"
 					minimal={true}
 					icon="plus"
@@ -112,10 +121,14 @@ const Backlinks = React.memo(function Backlinks(props) {
 		const citations = sortedItems.filter(it => it._type == "citing");
 
 		const refList = references.length > 0 
-			? <ul className={Classes.LIST_UNSTYLED} list-type="references">{references.map((ref) => <BacklinksItem key={ref._doi} entry={ref} />)}</ul> 
+			? <ul className={Classes.LIST_UNSTYLED} list-type="references">
+				{references.map((ref) => <BacklinksItem key={ref._doi} entry={ref} />)}
+			</ul> 
 			: null;
 		const citList = citations.length > 0 
-			? <ul className={Classes.LIST_UNSTYLED} list-type="citations">{citations.map((cit) => <BacklinksItem key={cit._doi} entry={cit} />)}</ul> 
+			? <ul className={Classes.LIST_UNSTYLED} list-type="citations">
+				{citations.map((cit) => <BacklinksItem key={cit._doi} entry={cit} />)}
+			</ul> 
 			: null;
 		const separator = <span className="backlinks-list_divider"><Tag minimal={true} multiline={true}>{origin}</Tag><hr /></span>;
 
@@ -169,7 +182,14 @@ function RelatedItemsBar(props) {
 	const refCount = data.references?.length || null;
 	const citCount = data.citations?.length || null;
 
-	const backlinks_matched = useMemo(() => (refCount + citCount > 0 ? findBacklinks(itemsWithDOIs, data) : []), [refCount + citCount > 0, data]);
+	const backlinks_matched = useMemo(() => {
+		return (
+			refCount + citCount > 0 
+				? findBacklinks(itemsWithDOIs, data) 
+				: []
+		);
+	}, [refCount + citCount > 0, data]);
+
 	const showBacklinksButtonProps = useMemo(() => {
 		return backlinks_matched.length == 0
 			? {
