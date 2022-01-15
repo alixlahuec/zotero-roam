@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { Button, Classes, Dialog } from "@blueprintjs/core";
 
 import "./index.css";
-import { makeTimestamp, pluralize } from "../../utils";
+import { makeTimestamp, parseDOI, pluralize } from "../../utils";
 
 /** Formats a list of items for display in AuxiliaryDialog
  * @param {Object[]} items - The list of items to format 
@@ -25,6 +25,76 @@ function simplifyRelatedItems(items){
 			timestamp: makeTimestamp(item.data.dateAdded),
 			inGraph: false
 		};
+	});
+}
+
+/** Formats a list of Semantic Scholar entries for display in AuxiliaryDialog
+ * @param {Object[]} items - The list of entries to format 
+ * @returns {{
+ * authors: String, 
+ * doi: String, 
+ * intent: String[], 
+ * isInfluential: Boolean,
+ * links: Object,
+ * meta: String,
+ * title: String,
+ * url: String,
+ * year: String
+ * }[]} The formatted list, ready for rendering
+ */
+function simplifyRelatedSemantic(items){
+	return items.map((item) => {
+		let cleanItem = {
+			authors: "",
+			doi: parseDOI(item.doi),
+			intent: item.intent,
+			isInfluential: item.isInfluential,
+			links: {},
+			meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
+			title: item.title,
+			url: item.url || "",
+			year: item.year ? item.year.toString() : ""
+		};
+
+		// Parse authors data
+		cleanItem.authorsLastNames = item.authors.map(a => {
+			let components = a.name.replaceAll(".", " ").split(" ").filter(Boolean);
+			if(components.length == 1){
+				return components[0];
+			} else {
+				return components.slice(1).filter(c => c.length > 1).join(" ");
+			}
+		});
+		cleanItem.authorsString = cleanItem.authorsLastNames.join(" ");
+		switch(cleanItem.authorsLastNames.length){
+		case 0:
+			break;
+		case 1:
+			cleanItem.authors = cleanItem.authorsLastNames[0];
+			break;
+		case 2:
+			cleanItem.authors = cleanItem.authorsLastNames[0] + " & " + cleanItem.authorsLastNames[1];
+			break;
+		case 3:
+			cleanItem.authors = cleanItem.authorsLastNames[0] + ", " + cleanItem.authorsLastNames[1] + " & " + cleanItem.authorsLastNames[2];
+			break;
+		default:
+			cleanItem.authors = cleanItem.authorsLastNames[0] + " et al.";
+		}
+
+		// Parse external links
+		if(item.paperId){
+			cleanItem.links["semanticScholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
+		}
+		if(item.arxivId){
+			cleanItem.links["arxiv"] = `https://arxiv.org/abs/${item.arxivId}`;
+		}
+		if(item.doi){
+			cleanItem.links["connectedPapers"] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
+			cleanItem.links["googleScholar"] = `https://scholar.google.com/scholar?q=${item.doi}`;
+		}
+
+		return cleanItem;
 	});
 }
 
@@ -197,15 +267,16 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 	const dialog_class = useMemo(() => "zr-auxiliary-dialog--" + dialogClass, []);
 
 	const dialogContents = useMemo(() => {
-		let formattedItems = simplifyRelatedItems(items);
 		let { title, type } = show;
+		let formattedItems = (["is_citation", "is_reference"].includes(type)) ? simplifyRelatedSemantic(items) : simplifyRelatedItems(items);
+		
 		let panelProps = { 
 			ariaLabelledBy, 
 			onClose,
 			items: formattedItems,
 			by: type,
 			title: title,
-			sort: type == "added_on" ? "added" : "meta"
+			sort: (["is_citation", "is_reference"].includes(type)) ? "year" : type == "added_on" ? "added" : "meta"
 		};
 
 		return (

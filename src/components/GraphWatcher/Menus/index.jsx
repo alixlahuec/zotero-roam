@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
@@ -73,10 +73,6 @@ function BacklinksItem(props) {
 	const { key, data, meta } = item;
 	const pub_year = meta.parsedDate ? new Date(meta.parsedDate).getUTCFullYear() : "";
 	const pub_type = _type == "cited" ? "reference" : "citation";
-
-	useEffect(() => {
-		console.log(props);
-	}, [props]);
 
 	return (
 		<li className="zr-backlink-item" 
