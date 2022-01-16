@@ -5,7 +5,7 @@ import { QueryList } from "@blueprintjs/select";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import { getCitekeyPages } from "../../../roam";
-import { pluralize } from "../../../utils";
+import { pluralize, sortItems } from "../../../utils";
 import "./index.css";
 
 function searchEngine(query, items){
@@ -47,10 +47,10 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 						<div className="zr-related-item-contents--metadata">
 							<span className={type == "is_reference" ? "zr-highlight" : "zr-highlight-2"}>{item.authors}</span>
 							<span className="zr-secondary">{item.meta}</span>
-							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
-							{item.intent.length > 0
-								? item.intent.map(int => <Tag key={int} minimal={true}>{int}</Tag>)
+							{item.isInfluential
+								? <Icon icon="trending-up" color="#f8c63a" htmlTitle="This item was classified as influential by Semantic Scholar" />
 								: null}
+							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 						</div>
 						<span className="zr-related-item-contents--actions">
 							{item.url && !inLibrary
@@ -68,6 +68,9 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 								: <Button icon="inheritance" intent="primary" className="zr-text-small" minimal={true} small={true} text="Add to Zotero" />}
 						</span>
 					</div>
+					{item.intent.length > 0
+						? item.intent.map(int => <Tag key={int} minimal={true}>{int.charAt(0).toUpperCase() + int.slice(1)}</Tag>)
+						: null}
 					<div className="zr-related-item--links">
 						{Object.keys(item.links).map((key) => {
 							return (
@@ -166,23 +169,25 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 	}, []);
 
 	const references = useMemo(() => {
-		return items.references.map(it => {
-			let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
-			return {
-				...it,
-				inGraph
-			};
-		});
+		return sortItems(items.references, "year")
+			.map(it => {
+				let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
+				return {
+					...it,
+					inGraph
+				};
+			});
 	}, [roamCitekeys, items.references]);
 
 	const citations = useMemo(() => {
-		return items.citations.map(it => {
-			let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
-			return {
-				...it,
-				inGraph
-			};
-		});
+		return sortItems(items.citations, "year")
+			.map(it => {
+				let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
+				return {
+					...it,
+					inGraph
+				};
+			});
 	}, [roamCitekeys, items.citations]);
 
 	const references_title = useMemo(() => {

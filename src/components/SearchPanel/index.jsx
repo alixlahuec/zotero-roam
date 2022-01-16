@@ -274,7 +274,7 @@ SearchResult.propTypes = {
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { handleChange, portalTarget, version } = props;
+	const { handleChange, portalTarget } = props;
 
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	let [query, setQuery] = useState();
@@ -328,9 +328,12 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
 
-		const searchScope = <Tag id={dialogLabel} intent="primary" minimal={true} large={true} multiline={true}>Zotero Library</Tag>;
+		const leftElem = <Tag id={dialogLabel} intent="primary" minimal={true} large={true} multiline={true}>Zotero Library</Tag>;
 
-		const closeButton = <Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />;
+		const rightElem = <>
+			<Switch className='zr-quick-copy' label='Quick Copy' checked={quickCopyActive} onChange={toggleQuickCopy} />
+			<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />
+		</>;
 
 		return (
 			<div className="zr-querylist">
@@ -346,8 +349,8 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					onKeyDown={handleKeyDown}
 					onKeyUp={handleKeyUp}
 					inputRef={searchbar}
-					leftElement={searchScope}
-					rightElement={closeButton}
+					leftElement={leftElem}
+					rightElement={rightElem}
 				/>
 				{selectedItem ? <SelectedItem item={selectedItem} />
 					: <>
@@ -357,10 +360,6 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 							onKeyUp={handleKeyUp}
 						>
 							{listProps.itemList}
-						</div>
-						<div className={Classes.DIALOG_FOOTER_ACTIONS}>
-							<Switch className='zr-quick-copy' label='Quick Copy' checked={quickCopyActive} onChange={toggleQuickCopy} />
-							<Tag className="zr-extension-info" minimal={true}>{version}</Tag>
 						</div>
 					</>}
 			</div>

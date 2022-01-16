@@ -1,16 +1,19 @@
-label.zr-quick-copy {
-    font-weight: 300;
+#zotero-roam-search-autocomplete {
+    box-shadow: none;
+    font-size: 13px;
 }
 
-.zr-extension-info {
-    opacity: 0.5;
-  }
+label.zr-quick-copy {
+    font-weight: 300;
+    font-size: 12px;
+    margin-bottom: 0px;
+}
 
 /* QueryList */
 
 .zr-querylist .bp3-input-group .bp3-tag {
-    margin: 0px;
-    margin-right: 10px;
+    margin-right: 20px;
+    font-size: 12px;
 }
 
 #zotero-roam-library-rendered .bp3-menu {

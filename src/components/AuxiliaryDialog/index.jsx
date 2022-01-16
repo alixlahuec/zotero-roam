@@ -110,7 +110,7 @@ AuxiliaryDialog.propTypes = {
 	portalTarget: PropTypes.string,
 	show: PropTypes.shape({
 		title: PropTypes.string,
-		type: PropTypes.oneOf(["added_on", "has_abstract", "has_tag", "is_citation", "is_reference"])
+		type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
 	})
 };
 

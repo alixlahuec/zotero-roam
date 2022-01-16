@@ -56,7 +56,6 @@ class App extends Component {
 					portalTarget={extensionPortal}
 					userSettings={userSettings}
 					handleChange={this.handleChangeInSearchPanel}
-					version={version}
 				/>
 			</QueryClientProvider>
 		);

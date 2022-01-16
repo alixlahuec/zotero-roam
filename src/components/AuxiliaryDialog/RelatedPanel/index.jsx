@@ -73,7 +73,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 });
 RelatedItem.propTypes = {
 	item: PropTypes.object,
-	type: PropTypes.oneOf(["added_on", "has_abstract", "has_tag", "is_citation", "is_reference"]),
+	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"]),
 	inGraph: PropTypes.oneOf([PropTypes.string, false]),
 	allAbstractsShown: PropTypes.bool,
 };
@@ -97,12 +97,12 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 				string: "item",
 				suffix: " added on " + title
 			};
-		case "has_abstract":
+		case "with_abstract":
 			return {
 				string: "abstract",
 				suffix: " containing " + title
 			};
-		case "has_tag":
+		case "with_tag":
 			return {
 				string: "item",
 				suffix: " tagged with " + title
@@ -139,7 +139,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 });
 RelatedPanel.propTypes = {
 	items: PropTypes.array,
-	type: PropTypes.oneOf(["added_on", "has_abstract", "has_tag", "is_citation", "is_reference"]),
+	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"]),
 	sort: PropTypes.oneOf(["added", "meta"]),
 	title: PropTypes.string,
 	onClose: PropTypes.func,
