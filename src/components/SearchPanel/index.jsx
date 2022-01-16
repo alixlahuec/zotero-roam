@@ -328,30 +328,25 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
 
-		const searchScope = <span id={dialogLabel} className="zr-search-scope">
-			Zotero Library
-			<Icon icon="chevron-right" />
-		</span>;
+		const searchScope = <Tag id={dialogLabel} intent="primary" minimal={true} multiline={true}>Zotero Library</Tag>;
 
 		const closeButton = <Button className={Classes.MINIMAL} icon="cross" onClick={handleClose} />;
 
 		return (
 			<div className="zr-querylist">
-				<div className="header-bottom">
-					<InputGroup
-						className={(Classes.INPUT, Classes.FILL)}
-						id="zotero-roam-search-autocomplete"
-						placeholder="Search by title, year, authors (last names), citekey, tags"
-						spellCheck="false"
-						autoComplete="off"
-						onChange={handleQueryChange}
-						onKeyDown={handleKeyDown}
-						onKeyUp={handleKeyUp}
-						inputRef={searchbar}
-						leftElement={searchScope}
-						rightElement={closeButton}
-					/>
-				</div>
+				<InputGroup
+					className={(Classes.INPUT, Classes.FILL)}
+					id="zotero-roam-search-autocomplete"
+					placeholder="Search by title, year, authors (last names), citekey, tags"
+					spellCheck="false"
+					autoComplete="off"
+					onChange={handleQueryChange}
+					onKeyDown={handleKeyDown}
+					onKeyUp={handleKeyUp}
+					inputRef={searchbar}
+					leftElement={searchScope}
+					rightElement={closeButton}
+				/>
 				{selectedItem ? <SelectedItem item={selectedItem} />
 					: <>
 						<div

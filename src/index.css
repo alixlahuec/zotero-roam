@@ -27,7 +27,7 @@ h5.panel-tt[list-type="citations"]{color:#d9822b;}
 .zotero-roam-overlay-close{margin:0;padding:0;min-width:41px;}
 
 #zotero-roam-citations-autocomplete{flex:1 0 100%;}
-#zotero-roam-search-autocomplete, #zotero-roam-citations-autocomplete{padding:0px 10px;box-shadow:none;}
+
 #zotero-roam-search-autocomplete::placeholder, #zotero-roam-citations-autocomplete::placeholder{opacity:0.6;}
 #zotero-roam-search-autocomplete:focus, #zotero-roam-citations-autocomplete:focus, #zotero-roam-tagselector_citations:focus{box-shadow:none;}
 :not(.bp3-dark) #zotero-roam-search-autocomplete, :not(.bp3-dark) #zotero-roam-citations-autocomplete{border-bottom: 1px #ececec solid;color: #717171;}
@@ -44,15 +44,11 @@ li[aria-selected="true"] > .bp3-menu-item, .zotero-roam-tagselector_option[aria-
 .zotero-roam-library-results-count:empty {padding: 0px;}
 .zotero-roam-library-results-count{display:block;padding:min(6px, 0.2em) 0;}
 .zotero-roam-citations-results-count, .zotero-roam-tag-list-count {padding: 6px 10px;}
-.zotero-roam-search_result{padding:3px 0px;}
+
 .zotero-roam-citations-search_result{padding:3px 6px;}
 .zotero-roam-citations-search_result[in-library="true"]{background-color:#f3fdf3;border-left: 2px #a4f1a4 solid;}
 .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#5863582e;}
 .zotero-roam-page-control > span[icon]{margin-right:0px;}
-#zotero-roam-library-rendered, #zotero-roam-citations-pagination {width:97%;margin: 0 auto;}
-
-#zotero-roam-library-rendered[view="search"][has-results] + .bp3-dialog-footer-actions, #zotero-roam-citations-pagination + .bp3-dialog-footer-actions{box-shadow: 0px -4px 10px 0px #d6d6d6;}
-.bp3-dark #zotero-roam-library-rendered[view="search"][has-results] + .bp3-dialog-footer-actions, .bp3-dark #zotero-roam-citations-pagination + .bp3-dialog-footer-actions{box-shadow: 0px -4px 10px 0px #171717;}
 
 .item-basic-metadata, .item-additional-metadata {background:#f5f8fa;}
 .bp3-dark .item-basic-metadata, .bp3-dark .item-additional-metadata, .bp3-dark .zotero-roam-citation-abstract{background-color:#2b3135;}
@@ -67,7 +63,7 @@ li[aria-selected="true"] > .bp3-menu-item, .zotero-roam-tagselector_option[aria-
 .zotero-roam-citation-metadata, .zotero-roam-search-item-contents{flex: 0 1 97%;white-space:normal;}
 
 .zotero-roam-citations-search_result .zotero-roam-search-item-key {flex-wrap:wrap;}
-.zotero-roam-search_result .zotero-roam-search-item-key {flex-wrap:nowrap;}
+
 .zotero-roam-search_result .zotero-roam-search-item-key .bp3-icon {padding:6px;}
 .zotero-roam-search-item-key{flex: 1 0 20%;text-align:right;overflow-wrap:anywhere;font-size:0.8em;display:flex;align-items:center;justify-content:flex-end;}
 .zotero-roam-search-item-key .zotero-roam-citation-identifier-link {display:block;flex: 0 0 100%;}

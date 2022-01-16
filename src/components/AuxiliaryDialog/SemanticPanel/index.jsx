@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Classes, Icon, InputGroup, Tabs, Tab, Menu, MenuItem, ButtonGroup } from "@blueprintjs/core";
+import { Button, Classes, Icon, InputGroup, Tabs, Tab, Menu, MenuItem } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 import { Popover2 } from "@blueprintjs/popover2";
 
@@ -45,7 +45,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{display: "flex"}}>
 						<div className="zr-related-item-contents--metadata">
-							<span className="zr-highlight">{item.authors}</span>
+							<span className={type == "is_reference" ? "zr-highlight" : "zr-highlight-2"}>{item.authors}</span>
 							<span className="zr-secondary">{item.meta}</span>
 							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 						</div>
@@ -58,12 +58,9 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 								: null}
 							{inLibrary 
 								? inGraph
-									? <ButtonGroup>
-										<Button intent="success" className={[Classes.ACTIVE, "zr-text-small"].join(" ")} minimal={true} small={true} text={"@" + inLibrary.key} />
-										<Popover2 interactionKind="hover" placement="right_start" lazy={true} content={openInMenu}>
-											<Button icon="caret-right" intent="success" />
-										</Popover2>
-									</ButtonGroup>
+									? <Popover2 interactionKind="hover" placement="right_start" lazy={true} content={openInMenu}>
+										<Button rightIcon="caret-right" intent="success" className={[Classes.ACTIVE, "zr-text-small"].join(" ")} minimal={true} small={true} text={"@" + inLibrary.key} />
+									</Popover2>
 									: <Button icon="plus" className="zr-text-small" minimal={true} small={true} text={"@" + inLibrary.key} />
 								: <Button icon="inheritance" intent="primary" className="zr-text-small" minimal={true} small={true} text="Add to Zotero" />}
 						</span>

@@ -128,7 +128,7 @@ function RelatedItemsBar(props) {
 	
 	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
 	const [isDialogOpen, setDialogOpen] = useState(false);
-	const [isShowing, setShowing] = useState({title, type: "is_reference"});
+	const [isShowing, setShowing] = useState({title, type: "is_citation"});
 
 	const toggleBacklinks = useCallback(() => {
 		setBacklinksListOpen(!isBacklinksListOpen);
