@@ -57,6 +57,16 @@
     margin-top: 5px;
 }
 
+/* SemanticPanel */
+
+input[id*="semantic-search--"] {
+    background: 0;
+    margin-bottom: 10px;
+    box-shadow: none;
+    font-size: 1em;
+    color: #818181;
+}
+
 
 /* SMALLER DISPLAYS */
 

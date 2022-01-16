@@ -3,11 +3,13 @@ import PropTypes from "prop-types";
 import { Classes, Icon } from "@blueprintjs/core";
 
 function ButtonLink(props) {
-	const { icon = null, iconProps = {}, text = null, textProps = {}, href, linkClass = [] } = props;
+	const { icon = null, iconProps = {}, text = null, textProps = {}, href, linkClass = [], ...otherProps } = props;
 	let extraClasses = linkClass.constructor === Array ? linkClass : [linkClass];
 
 	return (
-		<a role="button" className={[Classes.BUTTON, ...extraClasses].join(" ")} target="_blank" href={href} rel="noreferrer">
+		<a role="button" className={[Classes.BUTTON, ...extraClasses].join(" ")}
+			target="_blank" href={href} rel="noreferrer"
+			{...otherProps}>
 			{icon ? <Icon icon={icon} {...iconProps} /> : null}
 			{text ? <span className={Classes.BUTTON_TEXT} {...textProps}>{text}</span> : null}
 		</a>
