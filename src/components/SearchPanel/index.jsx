@@ -328,9 +328,9 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
 
-		const searchScope = <Tag id={dialogLabel} intent="primary" minimal={true} multiline={true}>Zotero Library</Tag>;
+		const searchScope = <Tag id={dialogLabel} intent="primary" minimal={true} large={true} multiline={true}>Zotero Library</Tag>;
 
-		const closeButton = <Button className={Classes.MINIMAL} icon="cross" onClick={handleClose} />;
+		const closeButton = <Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />;
 
 		return (
 			<div className="zr-querylist">
@@ -340,6 +340,8 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					placeholder="Search by title, year, authors (last names), citekey, tags"
 					spellCheck="false"
 					autoComplete="off"
+					type="text"
+					large={true}
 					onChange={handleQueryChange}
 					onKeyDown={handleKeyDown}
 					onKeyUp={handleKeyUp}
