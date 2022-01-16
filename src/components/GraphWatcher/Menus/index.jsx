@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
 
-import { compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize, readDNP } from "../../../utils";
+import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize, readDNP } from "../../../utils";
 import { queryItems, querySemantic } from "../../../queries";
 import ButtonLink from "../../ButtonLink";
 import SciteBadge from "../../SciteBadge";
@@ -45,113 +45,6 @@ const findPageMenus = () => {
 		tagMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.tag}]`))
 	};
 };
-
-/** Formats the metadata of a Semantic Scholar entry
- * @param {Object} item - The Semantic Scholar entry to format 
- * @returns {{
- * authors: String, 
- * doi: String, 
- * intent: String[], 
- * isInfluential: Boolean,
- * links: Object,
- * meta: String,
- * title: String,
- * url: String,
- * year: String
- * }[]} The formatted entry
- */
-function cleanSemanticItem(item){
-	let cleanItem = {
-		authors: "",
-		doi: parseDOI(item.doi),
-		intent: item.intent,
-		isInfluential: item.isInfluential,
-		links: {},
-		meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
-		title: item.title,
-		url: item.url || "",
-		year: item.year ? item.year.toString() : ""
-	};
-
-	// Parse authors data
-	cleanItem.authorsLastNames = item.authors.map(a => {
-		let components = a.name.replaceAll(".", " ").split(" ").filter(Boolean);
-		if(components.length == 1){
-			return components[0];
-		} else {
-			return components.slice(1).filter(c => c.length > 1).join(" ");
-		}
-	});
-	cleanItem.authorsString = cleanItem.authorsLastNames.join(" ");
-	switch(cleanItem.authorsLastNames.length){
-	case 0:
-		break;
-	case 1:
-		cleanItem.authors = cleanItem.authorsLastNames[0];
-		break;
-	case 2:
-		cleanItem.authors = cleanItem.authorsLastNames[0] + " & " + cleanItem.authorsLastNames[1];
-		break;
-	case 3:
-		cleanItem.authors = cleanItem.authorsLastNames[0] + ", " + cleanItem.authorsLastNames[1] + " & " + cleanItem.authorsLastNames[2];
-		break;
-	default:
-		cleanItem.authors = cleanItem.authorsLastNames[0] + " et al.";
-	}
-
-	// Parse external links
-	if(item.paperId){
-		cleanItem.links["semanticScholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
-	}
-	if(item.arxivId){
-		cleanItem.links["arxiv"] = `https://arxiv.org/abs/${item.arxivId}`;
-	}
-	if(item.doi){
-		cleanItem.links["connectedPapers"] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
-		cleanItem.links["googleScholar"] = `https://scholar.google.com/scholar?q=${item.doi}`;
-	}
-
-	return cleanItem;
-}
-
-/** Formats a list of Semantic Scholar entries for display
- * @param {ZoteroItem[]|Object[]} datastore - The list of Zotero items to match against 
- * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to format 
- * @returns {{
- * citations: Object[], 
- * references: Object[],
- * backlinks: Object[]}} The formatted list
- */
-function cleanSemantic(datastore, semantic){
-	// Note: DOIs from the Semantic Scholar queries are sanitized at fetch
-	let { citations, references } = semantic;
-
-	let clean_citations = citations.map((cit) => {
-		let cleanProps = cleanSemanticItem(cit);
-		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == cit.doi) || false;
-		return {
-			...cleanProps,
-			inLibrary,
-			_type: "citing"
-		};
-	});
-
-	let clean_references = references.map((ref) => {
-		let cleanProps = cleanSemanticItem(ref);
-		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == ref.doi) || false;
-		return {
-			...cleanProps,
-			inLibrary,
-			_type: "cited"
-		};
-	});
-
-	return {
-		citations: clean_citations,
-		references: clean_references,
-		backlinks: [...clean_references, ...clean_citations].filter(item => item.inLibrary)
-	};
-}
 
 function BacklinksItem(props) {
 	const { _type, inLibrary: item } = props.entry;
@@ -250,19 +143,19 @@ function RelatedItemsBar(props) {
 	}, []);
 
 	const showReferences = useCallback(() => {
-		openDialog();
 		setShowing({
 			title,
 			type: "is_reference"
 		});
+		openDialog();
 	}, [title]);
 
 	const showCitations = useCallback(() => {
-		openDialog();
 		setShowing({
 			title,
 			type: "is_citation"
 		});
+		openDialog();
 	}, [title]);
 
 	// Only select items with valid DOIs to reduce dataset size

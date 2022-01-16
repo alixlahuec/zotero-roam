@@ -43,6 +43,113 @@ function analyzeUserRequests(reqs){
 	}
 }
 
+/** Formats the metadata of a Semantic Scholar entry
+ * @param {Object} item - The Semantic Scholar entry to format 
+ * @returns {{
+ * authors: String, 
+ * doi: String, 
+ * intent: String[], 
+ * isInfluential: Boolean,
+ * links: Object,
+ * meta: String,
+ * title: String,
+ * url: String,
+ * year: String
+ * }[]} The formatted entry
+ */
+function cleanSemanticItem(item){
+	let cleanItem = {
+		authors: "",
+		doi: parseDOI(item.doi),
+		intent: item.intent,
+		isInfluential: item.isInfluential,
+		links: {},
+		meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
+		title: item.title,
+		url: item.url || "",
+		year: item.year ? item.year.toString() : ""
+	};
+
+	// Parse authors data
+	cleanItem.authorsLastNames = item.authors.map(a => {
+		let components = a.name.replaceAll(".", " ").split(" ").filter(Boolean);
+		if(components.length == 1){
+			return components[0];
+		} else {
+			return components.slice(1).filter(c => c.length > 1).join(" ");
+		}
+	});
+	cleanItem.authorsString = cleanItem.authorsLastNames.join(" ");
+	switch(cleanItem.authorsLastNames.length){
+	case 0:
+		break;
+	case 1:
+		cleanItem.authors = cleanItem.authorsLastNames[0];
+		break;
+	case 2:
+		cleanItem.authors = cleanItem.authorsLastNames[0] + " & " + cleanItem.authorsLastNames[1];
+		break;
+	case 3:
+		cleanItem.authors = cleanItem.authorsLastNames[0] + ", " + cleanItem.authorsLastNames[1] + " & " + cleanItem.authorsLastNames[2];
+		break;
+	default:
+		cleanItem.authors = cleanItem.authorsLastNames[0] + " et al.";
+	}
+
+	// Parse external links
+	if(item.paperId){
+		cleanItem.links["semantic-scholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
+	}
+	if(item.arxivId){
+		cleanItem.links["arxiv"] = `https://arxiv.org/abs/${item.arxivId}`;
+	}
+	if(item.doi){
+		cleanItem.links["connected-papers"] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
+		cleanItem.links["google-scholar"] = `https://scholar.google.com/scholar?q=${item.doi}`;
+	}
+
+	return cleanItem;
+}
+
+/** Formats a list of Semantic Scholar entries for display
+ * @param {ZoteroItem[]|Object[]} datastore - The list of Zotero items to match against 
+ * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to format 
+ * @returns {{
+ * citations: Object[], 
+ * references: Object[],
+ * backlinks: Object[]}} The formatted list
+ */
+function cleanSemantic(datastore, semantic){
+	// Note: DOIs from the Semantic Scholar queries are sanitized at fetch
+	let { citations, references } = semantic;
+
+	let clean_citations = citations.map((cit) => {
+		let cleanProps = cleanSemanticItem(cit);
+		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == cit.doi) || false;
+		return {
+			...cleanProps,
+			inLibrary,
+			_type: "citing"
+		};
+	});
+
+	let clean_references = references.map((ref) => {
+		let cleanProps = cleanSemanticItem(ref);
+		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == ref.doi) || false;
+		return {
+			...cleanProps,
+			inLibrary,
+			_type: "cited"
+		};
+	});
+
+	return {
+		citations: clean_citations,
+		references: clean_references,
+		backlinks: [...clean_references, ...clean_citations].filter(item => item.inLibrary)
+	};
+}
+
 /** Compares two Zotero items by publication year then alphabetically, to determine sort order
  * @param {ZoteroItem|Object} a - The first item to compare
  * @param {ZoteroItem|Object} b - The second item to compare
@@ -313,8 +420,18 @@ function setupPortals(slotID, portalID){
 	document.getElementById("app").appendChild(zrPortal);
 }
 
+/** Sorts an array of objects on a given string key, in ascending order
+ * @param {Object[]} items - The list of items to sort 
+ * @param {String} sort - The key to sort items on 
+ * @returns {Object[]} The sorted array
+ */
+function sortItems(items, sort = "meta"){
+	return items.sort((a,b) => (a[`${sort}`].toLowerCase() < b[`${sort}`].toLowerCase() ? -1 : 1));
+}
+
 export {
 	analyzeUserRequests,
+	cleanSemantic,
 	compareItemsByYear,
 	copyToClipboard,
 	escapeRegExp,
@@ -328,5 +445,6 @@ export {
 	pluralize,
 	readDNP,
 	setupDependencies,
-	setupPortals
+	setupPortals,
+	sortItems
 };

@@ -2,6 +2,8 @@
     align-self: baseline;
     width: max(55%, 550px);
     margin: 10vh auto;
+    max-height: 80vh;
+    overflow-y: scroll;
     padding-bottom:0px;
     box-shadow: none;
 }
@@ -13,11 +15,6 @@
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div {
     padding: 10px 30px;
     font-size: 0.9em;
-}
-
-.bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu {
-    max-height: 80vh;
-    overflow-y: scroll;
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .header-content {
@@ -59,37 +56,6 @@
     border-radius: 6px;
     margin-top: 5px;
 }
-
-/* SemanticPanel */
-
-.zr-semantic-panel--contents .bp3-tab-list {
-    margin-left: 30px;
-}
-
-.zr-semantic-panel--contents .bp3-tab {
-    font-size: 0.9em;
-}
-
-.zr-semantic-panel--contents .bp3-tab[aria-selected="true"] {
-    font-weight: bold;
-}
-
-.zr-semantic-panel--contents .bp3-tab .bp3-icon {
-    margin-right: 5px;
-}
-
-.zr-semantic-panel--contents .bp3-tab-panel {
-    margin-top: 10px;
-}
-
-input[id*="semantic-search--"] {
-    background: 0;
-    margin-bottom: 10px;
-    box-shadow: none;
-    font-size: 1em;
-    color: #818181;
-}
-
 
 /* SMALLER DISPLAYS */
 
