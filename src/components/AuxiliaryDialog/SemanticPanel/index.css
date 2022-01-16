@@ -1,45 +1,42 @@
-.zr-semantic-panel--contents .bp3-tab-list {
+.zr-semantic-panel--main .bp3-tab-list {
     margin-left: 30px;
     align-items: start;
 }
 
-.zr-semantic-panel--contents .bp3-tab-list > *:not(.bp3-flex-expander):not(.bp3-button) {
+.zr-semantic-panel--main .bp3-tab-list > *:not(.bp3-flex-expander):not(.bp3-button) {
     line-height: 21px;
     margin-top: 10px;
     font-size: 0.9em;
 }
 
-.zr-semantic-panel--contents .bp3-tab[aria-selected="true"] {
-    font-weight: bold;
+.zr-semantic-panel--main .bp3-tab[aria-selected="true"] {
+    font-weight: 600;
+    box-shadow: none;
 }
 
-.zr-semantic-panel--contents .bp3-tab[aria-selected="false"] {
+.zr-semantic-panel--main .bp3-tab[aria-selected="false"] {
     opacity: 0.7;
 }
 
-.zr-semantic-panel--contents .bp3-tab[data-tab-id="is_reference"][aria-selected="true"],
-.zr-semantic-panel--contents .bp3-tab[data-tab-id="is_reference"]:not([aria-disabled="true"]):hover {
+.zr-semantic-panel--main .bp3-tab[data-tab-id="is_reference"][aria-selected="true"],
+.zr-semantic-panel--main .bp3-tab[data-tab-id="is_reference"]:not([aria-disabled="true"]):hover {
     color: #206fe6; /* zr-highlight */
 }
 
-.zr-semantic-panel--contents .bp3-tab[data-tab-id="is_citation"][aria-selected="true"],
-.zr-semantic-panel--contents .bp3-tab[data-tab-id="is_citation"]:not([aria-disabled="true"]):hover {
+.zr-semantic-panel--main .bp3-tab[data-tab-id="is_citation"][aria-selected="true"],
+.zr-semantic-panel--main .bp3-tab[data-tab-id="is_citation"]:not([aria-disabled="true"]):hover {
     color: #d9822b; /* zr-highlight-2 */
 }
 
-.zr-semantic-panel--contents .bp3-tab-indicator-wrapper .bp3-tab-indicator {
-    display: none;
-}
-
-.zr-semantic-panel--contents .bp3-tab .bp3-icon {
+.zr-semantic-panel--main .bp3-tab .bp3-icon {
     margin-right: 5px;
 }
 
-.zr-semantic-panel--contents .bp3-tab-panel {
+.zr-semantic-panel--main .bp3-tab-panel {
     margin-top: 5px;
 }
 
-.zr-semantic-panel--contents input[id*="semantic-search--"] {
+.zr-semantic-panel--main input[id*="semantic-search--"] {
     background: 0;
     margin-bottom: 10px;
     box-shadow: none;
@@ -47,10 +44,10 @@
     color: #818181;
 }
 
-.zr-semantic-panel--contents .zr-related-item--links {
+.zr-semantic-panel--main .zr-related-item--links {
     display: block;
 }
 
-.zr-semantic-panel--contents .zr-related-item--links span[data-service] {
+.zr-semantic-panel--main .zr-related-item--links span[data-service] {
     padding-right: 10px;
 }

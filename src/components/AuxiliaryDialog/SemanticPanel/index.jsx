@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Classes, Icon, InputGroup, Tabs, Tab, Menu, MenuItem } from "@blueprintjs/core";
+import { Button, Classes, Icon, InputGroup, Tabs, Tab, Menu, MenuItem, ButtonGroup } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
+import { Popover2 } from "@blueprintjs/popover2";
 
 import { getCitekeyPages } from "../../../roam";
 import { pluralize } from "../../../utils";
 import "./index.css";
-import { Popover2 } from "@blueprintjs/popover2";
 
 function searchEngine(query, items){
 	return items
@@ -58,9 +58,12 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 								: null}
 							{inLibrary 
 								? inGraph
-									? <Popover2 interactionKind="hover" content={openInMenu}>
-										<Button icon="symbol-circle" intent="success" className="zr-text-small" minimal={true} small={true} text={"@" + inLibrary.key} />
-									</Popover2>
+									? <ButtonGroup>
+										<Button intent="success" className={[Classes.ACTIVE, "zr-text-small"].join(" ")} minimal={true} small={true} text={"@" + inLibrary.key} />
+										<Popover2 interactionKind="hover" placement="right_start" lazy={true} content={openInMenu}>
+											<Button icon="caret-right" intent="success" />
+										</Popover2>
+									</ButtonGroup>
 									: <Button icon="plus" className="zr-text-small" minimal={true} small={true} text={"@" + inLibrary.key} />
 								: <Button icon="inheritance" intent="primary" className="zr-text-small" minimal={true} small={true} text="Add to Zotero" />}
 						</span>

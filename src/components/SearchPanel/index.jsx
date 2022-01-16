@@ -328,13 +328,16 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
 
+		const searchScope = <span id={dialogLabel} className="zr-search-scope">
+			Zotero Library
+			<Icon icon="chevron-right" />
+		</span>;
+
+		const closeButton = <Button className={Classes.MINIMAL} icon="cross" onClick={handleClose} />;
+
 		return (
 			<div className="zr-querylist">
 				<div className="header-bottom">
-					<span id={dialogLabel} className="zr-search-scope">
-            Zotero Library
-						<Icon icon="chevron-right" />
-					</span>
 					<InputGroup
 						className={(Classes.INPUT, Classes.FILL)}
 						id="zotero-roam-search-autocomplete"
@@ -345,6 +348,8 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 						onKeyDown={handleKeyDown}
 						onKeyUp={handleKeyUp}
 						inputRef={searchbar}
+						leftElement={searchScope}
+						rightElement={closeButton}
 					/>
 				</div>
 				{selectedItem ? <SelectedItem item={selectedItem} />
@@ -374,14 +379,8 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			lazy={false}
 			onClose={handleClose}
 			onOpening={handleOpen}
-			mainPanel={<>
-				<div className="header-content">
-					<div className="header-right">
-						<div className="controls-top">
-							<Button className={Classes.MINIMAL} icon="small-cross" onClick={handleClose} />
-						</div>
-					</div>
-				</div>
+			portalTarget={portalTarget}
+			mainPanel={
 				<QueryList
 					initialContent={null}
 					items={items}
@@ -391,9 +390,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					onItemSelect={handleItemSelect}
 					onQueryChange={handleQueryChange}
 					query={query}
-				/>
-			</>}
-			portalTarget={portalTarget}
+				/>}
 			sidePanel=""
 		/>
 	);

@@ -51,7 +51,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 		show
 	} = props;
 
-	const dialog_class = useMemo(() => "zr-auxiliary-dialog--" + dialogClass, []);
+	const dialog_class = useMemo(() => "zr-auxiliary-dialog--" + dialogClass, [dialogClass]);
 
 	const dialogContents = useMemo(() => {
 		let { title, type } = show;
@@ -64,7 +64,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 
 		if(["is_citation", "is_reference"].includes(type)){
 			let semanticProps = {
-				panelProps,
+				...panelProps,
 				items
 			};
 			return (
@@ -72,7 +72,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 			);
 		} else {
 			let relatedProps = {
-				panelProps,
+				...panelProps,
 				items: simplifyRelatedItems(items),
 				sort: type == "added_on" ? "added" : "meta"
 			};
@@ -80,7 +80,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 				<RelatedPanel {...relatedProps} />
 			);
 		}
-	}, [show.type, show.title, items, onClose]);
+	}, [show, items, onClose]);
 
 	return (
 		createPortal(
