@@ -344,7 +344,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 		return (
 			<>
 				<Icon icon="citation" intent="primary" />
-				<span className={ Classes.TEXT }>{pluralize(references.length, "reference")}</span>
+				<span>{pluralize(references.length, "reference")}</span>
 			</>
 		);
 	}, [references.length]);
@@ -359,7 +359,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 	}, [citations.length]);
 
 	return (
-		<>
+		<div className="zr-semantic-panel--contents">
 			<Tabs id="zr-semantic-panel" SelectedTabId={isActiveTab} onChange={selectTab}>
 				<Tab id="is_reference" 
 					panel={<SemanticQuery
@@ -381,7 +381,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 				<h5 className="panel-tt" id={ariaLabelledBy}>{title}</h5>
 				<Button icon="cross" minimal={true} onClick={onClose} />
 			</Tabs>
-		</>
+		</div>
 	);
 });
 SemanticPanel.propTypes = {
