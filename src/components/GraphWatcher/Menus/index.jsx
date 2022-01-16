@@ -307,7 +307,7 @@ function RelatedItemsBar(props) {
 						? <AuxiliaryDialog className="citations" 
 							ariaLabelledBy={"zr-aux-dialog--" + title}
 							show={isShowing} 
-							items={(isShowing.type == "is_reference" ? cleanSemanticData.references : cleanSemanticData.citations) || []}
+							items={cleanSemanticData}
 							isOpen={isDialogOpen} 
 							portalTarget={extensionPortal} 
 							onClose={closeDialog} />

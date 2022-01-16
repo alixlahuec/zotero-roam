@@ -1,11 +1,12 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
-import { Button, Classes, Dialog } from "@blueprintjs/core";
+import { Button, Classes, Dialog, InputGroup, Tabs, Tab } from "@blueprintjs/core";
 
 import "./index.css";
 import { makeTimestamp, pluralize } from "../../utils";
 import { getCitekeyPages } from "../../roam";
+import { QueryList } from "@blueprintjs/select";
 
 /** Formats a list of items for display in AuxiliaryDialog
  * @param {Object[]} items - The list of items to format 
@@ -48,7 +49,18 @@ function sortItems(items, sort = "meta"){
 	return items.sort((a,b) => (a[`${sort}`].toLowerCase() < b[`${sort}`].toLowerCase() ? -1 : 1));
 }
 
-function RelatedBy(props){
+function searchEngine(query, items){
+	return items
+		.filter(it => it.title.toLowerCase().includes(query.toLowerCase()));
+}
+
+function listItemRenderer(item, _itemProps, type) {
+	// let { handleClick, modifiers, query } = itemProps;
+
+	return <RelatedSemantic key={item.doi} item={item} type={type} inGraph={item.inGraph} />;
+}
+
+const RelatedBy = React.memo(function RelatedBy(props) {
 	const { items, type, sort, title, onClose, ariaLabelledBy } = props;
 	const [isShowingAllAbstracts, setShowingAllAbstracts] = useState(false);
 
@@ -57,7 +69,7 @@ function RelatedBy(props){
 	}, [isShowingAllAbstracts]);
 
 	const sortedItems = useMemo(() => {
-		return sortItems(items, sort);
+		return ["is_reference", "is_citation"].includes(type) ? items : sortItems(items, sort);
 	}, [items]);
 
 	const relationship = useMemo(() => {
@@ -113,18 +125,13 @@ function RelatedBy(props){
 							return (
 								<RelatedItem key={[it.location, it.key].join("-")} inGraph={inGraph} allAbstractsShown={isShowingAllAbstracts} item={it} type={type} />
 							);})
-						: sortedItems.map(it => {
-							let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
-							return (
-								<RelatedSemantic key={it.doi} item={it} type={type} inGraph={inGraph} />
-							);
-						})
+						: <SemanticPanel roamCitekeys={roamCitekeys} items={sortedItems} type={type} />
 					}
 				</ul>
 			</div>
 		</>
 	);
-}
+});
 RelatedBy.propTypes = {
 	items: PropTypes.array,
 	type: PropTypes.oneOf(["added_on", "has_abstract", "has_tag", "is_citation", "is_reference"]),
@@ -225,16 +232,17 @@ const RelatedSemantic = React.memo(function RelatedSemantic(props) {
 							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 						</div>
 						<span className="zr-related-item-contents--actions">
-							{item.url
+							{item.url && !inLibrary
 								? <a href={item.url} target="_blank" rel="noreferrer"
-									className={[ Classes.TEXT_MUTED, "zr-text-small", "zotero-roam-citation-identifier-link"].join("")} 
+									zr-role="item-url"
+									className={[ Classes.TEXT_MUTED, "zr-text-small"].join(" ")} 
 								>{item.doi || "Semantic Scholar"}</a>
 								: null}
 							{inGraph
-								? <Button icon="symbol-circle" intent="success" className="zr-text-small" minimal={true} small={true} text="Go to page" />
+								? <Button icon="symbol-circle" intent="success" className="zr-text-small" minimal={true} small={true} text="Go to Roam page" />
 								: inLibrary
 									? <Button icon="plus" className="zr-text-small" minimal={true} small={true} text={"@" + inLibrary.key} />
-									: <Button icon="inheritance" intent="primary" className={["zotero-roam-citation-add-import", "zr-text-small"].join(" ")} minimal={true} small={true} text="Add to Zotero" />}
+									: <Button icon="inheritance" intent="primary" className="zr-text-small" minimal={true} small={true} text="Add to Zotero" />}
 						</span>
 					</div>
 				</div>
@@ -258,6 +266,118 @@ RelatedSemantic.propTypes = {
 		inLibrary: PropTypes.oneOf([PropTypes.object, false])
 	}),
 	inGraph: PropTypes.oneOf([PropTypes.string, false])
+};
+
+const SemanticQuery = React.memo(function SemanticQuery(props) {
+	const { items, type } = props;
+	const [query, setQuery] = useState();
+	const searchbar = useRef();
+
+	const defaultContent = useMemo(() => {
+		return items.map(it => <RelatedSemantic key={it.doi} item={it} type={type} inGraph={it.inGraph} />);
+	}, [items, type]);
+
+	const handleQueryChange = useCallback((query) => {
+		setQuery(query);
+		// debounce
+	}, []);
+
+	const itemRenderer = useCallback((item, itemProps) => {
+		return listItemRenderer(item, itemProps, type);
+	}, [type]);
+
+	function listRenderer(listProps) {
+		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
+
+		return (
+			<>
+				<InputGroup
+					id={"zr-semantic-panel__search-" + type}
+					placeholder="Search by title"
+					spellCheck="false"
+					autoComplete="off"
+					onChange={handleQueryChange}
+					onKeyDown={handleKeyDown}
+					onKeyUp={handleKeyUp}
+					inputRef={searchbar}
+				/>
+				{listProps.itemList}
+			</>
+		);
+	}
+
+	return(
+		<QueryList 
+			initialContent={defaultContent}
+			items={items}
+			itemListPredicate={searchEngine}
+			renderer={listRenderer}
+			itemRenderer={itemRenderer}
+			onQueryChange={handleQueryChange}
+			query={query}
+		/>
+	);
+});
+SemanticQuery.propTypes = {
+	items: PropTypes.arrayOf(PropTypes.object),
+	type: PropTypes.oneOf(["is_citation", "is_reference"])
+};
+
+const SemanticPanel = React.memo(function SemanticPanel(props) {
+	const { roamCitekeys, items, type} = props;
+	const [isActiveTab, setActiveTab] = useState(type);
+
+	const selectTab = useCallback((newtab, _prevtab, _event) => {
+		setActiveTab(newtab);
+	}, []);
+
+	const references = useMemo(() => {
+		return items.references.map(it => {
+			let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
+			return {
+				...it,
+				inGraph
+			};
+		});
+	}, [roamCitekeys, items.references]);
+
+	const citations = useMemo(() => {
+		return items.citations.map(it => {
+			let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
+			return {
+				...it,
+				inGraph
+			};
+		});
+	}, [roamCitekeys, items.citations]);
+
+	return (
+		<Tabs id="zr-semantic-panel" SelectedTabId={isActiveTab} onChange={selectTab}>
+			<Tab id="is_reference" 
+				panel={<SemanticQuery
+					items={references}
+					type="is_reference"
+				/>} 
+				disabled={references.length == 0}
+				title={pluralize(references.length, "reference")}
+			/>
+			<Tab id="is_citation" 
+				panel={<SemanticQuery
+					items={citations}
+					type="is_citation"
+				/>}
+				disabled={citations.length == 0}
+				title={pluralize(citations.length, "citing paper")}
+			/>
+			<Tabs.Expander />
+			<Button icon="cross" />
+		</Tabs>
+	);
+});
+SemanticPanel.propTypes = {
+	roamCitekeys: PropTypes.instanceOf(Map),
+	items: PropTypes.arrayOf(PropTypes.object),
+	type: PropTypes.oneOf(["is_citation", "is_reference"])
 };
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
