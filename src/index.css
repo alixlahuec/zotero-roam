@@ -28,11 +28,6 @@ h5.panel-tt[list-type="citations"]{color:#d9822b;}
 
 #zotero-roam-citations-autocomplete{flex:1 0 100%;}
 
-#zotero-roam-search-autocomplete::placeholder, #zotero-roam-citations-autocomplete::placeholder{opacity:0.6;}
-#zotero-roam-search-autocomplete:focus, #zotero-roam-citations-autocomplete:focus, #zotero-roam-tagselector_citations:focus{box-shadow:none;}
-:not(.bp3-dark) #zotero-roam-search-autocomplete, :not(.bp3-dark) #zotero-roam-citations-autocomplete{border-bottom: 1px #ececec solid;color: #717171;}
-.bp3-dark #zotero-roam-search-autocomplete, .bp3-dark #zotero-roam-citations-autocomplete{border-bottom: 1px #2f4d75 solid;}
-
 li[aria-selected="true"] > .bp3-menu-item, .zotero-roam-tagselector_option[aria-selected="true"]{background-color:#e7f3f7;}
 .bp3-dark li[aria-selected="true"]{background-color:#191919;}
 #zotero-roam-citations-pagination > .bp3-button-group{margin:5px 0;}

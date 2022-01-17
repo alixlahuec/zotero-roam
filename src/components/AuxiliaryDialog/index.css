@@ -15,7 +15,8 @@
     font-size: 0.9em;
 }
 
-.bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu {
+.bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu,
+.bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div > ul {
     max-height: 70vh;
     overflow-y: scroll;
 }
@@ -29,7 +30,6 @@
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="toggle-abstracts"] {
-    background: #d6e0e6;
     margin: 0px 15px;
 }
 .bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="abstract-toggle"] {
@@ -54,7 +54,13 @@
 .zr-related-item-contents--actions button .bp3-button-text {overflow-wrap: anywhere;}
 .zr-related-item-contents--actions [zr-role="item-url"] {display:block;}
 
-.zr-related-item-contents .bp3-tag {opacity: 0.6;padding-right: 8px;}
+.zr-related-item-contents .zr-related-item--intents {margin: 5px 0px;}
+.zr-related-item-contents .zr-related-item--intents .bp3-tag[data-semantic-intent] {
+    background-color: #d8c4ff;
+    color: #a05fba;
+    opacity: 0.6;
+    margin-right: 8px;
+}
 
 .zr-related-item--abstract {
     background: #e8ecf6;

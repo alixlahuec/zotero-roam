@@ -328,7 +328,10 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
 
-		const leftElem = <Tag id={dialogLabel} intent="primary" minimal={true} large={true} multiline={true}>Zotero Library</Tag>;
+		const leftElem = <Icon id={dialogLabel} title="Search in Zotero items"
+			htmlTitle="Search in Zotero items"
+			intent="primary"
+			icon="learning" />;
 
 		const rightElem = <>
 			<Switch className='zr-quick-copy' label='Quick Copy' checked={quickCopyActive} onChange={toggleQuickCopy} />

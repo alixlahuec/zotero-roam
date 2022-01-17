@@ -117,7 +117,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 			<div className="header-content">
 				<div className="header-left">
 					<h5 id={ariaLabelledBy} className="panel-tt">{pluralize(sortedItems.length, relationship.string, relationship.suffix)}</h5>
-					<Button className={[Classes.ACTIVE, "zr-text-small"].join(" ")} zr-role="toggle-abstracts" icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
+					<Button className="zr-text-small" zr-role="toggle-abstracts" icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
 				</div>
 				<div className={["header-right", "zr-auxiliary"].join(" ")}>
 					<Button icon="small-cross" minimal={true} onClick={onClose} />

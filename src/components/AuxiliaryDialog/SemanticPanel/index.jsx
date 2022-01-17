@@ -4,7 +4,7 @@ import { Button, Classes, Icon, InputGroup, Tabs, Tab, Tag, Menu, MenuItem } fro
 import { QueryList } from "@blueprintjs/select";
 import { Popover2 } from "@blueprintjs/popover2";
 
-import { getCitekeyPages } from "../../../roam";
+import { getCitekeyPages, openInSidebarByUID, openPageByUID } from "../../../roam";
 import { pluralize, sortItems } from "../../../utils";
 import "./index.css";
 
@@ -23,18 +23,56 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 	const { item, type, inGraph } = props;
 	const { inLibrary } = item;
 
-	const openInMenu = useMemo(() => {
-		if(!inGraph){
+	const popoverMenuProps = useMemo(() => {
+		return {
+			interactionKind: "hover",
+			placement: "right-start",
+			lazy: true
+		};
+	}, []);
+
+	const actionsMenu = useMemo(() => {
+		if(!inLibrary){
 			return null;
+		} else if(!inGraph){
+			return (
+				<Menu>
+					<MenuItem className="zr-text-small" icon="add" text="Import metadata" />
+					<MenuItem className="zr-text-small" icon="inheritance" text="Import & open in sidebar" />
+				</Menu>
+			);
 		} else {
 			return (
 				<Menu>
-					<MenuItem icon="arrow-right" text="Go to Roam page" data-title={"@" + inLibrary.key} />
-					<MenuItem icon="inheritance" text="Open in sidebar" data-uid={inGraph} />
+					<MenuItem className="zr-text-small" 
+						icon="arrow-right" 
+						text="Go to Roam page"
+						onClick={() => openPageByUID(inGraph)} />
+					<MenuItem className="zr-text-small" 
+						icon="inheritance" 
+						text="Open in sidebar"
+						onClick={() => openInSidebarByUID(inGraph)} />
 				</Menu>
 			);
 		}
-	}, [item, inGraph]);
+	}, [item, inLibrary, inGraph]);
+
+	const itemActions = useMemo(() => {
+		if(!inLibrary){
+			return (
+				<Button text="Add to Zotero" className="zr-text-small" icon="inheritance" intent="primary" minimal={true} small={true} />
+			);
+		} else {
+			let buttonProps = inGraph
+				? {intent: "success", onClick: () => openPageByUID(inGraph)}
+				: {};
+			return (
+				<Popover2 {...popoverMenuProps} content={actionsMenu}>
+					<Button text={"@" + inLibrary.key} className="zr-text-small" rightIcon="chevron-right" minimal={true} small={true} {...buttonProps} />
+				</Popover2>
+			);
+		}
+	}, [inGraph, inLibrary, popoverMenuProps, actionsMenu]);
 
 	return (
 		<li className="zr-related-item" data-semantic-type={type}>
@@ -51,6 +89,15 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 								? <Icon icon="trending-up" color="#f8c63a" htmlTitle="This item was classified as influential by Semantic Scholar" />
 								: null}
 							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
+							<div className="zr-related-item--links">
+								{Object.keys(item.links).map((key) => {
+									return (
+										<span key={key} data-service={key}>
+											<a href={item.links[key]} className="zr-text-small" target="_blank" rel="noreferrer">{key.split("-").map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(" ")}</a>
+										</span>
+									);
+								})}
+							</div>
 						</div>
 						<span className="zr-related-item-contents--actions">
 							{item.url && !inLibrary
@@ -59,26 +106,13 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 									className={[ Classes.TEXT_MUTED, "zr-text-small"].join(" ")} 
 								>{item.doi || "Semantic Scholar"}</a>
 								: null}
-							{inLibrary 
-								? inGraph
-									? <Popover2 interactionKind="hover" placement="right-start" lazy={true} content={openInMenu}>
-										<Button rightIcon="caret-right" intent="success" className="zr-text-small" minimal={true} small={true} text={"@" + inLibrary.key} />
-									</Popover2>
-									: <Button icon="plus" className="zr-text-small" minimal={true} small={true} text={"@" + inLibrary.key} />
-								: <Button icon="inheritance" intent="primary" className="zr-text-small" minimal={true} small={true} text="Add to Zotero" />}
+							{itemActions}
 						</span>
 					</div>
-					{item.intent.length > 0
-						? item.intent.map(int => <Tag key={int} minimal={true}>{int.charAt(0).toUpperCase() + int.slice(1)}</Tag>)
-						: null}
-					<div className="zr-related-item--links">
-						{Object.keys(item.links).map((key) => {
-							return (
-								<span key={key} data-service={key}>
-									<a href={item.links[key]} className="zr-text-small" target="_blank" rel="noreferrer">{key.split("-").map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(" ")}</a>
-								</span>
-							);
-						})}
+					<div className="zr-related-item--intents">
+						{item.intent.length > 0
+							? item.intent.map(int => <Tag key={int} data-semantic-intent={int} minimal={true}>{int.charAt(0).toUpperCase() + int.slice(1)}</Tag>)
+							: null}
 					</div>
 				</div>
 			</div>
