@@ -10,6 +10,8 @@ import {
 	TagMenuFactory 
 } from "./Menus";
 import Autocomplete from "./Autocomplete";
+import InlineCitekeys from "./InlineCitekeys";
+import { getCitekeyPages } from "../../roam";
 
 class GraphWatcher extends PureComponent {
 	constructor(props){
@@ -17,7 +19,8 @@ class GraphWatcher extends PureComponent {
 		this.state = {
 			citekeyMenus: [],
 			dnpMenus: [],
-			tagMenus: []
+			tagMenus: [],
+			roamCitekeys: getCitekeyPages()
 		};
 		this.updatePageElements = this.updatePageElements.bind(this);
 	}
@@ -49,14 +52,21 @@ class GraphWatcher extends PureComponent {
 	}
 
 	render() {
-		let { citekeyMenus, dnpMenus, tagMenus } = this.state;
-		let { dataRequests, autocomplete, extensionPortal } = this.props;
+		let { citekeyMenus, dnpMenus, tagMenus, roamCitekeys } = this.state;
+		let { dataRequests, autocomplete, renderInline, portalId } = this.props;
+
+		let sharedProps = {
+			dataRequests,
+			portalId,
+			roamCitekeys
+		};
         
 		return <>
-			{citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} dataRequests={dataRequests} extensionPortal={extensionPortal} /> : null}
-			{dnpMenus ? <DNPMenuFactory menus={dnpMenus} dataRequests={dataRequests} extensionPortal={extensionPortal} /> : null}
-			{tagMenus ? <TagMenuFactory menus={tagMenus} dataRequests={dataRequests} extensionPortal={extensionPortal} /> : null}
+			{citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} {...sharedProps} /> : null}
+			{dnpMenus ? <DNPMenuFactory menus={dnpMenus} {...sharedProps} /> : null}
+			{tagMenus ? <TagMenuFactory menus={tagMenus} {...sharedProps} /> : null}
 			{autocomplete.trigger ? <Autocomplete config={autocomplete} dataRequests={dataRequests} /> : null}
+			<InlineCitekeys dataRequests={dataRequests} portalId={portalId} renderInline={renderInline} />
 		</>;
 	}
 
@@ -81,11 +91,18 @@ class GraphWatcher extends PureComponent {
 			}
 		});
 	}
+
+	updateRoamCitekeys(){
+		this.setState({
+			roamCitekeys: getCitekeyPages()
+		});
+	}
 }
 GraphWatcher.propTypes = {
-	dataRequests: PropTypes.array,
 	autocomplete: PropTypes.object,
-	extensionPortal: PropTypes.string
+	dataRequests: PropTypes.array,
+	portalId: PropTypes.string,
+	renderInline: PropTypes.bool,
 };
 
 export default GraphWatcher;

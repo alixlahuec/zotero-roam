@@ -114,20 +114,23 @@ function cleanSemanticItem(item){
 /** Formats a list of Semantic Scholar entries for display
  * @param {ZoteroItem[]|Object[]} datastore - The list of Zotero items to match against 
  * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to format 
+ * @param {Map} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
  * @returns {{
  * citations: Object[], 
  * references: Object[],
  * backlinks: Object[]}} The formatted list
  */
-function cleanSemantic(datastore, semantic){
+function cleanSemantic(datastore, semantic, roamCitekeys){
 	// Note: DOIs from the Semantic Scholar queries are sanitized at fetch
 	let { citations, references } = semantic;
 
 	let clean_citations = citations.map((cit) => {
 		let cleanProps = cleanSemanticItem(cit);
 		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == cit.doi) || false;
+		let inGraph = inLibrary && roamCitekeys.has("@" + inLibrary.key) ? roamCitekeys.get("@" + inLibrary.key) : false;
 		return {
 			...cleanProps,
+			inGraph,
 			inLibrary,
 			_type: "citing"
 		};
@@ -136,8 +139,10 @@ function cleanSemantic(datastore, semantic){
 	let clean_references = references.map((ref) => {
 		let cleanProps = cleanSemanticItem(ref);
 		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == ref.doi) || false;
+		let inGraph = inLibrary && roamCitekeys.has("@" + inLibrary.key) ? roamCitekeys.get("@" + inLibrary.key) : false;
 		return {
 			...cleanProps,
+			inGraph,
 			inLibrary,
 			_type: "cited"
 		};

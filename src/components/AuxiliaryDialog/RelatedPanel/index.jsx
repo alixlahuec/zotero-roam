@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { Button, Classes } from "@blueprintjs/core";
 
 import { pluralize, sortItems } from "../../../utils";
-import { getCitekeyPages } from "../../../roam";
 
 const RelatedItem = React.memo(function RelatedItem(props) {
 	const { item, type, inGraph, allAbstractsShown } = props;
@@ -110,13 +109,15 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 		}
 	}, [type]);
 
-	const roamCitekeys = getCitekeyPages();
+	const panelLabel = useMemo(() => {
+		return pluralize(sortedItems.length, relationship.string, relationship.suffix);
+	}, sortedItems.length, relationship);
 
 	return (
 		<>
 			<div className="header-content">
 				<div className="header-left">
-					<h5 id={ariaLabelledBy} className="panel-tt">{pluralize(sortedItems.length, relationship.string, relationship.suffix)}</h5>
+					<h5 id={ariaLabelledBy} className="panel-tt">{panelLabel}</h5>
 					<Button className="zr-text-small" zr-role="toggle-abstracts" icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} minimal={true} onClick={toggleAbstracts}>{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts</Button>
 				</div>
 				<div className={["header-right", "zr-auxiliary"].join(" ")}>
@@ -126,9 +127,8 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 			<div className="rendered-div">
 				<ul className={Classes.LIST_UNSTYLED}>
 					{sortedItems.map(it => {
-						let inGraph = roamCitekeys.has("@" + it.key) ? roamCitekeys.get("@" + it.key) : false;
 						return (
-							<RelatedItem key={[it.location, it.key].join("-")} inGraph={inGraph} allAbstractsShown={isShowingAllAbstracts} item={it} type={type} />
+							<RelatedItem key={[it.location, it.key].join("-")} inGraph={it.inGraph} allAbstractsShown={isShowingAllAbstracts} item={it} type={type} />
 						);
 					})
 					}
@@ -138,12 +138,13 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 	);
 });
 RelatedPanel.propTypes = {
+	ariaLabelledBy: PropTypes.string,
 	items: PropTypes.array,
-	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"]),
+	onClose: PropTypes.func,
+	portalId: PropTypes.string,
 	sort: PropTypes.oneOf(["added", "meta"]),
 	title: PropTypes.string,
-	onClose: PropTypes.func,
-	ariaLabelledBy: PropTypes.string,
+	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
 };
 
 export default RelatedPanel;

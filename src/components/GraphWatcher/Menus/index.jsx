@@ -1,428 +1,18 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
-import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
 
-import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize, readDNP } from "../../../utils";
-import { queryItems, querySemantic } from "../../../queries";
-import ButtonLink from "../../ButtonLink";
-import SciteBadge from "../../SciteBadge";
-import AuxiliaryDialog from "../../AuxiliaryDialog";
+import { queryItems } from "../../../queries";
+
+import CitekeyMenu from "./CitekeyMenu";
+import DNPMenu from "./DNPMenu";
+import TagMenu from "./TagMenu";
+
+import { addPageMenus, cleanRelatedItem, findPageMenus } from "./utils";
 import "./index.css";
-import { menuPrefix, menuClasses, showClasses } from "../classes";
-
-const addPageMenus = () => {
-	let newPages = Array.from(document.querySelectorAll("h1.rm-title-display"))
-		.filter(page => !(page.parentElement.querySelector(`[class*=${menuPrefix}]`)));
-	for(const page of newPages) {
-		let title = page.querySelector("span") ? page.querySelector("span").innerText : page.innerText;
-		// DEP: page menu trigger setting
-		// TODO: add Roam page UIDs as data-uid below
-		let menu = document.createElement("div");
-		menu.setAttribute("data-title", title);
-		// Case 1 (ref-citekey) : on-page menu
-		if(title.startsWith("@")){
-			menu.classList.add(menuClasses.citekey);
-			menu.setAttribute("data-citekey", title.slice(1));
-		} else if(title.match(/(.+) ([0-9]+).{2}, ([0-9]{4})/g)) {
-			// Case 2 (DNP) : "XX items added"
-			let dnp_date = readDNP(title, { as_date: false });
-			menu.classList.add(menuClasses.dnp);
-			menu.setAttribute("data-dnp-date", JSON.stringify(dnp_date));
-		} else {
-			// Case 3 (all other pages) : "XX abstracts", "YY tagged items"
-			menu.classList.add(menuClasses.tag);
-		}
-
-		page.insertAdjacentElement("afterend", menu);
-	}
-};
-
-const findPageMenus = () => {
-	return {
-		citekeyMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.citekey}]`)),
-		dnpMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.dnp}]`)),
-		tagMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.tag}]`))
-	};
-};
-
-function BacklinksItem(props) {
-	const { _type, inLibrary: item } = props.entry;
-	const { key, data, meta } = item;
-	const pub_year = meta.parsedDate ? new Date(meta.parsedDate).getUTCFullYear() : "";
-	const pub_type = _type == "cited" ? "reference" : "citation";
-
-	return (
-		<li className="zr-backlink-item" 
-			data-backlink-type={pub_type} 
-			data-key={"@" + key} 
-			data-item-type={data.itemType} 
-			data-item-year={pub_year}
-		>
-			<div className="zr-backlink-item--year">{pub_year}</div>
-			<div className="zr-backlink-item--info">
-				<span zr-role="item-authors" className="zotero-roam-search-item-authors zr-highlight">{meta.creatorSummary || ""}</span>
-				<span zr-role="item-publication" className="zr-secondary">{data.publicationTitle || data.bookTitle || data.university || ""}</span>
-				<span zr-role="item-title" className="zotero-roam-search-item-title">{data.title}</span>
-			</div>
-			<div className="zr-backlink-item--state">
-				<Button className="zr-text-small"
-					minimal={true}
-					icon="plus"
-					aria-label={"Add & open @" + key + " in the sidebar"}
-				>
-					{"@" + key}
-				</Button>
-			</div>
-		</li>
-	);
-}
-BacklinksItem.propTypes = {
-	entry: PropTypes.object
-};
-
-const Backlinks = React.memo(function Backlinks(props) {
-	const { items, origin, isOpen } = props;
-
-	if(items.length == 0){
-		return null;
-	} else {
-		let [...itemList] = items;
-		const sortedItems = itemList.sort((a,b) => compareItemsByYear(a.inLibrary, b.inLibrary));
-		const references = sortedItems.filter(it => it._type == "cited");
-		const citations = sortedItems.filter(it => it._type == "citing");
-
-		const refList = references.length > 0 
-			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="references">
-				{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} />)}
-			</ul> 
-			: null;
-		const citList = citations.length > 0 
-			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="citations">
-				{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} />)}
-			</ul> 
-			: null;
-		const separator = <span className="backlinks-list_divider"><Tag minimal={true} multiline={true}>{origin}</Tag><hr /></span>;
-
-		return (
-			<Collapse isOpen={isOpen} keepChildrenMounted={true}>
-				<ul className={[ Classes.LIST_UNSTYLED, "zr-citekey-menu--backlinks"].join(" ")}>
-					{refList}
-					{separator}
-					{citList}
-				</ul>
-			</Collapse>
-		);
-	}
-});
-Backlinks.propTypes = {
-	items: PropTypes.array,
-	origin: PropTypes.string,
-	isOpen: PropTypes.bool
-};
-
-function RelatedItemsBar(props) {
-	const { doi, title, origin, items, dialogProps } = props;
-	const { extensionPortal } = dialogProps;
-	const { isLoading, isError, data = {}, error } = querySemantic(doi);
-	
-	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
-	const [isDialogOpen, setDialogOpen] = useState(false);
-	const [isShowing, setShowing] = useState({title, type: "is_reference"});
-
-	const toggleBacklinks = useCallback(() => {
-		setBacklinksListOpen(!isBacklinksListOpen);
-	}, [isBacklinksListOpen]);
-
-	const openDialog = useCallback(() => {
-		setDialogOpen(true);
-	}, []);
-
-	const closeDialog = useCallback(() => {
-		setDialogOpen(false);
-	}, []);
-
-	const showReferences = useCallback(() => {
-		setShowing({
-			title,
-			type: "is_reference"
-		});
-		openDialog();
-	}, [title]);
-
-	const showCitations = useCallback(() => {
-		setShowing({
-			title,
-			type: "is_citation"
-		});
-		openDialog();
-	}, [title]);
-
-	// Only select items with valid DOIs to reduce dataset size
-	const itemsWithDOIs = useMemo(() => items.filter(it => parseDOI(it.data.DOI)), [items]);
-
-	const refCount = data.references?.length || null;
-	const citCount = data.citations?.length || null;
-
-	const cleanSemanticData = useMemo(() => {
-		let { citations = [], references = [] } = data;
-		return cleanSemantic(itemsWithDOIs, { citations, references });
-	}, [data, itemsWithDOIs]);
-
-	const showBacklinksButtonProps = useMemo(() => {
-		return cleanSemanticData.backlinks.length == 0
-			? {
-				disabled: true,
-				icon: null,
-				text: "No related library items"
-			}
-			: {
-				icon: isBacklinksListOpen ? "caret-down" : "caret-right",
-				text: pluralize(cleanSemanticData.backlinks.length, "related library item")
-			};
-	}, [cleanSemanticData.backlinks.length > 0, isBacklinksListOpen]);
-
-	return (
-		<div className="zotero-roam-page-menu-citations">
-			{isError
-				? <Callout intent="danger">
-                Citations and references could not be retrieved from SemanticScholar :
-					{error}
-				</Callout>
-				:
-				<>
-					<ButtonGroup minimal={true} fill={true}>
-						<Button className={ showClasses.references } loading={isLoading} onClick={showReferences} icon="citation" intent="primary">{ pluralize(refCount, "reference") }</Button>
-						<Button className={ showClasses.citations } loading={isLoading} onClick={showCitations} icon="chat" intent="warning" >{ pluralize(citCount, "citation") }</Button>
-						<Button className={ showClasses.backlinks } loading={isLoading} onClick={toggleBacklinks} {...showBacklinksButtonProps} ></Button>
-					</ButtonGroup>
-					{refCount + citCount > 0
-						? <AuxiliaryDialog className="citations" 
-							ariaLabelledBy={"zr-aux-dialog--" + title}
-							show={isShowing} 
-							items={cleanSemanticData}
-							isOpen={isDialogOpen} 
-							portalTarget={extensionPortal} 
-							onClose={closeDialog} />
-						: null}
-					<Backlinks items={cleanSemanticData.backlinks} origin={origin} isOpen={isBacklinksListOpen} />
-				</>
-			}
-		</div>
-	);
-}
-RelatedItemsBar.propTypes = {
-	doi: PropTypes.string,
-	title: PropTypes.string,
-	origin: PropTypes.string,
-	items: PropTypes.array,
-	dialogProps: PropTypes.shape({
-		extensionPortal: PropTypes.string
-	})
-};
-
-const CitekeyMenu = React.memo(function CitekeyMenu(props) {
-	const { item, itemList, extensionPortal } = props;
-	const { items, pdfs, notes } = itemList;
-
-	const doi = parseDOI(item.data.DOI);
-	const has_pdfs = pdfs.filter(pdf => pdf.data.parentItem == item.data.key && pdf.library.id == item.library.id);
-	const has_notes = notes.filter(note => note.data.parentItem == item.data.key && note.library.id == item.library.id);
-
-	const doiHeader = useMemo(() => {
-		return doi 
-			? <span className="zr-citekey-doi" data-doi={doi}><a href={"https://doi.org/" + doi} target="_blank" className={Classes.TEXT_MUTED} rel="noreferrer">{doi}</a></span> 
-			: null;
-	}, [doi]);
-    
-	const importNotes = has_notes ? <Button icon="comment">Import notes</Button> : null;
-	const pdfLinks = useMemo(() => {
-		if(has_pdfs.length == 0) {
-			return null;
-		} else {
-			return (
-				has_pdfs.map(pdf => {
-					let location = pdf.library.type == "group" ? `groups/${pdf.library.id}` : "library";
-					let href = (["linked_file", "imported_file", "imported_url"].includes(pdf.data.linkMode)) ? `zotero://open-pdf/${location}/items/${pdf.data.key}` : pdf.data.url;
-					return (
-						<ButtonLink linkClass={ Classes.MINIMAL }
-							zr-role="pdf-link"
-							key={pdf.key}
-							href={href}
-							icon="paperclip"
-							text={pdf.data.filename || pdf.data.title} />
-					);
-				})
-			);
-		}
-	}, has_pdfs);
-    
-	const open_zotero = useMemo(() => {
-		return (
-			<>
-				<ButtonLink icon="application" text="Open in Zotero" href={getLocalLink(item, { format: "target" })} />
-				<ButtonLink icon="cloud" text="Open in Zotero [Web library]" href={getWebLink(item, { format: "target" })} />
-			</>
-		);
-	},[item.library, item.data.key]);
-
-	const sciteBadge = useMemo(() => {
-		return doi ? <SciteBadge doi={doi} /> : null;
-	}, [doi]);
-
-	const ext_links = useMemo(() => {
-		let connectedPapersLink = <ButtonLink icon="layout" text="Connected Papers" href={"https://www.connectedpapers.com/" + (doi ? "api/redirect/doi/" + doi : "search?q=" + encodeURIComponent(item.data.title)) } />;
-		let semanticLink = doi ? <ButtonLink icon="bookmark" text="Semantic Scholar" href={"https://api.semanticscholar.org/" + doi} /> : null;
-		let googleScholarLink = <ButtonLink icon="learning" text="Google Scholar" href={"https://scholar.google.com/scholar?q=" + (doi || encodeURIComponent(item.data.title))} />;
-
-		return (
-			<>
-				{connectedPapersLink}
-				{semanticLink}
-				{googleScholarLink}
-			</>
-		);
-	}, [doi, item.data.title]);
-    
-	const relatedBar = useMemo(() => {
-		return doi
-			? <RelatedItemsBar doi={doi}
-				title={"@" + item.key}
-				origin={item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : ""} 
-				items={items}
-				dialogProps={{ extensionPortal}}
-			/>
-			: null;
-	}, [doi, item.key, item.meta.parsedDate, items, extensionPortal]);
-
-	return (
-		<>
-			{doiHeader}
-			<Card elevation={0} className="zr-citekey-menu">
-				<div className="zr-citekey-menu--header">
-					<ButtonGroup className="zr-citekey-menu--actions" minimal={true}>
-						<Button icon="add">Add metadata</Button>
-						{importNotes}
-						<Button icon="info-sign">View item information</Button>
-						{open_zotero}
-						{pdfLinks}
-						{ext_links}
-					</ButtonGroup>
-					{sciteBadge}
-				</div>
-				{relatedBar}
-			</Card>
-		</>
-	);
-});
-CitekeyMenu.propTypes = {
-	item: PropTypes.object,
-	itemList: PropTypes.array,
-	extensionPortal: PropTypes.string
-};
-
-function DNPMenu(props){
-	const { added, date, title, extensionPortal } = props;
-	const [isDialogOpen, setDialogOpen] = useState(false);
-
-	const hasAddedItems = added.length > 0;
-
-	const isShowing = useMemo(() => {
-		return {
-			date,
-			title,
-			type: "added_on"
-		};
-	}, [date]);
-
-	const openDialog = useCallback(() => {
-		setDialogOpen(true);
-	}, []);
-    
-	const closeDialog = useCallback(() => {
-		setDialogOpen(false);
-	}, []);
-
-	return (
-		<>
-			{hasAddedItems 
-				? <>
-					<Button minimal={true} icon="calendar" onClick={openDialog}>{pluralize(added.length, "item", " added")}</Button>
-					<AuxiliaryDialog className="added-on" 
-						isOpen={isDialogOpen}
-						show={isShowing} 
-						items={added} 
-						portalTarget={extensionPortal}
-						onClose={closeDialog}
-					/>
-				</>
-				: null}
-		</>
-	);
-}
-DNPMenu.propTypes = {
-	added: PropTypes.array,
-	date: PropTypes.date,
-	title: PropTypes.string,
-	extensionPortal: PropTypes.string
-};
-
-function TagMenu(props){
-	const { tagged = [], inAbstract = [], tag, extensionPortal } = props;
-	const [isDialogOpen, setDialogOpen] = useState(false);
-	const [isShowing, setShowing] = useState({});
-
-	const hasTaggedItems = tagged.length > 0;
-	const hasAbstracts = inAbstract.length > 0;
-
-	const showTagged = useCallback(() => {
-		setDialogOpen(true);
-		setShowing({
-			title: tag,
-			type: "with_tag"
-		});
-	}, [tag]);
-
-	const showAbstracts = useCallback(() => {
-		setDialogOpen(true);
-		setShowing({
-			title: tag,
-			type: "with_abstract"
-		});
-	}, [tag]);
-
-	const closeDialog = useCallback(() => {
-		setDialogOpen(false);
-	}, []);
-
-	return (
-		<>
-			{hasTaggedItems
-				? <Button minimal={true} icon="manual" onClick={showTagged}>{pluralize(tagged.length, "tagged item")}</Button>
-				: null}
-			{hasAbstracts
-				? <Button minimal={true} icon="manually-entered-data" onClick={showAbstracts}>{pluralize(inAbstract.length, "abstract")}</Button>
-				: null}
-			{hasTaggedItems || hasAbstracts
-				? <AuxiliaryDialog className="related"
-					isOpen={isDialogOpen}
-					show={isShowing} 
-					items={isShowing.type == "with_tag" ? tagged : inAbstract} 
-					portalTarget={extensionPortal}
-					onClose={closeDialog} />
-				: null}
-		</>
-	);
-}
-TagMenu.propTypes = {
-	tagged: PropTypes.array,
-	inAbstract: PropTypes.array,
-	tag: PropTypes.string,
-	extensionPortal: PropTypes.string
-};
 
 function CitekeyMenuFactory(props){
-	const { menus, dataRequests, extensionPortal } = props;
+	const { menus, dataRequests, portalId, roamCitekeys } = props;
 	const itemQueries = queryItems(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -460,7 +50,7 @@ function CitekeyMenuFactory(props){
 				.map((menu, i) => {
 					let { item, div } = menu;
 					return (
-						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} extensionPortal={extensionPortal} />, div)
+						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} portalId={portalId} roamCitekeys={roamCitekeys} />, div)
 					);
 				});
 		}
@@ -468,9 +58,15 @@ function CitekeyMenuFactory(props){
 
 	return citekeyMenus;
 }
+CitekeyMenuFactory.propTypes = {
+	menus: PropTypes.arrayOf(PropTypes.node,), 
+	dataRequests: PropTypes.array,
+	portalId: PropTypes.string,
+	roamCitekeys: PropTypes.instanceOf(Map)
+};
 
 function DNPMenuFactory(props){
-	const { menus, dataRequests, extensionPortal } = props;
+	const { menus, dataRequests, portalId, roamCitekeys } = props;
 	const itemQueries = queryItems(dataRequests, { 
 		select: (datastore) => datastore.data.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType)),
 		notifyOnChangeProps: ["data"]
@@ -484,24 +80,32 @@ function DNPMenuFactory(props){
 			return menus.map(menu => {
 				let title = menu.getAttribute("data-title");
 				let dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date"))).toDateString();
-				let added = items.filter(it => new Date(it.data.dateAdded).toDateString() == dnp_date);
+				let added = items
+					.filter(it => new Date(it.data.dateAdded).toDateString() == dnp_date)
+					.map(it => cleanRelatedItem(it, roamCitekeys));
 				return { div: menu, added, date: dnp_date, title};
 			})
 				.filter(menu => menu.added)
 				.map((menu, i) => {
 					let { added, date, div, title } = menu;
 					return (
-						createPortal(<DNPMenu key={i} date={date} title={title} added={added} extensionPortal={extensionPortal} />, div)
+						createPortal(<DNPMenu key={i} date={date} title={title} added={added} portalId={portalId} />, div)
 					);
 				});
 		}
-	}, [menus, items]);
+	}, [menus, items, roamCitekeys]);
 
 	return dnpPortals;
 }
+DNPMenuFactory.propTypes = {
+	menus: PropTypes.arrayOf(PropTypes.node,), 
+	dataRequests: PropTypes.array,
+	portalId: PropTypes.string,
+	roamCitekeys: PropTypes.instanceOf(Map)
+};
 
 function TagMenuFactory(props){
-	const { menus, dataRequests, extensionPortal } = props;
+	const { menus, dataRequests, portalId, roamCitekeys } = props;
 	const itemQueries = queryItems(dataRequests, { 
 		select: (datastore) => datastore.data.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType)),
 		notifyOnChangeProps: ["data"]
@@ -531,10 +135,10 @@ function TagMenuFactory(props){
 				let title = menu.getAttribute("data-title");
 				let results = with_tags_or_abstract.reduce((obj, item) => {
 					if(item.abstract.includes(title)){
-						obj.with_abstract.push(item.itemData);
+						obj.with_abstract.push(cleanRelatedItem(item.itemData, roamCitekeys));
 					}
 					if(item.tagList.includes(title)){
-						obj.with_tags.push(item.itemData);
+						obj.with_tags.push(cleanRelatedItem(item.itemData, roamCitekeys));
 					}
 					return obj;
 				}, { with_tags: [], with_abstract: []});
@@ -545,14 +149,20 @@ function TagMenuFactory(props){
 				.map((menu,i) => {
 					let { with_tags, with_abstract, div, tag } = menu;
 					return (
-						createPortal(<TagMenu key={i} tag={tag} tagged={with_tags} inAbstract={with_abstract} extensionPortal={extensionPortal} />, div)
+						createPortal(<TagMenu key={i} tag={tag} tagged={with_tags} inAbstract={with_abstract} portalId={portalId} />, div)
 					);
 				});
 		}
-	}, [menus, items]);
+	}, [menus, items, roamCitekeys]);
 
 	return tagPortals;
 }
+TagMenuFactory.propTypes = {
+	menus: PropTypes.arrayOf(PropTypes.node,), 
+	dataRequests: PropTypes.array,
+	portalId: PropTypes.string,
+	roamCitekeys: PropTypes.instanceOf(Map)
+};
 
 export {
 	addPageMenus,

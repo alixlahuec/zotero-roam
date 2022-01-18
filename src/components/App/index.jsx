@@ -6,6 +6,9 @@ import ExtensionIcon from "../ExtensionIcon";
 import GraphWatcher from "../GraphWatcher";
 import SearchPanel from "../SearchPanel";
 
+import { _getChildren, _getItems } from "../../queries";
+import { addPaletteCommand } from "../../roam";
+
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
@@ -16,10 +19,6 @@ const queryClient = new QueryClient({
 		}
 	}
 });
-
-const getItems = () => {
-	return queryClient.getQueriesData(["items"]);	
-};
 
 class App extends Component {
 	constructor(props){
@@ -36,10 +35,14 @@ class App extends Component {
 		this.handleChangeInSearchPanel = this.handleChangeInSearchPanel.bind(this);
 	}
 
+	componentDidMount(){
+		addPaletteCommand("zoteroRoam : Open the search panel", this.openSearchPanel);
+	}
+
 	render() {
 		let { extension, dataRequests, apiKeys, libraries, userSettings } = this.props;
-		let { version, extensionPortal } = extension;
-		let { autocomplete } = userSettings;
+		let { version, portalId } = extension;
+		let { autocomplete, render_inline } = userSettings;
 		let { status, searchPanel } = this.state;
 
 		return (
@@ -50,10 +53,10 @@ class App extends Component {
 					openSearchPanel={this.openSearchPanel}
 				/>
 				{status == "on"
-					? <GraphWatcher dataRequests={dataRequests} autocomplete={autocomplete} extensionPortal={extensionPortal} />
+					? <GraphWatcher autocomplete={autocomplete} renderInline={render_inline} dataRequests={dataRequests} portalId={portalId} />
 					: null}
 				<SearchPanel panelState={searchPanel}
-					portalTarget={extensionPortal}
+					portalTarget={portalId}
 					userSettings={userSettings}
 					handleChange={this.handleChangeInSearchPanel}
 				/>
@@ -104,7 +107,7 @@ class App extends Component {
 App.propTypes = {
 	extension: PropTypes.shape({
 		version: PropTypes.string,
-		extensionPortal: PropTypes.string
+		portalId: PropTypes.string
 	}),
 	dataRequests: PropTypes.array,
 	apiKeys: PropTypes.array,
@@ -112,7 +115,12 @@ App.propTypes = {
 	userSettings: PropTypes.object
 };
 
+// Utilities to be exposed via global zoteroRoam variable, for consumption by users :
+const getChildren = (item) => _getChildren(item, queryClient);
+const getItems = (select = "all", filters = {}) => _getItems(select, filters, queryClient);
+
 export {
 	App,
+	getChildren,
 	getItems
 };

@@ -41,9 +41,21 @@ label.zr-quick-copy {
     font-size: 0.9em;
 }
 
-.zr-dialog-overlay--search-library .zotero-roam-search_result .zotero-roam-search-item-key {
-    flex-wrap: nowrap;
+.zr-dialog-overlay--search-library .zr-library-item--contents {
+    white-space: normal;
+}
+
+.zr-dialog-overlay--search-library .zotero-roam-search_result .zr-library-item--key {
     flex: 1 0 auto;
+    padding: 0px 6px;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+.zr-dialog-overlay--search-library .zotero-roam-search_result[data-in-graph="true"] .zr-library-item--key {
+    background-color: #d6ffe1;
+    color: #429965;
+    font-weight: 500;
 }
 
 /* SelectedItem */

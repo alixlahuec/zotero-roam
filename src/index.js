@@ -2,7 +2,8 @@ import React from "react";
 import { render as ReactDOMRender } from "react-dom";
 import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
 import { Toast } from "@blueprintjs/core";
-import { App, getItems } from "./components/App";
+import { App, getChildren, getItems } from "./components/App";
+import { registerSmartblockCommands } from "./smartblocks";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./index.css";
@@ -11,25 +12,31 @@ window.zoteroRoam = {};
 
 (()=>{
 
-	const version = "0.7.0";
+	const extension = {
+		version: "0.7.0",
+		portalId: "zotero-roam-portal"
+	};
+
 	const extensionSlot = "zotero-roam-slot";
-	const extensionPortal = "zotero-roam-portal";
-    
-	setupPortals(extensionSlot, extensionPortal);
+	
+	setupPortals(extensionSlot, extension.portalId);
 
 	let {
 		dataRequests = [],
 		autocomplete = {},
-		autoload = false
+		autoload = false,
+		render_inline = false
 	} = window.zoteroRoam_settings;
 
 	window.zoteroRoam.config = {
 		userSettings: {
 			autocomplete,
-			autoload
+			autoload,
+			render_inline
 		}
 	};
 
+	window.zoteroRoam.getChildren = getChildren;
 	window.zoteroRoam.getItems = getItems;
 
 	try {
@@ -37,10 +44,11 @@ window.zoteroRoam = {};
 		setupDependencies([
 			{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"} // Scite.ai Badge
 		]);
+		registerSmartblockCommands();
 
 		ReactDOMRender(
 			<App
-				extension={{ version, extensionPortal }}
+				extension={extension}
 				{...window.zoteroRoam.config.requests}
 				userSettings={window.zoteroRoam.config.userSettings}
 			/>,

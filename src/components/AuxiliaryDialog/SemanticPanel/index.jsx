@@ -75,7 +75,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 	}, [inGraph, inLibrary, popoverMenuProps, actionsMenu]);
 
 	return (
-		<li className="zr-related-item" data-semantic-type={type}>
+		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
 			<div className={ Classes.MENU_ITEM } label={item.doi}>
 				<span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zr-related-item--timestamp"].join(" ")}>
 					{item.year}
@@ -276,6 +276,7 @@ SemanticPanel.propTypes = {
 	ariaLabelledBy: PropTypes.string,
 	items: PropTypes.arrayOf(PropTypes.object),
 	onClose: PropTypes.func,
+	portalId: PropTypes.string,
 	title: PropTypes.string,
 	type: PropTypes.oneOf(["is_citation", "is_reference"])
 };

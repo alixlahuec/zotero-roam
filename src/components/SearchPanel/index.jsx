@@ -4,7 +4,9 @@ import { Button, ButtonGroup, Classes, Icon, InputGroup, MenuItem, Switch, Tag }
 import { QueryList } from "@blueprintjs/select";
 import DialogOverlay from "../DialogOverlay";
 import { useQueryClient } from "react-query";
+
 import { copyToClipboard } from "../../utils";
+import { getCitekeyPages, openPageByUID } from "../../roam";
 import "./index.css";
 
 const query_threshold = 3;
@@ -13,8 +15,8 @@ const results_limit = 50;
 
 const dialogLabel="zr-library-search-dialogtitle";
 const dialogClass="search-library";
-const resultClass = Classes.TEXT_OVERFLOW_ELLIPSIS + " zotero-roam-search-item-contents";
-const resultKeyClass = Classes.MENU_ITEM_LABEL + " zotero-roam-search-item-key";
+const resultClass = [Classes.TEXT_OVERFLOW_ELLIPSIS, "zr-library-item--contents"].join(" ");
+const resultKeyClass = [Classes.MENU_ITEM_LABEL, "zr-library-item--key"].join(" ");
 
 // Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 function useDebounceCallback(callback, timeout) {
@@ -111,7 +113,7 @@ function SelectedItem(props) {
 					</span>
 					: null}
 			</div>
-			<div className="item-citekey-section" in-graph={inGraph.toString()}>
+			<div className="item-citekey-section" data-in-graph={inGraph.toString()}>
 				<div className={Classes.FILL + " citekey-element"}>
 					{inGraph
 						? <Icon icon="symbol-circle" />
@@ -147,7 +149,7 @@ function SelectedItem(props) {
 								className="item-go-to-page"
 								intent="primary"
 								icon="arrow-right"
-								onClick={() => window.roamAlphaAPI.ui.mainWindow.openPage({page: {title: "@" + key}})} />
+								onClick={() => openPageByUID(inGraph)} />
 							: null  
 						}
 						<Button text="Import item metadata"
@@ -201,7 +203,7 @@ function searchEngine(query, items) {
 	}
 }
 
-function simplifyRequestData(arr){
+function simplifyRequestData(arr, roamCitekeys){
 	return arr
 		.filter(i => !["note", "attachment", "annotation"].includes(i.data.itemType))
 		.map(item => {
@@ -233,7 +235,7 @@ function simplifyRequestData(arr){
 				location: item.library.type + "s/" + item.library.id,
 				itemType: item.data.itemType,
 				"_multiField": "",
-				inGraph: false,
+				inGraph: roamCitekeys.has("@" + item.key) ? roamCitekeys.get("@" + item.key) : false,
 				weblink: hasURL ? {href: hasURL, title: hasURL} : false
 			};
 		});
@@ -249,8 +251,8 @@ const SearchResult = React.memo(function SearchResult(props) {
 		role="option"
 		aria-selected={modifiers.active}
 		data-item-type={itemType}
-		in-graph={inGraph.toString()}
-		labelElement={<span>{key}</span>}
+		data-in-graph={(inGraph != false).toString()}
+		labelElement={"@" + key}
 		labelClassName={resultKeyClass}
 		tagName="div"
 		text={
@@ -285,9 +287,10 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	const searchbar = useRef();
 	let [selectedItem, itemSelect] = useState(null);
 	let [quickCopyActive, setQuickCopy] = useState(false); // DEP
+	let [roamCitekeys, setRoamCitekeys] = useState(getCitekeyPages());
 
 	const client = useQueryClient();
-	const items = simplifyRequestData(client.getQueriesData("items").map((res) => res[1]?.data || []).flat(1));
+	const items = simplifyRequestData(client.getQueriesData("items").map((res) => res[1]?.data || []).flat(1), roamCitekeys);
 
 	const handleClose = useCallback(() => {
 		setQuery("");
@@ -298,7 +301,10 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		});
 	}, []);
 
-	const handleOpen = useCallback(() => { searchbar.current.focus(); }, []);
+	const handleOpen = useCallback(() => {
+		setRoamCitekeys(getCitekeyPages()); 
+		searchbar.current.focus(); 
+	}, []);
 
 	const toggleQuickCopy = useCallback(() => { setQuickCopy(!quickCopyActive); }, [quickCopyActive]);
 

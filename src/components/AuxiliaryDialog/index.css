@@ -19,14 +19,44 @@
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div > ul {
     max-height: 70vh;
     overflow-y: scroll;
+    scrollbar-width: 5px;
+    scrollbar-color: #8c8c8c #ececec;
+}
+
+.bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu::-webkit-scrollbar,
+.bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div > ul::-webkit-scrollbar {
+    width: 5px;
+}
+
+.bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu::-webkit-scrollbar-thumb,
+.bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div > ul::-webkit-scrollbar-thumb {
+    background: #8c8c8c;
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .header-content {
+    width:100%;
+    margin:0;
+    display:flex;
+    flex-wrap:wrap;
     margin-bottom: 15px;
 }
 
+.bp3-dialog[class*="zr-auxiliary-dialog--"] .header-left {
+    flex: 0 1 66%;
+    padding-top:5px;
+    padding-left:min(20px, 2vw);
+    overflow-wrap:anywhere;
+}
+
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .header-right {
+    flex: 0 1 34%;
     text-align: right;
+}
+
+.bp3-dialog[class*="zr-auxiliary-dialog--"] h5.panel-tt{
+    font-weight:600;
+    display:inline-block;
+    padding-right:15px;
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="toggle-abstracts"] {
@@ -44,23 +74,15 @@
     white-space: break-spaces;
 }
 
-.zr-related-item--timestamp{margin-right:20px;}
-.zr-related-item > .bp3-menu-item{flex-wrap:nowrap;user-select:initial;}
+.zr-related-item--timestamp{margin-right:10px;padding: 0px 6px;}
+.zr-related-item > .bp3-menu-item:hover {background-color:unset;cursor:unset;}
 .zr-related-item-contents--metadata{flex: 0 1 100%;}
 .zr-related-item-contents--metadata .zr-highlight:not(:empty),
 .zr-related-item-contents--metadata .zr-highlight-2:not(:empty) {padding-right: 8px;}
 .zr-related-item-contents--actions{text-align:right;flex: 1 0 auto;}
-.zr-related-item-contents--actions button, .zr-related-item-contents--actions a{opacity:0.6;overflow-wrap: break-word;}
+.zr-related-item-contents--actions button.bp3-small, .zr-related-item-contents--actions a{opacity:0.6;overflow-wrap: break-word;padding:0px;}
 .zr-related-item-contents--actions button .bp3-button-text {overflow-wrap: anywhere;}
 .zr-related-item-contents--actions [zr-role="item-url"] {display:block;}
-
-.zr-related-item-contents .zr-related-item--intents {margin: 5px 0px;}
-.zr-related-item-contents .zr-related-item--intents .bp3-tag[data-semantic-intent] {
-    background-color: #d8c4ff;
-    color: #a05fba;
-    opacity: 0.6;
-    margin-right: 8px;
-}
 
 .zr-related-item--abstract {
     background: #e8ecf6;

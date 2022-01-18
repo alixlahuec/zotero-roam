@@ -5,40 +5,7 @@ import { Classes, Dialog, } from "@blueprintjs/core";
 
 import RelatedPanel from "./RelatedPanel";
 import SemanticPanel from "./SemanticPanel";
-import { makeTimestamp } from "../../utils";
 import "./index.css";
-
-/** Formats a list of items for display in AuxiliaryDialog
- * @param {Object[]} items - The list of items to format 
- * @returns {{
- * abstract: String,
- * added: Date,
- * inGraph: Boolean,
- * itemType: String,
- * key: String,
- * location: String,
- * meta: String,
- * timestamp: String,
- * title: String
- * }[]} The formatted array
- */
-function simplifyRelatedItems(items){
-	return items.map(item => {
-		let creator = item.meta.creatorSummary || "";
-		let pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
-		return {
-			abstract: item.data.abstractNote || "",
-			key: item.key,
-			location: item.library.type + "s/" + item.library.id,
-			meta: [creator, pub_year].filter(Boolean).join(" "),
-			title: item.data.title || "",
-			added: item.data.dateAdded,
-			itemType: item.data.itemType,
-			timestamp: makeTimestamp(item.data.dateAdded),
-			inGraph: false
-		};
-	});
-}
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 	const {
@@ -47,7 +14,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 		isOpen,
 		items,
 		onClose,
-		portalTarget,
+		portalId,
 		show
 	} = props;
 
@@ -57,23 +24,20 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 		let { title, type } = show;
 		let panelProps = { 
 			ariaLabelledBy, 
+			items,
 			onClose,
+			portalId,
 			type,
 			title
 		};
 
 		if(["is_citation", "is_reference"].includes(type)){
-			let semanticProps = {
-				...panelProps,
-				items
-			};
 			return (
-				<SemanticPanel {...semanticProps} />
+				<SemanticPanel {...panelProps} />
 			);
 		} else {
 			let relatedProps = {
 				...panelProps,
-				items: simplifyRelatedItems(items),
 				sort: type == "added_on" ? "added" : "meta"
 			};
 			return (
@@ -98,7 +62,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 					{dialogContents}
 				</div>
 			</Dialog>,
-			document.getElementById(portalTarget))
+			document.getElementById(portalId))
 	);
 });
 AuxiliaryDialog.propTypes = {
@@ -107,7 +71,7 @@ AuxiliaryDialog.propTypes = {
 	isOpen: PropTypes.bool,
 	items: PropTypes.array,
 	onClose: PropTypes.func,
-	portalTarget: PropTypes.string,
+	portalId: PropTypes.string,
 	show: PropTypes.shape({
 		title: PropTypes.string,
 		type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
