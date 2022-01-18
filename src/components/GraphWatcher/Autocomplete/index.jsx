@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import Tribute from "tributejs";
 
@@ -33,6 +33,12 @@ const tributeConfig = {
 	}
 };
 
+/** Custom hook to retrieve library items and return them in a convenient format for the Tribute
+ * @param {Object[]} reqs - The data requests to use to retrieve items 
+ * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} format - The format the item should be pasted as
+ * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} display - The format the item should be displayed in 
+ * @returns {{key: String, itemType: String, source: ("zotero"), value: String, display: String}[]} The array of Tribute entries
+ */
 const getItems = (reqs, format = "citekey", display = "citekey") => {
 	const itemQueries = queryItems(reqs, { 
 		select: (datastore) => {
@@ -61,14 +67,18 @@ const Autocomplete = React.memo(function Autocomplete(props) {
 	const { config, dataRequests } = props;
 	const { trigger, display = "citekey", format = "citation" } = config;
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const formattedLib = getItems(dataRequests, format, display) || [];
-	const tributeFactory = {
-		trigger,
-		...tributeConfig,
-		values: (text,cb) => {
-			cb(formattedLib.filter(item => item[tributeConfig.lookup].toLowerCase().includes(text.toLowerCase())));
-		}
-	};
+	
+	const tributeFactory = useMemo(() => {
+		return {
+			trigger,
+			...tributeConfig,
+			values: (text,cb) => {
+				cb(formattedLib.filter(item => item[tributeConfig.lookup].toLowerCase().includes(text.toLowerCase())));
+			}
+		};
+	}, [formattedLib, trigger]);
 
 	// Detect if a block is currently being edited
 	const checkEditingMode = useCallback(() => {

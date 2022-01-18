@@ -44,7 +44,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 				<RelatedPanel {...relatedProps} />
 			);
 		}
-	}, [show, items, onClose]);
+	}, [show, items, onClose, ariaLabelledBy, portalId]);
 
 	return (
 		createPortal(

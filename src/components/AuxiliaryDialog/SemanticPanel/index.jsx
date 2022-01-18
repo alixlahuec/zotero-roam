@@ -55,7 +55,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				</Menu>
 			);
 		}
-	}, [item, inLibrary, inGraph]);
+	}, [inLibrary, inGraph]);
 
 	const itemActions = useMemo(() => {
 		if(!inLibrary){

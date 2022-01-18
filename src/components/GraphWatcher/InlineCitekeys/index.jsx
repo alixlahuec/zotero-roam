@@ -6,6 +6,10 @@ import { queryItems } from "../../../queries";
 import { formatItemReference } from "../../../utils";
 import { createPortal } from "react-dom";
 
+/** Custom hook to retrieve library items and return a Map with their data & formatted citation
+ * @param {Object[]} reqs - The data requests to use to retrieve items
+ * @returns {Map<String,{citation: String, data: ZoteroItem|Object}>} The map of current library items
+ */
 const getItems = (reqs) => {
 	const itemQueries = queryItems(reqs, { 
 		select: (datastore) => {
@@ -80,7 +84,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 	const [contextMenuTarget, setContextMenuTarget] = useState(null);
 
 	const itemsMap = getItems(dataRequests);
-	console.log(itemsMap); // For debugging
+    
 	const openContextMenu = useCallback((e) => {
 		e.preventDefault();
 		const { pageX: left, pageY: top, target} = e;
@@ -123,7 +127,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 				}
 			}
 		}
-	}, [itemsMap, renderInline]);
+	}, [itemsMap, renderInline, openContextMenu]);
 
 	const cleanupCitekeyRefs = useCallback(() => {
 		let refCitekeys = document.querySelectorAll("span[data-link-title^='@'][data-in-library]");
@@ -135,7 +139,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 				linkElement.removeEventListener("contextmenu", openContextMenu);   
 			}
 		});
-	}, [renderInline]);
+	}, [renderInline, openContextMenu]);
 
 	useEffect(() => {		
 		const watcher = setInterval(
@@ -147,7 +151,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 			clearInterval(watcher);
 			cleanupCitekeyRefs;
 		};
-	}, [renderInline]);
+	}, [renderInline, renderCitekeyRefs, cleanupCitekeyRefs]);
 
 	return (
 		createPortal(

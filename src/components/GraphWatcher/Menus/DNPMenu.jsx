@@ -17,7 +17,7 @@ function DNPMenu(props){
 			title,
 			type: "added_on"
 		};
-	}, [date]);
+	}, [date, title]);
 
 	const openDialog = useCallback(() => {
 		setDialogOpen(true);

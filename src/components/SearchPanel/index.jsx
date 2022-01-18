@@ -297,7 +297,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			isOpen: false,
 			isSidePanelOpen: false
 		});
-	}, []);
+	}, [handleChange]);
 
 	const handleOpen = useCallback(() => {
 		setRoamCitekeys(getCitekeyPages()); 
@@ -321,7 +321,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 				itemSelect(item);
 			}
 		}
-	}, [selectedItem, quickCopyActive]);
+	}, [selectedItem, quickCopyActive, handleClose]);
 
 	function handleQueryChange(query, _e) {
 		handleItemSelect(null);

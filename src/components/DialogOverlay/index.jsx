@@ -46,7 +46,7 @@ function DialogOverlay(props) {
 		sidePanel
 	} = props;
     
-	const dialog_class = useMemo(() => "zr-dialog-overlay--" + dialogClass, []);
+	const dialog_class = useMemo(() => "zr-dialog-overlay--" + dialogClass, [dialogClass]);
 	const mainPanelStyle = useMemo(() => {
 		return {
 			flex: "1 1 100%"

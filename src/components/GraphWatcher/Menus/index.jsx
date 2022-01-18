@@ -54,7 +54,7 @@ function CitekeyMenuFactory(props){
 					);
 				});
 		}
-	}, [menus, citekeyItems]);
+	}, [menus, citekeyItems, itemList, portalId, roamCitekeys]);
 
 	return citekeyMenus;
 }
@@ -93,7 +93,7 @@ function DNPMenuFactory(props){
 					);
 				});
 		}
-	}, [menus, items, roamCitekeys]);
+	}, [menus, items, portalId, roamCitekeys]);
 
 	return dnpPortals;
 }
@@ -153,7 +153,7 @@ function TagMenuFactory(props){
 					);
 				});
 		}
-	}, [menus, items, roamCitekeys]);
+	}, [menus, items, portalId, roamCitekeys, with_tags_or_abstract]);
 
 	return tagPortals;
 }

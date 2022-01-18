@@ -27,7 +27,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 				text: "@" + item.key
 			};
 		}
-	}, [inGraph]);
+	}, [inGraph, item.key]);
 
 	useEffect(() => {
 		setAbstractVisible(allAbstractsShown);
@@ -87,7 +87,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 
 	const sortedItems = useMemo(() => {
 		return sortItems(items, sort);
-	}, [items]);
+	}, [items, sort]);
 
 	const relationship = useMemo(() => {
 		switch(type){
@@ -107,11 +107,11 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 				suffix: " tagged with " + title
 			};
 		}
-	}, [type]);
+	}, [type, title]);
 
 	const panelLabel = useMemo(() => {
 		return pluralize(sortedItems.length, relationship.string, relationship.suffix);
-	}, sortedItems.length, relationship);
+	}, [sortedItems.length, relationship]);
 
 	return (
 		<>

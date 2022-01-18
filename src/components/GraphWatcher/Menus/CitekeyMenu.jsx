@@ -36,7 +36,7 @@ function BacklinksItem(props) {
 				/>
 			);
 		}
-	}, [item, inGraph]);
+	}, [inGraph, pub_type, key]);
 
 	return (
 		<li className="zr-backlink-item" 
@@ -127,7 +127,7 @@ function RelatedItemsBar(props) {
 			type: "is_reference"
 		});
 		openDialog();
-	}, [title]);
+	}, [title, openDialog]);
 
 	const showCitations = useCallback(() => {
 		setShowing({
@@ -135,7 +135,7 @@ function RelatedItemsBar(props) {
 			type: "is_citation"
 		});
 		openDialog();
-	}, [title]);
+	}, [title, openDialog]);
 
 	// Only select items with valid DOIs to reduce dataset size
 	const itemsWithDOIs = useMemo(() => items.filter(it => parseDOI(it.data.DOI)), [items]);
@@ -159,7 +159,7 @@ function RelatedItemsBar(props) {
 				icon: isBacklinksListOpen ? "caret-down" : "caret-right",
 				text: pluralize(cleanSemanticData.backlinks.length, "related library item")
 			};
-	}, [cleanSemanticData.backlinks.length > 0, isBacklinksListOpen]);
+	}, [cleanSemanticData.backlinks.length, isBacklinksListOpen]);
 
 	return (
 		<div className="zotero-roam-page-menu-citations">
@@ -233,7 +233,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				})
 			);
 		}
-	}, has_pdfs);
+	}, [has_pdfs]);
     
 	const open_zotero = useMemo(() => {
 		return (
@@ -242,7 +242,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				<ButtonLink icon="cloud" text="Open in Zotero [Web library]" href={getWebLink(item, { format: "target" })} />
 			</>
 		);
-	},[item.library, item.data.key]);
+	},[item]);
 
 	const sciteBadge = useMemo(() => {
 		return doi ? <SciteBadge doi={doi} /> : null;
@@ -272,7 +272,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				roamCitekeys={roamCitekeys}
 			/>
 			: null;
-	}, [doi, item.key, item.meta.parsedDate, items, portalId]);
+	}, [doi, item.key, item.meta.parsedDate, items, portalId, roamCitekeys]);
 
 	return (
 		<>
