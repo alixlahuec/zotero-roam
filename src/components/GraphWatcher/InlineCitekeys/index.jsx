@@ -80,6 +80,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 	const [contextMenuTarget, setContextMenuTarget] = useState(null);
 
 	const itemsMap = getItems(dataRequests) || new Map();
+	console.log(itemsMap); // For debugging
 	const openContextMenu = useCallback((e) => {
 		e.preventDefault();
 		const { pageX: left, pageY: top, target} = e;
@@ -90,6 +91,8 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 
 	const renderCitekeyRefs = useCallback(() => {
 		let refCitekeys = document.querySelectorAll("span[data-link-title^='@']");
+
+		console.log(itemsMap); // For debugging
 
 		for(let i=0;i<refCitekeys.length;i++){
 			let refCitekeyElement = refCitekeys[i];
