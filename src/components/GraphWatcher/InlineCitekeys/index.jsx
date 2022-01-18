@@ -33,11 +33,15 @@ const getItems = (reqs) => {
 const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, target } = props;
 
-	const citekey = target.parentElement.dataset.linkTitle;
-	const pageUID = target.parentElement.dataset.linkUid;
+	const citekey = target?.parentElement.dataset.linkTitle;
+	const pageUID = target?.parentElement.dataset.linkUid;
 
 	const item = useMemo(() => {
-		return itemsMap.get(citekey).data;
+		if(citekey){
+			return itemsMap.get(citekey).data;
+		} else {
+			return {};
+		}
 	}, [citekey, itemsMap]);
 
 	return (
@@ -51,7 +55,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 					<MenuItem icon="arrow-right" 
 						text="Import metadata" 
 						data-uid={pageUID} 
-						data-item-type={item.data.itemType}
+						data-item-type={item.data?.itemType}
 						data-citekey={citekey} />
 				</Menu>
 			</div>
