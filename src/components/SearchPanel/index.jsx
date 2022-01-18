@@ -147,14 +147,12 @@ function SelectedItem(props) {
 						{ inGraph 
 							? <Button text="Go to Roam page"
 								className="item-go-to-page"
-								intent="primary"
 								icon="arrow-right"
 								onClick={() => openPageByUID(inGraph)} />
 							: null  
 						}
 						<Button text="Import item metadata"
-							className="item-add-metadata" 
-							intent="primary" 
+							className="item-add-metadata"
 							icon="add" />
 					</ButtonGroup>
 				</div>
@@ -340,7 +338,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			icon="learning" />;
 
 		const rightElem = <>
-			<Switch className='zr-quick-copy' label='Quick Copy' checked={quickCopyActive} onChange={toggleQuickCopy} />
+			<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={quickCopyActive} onChange={toggleQuickCopy} />
 			<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />
 		</>;
 

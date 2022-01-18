@@ -461,7 +461,7 @@ function _getChildren(item, queryClient){
 }
 
 function _getItems(select = "all", filters = {}, queryClient) {
-	let items = queryClient.getQueriesData(["items"], filters).map(query => query[1]);
+	let items = queryClient.getQueriesData(["items"], filters).map(query => (query[1] || {}).data || []).flat(1);
 	switch(select){
 	case "items":
 		return items.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType));

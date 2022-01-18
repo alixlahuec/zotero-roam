@@ -109,14 +109,18 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 					continue;
 				} else if(current_status == "true"){
 					linkElement.textContent = itemsMap.get(citekey).citation;
-					linkElement.addEventListener("contextmenu", openContextMenu);
+					if(renderInline == true){
+						linkElement.addEventListener("contextmenu", openContextMenu);
+					}
 				} else {
 					linkElement.textContent = citekey;
-					linkElement.removeEventListener("contextmenu", openContextMenu);
+					if(renderInline == true){
+						linkElement.removeEventListener("contextmenu", openContextMenu);
+					}
 				}
 			}
 		}
-	}, [itemsMap]);
+	}, [itemsMap, renderInline]);
 
 	const cleanupCitekeyRefs = useCallback(() => {
 		let refCitekeys = document.querySelectorAll("span[data-link-title^='@'][data-in-library]");
@@ -124,21 +128,22 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 			ck.removeAttribute("data-in-library");
 			let linkElement = ck.getElementsByClassName("rm-page-ref")[0];
 			linkElement.textContent = ck.getAttribute("data-link-title");
-			linkElement.removeEventListener("contextmenu", openContextMenu);});
-	}, []);
+			if(renderInline == true){
+				linkElement.removeEventListener("contextmenu", openContextMenu);   
+			}
+		});
+	}, [renderInline]);
 
-	useEffect(() => {
-		if(renderInline == true){
-			const watcher = setInterval(
-				() => {
-					renderCitekeyRefs();
-				}, 1000
-			);
-			return function cleanup() {
-				clearInterval(watcher);
-				cleanupCitekeyRefs;
-			};
-		}
+	useEffect(() => {		
+		const watcher = setInterval(
+			() => {
+				renderCitekeyRefs();
+			}, 1000
+		);
+		return function cleanup() {
+			clearInterval(watcher);
+			cleanupCitekeyRefs;
+		};
 	}, [renderInline]);
 
 	return (

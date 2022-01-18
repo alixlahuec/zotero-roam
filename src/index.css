@@ -159,7 +159,7 @@ label[data-tag-source] {color: #b3b3b3;background:#f9f9f9;border: 1px #e9e9e9 so
 .zr-highlight-2 {color: var(--zr-highlight-2,#d9822b);}
 .zr-secondary {color: var(--zr-secondary-co,#7b7b7b);font-weight:var(--zr-secondary-fw,300);}
 .zr-auxiliary{color: var(--zr-auxiliary-co,#5c7080);}
-[class*="zr"] [aria-selected="true"]{background-color: var(--zr-selected-bc,#eaf3fc);}
+[class*="zr"] li[aria-selected="true"]{background-color: var(--zr-selected-bc,#eaf3fc);}
 
 .bp3-dark .zr-highlight{color: var(--zr-dark-highlight,#3fb8ff);}
 .bp3-dark .zr-auxiliary{color: var(--zr-dark-auxiliary,#95a8b7);}

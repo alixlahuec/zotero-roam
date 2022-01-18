@@ -5,7 +5,7 @@
     box-shadow: none;
 }
 
-.bp3-dialog[class*="zr-dialog-overlay--"]:not(.bp3-dark) {
+.bp3-dialog[class*="zr-dialog-overlay--"] {
     background: white;
 }
 
@@ -46,4 +46,15 @@
 
 @media (max-width: 600px){
     .bp3-dialog[class*="zr-dialog-overlay--"] {margin-left: calc(min(20vw, 30px) + 2.5%);}
+}
+
+/* DARK THEMES */
+.bp3-dark.bp3-dialog[class*="zr-dialog-overlay--"] {
+    background: var(--zr-dark-dialog-bg, #242424);
+}
+
+@media (prefers-color-scheme: dark){
+    .bp3-dialog[class*="zr-dialog-overlay--"] {
+        background: var(--zr-dark-dialog-bg, #242424);
+    }
 }

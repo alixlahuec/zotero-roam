@@ -44,7 +44,7 @@
     color: #818181;
 }
 
-.zr-semantic-panel--main .zr-related-item[data-in-library] .zr-related-item--timestamp {
+.zr-semantic-panel--main .zr-related-item[data-in-library="true"] .zr-related-item--timestamp {
     color: white;
     background-color: #74c37496;
     border-radius: 3px;

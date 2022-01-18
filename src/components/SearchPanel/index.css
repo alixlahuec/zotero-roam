@@ -4,8 +4,12 @@
 }
 #zotero-roam-search-autocomplete::placeholder {opacity:0.6;}
 #zotero-roam-search-autocomplete:focus {box-shadow:none;}
-.bp3-dark #zotero-roam-search-autocomplete {border-bottom: 1px #2f4d75 solid;}
-:not(.bp3-dark) #zotero-roam-search-autocomplete {border-bottom: 1px #f2f2f2 solid;color: #717171;}
+#zotero-roam-search-autocomplete {
+    border-bottom-width: 1px;
+    border-bottom-color: #f2f2f2;
+    border-bottom-style: solid;
+    color: #717171;
+}
 
 label.zr-quick-copy {
     font-weight: 300;
@@ -29,7 +33,6 @@ label.zr-quick-copy {
     overflow-y: scroll;
     background: unset;
     padding: 0px;
-    padding-bottom: 10px;
 }
 
 #zotero-roam-library-rendered .bp3-menu::-webkit-scrollbar {
@@ -46,7 +49,7 @@ label.zr-quick-copy {
 }
 
 .zr-dialog-overlay--search-library .zotero-roam-search_result .zr-library-item--key {
-    flex: 1 0 auto;
+    flex: 0 0 auto;
     padding: 0px 6px;
     font-size: 0.8em;
     text-align: right;
@@ -56,6 +59,7 @@ label.zr-quick-copy {
     background-color: #d6ffe1;
     color: #429965;
     font-weight: 500;
+    border-radius: 3px;
 }
 
 /* SelectedItem */
@@ -89,11 +93,6 @@ h4.item-title{
     border-bottom: 1px #e6e6e6 solid;
 }
 
-.bp3-dark .item-abstract{
-    border-top-color: #4a4a4a;
-    border-bottom-color: #4a4a4a;
-}
-
 .item-additional-metadata p strong ~ span {
     margin:3px;
 }
@@ -108,7 +107,6 @@ h4.item-title{
 }
 
 .item-actions > .bp3-card{ background-color: #eff8ff;box-shadow:none; }
-.bp3-dark .item-actions > .bp3-card{ background-color:#2b3135; }
 
 .item-citekey-section{
     margin:10px 0px;
@@ -132,10 +130,14 @@ h4.item-title{
 }
 /**/
 
-.copy-buttons > .bp3-button{ font-size:0.7em;margin:5px; }
-.copy-buttons > .bp3-button, 
-.copy-buttons > .bp3-button:hover{ border: 1px #f1f7ff solid; }
-.bp3-dark .copy-buttons > a.bp3-button{ border: 1px #2f4d75 solid; }
+.copy-buttons > a.bp3-button,
+.copy-buttons > a.bp3-button:hover { 
+    font-size:0.7em;
+    margin:5px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #f1f7ff;
+}
 
 .item-rendered-notes p{
     font-weight:350;
@@ -161,4 +163,62 @@ h4.item-title{
     #zotero-roam-search-selected-item .selected-item-header .copy-buttons{display:none;}
     #zotero-roam-search-selected-item .selected-item-header{flex-direction:column-reverse;}
     #zotero-roam-search-selected-item .selected-item-body{flex-direction:column;}
+}
+
+/* DARK THEMES */
+
+.bp3-dark #zotero-roam-search-autocomplete {
+    background: var(--zr-dark-dialog-bg, #242424);
+    border-bottom-color: var(--zr-dark-border-color,#363a3f);
+}
+
+.bp3-dark .zr-dialog-overlay--search-library .zr-library-item--contents,
+.bp3-dark .item-basic-metadata,
+.bp3-dark .item-additional-metadata,
+.bp3-dark .citekey-element,
+.bp3-dark .item-actions button {
+    color: var(--zr-dark-text-co, #76a0cb);
+}
+
+.bp3-dark .item-abstract{
+    border-top-color: var(--zr-dark-border-color,#363a3f);
+    border-bottom-color: var(--zr-dark-border-color,#363a3f);
+}
+
+.bp3-dark .copy-buttons > a.bp3-button,
+.bp3-dark .copy-buttons > a.bp3-button:hover {
+    color: var(--zr-dark-text-co, #76a0cb); 
+    border-color: var(--zr-dark-border-color,#363a3f);
+}
+
+.bp3-dark .item-basic-metadata,
+.bp3-dark .item-additional-metadata,
+.bp3-dark .item-actions > .bp3-card { 
+    background-color:var(--zr-dark-elem-bg, #2b3135);
+}
+
+@media (prefers-color-scheme: dark){
+    #zotero-roam-search-autocomplete {
+        background: var(--zr-dark-dialog-bg, #242424);
+        border-bottom-color: var(--zr-dark-border-color,#363a3f);
+    }
+    .zr-dialog-overlay--search-library .zr-library-item--contents,
+    .item-basic-metadata,
+    .item-additional-metadata,
+    .citekey-element {
+        color: var(--zr-dark-text-co,#76a0cb);
+    }
+    .item-abstract {
+        border-top-color: var(--zr-dark-border-color,#363a3f);
+        border-bottom-color: var(--zr-dark-border-color,#363a3f);
+    }
+    .copy-buttons > a.bp3-button,
+    .copy-buttons > a.bp3-button:hover { 
+        border-color: var(--zr-dark-border-color,#363a3f);
+    }
+    .item-basic-metadata,
+    .item-additional-metadata,
+    .item-actions > .bp3-card {
+        background-color: var(--zr-dark-elem-bg, #2b3135);
+    }
 }
