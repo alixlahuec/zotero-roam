@@ -79,7 +79,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 	const [contextMenuCoordinates, setContextMenuCoordinates] = useState({left: 0, top:0});
 	const [contextMenuTarget, setContextMenuTarget] = useState(null);
 
-	const itemsMap = getItems(dataRequests) || new Map();
+	const itemsMap = getItems(dataRequests);
 	console.log(itemsMap); // For debugging
 	const openContextMenu = useCallback((e) => {
 		e.preventDefault();
