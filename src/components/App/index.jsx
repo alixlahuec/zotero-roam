@@ -42,7 +42,7 @@ class App extends Component {
 	render() {
 		let { extension, dataRequests, apiKeys, libraries, userSettings } = this.props;
 		let { version, portalId } = extension;
-		let { autocomplete, render_inline } = userSettings;
+		let { autocomplete, copy, render_inline } = userSettings;
 		let { status, searchPanel } = this.state;
 
 		return (
@@ -57,7 +57,7 @@ class App extends Component {
 					: null}
 				<SearchPanel panelState={searchPanel}
 					portalTarget={portalId}
-					userSettings={userSettings}
+					copySettings={copy}
 					handleChange={this.handleChangeInSearchPanel}
 				/>
 			</QueryClientProvider>
@@ -112,7 +112,17 @@ App.propTypes = {
 	dataRequests: PropTypes.array,
 	apiKeys: PropTypes.array,
 	libraries: PropTypes.array,
-	userSettings: PropTypes.object
+	userSettings: PropTypes.shape({
+		autocomplete: PropTypes.object,
+		autoload: PropTypes.bool,
+		copy: PropTypes.shape({
+			always: PropTypes.bool,
+			defaultFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag"]),
+			overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
+			useQuickCopy: PropTypes.bool
+		}),
+		render_inline: PropTypes.bool
+	}),
 };
 
 // Utilities to be exposed via global zoteroRoam variable, for consumption by users :

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Button } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../../AuxiliaryDialog";
+import AuxiliaryDialog from "../AuxiliaryDialog";
 import { pluralize } from "../../../utils";
 
 function TagMenu(props){

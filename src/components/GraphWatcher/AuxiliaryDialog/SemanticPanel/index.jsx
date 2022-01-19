@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Classes, Icon, InputGroup, Tabs, Tab, Tag, Menu, MenuItem, MenuDivider, NonIdealState } from "@blueprintjs/core";
+import { Button, Classes, Icon, InputGroup, Tabs, Tab, Tag, NonIdealState } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
-import { Popover2 } from "@blueprintjs/popover2";
 
-import { getCitekeyPages, openInSidebarByUID, openPageByUID } from "../../../roam";
-import { getLocalLink, getWebLink, pluralize, sortItems } from "../../../utils";
+import { getCitekeyPages } from "../../../../roam";
+import { pluralize, sortItems } from "../../../../utils";
 import "./index.css";
+import CitekeyPopover from "../../CitekeyPopover";
 
 const noResultsState = <NonIdealState icon="search" title="No results" />;
 
@@ -25,78 +25,26 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 	const { item, type, inGraph } = props;
 	const { inLibrary } = item;
 
-	const popoverMenuProps = useMemo(() => {
-		return {
-			interactionKind: "hover",
-			placement: "right-start",
-			lazy: true
-		};
-	}, []);
-
-	const actionsMenu = useMemo(() => {
-		if(!inLibrary){
-			return null;
-		} else if(!inGraph){
-			return (
-				<Menu className="zr-text-small">
-					<MenuItem icon="add" text="Import metadata" />
-					<MenuItem icon="inheritance" text="Import & open in sidebar" />
-					<MenuDivider />
-					<MenuItem 
-						icon="application"
-						text="Open in Zotero (app)"
-						href={getLocalLink(inLibrary, {format: "target"})} 
-						target="_blank" />
-					<MenuItem 
-						icon="cloud"
-						text="Open in Zotero (web)"
-						href={getWebLink(inLibrary, {format: "target"})} 
-						target="_blank" />
-				</Menu>
-			);
-		} else {
-			return (
-				<Menu className="zr-text-small">
-					<MenuItem 
-						icon="arrow-right" 
-						text="Go to Roam page"
-						onClick={() => openPageByUID(inGraph)} />
-					<MenuItem 
-						icon="inheritance" 
-						text="Open in sidebar"
-						onClick={() => openInSidebarByUID(inGraph)} />
-					<MenuDivider />
-					<MenuItem 
-						icon="application"
-						text="Open in Zotero (app)"
-						href={getLocalLink(inLibrary, {format: "target"})} 
-						target="_blank" />
-					<MenuItem 
-						icon="cloud"
-						text="Open in Zotero (web)"
-						href={getWebLink(inLibrary, {format: "target"})} 
-						target="_blank" />
-				</Menu>
-			);
-		}
-	}, [inLibrary, inGraph]);
-
 	const itemActions = useMemo(() => {
 		if(!inLibrary){
 			return (
-				<Button text="Add to Zotero" className="zr-text-small" icon="inheritance" intent="primary" minimal={true} small={true} />
+				<>
+					{item.url
+						? <a href={item.url} target="_blank" rel="noreferrer"
+							zr-role="item-url"
+							className={[ Classes.TEXT_MUTED, "zr-text-small"].join(" ")} >
+							{item.doi || "Semantic Scholar"}
+						</a>
+						: null}
+					<Button text="Add to Zotero" className="zr-text-small" icon="inheritance" intent="primary" minimal={true} small={true} />
+				</>
 			);
 		} else {
-			let buttonProps = inGraph
-				? {intent: "success", onClick: () => openPageByUID(inGraph)}
-				: {};
 			return (
-				<Popover2 {...popoverMenuProps} content={actionsMenu}>
-					<Button text={"@" + inLibrary.key} className="zr-text-small" rightIcon="chevron-right" minimal={true} small={true} {...buttonProps} />
-				</Popover2>
+				<CitekeyPopover inGraph={inGraph} item={inLibrary} />
 			);
 		}
-	}, [inGraph, inLibrary, popoverMenuProps, actionsMenu]);
+	}, [inGraph, inLibrary, item.doi, item.url]);
 
 	return (
 		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
@@ -124,12 +72,6 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 							</div>
 						</div>
 						<span className="zr-related-item-contents--actions">
-							{item.url && !inLibrary
-								? <a href={item.url} target="_blank" rel="noreferrer"
-									zr-role="item-url"
-									className={[ Classes.TEXT_MUTED, "zr-text-small"].join(" ")} 
-								>{item.doi || "Semantic Scholar"}</a>
-								: null}
 							{itemActions}
 						</span>
 					</div>

@@ -1,0 +1,27 @@
+.zr-library-item-popover button {
+    font-weight: 500;
+    background-color: #ececec;
+    padding-left: 5px;
+}
+
+/* DARK THEMES */
+
+.bp3-dark [data-in-graph="false"] .zr-library-item-popover button {
+    background-color: var(--zr-dark-selected-bc,#191919);
+}
+
+.bp3-dark [data-in-graph="true"] .zr-library-item-popover button {
+    background-color: var(--zr-dark-positive-bc, #5863582e);
+    color: var(--zr-dark-positive-co, #86f686);
+}
+
+@media (prefers-color-scheme: dark){
+    .zr-library-item-popover button {
+        background-color: var(--zr-dark-selected-bc,#191919);
+    }
+
+    [data-in-graph="true"] .zr-library-item-popover button {
+        background-color: var(--zr-dark-positive-bc, #5863582e);
+        color: var(--zr-dark-positive-co, #86f686);
+    }
+}

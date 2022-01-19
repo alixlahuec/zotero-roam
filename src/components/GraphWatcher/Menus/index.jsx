@@ -2,7 +2,8 @@ import React, { useMemo } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 
-import { queryItems } from "../../../queries";
+import { useQuery_Items } from "../../../queries";
+import { categorizeLibraryItems } from "../../../utils";
 
 import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
@@ -13,29 +14,13 @@ import "./index.css";
 
 function CitekeyMenuFactory(props){
 	const { menus, dataRequests, portalId, roamCitekeys } = props;
-	const itemQueries = queryItems(dataRequests, { 
+	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
 	});
 
 	const data = itemQueries.map(q => q.data || []).flat(1);
-	const itemList = useMemo(() => {
-		return data.reduce((obj, item) => {
-			if (["note", "annotation"].includes(item.data.itemType)) {
-				obj.notes.push(item);
-			} else if (item.data.itemType == "attachment") {
-				if (item.data.contentType == "application/pdf") {
-					obj.pdfs.push(item);
-				}
-				// If the attachment is not a PDF, ignore it
-			} else {
-				obj.items.push(item);
-			}
-
-			return obj;
-
-		}, { items: [], pdfs: [], notes: [] });
-	}, [data]);
+	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 
 	const citekeyItems = useMemo(() => itemList.items.filter(it => it.has_citekey), [itemList]);
 	const citekeyMenus = useMemo(() => {
@@ -67,7 +52,7 @@ CitekeyMenuFactory.propTypes = {
 
 function DNPMenuFactory(props){
 	const { menus, dataRequests, portalId, roamCitekeys } = props;
-	const itemQueries = queryItems(dataRequests, { 
+	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType)),
 		notifyOnChangeProps: ["data"]
 	});
@@ -106,7 +91,7 @@ DNPMenuFactory.propTypes = {
 
 function TagMenuFactory(props){
 	const { menus, dataRequests, portalId, roamCitekeys } = props;
-	const itemQueries = queryItems(dataRequests, { 
+	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType)),
 		notifyOnChangeProps: ["data"]
 	});

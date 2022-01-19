@@ -25,6 +25,7 @@ window.zoteroRoam = {};
 		dataRequests = [],
 		autocomplete = {},
 		autoload = false,
+		copy = {},
 		render_inline = false
 	} = window.zoteroRoam_settings;
 
@@ -32,6 +33,13 @@ window.zoteroRoam = {};
 		userSettings: {
 			autocomplete,
 			autoload,
+			copy: {
+				always: false,
+				defaultFormat: "citekey",
+				overrideKey: "shiftKey",
+				useQuickCopy: false,
+				...copy // Use object merging to handle undefined settings
+			},
 			render_inline
 		}
 	};

@@ -43,6 +43,24 @@ function analyzeUserRequests(reqs){
 	}
 }
 
+function categorizeLibraryItems(datastore){
+	return datastore.reduce((obj, item) => {
+		if (["note", "annotation"].includes(item.data.itemType)) {
+			obj.notes.push(item);
+		} else if (item.data.itemType == "attachment") {
+			if (item.data.contentType == "application/pdf") {
+				obj.pdfs.push(item);
+			}
+			// If the attachment is not a PDF, ignore it
+		} else {
+			obj.items.push(item);
+		}
+
+		return obj;
+
+	}, { items: [], pdfs: [], notes: [] });
+}
+
 /** Formats the metadata of a Semantic Scholar entry
  * @param {Object} item - The Semantic Scholar entry to format 
  * @returns {{
@@ -249,7 +267,7 @@ function formatItemReference(item, format, {accent_class = "zr-highlight"} = {})
 
 /** Creates a local link to a specific Zotero item, which opens in the standalone app.
  * @param {ZoteroItem|Object} item - The targeted Zotero item
- * @param {{format: String, text: String}} config - Additional settings
+ * @param {{format: ("markdown"|"target"), text?: String}} config - Additional settings
  * @returns A link to the item, either as a Markdown link or a URI
  */
 function getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
@@ -266,7 +284,7 @@ function getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
 
 /** Creates a web link to a specific Zotero item, which opens in the browser.
  * @param {ZoteroItem|Object} item - The targeted Zotero item 
- * @param {{format: String, text: String}} config - Additional settings 
+ * @param {{format: ("markdown"|"target"), text?: String}} config - Additional settings 
  * @returns A link to the item, either as a Markdown link or a URL
  */
 function getWebLink(item, {format = "markdown", text = "Web library"} = {}){
@@ -436,6 +454,7 @@ function sortItems(items, sort = "meta"){
 
 export {
 	analyzeUserRequests,
+	categorizeLibraryItems,
 	cleanSemantic,
 	compareItemsByYear,
 	copyToClipboard,

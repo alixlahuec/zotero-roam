@@ -2,39 +2,25 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Classes } from "@blueprintjs/core";
 
-import { pluralize, sortItems } from "../../../utils";
+import { pluralize, sortItems } from "../../../../utils";
+import CitekeyPopover from "../../CitekeyPopover";
 
 const RelatedItem = React.memo(function RelatedItem(props) {
-	const { item, type, inGraph, allAbstractsShown } = props;
+	const { allAbstractsShown, closeDialog, inGraph, item, type } = props;
 	const [isAbstractVisible, setAbstractVisible] = useState(allAbstractsShown);
 
 	const toggleAbstract = useCallback(() => {
 		setAbstractVisible(!isAbstractVisible);
 	}, [isAbstractVisible]);
 
-	const buttonProps = useMemo(() => {
-		if(inGraph){
-			return {
-				icon: "symbol-circle",
-				intent: "success",
-				"data-citekey": item.key,
-				"data-uid": inGraph,
-				text: "Go to @" + item.key
-			};
-		} else {
-			return {
-				icon: "plus",
-				text: "@" + item.key
-			};
-		}
-	}, [inGraph, item.key]);
+	const itemActions = useMemo(() => <CitekeyPopover closeDialog={closeDialog} inGraph={inGraph} item={item} />, [closeDialog, inGraph, item]);
 
 	useEffect(() => {
 		setAbstractVisible(allAbstractsShown);
 	}, [allAbstractsShown]);
 
 	return (
-		<li className="zr-related-item" data-item-type={item.itemType}>
+		<li className="zr-related-item" data-item-type={item.itemType} data-in-graph={(inGraph != false).toString()}>
 			<div className={ Classes.MENU_ITEM } label={item.key}>
 				{type == "added_on"
 					? <span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zr-related-item--timestamp"].join(" ")}>
@@ -48,12 +34,12 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 							<span className="zr-highlight">{item.meta}</span>
 						</div>
 						<span className="zr-related-item-contents--actions">
-							<Button className="zr-text-small" minimal={true} small={true} {...buttonProps} />
+							{itemActions}
 						</span>
 					</div>
 					<div className="zr-related-item--abstract">
 						{item.abstract
-							? <Button className={ [Classes.ACTIVE, "zr-text-small"].join(" ") }
+							? <Button className="zr-text-small"
 								zr-role="abstract-toggle"
 								icon={isAbstractVisible ? "chevron-down" : "chevron-right"}
 								onClick={toggleAbstract} 
@@ -71,10 +57,11 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 	);
 });
 RelatedItem.propTypes = {
+	allAbstractsShown: PropTypes.bool,
+	closeDialog: PropTypes.func,
+	inGraph: PropTypes.oneOf([PropTypes.string, false]),
 	item: PropTypes.object,
 	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"]),
-	inGraph: PropTypes.oneOf([PropTypes.string, false]),
-	allAbstractsShown: PropTypes.bool,
 };
 
 const RelatedPanel = React.memo(function RelatedPanel(props) {
@@ -128,7 +115,12 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 				<ul className={Classes.LIST_UNSTYLED}>
 					{sortedItems.map(it => {
 						return (
-							<RelatedItem key={[it.location, it.key].join("-")} inGraph={it.inGraph} allAbstractsShown={isShowingAllAbstracts} item={it} type={type} />
+							<RelatedItem key={[it.location, it.key].join("-")} 
+								allAbstractsShown={isShowingAllAbstracts} 
+								closeDialog={onClose}
+								inGraph={it.inGraph} 
+								item={it} 
+								type={type} />
 						);
 					})
 					}

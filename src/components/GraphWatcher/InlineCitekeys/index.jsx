@@ -1,31 +1,61 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import PropTypes from "prop-types";
-import { Classes, Menu, MenuItem, Overlay } from "@blueprintjs/core";
-
-import { queryItems } from "../../../queries";
-import { formatItemReference } from "../../../utils";
 import { createPortal } from "react-dom";
+import PropTypes from "prop-types";
+import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
+
+import { useQuery_Items } from "../../../queries";
+import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, parseDOI } from "../../../utils";
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation
  * @param {Object[]} reqs - The data requests to use to retrieve items
- * @returns {Map<String,{citation: String, data: ZoteroItem|Object}>} The map of current library items
+ * @returns {Map<String,
+ * {citation: String, 
+ * data: {
+ * children: {pdfs: Array, notes: Array}, 
+ * item: Object, 
+ * weblink: Object|Boolean, 
+ * zotero: {local: String, web: String}}}>} The map of current library items
  */
-const getItems = (reqs) => {
-	const itemQueries = queryItems(reqs, { 
+const useGetItems = (reqs) => {
+	const itemQueries = useQuery_Items(reqs, { 
 		select: (datastore) => {
-			return datastore.data
-				? datastore.data
-					.filter(item => !["attachment", "note", "annotation"].includes(item.data.itemType))
-					.map(item => {
-						return [
-							"@" + item.key, 
-							{
-								citation: formatItemReference(item, "inline") || "@" + item.key,
-								data: item
+			if(datastore.data){
+				let lib = categorizeLibraryItems(datastore.data);
+
+				return lib.items.map(item => {
+					let hasURL = item.data.url;
+					let hasDOI = parseDOI(item.data.DOI);
+					let weblink = hasURL
+						? { href: hasURL, title: hasURL }
+						: hasDOI
+							? { href: "https://doi/org/" + hasDOI, title: hasDOI}
+							: false;
+
+					let pdfs = lib.pdfs.filter(p => p.library.type + "s/" + p.library.id == location && p.data.parentItem == item.data.key);
+					let notes = lib.notes.filter(n => n.library.type + "s/" + n.library.id == location && n.data.parentItem == item.data.key);
+
+					return [
+						"@" + item.key,
+						{
+							citation: formatItemReference(item, "inline") || "@" + item.key,
+							data: {
+								children: {
+									pdfs,
+									notes
+								},
+								item,
+								weblink,
+								zotero: {
+									local: getLocalLink(item, {format: "target"}),
+									web: getWebLink(item, {format: "target"})
+								}
 							}
-						];
-					})
-				: [];
+						}
+					];
+				});
+			} else {
+				return [];
+			}
 		},
 		notifyOnChangeProps: ["data"] 
 	});
@@ -40,7 +70,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const citekey = target?.parentElement.dataset.linkTitle;
 	const pageUID = target?.parentElement.dataset.linkUid;
 
-	const item = useMemo(() => {
+	const itemData = useMemo(() => {
 		if(citekey){
 			return itemsMap.get(citekey).data;
 		} else {
@@ -59,6 +89,50 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		}, 160);
 	}, []);
 
+	const pdfChildren = useMemo(() => {
+		if(!((itemData.children || {}).pdfs)){
+			return null;
+		} else {
+			let { pdfs } = itemData.children;
+			let firstElem = pdfs[0];
+			let libLoc = firstElem.library.type == "group" ? `groups/${firstElem.library.id}` : "library";
+
+			return (
+				<>
+					<MenuDivider title="PDF Attachments" />
+					{pdfs.map((p,i) => {
+						let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
+						return <MenuItem key={i} className="zr-context-menu--option" 
+							href={pdfHref} 
+							icon="paperclip"
+							rel="noreferrer" 
+							target="_blank"
+							text={p.data.filename || p.data.title} />;
+					})}
+				</>
+			);
+		}
+	}, [itemData]);
+
+	const notesChildren = useMemo(() => {
+		if(!((itemData.children || {}).notes)){
+			return null;
+		} else {
+			let { notes } = itemData.children;
+
+			return (
+				<>
+					<MenuDivider />
+					<MenuItem className="zr-context-menu--option"
+						icon="comment"
+						text="Show notes"
+						onClick={() => console.log(notes)}
+					/>
+				</>
+			);
+		}
+	}, [itemData]);
+
 	return (
 		<Overlay
 			isOpen={isOpen}
@@ -73,9 +147,21 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 						icon="add" 
 						text="Import metadata"
 						intent="primary" 
-						data-uid={pageUID} 
-						data-item-type={item.data?.itemType}
+						data-uid={pageUID}
 						data-citekey={citekey} />
+					<MenuDivider />
+					<MenuItem className="zr-context-menu-option" 
+						icon="application"
+						text="Open in Zotero"
+						href={itemData.zotero?.local}
+					/>
+					<MenuItem className="zr-context-menu-option"
+						icon="cloud"
+						text="Open in Zotero (web)"
+						href={itemData.zotero?.web}
+					/>
+					{pdfChildren}
+					{notesChildren}
 				</Menu>
 			</div>
 		</Overlay>
@@ -99,7 +185,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 	const [contextMenuCoordinates, setContextMenuCoordinates] = useState({left: 0, top:0});
 	const [contextMenuTarget, setContextMenuTarget] = useState(null);
 
-	const itemsMap = getItems(dataRequests);
+	const itemsMap = useGetItems(dataRequests);
     
 	const openContextMenu = useCallback((e) => {
 		e.preventDefault();
@@ -111,7 +197,6 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 
 	const closeContextMenu = useCallback(() => {
 		setContextMenuTarget(null);
-		setContextMenuCoordinates({left: 0, top: 0});
 		setContextMenuOpen(false);
 	}, []);
 

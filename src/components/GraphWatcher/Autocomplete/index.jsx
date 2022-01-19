@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Tribute from "tributejs";
 
 import { formatItemReference, escapeRegExp } from "../../../utils";
-import { queryItems } from "../../../queries";
+import { useQuery_Items } from "../../../queries";
 import "./index.css";
 
 const tributeClass = "zotero-roam-tribute";
@@ -39,8 +39,8 @@ const tributeConfig = {
  * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} display - The format the item should be displayed in 
  * @returns {{key: String, itemType: String, source: ("zotero"), value: String, display: String}[]} The array of Tribute entries
  */
-const getItems = (reqs, format = "citekey", display = "citekey") => {
-	const itemQueries = queryItems(reqs, { 
+const useGetItems = (reqs, format = "citekey", display = "citekey") => {
+	const itemQueries = useQuery_Items(reqs, { 
 		select: (datastore) => {
 			return datastore.data
 				? datastore.data
@@ -68,7 +68,7 @@ const Autocomplete = React.memo(function Autocomplete(props) {
 	const { trigger, display = "citekey", format = "citation" } = config;
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const formattedLib = getItems(dataRequests, format, display) || [];
+	const formattedLib = useGetItems(dataRequests, format, display) || [];
 	
 	const tributeFactory = useMemo(() => {
 		return {

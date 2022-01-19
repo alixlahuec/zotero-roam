@@ -63,7 +63,7 @@ axiosRetry(citoidClient, {
  * @param {Object} opts - Optional configuration to use with the queries
  * @returns The item React queries that correspond to the data requests
  */
-const queryItems = (reqs, opts = {}) => {
+const useQuery_Items = (reqs, opts = {}) => {
 	// Defaults for this query
 	let { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest} = opts;
 	// Factory
@@ -88,7 +88,7 @@ const queryItems = (reqs, opts = {}) => {
  * @param {Object} opts - Optional configuration to use with the queries 
  * @returns The permission React queries that correspond to the API keys
  */
-const queryPermissions = (keys, opts = {}) => {
+const useQuery_Permissions = (keys, opts = {}) => {
 	// Defaults for this query
 	let { staleTime = 1000 * 60 * 60, refetchInterval = 1000 * 60 * 60, ...rest } = opts;
 	// Factory
@@ -106,12 +106,12 @@ const queryPermissions = (keys, opts = {}) => {
 };
 
 /** Uses tag React queries for specific libraries. By default, `staleTime = 3 min`.
- *  Refetching is managed by {@link queryItems}.
+ *  Refetching is managed by {@link useQuery_Items}.
  * @param {ZoteroLibrary[]} libraries - The targeted Zotero libraries 
  * @param {Object} opts - Optional configuration to use with the queries 
  * @returns The tag React queries that correspond to the libraries
  */
-const queryTags = (libraries, opts = {}) => {
+const useQuery_Tags = (libraries, opts = {}) => {
 	// Defaults for this query
 	let { staleTime = 1000 * 60 * 3, ...rest } = opts;
 	// Factory
@@ -133,7 +133,7 @@ const queryTags = (libraries, opts = {}) => {
  * @param {Object} opts - Optional configuration to use with the queries 
  * @returns The collection React queries that correspond to the libraries
  */
-const queryCollections = (libraries, opts = {}) => {
+const useQuery_Collections = (libraries, opts = {}) => {
 	// Defaults for this query
 	let { staleTime = 1000 * 60 * 5, refetchInterval = 1000 * 60 * 5, ...rest} = opts;
 	// Factory
@@ -159,7 +159,7 @@ const queryCollections = (libraries, opts = {}) => {
  * @param {Object} opts - Optional configuration to use with the queries 
  * @returns The React query that correspond to the DOI's Semantic Scholar data
  */
-const querySemantic = (doi, opts = {}) => {
+const useQuery_Semantic = (doi, opts = {}) => {
 	// Defaults for this query
 	let { cacheTime = Infinity, ...rest } = opts;
 	// Factory
@@ -178,7 +178,7 @@ const querySemantic = (doi, opts = {}) => {
  * @param {Object} opts - Optional configuration to use with the queries
  * @returns The React query that corresponds to the URL's Wikipedia metadata
  */
-const queryCitoid = (query, opts = {}) => {
+const useQuery_Citoid = (query, opts = {}) => {
 	// Defaults for this query
 	let { cacheTime = Infinity, ...rest } = opts;
 	// Factory
@@ -521,12 +521,12 @@ function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
 // -----------------
 
 export {
-	queryItems,
-	queryPermissions,
-	queryTags,
-	queryCollections,
-	querySemantic,
-	queryCitoid,
+	useQuery_Items,
+	useQuery_Permissions,
+	useQuery_Tags,
+	useQuery_Collections,
+	useQuery_Semantic,
+	useQuery_Citoid,
 	_getChildren,
 	_getItems
 };

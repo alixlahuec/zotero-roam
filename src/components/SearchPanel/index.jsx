@@ -1,12 +1,14 @@
 import React, { useCallback, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, ButtonGroup, Classes, Icon, InputGroup, MenuItem, NonIdealState, Switch, Tag } from "@blueprintjs/core";
+import { Button, Classes, Icon, InputGroup, MenuItem, NonIdealState, Switch } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
-import DialogOverlay from "../DialogOverlay";
 import { useQueryClient } from "react-query";
 
+import DialogOverlay from "../DialogOverlay";
+import ItemDetails from "./ItemDetails";
 import { copyToClipboard } from "../../utils";
-import { getCitekeyPages, openPageByUID } from "../../roam";
+import { getCitekeyPages } from "../../roam";
+import { cleanLibrary, formatItemReferenceForCopy } from "./utils";
 import "./index.css";
 
 const query_threshold = 3;
@@ -45,139 +47,6 @@ function useDebounceCallback(callback, timeout) {
 	return [debounceCallback, cancel];
 }
 
-function CopyButton(props){
-	let { copyProps, ...rest } = props;
-
-	const formatCitekey = () => {
-		let {citekey, item, format} = copyProps;
-		let output;
-		let pageRef = "[[@" + citekey + "]]";
-  
-		switch(format){
-		case "page-reference":
-			output = pageRef;
-			break;
-		case "tag":
-			output = "#" + pageRef;
-			break;
-		case "citation":
-			output = "[" + item.authors + " (" + item.year + ")](" + pageRef + ")";
-			break;
-		case "citekey":
-		default:
-			output = "@" + citekey;
-			break;
-		}
-    
-		copyToClipboard(output);
-	};
-  
-	return <Button {...rest} onClick={formatCitekey} />;
-}
-CopyButton.propTypes = {
-	copyProps: PropTypes.object
-};
-
-function CopyButtonsSet(props){
-	return <ButtonGroup fill={true} minimal={true} className="copy-buttons">
-		<CopyButton text="Copy @citekey" intent="primary" small={true} copyProps={{format: "citekey", ...props}} />
-		<CopyButton text="[Citation]([[@]])" intent="primary" small={true} copyProps={{format: "citation", ...props}} />
-		<CopyButton text="#@" intent="primary" small={true} copyProps={{format: "tag", ...props}} />
-		<CopyButton text="[[@]]" intent="primary" small={true} copyProps={{format: "page-reference", ...props}} />
-	</ButtonGroup>;
-}
-
-function SelectedItem(props) {
-	let {
-		abstract, 
-		authors, 
-		authorsFull, 
-		authorsRoles, 
-		inGraph, 
-		key, 
-		publication, 
-		tags, 
-		title, 
-		weblink, 
-		year} = props.item;
-
-	return <div id="zotero-roam-search-selected-item">
-		<div className="selected-item-header">
-			<div className="item-basic-metadata">
-				<h4 className="item-title">{title}</h4>
-				<span className="zotero-roam-search-item-authors zr-highlight">{authors + " (" + year + ")"}</span>
-				{publication
-					? <span className="zr-secondary">{publication}</span>
-					: null}
-				{weblink
-					? <span className="item-weblink zr-secondary" style={{ display: "block" }}>
-						<a href={weblink.href} target="_blank" rel="noreferrer">{weblink.title}</a>
-					</span>
-					: null}
-			</div>
-			<div className="item-citekey-section" data-in-graph={inGraph.toString()}>
-				<div className={Classes.FILL + " citekey-element"}>
-					{inGraph
-						? <Icon icon="symbol-circle" />
-						: <Icon icon="minus" intent="warning" />}
-					{"@" + key}
-				</div>
-				{navigator.clipboard
-					? <CopyButtonsSet citekey={key} item={props.item} />
-					: null}
-			</div>
-		</div>
-		<div className="selected-item-body">
-			<div className="item-additional-metadata">
-				<p className={"item-abstract zr-text-small " + Classes.RUNNING_TEXT}>{abstract}</p>
-				{authorsFull.length > 0
-					? <p className="item-creators">
-						<strong>Contributors : </strong>
-						{authorsFull.map((aut, i) => <Tag key={i} intent="primary" className="item-creator-tag" >{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
-					</p>
-					: null}
-				{tags.length > 0
-					? <p className="item-tags">
-						<strong>Tags : </strong>
-						{tags.map((tag, i) => <Tag key={i}>#{tag}</Tag>)}
-					</p>
-					: null}
-			</div>
-			<div className="item-actions">
-				<div className={Classes.CARD}>
-					<ButtonGroup minimal={true} alignText="left" vertical={true} fill={true}>
-						{ inGraph 
-							? <Button text="Go to Roam page"
-								className="item-go-to-page"
-								icon="arrow-right"
-								onClick={() => openPageByUID(inGraph)} />
-							: null  
-						}
-						<Button text="Import item metadata"
-							className="item-add-metadata"
-							icon="add" />
-					</ButtonGroup>
-				</div>
-			</div>
-		</div>
-	</div>;
-}
-SelectedItem.propTypes = {
-	item: PropTypes.shape({
-		abstract: PropTypes.string,
-		authors: PropTypes.string,
-		authorsFull: PropTypes.array,
-		authorsRoles: PropTypes.array,
-		inGraph: PropTypes.bool,
-		key: PropTypes.string,
-		publication: PropTypes.string,
-		tags: PropTypes.array,
-		title: PropTypes.string,
-		weblink: PropTypes.oneOfType(PropTypes.object, PropTypes.bool),
-		year: PropTypes.string
-	}),
-};
-
 function listItemRenderer(item, itemProps) {
 	let { handleClick, modifiers, query } = itemProps;
 	let passedProps = { item, handleClick, modifiers, query };
@@ -201,44 +70,6 @@ function searchEngine(query, items) {
   
 		return matches;
 	}
-}
-
-function simplifyRequestData(arr, roamCitekeys){
-	return arr
-		.filter(i => !["note", "attachment", "annotation"].includes(i.data.itemType))
-		.map(item => {
-			let hasURL = item.data.url || item.data.DOI || false;
-			let creators = item.data.creators.map(cre => {
-				return {
-					full: cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ") || "",
-					last: cre.lastName || cre.name || "",
-					role: cre.creatorType || ""
-				};
-			});
-			let tags = Array.from(new Set(item.data.tags.map(t => t.tag)));
-
-			return {
-				key: item.key,
-				itemKey: item.data.key,
-				title: item.data.title,
-				abstract: item.data.abstractNote || "",
-				authors: item.meta.creatorSummary || "",
-				year: item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear().toString() : "",
-				meta: "",
-				publication: item.data.publicationTitle || item.data.bookTitle || item.data.university || "",
-				tags: tags,
-				tagsString: tags.map(tag => `#${tag}`).join(", "),
-				authorsFull: creators.map(cre => cre.full),
-				authorsRoles: creators.map(cre => cre.role),
-				authorsLastNames: creators.map(cre => cre.last),
-				authorsString: creators.map(cre => cre.full).join(" "),
-				location: item.library.type + "s/" + item.library.id,
-				itemType: item.data.itemType,
-				"_multiField": "",
-				inGraph: roamCitekeys.has("@" + item.key) ? roamCitekeys.get("@" + item.key) : false,
-				weblink: hasURL ? {href: hasURL, title: hasURL} : false
-			};
-		});
 }
 
 const SearchResult = React.memo(function SearchResult(props) {
@@ -276,7 +107,7 @@ SearchResult.propTypes = {
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { handleChange, portalTarget } = props;
+	const { copySettings, handleChange, portalTarget } = props;
 
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	let [query, setQuery] = useState();
@@ -286,11 +117,11 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 	const searchbar = useRef();
 	let [selectedItem, itemSelect] = useState(null);
-	let [quickCopyActive, setQuickCopy] = useState(false); // DEP
+	let [quickCopyActive, setQuickCopy] = useState(copySettings.useQuickCopy); // Is QuickCopy active by default ?
 	let [roamCitekeys, setRoamCitekeys] = useState(getCitekeyPages());
 
 	const client = useQueryClient();
-	const items = simplifyRequestData(client.getQueriesData("items").map((res) => res[1]?.data || []).flat(1), roamCitekeys);
+	const items = cleanLibrary(client.getQueriesData("items").map((res) => res[1]?.data || []).flat(1), roamCitekeys);
 
 	const handleClose = useCallback(() => {
 		setQuery("");
@@ -308,7 +139,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 	const toggleQuickCopy = useCallback(() => { setQuickCopy(!quickCopyActive); }, [quickCopyActive]);
 
-	const handleItemSelect = useCallback((item, _e) => {
+	const handleItemSelect = useCallback((item, e) => {
 		if(item === selectedItem){ 
 			return; 
 		} else if(!item){
@@ -316,14 +147,20 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		} else {
 			if(quickCopyActive){
 				// Mode: Quick Copy
-				copyToClipboard("@" + item.key);
+				copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
+				// TODO: Add dependency on copySettings.overrideKey
 				handleClose();
 			} else {
+				if(copySettings.always == true){
+					copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
+				}
 				searchbar.current.blur();
 				itemSelect(item);
 			}
 		}
-	}, [selectedItem, quickCopyActive, handleClose]);
+		// For testing
+		console.log(e);
+	}, [copySettings.always, copySettings.defaultFormat, handleClose, quickCopyActive, selectedItem]);
 
 	function handleQueryChange(query, _e) {
 		handleItemSelect(null);
@@ -361,7 +198,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					leftElement={leftElem}
 					rightElement={rightElem}
 				/>
-				{selectedItem ? <SelectedItem item={selectedItem} />
+				{selectedItem ? <ItemDetails item={selectedItem} closeDialog={handleClose} defaultCopyFormat={copySettings.defaultFormat} />
 					: <>
 						<div
 							id="zotero-roam-library-rendered"
@@ -403,12 +240,18 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 });
 SearchPanel.propTypes = {
-	panelState: PropTypes.object,
-	isOpen: PropTypes.bool,
-	isSidePanelOpen: PropTypes.bool,
+	copySettings: PropTypes.shape({
+		always: PropTypes.bool,
+		defaultFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
+		overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
+		useQuickCopy: PropTypes.bool
+	}),
 	handleChange: PropTypes.func,
-	portalTarget: PropTypes.string,
-	version: PropTypes.string
+	panelState: PropTypes.shape({
+		isOpen: PropTypes.bool,
+		isSidePanelOpen: PropTypes.bool
+	}),
+	portalTarget: PropTypes.string
 };
 
 export default SearchPanel;

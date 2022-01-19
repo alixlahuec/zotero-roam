@@ -2,10 +2,10 @@ import React, { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../../AuxiliaryDialog";
+import AuxiliaryDialog from "../AuxiliaryDialog";
 import ButtonLink from "../../ButtonLink";
 import SciteBadge from "../../SciteBadge";
-import { querySemantic } from "../../../queries";
+import { useQuery_Semantic } from "../../../queries";
 import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
 import { showClasses } from "../classes";
 
@@ -47,7 +47,7 @@ function BacklinksItem(props) {
 		>
 			<div className="zr-backlink-item--year">{pub_year}</div>
 			<div className="zr-backlink-item--info">
-				<span zr-role="item-authors" className="zotero-roam-search-item-authors zr-highlight">{meta.creatorSummary || ""}</span>
+				<span zr-role="item-authors" className={["zotero-roam-search-item-authors", pub_type == "reference" ? "zr-highlight" : "zr-highlight-2"].join(" ")}>{meta.creatorSummary || ""}</span>
 				<span zr-role="item-publication" className="zr-secondary">{data.publicationTitle || data.bookTitle || data.university || ""}</span>
 				<span zr-role="item-title" className="zotero-roam-search-item-title">{data.title}</span>
 			</div>
@@ -103,7 +103,7 @@ Backlinks.propTypes = {
 
 function RelatedItemsBar(props) {
 	const { doi, title, origin, items, portalId, roamCitekeys } = props;
-	const { isLoading, isError, data = {}, error } = querySemantic(doi);
+	const { isLoading, isError, data = {}, error } = useQuery_Semantic(doi);
 	
 	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
 	const [isDialogOpen, setDialogOpen] = useState(false);
@@ -223,11 +223,10 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 					let location = pdf.library.type == "group" ? `groups/${pdf.library.id}` : "library";
 					let href = (["linked_file", "imported_file", "imported_url"].includes(pdf.data.linkMode)) ? `zotero://open-pdf/${location}/items/${pdf.data.key}` : pdf.data.url;
 					return (
-						<ButtonLink linkClass={ Classes.MINIMAL }
-							zr-role="pdf-link"
-							key={pdf.key}
+						<ButtonLink zr-role="pdf-link" key={pdf.key}
 							href={href}
 							icon="paperclip"
+							minimal={true}
 							text={pdf.data.filename || pdf.data.title} />
 					);
 				})
