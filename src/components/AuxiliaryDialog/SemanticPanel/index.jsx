@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Classes, Icon, InputGroup, Tabs, Tab, Tag, Menu, MenuItem, MenuDivider } from "@blueprintjs/core";
+import { Button, Classes, Icon, InputGroup, Tabs, Tab, Tag, Menu, MenuItem, MenuDivider, NonIdealState } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import { getCitekeyPages, openInSidebarByUID, openPageByUID } from "../../../roam";
 import { getLocalLink, getWebLink, pluralize, sortItems } from "../../../utils";
 import "./index.css";
+
+const noResultsState = <NonIdealState icon="search" title="No results" />;
 
 function searchEngine(query, items){
 	return items
@@ -43,12 +45,12 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 					<MenuItem 
 						icon="application"
 						text="Open in Zotero (app)"
-						href={getLocalLink(item, {format: "target"})} 
+						href={getLocalLink(inLibrary, {format: "target"})} 
 						target="_blank" />
 					<MenuItem 
 						icon="cloud"
 						text="Open in Zotero (web)"
-						href={getWebLink(item, {format: "target"})} 
+						href={getWebLink(inLibrary, {format: "target"})} 
 						target="_blank" />
 				</Menu>
 			);
@@ -67,17 +69,17 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 					<MenuItem 
 						icon="application"
 						text="Open in Zotero (app)"
-						href={getLocalLink(item, {format: "target"})} 
+						href={getLocalLink(inLibrary, {format: "target"})} 
 						target="_blank" />
 					<MenuItem 
 						icon="cloud"
 						text="Open in Zotero (web)"
-						href={getWebLink(item, {format: "target"})} 
+						href={getWebLink(inLibrary, {format: "target"})} 
 						target="_blank" />
 				</Menu>
 			);
 		}
-	}, [inLibrary, inGraph, item]);
+	}, [inLibrary, inGraph]);
 
 	const itemActions = useMemo(() => {
 		if(!inLibrary){
@@ -205,6 +207,7 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 			itemListPredicate={searchEngine}
 			renderer={listRenderer}
 			itemRenderer={itemRenderer}
+			noResults={noResultsState}
 			onQueryChange={handleQueryChange}
 			query={query}
 		/>

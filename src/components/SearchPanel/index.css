@@ -206,7 +206,7 @@ h4.item-title{
     .item-basic-metadata,
     .item-additional-metadata,
     .citekey-element,
-    .item-actions button {
+    .item-actions button[type="button"] {
         color: var(--zr-dark-text-co,#76a0cb);
     }
     .item-abstract {
@@ -215,6 +215,7 @@ h4.item-title{
     }
     .copy-buttons > .bp3-button,
     .copy-buttons > .bp3-button:hover { 
+        color: var(--zr-dark-text-co,#76a0cb);
         border-color: var(--zr-dark-border-color,#363a3f);
     }
     .item-basic-metadata,

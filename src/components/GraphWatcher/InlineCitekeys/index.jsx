@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-import { Menu, MenuItem, Overlay } from "@blueprintjs/core";
+import { Classes, Menu, MenuItem, Overlay } from "@blueprintjs/core";
 
 import { queryItems } from "../../../queries";
 import { formatItemReference } from "../../../utils";
@@ -56,7 +56,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 			} catch(e){
 				// Do nothing
 			}
-		}, 120);
+		}, 160);
 	}, []);
 
 	return (
@@ -67,10 +67,12 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 			onClose={onClose}
 			onOpen={onOpen}
 			usePortal={false}>
-			<div className="zr-context-menu--wrapper" style={coords}>
-				<Menu className="zr-context-menu--option">
-					<MenuItem icon="arrow-right" 
-						text="Import metadata" 
+			<div className={["zr-context-menu--wrapper", Classes.POPOVER].join(" ")} style={coords}>
+				<Menu className="zr-context-menu">
+					<MenuItem className="zr-context-menu--option" 
+						icon="add" 
+						text="Import metadata"
+						intent="primary" 
 						data-uid={pageUID} 
 						data-item-type={item.data?.itemType}
 						data-citekey={citekey} />
@@ -115,8 +117,6 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 
 	const renderCitekeyRefs = useCallback(() => {
 		let refCitekeys = document.querySelectorAll("span[data-link-title^='@']");
-
-		console.log(itemsMap); // For debugging
 
 		for(let i=0;i<refCitekeys.length;i++){
 			let refCitekeyElement = refCitekeys[i];
