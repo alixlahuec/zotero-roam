@@ -35,7 +35,7 @@ const getItems = (reqs) => {
 };
 
 const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
-	const { coords, isOpen, itemsMap, target } = props;
+	const { coords, isOpen, itemsMap, onClose, target } = props;
 
 	const citekey = target?.parentElement.dataset.linkTitle;
 	const pageUID = target?.parentElement.dataset.linkUid;
@@ -48,11 +48,24 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		}
 	}, [citekey, itemsMap]);
 
+	const onOpen = useCallback(() => {
+		setTimeout(() => {
+			try{
+				// Hide default Roam context menu
+				document.querySelector("body > .bp3-context-menu+.bp3-portal").style.display = "none";
+			} catch(e){
+				// Do nothing
+			}
+		}, 120);
+	}, []);
+
 	return (
 		<Overlay
 			isOpen={isOpen}
 			hasBackdrop={false}
 			lazy={false}
+			onClose={onClose}
+			onOpen={onOpen}
 			usePortal={false}>
 			<div className="zr-context-menu--wrapper" style={coords}>
 				<Menu className="zr-context-menu--option">
@@ -73,6 +86,7 @@ CitekeyContextMenu.propTypes = {
 	}),
 	isOpen: PropTypes.bool,
 	itemsMap: PropTypes.instanceOf(Map),
+	onClose: PropTypes.func,
 	portalId: PropTypes.string,
 	target: PropTypes.node
 };
@@ -91,6 +105,12 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 		setContextMenuCoordinates({left, top});
 		setContextMenuTarget(target);
 		setContextMenuOpen(true);
+	}, []);
+
+	const closeContextMenu = useCallback(() => {
+		setContextMenuTarget(null);
+		setContextMenuCoordinates({left: 0, top: 0});
+		setContextMenuOpen(false);
 	}, []);
 
 	const renderCitekeyRefs = useCallback(() => {
@@ -159,6 +179,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 				coords={contextMenuCoordinates} 
 				isOpen={isContextMenuOpen} 
 				itemsMap={itemsMap}
+				onClose={closeContextMenu}
 				target={contextMenuTarget} />, 
 			document.getElementById(portalId))
 	);

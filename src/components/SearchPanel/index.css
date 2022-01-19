@@ -74,7 +74,7 @@ label.zr-quick-copy {
 .selected-item-body{ flex-wrap:wrap; }
 
 .item-basic-metadata, 
-.item-additional-metadata{ flex: 0 1 60%;padding: 20px;}
+.item-additional-metadata{ flex: 0 1 60%;padding: 20px;background:#f5f8fa;}
 .item-basic-metadata{ padding-top:10px; }
 .item-additional-metadata{ padding-top:0px; }
 
@@ -130,8 +130,8 @@ h4.item-title{
 }
 /**/
 
-.copy-buttons > a.bp3-button,
-.copy-buttons > a.bp3-button:hover { 
+.copy-buttons > .bp3-button,
+.copy-buttons > .bp3-button:hover { 
     font-size:0.7em;
     margin:5px;
     border-width: 1px;
@@ -185,8 +185,8 @@ h4.item-title{
     border-bottom-color: var(--zr-dark-border-color,#363a3f);
 }
 
-.bp3-dark .copy-buttons > a.bp3-button,
-.bp3-dark .copy-buttons > a.bp3-button:hover {
+.bp3-dark .copy-buttons > .bp3-button,
+.bp3-dark .copy-buttons > .bp3-button:hover {
     color: var(--zr-dark-text-co, #76a0cb); 
     border-color: var(--zr-dark-border-color,#363a3f);
 }
@@ -194,7 +194,7 @@ h4.item-title{
 .bp3-dark .item-basic-metadata,
 .bp3-dark .item-additional-metadata,
 .bp3-dark .item-actions > .bp3-card { 
-    background-color:var(--zr-dark-elem-bg, #2b3135);
+    background-color:var(--zr-dark-elem-bg, #2B3143);
 }
 
 @media (prefers-color-scheme: dark){
@@ -205,20 +205,21 @@ h4.item-title{
     .zr-dialog-overlay--search-library .zr-library-item--contents,
     .item-basic-metadata,
     .item-additional-metadata,
-    .citekey-element {
+    .citekey-element,
+    .item-actions button {
         color: var(--zr-dark-text-co,#76a0cb);
     }
     .item-abstract {
         border-top-color: var(--zr-dark-border-color,#363a3f);
         border-bottom-color: var(--zr-dark-border-color,#363a3f);
     }
-    .copy-buttons > a.bp3-button,
-    .copy-buttons > a.bp3-button:hover { 
+    .copy-buttons > .bp3-button,
+    .copy-buttons > .bp3-button:hover { 
         border-color: var(--zr-dark-border-color,#363a3f);
     }
     .item-basic-metadata,
     .item-additional-metadata,
     .item-actions > .bp3-card {
-        background-color: var(--zr-dark-elem-bg, #2b3135);
+        background-color: var(--zr-dark-elem-bg, #2B3143);
     }
 }

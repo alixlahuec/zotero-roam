@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Classes, Icon, InputGroup, Tabs, Tab, Tag, Menu, MenuItem } from "@blueprintjs/core";
+import { Button, Classes, Icon, InputGroup, Tabs, Tab, Tag, Menu, MenuItem, MenuDivider } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import { getCitekeyPages, openInSidebarByUID, openPageByUID } from "../../../roam";
-import { pluralize, sortItems } from "../../../utils";
+import { getLocalLink, getWebLink, pluralize, sortItems } from "../../../utils";
 import "./index.css";
 
 function searchEngine(query, items){
@@ -36,26 +36,48 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 			return null;
 		} else if(!inGraph){
 			return (
-				<Menu>
-					<MenuItem className="zr-text-small" icon="add" text="Import metadata" />
-					<MenuItem className="zr-text-small" icon="inheritance" text="Import & open in sidebar" />
+				<Menu className="zr-text-small">
+					<MenuItem icon="add" text="Import metadata" />
+					<MenuItem icon="inheritance" text="Import & open in sidebar" />
+					<MenuDivider />
+					<MenuItem 
+						icon="application"
+						text="Open in Zotero (app)"
+						href={getLocalLink(item, {format: "target"})} 
+						target="_blank" />
+					<MenuItem 
+						icon="cloud"
+						text="Open in Zotero (web)"
+						href={getWebLink(item, {format: "target"})} 
+						target="_blank" />
 				</Menu>
 			);
 		} else {
 			return (
-				<Menu>
-					<MenuItem className="zr-text-small" 
+				<Menu className="zr-text-small">
+					<MenuItem 
 						icon="arrow-right" 
 						text="Go to Roam page"
 						onClick={() => openPageByUID(inGraph)} />
-					<MenuItem className="zr-text-small" 
+					<MenuItem 
 						icon="inheritance" 
 						text="Open in sidebar"
 						onClick={() => openInSidebarByUID(inGraph)} />
+					<MenuDivider />
+					<MenuItem 
+						icon="application"
+						text="Open in Zotero (app)"
+						href={getLocalLink(item, {format: "target"})} 
+						target="_blank" />
+					<MenuItem 
+						icon="cloud"
+						text="Open in Zotero (web)"
+						href={getWebLink(item, {format: "target"})} 
+						target="_blank" />
 				</Menu>
 			);
 		}
-	}, [inLibrary, inGraph]);
+	}, [inLibrary, inGraph, item]);
 
 	const itemActions = useMemo(() => {
 		if(!inLibrary){

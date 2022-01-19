@@ -24,7 +24,7 @@ const tributeConfig = {
 	noMatchTemplate: function () {
 		return "<span style:\"visibility: hidden;\"></span>";
 	},
-	requireLeadingSpace: false,
+	requireLeadingSpace: true,
 	selectTemplate: (item) => {
 		return item.original.value;
 	},

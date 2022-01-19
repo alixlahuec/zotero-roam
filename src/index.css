@@ -20,9 +20,6 @@
 .bp3-dark .zotero-roam-citations-search_result[in-library="true"]{background-color:#5863582e;}
 .zotero-roam-page-control > span[icon]{margin-right:0px;}
 
-.item-basic-metadata, .item-additional-metadata {background:#f5f8fa;}
-.bp3-dark .item-basic-metadata, .bp3-dark .item-additional-metadata, .bp3-dark .zotero-roam-citation-abstract{background-color:#2b3135;}
-
 .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
 .header-right .zotero-roam-sequence {background: unset;color: #c79f0c;}
 
