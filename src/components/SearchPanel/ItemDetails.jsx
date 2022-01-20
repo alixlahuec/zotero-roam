@@ -52,10 +52,10 @@ function CopyButtons(props){
 
 	const optionsMenu = useMemo(() => {
 		let options = [
-			{ format: "citekey", text: "Copy @citekey" },
-			{ format: "tag", text: "Copy #@citekey" },
-			{ format: "page-reference", text: "Copy [[@citekey]]" },
-			{ format: "citation", text: "Copy [Citation]([[@]])" }
+			{ format: "citekey", text: "as @citekey" },
+			{ format: "tag", text: "as #@citekey" },
+			{ format: "page-reference", text: "as [[@citekey]]" },
+			{ format: "citation", text: "as [Citation]([[@]])" }
 		].filter(op => op.format != defaultCopyFormat);
 		return (
 			<Menu className="zr-text-small">
@@ -66,9 +66,14 @@ function CopyButtons(props){
 
 	return (
 		<ButtonGroup className="copy-buttons" fill={true} minimal={true} >
-			<Button icon="clipboard" text={"as " + defaultCopyText} onClick={() => copyToClipboard(defaultCopyText)} />
+			<Button className={["zr-text-small", "zr-secondary"].join(" ")}
+				fill={true} 
+				icon="clipboard"
+				intent="primary" 
+				text={defaultCopyText} 
+				onClick={() => copyToClipboard(defaultCopyText)} />
 			<Popover2 interactionKind="hover" placement="right-start" content={optionsMenu} >
-				<Button icon="caret-right" />
+				<Button icon="caret-right" intent="primary" />
 			</Popover2>
 		</ButtonGroup>
 	);

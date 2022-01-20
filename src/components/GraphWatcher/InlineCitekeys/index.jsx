@@ -13,6 +13,7 @@ import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, 
  * data: {
  * children: {pdfs: Array, notes: Array}, 
  * item: Object, 
+ * location: String,
  * weblink: Object|Boolean, 
  * zotero: {local: String, web: String}}}>} The map of current library items
  */
@@ -30,6 +31,7 @@ const useGetItems = (reqs) => {
 						: hasDOI
 							? { href: "https://doi/org/" + hasDOI, title: hasDOI}
 							: false;
+					let location = item.library.type + "s/" + item.library.id;
 
 					let pdfs = lib.pdfs.filter(p => p.library.type + "s/" + p.library.id == location && p.data.parentItem == item.data.key);
 					let notes = lib.notes.filter(n => n.library.type + "s/" + n.library.id == location && n.data.parentItem == item.data.key);
@@ -44,6 +46,7 @@ const useGetItems = (reqs) => {
 									notes
 								},
 								item,
+								location,
 								weblink,
 								zotero: {
 									local: getLocalLink(item, {format: "target"}),
@@ -78,7 +81,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		}
 	}, [citekey, itemsMap]);
 
-	const onOpen = useCallback(() => {
+	const onOpened = useCallback(() => {
 		setTimeout(() => {
 			try{
 				// Hide default Roam context menu
@@ -89,17 +92,16 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 			} catch(e){
 				// Do nothing
 			}
-		}, 160);
+		}, 200);
 	}, [citekey, itemsMap]);
 
 	const pdfChildren = useMemo(() => {
 		if(!(itemData?.children?.pdfs?.length > 0)){
 			return null;
 		} else {
-			let { pdfs } = itemData.children;
-			let firstElem = pdfs[0];
-			let libLoc = firstElem.library.type == "group" ? `groups/${firstElem.library.id}` : "library";
-
+			let { pdfs = [] } = itemData.children;
+			let libLoc = itemData.location.startsWith("groups/") ? itemData.location : "library";
+			
 			return (
 				<>
 					<MenuDivider title="PDF Attachments" />
@@ -121,7 +123,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		if(!((itemData.children || {}).notes)){
 			return null;
 		} else {
-			let { notes } = itemData.children;
+			let { notes = [] } = itemData.children;
 
 			return (
 				<>
@@ -142,7 +144,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 			hasBackdrop={false}
 			lazy={false}
 			onClose={onClose}
-			onOpen={onOpen}
+			onOpened={onOpened}
 			usePortal={false}>
 			<div className={["zr-context-menu--wrapper", Classes.POPOVER].join(" ")} style={coords}>
 				<Menu className="zr-context-menu">
