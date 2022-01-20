@@ -35,7 +35,7 @@ axiosRetry(zoteroClient, {
 				return retryCount * 1000;
 			}
 		} else {
-			return retryCount * 1000;
+			return retryCount * 3000;
 		}
 	}
 });
