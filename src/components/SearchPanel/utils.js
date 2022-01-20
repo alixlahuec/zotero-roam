@@ -4,6 +4,7 @@ import { categorizeLibraryItems, getLocalLink, getWebLink, parseDOI } from "../.
  * @param {Object[]} arr - The library's contents, including top-level items, attachments and notes 
  * @param {Map} roamCitekeys - The map of citekey pages present in Roam 
  * @returns {Object[]} - The simplified items
+ * @see cleanLibraryReturnArrayType
  */
 function cleanLibrary(arr, roamCitekeys){
 	let lib = categorizeLibraryItems(arr);
@@ -72,7 +73,7 @@ function formatItemReferenceForCopy(simplifiedItem, format){
 	let citekey = simplifiedItem.key;
 	let pageRef = "[[@" + citekey + "]]";
 
-	switch(format){
+	switch(true){
 	case (format instanceof Function):
 		return format(citekey, simplifiedItem.raw);
 	case "page-reference":

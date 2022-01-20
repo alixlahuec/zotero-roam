@@ -4,6 +4,7 @@ import { Button, Classes } from "@blueprintjs/core";
 
 import { pluralize, sortItems } from "../../../../utils";
 import CitekeyPopover from "../../CitekeyPopover";
+import * as customPropTypes from "../../../../propTypes";
 
 const RelatedItem = React.memo(function RelatedItem(props) {
 	const { allAbstractsShown, closeDialog, inGraph, item, type } = props;
@@ -13,7 +14,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 		setAbstractVisible(!isAbstractVisible);
 	}, [isAbstractVisible]);
 
-	const itemActions = useMemo(() => <CitekeyPopover closeDialog={closeDialog} inGraph={inGraph} item={item} />, [closeDialog, inGraph, item]);
+	const itemActions = useMemo(() => <CitekeyPopover closeDialog={closeDialog} inGraph={inGraph} item={item.raw} />, [closeDialog, inGraph, item]);
 
 	useEffect(() => {
 		setAbstractVisible(allAbstractsShown);
@@ -60,7 +61,7 @@ RelatedItem.propTypes = {
 	allAbstractsShown: PropTypes.bool,
 	closeDialog: PropTypes.func,
 	inGraph: PropTypes.oneOf([PropTypes.string, false]),
-	item: PropTypes.object,
+	item: customPropTypes.cleanRelatedItemType,
 	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"]),
 };
 
@@ -131,7 +132,10 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 });
 RelatedPanel.propTypes = {
 	ariaLabelledBy: PropTypes.string,
-	items: PropTypes.array,
+	/** Array of related items 
+	 * See {@link cleanSemantic} for properties
+	 */
+	items: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,
 	sort: PropTypes.oneOf(["added", "meta"]),

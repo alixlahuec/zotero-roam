@@ -4,6 +4,7 @@ import { Button } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
 import { pluralize } from "../../../utils";
+import * as customPropTypes from "../../../propTypes";
 
 function TagMenu(props){
 	const { tagged = [], inAbstract = [], tag, portalId } = props;
@@ -61,8 +62,8 @@ function TagMenu(props){
 	);
 }
 TagMenu.propTypes = {
-	tagged: PropTypes.array,
-	inAbstract: PropTypes.array,
+	tagged: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
+	inAbstract: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
 	tag: PropTypes.string,
 	portalId: PropTypes.string
 };

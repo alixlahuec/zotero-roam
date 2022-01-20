@@ -43,6 +43,10 @@ function analyzeUserRequests(reqs){
 	}
 }
 
+/** Categorize library items according to their type (items, PDFs attachments, notes)
+ * @param {Object[]} datastore - The items to categorize 
+ * @returns {{items: ZoteroItem[]|Object[], pdfs: Object[], notes: Object[]}} The categorized object
+ */
 function categorizeLibraryItems(datastore){
 	return datastore.reduce((obj, item) => {
 		if (["note", "annotation"].includes(item.data.itemType)) {
@@ -65,6 +69,8 @@ function categorizeLibraryItems(datastore){
  * @param {Object} item - The Semantic Scholar entry to format 
  * @returns {{
  * authors: String, 
+ * authorsLastNames: String,
+ * authorsString: String,
  * doi: String, 
  * intent: String[], 
  * isInfluential: Boolean,
@@ -74,6 +80,7 @@ function categorizeLibraryItems(datastore){
  * url: String,
  * year: String
  * }[]} The formatted entry
+ * @see cleanSemanticItemType
  */
 function cleanSemanticItem(item){
 	let cleanItem = {
@@ -137,6 +144,7 @@ function cleanSemanticItem(item){
  * citations: Object[], 
  * references: Object[],
  * backlinks: Object[]}} The formatted list
+ * @see cleanSemanticReturnObjectType
  */
 function cleanSemantic(datastore, semantic, roamCitekeys){
 	// Note: DOIs from the Semantic Scholar queries are sanitized at fetch

@@ -194,7 +194,7 @@ RelatedItemsBar.propTypes = {
 	doi: PropTypes.string,
 	title: PropTypes.string,
 	origin: PropTypes.string,
-	items: PropTypes.array,
+	items: PropTypes.arrayOf(PropTypes.object),
 	portalId: PropTypes.string,
 	roamCitekeys: PropTypes.instanceOf(Map)
 };
@@ -295,7 +295,11 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 });
 CitekeyMenu.propTypes = {
 	item: PropTypes.object,
-	itemList: PropTypes.array,
+	itemList: PropTypes.shape({
+		items: PropTypes.arrayOf(PropTypes.object),
+		pdfs: PropTypes.arrayOf(PropTypes.object),
+		notes: PropTypes.arrayOf(PropTypes.object),
+	}),
 	portalId: PropTypes.string,
 	roamCitekeys: PropTypes.instanceOf(Map)
 };

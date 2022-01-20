@@ -9,6 +9,7 @@ import ItemDetails from "./ItemDetails";
 import { copyToClipboard } from "../../utils";
 import { getCitekeyPages } from "../../roam";
 import { cleanLibrary, formatItemReferenceForCopy } from "./utils";
+import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 const query_threshold = 3;
@@ -99,7 +100,7 @@ const SearchResult = React.memo(function SearchResult(props) {
 	/>;
 });
 SearchResult.propTypes = {
-	item: PropTypes.object,
+	item: customPropTypes.cleanLibraryItemType,
 	handleClick: PropTypes.func,
 	modifiers: PropTypes.object,
 	query: PropTypes.string
@@ -148,8 +149,12 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			if(quickCopyActive){
 				// Mode: Quick Copy
 				copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
-				// TODO: Add dependency on copySettings.overrideKey
-				handleClose();
+				if(copySettings.overrideKey && e[copySettings.overrideKey] == true){
+					searchbar.current.blur();
+					itemSelect(item);
+				} else {
+					handleClose();
+				}
 			} else {
 				if(copySettings.always == true){
 					copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
@@ -158,9 +163,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 				itemSelect(item);
 			}
 		}
-		// For testing
-		console.log(e);
-	}, [copySettings.always, copySettings.defaultFormat, handleClose, quickCopyActive, selectedItem]);
+	}, [copySettings.always, copySettings.defaultFormat, copySettings.overrideKey, handleClose, quickCopyActive, selectedItem]);
 
 	function handleQueryChange(query, _e) {
 		handleItemSelect(null);

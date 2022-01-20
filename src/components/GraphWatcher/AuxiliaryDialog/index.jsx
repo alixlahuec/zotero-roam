@@ -5,6 +5,7 @@ import { Classes, Dialog, } from "@blueprintjs/core";
 
 import RelatedPanel from "./RelatedPanel";
 import SemanticPanel from "./SemanticPanel";
+import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
@@ -69,7 +70,7 @@ AuxiliaryDialog.propTypes = {
 	ariaLabelledBy: PropTypes.string,
 	className: PropTypes.string,
 	isOpen: PropTypes.bool,
-	items: PropTypes.array,
+	items: PropTypes.arrayOf(PropTypes.oneOf([customPropTypes.cleanRelatedItemType, customPropTypes.cleanSemanticReturnType])),
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,
 	show: PropTypes.shape({

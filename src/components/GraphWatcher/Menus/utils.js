@@ -39,23 +39,26 @@ const addPageMenus = () => {
  * key: String,
  * location: String,
  * meta: String,
+ * raw: Object,
  * timestamp: String,
  * title: String
  * }[]} The formatted array
+ * @see cleanRelatedItemType
  */
 function cleanRelatedItem(item, roamCitekeys){
 	let creator = item.meta.creatorSummary || "";
 	let pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
 	return {
 		abstract: item.data.abstractNote || "",
+		added: item.data.dateAdded,
+		inGraph: roamCitekeys.has("@" + item.key) ? roamCitekeys.get("@" + item.key) : false,
+		itemType: item.data.itemType,
 		key: item.key,
 		location: item.library.type + "s/" + item.library.id,
 		meta: [creator, pub_year].filter(Boolean).join(" "),
-		title: item.data.title || "",
-		added: item.data.dateAdded,
-		itemType: item.data.itemType,
+		raw: item,
 		timestamp: makeTimestamp(item.data.dateAdded),
-		inGraph: roamCitekeys.has("@" + item.key) ? roamCitekeys.get("@" + item.key) : false
+		title: item.data.title || ""
 	};
 }
 

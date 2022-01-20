@@ -4,6 +4,7 @@ import { Button } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
 import { pluralize } from "../../../utils";
+import * as customPropTypes from "../../../propTypes";
 
 function DNPMenu(props){
 	const { added, date, title, portalId } = props;
@@ -49,7 +50,7 @@ function DNPMenu(props){
 	);
 }
 DNPMenu.propTypes = {
-	added: PropTypes.array,
+	added: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
 	date: PropTypes.date,
 	title: PropTypes.string,
 	portalId: PropTypes.string

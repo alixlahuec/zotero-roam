@@ -3,10 +3,10 @@ import PropTypes from "prop-types";
 import { Button, Classes, Icon, InputGroup, Tabs, Tab, Tag, NonIdealState } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
-import { getCitekeyPages } from "../../../../roam";
-import { pluralize, sortItems } from "../../../../utils";
-import "./index.css";
 import CitekeyPopover from "../../CitekeyPopover";
+import { pluralize, sortItems } from "../../../../utils";
+import * as customPropTypes from "../../../../propTypes";
+import "./index.css";
 
 const noResultsState = <NonIdealState icon="search" title="No results" />;
 
@@ -87,19 +87,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 });
 SemanticItem.propTypes = {
 	type: PropTypes.oneOf(["is_reference", "is_citation"]),
-	item: PropTypes.shape({
-		authors: PropTypes.string, 
-		doi: PropTypes.string,
-		intent: PropTypes.arrayOf(PropTypes.string),
-		isInfluential: PropTypes.bool,
-		links: PropTypes.object,
-		meta: PropTypes.string,
-		title: PropTypes.string,
-		url: PropTypes.string,
-		year: PropTypes.string,
-		_type: PropTypes.oneOf(["cited", "citing"]),
-		inLibrary: PropTypes.oneOf([PropTypes.object, false])
-	}),
+	item: customPropTypes.cleanSemanticReturnType,
 	inGraph: PropTypes.oneOf([PropTypes.string, false])
 };
 
@@ -156,40 +144,21 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 	);
 });
 SemanticQuery.propTypes = {
-	items: PropTypes.arrayOf(PropTypes.object),
+	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 	type: PropTypes.oneOf(["is_citation", "is_reference"])
 };
 
 const SemanticPanel = React.memo(function SemanticPanel(props) {
 	const { ariaLabelledBy, onClose, type, title, items } = props;
 	const [isActiveTab, setActiveTab] = useState(type);
-	const roamCitekeys = getCitekeyPages();
 
 	const selectTab = useCallback((newtab, _prevtab, _event) => {
 		setActiveTab(newtab);
 	}, []);
 
-	const references = useMemo(() => {
-		return sortItems(items.references, "year")
-			.map(it => {
-				let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
-				return {
-					...it,
-					inGraph
-				};
-			});
-	}, [roamCitekeys, items.references]);
+	const references = useMemo(() =>  sortItems(items.references, "year"), [items.references]);
 
-	const citations = useMemo(() => {
-		return sortItems(items.citations, "year")
-			.map(it => {
-				let inGraph = it.inLibrary && roamCitekeys.has("@" + it.inLibrary.key) ? roamCitekeys.get("@" + it.inLibrary.key) : false;
-				return {
-					...it,
-					inGraph
-				};
-			});
-	}, [roamCitekeys, items.citations]);
+	const citations = useMemo(() => sortItems(items.citations, "year"), [items.citations]);
 
 	const references_title = useMemo(() => {
 		return (
@@ -241,7 +210,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 });
 SemanticPanel.propTypes = {
 	ariaLabelledBy: PropTypes.string,
-	items: PropTypes.arrayOf(PropTypes.object),
+	items: customPropTypes.cleanSemanticReturnObjectType,
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,
 	title: PropTypes.string,
