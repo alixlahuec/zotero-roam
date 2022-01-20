@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
-import { Button, ButtonGroup, Classes, Icon, Menu, MenuItem, Tag } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Divider, Icon, Menu, MenuItem, Tag } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ButtonLink from "../ButtonLink";
@@ -34,7 +34,7 @@ function CopyOption(props){
 		copyToClipboard(output);
 	}, [citekey, format, item]);
   
-	return <MenuItem onClick={formatCitekey} text={text} />;
+	return <MenuItem icon="clipboard" onClick={formatCitekey} text={text} />;
 }
 CopyOption.propTypes = {
 	citekey: PropTypes.string,
@@ -66,8 +66,8 @@ function CopyButtons(props){
 
 	return (
 		<ButtonGroup className="copy-buttons" fill={true} minimal={true} >
-			<Button icon="clipboard" text={"Copy " + defaultCopyText} onClick={() => copyToClipboard(defaultCopyText)} />
-			<Popover2 interactionKind="hover" content={optionsMenu} >
+			<Button icon="clipboard" text={"as " + defaultCopyText} onClick={() => copyToClipboard(defaultCopyText)} />
+			<Popover2 interactionKind="hover" placement="right-start" content={optionsMenu} >
 				<Button icon="caret-right" />
 			</Popover2>
 		</ButtonGroup>
@@ -197,10 +197,12 @@ function ItemDetails(props) {
 							icon="add" />
 					</ButtonGroup>
 				</div>
-				<ButtonGroup minimal={true} alignText="left" vertical={true} fill={true}>
+				<h5>Zotero links</h5>
+				<ButtonGroup minimal={true} alignText="left" vertical={true} >
 					<ButtonLink href={zotero.local} icon="application" text="Open in Zotero" />
 					<ButtonLink href={zotero.web} icon="cloud" text="Open in Zotero (web)" />
 				</ButtonGroup>
+				<Divider />
 				{pdfs}
 				{notes}
 			</div>

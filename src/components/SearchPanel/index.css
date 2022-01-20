@@ -110,6 +110,13 @@ h4.item-title{
 
 .item-actions > .bp3-card{ background-color: #eff8ff;box-shadow:none; }
 
+.item-citekey-section .bp3-button-group .bp3-button,
+.item-actions .bp3-button-group .bp3-button {
+    flex: 0 1 auto;
+}
+
+.item-actions .bp3-button.item-pdf-link {font-weight: 600;}
+
 .item-citekey-section{
     margin:10px 0px;
     overflow-wrap:break-word;
@@ -124,21 +131,6 @@ h4.item-title{
     display:flex;
     align-items:center;
     overflow-wrap:anywhere;
-}
-
-/* To prevent weird resizing of flex container on smaller displays */
-.copy-buttons {
-    flex-wrap: wrap;
-}
-/**/
-
-.copy-buttons > .bp3-button,
-.copy-buttons > .bp3-button:hover { 
-    font-size:0.7em;
-    margin:5px;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #f1f7ff;
 }
 
 .item-rendered-notes p{
@@ -183,7 +175,7 @@ h4.item-title{
 .bp3-dark .item-basic-metadata,
 .bp3-dark .item-additional-metadata,
 .bp3-dark .citekey-element,
-.bp3-dark .item-actions button {
+.bp3-dark .item-actions .bp3-button-group button {
     color: var(--zr-dark-text-co, #76a0cb);
 }
 

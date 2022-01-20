@@ -83,14 +83,17 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 			try{
 				// Hide default Roam context menu
 				document.querySelector("body > .bp3-context-menu+.bp3-portal").style.display = "none";
+				// For testing
+				console.log(itemsMap);
+				console.log(citekey);
 			} catch(e){
 				// Do nothing
 			}
 		}, 160);
-	}, []);
+	}, [citekey, itemsMap]);
 
 	const pdfChildren = useMemo(() => {
-		if(!((itemData.children || {}).pdfs)){
+		if(!(itemData?.children?.pdfs?.length > 0)){
 			return null;
 		} else {
 			let { pdfs } = itemData.children;
