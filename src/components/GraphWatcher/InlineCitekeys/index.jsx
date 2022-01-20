@@ -92,7 +92,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 			} catch(e){
 				// Do nothing
 			}
-		}, 200);
+		}, 120);
 	}, [citekey, itemsMap]);
 
 	const pdfChildren = useMemo(() => {
@@ -201,8 +201,8 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 	}, []);
 
 	const closeContextMenu = useCallback(() => {
-		setContextMenuTarget(null);
 		setContextMenuOpen(false);
+		setContextMenuTarget(null);
 	}, []);
 
 	const renderCitekeyRefs = useCallback(() => {

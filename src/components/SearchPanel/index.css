@@ -195,6 +195,12 @@ h4.item-title{
     background-color:var(--zr-dark-elem-bg, #2B3143);
 }
 
+.item-citekey-section .bp3-button-group .bp3-button,
+.item-actions .bp3-button-group .bp3-button {
+    color: var(--zr-dark-text-co, #76a0cb);
+    background-color: var(--zr-dark-selected-bc,#191919);
+}
+
 @media (prefers-color-scheme: dark){
     #zotero-roam-search-autocomplete {
         background: var(--zr-dark-dialog-bg, #242424);
