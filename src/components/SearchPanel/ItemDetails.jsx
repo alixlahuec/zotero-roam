@@ -52,10 +52,10 @@ function CopyButtons(props){
 
 	const optionsMenu = useMemo(() => {
 		let options = [
-			{ format: "citekey", text: "as @citekey" },
-			{ format: "tag", text: "as #@citekey" },
-			{ format: "page-reference", text: "as [[@citekey]]" },
-			{ format: "citation", text: "as [Citation]([[@]])" }
+			{ format: "citekey", text: "...as @citekey" },
+			{ format: "tag", text: "...as #@citekey" },
+			{ format: "page-reference", text: "...as [[@citekey]]" },
+			{ format: "citation", text: "...as [Citation]([[@]])" }
 		].filter(op => op.format != defaultCopyFormat);
 		return (
 			<Menu className="zr-text-small">
@@ -69,11 +69,10 @@ function CopyButtons(props){
 			<Button className={["zr-text-small", "zr-secondary"].join(" ")}
 				fill={true} 
 				icon="clipboard"
-				intent="primary" 
 				text={defaultCopyText} 
 				onClick={() => copyToClipboard(defaultCopyText)} />
 			<Popover2 interactionKind="hover" placement="right-start" content={optionsMenu} >
-				<Button icon="caret-right" intent="primary" />
+				<Button className="zr-secondary" icon="caret-right" />
 			</Popover2>
 		</ButtonGroup>
 	);
@@ -201,13 +200,12 @@ function ItemDetails(props) {
 							className="item-add-metadata"
 							icon="add" />
 					</ButtonGroup>
+					<Divider />
+					<ButtonGroup minimal={true} alignText="left" vertical={true} >
+						<ButtonLink href={zotero.local} icon="application" text="Open in Zotero" />
+						<ButtonLink href={zotero.web} icon="cloud" text="Open in Zotero (web)" />
+					</ButtonGroup>
 				</div>
-				<h5>Zotero links</h5>
-				<ButtonGroup minimal={true} alignText="left" vertical={true} >
-					<ButtonLink href={zotero.local} icon="application" text="Open in Zotero" />
-					<ButtonLink href={zotero.web} icon="cloud" text="Open in Zotero (web)" />
-				</ButtonGroup>
-				<Divider />
 				{pdfs}
 				{notes}
 			</div>

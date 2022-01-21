@@ -20,6 +20,10 @@
         background-color: var(--zr-dark-selected-bc,#191919);
     }
 
+    [data-in-graph="false"] .zr-library-item-popover button {
+        background-color: var(--zr-dark-selected-bc,#191919);
+    }
+
     [data-in-graph="true"] .zr-library-item-popover button {
         background-color: var(--zr-dark-positive-bc, #5863582e);
         color: var(--zr-dark-positive-co, #86f686);

@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Classes, Icon, InputGroup, MenuItem, NonIdealState, Switch } from "@blueprintjs/core";
+import { Button, Classes, Icon, InputGroup, MenuItem, Switch } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 import { useQueryClient } from "react-query";
 
@@ -20,8 +20,6 @@ const dialogLabel="zr-library-search-dialogtitle";
 const dialogClass="search-library";
 const resultClass = [Classes.TEXT_OVERFLOW_ELLIPSIS, "zr-library-item--contents"].join(" ");
 const resultKeyClass = [Classes.MENU_ITEM_LABEL, "zr-library-item--key"].join(" ");
-
-const noResultsState = <NonIdealState icon="search" title="No results" />;
 
 // Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 function useDebounceCallback(callback, timeout) {
@@ -231,7 +229,6 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					items={items}
 					itemListPredicate={searchEngine}
 					itemRenderer={listItemRenderer}
-					noResults={noResultsState}
 					onItemSelect={handleItemSelect}
 					onQueryChange={handleQueryChange}
 					query={query}

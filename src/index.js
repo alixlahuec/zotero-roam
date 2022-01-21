@@ -1,7 +1,7 @@
 import React from "react";
 import { render as ReactDOMRender } from "react-dom";
 import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
-import { Toast } from "@blueprintjs/core";
+import { HotkeysProvider, Toast } from "@blueprintjs/core";
 import { App, getChildren, getItems } from "./components/App";
 import { registerSmartblockCommands } from "./smartblocks";
 
@@ -26,7 +26,8 @@ window.zoteroRoam = {};
 		autocomplete = {},
 		autoload = false,
 		copy = {},
-		render_inline = false
+		render_inline = false,
+		shortcuts = {}
 	} = window.zoteroRoam_settings;
 
 	window.zoteroRoam.config = {
@@ -40,7 +41,11 @@ window.zoteroRoam = {};
 				useQuickCopy: false,
 				...copy // Use object merging to handle undefined settings
 			},
-			render_inline
+			render_inline,
+			shortcuts: {
+				"toggleSearchPanel": "alt+E",
+				...shortcuts
+			}
 		}
 	};
 
@@ -55,11 +60,13 @@ window.zoteroRoam = {};
 		registerSmartblockCommands();
 
 		ReactDOMRender(
-			<App
-				extension={extension}
-				{...window.zoteroRoam.config.requests}
-				userSettings={window.zoteroRoam.config.userSettings}
-			/>,
+			<HotkeysProvider>
+				<App
+					extension={extension}
+					{...window.zoteroRoam.config.requests}
+					userSettings={window.zoteroRoam.config.userSettings}
+				/>
+			</HotkeysProvider>,
 			document.getElementById(extensionSlot)
 		);
 	} catch (e) {

@@ -8,7 +8,7 @@ import { pluralize, sortItems } from "../../../../utils";
 import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
 
-const noResultsState = <NonIdealState icon="search" title="No results" />;
+const noResultsState = <NonIdealState className="zr-auxiliary" description="No results found" />;
 
 function searchEngine(query, items){
 	return items

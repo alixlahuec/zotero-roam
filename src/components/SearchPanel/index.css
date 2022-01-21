@@ -143,6 +143,10 @@ h4.item-title{
 }
 /**/
 
+.copy-buttons > .bp3-button > .bp3-button-text {
+    text-overflow: ellipsis;
+}
+
 /* SMALLER DISPLAYS */
 
 .roam-body.mobile + #zotero-roam-portal .zr-quick-copy{ display:none; }
@@ -175,17 +179,21 @@ h4.item-title{
 .bp3-dark .item-basic-metadata,
 .bp3-dark .item-additional-metadata,
 .bp3-dark .citekey-element,
-.bp3-dark .item-actions .bp3-button-group button {
+.copy-buttons .bp3-button,
+.copy-buttons .bp3-button:hover,
+.bp3-dark .item-actions .bp3-button-group button,
+.bp3-dark .item-actions .bp3-button-group .bp3-button {
     color: var(--zr-dark-text-co, #76a0cb);
 }
 
-.bp3-dark .item-abstract{
+.bp3-dark .item-abstract {
     border-top-color: var(--zr-dark-border-color,#363a3f);
     border-bottom-color: var(--zr-dark-border-color,#363a3f);
 }
 
 .bp3-dark .copy-buttons > .bp3-button,
-.bp3-dark .copy-buttons > .bp3-button:hover {
+.bp3-dark .copy-buttons > .bp3-button:hover,
+.bp3-dark .item-actions .bp3-divider {
     border-color: var(--zr-dark-border-color,#363a3f);
 }
 
@@ -193,12 +201,6 @@ h4.item-title{
 .bp3-dark .item-additional-metadata,
 .bp3-dark .item-actions > .bp3-card { 
     background-color:var(--zr-dark-elem-bg, #2B3143);
-}
-
-.item-citekey-section .bp3-button-group .bp3-button,
-.item-actions .bp3-button-group .bp3-button {
-    color: var(--zr-dark-text-co, #76a0cb);
-    background-color: var(--zr-dark-selected-bc,#191919);
 }
 
 @media (prefers-color-scheme: dark){
@@ -214,7 +216,10 @@ h4.item-title{
     .item-basic-metadata,
     .item-additional-metadata,
     .citekey-element,
-    .item-actions button[type="button"] {
+    .copy-buttons .bp3-button,
+    .copy-buttons .bp3-button:hover,
+    .item-actions button[type="button"],
+    .item-actions .bp3-button-group .bp3-button {
         color: var(--zr-dark-text-co,#76a0cb);
     }
     .item-abstract {
@@ -222,7 +227,8 @@ h4.item-title{
         border-bottom-color: var(--zr-dark-border-color,#363a3f);
     }
     .copy-buttons > .bp3-button,
-    .copy-buttons > .bp3-button:hover {
+    .copy-buttons > .bp3-button:hover,
+    .item-actions > .bp3-card .bp3-divider {
         border-color: var(--zr-dark-border-color,#363a3f);
     }
     .item-basic-metadata,

@@ -5,6 +5,7 @@ import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/cor
 
 import { useQuery_Items } from "../../../queries";
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, parseDOI } from "../../../utils";
+import "./index.css";
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation
  * @param {Object[]} reqs - The data requests to use to retrieve items
@@ -81,19 +82,16 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		}
 	}, [citekey, itemsMap]);
 
-	const onOpened = useCallback(() => {
+	const onOpening = useCallback(() => {
 		setTimeout(() => {
 			try{
 				// Hide default Roam context menu
 				document.querySelector("body > .bp3-context-menu+.bp3-portal").style.display = "none";
-				// For testing
-				console.log(itemsMap);
-				console.log(citekey);
 			} catch(e){
 				// Do nothing
 			}
-		}, 120);
-	}, [citekey, itemsMap]);
+		}, 100);
+	}, []);
 
 	const pdfChildren = useMemo(() => {
 		if(!(itemData?.children?.pdfs?.length > 0)){
@@ -144,7 +142,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 			hasBackdrop={false}
 			lazy={false}
 			onClose={onClose}
-			onOpened={onOpened}
+			onOpening={onOpening}
 			usePortal={false}>
 			<div className={["zr-context-menu--wrapper", Classes.POPOVER].join(" ")} style={coords}>
 				<Menu className="zr-context-menu">
@@ -152,8 +150,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 						icon="add" 
 						text="Import metadata"
 						intent="primary" 
-						data-uid={pageUID}
-						data-citekey={citekey} />
+						data-uid={pageUID} />
 					<MenuDivider />
 					<MenuItem className="zr-context-menu-option" 
 						icon="application"
