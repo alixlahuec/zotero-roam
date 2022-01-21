@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
@@ -11,7 +11,6 @@ import { getCitekeyPages } from "../../roam";
 import { cleanLibrary, formatItemReferenceForCopy } from "./utils";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
-import { useMemo } from "react/cjs/react.development";
 
 const query_threshold = 3;
 const query_debounce = 300;
