@@ -90,7 +90,7 @@
     background-color: var(--zr-dark-selected-bc,#191919);
 }
 
-.bp3-dark .zr-semantic-panel--main .zr-related-item[data-in-library="true"][data-in-graph="true"] .zr-related-item--timestamp {
+.bp3-dark .zr-semantic-panel--main .zr-related-item[data-in-library="true"] .zr-related-item--timestamp {
     background-color: var(--zr-dark-positive-bc, #5863582e);
     color: var(--zr-dark-positive-co, #86f686);
 }
@@ -115,7 +115,7 @@
         background-color: var(--zr-dark-selected-bc,#191919);
     }
 
-    .zr-semantic-panel--main .zr-related-item[data-in-library="true"][data-in-graph="true"] .zr-related-item--timestamp {
+    .zr-semantic-panel--main .zr-related-item[data-in-library="true"] .zr-related-item--timestamp {
         background-color: var(--zr-dark-positive-bc, #5863582e);
         color: var(--zr-dark-positive-co, #86f686);
     }

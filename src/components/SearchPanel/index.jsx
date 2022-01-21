@@ -231,6 +231,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		let configs = {
 			"toggleQuickCopy": {
 				disabled: !isOpen,
+				group: "Search Panel",
 				label: "Toggle QuickCopy",
 				onKeyDown: () => toggleQuickCopy()
 			},
