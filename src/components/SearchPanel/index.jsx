@@ -140,10 +140,10 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	const toggleOpenClosed = useCallback(() => {
 		if(isOpen){
 			handleClose();
-		} else {
+		} else if(has_data) {
 			openPanel();
 		}
-	}, [isOpen, openPanel, handleClose]);
+	}, [has_data, isOpen, openPanel, handleClose]);
 
 	const toggleQuickCopy = useCallback(() => { setQuickCopy(!quickCopyActive); }, [quickCopyActive]);
 
@@ -230,13 +230,11 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 		let configs = {
 			"toggleQuickCopy": {
-				disabled: !isOpen,
 				group: "Search Panel",
 				label: "Toggle QuickCopy",
 				onKeyDown: () => toggleQuickCopy()
 			},
 			"toggleSearchPanel": {
-				disabled: !has_data,
 				global: true,
 				label: "Toggle the Search Panel",
 				onKeyDown: () => toggleOpenClosed()
@@ -253,7 +251,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 				};
 			});
 		
-	}, [has_data, isOpen, shortcutsSettings, toggleOpenClosed, toggleQuickCopy]);
+	}, [shortcutsSettings, toggleOpenClosed, toggleQuickCopy]);
 
 	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
