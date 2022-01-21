@@ -43,7 +43,8 @@ function DialogOverlay(props) {
 		onClose,
 		onOpening,
 		portalTarget,
-		sidePanel
+		sidePanel,
+		...otherProps
 	} = props;
     
 	const dialog_class = useMemo(() => "zr-dialog-overlay--" + dialogClass, [dialogClass]);
@@ -77,6 +78,7 @@ function DialogOverlay(props) {
 				canOutsideClickClose={true}
 				onClose={onClose}
 				onOpening={onOpening}
+				{...otherProps}
 			>
 				<div className={Classes.DIALOG_BODY}>
 					<MainPanel style={mainPanelStyle} contents={mainPanel} />

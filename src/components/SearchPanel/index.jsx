@@ -253,12 +253,14 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		
 	}, [shortcutsSettings, toggleOpenClosed, toggleQuickCopy]);
 
-	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
+	const { handleKeyUp, handleKeyDown } = useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
 	return (
 		<DialogOverlay
 			ariaLabelledBy={dialogLabel}
 			className={dialogClass}
+			onKeyUp={handleKeyUp}
+			onKeyDown={handleKeyDown}
 			isOpen={isOpen}
 			isSidePanelOpen={isSidePanelOpen}
 			lazy={false}
