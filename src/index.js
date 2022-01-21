@@ -44,6 +44,7 @@ window.zoteroRoam = {};
 			render_inline,
 			shortcuts: {
 				"toggleSearchPanel": "alt+E",
+				"toggleQuickCopy": false,
 				...shortcuts
 			}
 		}
@@ -60,7 +61,7 @@ window.zoteroRoam = {};
 		registerSmartblockCommands();
 
 		ReactDOMRender(
-			<HotkeysProvider>
+			<HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
 				<App
 					extension={extension}
 					{...window.zoteroRoam.config.requests}

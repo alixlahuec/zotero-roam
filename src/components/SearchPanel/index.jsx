@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Classes, Icon, InputGroup, MenuItem, Switch } from "@blueprintjs/core";
+import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 import { useQueryClient } from "react-query";
 
@@ -11,6 +11,7 @@ import { getCitekeyPages } from "../../roam";
 import { cleanLibrary, formatItemReferenceForCopy } from "./utils";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
+import { useMemo } from "react/cjs/react.development";
 
 const query_threshold = 3;
 const query_debounce = 300;
@@ -106,7 +107,7 @@ SearchResult.propTypes = {
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { copySettings, handleChange, portalTarget } = props;
+	const { copySettings, handleChange, portalTarget, shortcutsSettings } = props;
 
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	let [query, setQuery] = useState();
@@ -121,6 +122,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 	const client = useQueryClient();
 	const items = cleanLibrary(client.getQueriesData("items").map((res) => res[1]?.data || []).flat(1), roamCitekeys);
+	const has_data = items.length > 0;
 
 	const handleClose = useCallback(() => {
 		setQuery("");
@@ -135,6 +137,14 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		setRoamCitekeys(getCitekeyPages()); 
 		searchbar.current.focus(); 
 	}, []);
+
+	const toggleOpenClosed = useCallback(() => {
+		if(isOpen){
+			handleClose();
+		} else {
+			handleOpen();
+		}
+	}, [isOpen, handleOpen, handleClose]);
 
 	const toggleQuickCopy = useCallback(() => { setQuickCopy(!quickCopyActive); }, [quickCopyActive]);
 
@@ -213,6 +223,39 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		);
 	}
 
+	const hotkeys = useMemo(() => {
+		let defaultProps = {
+			allowInInput: true,
+			global: false
+		};
+
+		let configs = {
+			"toggleQuickCopy": {
+				disabled: !isOpen,
+				label: "Toggle QuickCopy",
+				onKeyDown: () => toggleQuickCopy()
+			},
+			"toggleSearchPanel": {
+				disabled: !has_data,
+				global: true,
+				label: "Toggle the Search Panel",
+				onKeyDown: () => toggleOpenClosed()
+			}
+		};
+
+		return Object.keys(shortcutsSettings)
+			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] != false)
+			.map(k => {
+				return {
+					...defaultProps,
+					...configs[k]
+				};
+			});
+		
+	}, [has_data, isOpen, shortcutsSettings, toggleOpenClosed, toggleQuickCopy]);
+
+	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
+
 	return (
 		<DialogOverlay
 			ariaLabelledBy={dialogLabel}
@@ -251,7 +294,8 @@ SearchPanel.propTypes = {
 		isOpen: PropTypes.bool,
 		isSidePanelOpen: PropTypes.bool
 	}),
-	portalTarget: PropTypes.string
+	portalTarget: PropTypes.string,
+	shortcutsSettings: PropTypes.object
 };
 
 export default SearchPanel;
