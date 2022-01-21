@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { HotkeysTarget2 } from "@blueprintjs/core";
 
 import ExtensionIcon from "../ExtensionIcon";
 import GraphWatcher from "../GraphWatcher";
@@ -33,6 +34,19 @@ class App extends Component {
 		this.toggleExtension = this.toggleExtension.bind(this);
 		this.openSearchPanel = this.openSearchPanel.bind(this);
 		this.handleChangeInSearchPanel = this.handleChangeInSearchPanel.bind(this);
+		this.hotkeys = this.props.userSettings.shortcuts.toggleSearchPanel == false
+			? []
+			: [
+				{
+					combo: this.props.userSettings.shortcuts.toggleSearchPanel,
+					global: true,
+					label: "Toggle Search Panel",
+					onKeyDown: this.openSearchPanel
+				}
+			];
+		this.hotkeysOptions = {
+			showDialogKeyCombo: "shift+Z+R"
+		};
 	}
 
 	componentDidMount(){
@@ -46,23 +60,25 @@ class App extends Component {
 		let { status, searchPanel } = this.state;
 
 		return (
-			<QueryClientProvider client={queryClient}>
-				<ExtensionIcon status={status} version={version}
-					dataRequests={dataRequests} apiKeys={apiKeys} libraries={libraries} userSettings={userSettings}
-					toggleExtension={this.toggleExtension}
-					openSearchPanel={this.openSearchPanel}
-				/>
-				{status == "on"
-					? <GraphWatcher autocomplete={autocomplete} renderInline={render_inline} dataRequests={dataRequests} portalId={portalId} />
-					: null}
-				<SearchPanel panelState={searchPanel}
-					portalTarget={portalId}
-					copySettings={copy}
-					shortcutsSettings={shortcuts}
-					handleChange={this.handleChangeInSearchPanel}
-					openPanel={this.openSearchPanel}
-				/>
-			</QueryClientProvider>
+			<HotkeysTarget2 hotkeys={this.hotkeys} options={this.hotkeysOptions}>
+				<QueryClientProvider client={queryClient}>
+					<ExtensionIcon status={status} version={version}
+						dataRequests={dataRequests} apiKeys={apiKeys} libraries={libraries} userSettings={userSettings}
+						toggleExtension={this.toggleExtension}
+						openSearchPanel={this.openSearchPanel}
+					/>
+					{status == "on"
+						? <GraphWatcher autocomplete={autocomplete} renderInline={render_inline} dataRequests={dataRequests} portalId={portalId} />
+						: null}
+					<SearchPanel panelState={searchPanel}
+						portalTarget={portalId}
+						copySettings={copy}
+						shortcutsSettings={shortcuts}
+						handleChange={this.handleChangeInSearchPanel}
+						openPanel={this.openSearchPanel}
+					/>
+				</QueryClientProvider>
+			</HotkeysTarget2>
 		);
 	}
 
