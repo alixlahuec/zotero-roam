@@ -60,6 +60,7 @@ class App extends Component {
 					copySettings={copy}
 					shortcutsSettings={shortcuts}
 					handleChange={this.handleChangeInSearchPanel}
+					openPanel={this.openSearchPanel}
 				/>
 			</QueryClientProvider>
 		);

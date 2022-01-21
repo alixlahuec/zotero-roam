@@ -106,7 +106,7 @@ SearchResult.propTypes = {
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { copySettings, handleChange, portalTarget, shortcutsSettings } = props;
+	const { copySettings, handleChange, portalTarget, shortcutsSettings, openPanel } = props;
 
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	let [query, setQuery] = useState();
@@ -141,9 +141,9 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		if(isOpen){
 			handleClose();
 		} else {
-			handleOpen();
+			openPanel();
 		}
-	}, [isOpen, handleOpen, handleClose]);
+	}, [isOpen, openPanel, handleClose]);
 
 	const toggleQuickCopy = useCallback(() => { setQuickCopy(!quickCopyActive); }, [quickCopyActive]);
 
@@ -291,6 +291,7 @@ SearchPanel.propTypes = {
 		useQuickCopy: PropTypes.bool
 	}),
 	handleChange: PropTypes.func,
+	openPanel: PropTypes.func,
 	panelState: PropTypes.shape({
 		isOpen: PropTypes.bool,
 		isSidePanelOpen: PropTypes.bool
