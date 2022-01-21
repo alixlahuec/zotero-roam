@@ -106,7 +106,7 @@ SearchResult.propTypes = {
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { copySettings, handleChange, portalTarget, shortcutsSettings } = props;
+	const { closePanel, copySettings, portalTarget, shortcutsSettings } = props;
 
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	let [query, setQuery] = useState();
@@ -123,13 +123,10 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	const items = cleanLibrary(client.getQueriesData("items").map((res) => res[1]?.data || []).flat(1), roamCitekeys);
 
 	const handleClose = useCallback(() => {
+		closePanel();
 		setQuery("");
 		itemSelect(null);
-		handleChange({
-			isOpen: false,
-			isSidePanelOpen: false
-		});
-	}, [handleChange]);
+	}, [closePanel]);
 
 	const handleOpen = useCallback(() => {
 		setRoamCitekeys(getCitekeyPages()); 
@@ -268,13 +265,13 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 });
 SearchPanel.propTypes = {
+	closePanel: PropTypes.func,
 	copySettings: PropTypes.shape({
 		always: PropTypes.bool,
 		defaultFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
 		overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
 		useQuickCopy: PropTypes.bool
 	}),
-	handleChange: PropTypes.func,
 	panelState: PropTypes.shape({
 		isOpen: PropTypes.bool,
 		isSidePanelOpen: PropTypes.bool

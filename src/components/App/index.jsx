@@ -32,8 +32,9 @@ class App extends Component {
 			}
 		};
 		this.toggleExtension = this.toggleExtension.bind(this);
+		this.closeSearchPanel = this.closeSearchPanel.bind(this);
 		this.openSearchPanel = this.openSearchPanel.bind(this);
-		this.handleChangeInSearchPanel = this.handleChangeInSearchPanel.bind(this);
+		this.toggleSearchPanel = this.toggleSearchPanel.bind(this);
 		this.hotkeys = this.props.userSettings.shortcuts.toggleSearchPanel == false
 			? []
 			: [
@@ -41,7 +42,7 @@ class App extends Component {
 					combo: this.props.userSettings.shortcuts.toggleSearchPanel,
 					global: true,
 					label: "Toggle Search Panel",
-					onKeyDown: this.openSearchPanel
+					onKeyDown: this.toggleSearchPanel
 				}
 			];
 		this.hotkeysOptions = {
@@ -74,8 +75,7 @@ class App extends Component {
 						portalTarget={portalId}
 						copySettings={copy}
 						shortcutsSettings={shortcuts}
-						handleChange={this.handleChangeInSearchPanel}
-						openPanel={this.openSearchPanel}
+						closePanel={this.closeSearchPanel}
 					/>
 				</QueryClientProvider>
 			</HotkeysTarget2>
@@ -95,6 +95,23 @@ class App extends Component {
 		});
 	}
 
+	closeSearchPanel() {
+		this.setState((prevState) => {
+			let { isOpen, isSidePanelOpen, ...rest } = prevState.searchPanel;
+			if (isOpen) {
+				return {
+					searchPanel: {
+						isOpen: false,
+						isSidePanelOpen: false,
+						...rest
+					}
+				};
+			} else {
+				return {};
+			}
+		});
+	}
+
 	openSearchPanel() {
 		this.setState((prevState) => {
 			let { isOpen, ...rest } = prevState.searchPanel;
@@ -111,16 +128,14 @@ class App extends Component {
 		});
 	}
 
-	handleChangeInSearchPanel(changes) {
-		this.setState((prevState) => {
-			return {
-				searchPanel: {
-					...prevState.searchPanel,
-					...changes
-				}
-			};
-		});
+	toggleSearchPanel() {
+		if(this.state.searchPanel.isOpen){
+			this.closeSearchPanel();
+		} else {
+			this.openSearchPanel();
+		}
 	}
+
 }
 App.propTypes = {
 	extension: PropTypes.shape({

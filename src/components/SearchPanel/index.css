@@ -113,6 +113,7 @@ h4.item-title{
 .item-citekey-section .bp3-button-group .bp3-button,
 .item-actions .bp3-button-group .bp3-button {
     flex: 0 1 auto;
+    word-break: break-word;
 }
 
 .item-actions .bp3-button.item-pdf-link {font-weight: 600;}
