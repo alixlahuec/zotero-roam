@@ -247,7 +247,8 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			.map(k => {
 				return {
 					...defaultProps,
-					...configs[k]
+					...configs[k],
+					combo: shortcutsSettings[k]
 				};
 			});
 		
