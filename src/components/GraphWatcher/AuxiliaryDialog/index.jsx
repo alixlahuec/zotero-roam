@@ -14,6 +14,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 		className: dialogClass,
 		isOpen,
 		items,
+		metadataSettings,
 		onClose,
 		portalId,
 		show
@@ -26,6 +27,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 		let panelProps = { 
 			ariaLabelledBy, 
 			items,
+			metadataSettings,
 			onClose,
 			portalId,
 			type,
@@ -45,7 +47,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 				<RelatedPanel {...relatedProps} />
 			);
 		}
-	}, [show, items, onClose, ariaLabelledBy, portalId]);
+	}, [show, items, metadataSettings, onClose, ariaLabelledBy, portalId]);
 
 	return (
 		createPortal(
@@ -71,6 +73,7 @@ AuxiliaryDialog.propTypes = {
 	className: PropTypes.string,
 	isOpen: PropTypes.bool,
 	items: PropTypes.arrayOf(PropTypes.oneOf([customPropTypes.cleanRelatedItemType, customPropTypes.cleanSemanticReturnType])),
+	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,
 	show: PropTypes.shape({

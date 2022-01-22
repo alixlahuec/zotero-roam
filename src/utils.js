@@ -136,6 +136,50 @@ function cleanSemanticItem(item){
 	return cleanItem;
 }
 
+/** Matches a clean Semantic Scholar entry to Zotero and Roam data
+ * @param {Object} semanticItem - A Semantic Scholar item, as returned by {@link cleanSemanticItem}
+ * @param {{items: Array, pdfs: Array, notes: Array}} datastore - The categorized list of Zotero items to match against 
+ * @param {Map} roamCitekeys - The map of citekey pages in the Roam graph 
+ * @returns {Object} - The matched entry for the item
+ * @see cleanSemanticReturnType
+ */
+function cleanSemanticMatch(semanticItem, {items = [], pdfs = [], notes = []} = {}, roamCitekeys){
+	let cleanSemantic = cleanSemanticItem(semanticItem);
+	if(!cleanSemantic.doi){
+		return {
+			...cleanSemantic,
+			inGraph: false,
+			inLibrary: false
+		};
+	} else {
+		let libItem = items.find(it => parseDOI(it.data.DOI) == cleanSemantic.doi);
+		if(!libItem){
+			return {
+				...cleanSemantic,
+				inGraph: false,
+				inLibrary: false
+			};	
+		} else {
+			let location = libItem.library.type + "s/" + libItem.library.id;
+			let itemKey = libItem.data.key;
+			let pdfItems = pdfs.filter(p => p.library.type + "s/" + p.library.id == location && p.data.parentItem == itemKey);
+			let noteItems = notes.filter(n => n.library.type + "s/" + n.library.id == location && n.data.parentItem == itemKey);
+
+			return {
+				...cleanSemantic,
+				inGraph: roamCitekeys.has("@" + libItem.key) ? roamCitekeys.get("@" + libItem.key) : false,
+				inLibrary: {
+					children: {
+						pdfs: pdfItems,
+						notes: noteItems
+					},
+					raw: libItem
+				}
+			};
+		}
+	}
+}
+
 /** Formats a list of Semantic Scholar entries for display
  * @param {ZoteroItem[]|Object[]} datastore - The list of Zotero items to match against 
  * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to format 
@@ -147,29 +191,23 @@ function cleanSemanticItem(item){
  * @see cleanSemanticReturnObjectType
  */
 function cleanSemantic(datastore, semantic, roamCitekeys){
+	let { items = [], pdfs = [], notes = []} = datastore;
+	let itemsWithDOIs = items.filter(it => it.data.DOI);
 	// Note: DOIs from the Semantic Scholar queries are sanitized at fetch
 	let { citations, references } = semantic;
 
 	let clean_citations = citations.map((cit) => {
-		let cleanProps = cleanSemanticItem(cit);
-		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == cit.doi) || false;
-		let inGraph = inLibrary && roamCitekeys.has("@" + inLibrary.key) ? roamCitekeys.get("@" + inLibrary.key) : false;
+		let cleanProps = cleanSemanticMatch(cit, {items: itemsWithDOIs, pdfs, notes}, roamCitekeys);
 		return {
 			...cleanProps,
-			inGraph,
-			inLibrary,
 			_type: "citing"
 		};
 	});
 
 	let clean_references = references.map((ref) => {
-		let cleanProps = cleanSemanticItem(ref);
-		let inLibrary = datastore.find(it => parseDOI(it.data.DOI) == ref.doi) || false;
-		let inGraph = inLibrary && roamCitekeys.has("@" + inLibrary.key) ? roamCitekeys.get("@" + inLibrary.key) : false;
+		let cleanProps = cleanSemanticMatch(ref, {items: itemsWithDOIs, pdfs, notes}, roamCitekeys);
 		return {
 			...cleanProps,
-			inGraph,
-			inLibrary,
 			_type: "cited"
 		};
 	});
@@ -241,6 +279,22 @@ function copyToClipboard(text){
  */
 function escapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
+/** Executes a function by its name, with optional arguments.
+ * From Jason Bunting on SO : https://stackoverflow.com/questions/359788/how-to-execute-a-javascript-function-when-i-have-its-name-as-a-string
+ * @param {String} functionName - The name of the function to execute. Can be namespaced (e.g, window.myFunc). 
+ * @param {*} context - The context where the function should be trigger. For most cases, it should be `window`.
+ * @returns {*} The output of the function
+ */
+function executeFunctionByName(functionName, context /*, args */) {
+	var args = Array.prototype.slice.call(arguments, 2);
+	var namespaces = functionName.split(".");
+	var func = namespaces.pop();
+	for (var i = 0; i < namespaces.length; i++) {
+		context = context[namespaces[i]];
+	}
+	return context[func].apply(context, args);
 }
 
 /** Converts an item into a given string format
@@ -467,6 +521,7 @@ export {
 	compareItemsByYear,
 	copyToClipboard,
 	escapeRegExp,
+	executeFunctionByName,
 	formatItemReference,
 	getLocalLink,
 	getWebLink,

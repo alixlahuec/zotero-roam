@@ -15,14 +15,14 @@ function searchEngine(query, items){
 		.filter(it => it.title.toLowerCase().includes(query.toLowerCase()));
 }
 
-function listItemRenderer(item, _itemProps, type) {
+function listItemRenderer(item, _itemProps, metadataSettings, type) {
 	// let { handleClick, modifiers, query } = itemProps;
 
-	return <SemanticItem key={item.doi} item={item} type={type} inGraph={item.inGraph} />;
+	return <SemanticItem key={item.doi} inGraph={item.inGraph} item={item} metadataSettings={metadataSettings} type={type} />;
 }
 
 const SemanticItem = React.memo(function SemanticItem(props) {
-	const { item, type, inGraph } = props;
+	const { inGraph, item, metadataSettings, type } = props;
 	const { inLibrary } = item;
 
 	const itemActions = useMemo(() => {
@@ -40,11 +40,12 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				</>
 			);
 		} else {
+			let { children: { pdfs, notes }, raw} = inLibrary;
 			return (
-				<CitekeyPopover inGraph={inGraph} item={inLibrary} />
+				<CitekeyPopover inGraph={inGraph} item={raw} metadataSettings={metadataSettings} notes={notes} pdfs={pdfs} />
 			);
 		}
-	}, [inGraph, inLibrary, item.doi, item.url]);
+	}, [inGraph, inLibrary, item.doi, item.url, metadataSettings]);
 
 	return (
 		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
@@ -86,19 +87,20 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 	);
 });
 SemanticItem.propTypes = {
-	type: PropTypes.oneOf(["is_reference", "is_citation"]),
+	inGraph: PropTypes.oneOf([PropTypes.string, false]),
 	item: customPropTypes.cleanSemanticReturnType,
-	inGraph: PropTypes.oneOf([PropTypes.string, false])
+	metadataSettings: PropTypes.object,
+	type: PropTypes.oneOf(["is_reference", "is_citation"])
 };
 
 const SemanticQuery = React.memo(function SemanticQuery(props) {
-	const { items, type } = props;
+	const { items, metadataSettings, type } = props;
 	const [query, setQuery] = useState();
 	const searchbar = useRef();
 
 	const defaultContent = useMemo(() => {
-		return items.map(it => <SemanticItem key={it.doi} item={it} type={type} inGraph={it.inGraph} />);
-	}, [items, type]);
+		return items.map(it => <SemanticItem key={it.doi} inGraph={it.inGraph} item={it} metadataSettings={metadataSettings} type={type} />);
+	}, [items, metadataSettings, type]);
 
 	const handleQueryChange = useCallback((query) => {
 		setQuery(query);
@@ -106,8 +108,8 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 	}, []);
 
 	const itemRenderer = useCallback((item, itemProps) => {
-		return listItemRenderer(item, itemProps, type);
-	}, [type]);
+		return listItemRenderer(item, itemProps, metadataSettings, type);
+	}, [metadataSettings, type]);
 
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
@@ -145,11 +147,12 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 });
 SemanticQuery.propTypes = {
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
+	metadataSettings: PropTypes.object,
 	type: PropTypes.oneOf(["is_citation", "is_reference"])
 };
 
 const SemanticPanel = React.memo(function SemanticPanel(props) {
-	const { ariaLabelledBy, onClose, type, title, items } = props;
+	const { ariaLabelledBy, items, metadataSettings, type, title, onClose } = props;
 	const [isActiveTab, setActiveTab] = useState(type);
 
 	const selectTab = useCallback((newtab, _prevtab, _event) => {
@@ -188,6 +191,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 				<Tab id="is_reference" 
 					panel={<SemanticQuery
 						items={references}
+						metadataSettings={metadataSettings}
 						type="is_reference"
 					/>} 
 					disabled={references.length == 0}
@@ -196,6 +200,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 				<Tab id="is_citation" 
 					panel={<SemanticQuery
 						items={citations}
+						metadataSettings={metadataSettings}
 						type="is_citation"
 					/>}
 					disabled={citations.length == 0}
@@ -211,6 +216,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 SemanticPanel.propTypes = {
 	ariaLabelledBy: PropTypes.string,
 	items: customPropTypes.cleanSemanticReturnObjectType,
+	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,
 	title: PropTypes.string,

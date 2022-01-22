@@ -12,8 +12,16 @@ import TagMenu from "./TagMenu";
 import { addPageMenus, cleanRelatedItem, findPageMenus } from "./utils";
 import "./index.css";
 
+const sharedPropTypes = { 
+	dataRequests: PropTypes.array,
+	menus: PropTypes.arrayOf(PropTypes.node),
+	metadataSettings: PropTypes.object,
+	portalId: PropTypes.string,
+	roamCitekeys: PropTypes.instanceOf(Map)
+};
+
 function CitekeyMenuFactory(props){
-	const { menus, dataRequests, portalId, roamCitekeys } = props;
+	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys } = props;
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -35,30 +43,29 @@ function CitekeyMenuFactory(props){
 				.map((menu, i) => {
 					let { item, div } = menu;
 					return (
-						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} portalId={portalId} roamCitekeys={roamCitekeys} />, div)
+						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} metadataSettings={metadataSettings} portalId={portalId} roamCitekeys={roamCitekeys} />, div)
 					);
 				});
 		}
-	}, [menus, citekeyItems, itemList, portalId, roamCitekeys]);
+	}, [citekeyItems, itemList, menus, metadataSettings, portalId, roamCitekeys]);
 
 	return citekeyMenus;
 }
-CitekeyMenuFactory.propTypes = {
-	menus: PropTypes.arrayOf(PropTypes.node,), 
-	dataRequests: PropTypes.array,
-	portalId: PropTypes.string,
-	roamCitekeys: PropTypes.instanceOf(Map)
-};
+CitekeyMenuFactory.propTypes = sharedPropTypes;
 
 function DNPMenuFactory(props){
-	const { menus, dataRequests, portalId, roamCitekeys } = props;
+	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys } = props;
 	const itemQueries = useQuery_Items(dataRequests, { 
-		select: (datastore) => datastore.data.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType)),
-		notifyOnChangeProps: ["data"]
+		select: (datastore) => datastore.data, 
+		notifyOnChangeProps: ["data"] 
 	});
 
-	const items = itemQueries.map(q => q.data || []).flat(1);
+	const data = itemQueries.map(q => q.data || []).flat(1);
+	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
+	
 	const dnpPortals = useMemo(() => {
+		let { items, pdfs, notes } = itemList;
+
 		if(!items){
 			return null;
 		} else {
@@ -67,41 +74,40 @@ function DNPMenuFactory(props){
 				let dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date"))).toDateString();
 				let added = items
 					.filter(it => new Date(it.data.dateAdded).toDateString() == dnp_date)
-					.map(it => cleanRelatedItem(it, roamCitekeys));
+					.map(it => cleanRelatedItem(it, {pdfs, notes}, roamCitekeys));
 				return { div: menu, added, date: dnp_date, title};
 			})
 				.filter(menu => menu.added)
 				.map((menu, i) => {
 					let { added, date, div, title } = menu;
 					return (
-						createPortal(<DNPMenu key={i} date={date} title={title} added={added} portalId={portalId} />, div)
+						createPortal(<DNPMenu key={i} 
+							added={added} date={date} title={title} 
+							metadataSettings={metadataSettings} portalId={portalId} />, div)
 					);
 				});
 		}
-	}, [menus, items, portalId, roamCitekeys]);
+	}, [itemList, menus, metadataSettings, portalId, roamCitekeys]);
 
 	return dnpPortals;
 }
-DNPMenuFactory.propTypes = {
-	menus: PropTypes.arrayOf(PropTypes.node,), 
-	dataRequests: PropTypes.array,
-	portalId: PropTypes.string,
-	roamCitekeys: PropTypes.instanceOf(Map)
-};
+DNPMenuFactory.propTypes = sharedPropTypes;
 
 function TagMenuFactory(props){
-	const { menus, dataRequests, portalId, roamCitekeys } = props;
+	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys } = props;
 	const itemQueries = useQuery_Items(dataRequests, { 
-		select: (datastore) => datastore.data.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType)),
-		notifyOnChangeProps: ["data"]
+		select: (datastore) => datastore.data, 
+		notifyOnChangeProps: ["data"] 
 	});
-    
-	const items = itemQueries.map(q => q.data || []).flat(1);
+
+	const data = itemQueries.map(q => q.data || []).flat(1);
+	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
+
 	// Select to reduce dataset size :
 	// - for tag matching, only top-level items that have any tags
 	// - for abstract matching, only items that have an abstract
 	const with_tags_or_abstract = useMemo(() => {
-		return items
+		return itemList.items
 			.filter(it => it.data.abstractNote || it.data.tags.length > 0)
 			.map(it => {
 				return {
@@ -110,9 +116,10 @@ function TagMenuFactory(props){
 					tagList: it.data.tags.map(t => t.tag)
 				};
 			});
-	}, [items]);
+	}, [itemList.items]);
 
 	const tagPortals = useMemo(() => {
+		let { items, pdfs, notes } = itemList;
 		if(!items){
 			return null;
 		} else {
@@ -120,10 +127,10 @@ function TagMenuFactory(props){
 				let title = menu.getAttribute("data-title");
 				let results = with_tags_or_abstract.reduce((obj, item) => {
 					if(item.abstract.includes(title)){
-						obj.with_abstract.push(cleanRelatedItem(item.itemData, roamCitekeys));
+						obj.with_abstract.push(cleanRelatedItem(item.itemData, { pdfs, notes }, roamCitekeys));
 					}
 					if(item.tagList.includes(title)){
-						obj.with_tags.push(cleanRelatedItem(item.itemData, roamCitekeys));
+						obj.with_tags.push(cleanRelatedItem(item.itemData, { pdfs, notes }, roamCitekeys));
 					}
 					return obj;
 				}, { with_tags: [], with_abstract: []});
@@ -134,20 +141,17 @@ function TagMenuFactory(props){
 				.map((menu,i) => {
 					let { with_tags, with_abstract, div, tag } = menu;
 					return (
-						createPortal(<TagMenu key={i} tag={tag} tagged={with_tags} inAbstract={with_abstract} portalId={portalId} />, div)
+						createPortal(<TagMenu key={i} 
+							tag={tag} inAbstract={with_abstract} tagged={with_tags} 
+							metadataSettings={metadataSettings} portalId={portalId} />, div)
 					);
 				});
 		}
-	}, [menus, items, portalId, roamCitekeys, with_tags_or_abstract]);
+	}, [itemList, menus, metadataSettings, portalId, roamCitekeys, with_tags_or_abstract]);
 
 	return tagPortals;
 }
-TagMenuFactory.propTypes = {
-	menus: PropTypes.arrayOf(PropTypes.node,), 
-	dataRequests: PropTypes.array,
-	portalId: PropTypes.string,
-	roamCitekeys: PropTypes.instanceOf(Map)
-};
+TagMenuFactory.propTypes = sharedPropTypes;
 
 export {
 	addPageMenus,

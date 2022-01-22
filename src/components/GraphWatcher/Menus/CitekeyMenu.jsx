@@ -5,38 +5,53 @@ import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blu
 import AuxiliaryDialog from "../AuxiliaryDialog";
 import ButtonLink from "../../ButtonLink";
 import SciteBadge from "../../SciteBadge";
-import { useQuery_Semantic } from "../../../queries";
-import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
 import { showClasses } from "../classes";
+import { useQuery_Semantic } from "../../../queries";
+import { findRoamPage, importItemMetadata, openInSidebarByUID } from "../../../roam";
+import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
+import * as customPropTypes from "../../../propTypes";
 
 function BacklinksItem(props) {
-	const { _type, inLibrary: item, inGraph } = props.entry;
+	const { entry, metadataSettings } = props;
+	const { _type, inLibrary, inGraph } = entry;
+	const { children: { pdfs, notes }, raw: item} = inLibrary;
 	const { key, data, meta } = item;
+
 	const pub_year = meta.parsedDate ? new Date(meta.parsedDate).getUTCFullYear() : "";
 	const pub_type = _type == "cited" ? "reference" : "citation";
 
-	const itemActions = useMemo(() => {
+	const handleClick = useCallback(() => {
 		if(!inGraph){
-			return (
-				<Button className="zr-text-small"
-					minimal={true}
-					icon="plus"
-					aria-label={"Add & open @" + key + " in the sidebar"}
-				>
-					{"@" + key}
-				</Button>
-			);
+			importItemMetadata({ item, pdfs, notes }, false, metadataSettings);
 		} else {
-			return (
-				<Button className="zr-text-small"
-					minimal={true}
-					icon="inheritance"
-					intent={pub_type == "reference" ? "primary" : "warning"}
-					aria-label={"Open @" + key + " in the sidebar"}
-				/>
-			);
+			openInSidebarByUID(inGraph);
 		}
-	}, [inGraph, pub_type, key]);
+	}, [inGraph, item, metadataSettings, notes, pdfs]);
+
+	const buttonProps = useMemo(() => {
+		let sharedProps = {
+			className: "zr-text-small",
+			minimal: true,
+			onClick: handleClick
+		};
+
+		if(!inGraph){
+			return {
+				...sharedProps,
+				ariaLabel: "Add & open @" + key + " in the sidebar",
+				icon: "plus",
+				text: "@" + key
+			};
+		} else {
+			return {
+				ariaLabel: "Open @" + key + " in the sidebar",
+				icon: "inheritance",
+				intent: pub_type == "reference" ? "primary" : "warning"
+			};
+		}
+	}, [handleClick, inGraph, key, pub_type]);
+
+	const itemActions = useMemo(() => <Button {...buttonProps} />, [buttonProps]);
 
 	return (
 		<li className="zr-backlink-item" 
@@ -58,28 +73,29 @@ function BacklinksItem(props) {
 	);
 }
 BacklinksItem.propTypes = {
-	entry: PropTypes.object
+	entry: customPropTypes.cleanSemanticReturnType,
+	metadataSettings: PropTypes.object
 };
 
 const Backlinks = React.memo(function Backlinks(props) {
-	const { items, origin, isOpen } = props;
+	const { isOpen, items, metadataSettings, origin } = props;
 
 	if(items.length == 0){
 		return null;
 	} else {
 		let [...itemList] = items;
-		const sortedItems = itemList.sort((a,b) => compareItemsByYear(a.inLibrary, b.inLibrary));
+		const sortedItems = itemList.sort((a,b) => compareItemsByYear(a.inLibrary.raw, b.inLibrary.raw));
 		const references = sortedItems.filter(it => it._type == "cited");
 		const citations = sortedItems.filter(it => it._type == "citing");
 
 		const refList = references.length > 0 
 			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="references">
-				{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} />)}
+				{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} metadataSettings={metadataSettings} />)}
 			</ul> 
 			: null;
 		const citList = citations.length > 0 
 			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="citations">
-				{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} />)}
+				{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} metadataSettings={metadataSettings} />)}
 			</ul> 
 			: null;
 		const separator = <span className="backlinks-list_divider"><Tag minimal={true} multiline={true}>{origin}</Tag><hr /></span>;
@@ -96,13 +112,14 @@ const Backlinks = React.memo(function Backlinks(props) {
 	}
 });
 Backlinks.propTypes = {
-	items: PropTypes.array,
-	origin: PropTypes.string,
-	isOpen: PropTypes.bool
+	isOpen: PropTypes.bool,
+	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
+	metadataSettings: PropTypes.object,
+	origin: PropTypes.string
 };
 
 function RelatedItemsBar(props) {
-	const { doi, title, origin, items, portalId, roamCitekeys } = props;
+	const { doi, itemList, metadataSettings, origin, portalId, roamCitekeys, title } = props;
 	const { isLoading, isError, data = {}, error } = useQuery_Semantic(doi);
 	
 	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
@@ -137,16 +154,13 @@ function RelatedItemsBar(props) {
 		openDialog();
 	}, [title, openDialog]);
 
-	// Only select items with valid DOIs to reduce dataset size
-	const itemsWithDOIs = useMemo(() => items.filter(it => parseDOI(it.data.DOI)), [items]);
-
 	const refCount = data.references?.length || null;
 	const citCount = data.citations?.length || null;
 
 	const cleanSemanticData = useMemo(() => {
 		let { citations = [], references = [] } = data;
-		return cleanSemantic(itemsWithDOIs, { citations, references }, roamCitekeys);
-	}, [data, itemsWithDOIs, roamCitekeys]);
+		return cleanSemantic(itemList, { citations, references }, roamCitekeys);
+	}, [data, itemList, roamCitekeys]);
 
 	const showBacklinksButtonProps = useMemo(() => {
 		return cleanSemanticData.backlinks.length == 0
@@ -178,13 +192,14 @@ function RelatedItemsBar(props) {
 					{refCount + citCount > 0
 						? <AuxiliaryDialog className="citations" 
 							ariaLabelledBy={"zr-aux-dialog--" + title}
-							show={isShowing} 
-							items={cleanSemanticData}
 							isOpen={isDialogOpen} 
+							items={cleanSemanticData}
+							metadataSettings={metadataSettings}
 							portalId={portalId}
+							show={isShowing} 
 							onClose={closeDialog} />
 						: null}
-					<Backlinks items={cleanSemanticData.backlinks} origin={origin} isOpen={isBacklinksListOpen} />
+					<Backlinks isOpen={isBacklinksListOpen} items={cleanSemanticData.backlinks} metadataSettings={metadataSettings} origin={origin} />
 				</>
 			}
 		</div>
@@ -192,26 +207,36 @@ function RelatedItemsBar(props) {
 }
 RelatedItemsBar.propTypes = {
 	doi: PropTypes.string,
-	title: PropTypes.string,
+	itemList: PropTypes.shape({
+		items: PropTypes.arrayOf(customPropTypes.zoteroItemType),
+		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
+		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
+	}),
+	metadataSettings: PropTypes.object,
 	origin: PropTypes.string,
-	items: PropTypes.arrayOf(PropTypes.object),
 	portalId: PropTypes.string,
-	roamCitekeys: PropTypes.instanceOf(Map)
+	roamCitekeys: PropTypes.instanceOf(Map),
+	title: PropTypes.string
 };
 
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
-	const { item, itemList, portalId, roamCitekeys } = props;
-	const { items, pdfs, notes } = itemList;
+	const { item, itemList, metadataSettings, portalId, roamCitekeys } = props;
 
 	const doi = parseDOI(item.data.DOI);
-	const has_pdfs = pdfs.filter(pdf => pdf.data.parentItem == item.data.key && pdf.library.id == item.library.id);
-	const has_notes = notes.filter(note => note.data.parentItem == item.data.key && note.library.id == item.library.id);
+	const pageUID = findRoamPage("@" + item.key);
+
+	const has_pdfs = itemList.pdfs.filter(pdf => pdf.data.parentItem == item.data.key && pdf.library.id == item.library.id);
+	const has_notes = itemList.notes.filter(note => note.data.parentItem == item.data.key && note.library.id == item.library.id);
 
 	const doiHeader = useMemo(() => {
 		return doi 
 			? <span className="zr-citekey-doi" data-doi={doi}><a href={"https://doi.org/" + doi} target="_blank" className={Classes.TEXT_MUTED} rel="noreferrer">{doi}</a></span> 
 			: null;
 	}, [doi]);
+
+	const importMetadata = useCallback(() => {
+		importItemMetadata({ item, pdfs: has_pdfs, notes: has_notes}, pageUID, metadataSettings);
+	}, [has_pdfs, has_notes, item, metadataSettings, pageUID]);
     
 	const importNotes = has_notes ? <Button icon="comment">Import notes</Button> : null;
 	const pdfLinks = useMemo(() => {
@@ -264,14 +289,15 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	const relatedBar = useMemo(() => {
 		return doi
 			? <RelatedItemsBar doi={doi}
-				title={"@" + item.key}
+				itemList={itemList}
 				origin={item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : ""} 
-				items={items}
+				metadataSettings={metadataSettings}
 				portalId={portalId}
 				roamCitekeys={roamCitekeys}
+				title={"@" + item.key}
 			/>
 			: null;
-	}, [doi, item.key, item.meta.parsedDate, items, portalId, roamCitekeys]);
+	}, [doi, item.key, item.meta.parsedDate, itemList, metadataSettings, portalId, roamCitekeys]);
 
 	return (
 		<>
@@ -279,7 +305,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 			<Card elevation={0} className="zr-citekey-menu">
 				<div className="zr-citekey-menu--header">
 					<ButtonGroup className="zr-citekey-menu--actions" minimal={true}>
-						<Button icon="add">Add metadata</Button>
+						<Button icon="add" onClick={importMetadata}>Add metadata</Button>
 						{importNotes}
 						<Button icon="info-sign">View item information</Button>
 						{open_zotero}
@@ -294,12 +320,13 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	);
 });
 CitekeyMenu.propTypes = {
-	item: PropTypes.object,
+	item: customPropTypes.zoteroItemType,
 	itemList: PropTypes.shape({
-		items: PropTypes.arrayOf(PropTypes.object),
-		pdfs: PropTypes.arrayOf(PropTypes.object),
-		notes: PropTypes.arrayOf(PropTypes.object),
+		items: PropTypes.arrayOf(customPropTypes.zoteroItemType),
+		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
+		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 	}),
+	metadataSettings: PropTypes.object,
 	portalId: PropTypes.string,
 	roamCitekeys: PropTypes.instanceOf(Map)
 };

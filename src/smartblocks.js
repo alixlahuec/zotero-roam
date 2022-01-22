@@ -1,16 +1,21 @@
-import { getItems } from "./components/App";
 
-const commands = {
-	"ZOTERORANDOMCITEKEY": {
-		help: "Return one or more Zotero citekeys, with optional tag query",
-		handler: (_context) => (nb = "1", query="") => {
-			return getItems("items")
-				.filter(it => processQuery(query, it.data.tags.map(t => t.tag)))
-				.map(it => "@" + it.key)
-				.sort(() => 0.5 - Math.random())
-				.slice(0, Number(nb) || 1);
+/** Generates the list of custom SmartBlocks commands to register
+ * @param {function} getItems - The exposed utility that returns available Zotero items. See {@link App} component.
+ * @returns {Object} The list of commands to register
+ */
+const sbCommands = (getItems) => {
+	return {
+		"ZOTERORANDOMCITEKEY": {
+			help: "Return one or more Zotero citekeys, with optional tag query",
+			handler: (_context) => (nb = "1", query="") => {
+				return getItems("items")
+					.filter(it => processQuery(query, it.data.tags.map(t => t.tag)))
+					.map(it => "@" + it.key)
+					.sort(() => 0.5 - Math.random())
+					.slice(0, Number(nb) || 1);
+			}
 		}
-	}
+	};
 };
 
 /** Returns the outcome of a given query against a given props array
@@ -75,7 +80,8 @@ function eval_term(term, props){
 
 /** Register the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
  */
-function registerSmartblockCommands(){
+function registerSmartblockCommands(getItems){
+	const commands = sbCommands(getItems);
 	Object.keys(commands).forEach(k => {
 		let {help, handler} = commands[k];
 		window.roamjs?.extension?.smartblocks?.registerCommand({

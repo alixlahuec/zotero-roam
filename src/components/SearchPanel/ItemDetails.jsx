@@ -4,9 +4,10 @@ import { Button, ButtonGroup, Classes, Divider, Icon, Menu, MenuItem, Tag } from
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ButtonLink from "../ButtonLink";
-import { openPageByUID } from "../../roam";
+import { importItemMetadata, openPageByUID } from "../../roam";
 import { copyToClipboard } from "../../utils";
 import { formatItemReferenceForCopy } from "./utils";
+import * as customPropTypes from "../../propTypes";
 
 function CopyOption(props){
 	let { citekey, format, item, text } = props;
@@ -84,7 +85,7 @@ CopyButtons.propTypes = {
 };
 
 function ItemDetails(props) {
-	const { defaultCopyFormat, closeDialog, item } = props;
+	const { closeDialog, defaultCopyFormat, item, metadataSettings } = props;
 	const {
 		abstract, 
 		authors, 
@@ -93,12 +94,17 @@ function ItemDetails(props) {
 		children, 
 		inGraph, 
 		key, 
-		publication, 
+		publication,
 		tags, 
 		title, 
 		weblink, 
 		year,
 		zotero} = item;
+
+	const importMetadata = useCallback(() => {
+		let { pdfs = [], notes = [] } = children;
+		importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings);
+	}, [children, inGraph, item.raw, metadataSettings]);
 	
 	const navigateToPage = useCallback(() => {
 		if(inGraph != false){
@@ -111,8 +117,6 @@ function ItemDetails(props) {
 		// For testing
 		console.log(children.notes);
 	}, [children.notes]);
-
-	// TODO: Write callback function that imports metadata, using item.raw as argument
 
 	const pdfs = useMemo(() => {
 		if(children.pdfs.length == 0){
@@ -198,7 +202,8 @@ function ItemDetails(props) {
 						}
 						<Button text="Import item metadata"
 							className="item-add-metadata"
-							icon="add" />
+							icon="add"
+							onClick={importMetadata} />
 					</ButtonGroup>
 					<Divider />
 					<ButtonGroup minimal={true} alignText="left" vertical={true} >
@@ -213,37 +218,10 @@ function ItemDetails(props) {
 	</div>;
 }
 ItemDetails.propTypes = {
-	defaultCopyFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
 	closeDialog: PropTypes.func,
-	item: PropTypes.shape({
-		abstract: PropTypes.string,
-		authors: PropTypes.string,
-		authorsFull: PropTypes.arrayOf(PropTypes.string),
-		authorsLastNames: PropTypes.arrayOf(PropTypes.string),
-		authorsRoles: PropTypes.arrayOf(PropTypes.string),
-		children: PropTypes.shape({
-			pdfs: PropTypes.arrayOf(PropTypes.object),
-			notes: PropTypes.arrayOf(PropTypes.object)
-		}),
-		inGraph: PropTypes.bool,
-		itemKey: PropTypes.string,
-		itemType: PropTypes.string,
-		key: PropTypes.string,
-		location: PropTypes.string,
-		meta: PropTypes.string,
-		publication: PropTypes.string,
-		tags: PropTypes.array,
-		tagsString: PropTypes.string,
-		title: PropTypes.string,
-		weblink: PropTypes.oneOfType(PropTypes.object, PropTypes.bool),
-		year: PropTypes.string,
-		zotero: PropTypes.shape({
-			local: PropTypes.string,
-			web: PropTypes.string
-		}),
-		"_multiField": PropTypes.string,
-		raw: PropTypes.object
-	})
+	defaultCopyFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
+	item: customPropTypes.cleanLibraryItemType,
+	metadataSettings: PropTypes.object
 };
 
 export default ItemDetails;

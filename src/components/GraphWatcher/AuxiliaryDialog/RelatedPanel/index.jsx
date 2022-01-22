@@ -7,14 +7,15 @@ import CitekeyPopover from "../../CitekeyPopover";
 import * as customPropTypes from "../../../../propTypes";
 
 const RelatedItem = React.memo(function RelatedItem(props) {
-	const { allAbstractsShown, closeDialog, inGraph, item, type } = props;
+	const { allAbstractsShown, closeDialog, inGraph, item, metadataSettings, type } = props;
+	const { children: { pdfs, notes }, raw } = item;
 	const [isAbstractVisible, setAbstractVisible] = useState(allAbstractsShown);
 
 	const toggleAbstract = useCallback(() => {
 		setAbstractVisible(!isAbstractVisible);
 	}, [isAbstractVisible]);
 
-	const itemActions = useMemo(() => <CitekeyPopover closeDialog={closeDialog} inGraph={inGraph} item={item.raw} />, [closeDialog, inGraph, item]);
+	const itemActions = useMemo(() => <CitekeyPopover closeDialog={closeDialog} inGraph={inGraph} item={raw} metadataSettings={metadataSettings} notes={notes} pdfs={pdfs} />, [closeDialog, inGraph, metadataSettings, notes, pdfs, raw]);
 
 	useEffect(() => {
 		setAbstractVisible(allAbstractsShown);
@@ -62,11 +63,12 @@ RelatedItem.propTypes = {
 	closeDialog: PropTypes.func,
 	inGraph: PropTypes.oneOf([PropTypes.string, false]),
 	item: customPropTypes.cleanRelatedItemType,
+	metadataSettings: PropTypes.object,
 	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"]),
 };
 
 const RelatedPanel = React.memo(function RelatedPanel(props) {
-	const { items, type, sort, title, onClose, ariaLabelledBy } = props;
+	const { ariaLabelledBy, items, metadataSettings, sort, title, type, onClose } = props;
 	const [isShowingAllAbstracts, setShowingAllAbstracts] = useState(false);
 
 	const toggleAbstracts = useCallback(() => {
@@ -121,6 +123,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 								closeDialog={onClose}
 								inGraph={it.inGraph} 
 								item={it} 
+								metadataSettings={metadataSettings}
 								type={type} />
 						);
 					})
@@ -136,6 +139,7 @@ RelatedPanel.propTypes = {
 	 * See {@link cleanSemantic} for properties
 	 */
 	items: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
+	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,
 	sort: PropTypes.oneOf(["added", "meta"]),

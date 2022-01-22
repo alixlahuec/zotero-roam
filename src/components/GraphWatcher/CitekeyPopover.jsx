@@ -3,11 +3,17 @@ import PropTypes from "prop-types";
 import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
-import { openInSidebarByUID, openPageByUID } from "../../roam";
+import { importItemMetadata, openInSidebarByUID, openPageByUID } from "../../roam";
 import { getLocalLink, getWebLink } from "../../utils";
 
 const CitekeyPopover = React.memo(function CitekeyPopover(props) {
-	const { closeDialog, inGraph, item } = props;
+	const { closeDialog, inGraph, item, metadataSettings, notes = [], pdfs = [] } = props;
+
+	const handleClose = useCallback(() => {
+		if(closeDialog){
+			closeDialog();
+		}
+	}, [closeDialog]);
 
 	const popoverMenuProps = useMemo(() => {
 		return {
@@ -41,18 +47,22 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 		);
 	}, [item]);
 
+	const importMetadata = useCallback(() => {
+		importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings);
+	}, [inGraph, item, metadataSettings, pdfs, notes]);
+
 	const navigateToPage = useCallback(() => {
 		if(inGraph != false){
 			openPageByUID(inGraph);
-			closeDialog();
+			handleClose();
 		}
-	}, [closeDialog, inGraph]);
+	}, [handleClose, inGraph]);
 
 	const actionsMenu = useMemo(() => {
 		if(!inGraph){
 			return (
 				<Menu className="zr-text-small">
-					<MenuItem icon="add" text="Import metadata" />
+					<MenuItem icon="add" text="Import metadata" onClick={importMetadata} />
 					<MenuItem icon="inheritance" text="Import & open in sidebar" />
 					<MenuDivider />
 					{zoteroLinks}
@@ -74,7 +84,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 				</Menu>
 			);
 		}
-	}, [inGraph, navigateToPage, zoteroLinks]);
+	}, [importMetadata, inGraph, navigateToPage, zoteroLinks]);
 
 	return (
 		<Popover2 {...popoverMenuProps} content={actionsMenu}>
@@ -85,7 +95,10 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 CitekeyPopover.propTypes = {
 	closeDialog: PropTypes.func,
 	inGraph: PropTypes.oneOf(PropTypes.string, false),
-	item: PropTypes.object
+	item: PropTypes.object,
+	metadataSettings: PropTypes.object,
+	notes: PropTypes.arrayOf(PropTypes.object),
+	pdfs: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default CitekeyPopover;

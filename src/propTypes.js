@@ -1,5 +1,15 @@
 import PropTypes from "prop-types";
 
+const zoteroItemType = PropTypes.shape({
+	data: PropTypes.object,
+	has_citekey: PropTypes.bool,
+	key: PropTypes.string,
+	library: PropTypes.object,
+	meta: PropTypes.object,
+	version: PropTypes.number
+});
+
+
 /**
  * @see cleanLibrary
  */
@@ -11,8 +21,8 @@ const cleanLibraryItemType = PropTypes.shape({
 	authorsRoles: PropTypes.arrayOf(PropTypes.string),
 	authorsString: PropTypes.string,
 	children: PropTypes.shape({
-		pdfs: PropTypes.arrayOf(PropTypes.object),
-		notes: PropTypes.arrayOf(PropTypes.object),
+		pdfs: PropTypes.arrayOf(zoteroItemType),
+		notes: PropTypes.arrayOf(zoteroItemType),
 	}),
 	inGraph: PropTypes.oneOf([PropTypes.string, false]),
 	itemKey: PropTypes.string,
@@ -30,7 +40,7 @@ const cleanLibraryItemType = PropTypes.shape({
 		web: PropTypes.string
 	}),
 	_multiField: PropTypes.string,
-	raw: PropTypes.object
+	raw: zoteroItemType
 });
 const cleanLibraryReturnArrayType = PropTypes.arrayOf(cleanLibraryItemType);
 
@@ -40,12 +50,16 @@ const cleanLibraryReturnArrayType = PropTypes.arrayOf(cleanLibraryItemType);
 const cleanRelatedItemType = PropTypes.shape({
 	abstract: PropTypes.string,
 	added: PropTypes.instanceOf(Date),
+	children: PropTypes.shape({
+		pdfs: PropTypes.arrayOf(zoteroItemType),
+		notes: PropTypes.arrayOf(zoteroItemType)
+	}),
 	inGraph: PropTypes.bool,
 	itemType: PropTypes.string,
 	key: PropTypes.string,
 	location: PropTypes.string,
 	meta: PropTypes.string,
-	raw: PropTypes.object,
+	raw: zoteroItemType,
 	timestamp: PropTypes.string,
 	title: PropTypes.string
 });
@@ -68,14 +82,24 @@ const cleanSemanticItemType = PropTypes.shape({
 });
 
 /**
- * @see cleanSemantic
+ * @see cleanSemanticMatch
  */
 const cleanSemanticReturnType = PropTypes.shape({
 	...cleanSemanticItemType,
 	inGraph: PropTypes.oneOf([false, PropTypes.string]),
-	inLibrary: PropTypes.oneOf([false, PropTypes.object]),
+	inLibrary: PropTypes.oneOf([false, PropTypes.shape({
+		children: {
+			pdfs: PropTypes.arrayOf(zoteroItemType),
+			notes: PropTypes.arrayOf(zoteroItemType)
+		},
+		raw: zoteroItemType
+	})]),
 	_type: PropTypes.oneOf(["cited", "citing"])
 });
+
+/**
+ * @see cleanSemantic
+ */
 const cleanSemanticReturnObjectType = PropTypes.shape({
 	backlinks: PropTypes.arrayOf(cleanSemanticReturnType),
 	citations: PropTypes.arrayOf(cleanSemanticReturnType),
@@ -83,6 +107,7 @@ const cleanSemanticReturnObjectType = PropTypes.shape({
 });
 
 export {
+	zoteroItemType,
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,
 	cleanRelatedItemType,

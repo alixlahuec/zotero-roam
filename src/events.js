@@ -1,3 +1,5 @@
+import zrToaster from "./toaster";
+
 const events = [
 	/**
     * Signals a metadata import has terminated
@@ -53,6 +55,22 @@ function emitCustomEvent(type, detail = {}, target = document){
 	}
 }
 
+function setDefaultHooks(){
+	document.addEventListener("zotero-roam:metadata-added", (e) => {
+		let { error } = e.detail;
+		if(error){
+			zrToaster.show({
+				intent: "danger",
+				message: error
+			});
+		} else {
+			// For testing
+			console.log(e);
+		}
+	});
+}
+
 export {
-	emitCustomEvent
+	emitCustomEvent,
+	setDefaultHooks
 };

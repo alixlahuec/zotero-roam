@@ -55,10 +55,11 @@ class GraphWatcher extends PureComponent {
 
 	render() {
 		let { citekeyMenus, dnpMenus, tagMenus, roamCitekeys } = this.state;
-		let { dataRequests, autocomplete, renderInline, portalId } = this.props;
+		let { dataRequests, autocompleteSettings, metadataSettings, renderInline, portalId } = this.props;
 
 		let sharedProps = {
 			dataRequests,
+			metadataSettings,
 			portalId,
 			roamCitekeys
 		};
@@ -67,8 +68,8 @@ class GraphWatcher extends PureComponent {
 			{citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} {...sharedProps} /> : null}
 			{dnpMenus ? <DNPMenuFactory menus={dnpMenus} {...sharedProps} /> : null}
 			{tagMenus ? <TagMenuFactory menus={tagMenus} {...sharedProps} /> : null}
-			{autocomplete.trigger ? <Autocomplete config={autocomplete} dataRequests={dataRequests} /> : null}
-			<InlineCitekeys dataRequests={dataRequests} portalId={portalId} renderInline={renderInline} />
+			{autocompleteSettings.trigger ? <Autocomplete config={autocompleteSettings} dataRequests={dataRequests} /> : null}
+			<InlineCitekeys dataRequests={dataRequests} metadataSettings={metadataSettings} portalId={portalId} renderInline={renderInline} />
 		</>;
 	}
 
@@ -101,7 +102,8 @@ class GraphWatcher extends PureComponent {
 	}
 }
 GraphWatcher.propTypes = {
-	autocomplete: PropTypes.object,
+	autocompleteSettings: PropTypes.object,
+	metadataSettings: PropTypes.object,
 	dataRequests: PropTypes.array,
 	portalId: PropTypes.string,
 	renderInline: PropTypes.bool,

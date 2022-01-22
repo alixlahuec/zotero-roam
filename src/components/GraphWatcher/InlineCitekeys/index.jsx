@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
 import { useQuery_Items } from "../../../queries";
+import { importItemMetadata } from "../../../roam";
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, parseDOI } from "../../../utils";
 import "./index.css";
 
@@ -13,8 +14,8 @@ import "./index.css";
  * {citation: String, 
  * data: {
  * children: {pdfs: Array, notes: Array}, 
- * item: Object, 
  * location: String,
+ * raw: Object,
  * weblink: Object|Boolean, 
  * zotero: {local: String, web: String}}}>} The map of current library items
  */
@@ -46,8 +47,8 @@ const useGetItems = (reqs) => {
 									pdfs,
 									notes
 								},
-								item,
 								location,
+								raw: item,
 								weblink,
 								zotero: {
 									local: getLocalLink(item, {format: "target"}),
@@ -69,7 +70,7 @@ const useGetItems = (reqs) => {
 };
 
 const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
-	const { coords, isOpen, itemsMap, onClose, target } = props;
+	const { coords, isOpen, itemsMap, metadataSettings, onClose, target } = props;
 
 	const citekey = target?.parentElement.dataset.linkTitle;
 	const pageUID = target?.parentElement.dataset.linkUid;
@@ -93,6 +94,11 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		}, 100);
 	}, []);
 
+	const importMetadata = useCallback(() => {
+		let { pdfs = [], notes = [] } = itemData.children;
+		importItemMetadata({item: itemData.raw, pdfs, notes }, pageUID, metadataSettings);
+	}, [itemData.raw, itemData.children, metadataSettings, pageUID]);
+
 	const pdfChildren = useMemo(() => {
 		if(!(itemData?.children?.pdfs?.length > 0)){
 			return null;
@@ -115,10 +121,10 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 				</>
 			);
 		}
-	}, [itemData]);
+	}, [itemData.children, itemData.location]);
 
 	const notesChildren = useMemo(() => {
-		if(!((itemData.children || {}).notes)){
+		if(!(itemData?.children?.notes?.length > 0)){
 			return null;
 		} else {
 			let { notes = [] } = itemData.children;
@@ -134,7 +140,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 				</>
 			);
 		}
-	}, [itemData]);
+	}, [itemData.children]);
 
 	return (
 		<Overlay
@@ -150,7 +156,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 						icon="add" 
 						text="Import metadata"
 						intent="primary" 
-						data-uid={pageUID} />
+						onClick={importMetadata} />
 					<MenuDivider />
 					<MenuItem className="zr-context-menu-option" 
 						icon="application"
@@ -176,13 +182,14 @@ CitekeyContextMenu.propTypes = {
 	}),
 	isOpen: PropTypes.bool,
 	itemsMap: PropTypes.instanceOf(Map),
+	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,
 	target: PropTypes.node
 };
 
 const InlineCitekeys = React.memo(function InlineCitekeys(props) {
-	const { dataRequests, portalId, renderInline } = props;
+	const { dataRequests, metadataSettings, portalId, renderInline } = props;
 	const [isContextMenuOpen, setContextMenuOpen] = useState(false);
 	const [contextMenuCoordinates, setContextMenuCoordinates] = useState({left: 0, top:0});
 	const [contextMenuTarget, setContextMenuTarget] = useState(null);
@@ -256,7 +263,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 		);
 		return function cleanup() {
 			clearInterval(watcher);
-			cleanupCitekeyRefs;
+			cleanupCitekeyRefs();
 		};
 	}, [renderInline, renderCitekeyRefs, cleanupCitekeyRefs]);
 
@@ -266,6 +273,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 				coords={contextMenuCoordinates} 
 				isOpen={isContextMenuOpen} 
 				itemsMap={itemsMap}
+				metadataSettings={metadataSettings}
 				onClose={closeContextMenu}
 				target={contextMenuTarget} />, 
 			document.getElementById(portalId))
@@ -273,6 +281,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 });
 InlineCitekeys.propTypes = {
 	dataRequests: PropTypes.arrayOf(PropTypes.object),
+	metadataSettings: PropTypes.object,
 	portalId: PropTypes.string,
 	renderInline: PropTypes.bool,
 };

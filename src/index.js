@@ -1,9 +1,12 @@
 import React from "react";
 import { render as ReactDOMRender } from "react-dom";
-import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
-import { HotkeysProvider, Toast } from "@blueprintjs/core";
+import { HotkeysProvider } from "@blueprintjs/core";
+
 import { App, getChildren, getItems } from "./components/App";
+import { setDefaultHooks } from "./events";
 import { registerSmartblockCommands } from "./smartblocks";
+import zrToaster from "./toaster";
+import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./index.css";
@@ -26,10 +29,12 @@ window.zoteroRoam = {};
 		autocomplete = {},
 		autoload = false,
 		copy = {},
+		metadata = {},
 		render_inline = false,
 		shortcuts = {}
 	} = window.zoteroRoam_settings;
 
+	// Use object merging to handle undefined settings
 	window.zoteroRoam.config = {
 		userSettings: {
 			autocomplete,
@@ -39,7 +44,11 @@ window.zoteroRoam = {};
 				defaultFormat: "citekey",
 				overrideKey: "shiftKey",
 				useQuickCopy: false,
-				...copy // Use object merging to handle undefined settings
+				...copy
+			},
+			metadata: {
+				use: "function",
+				...metadata
 			},
 			render_inline,
 			shortcuts: {
@@ -58,7 +67,8 @@ window.zoteroRoam = {};
 		setupDependencies([
 			{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"} // Scite.ai Badge
 		]);
-		registerSmartblockCommands();
+		setDefaultHooks();
+		registerSmartblockCommands(getItems);
 
 		ReactDOMRender(
 			<HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
@@ -72,9 +82,10 @@ window.zoteroRoam = {};
 		);
 	} catch (e) {
 		console.error(e);
-		ReactDOMRender(
-			<Toast intent="danger" message={e.message} />
-		);
+		zrToaster.show({
+			intent: "danger",
+			message: e.message
+		});
 	}
 
 })();

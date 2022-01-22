@@ -106,7 +106,7 @@ SearchResult.propTypes = {
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { closePanel, copySettings, portalTarget, shortcutsSettings } = props;
+	const { closePanel, copySettings, metadataSettings, portalTarget, shortcutsSettings } = props;
 
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	let [query, setQuery] = useState();
@@ -123,9 +123,9 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	const items = cleanLibrary(client.getQueriesData("items").map((res) => res[1]?.data || []).flat(1), roamCitekeys);
 
 	const handleClose = useCallback(() => {
-		closePanel();
 		setQuery("");
 		itemSelect(null);
+		closePanel();
 	}, [closePanel]);
 
 	const handleOpen = useCallback(() => {
@@ -196,7 +196,11 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					leftElement={leftElem}
 					rightElement={rightElem}
 				/>
-				{selectedItem ? <ItemDetails item={selectedItem} closeDialog={handleClose} defaultCopyFormat={copySettings.defaultFormat} />
+				{selectedItem 
+					? <ItemDetails item={selectedItem} 
+						closeDialog={handleClose} 
+						defaultCopyFormat={copySettings.defaultFormat}
+						metadataSettings={metadataSettings} />
 					: <>
 						<div
 							id="zotero-roam-library-rendered"
@@ -272,6 +276,7 @@ SearchPanel.propTypes = {
 		overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
 		useQuickCopy: PropTypes.bool
 	}),
+	metadataSettings: PropTypes.object,
 	panelState: PropTypes.shape({
 		isOpen: PropTypes.bool,
 		isSidePanelOpen: PropTypes.bool

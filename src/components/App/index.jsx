@@ -57,7 +57,7 @@ class App extends Component {
 	render() {
 		let { extension, dataRequests, apiKeys, libraries, userSettings } = this.props;
 		let { version, portalId } = extension;
-		let { autocomplete, copy, render_inline, shortcuts } = userSettings;
+		let { autocomplete, copy, metadata, render_inline, shortcuts } = userSettings;
 		let { status, searchPanel } = this.state;
 
 		return (
@@ -69,11 +69,15 @@ class App extends Component {
 						openSearchPanel={this.openSearchPanel}
 					/>
 					{status == "on"
-						? <GraphWatcher autocomplete={autocomplete} renderInline={render_inline} dataRequests={dataRequests} portalId={portalId} />
+						? <GraphWatcher autocompleteSettings={autocomplete} metadataSettings={metadata} 
+							renderInline={render_inline} 
+							dataRequests={dataRequests} 
+							portalId={portalId} />
 						: null}
 					<SearchPanel panelState={searchPanel}
 						portalTarget={portalId}
 						copySettings={copy}
+						metadataSettings={metadata}
 						shortcutsSettings={shortcuts}
 						closePanel={this.closeSearchPanel}
 					/>
@@ -154,6 +158,7 @@ App.propTypes = {
 			overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
 			useQuickCopy: PropTypes.bool
 		}),
+		metadata: PropTypes.object,
 		render_inline: PropTypes.bool,
 		shortcuts: PropTypes.object
 	}),

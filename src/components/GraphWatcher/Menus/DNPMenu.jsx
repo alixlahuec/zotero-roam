@@ -7,7 +7,7 @@ import { pluralize } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
 
 function DNPMenu(props){
-	const { added, date, title, portalId } = props;
+	const { added, date, metadataSettings, portalId, title } = props;
 	const [isDialogOpen, setDialogOpen] = useState(false);
 
 	const hasAddedItems = added.length > 0;
@@ -39,9 +39,10 @@ function DNPMenu(props){
 					<Button minimal={true} icon="calendar" onClick={openDialog}>{buttonLabel}</Button>
 					<AuxiliaryDialog className="added-on" 
 						isOpen={isDialogOpen}
-						show={isShowing} 
 						items={added} 
+						metadataSettings={metadataSettings}
 						portalId={portalId}
+						show={isShowing} 
 						onClose={closeDialog}
 					/>
 				</>
@@ -52,8 +53,9 @@ function DNPMenu(props){
 DNPMenu.propTypes = {
 	added: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
 	date: PropTypes.date,
+	metadataSettings: PropTypes.object,
+	portalId: PropTypes.string,
 	title: PropTypes.string,
-	portalId: PropTypes.string
 };
 
 export default DNPMenu;
