@@ -8,7 +8,10 @@ module.exports = {
 		filename: "zoteroRoam.min.js"
 	},
 	resolve: {
-		extensions: [".js", ".jsx", ".css"]
+		extensions: [".js", ".jsx", ".css"],
+		alias: {
+			"react-dom$": "react-dom/profiling"
+		}
 	},
 	mode: "production",
 	module: {

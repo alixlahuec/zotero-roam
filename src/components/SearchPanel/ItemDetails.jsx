@@ -101,9 +101,9 @@ function ItemDetails(props) {
 		year,
 		zotero} = item;
 
-	const importMetadata = useCallback(() => {
+	const importMetadata = useCallback(async() => {
 		let { pdfs = [], notes = [] } = children;
-		importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings);
+		return await importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings);
 	}, [children, inGraph, item.raw, metadataSettings]);
 	
 	const navigateToPage = useCallback(() => {

@@ -3,6 +3,10 @@ import { getItemMetadata } from "./formatting";
 import { use_smartblock_metadata } from "./smartblocks";
 import { executeFunctionByName } from "./utils";
 
+/** Adds Roam blocks to a parent UID based on an Object block template.
+ * @param {String} parentUID - The UID of the parent (Roam block or page) 
+ * @param {{string: String, children?: Array}} object - The block Object to use as template 
+ */
 async function addBlockObject(parentUID, object) {
 	let {string: blockString, children = [], ...opts} = object;
 	
@@ -32,6 +36,11 @@ async function addBlockObject(parentUID, object) {
 	}
 }
 
+/** Adds Roam blocks to a parent UID, based on an array input.
+ * @param {String} parentUID - The UID of the parent (Roam block or page) 
+ * @param {Array<String|{string: String, children?: Array}>} arr - The array to use as template
+ * @returns The outcome of the operation
+ */
 async function addBlocksArray(parentUID, arr){
 	let defaultOutcome = {
 		args: {
@@ -73,13 +82,26 @@ async function addBlocksArray(parentUID, arr){
 	}
 }
 
-function addPaletteCommand(label, callback){
+/** Adds an entry to Roam's Command Palette
+ * @param {String} label - The label for the menu option 
+ * @param {Function} onSelect - The callback to execute upon selection
+ * @see https://roamresearch.com/#/app/developer-documentation/page/rAkidgrv3
+ */
+function addPaletteCommand(label, onSelect){
 	window.roamAlphaAPI.ui.commandPalette.addCommand({
 		label,
-		callback
+		callback: onSelect
 	});
 }
 
+/** Adds a single Roam block to a parent UID, with optional formatting.
+ * @param {String} parentUID - The UID of the parent (Roam block or page)
+ * @param {String} string - The text contents of the block
+ * @param {Number} order - The order of the block on the page
+ * @param {Object} opts - (optional) Additional formatting to be used (`heading`, `text-align`, ...). See the Roam Alpha API documentation for the complete list of available options.
+ * @returns {String} The UID of the created block
+ * @see https://roamresearch.com/#/app/developer-documentation/page/Sq5IhwNQY
+ */
 async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
 	let blockUID = window.roamAlphaAPI.util.generateUID();
 	let blockContents = {
@@ -97,6 +119,10 @@ async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
 	return blockUID;
 }
 
+/** Searches a Roam page by its title
+ * @param {String} title - The title to be searched
+ * @returns {String|false} The UID of the Roam page (if it exists), otherwise `false`
+ */
 function findRoamPage(title){
 	let pageSearch = window.roamAlphaAPI.q("[:find ?uid :in $ ?title :where[?p :node/title ?title][?p :block/uid ?uid]]", title);
 	if(pageSearch.length > 0){
@@ -106,15 +132,23 @@ function findRoamPage(title){
 	}
 }
 
+/** Retrieves the list of citekey pages (i.e, starting with `@`) in the Roam graph
+ * @returns {Map<String,String>} A Map whose `keys` are the pages' titles, and whose `entries` are the pages' UIDs
+ */
 function getCitekeyPages(){
 	return new Map(window.roamAlphaAPI.q("[:find ?title ?uid :where[?e :node/title ?title][(clojure.string/starts-with? ?title \"@\")][?e :block/uid ?uid]]"));
 }
 
-// TODO: Setup error handling, clean return logic, add visual feedback (Toast)
+/** Imports an item's metadata as Roam blocks
+ * @param {{item: ZoteroItem|Object, pdfs: Array, notes: Array}} itemData - The item's Zotero data and its children, if any
+ * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
+ * @param {Object} config - The user's `metadata` settings 
+ * @returns 
+ */
 async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, config){
 	let title = "@" + item.key;
 	let pageUID = uid || window.roamAlphaAPI.util.generateUID();
-	let page = {title: title, uid: pageUID};
+	let page = { new: null, title, uid: pageUID };
 	
 	if(pageUID != uid){
 		window.roamAlphaAPI.createPage({"page": {"title": title, "uid": pageUID}});
@@ -125,13 +159,16 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 	
 	let { use, func = null, smartblock = {}} = config;
 
+	// TODO: Add support or options for passing formatted children (PDFs/notes), for both `use` parameters
 	if(use == "smartblock"){
-		// TODO: Handle case where smartblock is {} ; add support  for passing children (PDFs/notes) to SmartBlock
-		let context = { item, page, uid: pageUID };
+		let context = { item, notes, page, pdfs };
 		try {
-			return await use_smartblock_metadata(smartblock, context);
+			let outcome = await use_smartblock_metadata(smartblock, context);
+			emitCustomEvent("metadata-added", outcome);
+
+			return outcome;
+
 		} catch(e) {
-			console.log({config: smartblock, context });
 			return await Promise.reject(e);
 		}
 	} else {
@@ -139,7 +176,7 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 			let metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : getItemMetadata(item, pdfs, notes);
 			let { args, error, success } = await addBlocksArray(pageUID, metadata);
 
-			emitCustomEvent("metadata-added", {
+			let outcome = {
 				args,
 				error,
 				raw: {
@@ -149,17 +186,30 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 				},
 				success,
 				title
-			});
+			};
+			emitCustomEvent("metadata-added", outcome);
+			
+			return outcome;
+
 		} catch(e) {
 			return await Promise.reject(e);
 		}
 	}
 }
 
-function openInSidebarByUID(uid, type = "outline"){
-	window.roamAlphaAPI.ui.rightSidebar.addWindow({window:{"type": type, "block-uid": uid}});
+/** Opens a Roam block or page in the right sidebar, based on its UID.
+ * @param {String} uid - The UID of the Roam entity (block or page)
+ * @param {String} type - The type of window that should be added to the sidebar. See the Roam Alpha API documentation for the complete list of available options.
+ * @see https://roamresearch.com/#/app/developer-documentation/page/yHDobV8KV
+ */
+async function openInSidebarByUID(uid, type = "outline"){
+	await window.roamAlphaAPI.ui.rightSidebar.addWindow({window:{"type": type, "block-uid": uid}});
 }
 
+/** Navigates to a Roam page, based on its UID.
+ * @param {String} uid - The UID of the Roam page 
+ * @see https://roamresearch.com/#/app/developer-documentation/page/_VyuLpfWb
+ */
 function openPageByUID(uid){
 	window.roamAlphaAPI.ui.mainWindow.openPage({page: {uid: uid}});
 }

@@ -47,9 +47,16 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 		);
 	}, [item]);
 
-	const importMetadata = useCallback(() => {
-		importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings);
+	const importMetadata = useCallback(async() => {
+		return await importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings);
 	}, [inGraph, item, metadataSettings, pdfs, notes]);
+
+	const importMetadataAndOpen = useCallback(async() => {
+		let { success } = await importMetadata();
+		if(success){
+			navigateToPage();
+		}
+	}, [importMetadata, navigateToPage]);
 
 	const navigateToPage = useCallback(() => {
 		if(inGraph != false){
@@ -58,12 +65,16 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 		}
 	}, [handleClose, inGraph]);
 
+	const openPageInSidebar = useCallback(() => {
+		openInSidebarByUID(inGraph);
+	}, [inGraph]);
+
 	const actionsMenu = useMemo(() => {
 		if(!inGraph){
 			return (
 				<Menu className="zr-text-small">
 					<MenuItem icon="add" text="Import metadata" onClick={importMetadata} />
-					<MenuItem icon="inheritance" text="Import & open in sidebar" />
+					<MenuItem icon="inheritance" text="Import & open in sidebar" onClick={importMetadataAndOpen} />
 					<MenuDivider />
 					{zoteroLinks}
 				</Menu>
@@ -78,13 +89,13 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 					<MenuItem 
 						icon="inheritance" 
 						text="Open in sidebar"
-						onClick={() => openInSidebarByUID(inGraph)} />
+						onClick={openPageInSidebar} />
 					<MenuDivider />
 					{zoteroLinks}
 				</Menu>
 			);
 		}
-	}, [importMetadata, inGraph, navigateToPage, zoteroLinks]);
+	}, [importMetadata, importMetadataAndOpen, inGraph, navigateToPage, openPageInSidebar, zoteroLinks]);
 
 	return (
 		<Popover2 {...popoverMenuProps} content={actionsMenu}>

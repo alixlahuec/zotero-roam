@@ -20,11 +20,14 @@ function BacklinksItem(props) {
 	const pub_year = meta.parsedDate ? new Date(meta.parsedDate).getUTCFullYear() : "";
 	const pub_type = _type == "cited" ? "reference" : "citation";
 
-	const handleClick = useCallback(() => {
+	const handleClick = useCallback(async() => {
 		if(!inGraph){
-			importItemMetadata({ item, pdfs, notes }, false, metadataSettings);
+			let { args: { uid }, success } = await importItemMetadata({ item, pdfs, notes }, false, metadataSettings);
+			if(success){
+				await openInSidebarByUID(uid);
+			}
 		} else {
-			openInSidebarByUID(inGraph);
+			await openInSidebarByUID(inGraph);
 		}
 	}, [inGraph, item, metadataSettings, notes, pdfs]);
 
@@ -234,11 +237,12 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 			: null;
 	}, [doi]);
 
-	const importMetadata = useCallback(() => {
-		importItemMetadata({ item, pdfs: has_pdfs, notes: has_notes}, pageUID, metadataSettings);
+	const importMetadata = useCallback(async() => {
+		return await importItemMetadata({ item, pdfs: has_pdfs, notes: has_notes}, pageUID, metadataSettings);
 	}, [has_pdfs, has_notes, item, metadataSettings, pageUID]);
     
 	const importNotes = has_notes ? <Button icon="comment">Import notes</Button> : null;
+
 	const pdfLinks = useMemo(() => {
 		if(has_pdfs.length == 0) {
 			return null;

@@ -5,6 +5,12 @@ const events = [
     * Signals a metadata import has terminated
     * @event zotero-roam:metadata-added
     * @type {object}
+    * @property {({blocks: Array, uid: String}|{new: Boolean, smartblock: Object, uid: String})} args - The configuration used for the import
+    * @property {error|null} error - The error thrown during the import, if failed
+    * @property {{item: ZoteroItem|Object, notes: Object[], pdfs: Object[]}} raw - The raw data provided as input
+    * @property {Boolean|null} success - Indicates if the update was successful
+    * @property {String} title - The title of the target page
+    * @see importItemMetadata
     */
 	"metadata-added",
 	/**
@@ -17,20 +23,20 @@ const events = [
     * Signals a data update for items has terminated
      * @event zotero-roam:update
      * @type {object}
-     * @property {Boolean} success - Indicates if the update was successful
-     * @property {{apikey: String, dataURI: String, library: String, name: String, params: String}} request - The data request that yielded the update
      * @property {ZoteroItem[]|Object[]} [data] - The data contained in the update, if successful
      * @property {error} [error] - The error thrown during the update, if failed
+     * @property {{apikey: String, dataURI: String, library: String, name: String, params: String}} request - The data request that yielded the update
+     * @property {Boolean} success - Indicates if the update was successful
      */
 	"update",
 	/**
      * Signals a data update for collections has terminated
      * @event zotero-roam:update-collections
      * @type {object}
-     * @property {Boolean} success - Indicates if the update was successful
-     * @property {{apikey: String, path: String}} - The library that yielded the update
      * @property {ZoteroCollection[]|Object[]} [data] - The data contained in the update, if successful
      * @property {error} [error] - The error thrown during the update, if failed
+     * @property {{apikey: String, path: String}} library - The library that yielded the update
+     * @property {Boolean} success - Indicates if the update was successful
      */
 	"update-collections",
 	/**
@@ -55,13 +61,21 @@ function emitCustomEvent(type, detail = {}, target = document){
 	}
 }
 
+/** Sets up default actions to trigger based on the extension's custom events
+ */
 function setDefaultHooks(){
 	document.addEventListener("zotero-roam:metadata-added", (e) => {
-		let { error } = e.detail;
+		let { error, success, title } = e.detail;
 		if(error){
+			console.error(error);
 			zrToaster.show({
 				intent: "danger",
-				message: error
+				message: `Metadata import failed for ${title} : \n ${error}`
+			});
+		} else if(success){
+			zrToaster.show({
+				intent: "success",
+				message: "Metadata added to" + title
 			});
 		} else {
 			// For testing

@@ -2,6 +2,7 @@
 /** Generates the list of custom SmartBlocks commands to register
  * @param {function} getItems - The exposed utility that returns available Zotero items. See {@link App} component.
  * @returns {Object} The list of commands to register
+ * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 const sbCommands = (getItems) => {
 	return {
@@ -79,6 +80,7 @@ function eval_term(term, props){
 }
 
 /** Register the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
+ * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 function registerSmartblockCommands(getItems){
 	const commands = sbCommands(getItems);
@@ -95,23 +97,54 @@ function registerSmartblockCommands(getItems){
 // Extension-triggered SmartBlocks
 
 /** Triggers a given SmartBlock to import an item's metadata
- * @param {*} config 
- * @param {*} context
+ * @param {Object} config - The identification for the SmartBlock to be used.
+ * @param {{
+ * item: ZoteroItem|Object, 
+ * notes: Array, 
+ * page: {new: Boolean, title: String, uid: String}, 
+ * pdfs: Array}} context - The context variables provided by the extension to the SmartBlock
  * @returns {Promise} If successful, `{success:true}` - otherwise an object containing the error encountered and the arguments with which the function was called.
+ * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 async function use_smartblock_metadata(config, context){
-	let obj = config;
-	obj.targetUid = context.uid;
-	if(!obj.variables){ obj.variables = {}; }
+	let { item, notes, page: { title, uid, ...args}, pdfs } = context;
+	let defaultOutcome = {
+		args: {
+			...args,
+			smartblock: config,
+			uid
+		},
+		error: null,
+		raw: {
+			item,
+			notes,
+			pdfs
+		},
+		success: null,
+		title
+	};
+
+	let obj = {
+		targetUid: uid,
+		variables: {},
+		...config
+	};
+
 	Object.keys(context).forEach(k => {
 		obj.variables[`${k}`] = context[`${k}`];
 	});
+	
 	try {
 		await window.roamjs?.extension?.smartblocks?.triggerSmartblock(obj);
-		Promise.resolve({ success: true });
+		return Promise.resolve({
+			...defaultOutcome, 
+			success: true});
 	} catch(e){
 		console.error(e);
-		Promise.reject({ success: false, error: e, details: {config, context, obj } });
+		return Promise.resolve({
+			...defaultOutcome,
+			error: e,
+			success: false});
 	}
 }
 
