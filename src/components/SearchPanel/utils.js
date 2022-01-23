@@ -3,7 +3,7 @@ import { categorizeLibraryItems, getLocalLink, getWebLink, parseDOI } from "../.
 /** Converts library data into a simplified list of top-level items, with their metadata, children, and links
  * @param {Object[]} arr - The library's contents, including top-level items, attachments and notes 
  * @param {Map} roamCitekeys - The map of citekey pages present in Roam 
- * @returns {Object[]} - The simplified items
+ * @returns {Object[]} The simplified items
  * @see cleanLibraryReturnArrayType
  */
 function cleanLibrary(arr, roamCitekeys){

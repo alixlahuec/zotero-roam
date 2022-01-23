@@ -80,7 +80,7 @@ function searchEngine(query, items) {
 }
 
 function testItemsEquality(a,b){
-	return (a.data.key == b.data.key && a.library.id == b.library.id && a.library.type == b.library.type);
+	return (a.itemKey == b.itemKey && a.location == b.location);
 }
 
 const SearchResult = React.memo(function SearchResult(props) {
