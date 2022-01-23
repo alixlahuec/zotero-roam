@@ -182,7 +182,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		);
 	}, [quickCopyActive, toggleQuickCopy, handleClose]);
 
-	const listRenderer = useMemo((listProps) => {
+	const listRenderer = useCallback((listProps) => {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
 
 		return (
