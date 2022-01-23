@@ -46,6 +46,13 @@ function useDebounceCallback(callback, timeout) {
 	return [debounceCallback, cancel];
 }
 
+const SearchbarLeftElement = () => {
+	return <Icon id={dialogLabel} title="Search in Zotero items"
+		htmlTitle="Search in Zotero items"
+		intent="primary"
+		icon="learning" />;
+};
+
 function listItemRenderer(item, itemProps) {
 	let { handleClick, modifiers, query } = itemProps;
 	let passedProps = { item, handleClick, modifiers, query };
@@ -160,24 +167,23 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		}
 	}, [copySettings.always, copySettings.defaultFormat, copySettings.overrideKey, handleClose, quickCopyActive, selectedItem]);
 
-	function handleQueryChange(query, _e) {
+	const handleQueryChange = useCallback((query, _e) => {
 		handleItemSelect(null);
 		setQuery(query);
 		debouncedCallback(query);
-	}
+	}, [handleItemSelect, debouncedCallback]);
 
-	function listRenderer(listProps) {
+	const searchbarRightElement = useMemo(() => {
+		return (
+			<>
+				<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={quickCopyActive} onChange={toggleQuickCopy} />
+				<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />
+			</>
+		);
+	}, [quickCopyActive, toggleQuickCopy, handleClose]);
+
+	const listRenderer = useMemo((listProps) => {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
-
-		const leftElem = <Icon id={dialogLabel} title="Search in Zotero items"
-			htmlTitle="Search in Zotero items"
-			intent="primary"
-			icon="learning" />;
-
-		const rightElem = <>
-			<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={quickCopyActive} onChange={toggleQuickCopy} />
-			<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />
-		</>;
 
 		return (
 			<div className="zr-querylist">
@@ -193,26 +199,21 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					onKeyDown={handleKeyDown}
 					onKeyUp={handleKeyUp}
 					inputRef={searchbar}
-					leftElement={leftElem}
-					rightElement={rightElem}
+					leftElement={SearchbarLeftElement}
+					rightElement={searchbarRightElement}
 				/>
 				{selectedItem 
 					? <ItemDetails item={selectedItem} 
 						closeDialog={handleClose} 
 						defaultCopyFormat={copySettings.defaultFormat}
 						metadataSettings={metadataSettings} />
-					: <>
-						<div
-							id="zotero-roam-library-rendered"
-							onKeyDown={handleKeyDown}
-							onKeyUp={handleKeyUp}
-						>
-							{listProps.itemList}
-						</div>
-					</>}
+					: <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} >
+						{listProps.itemList}
+					</div>
+				}
 			</div>
 		);
-	}
+	}, [copySettings.defaultFormat, handleClose, metadataSettings, searchbarRightElement, selectedItem]);
 
 	const hotkeys = useMemo(() => {
 		let defaultProps = {
