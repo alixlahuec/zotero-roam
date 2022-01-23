@@ -8,7 +8,7 @@
         "plugin:react/recommended",
         "plugin:react-hooks/recommended"
     ],
-    "ignorePatterns": ["webpack.config.js"],
+    "ignorePatterns": ["webpack.*config.js"],
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true

@@ -13,8 +13,8 @@ import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 const query_threshold = 3;
-const query_debounce = 300;
-const results_limit = 50;
+const query_debounce = 500;
+const results_limit = 30;
 
 const dialogLabel="zr-library-search-dialogtitle";
 const dialogClass="search-library";
@@ -46,12 +46,10 @@ function useDebounceCallback(callback, timeout) {
 	return [debounceCallback, cancel];
 }
 
-const SearchbarLeftElement = () => {
-	return <Icon id={dialogLabel} title="Search in Zotero items"
-		htmlTitle="Search in Zotero items"
-		intent="primary"
-		icon="learning" />;
-};
+const SearchbarLeftElement = <Icon id={dialogLabel} title="Search in Zotero items"
+	htmlTitle="Search in Zotero items"
+	intent="primary"
+	icon="learning" />;
 
 function listItemRenderer(item, itemProps) {
 	let { handleClick, modifiers, query } = itemProps;
