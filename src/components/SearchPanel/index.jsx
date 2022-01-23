@@ -13,7 +13,7 @@ import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 const query_threshold = 3;
-const query_debounce = 500;
+const query_debounce = 200;
 const results_limit = 30;
 
 const dialogLabel="zr-library-search-dialogtitle";
@@ -52,11 +52,14 @@ const SearchbarLeftElement = <Icon id={dialogLabel} title="Search in Zotero item
 	icon="learning" />;
 
 function listItemRenderer(item, itemProps) {
-	let { handleClick, modifiers, query } = itemProps;
-	let passedProps = { item, handleClick, modifiers, query };
-	let { location, key } = item;
+	let { handleClick, modifiers /*, query*/ } = itemProps;
+	let elemKey = [item.location, item.key].join("-");
 
-	return <SearchResult key={[location, key].join("-")} {...passedProps} />;
+	return <SearchResult key={elemKey}
+		handleClick={handleClick}
+		item={item}
+		modifiers={modifiers}
+	/>;
 }
 
 function searchEngine(query, items) {
@@ -74,6 +77,10 @@ function searchEngine(query, items) {
   
 		return matches;
 	}
+}
+
+function testItemsEquality(a,b){
+	return (a.data.key == b.data.key && a.library.id == b.library.id && a.library.type == b.library.type);
 }
 
 const SearchResult = React.memo(function SearchResult(props) {
@@ -105,8 +112,7 @@ const SearchResult = React.memo(function SearchResult(props) {
 SearchResult.propTypes = {
 	item: customPropTypes.cleanLibraryItemType,
 	handleClick: PropTypes.func,
-	modifiers: PropTypes.object,
-	query: PropTypes.string
+	modifiers: PropTypes.object
 };
 
 const SearchPanel = React.memo(function SearchPanel(props) {
@@ -257,6 +263,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					items={items}
 					itemListPredicate={searchEngine}
 					itemRenderer={listItemRenderer}
+					itemsEqual={testItemsEquality}
 					onItemSelect={handleItemSelect}
 					onQueryChange={handleQueryChange}
 					query={query}

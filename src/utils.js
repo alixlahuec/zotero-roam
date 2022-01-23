@@ -7,18 +7,18 @@ import "./typedefs";
  */
 function analyzeUserRequests(reqs){
 	if(reqs.length == 0){
-		throw new Error("At least one data request must be specified for the extension to function.");
+		throw new Error("At least one data request must be specified for the extension to function. See the documentation here : https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/api");
 	} else {
 		let fallbackAPIKey = reqs.find(req => req.apikey).apikey;
 		if(!fallbackAPIKey){
-			throw new Error("At least one data request must be assigned an API key.");
+			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/api");
 		} else {
 			const dataRequests = reqs.map((req, i) => {
 				let { dataURI, apikey = fallbackAPIKey, params = "", name = `${i}`} = req;
 				let library = dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1);
 
 				if(!dataURI){
-					throw new Error("Each data request must be assigned a data URI.");
+					throw new Error("Each data request must be assigned a data URI. See the documentation here : https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/api");
 				}
 
 				return { dataURI, apikey, params, name, library };

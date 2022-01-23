@@ -84,7 +84,7 @@ window.zoteroRoam = {};
 		console.error(e);
 		zrToaster.show({
 			intent: "danger",
-			message: e.message
+			message: "zoteroRoam : " + e.message
 		});
 	}
 
