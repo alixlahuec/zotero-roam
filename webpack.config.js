@@ -10,7 +10,8 @@ module.exports = {
 	resolve: {
 		extensions: [".js", ".jsx", ".css"],
 		alias: {
-			"react-dom$": "react-dom/profiling"
+			"react-dom$": "react-dom/profiling",
+			"scheduler/tracing": "scheduler/tracing-profiling"
 		}
 	},
 	mode: "production",
