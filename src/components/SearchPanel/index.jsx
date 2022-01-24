@@ -13,8 +13,8 @@ import "./index.css";
 import { useQuery_Items } from "../../queries";
 
 const query_threshold = 3;
-const query_debounce = 200;
-const results_limit = 10;
+const query_debounce = 300;
+const results_limit = 50;
 
 const dialogLabel="zr-library-search-dialogtitle";
 const dialogClass="search-library";
