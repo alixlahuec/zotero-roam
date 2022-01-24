@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
-import { useQueryClient } from "react-query";
 
 import DialogOverlay from "../DialogOverlay";
 import ItemDetails from "./ItemDetails";
@@ -11,6 +10,7 @@ import { getCitekeyPages } from "../../roam";
 import { cleanLibrary, formatItemReferenceForCopy } from "./utils";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
+import { useQuery_Items } from "../../queries";
 
 const query_threshold = 3;
 const query_debounce = 200;
@@ -20,6 +20,21 @@ const dialogLabel="zr-library-search-dialogtitle";
 const dialogClass="search-library";
 const resultClass = [Classes.TEXT_OVERFLOW_ELLIPSIS, "zr-library-item--contents"].join(" ");
 const resultKeyClass = [Classes.MENU_ITEM_LABEL, "zr-library-item--key"].join(" ");
+
+function useGetItems(reqs, roamCitekeys){
+	const itemQueries = useQuery_Items(reqs, {
+		notifyOnChangeProps: ["data"],
+		select: (datastore) => {
+			if(datastore.data){
+				return cleanLibrary(datastore.data, roamCitekeys);
+			} else {
+				return [];
+			}
+		}
+	});
+
+	return itemQueries.map(q => q.data || []).flat(1);
+}
 
 // Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 function useDebounceCallback(callback, timeout) {
@@ -159,7 +174,7 @@ SearchResult.propTypes = {
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { closePanel, copySettings, metadataSettings, portalTarget, shortcutsSettings } = props;
+	const { closePanel, copySettings, dataRequests, metadataSettings, portalTarget, shortcutsSettings } = props;
 
 	const searchbar = useRef();
 	let [selectedItem, itemSelect] = useState(null);
@@ -169,8 +184,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	const [debouncedCallback, ] = useDebounceCallback(_query => { }, query_debounce);
 
-	const client = useQueryClient();
-	const items = cleanLibrary(client.getQueriesData("items").map((res) => res[1]?.data || []).flat(1), roamCitekeys);
+	const items = useGetItems(dataRequests, roamCitekeys);
 
 	const handleClose = useCallback(() => {
 		setQuery("");
@@ -312,6 +326,7 @@ SearchPanel.propTypes = {
 		overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
 		useQuickCopy: PropTypes.bool
 	}),
+	dataRequests: PropTypes.array,
 	metadataSettings: PropTypes.object,
 	panelState: PropTypes.shape({
 		isOpen: PropTypes.bool,

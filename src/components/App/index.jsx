@@ -75,11 +75,12 @@ class App extends Component {
 							portalId={portalId} />
 						: null}
 					<SearchPanel panelState={searchPanel}
-						portalTarget={portalId}
-						copySettings={copy}
-						metadataSettings={metadata}
-						shortcutsSettings={shortcuts}
 						closePanel={this.closeSearchPanel}
+						copySettings={copy}
+						dataRequests={dataRequests}
+						metadataSettings={metadata}
+						portalTarget={portalId}
+						shortcutsSettings={shortcuts}
 					/>
 				</QueryClientProvider>
 			</HotkeysTarget2>

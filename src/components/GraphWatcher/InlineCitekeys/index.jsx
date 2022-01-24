@@ -21,6 +21,7 @@ import "./index.css";
  */
 const useGetItems = (reqs) => {
 	const itemQueries = useQuery_Items(reqs, { 
+		notifyOnChangeProps: ["data"],
 		select: (datastore) => {
 			if(datastore.data){
 				let lib = categorizeLibraryItems(datastore.data);
@@ -61,8 +62,7 @@ const useGetItems = (reqs) => {
 			} else {
 				return [];
 			}
-		},
-		notifyOnChangeProps: ["data"] 
+		} 
 	});
 	const data = itemQueries.map(q => q.data || []).flat(1);
     
