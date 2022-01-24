@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
@@ -61,11 +61,6 @@ function useDebounceCallback(callback, timeout) {
 	return [debounceCallback, cancel];
 }
 
-const SearchbarLeftElement = <Icon id={dialogLabel} title="Search in Zotero items"
-	htmlTitle="Search in Zotero items"
-	intent="primary"
-	icon="learning" />;
-
 function listItemRenderer(item, itemProps) {
 	let { handleClick, modifiers /*, query*/ } = itemProps;
 	let elemKey = [item.location, item.key].join("-");
@@ -78,7 +73,7 @@ function listItemRenderer(item, itemProps) {
 }
 
 const SearchInputGroup = React.memo(function SearchInputGroup(props) {
-	const { handleKeyDown, handleKeyUp, handleQueryChange, searchbar, searchbarRightElement } = props;
+	const { handleKeyDown, handleKeyUp, handleQueryChange, searchbar, searchbarLeftElement, searchbarRightElement } = props;
 
 	return (
 		<InputGroup
@@ -93,7 +88,7 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 			onKeyDown={handleKeyDown}
 			onKeyUp={handleKeyUp}
 			inputRef={searchbar}
-			leftElement={SearchbarLeftElement}
+			leftElement={searchbarLeftElement}
 			rightElement={searchbarRightElement}
 		/>
 	)	;
@@ -103,6 +98,7 @@ SearchInputGroup.propTypes = {
 	handleKeyUp: PropTypes.func,
 	handleQueryChange: PropTypes.func,
 	searchbar: PropTypes.node,
+	searchbarLeftElement: PropTypes.node,
 	searchbarRightElement: PropTypes.node
 };
 
@@ -172,32 +168,14 @@ SearchResult.propTypes = {
 	modifiers: PropTypes.object
 };
 
-const SearchPanel = React.memo(function SearchPanel(props) {
-	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { closePanel, copySettings, dataRequests, metadataSettings, portalTarget, shortcutsSettings } = props;
+function LibraryQueryList(props){
+	const { copySettings, handleClose, isOpen, items, metadataSettings, quickCopyActive, toggleQuickCopy } = props;
 
 	const searchbar = useRef();
 	let [selectedItem, itemSelect] = useState(null);
-	let [quickCopyActive, setQuickCopy] = useState(copySettings.useQuickCopy); // Is QuickCopy active by default ?
-	let [roamCitekeys, setRoamCitekeys] = useState(getCitekeyPages());
 	let [query, setQuery] = useState();
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	const [debouncedCallback, ] = useDebounceCallback(_query => { }, query_debounce);
-
-	const items = useGetItems(dataRequests, roamCitekeys);
-
-	const handleClose = useCallback(() => {
-		setQuery("");
-		itemSelect(null);
-		closePanel();
-	}, [closePanel]);
-
-	const handleOpen = useCallback(() => {
-		setRoamCitekeys(getCitekeyPages()); 
-		searchbar.current.focus(); 
-	}, []);
-
-	const toggleQuickCopy = useCallback(() => { setQuickCopy(!quickCopyActive); }, [quickCopyActive]);
 
 	const handleItemSelect = useCallback((item, e) => {
 		if(item === selectedItem){ 
@@ -222,13 +200,18 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 				itemSelect(item);
 			}
 		}
-	}, [copySettings, handleClose, quickCopyActive, selectedItem]);
+	}, [copySettings, handleClose, quickCopyActive, searchbar, selectedItem]);
 
 	const handleQueryChange = useCallback((query, _e) => {
 		handleItemSelect(null);
 		setQuery(query);
 		debouncedCallback(query);
 	}, [handleItemSelect, debouncedCallback]);
+
+	const searchbarLeftElement = useMemo(() => <Icon id={dialogLabel} title="Search in Zotero items"
+		htmlTitle="Search in Zotero items"
+		intent="primary"
+		icon="learning" />, []);
 
 	const searchbarRightElement = useMemo(() => {
 		return (
@@ -242,12 +225,13 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	const listRenderer = useCallback((listProps) => {
 		const { handleKeyUp, handleKeyDown, handleQueryChange, itemList } = listProps;
 		return (
-			<div className="zr-query-list">
+			<div className="zr-querylist">
 				<SearchInputGroup 
 					handleKeyDown={handleKeyDown} 
 					handleKeyUp={handleKeyUp} 
 					handleQueryChange={handleQueryChange}
 					searchbar={searchbar}
+					searchbarLeftElement={searchbarLeftElement}
 					searchbarRightElement={searchbarRightElement} />
 				{renderListDiv(
 					handleKeyDown, 
@@ -263,7 +247,63 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					})}
 			</div>
 		);
-	}, [copySettings, handleClose, metadataSettings, searchbarRightElement, selectedItem]);
+	}, [copySettings, handleClose, metadataSettings, searchbar, searchbarLeftElement, searchbarRightElement, selectedItem]);
+
+	useEffect(() => {
+		if(isOpen){
+		// On opening the panel :
+			searchbar.current.focus();
+		} else {
+			// On closing the panel :
+			setQuery("");
+			itemSelect(null);
+		}
+	}, [isOpen, searchbar]);
+	
+
+	return (
+		<QueryList
+			initialContent={null}
+			items={items}
+			itemListPredicate={searchEngine}
+			itemRenderer={listItemRenderer}
+			itemsEqual={testItemsEquality}
+			onItemSelect={handleItemSelect}
+			onQueryChange={handleQueryChange}
+			query={query}
+			renderer={listRenderer}
+		/>
+	);
+}
+LibraryQueryList.propTypes = {
+	copySettings: PropTypes.shape({
+		always: PropTypes.bool,
+		defaultFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
+		overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
+		useQuickCopy: PropTypes.bool
+	}),
+	handleClose: PropTypes.func,
+	isOpen: PropTypes.bool,
+	items: customPropTypes.cleanLibraryReturnArrayType,
+	metadataSettings: PropTypes.object,
+	quickCopyActive: PropTypes.bool,
+	toggleQuickCopy: PropTypes.func
+};
+
+const SearchPanel = React.memo(function SearchPanel(props) {
+	const { isOpen, isSidePanelOpen } = props.panelState;
+	const { closePanel, copySettings, dataRequests, metadataSettings, portalTarget, shortcutsSettings } = props;
+
+	let [quickCopyActive, setQuickCopy] = useState(copySettings.useQuickCopy); // Is QuickCopy active by default ?
+	let [roamCitekeys, setRoamCitekeys] = useState(getCitekeyPages());
+
+	const items = useGetItems(dataRequests, roamCitekeys);
+
+	const handleOpen = useCallback(() => {
+		setRoamCitekeys(getCitekeyPages()); 
+	}, []);
+
+	const toggleQuickCopy = useCallback(() => { setQuickCopy(!quickCopyActive); }, [quickCopyActive]);
 
 	const hotkeys = useMemo(() => {
 		let defaultProps = {
@@ -300,20 +340,17 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			isOpen={isOpen}
 			isSidePanelOpen={isSidePanelOpen}
 			lazy={false}
-			onClose={handleClose}
+			onClose={closePanel}
 			onOpening={handleOpen}
 			portalTarget={portalTarget}>
-			<QueryList
-				initialContent={null}
+			<LibraryQueryList 
+				copySettings={copySettings}
+				handleClose={closePanel}
+				isOpen={isOpen}
 				items={items}
-				itemListPredicate={searchEngine}
-				itemRenderer={listItemRenderer}
-				itemsEqual={testItemsEquality}
-				onItemSelect={handleItemSelect}
-				onQueryChange={handleQueryChange}
-				query={query}
-				renderer={listRenderer}
-			/>
+				metadataSettings={metadataSettings}
+				quickCopyActive={quickCopyActive}
+				toggleQuickCopy={toggleQuickCopy} />
 		</DialogOverlay>
 	);
 
