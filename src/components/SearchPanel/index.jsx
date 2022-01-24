@@ -14,7 +14,7 @@ import "./index.css";
 
 const query_threshold = 3;
 const query_debounce = 200;
-const results_limit = 30;
+const results_limit = 10;
 
 const dialogLabel="zr-library-search-dialogtitle";
 const dialogClass="search-library";
@@ -60,6 +60,48 @@ function listItemRenderer(item, itemProps) {
 		item={item}
 		modifiers={modifiers}
 	/>;
+}
+
+const SearchInputGroup = React.memo(function SearchInputGroup(props) {
+	const { handleKeyDown, handleKeyUp, handleQueryChange, searchbar, searchbarRightElement } = props;
+
+	return (
+		<InputGroup
+			className={(Classes.INPUT, Classes.FILL)}
+			id="zotero-roam-search-autocomplete"
+			placeholder="Search by title, year, authors (last names), citekey, tags"
+			spellCheck="false"
+			autoComplete="off"
+			type="text"
+			large={true}
+			onChange={handleQueryChange}
+			onKeyDown={handleKeyDown}
+			onKeyUp={handleKeyUp}
+			inputRef={searchbar}
+			leftElement={SearchbarLeftElement}
+			rightElement={searchbarRightElement}
+		/>
+	)	;
+});
+SearchInputGroup.propTypes = {
+	handleKeyDown: PropTypes.func,
+	handleKeyUp: PropTypes.func,
+	handleQueryChange: PropTypes.func,
+	searchbar: PropTypes.node,
+	searchbarRightElement: PropTypes.node
+};
+
+function renderListDiv(handleKeyDown, handleKeyUp, itemList, context){
+	const { handleClose, selectedItem, settings: { copy, metadata } } = context;
+
+	return selectedItem 
+		? <ItemDetails item={selectedItem} 
+			closeDialog={handleClose} 
+			defaultCopyFormat={copy.defaultFormat}
+			metadataSettings={metadata} />
+		: <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} >
+			{itemList}
+		</div>;
 }
 
 function searchEngine(query, items) {
@@ -119,16 +161,13 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
 	const { closePanel, copySettings, metadataSettings, portalTarget, shortcutsSettings } = props;
 
-	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
-	let [query, setQuery] = useState();
-	const [debouncedCallback, ] = useDebounceCallback(_query => {
-		//
-	}, query_debounce);
-
 	const searchbar = useRef();
 	let [selectedItem, itemSelect] = useState(null);
 	let [quickCopyActive, setQuickCopy] = useState(copySettings.useQuickCopy); // Is QuickCopy active by default ?
 	let [roamCitekeys, setRoamCitekeys] = useState(getCitekeyPages());
+	let [query, setQuery] = useState();
+	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
+	const [debouncedCallback, ] = useDebounceCallback(_query => { }, query_debounce);
 
 	const client = useQueryClient();
 	const items = cleanLibrary(client.getQueriesData("items").map((res) => res[1]?.data || []).flat(1), roamCitekeys);
@@ -169,7 +208,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 				itemSelect(item);
 			}
 		}
-	}, [copySettings.always, copySettings.defaultFormat, copySettings.overrideKey, handleClose, quickCopyActive, selectedItem]);
+	}, [copySettings, handleClose, quickCopyActive, selectedItem]);
 
 	const handleQueryChange = useCallback((query, _e) => {
 		handleItemSelect(null);
@@ -187,37 +226,30 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	}, [quickCopyActive, toggleQuickCopy, handleClose]);
 
 	const listRenderer = useCallback((listProps) => {
-		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
-
+		const { handleKeyUp, handleKeyDown, handleQueryChange, itemList } = listProps;
 		return (
-			<div className="zr-querylist">
-				<InputGroup
-					className={(Classes.INPUT, Classes.FILL)}
-					id="zotero-roam-search-autocomplete"
-					placeholder="Search by title, year, authors (last names), citekey, tags"
-					spellCheck="false"
-					autoComplete="off"
-					type="text"
-					large={true}
-					onChange={handleQueryChange}
-					onKeyDown={handleKeyDown}
-					onKeyUp={handleKeyUp}
-					inputRef={searchbar}
-					leftElement={SearchbarLeftElement}
-					rightElement={searchbarRightElement}
-				/>
-				{selectedItem 
-					? <ItemDetails item={selectedItem} 
-						closeDialog={handleClose} 
-						defaultCopyFormat={copySettings.defaultFormat}
-						metadataSettings={metadataSettings} />
-					: <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} >
-						{listProps.itemList}
-					</div>
-				}
+			<div className="zr-query-list">
+				<SearchInputGroup 
+					handleKeyDown={handleKeyDown} 
+					handleKeyUp={handleKeyUp} 
+					handleQueryChange={handleQueryChange}
+					searchbar={searchbar}
+					searchbarRightElement={searchbarRightElement} />
+				{renderListDiv(
+					handleKeyDown, 
+					handleKeyUp, 
+					itemList, 
+					{ 
+						handleClose, 
+						selectedItem,
+						settings: {
+							copy: copySettings,
+							metadata: metadataSettings
+						}
+					})}
 			</div>
 		);
-	}, [copySettings.defaultFormat, handleClose, metadataSettings, searchbarRightElement, selectedItem]);
+	}, [copySettings, handleClose, metadataSettings, searchbarRightElement, selectedItem]);
 
 	const hotkeys = useMemo(() => {
 		let defaultProps = {
@@ -256,21 +288,19 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			lazy={false}
 			onClose={handleClose}
 			onOpening={handleOpen}
-			portalTarget={portalTarget}
-			mainPanel={
-				<QueryList
-					initialContent={null}
-					items={items}
-					itemListPredicate={searchEngine}
-					itemRenderer={listItemRenderer}
-					itemsEqual={testItemsEquality}
-					onItemSelect={handleItemSelect}
-					onQueryChange={handleQueryChange}
-					query={query}
-					renderer={listRenderer}
-				/>}
-			sidePanel=""
-		/>
+			portalTarget={portalTarget}>
+			<QueryList
+				initialContent={null}
+				items={items}
+				itemListPredicate={searchEngine}
+				itemRenderer={listItemRenderer}
+				itemsEqual={testItemsEquality}
+				onItemSelect={handleItemSelect}
+				onQueryChange={handleQueryChange}
+				query={query}
+				renderer={listRenderer}
+			/>
+		</DialogOverlay>
 	);
 
 });
