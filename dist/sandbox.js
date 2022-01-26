@@ -82,7 +82,7 @@ var zoteroRoam = {};
             }
         },
         
-        version: "0.6.97",
+        version: "0.6.98",
 
         data: {items: [], collections: [], semantic: new Map(), libraries: new Map(), keys: [], roamPages: [], tags: {}},
         
@@ -6487,7 +6487,7 @@ var zoteroRoam = {};
         registerCommands(){
             Object.keys(zoteroRoam.smartblocks.commands).forEach(k => {
                 let {help, handler} = zoteroRoam.smartblocks.commands[`${k}`];
-                window.roamjs.extension.smartblocks.registerCommand({
+                window.roamjs?.extension?.smartblocks?.registerCommand({
                     text: k,
                     help: help,
                     handler: handler

@@ -55,7 +55,7 @@
         registerCommands(){
             Object.keys(zoteroRoam.smartblocks.commands).forEach(k => {
                 let {help, handler} = zoteroRoam.smartblocks.commands[`${k}`];
-                window.roamjs.extension.smartblocks.registerCommand({
+                window.roamjs?.extension?.smartblocks?.registerCommand({
                     text: k,
                     help: help,
                     handler: handler
