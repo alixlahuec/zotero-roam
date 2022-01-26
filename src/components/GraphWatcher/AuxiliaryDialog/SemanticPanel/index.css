@@ -86,7 +86,7 @@
     background-color: var(--zr-dark-selected-bc,#191919);
 }
 
-.bp3-dark .zr-semantic-panel--main .bp3-tag[data-semantic-intent] {
+.bp3-dark .zr-semantic-panel--main .zr-related-item--intents .bp3-tag[data-semantic-intent] {
     background-color: var(--zr-dark-selected-bc,#191919);
 }
 
@@ -111,7 +111,7 @@
         background-color: var(--zr-dark-selected-bc,#191919);
     }
 
-    .zr-semantic-panel--main .bp3-tag[data-semantic-intent] {
+    .zr-semantic-panel--main .zr-related-item--intents .bp3-tag[data-semantic-intent] {
         background-color: var(--zr-dark-selected-bc,#191919);
     }
 

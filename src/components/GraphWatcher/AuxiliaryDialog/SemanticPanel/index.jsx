@@ -59,7 +59,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 							<span className={type == "is_reference" ? "zr-highlight" : "zr-highlight-2"}>{item.authors}</span>
 							<span className="zr-secondary">{item.meta}</span>
 							{item.isInfluential
-								? <Icon icon="trending-up" color="#f8c63a" htmlTitle="This item was classified as influential by Semantic Scholar" />
+								? <Icon className="zr-related-item--decorating-icon" color="#f8c63a" htmlTitle="This item was classified as influential by Semantic Scholar" icon="trending-up" />
 								: null}
 							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 							<div className="zr-related-item--links">
@@ -78,7 +78,9 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 					</div>
 					<div className="zr-related-item--intents">
 						{item.intent.length > 0
-							? item.intent.map(int => <Tag key={int} data-semantic-intent={int} minimal={true}>{int.charAt(0).toUpperCase() + int.slice(1)}</Tag>)
+							? item.intent.map(int => {
+								let capitalizedIntent = int.charAt(0).toUpperCase() + int.slice(1);
+								return <Tag key={int} data-semantic-intent={int} htmlTitle={"This citation was classified as related to " + capitalizedIntent + " by Semantic Scholar"} minimal={true}>{capitalizedIntent}</Tag>;})
 							: null}
 					</div>
 				</div>

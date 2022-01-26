@@ -168,7 +168,7 @@ SearchResult.propTypes = {
 	modifiers: PropTypes.object
 };
 
-function LibraryQueryList(props){
+const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 	const { copySettings, handleClose, isOpen, items, metadataSettings, quickCopyActive, toggleQuickCopy } = props;
 
 	const searchbar = useRef();
@@ -274,7 +274,7 @@ function LibraryQueryList(props){
 			renderer={listRenderer}
 		/>
 	);
-}
+});
 LibraryQueryList.propTypes = {
 	copySettings: PropTypes.shape({
 		always: PropTypes.bool,

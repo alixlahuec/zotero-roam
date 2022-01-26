@@ -198,6 +198,11 @@ h4.item-title{
     border-color: var(--zr-dark-border-color,#363a3f);
 }
 
+.bp3-dark .item-citekey-section .bp3-button-group .bp3-button:hover,
+.bp3-dark .item-actions .bp3-button-group .bp3-button:hover {
+    background-color: var(--zr-dark-selected-bc,#191919);
+}
+
 .bp3-dark .item-basic-metadata,
 .bp3-dark .item-additional-metadata,
 .bp3-dark .item-actions > .bp3-card { 
@@ -231,6 +236,10 @@ h4.item-title{
     .copy-buttons > .bp3-button:hover,
     .item-actions > .bp3-card .bp3-divider {
         border-color: var(--zr-dark-border-color,#363a3f);
+    }
+    .item-citekey-section .bp3-button-group .bp3-button:hover,
+    .item-actions .bp3-button-group .bp3-button:hover {
+        background-color: var(--zr-dark-selected-bc,#191919);
     }
     .item-basic-metadata,
     .item-additional-metadata,

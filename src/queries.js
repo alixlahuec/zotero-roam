@@ -235,7 +235,28 @@ async function fetchAdditionalData(req, totalResults) {
 			return responses.map(res => res.data).flat(1);
 		})
 		.catch((error) => {
-			return Promise.reject(error);
+			return error;
+		});
+}
+
+async function fetchBibliography(req, { include = "bib", style, linkwrap, locale } = {}) {
+	let { apikey, itemKey, location } = req;
+
+	return zoteroClient.get(`${location}/items/${itemKey}`, {
+		headers: {
+			"Zotero-API-Key": apikey
+		},
+		params: {
+			include,
+			linkwrap,
+			locale,
+			style
+		}})
+		.then((response) => {
+			return response[include];
+		})
+		.catch((error) => {
+			return error;
 		});
 }
 
@@ -252,7 +273,7 @@ async function fetchItems(req, { match = [] } = {}) {
 	paramsQuery.set("start", 0);
 	paramsQuery.set("limit", 100);
 
-	return await zoteroClient.get(`${dataURI}?${paramsQuery.toString()}`, { headers: { "Zotero-API-Key": apikey } })
+	return zoteroClient.get(`${dataURI}?${paramsQuery.toString()}`, { headers: { "Zotero-API-Key": apikey } })
 		.then(async (response) => {
 			let { data: modified, headers } = response;
 			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
@@ -289,13 +310,13 @@ async function fetchItems(req, { match = [] } = {}) {
 				lastUpdated: Number(lastUpdated)
 			};
 		})
-		.catch(async (error) => {
+		.catch((error) => {
 			emitCustomEvent("update", {
 				success: false,
 				request: req,
 				error
 			});
-			throw error;
+			return error;
 		});
 }
 
@@ -304,12 +325,12 @@ async function fetchItems(req, { match = [] } = {}) {
  * @returns {Promise<ZoteroKey>} The API key's permissions
  */
 async function fetchPermissions(apikey) {
-	return await zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } })
+	return zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } })
 		.then((response) => {
 			return response.data;
 		})
 		.catch((error) => {
-			return Promise.reject(error);
+			return error;
 		});
 }
 
@@ -319,7 +340,7 @@ async function fetchPermissions(apikey) {
  */
 async function fetchTags(library) {
 	const { apikey, path } = library;
-	return await zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } })
+	return zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } })
 		.then(async (response) => {
 			let { data, headers } = response;
 			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
@@ -335,7 +356,7 @@ async function fetchTags(library) {
 			};
 		})
 		.catch((error) => {
-			return Promise.reject(error);
+			return error;
 		});
 }
 
@@ -349,7 +370,7 @@ async function fetchTags(library) {
 async function fetchCollections(library, since = 0, { match = [] } = {}) {
 	const { apikey, path } = library;
 
-	return await zoteroClient.get(`${path}/collections?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
+	return zoteroClient.get(`${path}/collections?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
 		.then(async (response) => {
 			let { data: modified, headers } = response;
 			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
@@ -383,7 +404,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 				library,
 				error
 			});
-			throw error;
+			return error;
 		});
 }
 
@@ -394,12 +415,12 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
  */
 async function fetchDeleted(library, since) {
 	const { apikey, path } = library;
-	return await zoteroClient.get(`${path}/deleted?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
+	return zoteroClient.get(`${path}/deleted?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
 		.then((response) => {
 			return response.data;
 		})
 		.catch((error) => {
-			return Promise.reject(error);
+			return error;
 		});
 }
 
@@ -408,7 +429,7 @@ async function fetchDeleted(library, since) {
  * @returns {Promise<{doi: String, citations: Object[], references: Object[]}>} Citation data for the item
 **/
 async function fetchSemantic(doi) {
-	return await semanticClient.get(`${doi}`)
+	return semanticClient.get(`${doi}`)
 		.then((response) => {
 			let { citations, references } = response.data;
 			// Select & transform citations with valid DOIs
@@ -435,7 +456,7 @@ async function fetchSemantic(doi) {
 			return { doi, citations, references };
 		})
 		.catch((error) => {
-			return Promise.reject(error);
+			return error;
 		});
 }
 
@@ -444,12 +465,12 @@ async function fetchSemantic(doi) {
  * @returns {Promise<Object>} The Zotero metadata for the URL
  */
 async function fetchCitoid(query) {
-	return await citoidClient.get(encodeURIComponent(query))
+	return citoidClient.get(encodeURIComponent(query))
 		.then((response) => {
 			return response.data[0];
 		})
 		.catch((error) => {
-			return Promise.reject(error);
+			return error;
 		});
 }
 
@@ -520,6 +541,7 @@ function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
 // -----------------
 
 export {
+	fetchBibliography,
 	useQuery_Items,
 	useQuery_Permissions,
 	useQuery_Tags,

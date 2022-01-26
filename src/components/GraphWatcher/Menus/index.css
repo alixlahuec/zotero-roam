@@ -42,10 +42,6 @@ button[class*='zr-page-menu-show--'] {
 .zr-backlink-item--info{line-height:normal;flex: 1 2 90%;}
 .zr-backlink-item--info > *:not(.zotero-roam-search-item-title), .zr-backlink-item--year{line-height:2em;}
 .zr-backlink-item--state{flex: 1 0 auto;overflow-wrap:anywhere;}
-.zr-backlink-item--state button.bp3-button{padding:0px 5px;}
-.zr-backlink-item--state button.bp3-button, .zr-backlink-item--state button.bp3-button:hover{border-radius:5px;}
-[in-graph="true"] .zr-backlink-item--state {align-self:stretch;text-align:right;}
-[in-graph="true"] .zr-backlink-item--state button {height:100%;}
 
 [data-backlink-type="reference"] .zr-backlink-item--year, 
 [data-backlink-type="reference"] a {

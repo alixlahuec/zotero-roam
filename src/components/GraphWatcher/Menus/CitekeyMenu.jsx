@@ -4,12 +4,14 @@ import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blu
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
 import ButtonLink from "../../ButtonLink";
+import CitekeyPopover from "../CitekeyPopover";
 import SciteBadge from "../../SciteBadge";
+
 import { showClasses } from "../classes";
-import { useQuery_Semantic } from "../../../queries";
-import { findRoamPage, importItemMetadata, openInSidebarByUID } from "../../../roam";
-import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
+import { useQuery_Semantic } from "../../../queries";
+import { findRoamPage, importItemMetadata } from "../../../roam";
+import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
 
 function BacklinksItem(props) {
 	const { entry, metadataSettings } = props;
@@ -20,41 +22,14 @@ function BacklinksItem(props) {
 	const pub_year = meta.parsedDate ? new Date(meta.parsedDate).getUTCFullYear() : "";
 	const pub_type = _type == "cited" ? "reference" : "citation";
 
-	const handleClick = useCallback(async() => {
-		if(!inGraph){
-			let { args: { uid }, success } = await importItemMetadata({ item, pdfs, notes }, false, metadataSettings);
-			if(success){
-				await openInSidebarByUID(uid);
-			}
-		} else {
-			await openInSidebarByUID(inGraph);
-		}
+	const itemActions = useMemo(() => {
+		return <CitekeyPopover 
+			inGraph={inGraph} 
+			item={item} 
+			metadataSettings={metadataSettings}
+			notes={notes}
+			pdfs={pdfs} />;
 	}, [inGraph, item, metadataSettings, notes, pdfs]);
-
-	const buttonProps = useMemo(() => {
-		let sharedProps = {
-			className: "zr-text-small",
-			minimal: true,
-			onClick: handleClick
-		};
-
-		if(!inGraph){
-			return {
-				...sharedProps,
-				ariaLabel: "Add & open @" + key + " in the sidebar",
-				icon: "plus",
-				text: "@" + key
-			};
-		} else {
-			return {
-				ariaLabel: "Open @" + key + " in the sidebar",
-				icon: "inheritance",
-				intent: pub_type == "reference" ? "primary" : "warning"
-			};
-		}
-	}, [handleClick, inGraph, key, pub_type]);
-
-	const itemActions = useMemo(() => <Button {...buttonProps} />, [buttonProps]);
 
 	return (
 		<li className="zr-backlink-item" 
@@ -107,7 +82,9 @@ const Backlinks = React.memo(function Backlinks(props) {
 			<Collapse isOpen={isOpen} keepChildrenMounted={true}>
 				<ul className={[ Classes.LIST_UNSTYLED, "zr-citekey-menu--backlinks"].join(" ")}>
 					{refList}
-					{separator}
+					{(references.length > 0 && citations.length > 0)
+						? separator
+						: null}
 					{citList}
 				</ul>
 			</Collapse>

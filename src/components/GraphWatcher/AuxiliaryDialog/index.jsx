@@ -53,12 +53,13 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 		createPortal(
 			<Dialog
 				ariaLabelledBy={ariaLabelledBy}
+				canEscapeKeyClose={true}
+				canOutsideClickClose={true}
 				className={dialog_class}
+				enforceFocus={false}
 				isOpen={isOpen}
 				lazy={true}
 				usePortal={false}
-				canEscapeKeyClose={true}
-				canOutsideClickClose={true}
 				onClose={onClose}
 			>
 				<div className={Classes.DIALOG_BODY}>

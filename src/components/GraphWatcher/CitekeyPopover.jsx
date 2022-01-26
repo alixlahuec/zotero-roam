@@ -17,10 +17,11 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 
 	const popoverMenuProps = useMemo(() => {
 		return {
+			autoFocus: true,
 			className: "zr-library-item-popover",
 			interactionKind: "hover",
-			placement: "right-start",
-			lazy: true
+			lazy: true,
+			placement: "right-start"
 		};
 	}, []);
 
@@ -52,11 +53,11 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 	}, [inGraph, item, metadataSettings, pdfs, notes]);
 
 	const importMetadataAndOpen = useCallback(async() => {
-		let { success } = await importMetadata();
+		let { success, args: { uid } } = await importMetadata();
 		if(success){
-			navigateToPage();
+			openPageInSidebar(uid);
 		}
-	}, [importMetadata, navigateToPage]);
+	}, [importMetadata, openPageInSidebar]);
 
 	const navigateToPage = useCallback(() => {
 		if(inGraph != false){

@@ -79,6 +79,7 @@
 .zr-related-item-contents--metadata{flex: 0 1 100%;}
 .zr-related-item-contents--metadata .zr-highlight:not(:empty),
 .zr-related-item-contents--metadata .zr-highlight-2:not(:empty) {padding-right: 8px;}
+.zr-related-item-contents--metadata .zr-related-item--decorating-icon {margin: 0px 10px;}
 .zr-related-item-contents--actions{text-align:right;flex: 1 0 auto;}
 .zr-related-item-contents--actions button.bp3-small, .zr-related-item-contents--actions a{opacity:0.6;overflow-wrap: break-word;}
 .zr-related-item-contents--actions button .bp3-button-text {overflow-wrap: anywhere;}
