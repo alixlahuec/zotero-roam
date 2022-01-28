@@ -276,7 +276,8 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 
 	useEffect(() => {
 		setActiveTab(type);
-	}, [type]);
+		console.log(selectProps);
+	}, [selectProps, type]);
 
 	return (
 		<>

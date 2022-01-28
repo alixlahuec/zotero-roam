@@ -42,7 +42,7 @@ class App extends Component {
 					combo: this.props.userSettings.shortcuts.toggleSearchPanel,
 					global: true,
 					label: "Toggle Search Panel",
-					onKeyDown: this.toggleSearchPanel
+					onKeyDown: () => this.toggleSearchPanel()
 				}
 			];
 		this.hotkeysOptions = {
@@ -138,14 +138,18 @@ class App extends Component {
 			let { isOpen, ...rest } = prevState.searchPanel;
 			if(isOpen){
 				return {
-					...rest,
-					isOpen: false,
-					isSidePanelOpen: false
+					searchPanel: {
+						...rest,
+						isOpen: false,
+						isSidePanelOpen: false
+					}
 				};
 			} else {
 				return {
-					...rest,
-					isOpen: true
+					searchPanel: {
+						...rest,
+						isOpen: true
+					}
 				};
 			}
 		});
