@@ -82,6 +82,7 @@ class App extends Component {
 						metadataSettings={metadata}
 						portalTarget={portalId}
 						shortcutsSettings={shortcuts}
+						status={status}
 					/>
 				</QueryClientProvider>
 			</HotkeysTarget2>

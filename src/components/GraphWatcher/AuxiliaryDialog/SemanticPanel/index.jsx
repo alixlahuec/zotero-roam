@@ -124,11 +124,23 @@ SemanticItem.propTypes = {
 
 const SemanticQuery = React.memo(function SemanticQuery(props) {
 	const { items, metadataSettings, selectProps, type } = props;
+
 	const [query, setQuery] = useState();
 	const searchbar = useRef();
 
 	const defaultContent = useMemo(() => {
-		return items.map(it => <SemanticItem key={it.doi} inGraph={it.inGraph} item={it} metadataSettings={metadataSettings} selectProps={selectProps} type={type} />);
+		const { handleRemove, handleSelect, items: selectedItems } = selectProps;
+		return items.map(it => {
+			let isSelected = selectedItems.findIndex(i => i.doi == it.doi && i.url == it.url) >= 0;
+			return <SemanticItem key={it.doi} 
+				handleRemove={handleRemove} 
+				handleSelect={handleSelect} 
+				inGraph={it.inGraph} 
+				isSelected={isSelected}
+				item={it} 
+				metadataSettings={metadataSettings} 
+				type={type} />;
+		});
 	}, [items, metadataSettings, selectProps, type]);
 
 	const handleQueryChange = useCallback((query) => {

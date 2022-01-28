@@ -21,8 +21,9 @@ const dialogClass="search-library";
 const resultClass = [Classes.TEXT_OVERFLOW_ELLIPSIS, "zr-library-item--contents"].join(" ");
 const resultKeyClass = [Classes.MENU_ITEM_LABEL, "zr-library-item--key"].join(" ");
 
-function useGetItems(reqs, roamCitekeys){
+function useGetItems(reqs, roamCitekeys, opts = {}){
 	const itemQueries = useQuery_Items(reqs, {
+		...opts,
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => {
 			if(datastore.data){
@@ -292,12 +293,12 @@ LibraryQueryList.propTypes = {
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { closePanel, copySettings, dataRequests, metadataSettings, portalTarget, shortcutsSettings } = props;
+	const { closePanel, copySettings, dataRequests, metadataSettings, portalTarget, shortcutsSettings, status } = props;
 
 	let [quickCopyActive, setQuickCopy] = useState(copySettings.useQuickCopy); // Is QuickCopy active by default ?
 	let [roamCitekeys, setRoamCitekeys] = useState(getCitekeyPages());
 
-	const items = useGetItems(dataRequests, roamCitekeys);
+	const items = useGetItems(dataRequests, roamCitekeys, { enabled: status == "on" });
 
 	const handleOpen = useCallback(() => {
 		setRoamCitekeys(getCitekeyPages()); 
@@ -370,7 +371,8 @@ SearchPanel.propTypes = {
 		isSidePanelOpen: PropTypes.bool
 	}),
 	portalTarget: PropTypes.string,
-	shortcutsSettings: PropTypes.object
+	shortcutsSettings: PropTypes.object,
+	status: PropTypes.bool
 };
 
 export default SearchPanel;
