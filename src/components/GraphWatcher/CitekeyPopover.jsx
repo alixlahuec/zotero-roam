@@ -48,8 +48,8 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 		);
 	}, [item]);
 
-	const importMetadata = useCallback(async() => {
-		return await importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings);
+	const importMetadata = useCallback(() => {
+		return importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings);
 	}, [inGraph, item, metadataSettings, pdfs, notes]);
 
 	const importMetadataAndOpen = useCallback(async() => {

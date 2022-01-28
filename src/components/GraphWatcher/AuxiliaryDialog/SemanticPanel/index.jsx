@@ -18,9 +18,6 @@ function searchEngine(query, items){
 function listItemRenderer(item, _itemProps, metadataSettings, selectProps, type) {
 	// let { handleClick, modifiers, query } = itemProps;
 	let { handleRemove, handleSelect, items } = selectProps;
-	// For debugging
-	console.log(selectProps);
-
 	let isSelected = items.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
 
 	return <SemanticItem key={item.doi} 
@@ -38,12 +35,14 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 	const { inLibrary } = item;
 
 	const handleClick = useCallback(() => {
+		// For debugging
+		console.log(props);
 		if(isSelected){
 			handleRemove(item);
 		} else {
 			handleSelect(item);
 		}
-	}, [isSelected, item, handleRemove, handleSelect]);
+	}, [isSelected, item, handleRemove, handleSelect, props]);
 
 	const itemActions = useMemo(() => {
 		if(!inLibrary){

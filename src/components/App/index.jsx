@@ -42,7 +42,7 @@ class App extends Component {
 					combo: this.props.userSettings.shortcuts.toggleSearchPanel,
 					global: true,
 					label: "Toggle Search Panel",
-					onKeyDown: this.toggleSearchPanel()
+					onKeyDown: this.toggleSearchPanel
 				}
 			];
 		this.hotkeysOptions = {
