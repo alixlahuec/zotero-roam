@@ -15,32 +15,32 @@ function searchEngine(query, items){
 		.filter(it => it.title.toLowerCase().includes(query.toLowerCase()));
 }
 
-function listItemRenderer(item, _itemProps, metadataSettings, onRemove, onSelect, selectedItems, type) {
+function listItemRenderer(item, _itemProps, metadataSettings, handleRemove, handleSelect, selectedItems, type) {
 	// let { handleClick, modifiers, query } = itemProps;
 
 	let isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
 
 	return <SemanticItem key={item.doi} 
+		handleRemove={handleRemove} 
+		handleSelect={handleSelect} 
 		inGraph={item.inGraph} 
 		isSelected={isSelected}
 		item={item} 
 		metadataSettings={metadataSettings} 
-		onRemove={onRemove} 
-		onSelect={onSelect} 
 		type={type} />;
 }
 
 const SemanticItem = React.memo(function SemanticItem(props) {
-	const { inGraph, isSelected, item, metadataSettings, onRemove, onSelect, type } = props;
+	const { handleRemove, handleSelect, inGraph, isSelected, item, metadataSettings, type } = props;
 	const { inLibrary } = item;
 
 	const handleClick = useCallback(() => {
 		if(isSelected){
-			onRemove(item);
+			handleRemove(item);
 		} else {
-			onSelect(item);
+			handleSelect(item);
 		}
-	}, [isSelected, item, onRemove, onSelect]);
+	}, [isSelected, item, handleRemove, handleSelect]);
 
 	const itemActions = useMemo(() => {
 		if(!inLibrary){
@@ -113,17 +113,17 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 	);
 });
 SemanticItem.propTypes = {
+	handleRemove: PropTypes.func,
+	handleSelect: PropTypes.func,
 	inGraph: PropTypes.oneOf([PropTypes.string, false]),
 	isSelected: PropTypes.bool,
 	item: customPropTypes.cleanSemanticReturnType,
 	metadataSettings: PropTypes.object,
-	onRemove: PropTypes.func,
-	onSelect: PropTypes.func,
 	type: PropTypes.oneOf(["is_reference", "is_citation"])
 };
 
 const SemanticQuery = React.memo(function SemanticQuery(props) {
-	const { items, metadataSettings, onRemove, onSelect, selectedItems, type } = props;
+	const { handleRemove, handleSelect, items, metadataSettings, selectedItems, type } = props;
 	const [query, setQuery] = useState();
 	const searchbar = useRef();
 
@@ -137,8 +137,8 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 	}, []);
 
 	const itemRenderer = useCallback((item, itemProps) => {
-		return listItemRenderer(item, itemProps, metadataSettings, onRemove, onSelect, selectedItems, type);
-	}, [metadataSettings, onRemove, onSelect, selectedItems, type]);
+		return listItemRenderer(item, itemProps, metadataSettings, handleRemove, handleSelect, selectedItems, type);
+	}, [metadataSettings, handleRemove, handleSelect, selectedItems, type]);
 
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
@@ -175,10 +175,10 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 	);
 });
 SemanticQuery.propTypes = {
+	handleRemove: PropTypes.func,
+	handleSelect: PropTypes.func,
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 	metadataSettings: PropTypes.object,
-	onRemove: PropTypes.func,
-	onSelect: PropTypes.func,
 	selectedItems: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 	type: PropTypes.oneOf(["is_citation", "is_reference"])
 };
@@ -248,18 +248,19 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 	}, [citations.length]);
 
 	const addToImport = useCallback((item) => {
-		let match = itemsForImport.find(i => i.doi == item.doi && i.url == item.url);
-		if(!match){
-			setItemsForImport([...itemsForImport, item]);
-		}
-	}, [itemsForImport]);
+		setItemsForImport(prevItems => {
+			let match = prevItems.find(i => i.doi == item.doi && i.url == item.url);
+			if(match){
+				return prevItems;
+			} else {
+				return [...prevItems, item];
+			}
+		});
+	}, []);
 
 	const removeFromImport = useCallback((item) => {
-		let match = itemsForImport.find(i => i.doi == item.doi && i.url == item.url);
-		if(match){
-			setItemsForImport(itemsForImport.filter(i => i.doi != item.doi && i.url != item.url));
-		}
-	}, [itemsForImport]);
+		setItemsForImport(prevItems => prevItems.filter(i => i.doi != item.doi && i.url != item.url));
+	}, []);
 
 	useEffect(() => {
 		setActiveTab(type);
@@ -271,10 +272,10 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 				<Tabs id="zr-semantic-panel" selectedTabId={isActiveTab} onChange={selectTab} animate={false}>
 					<Tab id="is_reference" 
 						panel={<SemanticQuery
+							handleRemove={removeFromImport}
+							handleSelect={addToImport}
 							items={references}
 							metadataSettings={metadataSettings}
-							onRemove={removeFromImport}
-							onSelect={addToImport}
 							selectedItems={itemsForImport}
 							type="is_reference"
 						/>} 
@@ -283,10 +284,10 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 					/>
 					<Tab id="is_citation" 
 						panel={<SemanticQuery
+							handleRemove={removeFromImport}
+							handleSelect={addToImport}
 							items={citations}
 							metadataSettings={metadataSettings}
-							onRemove={removeFromImport}
-							onSelect={addToImport}
 							selectedItems={itemsForImport}
 							type="is_citation"
 						/>}
