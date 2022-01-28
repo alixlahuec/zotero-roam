@@ -34,6 +34,14 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 	const { inGraph, isSelected, item, metadataSettings, onRemove, onSelect, type } = props;
 	const { inLibrary } = item;
 
+	const handleClick = useCallback(() => {
+		if(isSelected){
+			onRemove(item);
+		} else {
+			onSelect(item);
+		}
+	}, [isSelected, item, onRemove, onSelect]);
+
 	const itemActions = useMemo(() => {
 		if(!inLibrary){
 			return (
@@ -51,7 +59,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 						icon={isSelected ? "small-cross" : "small-plus"} 
 						intent="primary" 
 						minimal={true} 
-						onClick={isSelected ? onRemove : onSelect}
+						onClick={handleClick}
 						small={true} />
 				</>
 			);
@@ -61,7 +69,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				<CitekeyPopover inGraph={inGraph} item={raw} metadataSettings={metadataSettings} notes={notes} pdfs={pdfs} />
 			);
 		}
-	}, [inGraph, inLibrary, isSelected, item.doi, item.url, metadataSettings, onRemove, onSelect]);
+	}, [handleClick, inGraph, inLibrary, isSelected, item.doi, item.url, metadataSettings]);
 
 	return (
 		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
