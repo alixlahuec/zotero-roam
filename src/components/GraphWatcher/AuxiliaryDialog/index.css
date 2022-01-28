@@ -133,6 +133,10 @@
     color: var(--zr-dark-text-co, #76a0cb);
     background-color: var(--zr-dark-elem-bg, #2B3143);
 }
+.bp3-dark.bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary.bp3-active {
+    background-color: var(--zr-dark-text-co, #76a0cb);
+    color: var(--zr-dark-elem-bg, #2B3143);
+}
 
 @media (prefers-color-scheme: dark){
     .bp3-dialog[class*="zr-auxiliary-dialog--"] {
@@ -161,5 +165,9 @@
     .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary {
         color: var(--zr-dark-text-co, #76a0cb);
         background-color: var(--zr-dark-elem-bg, #2B3143);
+    }
+    .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary.bp3-active {
+        background-color: var(--zr-dark-text-co, #76a0cb);
+        color: var(--zr-dark-elem-bg, #2B3143);
     }
 }

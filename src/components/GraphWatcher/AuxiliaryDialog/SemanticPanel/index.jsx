@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Classes, Icon, InputGroup, Tabs, Tab, Tag, NonIdealState } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Icon, InputGroup, Tabs, Tab, Tag, NonIdealState } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
 import CitekeyPopover from "../../CitekeyPopover";
@@ -15,14 +15,23 @@ function searchEngine(query, items){
 		.filter(it => it.title.toLowerCase().includes(query.toLowerCase()));
 }
 
-function listItemRenderer(item, _itemProps, metadataSettings, type) {
+function listItemRenderer(item, _itemProps, metadataSettings, onRemove, onSelect, selectedItems, type) {
 	// let { handleClick, modifiers, query } = itemProps;
 
-	return <SemanticItem key={item.doi} inGraph={item.inGraph} item={item} metadataSettings={metadataSettings} type={type} />;
+	let isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
+
+	return <SemanticItem key={item.doi} 
+		inGraph={item.inGraph} 
+		isSelected={isSelected}
+		item={item} 
+		metadataSettings={metadataSettings} 
+		onRemove={onRemove} 
+		onSelect={onSelect} 
+		type={type} />;
 }
 
 const SemanticItem = React.memo(function SemanticItem(props) {
-	const { inGraph, item, metadataSettings, type } = props;
+	const { inGraph, isSelected, item, metadataSettings, onRemove, onSelect, type } = props;
 	const { inLibrary } = item;
 
 	const itemActions = useMemo(() => {
@@ -36,7 +45,14 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 							{item.doi || "Semantic Scholar"}
 						</a>
 						: null}
-					<Button text="Add to Zotero" className="zr-text-small" icon="inheritance" intent="primary" minimal={true} small={true} />
+					<Button text="Add to Zotero" 
+						active={isSelected}
+						className="zr-text-small" 
+						icon={isSelected ? "small-cross" : "small-plus"} 
+						intent="primary" 
+						minimal={true} 
+						onClick={isSelected ? onRemove : onSelect}
+						small={true} />
 				</>
 			);
 		} else {
@@ -45,7 +61,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				<CitekeyPopover inGraph={inGraph} item={raw} metadataSettings={metadataSettings} notes={notes} pdfs={pdfs} />
 			);
 		}
-	}, [inGraph, inLibrary, item.doi, item.url, metadataSettings]);
+	}, [inGraph, inLibrary, isSelected, item.doi, item.url, metadataSettings, onRemove, onSelect]);
 
 	return (
 		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
@@ -90,13 +106,16 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 });
 SemanticItem.propTypes = {
 	inGraph: PropTypes.oneOf([PropTypes.string, false]),
+	isSelected: PropTypes.bool,
 	item: customPropTypes.cleanSemanticReturnType,
 	metadataSettings: PropTypes.object,
+	onRemove: PropTypes.func,
+	onSelect: PropTypes.func,
 	type: PropTypes.oneOf(["is_reference", "is_citation"])
 };
 
 const SemanticQuery = React.memo(function SemanticQuery(props) {
-	const { items, metadataSettings, type } = props;
+	const { items, metadataSettings, onRemove, onSelect, selectedItems, type } = props;
 	const [query, setQuery] = useState();
 	const searchbar = useRef();
 
@@ -110,8 +129,8 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 	}, []);
 
 	const itemRenderer = useCallback((item, itemProps) => {
-		return listItemRenderer(item, itemProps, metadataSettings, type);
-	}, [metadataSettings, type]);
+		return listItemRenderer(item, itemProps, metadataSettings, onRemove, onSelect, selectedItems, type);
+	}, [metadataSettings, onRemove, onSelect, selectedItems, type]);
 
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
@@ -150,12 +169,49 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 SemanticQuery.propTypes = {
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 	metadataSettings: PropTypes.object,
+	onRemove: PropTypes.func,
+	onSelect: PropTypes.func,
+	selectedItems: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 	type: PropTypes.oneOf(["is_citation", "is_reference"])
+};
+
+const SidePanel = React.memo(function SidePanel(props) {
+	const { items } = props;
+
+	if(items.length == 0) {
+		return null;
+	} else {
+		return (
+			<div className="zr-semantic-panel--side">
+				<ul className={[Classes.LIST_UNSTYLED, "import-items"].join(" ")}>
+					{items.map(item => {
+						return (
+							<li className="import-items_selected" key={[item.doi, item.url].join("-")}>
+								<div className="selected_info">
+									<span className={[Classes.TEXT_MUTED, "selected_title"].join(" ")}>{item.title}</span>
+									<span className="selected_origin">{item.meta}</span>
+								</div>
+								<div className="selected_state">
+									<ButtonGroup minimal={true} small={true}>
+										<Button className="selected_remove-button" icon="cross" intent="danger" />
+									</ButtonGroup>
+								</div>
+							</li>
+						);
+					})}
+				</ul>
+			</div>
+		);
+	}
+});
+SidePanel.propTypes = {
+	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType)
 };
 
 const SemanticPanel = React.memo(function SemanticPanel(props) {
 	const { ariaLabelledBy, items, metadataSettings, type, title, onClose } = props;
 	const [isActiveTab, setActiveTab] = useState(type);
+	const [itemsForImport, setItemsForImport] = useState([]);
 
 	const selectTab = useCallback((newtab, _prevtab, _event) => {
 		setActiveTab(newtab);
@@ -183,36 +239,59 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 		);
 	}, [citations.length]);
 
+	const addToImport = useCallback((item) => {
+		let match = itemsForImport.find(i => i.doi == item.doi && i.url == item.url);
+		if(!match){
+			setItemsForImport([...itemsForImport, item]);
+		}
+	}, [itemsForImport]);
+
+	const removeFromImport = useCallback((item) => {
+		let match = itemsForImport.find(i => i.doi == item.doi && i.url == item.url);
+		if(match){
+			setItemsForImport(itemsForImport.filter(i => i.doi != item.doi && i.url != item.url));
+		}
+	}, [itemsForImport]);
+
 	useEffect(() => {
 		setActiveTab(type);
 	}, [type]);
 
 	return (
-		<div className="zr-semantic-panel--main">
-			<Tabs id="zr-semantic-panel" selectedTabId={isActiveTab} onChange={selectTab} animate={false}>
-				<Tab id="is_reference" 
-					panel={<SemanticQuery
-						items={references}
-						metadataSettings={metadataSettings}
-						type="is_reference"
-					/>} 
-					disabled={references.length == 0}
-					title={references_title}
-				/>
-				<Tab id="is_citation" 
-					panel={<SemanticQuery
-						items={citations}
-						metadataSettings={metadataSettings}
-						type="is_citation"
-					/>}
-					disabled={citations.length == 0}
-					title={citations_title}
-				/>
-				<Tabs.Expander />
-				<span className="zr-auxiliary" id={ariaLabelledBy}>{title}</span>
-				<Button icon="cross" minimal={true} large={true} onClick={onClose} />
-			</Tabs>
-		</div>
+		<>
+			<div className="zr-semantic-panel--main">
+				<Tabs id="zr-semantic-panel" selectedTabId={isActiveTab} onChange={selectTab} animate={false}>
+					<Tab id="is_reference" 
+						panel={<SemanticQuery
+							items={references}
+							metadataSettings={metadataSettings}
+							onRemove={removeFromImport}
+							onSelect={addToImport}
+							selectedItems={itemsForImport}
+							type="is_reference"
+						/>} 
+						disabled={references.length == 0}
+						title={references_title}
+					/>
+					<Tab id="is_citation" 
+						panel={<SemanticQuery
+							items={citations}
+							metadataSettings={metadataSettings}
+							onRemove={removeFromImport}
+							onSelect={addToImport}
+							selectedItems={itemsForImport}
+							type="is_citation"
+						/>}
+						disabled={citations.length == 0}
+						title={citations_title}
+					/>
+					<Tabs.Expander />
+					<span className="zr-auxiliary" id={ariaLabelledBy}>{title}</span>
+					<Button icon="cross" minimal={true} large={true} onClick={onClose} />
+				</Tabs>
+			</div>
+			<SidePanel items={itemsForImport} />
+		</>
 	);
 });
 SemanticPanel.propTypes = {
