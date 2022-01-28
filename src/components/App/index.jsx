@@ -39,6 +39,7 @@ class App extends Component {
 			? []
 			: [
 				{
+					allowInInput: true,
 					combo: this.props.userSettings.shortcuts.toggleSearchPanel,
 					global: true,
 					label: "Toggle Search Panel",

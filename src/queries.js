@@ -65,6 +65,8 @@ axiosRetry(citoidClient, {
 const useQuery_Items = (reqs, opts = {}) => {
 	// Defaults for this query
 	let { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest} = opts;
+	// For debugging
+	console.log(rest);
 	// Factory
 	const client = useQueryClient();
 	let queriesDefs = reqs.map((req) => {

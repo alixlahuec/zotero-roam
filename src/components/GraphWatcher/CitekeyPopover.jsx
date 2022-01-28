@@ -53,13 +53,12 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 	}, [inGraph, item, metadataSettings, pdfs, notes]);
 
 	const importMetadataAndOpen = useCallback(async() => {
-		let outcome = await importMetadata();
-		// For debugging
-		console.log(outcome);
-		if(outcome.success){
-			openPageInSidebar(outcome.args.uid);
+		let { success, args: { uid }} = await importMetadata();
+		
+		if(success){
+			openInSidebarByUID(uid);
 		}
-	}, [importMetadata, openPageInSidebar]);
+	}, [importMetadata]);
 
 	const navigateToPage = useCallback(() => {
 		if(inGraph != false){

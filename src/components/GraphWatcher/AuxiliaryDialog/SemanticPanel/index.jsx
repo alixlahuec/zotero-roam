@@ -35,14 +35,12 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 	const { inLibrary } = item;
 
 	const handleClick = useCallback(() => {
-		// For debugging
-		console.log(props);
 		if(isSelected){
 			handleRemove(item);
 		} else {
 			handleSelect(item);
 		}
-	}, [isSelected, item, handleRemove, handleSelect, props]);
+	}, [isSelected, item, handleRemove, handleSelect]);
 
 	const itemActions = useMemo(() => {
 		if(!inLibrary){
@@ -130,8 +128,8 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 	const searchbar = useRef();
 
 	const defaultContent = useMemo(() => {
-		return items.map(it => <SemanticItem key={it.doi} inGraph={it.inGraph} item={it} metadataSettings={metadataSettings} type={type} />);
-	}, [items, metadataSettings, type]);
+		return items.map(it => <SemanticItem key={it.doi} inGraph={it.inGraph} item={it} metadataSettings={metadataSettings} selectProps={selectProps} type={type} />);
+	}, [items, metadataSettings, selectProps, type]);
 
 	const handleQueryChange = useCallback((query) => {
 		setQuery(query);
@@ -276,8 +274,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props) {
 
 	useEffect(() => {
 		setActiveTab(type);
-		console.log(selectProps);
-	}, [selectProps, type]);
+	}, [type]);
 
 	return (
 		<>
