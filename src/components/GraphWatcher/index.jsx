@@ -55,7 +55,7 @@ class GraphWatcher extends PureComponent {
 
 	render() {
 		let { citekeyMenus, dnpMenus, tagMenus, roamCitekeys } = this.state;
-		let { dataRequests, autocompleteSettings, metadataSettings, renderInline, portalId } = this.props;
+		let { autocompleteSettings, dataRequests, libraries, metadataSettings, portalId, renderInline } = this.props;
 
 		let sharedProps = {
 			dataRequests,
@@ -65,7 +65,7 @@ class GraphWatcher extends PureComponent {
 		};
         
 		return <>
-			{citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} {...sharedProps} /> : null}
+			{citekeyMenus ? <CitekeyMenuFactory libraries={libraries} menus={citekeyMenus} {...sharedProps} /> : null}
 			{dnpMenus ? <DNPMenuFactory menus={dnpMenus} {...sharedProps} /> : null}
 			{tagMenus ? <TagMenuFactory menus={tagMenus} {...sharedProps} /> : null}
 			{autocompleteSettings.trigger ? <Autocomplete config={autocompleteSettings} dataRequests={dataRequests} /> : null}
@@ -103,6 +103,10 @@ class GraphWatcher extends PureComponent {
 }
 GraphWatcher.propTypes = {
 	autocompleteSettings: PropTypes.object,
+	libraries: PropTypes.arrayOf(PropTypes.shape({
+		apikey: PropTypes.string,
+		path: PropTypes.string
+	})),
 	metadataSettings: PropTypes.object,
 	dataRequests: PropTypes.array,
 	portalId: PropTypes.string,

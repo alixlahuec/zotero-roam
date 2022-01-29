@@ -99,7 +99,7 @@ Backlinks.propTypes = {
 };
 
 function RelatedItemsBar(props) {
-	const { doi, itemList, metadataSettings, origin, portalId, roamCitekeys, title } = props;
+	const { doi, itemList, libraries, metadataSettings, origin, portalId, roamCitekeys, title } = props;
 	const { isLoading, isError, data = {}, error } = useQuery_Semantic(doi);
 	
 	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
@@ -173,6 +173,7 @@ function RelatedItemsBar(props) {
 						? <SemanticPanel
 							isOpen={isDialogOpen} 
 							items={cleanSemanticData}
+							libraries={libraries}
 							metadataSettings={metadataSettings}
 							onClose={closeDialog}
 							portalId={portalId}
@@ -191,6 +192,10 @@ RelatedItemsBar.propTypes = {
 		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 	}),
+	libraries: PropTypes.arrayOf(PropTypes.shape({
+		apikey: PropTypes.string,
+		path: PropTypes.string
+	})),
 	metadataSettings: PropTypes.object,
 	origin: PropTypes.string,
 	portalId: PropTypes.string,
@@ -199,7 +204,7 @@ RelatedItemsBar.propTypes = {
 };
 
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
-	const { item, itemList, metadataSettings, portalId, roamCitekeys } = props;
+	const { item, itemList, libraries, metadataSettings, portalId, roamCitekeys } = props;
 
 	const doi = parseDOI(item.data.DOI);
 	const pageUID = findRoamPage("@" + item.key);
@@ -271,13 +276,14 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 			? <RelatedItemsBar doi={doi}
 				itemList={itemList}
 				origin={item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : ""} 
+				libraries={libraries}
 				metadataSettings={metadataSettings}
 				portalId={portalId}
 				roamCitekeys={roamCitekeys}
 				title={"@" + item.key}
 			/>
 			: null;
-	}, [doi, item.key, item.meta.parsedDate, itemList, metadataSettings, portalId, roamCitekeys]);
+	}, [doi, item.key, item.meta.parsedDate, itemList, libraries, metadataSettings, portalId, roamCitekeys]);
 
 	return (
 		<>
@@ -306,6 +312,10 @@ CitekeyMenu.propTypes = {
 		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 	}),
+	libraries: PropTypes.arrayOf(PropTypes.shape({
+		apikey: PropTypes.string,
+		path: PropTypes.string
+	})),
 	metadataSettings: PropTypes.object,
 	portalId: PropTypes.string,
 	roamCitekeys: PropTypes.instanceOf(Map)

@@ -6,7 +6,7 @@ import AuxiliaryDialog from "../AuxiliaryDialog";
 import SemanticQuery from "./SemanticQuery";
 import SidePanel from "./SidePanel";
 
-import { pluralize, sortItems } from "../../../utils";
+import { pluralize, sortElems } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -24,9 +24,9 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 		setActiveTab(newtab);
 	}, []);
 
-	const references = useMemo(() =>  sortItems(items.references, "year"), [items.references]);
+	const references = useMemo(() =>  sortElems(items.references, "year"), [items.references]);
 
-	const citations = useMemo(() => sortItems(items.citations, "year"), [items.citations]);
+	const citations = useMemo(() => sortElems(items.citations, "year"), [items.citations]);
 
 	const references_title = useMemo(() => {
 		return (
@@ -79,12 +79,17 @@ SemanticTabList.propTypes = {
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
-	selectProps: PropTypes.object,
+	selectProps: PropTypes.shape({
+		handleRemove: PropTypes.func,
+		handleSelect: PropTypes.func,
+		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
+		resetImport: PropTypes.func
+	}),
 	title: PropTypes.string
 };
 
 const SemanticPanel = React.memo(function SemanticPanel(props){
-	const { isOpen, items, metadataSettings, onClose, portalId, show } = props;
+	const { isOpen, items, libraries, metadataSettings, onClose, portalId, show } = props;
 	const [itemsForImport, setItemsForImport] = useState([]);
 
 	const has_selected_items = itemsForImport.length > 0;
@@ -104,13 +109,18 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 		setItemsForImport(prevItems => prevItems.filter(i => i.doi != item.doi && i.url != item.url));
 	}, []);
 
+	const resetImport = useCallback(() => {
+		setItemsForImport([]);
+	}, []);
+
 	const selectProps = useMemo(() => {
 		return {
 			handleRemove: removeFromImport,
 			handleSelect: addToImport,
-			items: itemsForImport
+			items: itemsForImport,
+			resetImport
 		};
-	}, [addToImport, itemsForImport, removeFromImport]);
+	}, [addToImport, itemsForImport, removeFromImport, resetImport]);
 
 	return (
 		<AuxiliaryDialog
@@ -132,7 +142,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 						title={show.title}
 					/>
 				</div>
-				<SidePanel items={itemsForImport} />
+				<SidePanel libraries={libraries} selectProps={selectProps} />
 			</div>
 		</AuxiliaryDialog>
 	);
@@ -140,6 +150,10 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 SemanticPanel.propTypes = {
 	isOpen: PropTypes.bool,
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
+	libraries: PropTypes.arrayOf(PropTypes.shape({
+		apikey: PropTypes.string,
+		path: PropTypes.string
+	})),
 	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,

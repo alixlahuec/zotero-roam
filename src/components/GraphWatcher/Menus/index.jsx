@@ -21,7 +21,8 @@ const sharedPropTypes = {
 };
 
 function CitekeyMenuFactory(props){
-	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys } = props;
+	const { dataRequests, libraries, menus, metadataSettings, portalId, roamCitekeys } = props;
+
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -43,15 +44,21 @@ function CitekeyMenuFactory(props){
 				.map((menu, i) => {
 					let { item, div } = menu;
 					return (
-						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} metadataSettings={metadataSettings} portalId={portalId} roamCitekeys={roamCitekeys} />, div)
+						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} libraries={libraries} metadataSettings={metadataSettings} portalId={portalId} roamCitekeys={roamCitekeys} />, div)
 					);
 				});
 		}
-	}, [citekeyItems, itemList, menus, metadataSettings, portalId, roamCitekeys]);
+	}, [citekeyItems, itemList, libraries, menus, metadataSettings, portalId, roamCitekeys]);
 
 	return citekeyMenus;
 }
-CitekeyMenuFactory.propTypes = sharedPropTypes;
+CitekeyMenuFactory.propTypes = {
+	libraries: PropTypes.arrayOf(PropTypes.shape({
+		apikey: PropTypes.string,
+		path: PropTypes.string
+	})),
+	...sharedPropTypes
+};
 
 function DNPMenuFactory(props){
 	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys } = props;

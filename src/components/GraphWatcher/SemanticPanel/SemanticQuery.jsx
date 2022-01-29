@@ -99,7 +99,8 @@ SemanticQuery.propTypes = {
 	selectProps: PropTypes.shape({
 		handleRemove: PropTypes.func,
 		handleSelect: PropTypes.func,
-		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType)
+		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
+		resetImport: PropTypes.func
 	}),
 	type: PropTypes.oneOf(["is_citation", "is_reference"])
 };

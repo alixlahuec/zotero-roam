@@ -1,5 +1,14 @@
 import PropTypes from "prop-types";
 
+const zoteroCollectionType = PropTypes.shape({
+	data: PropTypes.object,
+	key: PropTypes.string,
+	library: PropTypes.object,
+	links: PropTypes.object,
+	meta: PropTypes.object,
+	version: PropTypes.number
+});
+
 const zoteroItemType = PropTypes.shape({
 	data: PropTypes.object,
 	has_citekey: PropTypes.bool,
@@ -8,7 +17,6 @@ const zoteroItemType = PropTypes.shape({
 	meta: PropTypes.object,
 	version: PropTypes.number
 });
-
 
 /**
  * @see cleanLibrary
@@ -107,6 +115,7 @@ const cleanSemanticReturnObjectType = PropTypes.shape({
 });
 
 export {
+	zoteroCollectionType,
 	zoteroItemType,
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,

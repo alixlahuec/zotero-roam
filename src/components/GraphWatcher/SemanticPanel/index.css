@@ -1,10 +1,11 @@
 .bp3-dialog.zr-auxiliary-dialog--citations {
-    width:calc(55% - 10vw);
-    margin-left: calc(18vw + 9.5%);
+    width:calc(95% - 40vw);
+    margin-left: calc(20vw + 2.5%);
+    transition: 0.5s;
 }
 
 .bp3-dialog.zr-auxiliary-dialog--citations.has-selected-items {
-    width:calc(50% + 8vw);
+    width:calc(95% - 20vw);
 }
 
 .zr-semantic-panel--main .bp3-tab-list {
@@ -79,11 +80,12 @@
 
 .zr-semantic-panel--side {
     flex: 1 0 0%;
-    transition: 0.5s;
+    display: none;
 }
 
 .has-selected-items .zr-semantic-panel--side {
-    flex: 1 0 18%;
+    flex: 1 0 20%;
+    display: block;
 }
 
 /* DARK THEMES */

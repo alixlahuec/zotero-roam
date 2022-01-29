@@ -4,7 +4,7 @@ import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
 import CitekeyPopover from "../CitekeyPopover";
-import { pluralize, sortItems } from "../../../utils";
+import { pluralize, sortElems } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
@@ -100,7 +100,7 @@ const RelatedList = React.memo(function RelatedList(props) {
 
 	const sortedItems = useMemo(() => {
 		let sort = type == "added_on" ? "added" : "meta";
-		return sortItems(items, sort);
+		return sortElems(items, sort);
 	}, [items, type]);
 
 	return (

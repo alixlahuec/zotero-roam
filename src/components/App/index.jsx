@@ -56,30 +56,44 @@ class App extends Component {
 	}
 
 	render() {
-		let { extension, dataRequests, apiKeys, libraries, userSettings } = this.props;
-		let { version, portalId } = extension;
+		let { 
+			apiKeys, 
+			dataRequests, 
+			extension: { portalId, version }, 
+			libraries, 
+			userSettings 
+		} = this.props;
 		let { autocomplete, copy, metadata, render_inline, shortcuts } = userSettings;
 		let { status, searchPanel } = this.state;
 
 		return (
 			<HotkeysTarget2 hotkeys={this.hotkeys} options={this.hotkeysOptions}>
 				<QueryClientProvider client={queryClient}>
-					<ExtensionIcon status={status} version={version}
-						dataRequests={dataRequests} apiKeys={apiKeys} libraries={libraries} userSettings={userSettings}
-						toggleExtension={this.toggleExtension}
+					<ExtensionIcon 
+						apiKeys={apiKeys}
+						dataRequests={dataRequests} 
+						libraries={libraries}
 						openSearchPanel={this.openSearchPanel}
+						status={status} 
+						toggleExtension={this.toggleExtension}
+						userSettings={userSettings}
+						version={version}
 					/>
 					{status == "on"
-						? <GraphWatcher autocompleteSettings={autocomplete} metadataSettings={metadata} 
-							renderInline={render_inline} 
+						? <GraphWatcher 
+							autocompleteSettings={autocomplete} 
 							dataRequests={dataRequests} 
-							portalId={portalId} />
+							libraries={libraries}
+							metadataSettings={metadata} 
+							portalId={portalId}
+							renderInline={render_inline} />
 						: null}
-					<SearchPanel panelState={searchPanel}
+					<SearchPanel
 						closePanel={this.closeSearchPanel}
 						copySettings={copy}
 						dataRequests={dataRequests}
 						metadataSettings={metadata}
+						panelState={searchPanel}
 						portalTarget={portalId}
 						shortcutsSettings={shortcuts}
 						status={status}
@@ -159,13 +173,16 @@ class App extends Component {
 
 }
 App.propTypes = {
+	apiKeys: PropTypes.arrayOf(PropTypes.string),
+	dataRequests: PropTypes.array,
 	extension: PropTypes.shape({
 		version: PropTypes.string,
 		portalId: PropTypes.string
 	}),
-	dataRequests: PropTypes.array,
-	apiKeys: PropTypes.array,
-	libraries: PropTypes.array,
+	libraries: PropTypes.arrayOf(PropTypes.shape({
+		apikey: PropTypes.string,
+		path: PropTypes.string
+	})),
 	userSettings: PropTypes.shape({
 		autocomplete: PropTypes.object,
 		autoload: PropTypes.bool,

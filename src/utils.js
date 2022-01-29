@@ -505,13 +505,58 @@ function setupPortals(slotID, portalID){
 	document.getElementById("app").appendChild(zrPortal);
 }
 
-/** Sorts an array of objects on a given string key, in ascending order
- * @param {Object[]} items - The list of items to sort 
- * @param {String} sort - The key to sort items on 
+function sortCollectionChildren(parent, children, depth = 0){
+	let parColl = parent;
+	parColl.depth = depth;
+	if(children.length > 0){
+		let chldn = children.filter(ch => ch.data.parentCollection == parColl.key);
+		// If the collection has children, recurse
+		if(chldn){
+			let collArray = [parColl];
+			// Go through each child collection 1-by-1
+			// If a child has children itself, the recursion should ensure everything gets added where it should
+			for(let j = 0; j < chldn.length; j++){
+				collArray.push(...sortCollectionChildren(chldn[j], children, depth + 1));
+			}
+			return collArray;
+		} else {
+			return [parColl];
+		}
+	} else {
+		return [parColl];
+	}
+}
+
+function sortCollections(arr){
+	if(arr.length > 0){
+		// Sort collections A-Z
+		arr = [...arr].sort((a,b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
+		let orderedArray = [];
+		let topColls = arr.filter(cl => !cl.data.parentCollection);
+		topColls.forEach((cl, i) => { topColls[i].depth = 0; });
+		let childColls = arr.filter(cl => cl.data.parentCollection);
+		for(let k = 0; k < topColls.length; k++){
+			let chldn = childColls.filter(ch => ch.data.parentCollection == topColls[k].key);
+			// If the collection has children, pass it to sortCollectionChildren to recursively process the nested collections
+			if(chldn){
+				orderedArray.push(...sortCollectionChildren(topColls[k], childColls));
+			} else {
+				orderedArray.push(topColls[k]);
+			}
+		}
+		return orderedArray;
+	} else {
+		return [];
+	}
+}
+
+/** Sorts an array of objects on a given string key, in A-Z order
+ * @param {Object[]} items - The list of elements to sort 
+ * @param {String} sort - The key to sort elements on 
  * @returns {Object[]} The sorted array
  */
-function sortItems(items, sort = "meta"){
-	return items.sort((a,b) => (a[`${sort}`].toLowerCase() < b[`${sort}`].toLowerCase() ? -1 : 1));
+function sortElems(arr, sort){
+	return arr.sort((a,b) => (a[`${sort}`].toLowerCase() < b[`${sort}`].toLowerCase() ? -1 : 1));
 }
 
 export {
@@ -533,5 +578,6 @@ export {
 	readDNP,
 	setupDependencies,
 	setupPortals,
-	sortItems
+	sortCollections,
+	sortElems
 };
