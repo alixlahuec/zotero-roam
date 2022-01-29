@@ -1,7 +1,5 @@
 .bp3-dialog[class*="zr-auxiliary-dialog--"] {
     align-self: baseline;
-    width: max(55%, 550px);
-    margin: 10vh auto;
     padding-bottom:0px;
     box-shadow: none;
 }
@@ -59,22 +57,6 @@
     padding-right:15px;
 }
 
-.bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="toggle-abstracts"] {
-    margin: 0px 15px;
-}
-.bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="abstract-toggle"] {
-    background: none!important;
-}
-.bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="abstract-text"] {
-    display: block;
-    padding: 10px;
-    padding-top: 0px;
-    line-height: 1.4em;
-    text-align: justify;
-    white-space: break-spaces;
-}
-
-.zr-related-item--timestamp{margin-right:10px;padding: 0px 6px;}
 .zr-related-item > .bp3-menu-item:hover {background-color:unset;cursor:unset;}
 .zr-related-item-contents--metadata{flex: 0 1 100%;}
 .zr-related-item-contents--metadata .zr-highlight:not(:empty),
@@ -85,19 +67,6 @@
 .zr-related-item-contents--actions button .bp3-button-text {overflow-wrap: anywhere;}
 .zr-related-item-contents--actions a[zr-role="item-url"] {display:block;}
 .zr-related-item-contents--actions a[zr-role="item-url"]:hover {text-decoration: none;}
-
-.zr-related-item--abstract {
-    background: #e8ecf6;
-    display: inline-block;
-    border-radius: 6px;
-    margin-top: 5px;
-}
-
-/* SMALLER DISPLAYS */
-
-@media (max-width:600px){
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] { width:calc(95% - min(40vw, 60px)); }
-}
 
 /* DARK THEMES */
 
@@ -118,15 +87,6 @@
 .bp3-dark .zr-related-item-contents--actions a[zr-role="item-url"],
 .bp3-dark .zr-related-item-contents--actions a[zr-role="item-url"]:hover {
     color: var(--zr-dark-text-co, #76a0cb);
-}
-
-.bp3-dark.bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="toggle-abstracts"]{
-    background-color: var(--zr-dark-elem-bg, #2B3143);
-    color: var(--zr-dark-text-co, #76a0cb);
-}
-
-.bp3-dark .zr-related-item--abstract {
-    background-color: var(--zr-dark-selected-bc,#191919);
 }
 
 .bp3-dark.bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary {
@@ -154,13 +114,6 @@
     .zr-related-item-contents--actions a[zr-role="item-url"],
     .zr-related-item-contents--actions a[zr-role="item-url"]:hover {
         color: var(--zr-dark-text-co, #76a0cb);
-    }
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] [zr-role="toggle-abstracts"]{
-        background-color: var(--zr-dark-elem-bg, #2B3143);
-        color: var(--zr-dark-text-co, #76a0cb);
-    }
-    .zr-related-item--abstract {
-        background-color: var(--zr-dark-selected-bc,#191919);
     }
     .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary {
         color: var(--zr-dark-text-co, #76a0cb);

@@ -2,10 +2,10 @@ import React, { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../AuxiliaryDialog";
 import ButtonLink from "../../ButtonLink";
 import CitekeyPopover from "../CitekeyPopover";
 import SciteBadge from "../../SciteBadge";
+import SemanticPanel from "../SemanticPanel";
 
 import { showClasses } from "../classes";
 import * as customPropTypes from "../../../propTypes";
@@ -170,14 +170,13 @@ function RelatedItemsBar(props) {
 						<Button className={ showClasses.backlinks } loading={isLoading} onClick={toggleBacklinks} {...showBacklinksButtonProps} ></Button>
 					</ButtonGroup>
 					{refCount + citCount > 0
-						? <AuxiliaryDialog className="citations" 
-							ariaLabelledBy={"zr-aux-dialog--" + title}
+						? <SemanticPanel
 							isOpen={isDialogOpen} 
 							items={cleanSemanticData}
 							metadataSettings={metadataSettings}
+							onClose={closeDialog}
 							portalId={portalId}
-							show={isShowing} 
-							onClose={closeDialog} />
+							show={isShowing} />
 						: null}
 					<Backlinks isOpen={isBacklinksListOpen} items={cleanSemanticData.backlinks} metadataSettings={metadataSettings} origin={origin} />
 				</>

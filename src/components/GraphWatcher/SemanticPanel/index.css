@@ -1,3 +1,12 @@
+.bp3-dialog.zr-auxiliary-dialog--citations {
+    width:calc(55% - 10vw);
+    margin-left: calc(18vw + 9.5%);
+}
+
+.bp3-dialog.zr-auxiliary-dialog--citations.has-selected-items {
+    width:calc(50% + 8vw);
+}
+
 .zr-semantic-panel--main .bp3-tab-list {
     margin-left: 15px;
     align-items: start;
@@ -66,6 +75,15 @@
     color: #a05fba;
     opacity: 0.6;
     margin-right: 8px;
+}
+
+.zr-semantic-panel--side {
+    flex: 1 0 0%;
+    transition: 0.5s;
+}
+
+.has-selected-items .zr-semantic-panel--side {
+    flex: 1 0 18%;
 }
 
 /* DARK THEMES */

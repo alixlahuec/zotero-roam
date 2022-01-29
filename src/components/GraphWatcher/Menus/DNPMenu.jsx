@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Button } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../AuxiliaryDialog";
+import RelatedPanel from "../RelatedPanel";
 import { pluralize } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
 
@@ -37,13 +37,13 @@ function DNPMenu(props){
 			{hasAddedItems 
 				? <>
 					<Button minimal={true} icon="calendar" onClick={openDialog}>{buttonLabel}</Button>
-					<AuxiliaryDialog className="added-on" 
+					<RelatedPanel 
 						isOpen={isDialogOpen}
 						items={added} 
 						metadataSettings={metadataSettings}
+						onClose={closeDialog}
 						portalId={portalId}
 						show={isShowing} 
-						onClose={closeDialog}
 					/>
 				</>
 				: null}

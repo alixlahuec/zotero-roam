@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Button } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../AuxiliaryDialog";
+import RelatedPanel from "../RelatedPanel";
 import { pluralize } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
 
@@ -51,13 +51,13 @@ function TagMenu(props){
 				? <Button minimal={true} icon="manually-entered-data" onClick={showAbstracts}>{abstractsLabel}</Button>
 				: null}
 			{hasTaggedItems || hasAbstracts
-				? <AuxiliaryDialog className="related"
+				? <RelatedPanel
 					isOpen={isDialogOpen}
 					items={isShowing.type == "with_tag" ? tagged : inAbstract} 
 					metadataSettings={metadataSettings}
+					onClose={closeDialog}
 					portalId={portalId}
-					show={isShowing} 
-					onClose={closeDialog} />
+					show={isShowing} />
 				: null}
 		</>
 	);
