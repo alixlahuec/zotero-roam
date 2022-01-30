@@ -7,7 +7,7 @@ import ExtensionIcon from "../ExtensionIcon";
 import GraphWatcher from "../GraphWatcher";
 import SearchPanel from "../SearchPanel";
 
-import { _getChildren, _getItems } from "../../queries";
+import { _getChildren, _getItems } from "../../api/public";
 import { addPaletteCommand } from "../../roam";
 
 const queryClient = new QueryClient({

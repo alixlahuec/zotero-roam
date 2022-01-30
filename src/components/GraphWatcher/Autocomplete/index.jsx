@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Tribute from "tributejs";
 
 import { formatItemReference, escapeRegExp } from "../../../utils";
-import { useQuery_Items } from "../../../queries";
+import { useQuery_Items } from "../../../api/queries";
 import "./index.css";
 
 const tributeClass = "zotero-roam-tribute";

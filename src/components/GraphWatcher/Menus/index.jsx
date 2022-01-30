@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 
-import { useQuery_Items } from "../../../queries";
+import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems } from "../../../utils";
 
 import CitekeyMenu from "./CitekeyMenu";

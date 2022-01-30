@@ -10,7 +10,7 @@ import { getCitekeyPages } from "../../roam";
 import { cleanLibrary, formatItemReferenceForCopy } from "./utils";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
-import { useQuery_Items } from "../../queries";
+import { useQuery_Items } from "../../api/queries";
 
 const query_threshold = 3;
 const query_debounce = 300;

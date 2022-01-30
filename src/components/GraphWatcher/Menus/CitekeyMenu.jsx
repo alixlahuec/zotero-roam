@@ -9,7 +9,7 @@ import SemanticPanel from "../SemanticPanel";
 
 import { showClasses } from "../classes";
 import * as customPropTypes from "../../../propTypes";
-import { useQuery_Semantic } from "../../../queries";
+import { useQuery_Semantic } from "../../../api/queries";
 import { findRoamPage, importItemMetadata } from "../../../roam";
 import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
 

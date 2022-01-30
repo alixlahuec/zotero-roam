@@ -1,197 +1,8 @@
-import axios from "axios";
-import axiosRetry from "axios-retry";
-import { useQueries, useQuery, useQueryClient } from "react-query";
-import { parseDOI } from "./utils";
-import { emitCustomEvent } from "./events";
+import { useQueryClient } from "react-query";
 
-const zoteroClient = axios.create({
-	baseURL: "https://api.zotero.org/",
-	headers: {
-		"Zotero-API-Version": 3
-	}
-});
-axiosRetry(zoteroClient, {
-	retries: 2,
-	retryCondition: (error) => {
-		if(error.response){
-			let { status } = error.response;
-			if(status == 429 || status >= 500){
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	},
-	retryDelay: (retryCount, error) => {
-		if(error.response){
-			let { headers } = error.response;
-			if(headers["backoff"]){
-				return headers["backoff"] * 1000;
-			} else if(headers["retry-after"]){
-				return headers["retry-after"] * 1000;
-			} else {
-				return retryCount * 1000;
-			}
-		} else {
-			return retryCount * 3000;
-		}
-	}
-});
-
-const semanticClient = axios.create({
-	baseURL: "https://api.semanticscholar.org/v1/paper/",
-	params: {
-		"include_unknown_references": "true"
-	}
-});
-axiosRetry(semanticClient, {
-	retries: 3
-});
-
-const citoidClient = axios.create({
-	baseURL: "https://en.wikipedia.org/api/rest_v1/data/citation/zotero"
-});
-axiosRetry(citoidClient, {
-	retries: 3
-});
-
-/** Uses item React queries for specific data requests. By default, `staleTime = 1 min` and `refetchInterval = 1 min`.
- * @param {{apikey: String, dataURI: String, params: String, name: String, library: String}[]} reqs - The targeted data requests
- * @param {Object} opts - Optional configuration to use with the queries
- * @returns The item React queries that correspond to the data requests
- */
-const useQuery_Items = (reqs, opts = {}) => {
-	// Defaults for this query
-	let { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest} = opts;
-	
-	// Factory
-	const client = useQueryClient();
-	let queriesDefs = reqs.map((req) => {
-		let { params, ...identifiers } = req;
-		let queryKey = ["items", {...identifiers}];
-		let { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchItems({ ...req,  since }, { match }),
-			staleTime,
-			refetchInterval,
-			...rest
-		};
-	});
-	return useQueries(queriesDefs);
-};
-
-/** Uses permission React queries for specific API keys. By default, `staleTime = 1 hour` and `refetchInterval = 1 hour`.
- * @param {String[]} keys - The targeted Zotero API keys 
- * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The permission React queries that correspond to the API keys
- */
-const useQuery_Permissions = (keys, opts = {}) => {
-	// Defaults for this query
-	let { staleTime = 1000 * 60 * 60, refetchInterval = 1000 * 60 * 60, ...rest } = opts;
-	// Factory
-	let queriesDefs = keys.map((apikey) => {
-		let queryKey = ["permissions", { apikey }];
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchPermissions(apikey),
-			staleTime,
-			refetchInterval,
-			...rest
-		};
-	});
-	return useQueries(queriesDefs);
-};
-
-/** Uses tag React queries for specific libraries. By default, `staleTime = 3 min`.
- *  Refetching is managed by {@link useQuery_Items}.
- * @param {ZoteroLibrary[]} libraries - The targeted Zotero libraries 
- * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The tag React queries that correspond to the libraries
- */
-const useQuery_Tags = (libraries, opts = {}) => {
-	// Defaults for this query
-	let { staleTime = 1000 * 60 * 3, ...rest } = opts;
-	// Factory
-	let queriesDefs = libraries.map((library) => {
-		let { path, apikey } = library;
-		let queryKey = ["tags", { library: path, apikey }];
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchTags(library),
-			staleTime,
-			...rest
-		};
-	});
-	return useQueries(queriesDefs);
-};
-
-/** Uses collection React queries for specific libraries. By default, `staleTime = 5 min` and `refetchInterval = 5 min`.
- * @param {ZoteroLibrary[]} libraries - The targeted Zotero libraries 
- * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The collection React queries that correspond to the libraries
- */
-const useQuery_Collections = (libraries, opts = {}) => {
-	// Defaults for this query
-	let { staleTime = 1000 * 60 * 5, refetchInterval = 1000 * 60 * 5, ...rest} = opts;
-	// Factory
-	const client = useQueryClient();
-	let queriesDefs = libraries.map((lib) => {
-		let { path, apikey } = lib;
-		let queryKey = ["collections", { library: path, apikey }];
-		let { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchCollections(lib, since, { match }),
-			staleTime,
-			refetchInterval,
-			...rest
-		};
-	});
-	return useQueries(queriesDefs);
-};
-
-/** Uses a React query to retrieve Semantic Scholar citation data for a specific DOI. By default, `cacheTime = Infinity`.
- *  There is no refetch scheduled, since the data should not change over the course of a session.
- * @param {String} doi - The targeted DOI 
- * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The React query that correspond to the DOI's Semantic Scholar data
- */
-const useQuery_Semantic = (doi, opts = {}) => {
-	// Defaults for this query
-	let { cacheTime = Infinity, ...rest } = opts;
-	// Factory
-	let queryKey = ["semantic", { doi }];
-	return useQuery({
-		queryKey,
-		queryFn: (_queryKey) => fetchSemantic(doi),
-		cacheTime,
-		...rest
-	});
-};
-
-/** Uses a React query to retrieve Wikipedia metadata for a specific URL. By default, `cacheTime = Infinity`.
- *  There is no refetch scheduled, since the data should not change over the course of a session.
- * @param {String} query - The targeted URL 
- * @param {Object} opts - Optional configuration to use with the queries
- * @returns The React query that corresponds to the URL's Wikipedia metadata
- */
-const useQuery_Citoid = (query, opts = {}) => {
-	// Defaults for this query
-	let { cacheTime = Infinity, ...rest } = opts;
-	// Factory
-	let queryKey = ["citoid", { query }];
-	return useQuery({
-		queryKey,
-		queryFn: (_queryKey) => fetchCitoid(query),
-		cacheTime,
-		...rest
-	});
-};
-
-// UTILS
+import { zoteroClient, semanticClient, citoidClient } from "./clients";
+import { emitCustomEvent } from "../events";
+import { parseDOI } from "../utils";
 
 /** Extracts pinned citekeys from a dataset
  * @param {ZoteroItem[]} arr - The dataset of Zotero items to scan
@@ -475,31 +286,6 @@ async function fetchCitoid(query) {
 		});
 }
 
-function _getChildren(item, queryClient){
-	let location = item.library.type + "s/" + item.library.id;
-	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, queryClient)
-		.filter(el => el.data.parentItem == item.data.key);
-}
-
-function _getItems(select = "all", filters = {}, queryClient) {
-	let items = queryClient.getQueriesData(["items"], filters).map(query => (query[1] || {}).data || []).flat(1);
-	switch(select){
-	case "items":
-		return items.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType));
-	case "attachments":
-		return items.filter(it => it.data.itemType == "attachment");
-	case "children":
-		return items.filter(it => it.data.itemType == "note" || it.data.itemType == "attachment" && it.data.contentType == "application/pdf");
-	case "notes":
-		return items.filter(it => it.data.itemType == "note");
-	case "pdfs":
-		return items.filter(it => it.data.itemType == "attachment" && it.data.contentType == "application/pdf");
-	case "all":
-	default:
-		return items;
-	}
-}
-
 /** Compares two datasets and merges the changes. As the match is done on the `data.key` property, both items and collections can be matched.
  *  For items, merging involves an additional step to extract citekeys.
  * @param {{modified: ZoteroItem[]|ZoteroCollection[], deleted: ZoteroItem[]|ZoteroCollection[]}} update - The newer dataset
@@ -539,16 +325,39 @@ function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
 	}
 }
 
-// -----------------
+/** Adds new items to a Zotero library, with optional collections & tags.
+ * @param {ZoteroItem[]|Object[]} citoids -  The items to be added to Zotero.
+ * @param {{library: {apikey: String, path: String}, collections: String[], tags: String[]}} config - The options to be used for the import. 
+ * @returns 
+ */
+async function writeItems(items, {library, collections = [], tags = []} = {}){
+	const { apikey, path } = library;
+	const clean_tags = tags.map(t => { return { tag: t }; });
+
+	const data = items.map(citoid => {
+		// Remove key and version from the data object
+		const { key, version, ...item } = citoid;
+
+		return {
+			...item,
+			collections,
+			tags: clean_tags
+		};
+	});
+
+	return zoteroClient.post(`${path}/items`, {
+		headers: { "Zotero-API-Key": apikey },
+		data: JSON.stringify(data)
+	});
+}
 
 export {
 	fetchBibliography,
-	useQuery_Items,
-	useQuery_Permissions,
-	useQuery_Tags,
-	useQuery_Collections,
-	useQuery_Semantic,
-	useQuery_Citoid,
-	_getChildren,
-	_getItems
+	fetchCitoid,
+	fetchCollections,
+	fetchItems,
+	fetchPermissions,
+	fetchSemantic,
+	fetchTags,
+	writeItems
 };

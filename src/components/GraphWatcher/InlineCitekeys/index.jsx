@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
-import { useQuery_Items } from "../../../queries";
+import { useQuery_Items } from "../../../api/queries";
 import { importItemMetadata } from "../../../roam";
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, parseDOI } from "../../../utils";
 import "./index.css";

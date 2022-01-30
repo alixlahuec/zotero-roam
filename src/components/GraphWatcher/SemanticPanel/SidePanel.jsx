@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Classes } from "@blueprintjs/core";
 
@@ -36,9 +36,13 @@ const SidePanel = React.memo(function SidePanel(props) {
 	const { libraries, selectProps } = props;
 	const { handleRemove } = selectProps;
 
+	const identifiers = useMemo(() => {
+		return selectProps.items.map(it => it.doi ? ("https://doi.org/" + it.doi) : it.url);
+	}, [selectProps.items]);
+
 	return (
 		<div className="zr-semantic-panel--side">
-			<ZoteroImport libraries={libraries} selectProps={selectProps} />
+			<ZoteroImport identifiers={identifiers} libraries={libraries} selectProps={selectProps} />
 			<ul className={[Classes.LIST_UNSTYLED, "import-items"].join(" ")}>
 				{selectProps.items.map(item => <SelectedImportItem key={[item.doi, item.url].join("-")} handleRemove={handleRemove} item={item} />)}
 			</ul>

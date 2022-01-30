@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
-import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../queries";
+import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/queries";
 import { makeTimestamp } from "../../utils";
 import "./index.css";
 

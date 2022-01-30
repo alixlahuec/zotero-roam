@@ -1,4 +1,4 @@
-.import-header{margin-bottom:20px;}
+.import-header{margin-bottom:20px;margin-top:5px;}
 .import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
 .options-library-list, .options-collections-list{flex:1 0 50%;}
 .options-collections-list {max-height: 50vh;overflow-y:scroll;padding-top:2px;}
@@ -14,3 +14,11 @@
 .zotero-roam-tags-autocomplete{box-shadow:none;background:none;}
 .zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
 .zotero-roam-import-tags-list > li{padding:3px 5px;}
+
+.options-library-list label, .options-collections-list label {
+    font-size: 0.8em;
+}
+
+.options-tags .bp3-input.bp3-multi-select {
+    background: unset;
+}
