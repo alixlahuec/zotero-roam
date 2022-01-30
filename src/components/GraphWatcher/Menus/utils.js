@@ -2,6 +2,8 @@ import { menuPrefix, menuClasses } from "../classes";
 import { findRoamPage } from "../../../roam";
 import { makeTimestamp, readDNP } from "../../../utils";
 
+const dnpRegex = new RegExp(/(.+) ([0-9]+).{2}, ([0-9]{4})/g);
+
 const addPageMenus = () => {
 	let newPages = Array.from(document.querySelectorAll("h1.rm-title-display"))
 		.filter(page => !(page.parentElement.querySelector(`[class*=${menuPrefix}]`)));
@@ -20,7 +22,7 @@ const addPageMenus = () => {
 			menu.classList.add(menuClasses.citekey);
 			menu.setAttribute("data-citekey", title.slice(1));
 			break;
-		case (title.match(/(.+) ([0-9]+).{2}, ([0-9]{4})/g)):
+		case (dnpRegex.test(title)):
 			// (DNP) : "XX items added"
 			menu.classList.add(menuClasses.dnp);
 			menu.setAttribute("data-dnp-date", JSON.stringify(readDNP(title, { as_date: false })));

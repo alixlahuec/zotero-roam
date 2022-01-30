@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, ButtonGroup, Callout, Checkbox, RadioGroup, Spinner } from "@blueprintjs/core";
+import { Button, ButtonGroup, Callout, Checkbox, MenuItem, RadioGroup, Spinner } from "@blueprintjs/core";
 
 import { useQuery_Collections, useQuery_Permissions } from "../../queries";
 import { getAllPages } from "../../roam";
@@ -11,6 +11,11 @@ import "./index.css";
 import { MultiSelect } from "@blueprintjs/select";
 
 const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
+
+function itemRenderer(item, itemProps) {
+	let { handleClick, modifiers: { active } } = itemProps;
+	return <MenuItem active={active} onClick={handleClick} text={item} />;
+}
 
 const ImportPanel = React.memo(function ImportPanel(props) {
 	const { collections, isActive, libraries, resetImport } = props;
@@ -106,6 +111,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 						createNewItemPosition="first"
 						fill={true}
 						initialContent={null}
+						itemRenderer={itemRenderer}
 						items={roamPages}
 						onItemSelect={addTag}
 						onRemove={removeTag}
