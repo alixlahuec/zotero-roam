@@ -83,9 +83,35 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 	const [selectedColls, setSelectedColls] = useState([]);
 	const [selectedTags, setSelectedTags] = useState([]);
 
+	const handleCollSelection = useCallback((key) => {
+		setSelectedColls(currentSelection => {
+			if(currentSelection.includes(key)){
+				return currentSelection.filter(coll => coll.key != key);
+			} else {
+				return [...currentSelection, key];
+			}
+		});
+	}, []);
+
 	const handleLibSelection = useCallback((lib) => {
 		setSelectedLib(lib);
 		setSelectedColls([]);
+	}, []);
+
+	const handleTagRemoval = useCallback((tag) => {
+		setSelectedTags(currentTags => {
+			return currentTags.filter(t => t != tag);
+		});
+	}, []);
+
+	const handleTagSelection = useCallback((tag) => {
+		setSelectedTags(currentTags => {
+			if(!currentTags.includes(tag)){
+				return [...currentTags, tag];
+			} else {
+				return currentTags;
+			}
+		});
 	}, []);
 
 	const selectedLibCollections = useMemo(() => {
@@ -125,12 +151,13 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 				</div>
 				<CollectionsSelector 
 					collections={selectedLibCollections}
-					selectedCollections={selectedColls} 
-					setSelectedCollections={setSelectedColls} />
+					onSelect={handleCollSelection}
+					selectedCollections={selectedColls} />
 				<div className="options-tags">
 					<TagsSelector 
-						selectedTags={selectedTags} 
-						setSelectedTags={setSelectedTags} />
+						onRemove={handleTagRemoval}
+						onSelect={handleTagSelection}
+						selectedTags={selectedTags} />
 				</div>
 			</div>
 		</>

@@ -22,22 +22,16 @@ function itemPredicate(query, item) {
 }
 
 const TagsSelector = React.memo(function TagsSelector(props) {
-	const { selectedTags, setSelectedTags } = props;
+	const { selectedTags, onRemove, onSelect } = props;
 	const [roamPages,] = useState(getAllPages());
 
 	const addTag = useCallback((tag, _event) => {
-		setSelectedTags(currentTags => {
-			if(!currentTags.includes(tag)){
-				return [...currentTags, tag];
-			}
-		});
-	}, [setSelectedTags]);
+		onSelect(tag);
+	}, [onSelect]);
 
 	const removeTag = useCallback((tag, _index) => {
-		setSelectedTags(currentTags => {
-			return currentTags.filter(t => t != tag);
-		});
-	}, [setSelectedTags]);
+		onRemove(tag);
+	}, [onRemove]);
 
 	const tagInputProps = useMemo(() => {
 		return {
@@ -69,8 +63,9 @@ const TagsSelector = React.memo(function TagsSelector(props) {
 	);
 });
 TagsSelector.propTypes = {
-	selectedTags: PropTypes.arrayOf(PropTypes.string),
-	setSelectedTags: PropTypes.func
+	onRemove: PropTypes.func,
+	onSelect: PropTypes.func,
+	selectedTags: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default TagsSelector;

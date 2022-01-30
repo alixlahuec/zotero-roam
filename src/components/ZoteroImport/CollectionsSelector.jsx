@@ -28,30 +28,20 @@ CollectionOption.propTypes = {
 };
 
 const CollectionsSelector = React.memo(function CollectionsSelector(props) {
-	const { collections, selectedCollections, setSelectedCollections } = props;
-
-	const handleSelection = useCallback((key) => {
-		setSelectedCollections(currentSelection => {
-			if(currentSelection.includes(key)){
-				return currentSelection.filter(coll => coll.key != key);
-			} else {
-				return [...currentSelection, key];
-			}
-		});
-	}, [setSelectedCollections]);
+	const { collections, onSelect, selectedCollections } = props;
 
 	return (
 		collections.length == 0
 			? <Spinner />
 			: <div className="options-collections-list">
-				{collections.map(coll => <CollectionOption key={coll.key} collection={coll} isChecked={selectedCollections.includes(coll.key)} onSelect={handleSelection} />)}
+				{collections.map(coll => <CollectionOption key={coll.key} collection={coll} isChecked={selectedCollections.includes(coll.key)} onSelect={onSelect} />)}
 			</div>
 	);
 });
 CollectionsSelector.propTypes = {
 	collections: PropTypes.array,
-	selectedCollections: PropTypes.array,
-	setSelectedCollections: PropTypes.func
+	onSelect: PropTypes.func,
+	selectedCollections: PropTypes.array
 };
 
 export default CollectionsSelector;
