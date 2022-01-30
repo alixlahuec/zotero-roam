@@ -50,10 +50,7 @@ const SidePanel = React.memo(function SidePanel(props) {
 	);
 });
 SidePanel.propTypes = {
-	libraries: PropTypes.arrayOf(PropTypes.shape({
-		apikey: PropTypes.string,
-		path: PropTypes.string
-	})),
+	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	selectProps: PropTypes.shape({
 		handleRemove: PropTypes.func,
 		handleSelect: PropTypes.func,

@@ -11,6 +11,7 @@ import TagMenu from "./TagMenu";
 
 import { addPageMenus, cleanRelatedItem, findPageMenus } from "./utils";
 import "./index.css";
+import * as customPropTypes from "../../../propTypes";
 
 const sharedPropTypes = { 
 	dataRequests: PropTypes.array,
@@ -53,10 +54,7 @@ function CitekeyMenuFactory(props){
 	return citekeyMenus;
 }
 CitekeyMenuFactory.propTypes = {
-	libraries: PropTypes.arrayOf(PropTypes.shape({
-		apikey: PropTypes.string,
-		path: PropTypes.string
-	})),
+	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	...sharedPropTypes
 };
 

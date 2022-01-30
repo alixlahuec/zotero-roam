@@ -155,10 +155,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 SemanticPanel.propTypes = {
 	isOpen: PropTypes.bool,
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-	libraries: PropTypes.arrayOf(PropTypes.shape({
-		apikey: PropTypes.string,
-		path: PropTypes.string
-	})),
+	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,

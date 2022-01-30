@@ -10,6 +10,8 @@ import SearchPanel from "../SearchPanel";
 import { _getChildren, _getItems } from "../../api/public";
 import { addPaletteCommand } from "../../roam";
 
+import * as customPropTypes from "../../propTypes";
+
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
@@ -179,10 +181,7 @@ App.propTypes = {
 		version: PropTypes.string,
 		portalId: PropTypes.string
 	}),
-	libraries: PropTypes.arrayOf(PropTypes.shape({
-		apikey: PropTypes.string,
-		path: PropTypes.string
-	})),
+	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	userSettings: PropTypes.shape({
 		autocomplete: PropTypes.object,
 		autoload: PropTypes.bool,

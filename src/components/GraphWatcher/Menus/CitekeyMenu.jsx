@@ -8,10 +8,10 @@ import SciteBadge from "../../SciteBadge";
 import SemanticPanel from "../SemanticPanel";
 
 import { showClasses } from "../classes";
-import * as customPropTypes from "../../../propTypes";
 import { useQuery_Semantic } from "../../../api/queries";
 import { findRoamPage, importItemMetadata } from "../../../roam";
 import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
+import * as customPropTypes from "../../../propTypes";
 
 function BacklinksItem(props) {
 	const { entry, metadataSettings } = props;
@@ -40,9 +40,9 @@ function BacklinksItem(props) {
 		>
 			<div className="zr-backlink-item--year">{pub_year}</div>
 			<div className="zr-backlink-item--info">
-				<span zr-role="item-authors" className={["zotero-roam-search-item-authors", pub_type == "reference" ? "zr-highlight" : "zr-highlight-2"].join(" ")}>{meta.creatorSummary || ""}</span>
+				<span zr-role="item-authors" className={pub_type == "reference" ? "zr-highlight" : "zr-highlight-2"}>{meta.creatorSummary || ""}</span>
 				<span zr-role="item-publication" className="zr-secondary">{data.publicationTitle || data.bookTitle || data.university || ""}</span>
-				<span zr-role="item-title" className="zotero-roam-search-item-title">{data.title}</span>
+				<span zr-role="item-title" className="zr-item-title">{data.title}</span>
 			</div>
 			<div className="zr-backlink-item--state">
 				{itemActions}
@@ -192,10 +192,7 @@ RelatedItemsBar.propTypes = {
 		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 	}),
-	libraries: PropTypes.arrayOf(PropTypes.shape({
-		apikey: PropTypes.string,
-		path: PropTypes.string
-	})),
+	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	metadataSettings: PropTypes.object,
 	origin: PropTypes.string,
 	portalId: PropTypes.string,
@@ -312,10 +309,7 @@ CitekeyMenu.propTypes = {
 		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 	}),
-	libraries: PropTypes.arrayOf(PropTypes.shape({
-		apikey: PropTypes.string,
-		path: PropTypes.string
-	})),
+	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	metadataSettings: PropTypes.object,
 	portalId: PropTypes.string,
 	roamCitekeys: PropTypes.instanceOf(Map)

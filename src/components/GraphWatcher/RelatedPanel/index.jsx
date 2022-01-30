@@ -73,7 +73,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{display: "flex"}}>
 						<div className="zr-related-item-contents--metadata">
-							<span className="zotero-roam-search-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
+							<span className="zr-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 							<span className="zr-highlight">{item.meta}</span>
 						</div>
 						<span className="zr-related-item-contents--actions">

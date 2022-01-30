@@ -154,7 +154,7 @@ function ItemDetails(props) {
 		<div className="selected-item-header">
 			<div className="item-basic-metadata">
 				<h4 className="item-title">{title}</h4>
-				<span className="zotero-roam-search-item-authors zr-highlight">{authors + " (" + year + ")"}</span>
+				<span className="zr-highlight">{authors + " (" + year + ")"}</span>
 				{publication
 					? <span className="zr-secondary">{publication}</span>
 					: null}

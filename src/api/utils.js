@@ -345,10 +345,7 @@ async function writeItems(items, {library, collections = [], tags = []} = {}){
 		};
 	});
 
-	return zoteroClient.post(`${path}/items`, {
-		headers: { "Zotero-API-Key": apikey },
-		data: JSON.stringify(data)
-	});
+	return zoteroClient.post(`${path}/items`, JSON.stringify(data), { headers: { "Zotero-API-Key": apikey } });
 }
 
 export {

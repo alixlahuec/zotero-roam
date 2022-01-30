@@ -18,6 +18,12 @@ const zoteroItemType = PropTypes.shape({
 	version: PropTypes.number
 });
 
+const zoteroLibraryType = PropTypes.shape({
+	apikey: PropTypes.string,
+	path: PropTypes.string
+});
+
+
 /**
  * @see cleanLibrary
  */
@@ -117,6 +123,7 @@ const cleanSemanticReturnObjectType = PropTypes.shape({
 export {
 	zoteroCollectionType,
 	zoteroItemType,
+	zoteroLibraryType,
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,
 	cleanRelatedItemType,

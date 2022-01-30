@@ -93,6 +93,7 @@ h4.item-title{
     padding:15px;
     border-top: 1px #e6e6e6 solid;
     border-bottom: 1px #e6e6e6 solid;
+    white-space: break-spaces;
 }
 
 .item-additional-metadata p strong ~ span {

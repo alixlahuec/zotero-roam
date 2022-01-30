@@ -40,7 +40,7 @@ button[class*='zr-page-menu-show--'] {
 .zr-backlink-item--year, .zr-backlink-item--info{font-size:0.9em;padding: 0px 0px 6px 10px;}
 .zr-backlink-item--year{flex: 0 0 auto;}
 .zr-backlink-item--info{line-height:normal;flex: 1 2 90%;}
-.zr-backlink-item--info > *:not(.zotero-roam-search-item-title), .zr-backlink-item--year{line-height:2em;}
+.zr-backlink-item--info > *:not(.zr-item-title), .zr-backlink-item--year{line-height:2em;}
 .zr-backlink-item--state{flex: 1 0 auto;overflow-wrap:anywhere;}
 
 [data-backlink-type="reference"] .zr-backlink-item--year, 

@@ -1,11 +1,14 @@
 import React, { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, ButtonGroup, Callout, Checkbox, MenuItem, RadioGroup, Spinner } from "@blueprintjs/core";
-import { MultiSelect } from "@blueprintjs/select";
+import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
+
+import CollectionsSelector from "./CollectionsSelector";
+import LibrarySelector from "./LibrarySelector";
+import TagsSelector from "./TagsSelector";
+import zrToaster from "../../toaster";
 
 import { useQuery_Citoid, useQuery_Collections, useQuery_Permissions } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
-import { getAllPages } from "../../roam";
 import { sortCollections } from "../../utils";
 
 import * as customPropTypes from "../../propTypes";
@@ -13,17 +16,8 @@ import "./index.css";
 
 const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
 
-function itemRenderer(item, itemProps) {
-	let { handleClick, modifiers: { active } } = itemProps;
-	return <MenuItem active={active} onClick={handleClick} text={item} />;
-}
-
-function itemPredicate(query, item) {
-	return item.toLowerCase().includes(query.toLowerCase());
-}
-
 const ImportButton = React.memo(function ImportButton(props) {
-	const { identifiers, importProps, isActive } = props;
+	const { identifiers, importProps, isActive, resetImport } = props;
 
 	const citoidQueries = useQuery_Citoid(identifiers, { enabled: isActive > 0 && identifiers.length > 0});
 	const isDataReady = citoidQueries.every(q => q.data);
@@ -33,8 +27,16 @@ const ImportButton = React.memo(function ImportButton(props) {
 
 	const triggerImport = useCallback(() => {
 		const { collections, library, tags } = importProps;
-		mutate({ citoids, collections, library, tags });
-	}, [citoids, importProps, mutate]);
+		mutate({ citoids, collections, library, tags }, {
+			onSettled: (data, error, variables) => {
+				if(error){
+					console.log(data, variables);
+					zrToaster.show({ intent: "danger", message: "The import to Zotero failed : \n " + error});
+				}
+				resetImport();
+			}
+		});
+	}, [citoids, importProps, mutate, resetImport]);
 
 	const buttonProps = useMemo(() => {
 		if(status == "loading"){
@@ -68,13 +70,11 @@ ImportButton.propTypes = {
 	identifiers: PropTypes.arrayOf(PropTypes.string),
 	importProps: PropTypes.shape({
 		collections: PropTypes.arrayOf(PropTypes.string),
-		library: PropTypes.shape({
-			apikey: PropTypes.string,
-			path: PropTypes.string
-		}),
+		library: customPropTypes.zoteroLibraryType,
 		tags: PropTypes.arrayOf(PropTypes.string)
 	}),
-	isActive: PropTypes.bool
+	isActive: PropTypes.bool,
+	resetImport: PropTypes.func
 };
 
 const ImportPanel = React.memo(function ImportPanel(props) {
@@ -83,12 +83,10 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 	const [selectedColls, setSelectedColls] = useState([]);
 	const [selectedTags, setSelectedTags] = useState([]);
 
-	const [roamPages,] = useState(getAllPages());
-
-	const handleLibSelection = useCallback((event) => {
-		setSelectedLib(libraries.find(lib => lib.path == event.currentTarget.value));
+	const handleLibSelection = useCallback((lib) => {
+		setSelectedLib(lib);
 		setSelectedColls([]);
-	}, [libraries]);
+	}, []);
 
 	const selectedLibCollections = useMemo(() => {
 		let libCollections = collections.filter(cl => {
@@ -97,43 +95,6 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 		});
 		return sortCollections(libCollections);
 	}, [collections, selectedLib]);
-
-	const handleCollChange = useCallback((key) => {
-		setSelectedColls(currentSelection => {
-			if(currentSelection.includes(key)){
-				return currentSelection.filter(coll => coll.key != key);
-			} else {
-				return [...currentSelection, key];
-			}
-		});
-	}, []);
-
-	const createTag = useCallback((string) => string, []);
-
-	const addTag = useCallback((tag, _event) => {
-		setSelectedTags(currentTags => {
-			if(!currentTags.includes(tag)){
-				return [...currentTags, tag];
-			}
-		});
-	}, []);
-
-	const removeTag = useCallback((tag, _index) => {
-		setSelectedTags(currentTags => {
-			return currentTags.filter(t => t != tag);
-		});
-	}, []);
-
-	const tagRenderer = useCallback((tag) => tag, []);
-
-	const tagInputProps = useMemo(() => {
-		return {
-			leftIcon: "tag",
-			tagProps: {
-				minimal: true
-			}
-		};
-	}, []);
 
 	const importProps = useMemo(() => {
 		return {
@@ -148,49 +109,28 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 			<div className="import-header">
 				<ButtonGroup fill={true} minimal={true}>
 					<Button alignText="left" icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
-					<ImportButton identifiers={identifiers} importProps={importProps} isActive={isActive} />
+					<ImportButton 
+						identifiers={identifiers} 
+						importProps={importProps} 
+						isActive={isActive} 
+						resetImport={resetImport} />
 				</ButtonGroup>
 			</div>
 			<div className="import-options">
 				<div className="options-library-list">
-					<RadioGroup 
-						inline={false}
-						name="import-library"
-						onChange={handleLibSelection}
-						options={libraries.map(lib => { return { value: lib.path }; })}
-						selectedValue={selectedLib.path}/>
+					<LibrarySelector 
+						libraries={libraries} 
+						onSelect={handleLibSelection} 
+						selectedLib={selectedLib} />
 				</div>
-				{collections.length == 0
-					? <Spinner />
-					: <div className="options-collections-list">
-						{selectedLibCollections.map(coll => {
-							return <Checkbox key={coll.key}
-								checked={selectedColls.includes(coll.key)}
-								data-option-depth={coll.depth}
-								defaultChecked={false}
-								inline={false}
-								label={coll.data.name}
-								onChange={() => handleCollChange(coll.key)}
-							/>;})}
-					</div>
-				}
+				<CollectionsSelector 
+					collections={selectedLibCollections}
+					selectedCollections={selectedColls} 
+					setSelectedCollections={setSelectedColls} />
 				<div className="options-tags">
-					<MultiSelect
-						createNewItemFromQuery={createTag}
-						createNewItemPosition="first"
-						fill={true}
-						initialContent={null}
-						itemPredicate={itemPredicate}
-						itemRenderer={itemRenderer}
-						items={roamPages}
-						onItemSelect={addTag}
-						onRemove={removeTag}
-						openOnKeyDown={true}
-						placeholder="Add tags from Roam"
-						selectedItems={selectedTags}
-						tagInputProps={tagInputProps}
-						tagRenderer={tagRenderer}
-					/>
+					<TagsSelector 
+						selectedTags={selectedTags} 
+						setSelectedTags={setSelectedTags} />
 				</div>
 			</div>
 		</>
@@ -201,10 +141,7 @@ ImportPanel.propTypes = {
 	collections: PropTypes.arrayOf(customPropTypes.zoteroCollectionType),
 	identifiers: PropTypes.arrayOf(PropTypes.string),
 	isActive: PropTypes.bool,
-	libraries: PropTypes.arrayOf(PropTypes.shape({
-		apikey: PropTypes.string,
-		path: PropTypes.string
-	})),
+	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	resetImport: PropTypes.func
 };
 
@@ -256,10 +193,7 @@ const ZoteroImport = React.memo(function ZoteroImport(props) {
 });
 ZoteroImport.propTypes = {
 	identifiers: PropTypes.arrayOf(PropTypes.string),
-	libraries: PropTypes.arrayOf(PropTypes.shape({
-		apikey: PropTypes.string,
-		path: PropTypes.string
-	})),
+	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	selectProps: PropTypes.shape({
 		handleRemove: PropTypes.func,
 		handleSelect: PropTypes.func,

@@ -15,6 +15,8 @@ import Autocomplete from "./Autocomplete";
 import InlineCitekeys from "./InlineCitekeys";
 import { getCitekeyPages } from "../../roam";
 
+import * as customPropTypes from "../../propTypes";
+
 class GraphWatcher extends PureComponent {
 	constructor(props){
 		super(props);
@@ -103,10 +105,7 @@ class GraphWatcher extends PureComponent {
 }
 GraphWatcher.propTypes = {
 	autocompleteSettings: PropTypes.object,
-	libraries: PropTypes.arrayOf(PropTypes.shape({
-		apikey: PropTypes.string,
-		path: PropTypes.string
-	})),
+	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	metadataSettings: PropTypes.object,
 	dataRequests: PropTypes.array,
 	portalId: PropTypes.string,
