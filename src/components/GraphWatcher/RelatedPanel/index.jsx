@@ -16,6 +16,10 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 	const { children: { pdfs, notes }, raw } = item;
 	const [isAbstractVisible, setAbstractVisible] = useState(allAbstractsShown);
 
+	const toggleAbstract = useCallback(() => {
+		setAbstractVisible(prevState => !prevState);
+	}, []);
+
 	const has_timestamp = useMemo(() => {
 		return type == "added_on"
 			? <span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zr-related-item--timestamp"].join(" ")}>
@@ -47,10 +51,6 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 			);
 		}
 	}, [isAbstractVisible, item.abstract, toggleAbstract]);
-
-	const toggleAbstract = useCallback(() => {
-		setAbstractVisible(!isAbstractVisible);
-	}, [isAbstractVisible]);
 
 	const itemActions = useMemo(() => {
 		return <CitekeyPopover 

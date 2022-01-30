@@ -59,6 +59,8 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 		});
 	}, []);
 
+	const tagRenderer = useCallback((tag) => tag, []);
+
 	const tagInputProps = useMemo(() => {
 		return {
 			leftIcon: "tag",
@@ -111,6 +113,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 						placeholder="Add tags from Roam"
 						selectedItems={selectedTags}
 						tagInputProps={tagInputProps}
+						tagRenderer={tagRenderer}
 					/>
 				</div>
 			</div>

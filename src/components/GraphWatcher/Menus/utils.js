@@ -20,13 +20,11 @@ const addPageMenus = () => {
 			menu.classList.add(menuClasses.citekey);
 			menu.setAttribute("data-citekey", title.slice(1));
 			break;
-		case (title.match(/(.+) ([0-9]+).{2}, ([0-9]{4})/g)): {
+		case (title.match(/(.+) ([0-9]+).{2}, ([0-9]{4})/g)):
 			// (DNP) : "XX items added"
-			let dnp_date = readDNP(title, { as_date: false });
 			menu.classList.add(menuClasses.dnp);
-			menu.setAttribute("data-dnp-date", JSON.stringify(dnp_date));
+			menu.setAttribute("data-dnp-date", JSON.stringify(readDNP(title, { as_date: false })));
 			break;
-		}
 		default:
 			// (all other pages) : "XX abstracts", "YY tagged items"
 			menu.classList.add(menuClasses.tag);
