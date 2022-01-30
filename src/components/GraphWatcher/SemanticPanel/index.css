@@ -1,11 +1,15 @@
 .bp3-dialog.zr-auxiliary-dialog--citations {
-    width:calc(95% - 40vw);
-    margin-left: calc(20vw + 2.5%);
+    width:calc(97% - 44vw);
+    margin-left: calc(22vw + 1.5%);
     transition: 0.5s;
 }
 
+.bp3-dialog.zr-auxiliary-dialog--citations > .bp3-dialog-body {
+    display: flex;
+}
+
 .bp3-dialog.zr-auxiliary-dialog--citations.has-selected-items {
-    width:calc(95% - 20vw);
+    width:calc(97% - 22vw);
 }
 
 .zr-semantic-panel--main .bp3-tab-list {
@@ -80,12 +84,20 @@
 
 .zr-semantic-panel--side {
     flex: 1 0 0%;
-    display: none;
+    overflow: auto;
 }
 
 .has-selected-items .zr-semantic-panel--side {
-    flex: 1 0 20%;
+    flex: 1 0 22vw;
     display: block;
+    padding: 0px 15px;
+}
+
+li.import-items_selected {
+    display:flex;
+    justify-content:space-between;
+    background:#f9fafb;
+    padding:5px;
 }
 
 /* DARK THEMES */

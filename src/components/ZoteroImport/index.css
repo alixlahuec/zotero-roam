@@ -1,0 +1,16 @@
+.import-header{margin-bottom:20px;}
+.import-options{display:flex;justify-content:space-between;flex-wrap:wrap;}
+.options-library-list, .options-collections-list{flex:1 0 50%;}
+.options-collections-list {max-height: 50vh;overflow-y:scroll;padding-top:2px;}
+.options-collections-list::-webkit-scrollbar {width:0.2em;}
+.options-collections-list label{font-weight:400;margin-left:40px;font-size:0.8em;margin-bottom:0px;}
+.options-collections-list label[data-option-depth="0"]{margin-left:0px;}
+.options-collections-list label[data-option-depth="1"]{margin-left:20px;}
+.options-library-list label{font-weight:600;}
+.options-tags{padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;}
+.options-tags-select{flex: 1 0 50%;}
+.options-tags_selection{flex: 1 0 50%;padding:0px 8px;}
+.options-tags_selection .bp3-tag{word-break:break-word;}
+.zotero-roam-tags-autocomplete{box-shadow:none;background:none;}
+.zotero-roam-import-tags-list{position:fixed;max-width:calc(20vw - 40px);z-index:20;border:1px #e1eeff solid;max-height:250px;overflow:scroll;}
+.zotero-roam-import-tags-list > li{padding:3px 5px;}

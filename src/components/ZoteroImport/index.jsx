@@ -1,9 +1,14 @@
 import React, { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Callout, Checkbox, RadioGroup, Spinner } from "@blueprintjs/core";
+
 import { useQuery_Collections, useQuery_Permissions } from "../../queries";
+import { getAllPages } from "../../roam";
 import { sortCollections } from "../../utils";
+
 import * as customPropTypes from "../../propTypes";
+import "./index.css";
+import { MultiSelect } from "@blueprintjs/select";
 
 const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
 
@@ -11,6 +16,9 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 	const { collections, isActive, libraries, resetImport } = props;
 	const [selectedLib, setSelectedLib] = useState(libraries[0]);
 	const [selectedColls, setSelectedColls] = useState([]);
+	const [selectedTags, setSelectedTags] = useState([]);
+
+	const [roamPages,] = useState(getAllPages());
 
 	const handleLibSelection = useCallback((event) => {
 		setSelectedLib(libraries.find(lib => lib.path == event.currentTarget.value));
@@ -35,32 +43,76 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 		});
 	}, []);
 
+	const createTag = useCallback((string) => string, []);
+
+	const addTag = useCallback((tag, _event) => {
+		setSelectedTags(currentTags => {
+			if(!currentTags.includes(tag)){
+				return [...currentTags, tag];
+			}
+		});
+	}, []);
+
+	const removeTag = useCallback((tag, _index) => {
+		setSelectedTags(currentTags => {
+			return currentTags.filter(t => t != tag);
+		});
+	}, []);
+
+	const tagInputProps = useMemo(() => {
+		return {
+			leftIcon: "tag",
+			tagProps: {
+				minimal: true
+			}
+		};
+	}, []);
+
 	return (
 		<>
 			<div className="import-header">
-				<ButtonGroup minimal={true}>
-					<Button icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
-					<Button disabled={!isActive} icon="inheritance" intent="primary">Add to Zotero</Button>
+				<ButtonGroup fill={true} minimal={true}>
+					<Button alignText="left" icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
+					<Button alignText="right" disabled={!isActive} icon="inheritance" intent="primary">Add to Zotero</Button>
 				</ButtonGroup>
 			</div>
 			<div className="import-options">
-				<RadioGroup 
-					inline={false}
-					name="import-library"
-					onChange={handleLibSelection}
-					options={libraries.map(lib => { return { value: lib.path }; })}
-					selectedValue={selectedLib.path}/>
+				<div className="options-library-list">
+					<RadioGroup 
+						inline={false}
+						name="import-library"
+						onChange={handleLibSelection}
+						options={libraries.map(lib => { return { value: lib.path }; })}
+						selectedValue={selectedLib.path}/>
+				</div>
 				{collections.length == 0
 					? <Spinner />
-					: selectedLibCollections.map(coll => {
-						return <Checkbox key={coll.key}
-							checked={selectedColls.includes(coll.key)}
-							defaultChecked={false}
-							inline={false}
-							label={coll.data.name}
-							onChange={() => handleCollChange(coll.key)}
-						/>;
-					})}
+					: <div className="options-collections-list">
+						{selectedLibCollections.map(coll => {
+							return <Checkbox key={coll.key}
+								checked={selectedColls.includes(coll.key)}
+								defaultChecked={false}
+								inline={false}
+								label={coll.data.name}
+								onChange={() => handleCollChange(coll.key)}
+							/>;})}
+					</div>
+				}
+				<div className="options-tags">
+					<MultiSelect
+						createNewItemFromQuery={createTag}
+						createNewItemPosition="first"
+						fill={true}
+						initialContent={null}
+						items={roamPages}
+						onItemSelect={addTag}
+						onRemove={removeTag}
+						openOnKeyDown={true}
+						placeholder="Add tags from Roam"
+						selectedItems={selectedTags}
+						tagInputProps={tagInputProps}
+					/>
+				</div>
 			</div>
 		</>
 	);

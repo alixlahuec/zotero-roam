@@ -122,13 +122,18 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 		};
 	}, [addToImport, itemsForImport, removeFromImport, resetImport]);
 
+	const handleClose = useCallback(() => {
+		resetImport();
+		onClose();
+	}, [onClose, resetImport]);
+
 	return (
 		<AuxiliaryDialog
 			ariaLabelledBy={labelId}
 			className="citations"
 			extraClasses={has_selected_items ? ["has-selected-items"] : []}
 			isOpen={isOpen}
-			onClose={onClose}
+			onClose={handleClose}
 			portalId={portalId}
 		>
 			<div className={ Classes.DIALOG_BODY }>
@@ -137,7 +142,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 						defaultTab={show.type}
 						items={items}
 						metadataSettings={metadataSettings}
-						onClose={onClose}
+						onClose={handleClose}
 						selectProps={selectProps}
 						title={show.title}
 					/>

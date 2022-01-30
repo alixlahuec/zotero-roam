@@ -132,6 +132,12 @@ function findRoamPage(title){
 	}
 }
 
+function getAllPages(){
+	return window.roamAlphaAPI.q("[:find ?title :where[?e :node/title ?title]]")
+		.flat(1)
+		.sort((a,b) => a.toLowerCase() < b.toLowerCase() ? -1 : 1);
+}
+
 /** Retrieves the list of citekey pages (i.e, starting with `@`) in the Roam graph
  * @returns {Map<String,String>} A Map whose `keys` are the pages' titles, and whose `entries` are the pages' UIDs
  */
@@ -218,6 +224,7 @@ export {
 	addBlocksArray,
 	addPaletteCommand,
 	findRoamPage,
+	getAllPages,
 	getCitekeyPages,
 	importItemMetadata,
 	openInSidebarByUID,

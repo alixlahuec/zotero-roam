@@ -180,8 +180,6 @@ h4.item-title{
 .bp3-dark .item-basic-metadata,
 .bp3-dark .item-additional-metadata,
 .bp3-dark .citekey-element,
-.copy-buttons .bp3-button,
-.copy-buttons .bp3-button:hover,
 .bp3-dark .item-actions .bp3-button-group button,
 .bp3-dark .item-actions .bp3-button-group .bp3-button {
     color: var(--zr-dark-text-co, #76a0cb);
@@ -192,8 +190,6 @@ h4.item-title{
     border-bottom-color: var(--zr-dark-border-color,#363a3f);
 }
 
-.bp3-dark .copy-buttons > .bp3-button,
-.bp3-dark .copy-buttons > .bp3-button:hover,
 .bp3-dark .item-actions .bp3-divider {
     border-color: var(--zr-dark-border-color,#363a3f);
 }
@@ -222,8 +218,6 @@ h4.item-title{
     .item-basic-metadata,
     .item-additional-metadata,
     .citekey-element,
-    .copy-buttons .bp3-button,
-    .copy-buttons .bp3-button:hover,
     .item-actions button[type="button"],
     .item-actions .bp3-button-group .bp3-button {
         color: var(--zr-dark-text-co,#76a0cb);
@@ -232,8 +226,6 @@ h4.item-title{
         border-top-color: var(--zr-dark-border-color,#363a3f);
         border-bottom-color: var(--zr-dark-border-color,#363a3f);
     }
-    .copy-buttons > .bp3-button,
-    .copy-buttons > .bp3-button:hover,
     .item-actions > .bp3-card .bp3-divider {
         border-color: var(--zr-dark-border-color,#363a3f);
     }

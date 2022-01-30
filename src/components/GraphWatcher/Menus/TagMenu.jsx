@@ -9,10 +9,17 @@ import * as customPropTypes from "../../../propTypes";
 function TagMenu(props){
 	const { inAbstract = [], metadataSettings, tag, tagged = [], portalId } = props;
 	const [isDialogOpen, setDialogOpen] = useState(false);
-	const [isShowing, setShowing] = useState({});
+	const [isShowing, setShowing] = useState(null);
 
 	const hasTaggedItems = tagged.length > 0;
 	const hasAbstracts = inAbstract.length > 0;
+
+	const defaultShowProps = useMemo(() => {
+		return {
+			title: tag,
+			type: hasTaggedItems ? "with_tag" : "with_abstract"
+		};
+	}, [hasTaggedItems, tag]);
 
 	const showAbstracts = useCallback(() => {
 		setDialogOpen(true);
@@ -53,11 +60,11 @@ function TagMenu(props){
 			{hasTaggedItems || hasAbstracts
 				? <RelatedPanel
 					isOpen={isDialogOpen}
-					items={isShowing.type == "with_tag" ? tagged : inAbstract} 
+					items={(isShowing || defaultShowProps).type == "with_tag" ? tagged : inAbstract} 
 					metadataSettings={metadataSettings}
 					onClose={closeDialog}
 					portalId={portalId}
-					show={isShowing} />
+					show={isShowing || defaultShowProps} />
 				: null}
 		</>
 	);

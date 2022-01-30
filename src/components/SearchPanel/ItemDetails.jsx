@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
-import { Button, ButtonGroup, Classes, Divider, Icon, Menu, MenuItem, Tag } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ButtonLink from "../ButtonLink";
@@ -45,7 +45,7 @@ CopyOption.propTypes = {
 };
 
 function CopyButtons(props){
-	const { citekey, defaultCopyFormat, item } = props;
+	const { citekey, defaultCopyFormat, inGraph, item } = props;
 
 	const defaultCopyText = useMemo(() => {
 		return formatItemReferenceForCopy(item, defaultCopyFormat);
@@ -70,10 +70,11 @@ function CopyButtons(props){
 			<Button className={["zr-text-small", "zr-secondary"].join(" ")}
 				fill={true} 
 				icon="clipboard"
+				intent={inGraph ? "success" : "warning"}
 				text={defaultCopyText} 
 				onClick={() => copyToClipboard(defaultCopyText)} />
 			<Popover2 interactionKind="hover" placement="right-start" content={optionsMenu} >
-				<Button className="zr-secondary" icon="caret-right" />
+				<Button className="zr-secondary" icon="caret-right" intent={inGraph ? "success" : "warning"} />
 			</Popover2>
 		</ButtonGroup>
 	);
@@ -81,6 +82,7 @@ function CopyButtons(props){
 CopyButtons.propTypes = {
 	defaultCopyFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
 	citekey: PropTypes.string,
+	inGraph: PropTypes.bool,
 	item: PropTypes.object
 };
 
@@ -163,15 +165,9 @@ function ItemDetails(props) {
 					: null}
 			</div>
 			<div className="item-citekey-section" data-in-graph={inGraph.toString()}>
-				<div className={Classes.FILL + " citekey-element"}>
-					{inGraph
-						? <Icon icon="symbol-circle" intent="success" />
-						: <Icon icon="minus" intent="warning" />}
-					{"@" + key}
-				</div>
 				{navigator.clipboard
-					? <CopyButtons citekey={key} item={props.item} defaultCopyFormat={defaultCopyFormat} />
-					: null}
+					? <CopyButtons citekey={key} inGraph={inGraph != false} item={props.item} defaultCopyFormat={defaultCopyFormat} />
+					: <div className={[Classes.FILL, "citekey-element"].join(" ")}>@{key}</div>}
 			</div>
 		</div>
 		<div className="selected-item-body">
