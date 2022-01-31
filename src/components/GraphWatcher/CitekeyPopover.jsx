@@ -21,7 +21,8 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 			className: "zr-library-item-popover",
 			interactionKind: "hover",
 			lazy: true,
-			placement: "right-start"
+			placement: "right-start",
+			popoverClassName: "zr-popover"
 		};
 	}, []);
 

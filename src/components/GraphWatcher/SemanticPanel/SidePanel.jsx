@@ -17,7 +17,7 @@ const SelectedImportItem = React.memo(function SelectedImportItem(props) {
 		<li className={["import-items_selected", "zr-text-small"].join(" ")}>
 			<div className="selected_info">
 				<span className={[Classes.TEXT_MUTED, "selected_title"].join(" ")}>{item.title}</span>
-				<span className="selected_origin">{item.meta}</span>
+				<span className={["zr-secondary", "selected_origin"].join(" ")}>{item.meta}</span>
 			</div>
 			<div className="selected_state">
 				<ButtonGroup minimal={true} small={true}>

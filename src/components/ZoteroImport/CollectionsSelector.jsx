@@ -13,7 +13,7 @@ const CollectionOption = React.memo(function CollectionOption(props) {
 	return (
 		<Checkbox key={key}
 			checked={isChecked}
-			data-option-depth={depth}
+			className={["zr-text-small", `depth-${depth}`].join(" ")}
 			defaultChecked={false}
 			inline={false}
 			label={name}

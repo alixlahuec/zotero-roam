@@ -98,23 +98,25 @@ async function fetchItems(req, { match = [] } = {}) {
 			let deleted = [];
 			// DO NOT request deleted items since X if since = 0 (aka, initial data request)
 			// It's a waste of a call
-			if(since > 0 && modified.length > 0){
+			if(since > 0){
 				// Retrieve deleted items, if any
 				deleted = await fetchDeleted({ apikey, path: library }, since);
 
-				// Refetch tags data
-				const client = useQueryClient();
-				let tagsQueryKey = ["tags", { library: library, apikey: apikey }];
-				let { lastUpdated: latest_tags_version } = client.getQueryData(tagsQueryKey) || {}; // TODO: Check if getQueryData needs exact matching - if not, remove the apikey portion of line above
-				if(Number(latest_tags_version) < Number(lastUpdated)){
-					client.refetchQueries(tagsQueryKey);
-				}
+				if(modified.length > 0){
+					// Refetch tags data
+					const client = useQueryClient();
+					let tagsQueryKey = ["tags", { library: library, apikey: apikey }];
+					let { lastUpdated: latest_tags_version } = client.getQueryData(tagsQueryKey) || {}; // TODO: Check if getQueryData needs exact matching - if not, remove the apikey portion of line above
+					if(Number(latest_tags_version) < Number(lastUpdated)){
+						client.refetchQueries(tagsQueryKey);
+					}
 
-				emitCustomEvent("update", {
-					success: true,
-					request: req,
-					data: modified
-				});
+					emitCustomEvent("update", {
+						success: true,
+						request: req,
+						data: modified
+					});
+				}
 			}
 
 			return {
@@ -344,7 +346,8 @@ async function writeItems(items, {library, collections = [], tags = []} = {}){
 			tags: clean_tags
 		};
 	});
-
+	// TODO: Handle case where more than 50 items are selected for import
+	// https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
 	return zoteroClient.post(`${path}/items`, JSON.stringify(data), { headers: { "Zotero-API-Key": apikey } });
 }
 

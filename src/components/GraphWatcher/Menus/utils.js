@@ -22,7 +22,7 @@ const addPageMenus = () => {
 			menu.classList.add(menuClasses.citekey);
 			menu.setAttribute("data-citekey", title.slice(1));
 			break;
-		case (dnpRegex.test(title)):
+		case (dnpRegex.test(`${title}`)): // Using string literal to fix odd bug when reading a DNP page title (main view)
 			// (DNP) : "XX items added"
 			menu.classList.add(menuClasses.dnp);
 			menu.setAttribute("data-dnp-date", JSON.stringify(readDNP(title, { as_date: false })));

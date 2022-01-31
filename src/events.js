@@ -1,4 +1,5 @@
 import zrToaster from "./toaster";
+import { pluralize } from "./utils";
 
 const events = [
 	/**
@@ -80,6 +81,21 @@ function setDefaultHooks(){
 		} else {
 			// For testing
 			console.log(e);
+		}
+	});
+	document.addEventListener("zotero-roam:write", (e) => {
+		let { data, error, library } = e.detail;
+		if(error){
+			console.error(error);
+			zrToaster.show({
+				intent: "danger",
+				message: `Import to Zotero failed : \n ${error}`
+			});
+		} else {
+			zrToaster.show({
+				intent: "success",
+				message: pluralize(data?.successful?.length, "item", ` added to ${library}`)
+			});
 		}
 	});
 }

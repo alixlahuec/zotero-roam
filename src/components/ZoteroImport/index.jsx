@@ -5,7 +5,6 @@ import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
 import TagsSelector from "./TagsSelector";
-import zrToaster from "../../toaster";
 
 import { useQuery_Citoid, useQuery_Collections, useQuery_Permissions } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
@@ -27,14 +26,13 @@ const ImportButton = React.memo(function ImportButton(props) {
 
 	const triggerImport = useCallback(() => {
 		const { collections, library, tags } = importProps;
-		mutate({ citoids, collections, library, tags }, {
-			onSettled: (data, error, variables) => {
-				if(error){
-					console.log(data, variables);
-					zrToaster.show({ intent: "danger", message: "The import to Zotero failed : \n " + error});
-				}
-				resetImport();
-			}
+		mutate({ 
+			collections, 
+			items: citoids, 
+			library, 
+			tags 
+		}, {
+			onSettled: (_data, _error, _variables) => resetImport()
 		});
 	}, [citoids, importProps, mutate, resetImport]);
 
@@ -44,12 +42,12 @@ const ImportButton = React.memo(function ImportButton(props) {
 				disabled: true,
 				text: "Loading..."
 			};
-		} else if(status == "success") {
+		} else if(status == "error") {
 			return {
 				disabled: true,
-				icon: "check",
-				intent: "success",
-				text: "Done"
+				icon: "error",
+				intent: "danger",
+				text: "Error"
 			};
 		} else {
 			return {
@@ -227,7 +225,6 @@ ZoteroImport.propTypes = {
 		items: PropTypes.arrayOf(PropTypes.string),
 		resetImport: PropTypes.func
 	})
-    
 };
 
 export default ZoteroImport;

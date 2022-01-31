@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
+import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
 
 import ButtonLink from "../../ButtonLink";
 import CitekeyPopover from "../CitekeyPopover";
@@ -76,7 +76,10 @@ const Backlinks = React.memo(function Backlinks(props) {
 				{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} metadataSettings={metadataSettings} />)}
 			</ul> 
 			: null;
-		const separator = <span className="backlinks-list_divider"><Tag minimal={true} multiline={true}>{origin}</Tag><hr /></span>;
+		const separator = <span>
+			<Tag className="zr-backlinks-divider--tag" minimal={true} multiline={true}>{origin}</Tag>
+			<Divider />
+		</span>;
 
 		return (
 			<Collapse isOpen={isOpen} keepChildrenMounted={true}>

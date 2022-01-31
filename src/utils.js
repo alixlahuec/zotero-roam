@@ -433,7 +433,7 @@ function parseDOI(doi){
 /** Quantifies an ordinary English noun
  * @param {Integer} num - The quantity 
  * @param {String} string - The noun to quantify 
- * @param {String} suffix - An optional suffix for the noun
+ * @param {String} suffix - An optional suffix for the noun, apposed immediately after the noun (without spacing).
  * @returns A properly pluralized string
  */
 function pluralize(num, string, suffix = "") {

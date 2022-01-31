@@ -17,6 +17,7 @@ const LibrarySelector = React.memo(function LibrarySelector(props) {
 
 	return (
 		<RadioGroup 
+			className="zr-text-small"
 			inline={false}
 			name="import-library"
 			onChange={handleSelection}
