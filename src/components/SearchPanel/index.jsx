@@ -12,7 +12,7 @@ import * as customPropTypes from "../../propTypes";
 import "./index.css";
 import { useQuery_Items } from "../../api/queries";
 
-const query_threshold = 3;
+const query_threshold = 0;
 const query_debounce = 300;
 const results_limit = 50;
 

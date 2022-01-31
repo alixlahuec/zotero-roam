@@ -67,14 +67,14 @@ function CopyButtons(props){
 
 	return (
 		<ButtonGroup className="copy-buttons" fill={true} minimal={true} >
-			<Button className={["zr-text-small", "zr-secondary"].join(" ")}
+			<Button className="zr-text-small"
 				fill={true} 
 				icon="clipboard"
 				intent={inGraph ? "success" : "warning"}
 				text={defaultCopyText} 
 				onClick={() => copyToClipboard(defaultCopyText)} />
-			<Popover2 interactionKind="hover" placement="right-start" content={optionsMenu} >
-				<Button className="zr-secondary" icon="caret-right" intent={inGraph ? "success" : "warning"} />
+			<Popover2 interactionKind="hover" placement="right-start" popoverClassName="zr-popover" content={optionsMenu} >
+				<Button icon="caret-right" intent={inGraph ? "success" : "warning"} />
 			</Popover2>
 		</ButtonGroup>
 	);

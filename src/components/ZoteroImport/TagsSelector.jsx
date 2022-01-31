@@ -38,7 +38,6 @@ const TagsSelector = React.memo(function TagsSelector(props) {
 			canEscapeKeyClose: false,
 			fill: true,
 			minimal: true,
-			placement: "bottom",
 			popoverClassName: "zr-popover"
 		};
 	}, []);
@@ -67,6 +66,8 @@ const TagsSelector = React.memo(function TagsSelector(props) {
 			openOnKeyDown={true}
 			placeholder="Add tags from Roam"
 			popoverProps={popoverProps}
+			resetOnQuery={true}
+			resetOnSelect={true}
 			selectedItems={selectedTags}
 			tagInputProps={tagInputProps}
 			tagRenderer={tagRenderer}

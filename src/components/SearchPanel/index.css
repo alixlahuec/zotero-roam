@@ -203,7 +203,7 @@ h4.item-title{
 .bp3-dark .item-basic-metadata,
 .bp3-dark .item-additional-metadata,
 .bp3-dark .item-actions > .bp3-card { 
-    background-color:var(--zr-dark-elem-bg, #2B3143);
+    background-color: var(--zr-dark-elem-bg, #2B3143);
 }
 
 @media (prefers-color-scheme: dark){

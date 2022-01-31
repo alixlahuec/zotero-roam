@@ -96,6 +96,8 @@ function setDefaultHooks(){
 				intent: "success",
 				message: pluralize(data?.successful?.length, "item", ` added to ${library}`)
 			});
+			// For debugging :
+			console.log(data);
 		}
 	});
 }

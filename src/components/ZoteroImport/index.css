@@ -3,9 +3,9 @@
 .options-library-list, .options-collections-list{flex:1 0 50%;}
 .options-collections-list {max-height: 50vh;overflow-y:scroll;padding-top:2px;}
 .options-collections-list::-webkit-scrollbar {width:0.2em;}
-.options-collections-list label{font-weight:400;margin-bottom:0px;}
-.options-collections-list label[data-option-depth="0"]{margin-left:0px;}
-.options-collections-list label[data-option-depth="1"]{margin-left:20px;}
+.options-collections-list label{font-weight:400;margin-left: 40px;margin-bottom:0px;}
+.options-collections-list label.depth-0{margin-left:0px;}
+.options-collections-list label.depth-1{margin-left:20px;}
 .options-library-list label{font-weight:600;}
 .options-tags{padding:20px 0px;flex: 1 0 100%;flex-wrap:wrap;display:flex;}
 .options-tags-select{flex: 1 0 50%;}

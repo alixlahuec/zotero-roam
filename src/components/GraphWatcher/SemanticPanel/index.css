@@ -94,6 +94,11 @@
     padding: 0px 15px;
 }
 
+.zr-popover.bp3-multi-select-popover .bp3-menu {
+    max-width: calc(22vw - 30px);
+    width: calc(22vw - 30px);
+}
+
 li.import-items_selected {
     display:flex;
     justify-content:space-between;
