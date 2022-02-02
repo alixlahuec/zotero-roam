@@ -39,3 +39,12 @@
  * }}
  * ZoteroCollection
  */
+
+/**
+ * @typedef {{
+ * links: Object,
+ * meta: {numItems: Integer, type: Integer},
+ * tag: String
+ * }}
+ * ZoteroTag
+ */

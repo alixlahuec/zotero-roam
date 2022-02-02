@@ -4,17 +4,26 @@ import { InputGroup, NonIdealState } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
 import SemanticItem from "./SemanticItem";
+import { searchEngine } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
 
 const noResultsState = <NonIdealState className="zr-auxiliary" description="No results found" />;
 
-function searchEngine(query, items){
-	return items
-		.filter(it => it.title.toLowerCase().includes(query.toLowerCase()));
+function itemListPredicate(query, items){
+	return items.filter(it => searchEngine(
+		query, 
+		it._multiField,
+		{
+			any_case: true, 
+			match: "partial", 
+			search_compounds: true, 
+			word_order: "loose"
+		}
+	));
 }
 
-function listItemRenderer(item, _itemProps, metadataSettings, selectProps, type) {
+function listItemRenderer(item, _itemProps, metadataSettings, selectProps, type, updateRoamCitekeys) {
 	// let { handleClick, modifiers, query } = itemProps;
 	let { handleRemove, handleSelect, items: selectedItems } = selectProps;
 	let isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
@@ -26,11 +35,12 @@ function listItemRenderer(item, _itemProps, metadataSettings, selectProps, type)
 		isSelected={isSelected}
 		item={item} 
 		metadataSettings={metadataSettings} 
-		type={type} />;
+		type={type}
+		updateRoamCitekeys={updateRoamCitekeys} />;
 }
 
 const SemanticQuery = React.memo(function SemanticQuery(props) {
-	const { items, metadataSettings, selectProps, type } = props;
+	const { items, metadataSettings, selectProps, type, updateRoamCitekeys } = props;
 
 	const [query, setQuery] = useState();
 	const searchbar = useRef();
@@ -46,9 +56,10 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 				isSelected={isSelected}
 				item={it} 
 				metadataSettings={metadataSettings} 
-				type={type} />;
+				type={type}
+				updateRoamCitekeys={updateRoamCitekeys} />;
 		});
-	}, [items, metadataSettings, selectProps, type]);
+	}, [items, metadataSettings, selectProps, type, updateRoamCitekeys]);
 
 	const handleQueryChange = useCallback((query) => {
 		setQuery(query);
@@ -56,8 +67,8 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 	}, []);
 
 	const itemRenderer = useCallback((item, itemProps) => {
-		return listItemRenderer(item, itemProps, metadataSettings, selectProps, type);
-	}, [metadataSettings, selectProps, type]);
+		return listItemRenderer(item, itemProps, metadataSettings, selectProps, type, updateRoamCitekeys);
+	}, [metadataSettings, selectProps, type, updateRoamCitekeys]);
 
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
@@ -67,7 +78,7 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 				<InputGroup
 					id={"semantic-search--" + type}
 					leftIcon="search"
-					placeholder="Search by title"
+					placeholder="Search by title, authors (last names), or year"
 					spellCheck="false"
 					autoComplete="off"
 					onChange={handleQueryChange}
@@ -84,7 +95,7 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 		<QueryList 
 			initialContent={defaultContent}
 			items={items}
-			itemListPredicate={searchEngine}
+			itemListPredicate={itemListPredicate}
 			renderer={listRenderer}
 			itemRenderer={itemRenderer}
 			noResults={noResultsState}
@@ -102,7 +113,8 @@ SemanticQuery.propTypes = {
 		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 		resetImport: PropTypes.func
 	}),
-	type: PropTypes.oneOf(["is_citation", "is_reference"])
+	type: PropTypes.oneOf(["is_citation", "is_reference"]),
+	updateRoamCitekeys: PropTypes.func
 };
 
 export default SemanticQuery;

@@ -7,7 +7,7 @@ import { importItemMetadata, openInSidebarByUID, openPageByUID } from "../../roa
 import { getLocalLink, getWebLink } from "../../utils";
 
 const CitekeyPopover = React.memo(function CitekeyPopover(props) {
-	const { closeDialog, inGraph, item, metadataSettings, notes = [], pdfs = [] } = props;
+	const { closeDialog, inGraph, item, metadataSettings, notes = [], pdfs = [], updateRoamCitekeys } = props;
 
 	const handleClose = useCallback(() => {
 		if(closeDialog){
@@ -50,8 +50,12 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 	}, [item]);
 
 	const importMetadata = useCallback(async() => {
-		return await importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings);
-	}, [inGraph, item, metadataSettings, pdfs, notes]);
+		let outcome = await importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings);
+		if(outcome.success && outcome.page.new){
+			updateRoamCitekeys();
+		}
+		return outcome;
+	}, [inGraph, item, metadataSettings, pdfs, notes, updateRoamCitekeys]);
 
 	const importMetadataAndOpen = useCallback(async() => {
 		let { success, args: { uid }} = await importMetadata();
@@ -112,7 +116,8 @@ CitekeyPopover.propTypes = {
 	item: PropTypes.object,
 	metadataSettings: PropTypes.object,
 	notes: PropTypes.arrayOf(PropTypes.object),
-	pdfs: PropTypes.arrayOf(PropTypes.object)
+	pdfs: PropTypes.arrayOf(PropTypes.object),
+	updateRoamCitekeys: PropTypes.func
 };
 
 export default CitekeyPopover;

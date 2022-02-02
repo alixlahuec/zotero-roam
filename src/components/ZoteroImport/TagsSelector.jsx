@@ -4,6 +4,7 @@ import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect } from "@blueprintjs/select";
 
 import { getAllPages } from "../../roam";
+import { searchEngine } from "../../utils";
 
 const createNewItemFromQuery = (tag) => tag;
 const tagRenderer = (tag) => tag;
@@ -17,8 +18,16 @@ function itemRenderer(item, itemProps) {
 	return <MenuItem active={active} onClick={handleClick} text={item} />;
 }
 
-function itemPredicate(query, item) {
-	return item.toLowerCase().includes(query.toLowerCase());
+function itemListPredicate(query, items) {
+	return items.filter(item => searchEngine(
+		query, 
+		item, {
+			any_case: true,
+			match: "partial",
+			search_compounds: true,
+			word_order: "loose"
+		}))
+		.sort((a,b) => a.length < b.length ? -1 : 1);
 }
 
 const TagsSelector = React.memo(function TagsSelector(props) {
@@ -58,7 +67,7 @@ const TagsSelector = React.memo(function TagsSelector(props) {
 			createNewItemRenderer={createNewItemRenderer}
 			fill={true}
 			initialContent={null}
-			itemPredicate={itemPredicate}
+			itemListPredicate={itemListPredicate}
 			itemRenderer={itemRenderer}
 			items={roamPages}
 			onItemSelect={addTag}

@@ -7,7 +7,7 @@ import CitekeyPopover from "../CitekeyPopover";
 import * as customPropTypes from "../../../propTypes";
 
 const SemanticItem = React.memo(function SemanticItem(props) {
-	const { handleRemove, handleSelect, inGraph, isSelected, item, metadataSettings, type } = props;
+	const { handleRemove, handleSelect, inGraph, isSelected, item, metadataSettings, type, updateRoamCitekeys } = props;
 	const { inLibrary } = item;
 
 	const handleClick = useCallback(() => {
@@ -42,10 +42,10 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 		} else {
 			let { children: { pdfs, notes }, raw} = inLibrary;
 			return (
-				<CitekeyPopover inGraph={inGraph} item={raw} metadataSettings={metadataSettings} notes={notes} pdfs={pdfs} />
+				<CitekeyPopover inGraph={inGraph} item={raw} metadataSettings={metadataSettings} notes={notes} pdfs={pdfs} updateRoamCitekeys={updateRoamCitekeys} />
 			);
 		}
-	}, [handleClick, inGraph, inLibrary, isSelected, item.doi, item.url, metadataSettings]);
+	}, [handleClick, inGraph, inLibrary, isSelected, item.doi, item.url, metadataSettings, updateRoamCitekeys]);
 
 	return (
 		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
@@ -95,7 +95,8 @@ SemanticItem.propTypes = {
 	isSelected: PropTypes.bool,
 	item: customPropTypes.cleanSemanticReturnType,
 	metadataSettings: PropTypes.object,
-	type: PropTypes.oneOf(["is_reference", "is_citation"])
+	type: PropTypes.oneOf(["is_reference", "is_citation"]),
+	updateRoamCitekeys: PropTypes.func
 };
 
 export default SemanticItem;

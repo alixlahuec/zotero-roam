@@ -5,7 +5,7 @@ import { QueryList } from "@blueprintjs/select";
 
 import DialogOverlay from "../DialogOverlay";
 import ItemDetails from "./ItemDetails";
-import { copyToClipboard } from "../../utils";
+import { copyToClipboard, searchEngine } from "../../utils";
 import { getCitekeyPages } from "../../roam";
 import { cleanLibrary, formatItemReferenceForCopy } from "./utils";
 import * as customPropTypes from "../../propTypes";
@@ -21,21 +21,6 @@ const dialogClass="search-library";
 const resultClass = [Classes.TEXT_OVERFLOW_ELLIPSIS, "zr-library-item--contents"].join(" ");
 const resultKeyClass = [Classes.MENU_ITEM_LABEL, "zr-library-item--key"].join(" ");
 
-function useGetItems(reqs, roamCitekeys, opts = {}){
-	const itemQueries = useQuery_Items(reqs, {
-		...opts,
-		notifyOnChangeProps: ["data"],
-		select: (datastore) => {
-			if(datastore.data){
-				return cleanLibrary(datastore.data, roamCitekeys);
-			} else {
-				return [];
-			}
-		}
-	});
-
-	return itemQueries.map(q => q.data || []).flat(1);
-}
 
 // Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 function useDebounceCallback(callback, timeout) {
@@ -62,6 +47,48 @@ function useDebounceCallback(callback, timeout) {
 	return [debounceCallback, cancel];
 }
 
+function useGetItems(reqs, roamCitekeys, opts = {}){
+	const itemQueries = useQuery_Items(reqs, {
+		...opts,
+		notifyOnChangeProps: ["data"],
+		select: (datastore) => {
+			if(datastore.data){
+				return cleanLibrary(datastore.data, roamCitekeys);
+			} else {
+				return [];
+			}
+		}
+	});
+
+	return itemQueries.map(q => q.data || []).flat(1);
+}
+
+function itemListPredicate(query, items) {
+	if(query.length < query_threshold){
+		return [];
+	} else {
+		let matches = [];
+
+		for(let i = 0; matches.length < results_limit && i < items.length;i++){
+			let item = items[i];
+			if(searchEngine(
+				query, 
+				[item.key, item._multiField],
+				{ 
+					any_case: true, 
+					match: "partial", 
+					search_compounds: true, 
+					word_order: "loose"
+				}
+			)){
+				matches.push(item);
+			}
+		}
+  
+		return matches;
+	}
+}
+
 function listItemRenderer(item, itemProps) {
 	let { handleClick, modifiers /*, query*/ } = itemProps;
 	let elemKey = [item.location, item.key].join("-");
@@ -73,6 +100,23 @@ function listItemRenderer(item, itemProps) {
 	/>;
 }
 
+function renderListDiv(handleKeyDown, handleKeyUp, itemList, context){
+	const { handleClose, selectedItem, settings: { copy, metadata } } = context;
+
+	return selectedItem 
+		? <ItemDetails item={selectedItem} 
+			closeDialog={handleClose} 
+			defaultCopyFormat={copy.defaultFormat}
+			metadataSettings={metadata} />
+		: <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} >
+			{itemList}
+		</div>;
+}
+
+function testItemsEquality(a,b){
+	return (a.itemKey == b.itemKey && a.location == b.location);
+}
+
 const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 	const { handleKeyDown, handleKeyUp, handleQueryChange, searchbar, searchbarLeftElement, searchbarRightElement } = props;
 
@@ -80,7 +124,7 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 		<InputGroup
 			className={(Classes.INPUT, Classes.FILL)}
 			id="zotero-roam-search-autocomplete"
-			placeholder="Search by title, year, authors (last names), citekey, tags"
+			placeholder="Search by title, authors (last names), year, tags, or citekey"
 			spellCheck="false"
 			autoComplete="off"
 			type="text"
@@ -102,40 +146,6 @@ SearchInputGroup.propTypes = {
 	searchbarLeftElement: PropTypes.node,
 	searchbarRightElement: PropTypes.node
 };
-
-function renderListDiv(handleKeyDown, handleKeyUp, itemList, context){
-	const { handleClose, selectedItem, settings: { copy, metadata } } = context;
-
-	return selectedItem 
-		? <ItemDetails item={selectedItem} 
-			closeDialog={handleClose} 
-			defaultCopyFormat={copy.defaultFormat}
-			metadataSettings={metadata} />
-		: <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} >
-			{itemList}
-		</div>;
-}
-
-function searchEngine(query, items) {
-	if(query.length < query_threshold){
-		return [];
-	} else {
-		let matches = [];
-
-		for(let i = 0; matches.length < results_limit && i < items.length;i++){
-			let item = items[i];
-			if(item.title.includes(query)){
-				matches.push(item);
-			}
-		}
-  
-		return matches;
-	}
-}
-
-function testItemsEquality(a,b){
-	return (a.itemKey == b.itemKey && a.location == b.location);
-}
 
 const SearchResult = React.memo(function SearchResult(props) {
 	const { item, handleClick, modifiers } = props;
@@ -266,7 +276,7 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 		<QueryList
 			initialContent={null}
 			items={items}
-			itemListPredicate={searchEngine}
+			itemListPredicate={itemListPredicate}
 			itemRenderer={listItemRenderer}
 			itemsEqual={testItemsEquality}
 			onItemSelect={handleItemSelect}

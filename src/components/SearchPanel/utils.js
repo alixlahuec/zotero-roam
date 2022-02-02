@@ -28,29 +28,28 @@ function cleanLibrary(arr, roamCitekeys){
 			});
 			let tags = Array.from(new Set(item.data.tags.map(t => t.tag)));
 			let location = item.library.type + "s/" + item.library.id;
+			let itemKey = item.data.key;
 
-			let pdfs = lib.pdfs.filter(p => p.library.type + "s/" + p.library.id == location && p.data.parentItem == item.data.key);
-			let notes = lib.notes.filter(n => n.library.type + "s/" + n.library.id == location && n.data.parentItem == item.data.key);
+			let pdfs = lib.pdfs.filter(p => p.data.parentItem == itemKey && p.library.type + "s/" + p.library.id == location);
+			let notes = lib.notes.filter(n => n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location);
 
-			return {
+			let clean_item = {
 				abstract: item.data.abstractNote || "",
 				authors: item.meta.creatorSummary || "",
 				authorsFull: creators.map(cre => cre.full),
 				authorsLastNames: creators.map(cre => cre.last),
 				authorsRoles: creators.map(cre => cre.role),
-				authorsString: creators.map(cre => cre.full).join(" "),
 				children: {
 					pdfs,
 					notes
 				},
 				inGraph: roamCitekeys.has("@" + item.key) ? roamCitekeys.get("@" + item.key) : false,
-				itemKey: item.data.key,
+				itemKey,
 				itemType: item.data.itemType,
 				key: item.key,
 				location,
 				publication: item.data.publicationTitle || item.data.bookTitle || item.data.university || "",
 				tags: tags,
-				tagsString: tags.map(tag => `#${tag}`).join(", "),
 				title: item.data.title,
 				weblink,
 				year: item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear().toString() : "",
@@ -58,9 +57,17 @@ function cleanLibrary(arr, roamCitekeys){
 					local: getLocalLink(item, {format: "target"}),
 					web: getWebLink(item, {format: "target"})
 				},
-				"_multiField": "",
 				raw: item
 			};
+
+			clean_item._multiField = [
+				clean_item.authorsFull.join(" "), 
+				clean_item.year, 
+				clean_item.title, 
+				clean_item.tags.map(tag => `#${tag}`).join(", ")
+			].join(" ");
+
+			return clean_item;
 		});
 }
 

@@ -18,11 +18,12 @@ const sharedPropTypes = {
 	menus: PropTypes.arrayOf(PropTypes.node),
 	metadataSettings: PropTypes.object,
 	portalId: PropTypes.string,
-	roamCitekeys: PropTypes.instanceOf(Map)
+	roamCitekeys: PropTypes.instanceOf(Map),
+	updateRoamCitekeys: PropTypes.func
 };
 
 function CitekeyMenuFactory(props){
-	const { dataRequests, libraries, menus, metadataSettings, portalId, roamCitekeys } = props;
+	const { dataRequests, libraries, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys } = props;
 
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
@@ -45,11 +46,11 @@ function CitekeyMenuFactory(props){
 				.map((menu, i) => {
 					let { item, div } = menu;
 					return (
-						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} libraries={libraries} metadataSettings={metadataSettings} portalId={portalId} roamCitekeys={roamCitekeys} />, div)
+						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} libraries={libraries} metadataSettings={metadataSettings} portalId={portalId} roamCitekeys={roamCitekeys} updateRoamCitekeys={updateRoamCitekeys} />, div)
 					);
 				});
 		}
-	}, [citekeyItems, itemList, libraries, menus, metadataSettings, portalId, roamCitekeys]);
+	}, [citekeyItems, itemList, libraries, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys]);
 
 	return citekeyMenus;
 }
@@ -59,7 +60,7 @@ CitekeyMenuFactory.propTypes = {
 };
 
 function DNPMenuFactory(props){
-	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys } = props;
+	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys } = props;
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -88,18 +89,19 @@ function DNPMenuFactory(props){
 					return (
 						createPortal(<DNPMenu key={i} 
 							added={added} date={date} title={title} 
-							metadataSettings={metadataSettings} portalId={portalId} />, div)
+							metadataSettings={metadataSettings} portalId={portalId}
+							updateRoamCitekeys={updateRoamCitekeys} />, div)
 					);
 				});
 		}
-	}, [itemList, menus, metadataSettings, portalId, roamCitekeys]);
+	}, [itemList, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys]);
 
 	return dnpPortals;
 }
 DNPMenuFactory.propTypes = sharedPropTypes;
 
 function TagMenuFactory(props){
-	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys } = props;
+	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys } = props;
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -148,11 +150,12 @@ function TagMenuFactory(props){
 					return (
 						createPortal(<TagMenu key={i} 
 							tag={tag} inAbstract={with_abstract} tagged={with_tags} 
-							metadataSettings={metadataSettings} portalId={portalId} />, div)
+							metadataSettings={metadataSettings} portalId={portalId}
+							updateRoamCitekeys={updateRoamCitekeys} />, div)
 					);
 				});
 		}
-	}, [itemList, menus, metadataSettings, portalId, roamCitekeys, with_tags_or_abstract]);
+	}, [itemList, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys, with_tags_or_abstract]);
 
 	return tagPortals;
 }

@@ -1,4 +1,4 @@
-function _getChildren(item, queryClient){
+function _getChildren(item, queryClient) {
 	let location = item.library.type + "s/" + item.library.id;
 	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, queryClient)
 		.filter(el => el.data.parentItem == item.data.key);
@@ -23,7 +23,12 @@ function _getItems(select = "all", filters = {}, queryClient) {
 	}
 }
 
+function _getTags(queryClient) {
+	return queryClient.getQueriesData(["tags"]).map(query => (query[1] || {}).data || []).flat(1);
+}
+
 export {
 	_getChildren,
-	_getItems
+	_getItems,
+	_getTags
 };

@@ -1,5 +1,5 @@
 import { emitCustomEvent } from "./events";
-import { getItemMetadata } from "./formatting";
+import { getItemMetadata } from "./formatters/getItemMetadata";
 import { use_smartblock_metadata } from "./smartblocks";
 import { executeFunctionByName } from "./utils";
 
@@ -99,7 +99,7 @@ function addPaletteCommand(label, onSelect){
  * @param {String} string - The text contents of the block
  * @param {Number} order - The order of the block on the page
  * @param {Object} opts - (optional) Additional formatting to be used (`heading`, `text-align`, ...). See the Roam Alpha API documentation for the complete list of available options.
- * @returns {String} The UID of the created block
+ * @returns The UID of the created block
  * @see https://roamresearch.com/#/app/developer-documentation/page/Sq5IhwNQY
  */
 async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
@@ -115,7 +115,7 @@ async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
 			}
 		}
 	}
-	await window.roamAlphaAPI.createBlock({ "location": { "parent-uid": parentUID, "order": order }, "block": blockContents });
+	await window.roamAlphaAPI.createBlock({ location: { "parent-uid": parentUID, order }, "block": blockContents });
 	return blockUID;
 }
 
@@ -124,7 +124,13 @@ async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
  * @returns {String|false} The UID of the Roam page (if it exists), otherwise `false`
  */
 function findRoamPage(title){
-	let pageSearch = window.roamAlphaAPI.q("[:find ?uid :in $ ?title :where[?p :node/title ?title][?p :block/uid ?uid]]", title);
+	let pageSearch = window.roamAlphaAPI.q(`[
+		:find ?uid 
+		:in $ ?title 
+		:where
+			[?p :node/title ?title]
+			[?p :block/uid ?uid]
+		]`, title);
 	if(pageSearch.length > 0){
 		return pageSearch[0][0];
 	} else{
@@ -132,8 +138,15 @@ function findRoamPage(title){
 	}
 }
 
+/** Retrieves the full list of Roam pages, sorted in alphabetical order
+ * @returns {String[]} The array of all page titles, sorted from A-Z
+ */
 function getAllPages(){
-	return window.roamAlphaAPI.q("[:find ?title :where[?e :node/title ?title]]")
+	return window.roamAlphaAPI.q(`[
+		:find ?title 
+		:where
+			[?e :node/title ?title]
+		]`)
 		.flat(1)
 		.sort((a,b) => a.toLowerCase() < b.toLowerCase() ? -1 : 1);
 }
@@ -142,10 +155,32 @@ function getAllPages(){
  * @returns {Map<String,String>} A Map whose `keys` are the pages' titles, and whose `entries` are the pages' UIDs
  */
 function getCitekeyPages(){
-	return new Map(window.roamAlphaAPI.q("[:find ?title ?uid :where[?e :node/title ?title][(clojure.string/starts-with? ?title \"@\")][?e :block/uid ?uid]]"));
+	return new Map(window.roamAlphaAPI.q(`[
+		:find ?title ?uid 
+		:where
+			[?e :node/title ?title]
+			[(clojure.string/starts-with? ?title "@")]
+			[?e :block/uid ?uid]
+		]`));
+}
+
+/** Retrieves the full list of Roam pages whose title begins with any of the keys provided
+ * @param {String[]} keys - The Array of keys for which to retrieve Roam pages 
+ * @returns {{title: String, uid: String}[]} The Array of pages whose title begins with any of the specified initials
+ */
+function getInitialedPages(keys){
+	return window.roamAlphaAPI.q(`[
+		:find (pull ?e [:node/title :block/uid]) 
+		:in $ [?k ...] 
+		:where
+			[?e :node/title ?title]
+			[(clojure.string/starts-with? ?title ?k)]
+		]`, keys)
+		.flat(1);
 }
 
 /** Imports an item's metadata as Roam blocks
+ * @fires zotero-roam:metadata-added
  * @param {{item: ZoteroItem|Object, pdfs: Array, notes: Array}} itemData - The item's Zotero data and its children, if any
  * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
  * @param {Object} config - The user's `metadata` settings 
@@ -157,7 +192,7 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 	let page = { new: null, title, uid: pageUID };
 	
 	if(pageUID != uid){
-		window.roamAlphaAPI.createPage({"page": {"title": title, "uid": pageUID}});
+		window.roamAlphaAPI.createPage({ page: { title, "uid": pageUID}});
 		page.new = true;
 	} else {
 		page.new = false;
@@ -185,13 +220,13 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 			let outcome = {
 				args,
 				error,
+				page,
 				raw: {
 					item,
 					pdfs,
 					notes
 				},
-				success,
-				title
+				success
 			};
 			emitCustomEvent("metadata-added", outcome);
 			
@@ -209,15 +244,15 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
  * @see https://roamresearch.com/#/app/developer-documentation/page/yHDobV8KV
  */
 async function openInSidebarByUID(uid, type = "outline"){
-	await window.roamAlphaAPI.ui.rightSidebar.addWindow({window:{"type": type, "block-uid": uid}});
+	await window.roamAlphaAPI.ui.rightSidebar.addWindow({ window: { type, "block-uid": uid}});
 }
 
 /** Navigates to a Roam page, based on its UID.
  * @param {String} uid - The UID of the Roam page 
  * @see https://roamresearch.com/#/app/developer-documentation/page/_VyuLpfWb
  */
-function openPageByUID(uid){
-	window.roamAlphaAPI.ui.mainWindow.openPage({page: {uid: uid}});
+async function openPageByUID(uid){
+	await window.roamAlphaAPI.ui.mainWindow.openPage({ page: { uid }});
 }
 
 export {
@@ -226,6 +261,7 @@ export {
 	findRoamPage,
 	getAllPages,
 	getCitekeyPages,
+	getInitialedPages,
 	importItemMetadata,
 	openInSidebarByUID,
 	openPageByUID

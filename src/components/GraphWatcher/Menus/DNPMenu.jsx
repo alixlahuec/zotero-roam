@@ -7,7 +7,7 @@ import { pluralize } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
 
 function DNPMenu(props){
-	const { added, date, metadataSettings, portalId, title } = props;
+	const { added, date, metadataSettings, portalId, title, updateRoamCitekeys } = props;
 	const [isDialogOpen, setDialogOpen] = useState(false);
 
 	const hasAddedItems = added.length > 0;
@@ -44,6 +44,7 @@ function DNPMenu(props){
 						onClose={closeDialog}
 						portalId={portalId}
 						show={isShowing} 
+						updateRoamCitekeys={updateRoamCitekeys}
 					/>
 				</>
 				: null}
@@ -56,6 +57,7 @@ DNPMenu.propTypes = {
 	metadataSettings: PropTypes.object,
 	portalId: PropTypes.string,
 	title: PropTypes.string,
+	updateRoamCitekeys: PropTypes.func
 };
 
 export default DNPMenu;

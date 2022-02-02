@@ -13,7 +13,7 @@ import "./index.css";
 const labelId = "zr-semantic-panel-label";
 
 const SemanticTabList = React.memo(function SemanticTabList(props) {
-	const { defaultTab, items, metadataSettings, onClose, selectProps, title } = props;
+	const { defaultTab, items, metadataSettings, onClose, selectProps, title, updateRoamCitekeys } = props;
 	const [isActiveTab, setActiveTab] = useState(defaultTab);
 	
 	useEffect(() => {
@@ -54,6 +54,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 					metadataSettings={metadataSettings}
 					selectProps={selectProps}
 					type="is_reference"
+					updateRoamCitekeys={updateRoamCitekeys}
 				/>} 
 				disabled={references.length == 0}
 				title={references_title}
@@ -64,6 +65,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 					metadataSettings={metadataSettings}
 					selectProps={selectProps}
 					type="is_citation"
+					updateRoamCitekeys={updateRoamCitekeys}
 				/>}
 				disabled={citations.length == 0}
 				title={citations_title}
@@ -85,11 +87,12 @@ SemanticTabList.propTypes = {
 		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 		resetImport: PropTypes.func
 	}),
-	title: PropTypes.string
+	title: PropTypes.string,
+	updateRoamCitekeys: PropTypes.func
 };
 
 const SemanticPanel = React.memo(function SemanticPanel(props){
-	const { isOpen, items, libraries, metadataSettings, onClose, portalId, show } = props;
+	const { isOpen, items, libraries, metadataSettings, onClose, portalId, show, updateRoamCitekeys } = props;
 	const [itemsForImport, setItemsForImport] = useState([]);
 
 	const has_selected_items = itemsForImport.length > 0;
@@ -145,6 +148,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 						onClose={handleClose}
 						selectProps={selectProps}
 						title={show.title}
+						updateRoamCitekeys={updateRoamCitekeys}
 					/>
 				</div>
 				<SidePanel libraries={libraries} selectProps={selectProps} />
@@ -162,7 +166,8 @@ SemanticPanel.propTypes = {
 	show: PropTypes.shape({
 		title: PropTypes.string,
 		type: PropTypes.oneOf(["is_citation", "is_reference"])
-	})
+	}),
+	updateRoamCitekeys: PropTypes.func
 };
 
 export default SemanticPanel;

@@ -7,7 +7,7 @@ import { pluralize } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
 
 function TagMenu(props){
-	const { inAbstract = [], metadataSettings, tag, tagged = [], portalId } = props;
+	const { inAbstract = [], metadataSettings, tag, tagged = [], portalId, updateRoamCitekeys } = props;
 	const [isDialogOpen, setDialogOpen] = useState(false);
 	const [isShowing, setShowing] = useState(null);
 
@@ -64,7 +64,8 @@ function TagMenu(props){
 					metadataSettings={metadataSettings}
 					onClose={closeDialog}
 					portalId={portalId}
-					show={isShowing || defaultShowProps} />
+					show={isShowing || defaultShowProps}
+					updateRoamCitekeys={updateRoamCitekeys} />
 				: null}
 		</>
 	);
@@ -74,7 +75,8 @@ TagMenu.propTypes = {
 	metadataSettings: PropTypes.object,
 	tag: PropTypes.string,
 	tagged: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
-	portalId: PropTypes.string
+	portalId: PropTypes.string,
+	updateRoamCitekeys: PropTypes.func
 };
 
 export default TagMenu;

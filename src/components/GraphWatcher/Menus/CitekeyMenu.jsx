@@ -14,7 +14,7 @@ import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, 
 import * as customPropTypes from "../../../propTypes";
 
 function BacklinksItem(props) {
-	const { entry, metadataSettings } = props;
+	const { entry, metadataSettings, updateRoamCitekeys } = props;
 	const { _type, inLibrary, inGraph } = entry;
 	const { children: { pdfs, notes }, raw: item} = inLibrary;
 	const { key, data, meta } = item;
@@ -28,8 +28,9 @@ function BacklinksItem(props) {
 			item={item} 
 			metadataSettings={metadataSettings}
 			notes={notes}
-			pdfs={pdfs} />;
-	}, [inGraph, item, metadataSettings, notes, pdfs]);
+			pdfs={pdfs}
+			updateRoamCitekeys={updateRoamCitekeys} />;
+	}, [inGraph, item, metadataSettings, notes, pdfs, updateRoamCitekeys]);
 
 	return (
 		<li className="zr-backlink-item" 
@@ -52,11 +53,12 @@ function BacklinksItem(props) {
 }
 BacklinksItem.propTypes = {
 	entry: customPropTypes.cleanSemanticReturnType,
-	metadataSettings: PropTypes.object
+	metadataSettings: PropTypes.object,
+	updateRoamCitekeys: PropTypes.func
 };
 
 const Backlinks = React.memo(function Backlinks(props) {
-	const { isOpen, items, metadataSettings, origin } = props;
+	const { isOpen, items, metadataSettings, origin, updateRoamCitekeys } = props;
 
 	if(items.length == 0){
 		return null;
@@ -68,12 +70,12 @@ const Backlinks = React.memo(function Backlinks(props) {
 
 		const refList = references.length > 0 
 			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="references">
-				{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} metadataSettings={metadataSettings} />)}
+				{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} metadataSettings={metadataSettings} updateRoamCitekeys={updateRoamCitekeys} />)}
 			</ul> 
 			: null;
 		const citList = citations.length > 0 
 			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="citations">
-				{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} metadataSettings={metadataSettings} />)}
+				{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} metadataSettings={metadataSettings} updateRoamCitekeys={updateRoamCitekeys} />)}
 			</ul> 
 			: null;
 		const separator = <span>
@@ -98,11 +100,12 @@ Backlinks.propTypes = {
 	isOpen: PropTypes.bool,
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 	metadataSettings: PropTypes.object,
-	origin: PropTypes.string
+	origin: PropTypes.string,
+	updateRoamCitekeys: PropTypes.func
 };
 
 function RelatedItemsBar(props) {
-	const { doi, itemList, libraries, metadataSettings, origin, portalId, roamCitekeys, title } = props;
+	const { doi, itemList, libraries, metadataSettings, origin, portalId, roamCitekeys, title, updateRoamCitekeys } = props;
 	const { isLoading, isError, data = {}, error } = useQuery_Semantic(doi);
 	
 	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
@@ -180,9 +183,10 @@ function RelatedItemsBar(props) {
 							metadataSettings={metadataSettings}
 							onClose={closeDialog}
 							portalId={portalId}
-							show={isShowing} />
+							show={isShowing}
+							updateRoamCitekeys={updateRoamCitekeys} />
 						: null}
-					<Backlinks isOpen={isBacklinksListOpen} items={cleanSemanticData.backlinks} metadataSettings={metadataSettings} origin={origin} />
+					<Backlinks isOpen={isBacklinksListOpen} items={cleanSemanticData.backlinks} metadataSettings={metadataSettings} origin={origin} updateRoamCitekeys={updateRoamCitekeys} />
 				</>
 			}
 		</div>
@@ -200,11 +204,12 @@ RelatedItemsBar.propTypes = {
 	origin: PropTypes.string,
 	portalId: PropTypes.string,
 	roamCitekeys: PropTypes.instanceOf(Map),
-	title: PropTypes.string
+	title: PropTypes.string,
+	updateRoamCitekeys: PropTypes.func
 };
 
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
-	const { item, itemList, libraries, metadataSettings, portalId, roamCitekeys } = props;
+	const { item, itemList, libraries, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys } = props;
 
 	const doi = parseDOI(item.data.DOI);
 	const pageUID = findRoamPage("@" + item.key);
@@ -281,9 +286,10 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				portalId={portalId}
 				roamCitekeys={roamCitekeys}
 				title={"@" + item.key}
+				updateRoamCitekeys={updateRoamCitekeys}
 			/>
 			: null;
-	}, [doi, item.key, item.meta.parsedDate, itemList, libraries, metadataSettings, portalId, roamCitekeys]);
+	}, [doi, item.key, item.meta.parsedDate, itemList, libraries, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys]);
 
 	return (
 		<>
@@ -315,7 +321,8 @@ CitekeyMenu.propTypes = {
 	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	metadataSettings: PropTypes.object,
 	portalId: PropTypes.string,
-	roamCitekeys: PropTypes.instanceOf(Map)
+	roamCitekeys: PropTypes.instanceOf(Map),
+	updateRoamCitekeys: PropTypes.func
 };
 
 export default CitekeyMenu;

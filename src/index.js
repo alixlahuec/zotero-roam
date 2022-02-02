@@ -2,10 +2,10 @@ import React from "react";
 import { render as ReactDOMRender } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
-import { App, getChildren, getItems } from "./components/App";
+import { App, getChildren, getItems, getTags } from "./components/App";
 import { setDefaultHooks } from "./events";
 import { registerSmartblockCommands } from "./smartblocks";
-import zrToaster from "./toaster";
+import zrToaster from "./components/ExtensionToaster";
 import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
@@ -61,6 +61,7 @@ window.zoteroRoam = {};
 
 	window.zoteroRoam.getChildren = getChildren;
 	window.zoteroRoam.getItems = getItems;
+	window.zoteroRoam.getTags = getTags;
 
 	try {
 		window.zoteroRoam.config.requests = analyzeUserRequests(dataRequests);

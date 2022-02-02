@@ -7,7 +7,7 @@ import ExtensionIcon from "../ExtensionIcon";
 import GraphWatcher from "../GraphWatcher";
 import SearchPanel from "../SearchPanel";
 
-import { _getChildren, _getItems } from "../../api/public";
+import { _getChildren, _getItems, _getTags } from "../../api/public";
 import { addPaletteCommand } from "../../roam";
 
 import * as customPropTypes from "../../propTypes";
@@ -200,9 +200,11 @@ App.propTypes = {
 // Utilities to be exposed via global zoteroRoam variable, for consumption by users :
 const getChildren = (item) => _getChildren(item, queryClient);
 const getItems = (select = "all", filters = {}) => _getItems(select, filters, queryClient);
+const getTags = () => _getTags(queryClient);
 
 export {
 	App,
 	getChildren,
-	getItems
+	getItems,
+	getTags
 };

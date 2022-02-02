@@ -33,7 +33,6 @@ const cleanLibraryItemType = PropTypes.shape({
 	authorsFull: PropTypes.arrayOf(PropTypes.string),
 	authorsLastNames: PropTypes.arrayOf(PropTypes.string),
 	authorsRoles: PropTypes.arrayOf(PropTypes.string),
-	authorsString: PropTypes.string,
 	children: PropTypes.shape({
 		pdfs: PropTypes.arrayOf(zoteroItemType),
 		notes: PropTypes.arrayOf(zoteroItemType),
@@ -45,7 +44,6 @@ const cleanLibraryItemType = PropTypes.shape({
 	location: PropTypes.string,
 	publication: PropTypes.string,
 	tags: PropTypes.array,
-	tagsString: PropTypes.string,
 	title: PropTypes.string,
 	weblink: PropTypes.string,
 	year: PropTypes.oneOf([PropTypes.instanceOf(Date), ""]),
@@ -93,6 +91,7 @@ const cleanSemanticItemType = PropTypes.shape({
 	title: PropTypes.string,
 	url: PropTypes.string,
 	year: PropTypes.string,
+	_multiField: PropTypes.string
 });
 
 /**

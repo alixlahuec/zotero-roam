@@ -72,6 +72,70 @@ async function fetchBibliography(req, { include = "bib", style, linkwrap, locale
 		});
 }
 
+/** Requests data from the `/[library]/collections` endpoint of the Zotero API
+ * @fires zotero-roam:update-collections
+ * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @param {Integer} since - A library version
+ * @param {{match: Object[]}} config - Additional parameters
+ * @returns {Promise<{data: ZoteroCollection[], lastUpdated: Integer}>} Collections created or modified in Zotero since the specified version
+ */
+async function fetchCollections(library, since = 0, { match = [] } = {}) {
+	const { apikey, path } = library;
+
+	return zoteroClient.get(`${path}/collections?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
+		.then(async (response) => {
+			let { data: modified, headers } = response;
+			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
+			totalResults = Number(totalResults);
+			if(totalResults > 100){
+				let additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since}, totalResults);
+				modified.push(...additional);
+			}
+
+			let deleted = [];
+			// DO NOT request deleted items since X if since = 0 (aka, initial data request)
+			// It's a waste of a call
+			if(since > 0 && modified.length > 0){
+				deleted = await fetchDeleted(...library, since);
+
+				emitCustomEvent("update-collections", {
+					success: true,
+					library,
+					data: modified
+				});
+			}
+
+			return {
+				data: matchWithCurrentData({ modified, deleted: deleted.collections }, match),
+				lastUpdated: Number(lastUpdated)
+			};
+		})
+		.catch((error) => {
+			emitCustomEvent("update-collections", {
+				success: false,
+				library,
+				error
+			});
+			return error;
+		});
+}
+
+/** Requests data from the `/[library]/deleted` endpoint of the Zotero API
+ * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @param {Integer} since - A library version
+ * @returns {Promise<Object>} Elements deleted from Zotero since the specified version
+ */
+async function fetchDeleted(library, since) {
+	const { apikey, path } = library;
+	return zoteroClient.get(`${path}/deleted?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
+		.then((response) => {
+			return response.data;
+		})
+		.catch((error) => {
+			return error;
+		});
+}
+
 /** Requests data from the Zotero API, based on a specific data URI
  * @fires zotero-roam:update
  * @param {{apikey: String, dataURI: String, params: String, name: String, library: String}} req - The parameters of the request 
@@ -148,96 +212,6 @@ async function fetchPermissions(apikey) {
 		});
 }
 
-/** Requests data from the `/[library]/tags` endpoint of the Zotero API
- * @param {ZoteroLibrary} library - The targeted Zotero library
- * @returns {Promise<{data: Object[], lastUpdated: Integer}>} The library's tags
- */
-async function fetchTags(library) {
-	const { apikey, path } = library;
-	return zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } })
-		.then(async (response) => {
-			let { data, headers } = response;
-			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
-			totalResults = Number(totalResults);
-			if(totalResults > 100){
-				let additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey}, totalResults);
-				data.push(...additional);
-			}
-
-			return { 
-				data, 
-				lastUpdated: Number(lastUpdated)
-			};
-		})
-		.catch((error) => {
-			return error;
-		});
-}
-
-/** Requests data from the `/[library]/collections` endpoint of the Zotero API
- * @fires zotero-roam:update-collections
- * @param {ZoteroLibrary} library - The targeted Zotero library
- * @param {Integer} since - A library version
- * @param {{match: Object[]}} config - Additional parameters
- * @returns {Promise<{data: ZoteroCollection[], lastUpdated: Integer}>} Collections created or modified in Zotero since the specified version
- */
-async function fetchCollections(library, since = 0, { match = [] } = {}) {
-	const { apikey, path } = library;
-
-	return zoteroClient.get(`${path}/collections?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
-		.then(async (response) => {
-			let { data: modified, headers } = response;
-			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
-			totalResults = Number(totalResults);
-			if(totalResults > 100){
-				let additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since}, totalResults);
-				modified.push(...additional);
-			}
-
-			let deleted = [];
-			// DO NOT request deleted items since X if since = 0 (aka, initial data request)
-			// It's a waste of a call
-			if(since > 0 && modified.length > 0){
-				deleted = await fetchDeleted(...library, since);
-
-				emitCustomEvent("update-collections", {
-					success: true,
-					library,
-					data: modified
-				});
-			}
-
-			return {
-				data: matchWithCurrentData({ modified, deleted: deleted.collections }, match),
-				lastUpdated: Number(lastUpdated)
-			};
-		})
-		.catch((error) => {
-			emitCustomEvent("update-collections", {
-				success: false,
-				library,
-				error
-			});
-			return error;
-		});
-}
-
-/** Requests data from the `/[library]/deleted` endpoint of the Zotero API
- * @param {ZoteroLibrary} library - The targeted Zotero library
- * @param {Integer} since - A library version
- * @returns {Promise<Object>} Elements deleted from Zotero since the specified version
- */
-async function fetchDeleted(library, since) {
-	const { apikey, path } = library;
-	return zoteroClient.get(`${path}/deleted?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
-		.then((response) => {
-			return response.data;
-		})
-		.catch((error) => {
-			return error;
-		});
-}
-
 /** Requests data from the `/paper` endpoint of the Semantic Scholar API
  * @param {String} doi - The DOI of the targeted item, assumed to have already been checked and parsed.
  * @returns {Promise<{doi: String, citations: Object[], references: Object[]}>} Citation data for the item
@@ -274,6 +248,32 @@ async function fetchSemantic(doi) {
 		});
 }
 
+/** Requests data from the `/[library]/tags` endpoint of the Zotero API
+ * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @returns {Promise<{data: Object[], lastUpdated: Integer}>} The library's tags
+ */
+async function fetchTags(library) {
+	const { apikey, path } = library;
+	return zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } })
+		.then(async (response) => {
+			let { data, headers } = response;
+			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
+			totalResults = Number(totalResults);
+			if(totalResults > 100){
+				let additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey}, totalResults);
+				data.push(...additional);
+			}
+
+			return { 
+				data: makeTagMap(data), 
+				lastUpdated: Number(lastUpdated)
+			};
+		})
+		.catch((error) => {
+			return error;
+		});
+}
+
 /** Requests data from the `/data/citation/zotero` endpoint of the Wikipedia API
  * @param {String} query - The URL for which to request Zotero metadata
  * @returns {Promise<Object>} The Zotero metadata for the URL
@@ -286,6 +286,31 @@ async function fetchCitoid(query) {
 		.catch((error) => {
 			return error;
 		});
+}
+
+/** Converts Zotero tags data into a Map
+ * @param {ZoteroTag[]} tags - The tags data from Zotero from which to create the Map
+ * @returns {Map} A Map where each entry groups together Zotero tags with the exact same spelling, but a different type
+ */
+function makeTagMap(tags){
+	return tags.reduce(
+		function(map,t){
+			let { tag, meta : { type } } = t;
+			if(map.has(tag)){
+				let entry = map.get(tag);
+				if(entry.constructor === Array){
+					if(entry.every(el => el.tag != tag || el.meta.type != type)){
+						map.set(tag, [...entry, t]);
+					}
+				} else {
+					map.set(tag, [entry, t]);
+				}
+			} else{
+				map.set(tag,t);
+			} 
+			return map;
+		}, 
+		new Map());
 }
 
 /** Compares two datasets and merges the changes. As the match is done on the `data.key` property, both items and collections can be matched.

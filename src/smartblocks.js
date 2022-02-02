@@ -107,7 +107,8 @@ function registerSmartblockCommands(getItems){
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 async function use_smartblock_metadata(config, context){
-	let { item, notes, page: { title, uid, ...args}, pdfs } = context;
+	let { item, notes, page, pdfs } = context;
+	let { title, uid, ...args} = page;
 	let defaultOutcome = {
 		args: {
 			...args,
@@ -115,13 +116,13 @@ async function use_smartblock_metadata(config, context){
 			uid
 		},
 		error: null,
+		page,
 		raw: {
 			item,
 			notes,
 			pdfs
 		},
-		success: null,
-		title
+		success: null
 	};
 
 	let obj = {

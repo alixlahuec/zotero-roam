@@ -20,7 +20,9 @@ const useImportCitoids = () => {
 			if(!error){
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
-				client.invalidateQueries(["items", { library: path }]);	
+				client.invalidateQueries(["items", { library: path }], {
+					refetchInactive: true
+				});	
 			}
 
 			emitCustomEvent("write", {

@@ -1,4 +1,4 @@
-import zrToaster from "./toaster";
+import zrToaster from "./components/ExtensionToaster";
 import { pluralize } from "./utils";
 
 const events = [
@@ -8,9 +8,9 @@ const events = [
     * @type {object}
     * @property {({blocks: Array, uid: String}|{new: Boolean, smartblock: Object, uid: String})} args - The configuration used for the import
     * @property {error|null} error - The error thrown during the import, if failed
+	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
     * @property {{item: ZoteroItem|Object, notes: Object[], pdfs: Object[]}} raw - The raw data provided as input
     * @property {Boolean|null} success - Indicates if the update was successful
-    * @property {String} title - The title of the target page
     * @see importItemMetadata
     */
 	"metadata-added",

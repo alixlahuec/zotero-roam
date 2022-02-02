@@ -63,7 +63,8 @@ class GraphWatcher extends PureComponent {
 			dataRequests,
 			metadataSettings,
 			portalId,
-			roamCitekeys
+			roamCitekeys,
+			updateRoamCitekeys: this.updateRoamCitekeys
 		};
         
 		return <>

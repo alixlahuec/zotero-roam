@@ -78,12 +78,13 @@ function categorizeLibraryItems(datastore){
  * meta: String,
  * title: String,
  * url: String,
- * year: String
+ * year: String,
+ * _multiField: String
  * }[]} The formatted entry
  * @see cleanSemanticItemType
  */
 function cleanSemanticItem(item){
-	let cleanItem = {
+	let clean_item = {
 		authors: "",
 		doi: parseDOI(item.doi),
 		intent: item.intent,
@@ -96,7 +97,7 @@ function cleanSemanticItem(item){
 	};
 
 	// Parse authors data
-	cleanItem.authorsLastNames = item.authors.map(a => {
+	clean_item.authorsLastNames = item.authors.map(a => {
 		let components = a.name.replaceAll(".", " ").split(" ").filter(Boolean);
 		if(components.length == 1){
 			return components[0];
@@ -104,36 +105,43 @@ function cleanSemanticItem(item){
 			return components.slice(1).filter(c => c.length > 1).join(" ");
 		}
 	});
-	cleanItem.authorsString = cleanItem.authorsLastNames.join(" ");
-	switch(cleanItem.authorsLastNames.length){
+	clean_item.authorsString = clean_item.authorsLastNames.join(" ");
+	switch(clean_item.authorsLastNames.length){
 	case 0:
 		break;
 	case 1:
-		cleanItem.authors = cleanItem.authorsLastNames[0];
+		clean_item.authors = clean_item.authorsLastNames[0];
 		break;
 	case 2:
-		cleanItem.authors = cleanItem.authorsLastNames[0] + " & " + cleanItem.authorsLastNames[1];
+		clean_item.authors = clean_item.authorsLastNames[0] + " & " + clean_item.authorsLastNames[1];
 		break;
 	case 3:
-		cleanItem.authors = cleanItem.authorsLastNames[0] + ", " + cleanItem.authorsLastNames[1] + " & " + cleanItem.authorsLastNames[2];
+		clean_item.authors = clean_item.authorsLastNames[0] + ", " + clean_item.authorsLastNames[1] + " & " + clean_item.authorsLastNames[2];
 		break;
 	default:
-		cleanItem.authors = cleanItem.authorsLastNames[0] + " et al.";
+		clean_item.authors = clean_item.authorsLastNames[0] + " et al.";
 	}
 
 	// Parse external links
 	if(item.paperId){
-		cleanItem.links["semantic-scholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
+		clean_item.links["semantic-scholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
 	}
 	if(item.arxivId){
-		cleanItem.links["arxiv"] = `https://arxiv.org/abs/${item.arxivId}`;
+		clean_item.links["arxiv"] = `https://arxiv.org/abs/${item.arxivId}`;
 	}
 	if(item.doi){
-		cleanItem.links["connected-papers"] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
-		cleanItem.links["google-scholar"] = `https://scholar.google.com/scholar?q=${item.doi}`;
+		clean_item.links["connected-papers"] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
+		clean_item.links["google-scholar"] = `https://scholar.google.com/scholar?q=${item.doi}`;
 	}
 
-	return cleanItem;
+	// Set multifield property for search
+	clean_item._multiField = [
+		clean_item.authorsString,
+		clean_item.year,
+		clean_item.title
+	].join(" ");
+
+	return clean_item;
 }
 
 /** Matches a clean Semantic Scholar entry to Zotero and Roam data
@@ -361,6 +369,22 @@ function getWebLink(item, {format = "markdown", text = "Web library"} = {}){
 	}
 }
 
+/** Creates a dictionary from a String Array
+ * @param {String[]} arr - The array from which to make the dictionary
+ * @returns {Object<String,String[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array who begin with that letter or character (in any case).
+ */
+function makeDictionary(arr){
+	return arr.reduce((dict, elem) => {
+		let initial = elem.charAt(0).toLowerCase();
+		if(dict[initial]){
+			dict[initial].push(elem);
+		} else {
+			dict[initial] = [elem];
+		}
+		return dict;
+	}, {});
+}
+
 /** Converts a date into Roam DNP format
  * @param {Date|*} date - The date to parse and convert 
  * @param {{brackets: Boolean}} config - Additional parameters 
@@ -453,6 +477,98 @@ function readDNP(string, { as_date = true } = {}){
 	let parsedDate = [parseInt(yy), months.findIndex(month => month == mm) + 1, parseInt(dd)];
     
 	return as_date ? new Date([...parsedDate]) : parsedDate;
+}
+
+/** Inclusive multi-field search engine, with optional configuration
+ * @param {String} query - The query string to search 
+ * @param {String|String[]} target - The text to be searched. Can be a String or a String Array.
+ * @param {{any_case: Boolean, match: ("exact"|"partial"|"word"), search_compounds: Boolean, word_order: ("strict"|"loose")}} config - Additional configuration
+ * @returns {Boolean} `true` if the query is matched in the target (if String) or any of its elements (if String Array) ; `false` otherwise.
+ */
+function searchEngine(query, target, { any_case = true, match = "partial", search_compounds = true, word_order = "strict"} = {}){
+	if(target.constructor === String){
+		return searchEngine_string(query, target, { any_case, match, search_compounds, word_order});
+	} else if(target.constructor === Array){
+		return target.some(el => searchEngine_string(query, el, { any_case, match, search_compounds, word_order}));
+	} else {
+		throw new Error(`Unexpected input type ${target.constructor} : target should be a String or an Array`);
+	}
+}
+
+/** Inclusive search engine, with optional configuration
+ * @param {String} string - The query string to search 
+ * @param {String} text - The text to be searched
+ * @param {{any_case: Boolean, match: ("exact"|"partial"|"word"), search_compounds: Boolean, word_order: ("strict"|"loose")}} config - Additional configuration
+ * @returns {Boolean} `true` if the query is matched in the target string ; `false` otherwise.
+ */
+function searchEngine_string(string, text, {any_case = true, match = "partial", search_compounds = true , word_order = "strict"} = {}){
+	let query = string;
+	let target = text;
+
+	// If search is case-insensitive, transform query & target to lowercase
+	if(any_case == true){
+		query = string.toLowerCase();
+		target = text.toLowerCase();
+	}
+
+	// Is the query multi-word? Aka, has 1+ space(s) ?
+	let queryWords = query.split(" ");
+	let isHyphenated = queryWords.some(w => w.includes("-"));
+
+	if(queryWords.length == 1){
+		// Single-word query
+		let searchString = query;
+		if(isHyphenated && search_compounds == true){
+			// Replace hyphen by inclusive match (hyphen, space, nothing)
+			searchString = query.replace("-", "(?: |-)?");
+		}
+		// Then carry on with the search op
+		if(match == "partial"){
+			let searchReg = new RegExp(escapeRegExp(searchString), "g");
+			return searchReg.test(target);
+		} else if(match == "exact"){
+			let searchReg = new RegExp("^" + escapeRegExp(searchString) + "$", "g");
+			return searchReg.test(target);
+		} else {
+			let searchReg = new RegExp("(?:\\W|^)" + escapeRegExp(searchString) + "(?:\\W|$)", "g");
+			return searchReg.test(target);
+		}
+	} else {
+		// Multi-word query
+		let searchArray = queryWords.map(w => escapeRegExp(w));
+		if(search_compounds == true){
+			if(isHyphenated){
+				// For each hyphenated term, replace hyphen by inclusive match (hyphen, space, nothing)
+				searchArray = searchArray.map(w => w.includes("-") ? w.replace("-", "(?: |-)?") : w);
+			} else if(!isHyphenated && word_order == "strict"){
+				// If strict mode :
+				// Join the search Array by inclusive match pattern (hyphen, space, nothing)
+				searchArray = [searchArray.join("(?: |-)?")]; // keeping Array form so that the logic can be the same later on       
+			}
+			// If loose mode :
+			// No special action necessary, should use searchArray = queryWords as defined above (default)
+		}
+		// If search_compounds == false :
+		// No special action necessary, should use searchArray = queryWords as defined above (default)
+
+		// Then carry on with the search op
+		if(word_order == "loose"){
+			let searchArrayReg = searchArray.map(t => "(?:\\W|^)" + t + "(?:\\W|$)");
+			return searchArrayReg.every(exp => {
+				let regex = new RegExp(exp, "g");
+				return regex.test(target);
+			});
+		} else {
+			if(match == "exact"){
+				let searchReg = new RegExp("^" + searchArray.join(" ") + "$", "g");
+				return searchReg.test(target);
+			} else {
+				let searchReg = new RegExp("(?:\\W|^)" + searchArray.join(" ") + "(?:\\W|$)", "g");
+				return searchReg.test(target);
+			}
+		}
+	}
+
 }
 
 /** Injects external scripts into the page
@@ -570,12 +686,14 @@ export {
 	formatItemReference,
 	getLocalLink,
 	getWebLink,
+	makeDictionary,
 	makeDNP,
 	makeTimestamp,
 	matchArrays,
 	parseDOI,
 	pluralize,
 	readDNP,
+	searchEngine,
 	setupDependencies,
 	setupPortals,
 	sortCollections,

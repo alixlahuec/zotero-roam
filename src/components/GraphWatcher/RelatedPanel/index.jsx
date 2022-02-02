@@ -12,7 +12,7 @@ import "./index.css";
 const labelId = "zr-related-panel-label";
 
 const RelatedItem = React.memo(function RelatedItem(props) {
-	const { allAbstractsShown, closeDialog, inGraph, item, metadataSettings, type } = props;
+	const { allAbstractsShown, closeDialog, inGraph, item, metadataSettings, type, updateRoamCitekeys } = props;
 	const { children: { pdfs, notes }, raw } = item;
 	const [isAbstractVisible, setAbstractVisible] = useState(allAbstractsShown);
 
@@ -59,8 +59,9 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 			item={raw} 
 			metadataSettings={metadataSettings} 
 			notes={notes} 
-			pdfs={pdfs} />;
-	}, [closeDialog, inGraph, metadataSettings, notes, pdfs, raw]);
+			pdfs={pdfs}
+			updateRoamCitekeys={updateRoamCitekeys} />;
+	}, [closeDialog, inGraph, metadataSettings, notes, pdfs, raw, updateRoamCitekeys]);
 
 	useEffect(() => {
 		setAbstractVisible(allAbstractsShown);
@@ -93,10 +94,11 @@ RelatedItem.propTypes = {
 	item: customPropTypes.cleanRelatedItemType,
 	metadataSettings: PropTypes.object,
 	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"]),
+	updateRoamCitekeys: PropTypes.func
 };
 
 const RelatedList = React.memo(function RelatedList(props) {
-	const { allAbstractsShown, closeDialog, items, metadataSettings, type } = props;
+	const { allAbstractsShown, closeDialog, items, metadataSettings, type, updateRoamCitekeys } = props;
 
 	const sortedItems = useMemo(() => {
 		let sort = type == "added_on" ? "added" : "meta";
@@ -112,7 +114,8 @@ const RelatedList = React.memo(function RelatedList(props) {
 					inGraph={it.inGraph} 
 					item={it} 
 					metadataSettings={metadataSettings}
-					type={type} />;
+					type={type}
+					updateRoamCitekeys={updateRoamCitekeys} />;
 			})
 			}
 		</ul>
@@ -123,11 +126,12 @@ RelatedList.propTypes = {
 	closeDialog: PropTypes.func,
 	items: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
 	metadataSettings: PropTypes.object,
-	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag"])
+	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag"]),
+	updateRoamCitekeys: PropTypes.func
 };
 
 const RelatedPanel = React.memo(function RelatedPanel(props) {
-	const { isOpen, items, metadataSettings, onClose, portalId, show } = props;
+	const { isOpen, items, metadataSettings, onClose, portalId, show, updateRoamCitekeys } = props;
 	const [isShowingAllAbstracts, setShowingAllAbstracts] = useState(false);
 
 	const relationship = useMemo(() => {
@@ -197,6 +201,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 						items={items}
 						metadataSettings={metadataSettings}
 						type={show.type}
+						updateRoamCitekeys={updateRoamCitekeys}
 					/>
 				</div>
 			</div>
@@ -212,7 +217,8 @@ RelatedPanel.propTypes = {
 	show: PropTypes.shape({
 		title: PropTypes.string,
 		type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag"])
-	})
+	}),
+	updateRoamCitekeys: PropTypes.func
 };
 
 export default RelatedPanel;
