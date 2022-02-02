@@ -109,7 +109,11 @@ h4.item-title{
     flex: 0 1 95%;
 }
 
-.item-actions > .bp3-card{ background-color: #eff8ff;box-shadow:none; }
+.item-actions > .bp3-card{ 
+    background-color: #eff8ff;
+    box-shadow:none;
+    padding: 10px;
+ }
 
 .item-citekey-section .bp3-button-group .bp3-button,
 .item-actions .bp3-button-group .bp3-button {
@@ -167,45 +171,6 @@ h4.item-title{
 
 /* DARK THEMES */
 
-.bp3-dark #zotero-roam-search-autocomplete {
-    background: var(--zr-dark-dialog-bg, #242424);
-    border-bottom-color: var(--zr-dark-border-color,#363a3f);
-}
-
-.bp3-dark .zr-dialog-overlay--search-library .zotero-roam-search_result[data-in-graph="true"] .zr-library-item--key {
-    background-color: var(--zr-dark-positive-bc, #5863582e);
-    color: var(--zr-dark-positive-co, #86f686);
-}
-
-.bp3-dark .zr-dialog-overlay--search-library .zr-library-item--contents,
-.bp3-dark .item-basic-metadata,
-.bp3-dark .item-additional-metadata,
-.bp3-dark .citekey-element,
-.bp3-dark .item-actions .bp3-button-group button,
-.bp3-dark .item-actions .bp3-button-group .bp3-button {
-    color: var(--zr-dark-text-co, #76a0cb);
-}
-
-.bp3-dark .item-abstract {
-    border-top-color: var(--zr-dark-border-color,#363a3f);
-    border-bottom-color: var(--zr-dark-border-color,#363a3f);
-}
-
-.bp3-dark .item-actions .bp3-divider {
-    border-color: var(--zr-dark-border-color,#363a3f);
-}
-
-.bp3-dark .item-citekey-section .bp3-button-group .bp3-button:hover,
-.bp3-dark .item-actions .bp3-button-group .bp3-button:hover {
-    background-color: var(--zr-dark-selected-bc,#191919);
-}
-
-.bp3-dark .item-basic-metadata,
-.bp3-dark .item-additional-metadata,
-.bp3-dark .item-actions > .bp3-card { 
-    background-color: var(--zr-dark-elem-bg, #2B3143);
-}
-
 @media (prefers-color-scheme: dark){
     #zotero-roam-search-autocomplete {
         background: var(--zr-dark-dialog-bg, #242424);
@@ -233,6 +198,7 @@ h4.item-title{
     .item-citekey-section .bp3-button-group .bp3-button:hover,
     .item-actions .bp3-button-group .bp3-button:hover {
         background-color: var(--zr-dark-selected-bc,#191919);
+        color: var(--zr-dark-text-co, #76a0cb);
     }
     .item-basic-metadata,
     .item-additional-metadata,

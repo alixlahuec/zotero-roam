@@ -200,7 +200,7 @@ App.propTypes = {
 // Utilities to be exposed via global zoteroRoam variable, for consumption by users :
 const getChildren = (item) => _getChildren(item, queryClient);
 const getItems = (select = "all", filters = {}) => _getItems(select, filters, queryClient);
-const getTags = () => _getTags(queryClient);
+const getTags = (library) => _getTags(library, queryClient);
 
 export {
 	App,

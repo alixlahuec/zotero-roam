@@ -1,4 +1,5 @@
 import ReactDOM from "react-dom";
+import { getInitialedPages } from "./roam";
 import "./typedefs";
 
 /** Generates a data requests configuration object
@@ -436,6 +437,36 @@ function matchArrays(arr1, arr2){
 	return arr1.some(el => arr2.includes(el));
 }
 
+/** Matches
+ * @param {{title: String, uid: String}[]} r_data 
+ * @param {{token: String, roam: [], zotero: Object[]}[]} tagList 
+ * @returns 
+ */
+function matchRoamTags(r_data, z_data){
+	let rdata = [...r_data].sort((a,b) => a.title > b.title ? -1 : 1);
+	let zdata = [...z_data];
+
+	for(let elem of rdata){
+		let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));
+		if(in_table >= 0){
+			zdata[in_table].roam.push(elem);
+		}
+	}
+
+	return(zdata);
+}
+
+/** Matches Zotero tags with existing Roam pages
+ * @param {Object<String, Array>} tagList - The list of tokenized Zotero tags
+ * @returns {{}[]}
+ */
+function matchTagData(tagList){
+	return Object.keys(tagList).map(initial => {
+		let r_data = getInitialedPages(Array.from(new Set([initial, initial.toUpperCase()])));
+		return matchRoamTags(r_data, tagList[initial]);
+	}).flat(1);
+}
+
 /** Extracts a valid DOI from a string
  * @param {String} doi - The string to test 
  * @returns The DOI (starting with `10.`) if any - otherwise `false`
@@ -690,6 +721,7 @@ export {
 	makeDNP,
 	makeTimestamp,
 	matchArrays,
+	matchTagData,
 	parseDOI,
 	pluralize,
 	readDNP,

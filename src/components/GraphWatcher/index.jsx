@@ -27,6 +27,7 @@ class GraphWatcher extends PureComponent {
 			roamCitekeys: getCitekeyPages()
 		};
 		this.updatePageElements = this.updatePageElements.bind(this);
+		this.updateRoamCitekeys = this.updateRoamCitekeys.bind(this);
 	}
 
 	componentDidMount() {

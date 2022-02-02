@@ -24,3 +24,16 @@
 .zotero-roam-tribute-selected {
     background-color: #eaf3fc;
 }
+
+/* DARK THEMES */
+
+@media (prefers-color-scheme: dark){
+    .zotero-roam-tribute {
+        background-color: var(--zr-dark-selected-bc,#191919);
+        color: var(--zr-dark-auxiliary,#95a8b7);
+    }
+
+    .zotero-roam-tribute-selected {
+        background-color: var(--zr-dark-elem-bg, #2B3143);
+    }
+}

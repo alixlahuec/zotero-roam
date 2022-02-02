@@ -34,15 +34,6 @@
 
 /* DARK THEMES */
 
-.bp3-dialog.zr-auxiliary-dialog--related [zr-role="toggle-abstracts"]{
-    background-color: var(--zr-dark-elem-bg, #2B3143);
-    color: var(--zr-dark-text-co, #76a0cb);
-}
-
-.bp3-dark .zr-related-item--abstract {
-    background-color: var(--zr-dark-selected-bc,#191919);
-}
-
 @media (prefers-color-scheme: dark){
     .bp3-dialog.zr-auxiliary-dialog--related [zr-role="toggle-abstracts"]{
         background-color: var(--zr-dark-elem-bg, #2B3143);

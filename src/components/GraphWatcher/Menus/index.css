@@ -60,39 +60,6 @@ button[class*='zr-page-menu-show--'] {
 
 /* DARK THEMES */
 
-.bp3-dark .zr-citekey-menu {
-    background-color: var(--zr-dark-dialog-bg, #242424);
-}
-
-.bp3-dark .zr-citekey-menu .bp3-button {
-    color: var(--zr-dark-text-co,#76a0cb);
-}
-
-.bp3-dark .zotero-roam-page-menu-citations {
-    border-color: var(--zr-dark-border-color,#363a3f);
-}
-
-.bp3-dark .zr-backlinks-divider--tag.bp3-tag.bp3-minimal,
-.bp3-dark .zr-backlink-item--info .zr-item-title {
-    color: var(--zr-dark-text-co,#76a0cb);
-}
-
-.bp3-dark .zr-backlinks-divider--tag + .bp3-divider {
-    border-color: var(--zr-dark-border-color,#363a3f);
-}
-
-.bp3-dark .zr-citekey-menu--backlinks [zr-role="sublist"][list-type="references"] li:nth-child(even) {
-    background-color:var(--zr-dark-elem-bg, #2B3143);
-}
-.bp3-dark .zr-citekey-menu--backlinks [zr-role="sublist"][list-type="citations"] li:nth-child(even) {
-    background-color: var(--zr-dark-elem-bg-2, #3d332b);
-}
-
-.bp3-dark .zr-backlink-item[data-backlink-type="reference"]:hover,
-.bp3-dark .zr-backlink-item[data-backlink-type="citation"]:hover {
-    background-color: var(--zr-dark-selected-bc,#191919);
-}
-
 @media (prefers-color-scheme: dark){
     .zr-citekey-menu {
         background-color: var(--zr-dark-dialog-bg, #242424);

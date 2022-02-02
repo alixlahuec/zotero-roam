@@ -188,7 +188,7 @@ function ItemDetails(props) {
 			</div>
 			<div className="item-actions">
 				<div className={Classes.CARD}>
-					<ButtonGroup minimal={true} alignText="left" vertical={true} fill={true}>
+					<ButtonGroup alignText="left" fill={true} minimal={true} vertical={true} >
 						{ inGraph 
 							? <Button text="Go to Roam page"
 								className="item-go-to-page"
@@ -202,7 +202,7 @@ function ItemDetails(props) {
 							onClick={importMetadata} />
 					</ButtonGroup>
 					<Divider />
-					<ButtonGroup minimal={true} alignText="left" vertical={true} >
+					<ButtonGroup alignText="left" fill={true} minimal={true} vertical={true} >
 						<ButtonLink href={zotero.local} icon="application" text="Open in Zotero" />
 						<ButtonLink href={zotero.web} icon="cloud" text="Open in Zotero (web)" />
 					</ButtonGroup>

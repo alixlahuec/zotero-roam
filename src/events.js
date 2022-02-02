@@ -66,7 +66,7 @@ function emitCustomEvent(type, detail = {}, target = document){
  */
 function setDefaultHooks(){
 	document.addEventListener("zotero-roam:metadata-added", (e) => {
-		let { error, success, title } = e.detail;
+		let { error, page: { title }, success } = e.detail;
 		if(error){
 			console.error(error);
 			zrToaster.show({
@@ -76,7 +76,7 @@ function setDefaultHooks(){
 		} else if(success){
 			zrToaster.show({
 				intent: "success",
-				message: "Metadata added to" + title
+				message: "Metadata added to " + title
 			});
 		} else {
 			// For testing

@@ -2,7 +2,37 @@ import { useQueryClient } from "react-query";
 
 import { zoteroClient, semanticClient, citoidClient } from "./clients";
 import { emitCustomEvent } from "../events";
-import { parseDOI } from "../utils";
+import { makeDictionary, parseDOI, searchEngine } from "../utils";
+
+/** Categorizes Zotero tags into tokens, based on similar spellings
+ * @param {String[]} z_data - The tags to be categorized, as Strings
+ * @param {Map<String,Object>} tagMap - The map of Zotero tags
+ * @returns {{token: String, roam: [], zotero: Object[]}[]} The Array of tokenized tags, sorted alphabetically
+ */
+function categorizeZoteroTags(z_data, tagMap){
+	let output = [];
+	let zdata = [...z_data].sort((a,b) => a > b ? -1 : 1);
+	
+	for(let elem of zdata){
+		let in_table = output.findIndex(tk => searchEngine(elem, tk.token, { any_case: true, match: "exact", search_compounds: true}));
+		let z_item = tagMap.get(elem);
+		if(in_table == -1){
+			output.push({
+				token: elem.toLowerCase(), 
+				roam: [],
+				zotero: z_item.constructor === Array ? z_item : [z_item]
+			});
+		} else {
+			if(z_item.constructor === Array){
+				output[in_table].zotero.push(...z_item);
+			} else {
+				output[in_table].zotero.push(z_item);
+			}
+		}
+	}
+  
+	return output.sort((a,b) => a.token < b.token ? -1 : 1);
+}
 
 /** Extracts pinned citekeys from a dataset
  * @param {ZoteroItem[]} arr - The dataset of Zotero items to scan
@@ -265,7 +295,7 @@ async function fetchTags(library) {
 			}
 
 			return { 
-				data: makeTagMap(data), 
+				data: makeTagList(data), 
 				lastUpdated: Number(lastUpdated)
 			};
 		})
@@ -286,6 +316,18 @@ async function fetchCitoid(query) {
 		.catch((error) => {
 			return error;
 		});
+}
+
+function makeTagList(tags){
+	let tagMap = makeTagMap(tags);
+	let zdict = makeDictionary(Array.from(tagMap.keys()));
+	let zkeys = Object.keys(zdict).sort((a,b) => a < b ? -1 : 1);
+
+	let output = {};
+	zkeys.forEach(key => {
+		output[key] = categorizeZoteroTags(zdict[key], tagMap);
+	});
+	return output;
 }
 
 /** Converts Zotero tags data into a Map

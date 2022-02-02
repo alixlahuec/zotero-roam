@@ -1,3 +1,5 @@
+import { matchTagData } from "../utils";
+
 function _getChildren(item, queryClient) {
 	let location = item.library.type + "s/" + item.library.id;
 	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, queryClient)
@@ -23,8 +25,11 @@ function _getItems(select = "all", filters = {}, queryClient) {
 	}
 }
 
-function _getTags(queryClient) {
-	return queryClient.getQueriesData(["tags"]).map(query => (query[1] || {}).data || []).flat(1);
+function _getTags(library, queryClient) {
+	let data = queryClient.getQueryData(["tags", { library }]);
+	// For testing
+	matchTagData(data);
+	return data;
 }
 
 export {
