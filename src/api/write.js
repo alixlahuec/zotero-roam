@@ -27,7 +27,7 @@ const useImportCitoids = () => {
 
 			emitCustomEvent("write", {
 				collections,
-				data,
+				data: data.data,
 				error,
 				items,
 				library: path,

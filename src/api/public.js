@@ -1,4 +1,3 @@
-import { matchTagData } from "../utils";
 
 function _getChildren(item, queryClient) {
 	let location = item.library.type + "s/" + item.library.id;
@@ -27,8 +26,6 @@ function _getItems(select = "all", filters = {}, queryClient) {
 
 function _getTags(library, queryClient) {
 	let data = queryClient.getQueryData(["tags", { library }]);
-	// For testing
-	matchTagData(data);
 	return data;
 }
 
