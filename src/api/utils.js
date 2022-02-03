@@ -293,7 +293,8 @@ async function fetchTags(library) {
 				let additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey}, totalResults);
 				data.push(...additional);
 			}
-
+			// For debugging:
+			console.log(data);
 			return { 
 				data: makeTagList(data), 
 				lastUpdated: Number(lastUpdated)

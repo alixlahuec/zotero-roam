@@ -94,7 +94,7 @@ function setDefaultHooks(){
 		} else {
 			zrToaster.show({
 				intent: "success",
-				message: pluralize(data?.successful?.length, "item", ` added to ${library}`)
+				message: pluralize(Object.keys(data.successful)?.length, "item", ` added to ${library}`)
 			});
 			// For debugging :
 			console.log(data);

@@ -25,7 +25,8 @@ function _getItems(select = "all", filters = {}, queryClient) {
 }
 
 function _getTags(library, queryClient) {
-	let data = queryClient.getQueryData(["tags", { library }]);
+	const { path, apikey } = library;
+	let data = queryClient.getQueryData(["tags", { library: path, apikey }]);
 	return data;
 }
 
