@@ -33,7 +33,7 @@ function WebImportFactory({ divs }){
 	);
 }
 WebImportFactory.propTypes = {
-	divs: PropTypes.arrayOf(PropTypes.node)
+	divs: PropTypes.arrayOf(PropTypes.element)
 };
 
 export default WebImportFactory;

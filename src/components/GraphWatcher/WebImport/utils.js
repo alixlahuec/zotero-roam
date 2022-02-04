@@ -12,7 +12,7 @@ const addWebimportDivs = (tags) => {
 };
 
 const findWebimportDivs = () => {
-	return document.querySelectorAll(`[class=${webimportClass}]`);
+	return Array.from(document.querySelectorAll(`[class=${webimportClass}]`));
 };
 
 export { addWebimportDivs, findWebimportDivs };
