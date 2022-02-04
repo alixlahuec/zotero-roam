@@ -62,7 +62,7 @@ class GraphWatcher extends Component {
 			{citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} /> : null}
 			{dnpMenus ? <DNPMenuFactory menus={dnpMenus} /> : null}
 			{tagMenus ? <TagMenuFactory menus={tagMenus} /> : null}
-			{autocomplete.trigger ? <Autocomplete /> : null}
+			{autocomplete?.trigger ? <Autocomplete /> : null}
 			<WebImportFactory divs={webimportDivs} />
 			<InlineCitekeys />
 		</>;
