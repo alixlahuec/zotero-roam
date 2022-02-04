@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 
 import Autocomplete from "../Autocomplete";
 import InlineCitekeys from "./InlineCitekeys";
@@ -12,7 +12,7 @@ import { menuPrefix, webimportClass } from "./classes";
 import "./index.css";
 import WebImportFactory from "./WebImport";
 
-class GraphWatcher extends PureComponent {
+class GraphWatcher extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
@@ -23,8 +23,11 @@ class GraphWatcher extends PureComponent {
 		};
 		this.updatePageElements = this.updatePageElements.bind(this);
 	}
+	static contextType = UserSettings;
 
 	componentDidMount() {
+		// For debugging
+		console.log(this.context);
 		// From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
 		this._isMounted = true;
         
@@ -53,13 +56,13 @@ class GraphWatcher extends PureComponent {
 
 	render() {
 		let { citekeyMenus, dnpMenus, tagMenus, webimportDivs } = this.state;
-		let { autocomplete: autocompleteSettings } = this.context;
+		let { autocomplete } = this.context;
         
 		return <>
 			{citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} /> : null}
 			{dnpMenus ? <DNPMenuFactory menus={dnpMenus} /> : null}
 			{tagMenus ? <TagMenuFactory menus={tagMenus} /> : null}
-			{autocompleteSettings.trigger ? <Autocomplete /> : null}
+			{autocomplete.trigger ? <Autocomplete /> : null}
 			<WebImportFactory divs={webimportDivs} />
 			<InlineCitekeys />
 		</>;
@@ -92,6 +95,5 @@ class GraphWatcher extends PureComponent {
 		});
 	}
 }
-GraphWatcher.contextType = UserSettings;
 
 export default GraphWatcher;
