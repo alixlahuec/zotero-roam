@@ -8,7 +8,7 @@ import { getCitekeyPages } from "../../roam";
 const RoamCitekeys = React.createContext([]);
 
 const RoamCitekeysProvider = ({ children }) => {
-	const [roamCitekeys, setRoamCitekeys] = useState(getCitekeyPages());
+	const [roamCitekeys, setRoamCitekeys] = useState(() => getCitekeyPages());
 
 	const update = useCallback(() => {
 		setRoamCitekeys(getCitekeyPages());

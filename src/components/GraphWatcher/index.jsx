@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import Autocomplete from "../Autocomplete";
 import InlineCitekeys from "./InlineCitekeys";
@@ -12,68 +12,19 @@ import { menuPrefix, webimportClass } from "./classes";
 import "./index.css";
 import WebImportFactory from "./WebImport";
 
-class GraphWatcher extends Component {
-	constructor(props){
-		super(props);
-		this.state = {
-			citekeyMenus: [],
-			dnpMenus: [],
-			tagMenus: [],
-			webimportDivs: []
-		};
-		this.updatePageElements = this.updatePageElements.bind(this);
-	}
-	static contextType = UserSettings;
+const GraphWatcher = React.memo(function GraphWatcher(){
+	// From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
+	// https://jasonwatmore.com/post/2021/08/27/react-how-to-check-if-a-component-is-mounted-or-unmounted
+	const mounted = useRef(false);
+	const [{ citekeyMenus, dnpMenus, tagMenus }, setMenus] = useState({ citekeyMenus: [], dnpMenus: [], tagMenus: []});
+	const [webimportDivs, setWebimportDivs] = useState([]);
+	const { autocomplete: { trigger }, webimport: { tags }} = useContext(UserSettings);
 
-	componentDidMount() {
-		// For debugging
-		console.log(this.context);
-		// From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
-		this._isMounted = true;
-        
-		// The watcher adds empty <div>s to relevant page elements
-		// The contents of the <div>s will be managed by rendering portals
-		this.watcher = setInterval(
-			() => {
-				addPageMenus();
-				addWebimportDivs(this.context.webimport.tags);
-
-				if(this._isMounted){
-					this.updatePageElements();
-				}
-			},
-			1000
-		);
-	}
-
-	componentWillUmmount() {
-		// From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
-		this._isMounted = false;
-		clearInterval(this.watcher);
-		Array.from(document.querySelectorAll(`[class*=${menuPrefix}]`)).forEach(div => div.remove());
-		Array.from(document.querySelectorAll(`[class=${webimportClass}]`)).forEach(div => div.remove());
-	}
-
-	render() {
-		let { citekeyMenus, dnpMenus, tagMenus, webimportDivs } = this.state;
-		let { autocomplete } = this.context;
-        
-		return <>
-			{citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} /> : null}
-			{dnpMenus ? <DNPMenuFactory menus={dnpMenus} /> : null}
-			{tagMenus ? <TagMenuFactory menus={tagMenus} /> : null}
-			{autocomplete?.trigger ? <Autocomplete /> : null}
-			<WebImportFactory divs={webimportDivs} />
-			<InlineCitekeys />
-		</>;
-	}
-
-	updatePageElements(){
-		// TODO: Add other page elems (explo, etc)
-		this.setState((prevState) => {
+	const updatePageElements = useCallback(() => {
+		// Page menus
+		setMenus((prevState) => {
 			let update = {};
 
-			// Page menus
 			const currentMenus = findPageMenus();
 			for(let key of Object.keys(currentMenus)){
 				if(hasNodeListChanged(prevState[key], currentMenus[key])){
@@ -81,19 +32,59 @@ class GraphWatcher extends Component {
 				}
 			}
 
-			// Webimport divs
-			const currentDivs = findWebimportDivs();
-			if(hasNodeListChanged(prevState.webimportDivs, currentDivs)){
-				update.webimportDivs = currentDivs;
-			}
-
 			if(JSON.stringify(update) === "{}"){
-				return null;
+				return prevState;
 			} else {
-				return update;
+				return {
+					...prevState,
+					...update
+				};
 			}
 		});
-	}
-}
+
+		// Webimport divs
+		setWebimportDivs((prevState) => {
+			const currentDivs = findWebimportDivs();
+			if(hasNodeListChanged(prevState, currentDivs)){
+				return currentDivs;
+			} else {
+				return prevState;
+			}
+		});
+	}, []);
+
+	useEffect(() => {
+		mounted.current = true;
+		// The watcher adds empty <div>s to relevant page elements
+		// The contents of the <div>s will be managed by rendering portals
+		const watcher = setInterval(
+			() => {
+				addPageMenus();
+				addWebimportDivs(tags);
+
+				if(mounted.current){
+					updatePageElements();
+				}
+			},
+			1000
+		);
+
+		return () => {
+			mounted.current = false;
+			clearInterval(watcher);
+			Array.from(document.querySelectorAll(`[class*=${menuPrefix}]`)).forEach(div => div.remove());
+			Array.from(document.querySelectorAll(`[class=${webimportClass}]`)).forEach(div => div.remove());
+		};
+	}, [updatePageElements, tags]);
+
+	return <>
+		{citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} /> : null}
+		{dnpMenus ? <DNPMenuFactory menus={dnpMenus} /> : null}
+		{tagMenus ? <TagMenuFactory menus={tagMenus} /> : null}
+		{trigger ? <Autocomplete /> : null}
+		<WebImportFactory divs={webimportDivs} />
+		<InlineCitekeys />
+	</>;
+});
 
 export default GraphWatcher;
