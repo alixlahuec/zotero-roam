@@ -1,16 +1,19 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
 import DialogOverlay from "../DialogOverlay";
-import ItemDetails from "./ItemDetails";
-import { copyToClipboard, searchEngine } from "../../utils";
-import { getCitekeyPages } from "../../roam";
+import ItemDetails from "../ItemDetails";
+
+import { useQuery_Items } from "../../api/queries";
 import { cleanLibrary, formatItemReferenceForCopy } from "./utils";
+import { copyToClipboard, searchEngine } from "../../utils";
+
+import { ExtensionContext, UserSettings } from "../App";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
-import { useQuery_Items } from "../../api/queries";
+import { useRoamCitekeys } from "../RoamCitekeysContext";
 
 const query_threshold = 0;
 const query_debounce = 300;
@@ -100,14 +103,12 @@ function listItemRenderer(item, itemProps) {
 	/>;
 }
 
-function renderListDiv(handleKeyDown, handleKeyUp, itemList, context){
-	const { handleClose, selectedItem, settings: { copy, metadata } } = context;
+function renderListDiv(handleKeyDown, handleKeyUp, itemList, config){
+	const { handleClose, selectedItem } = config;
 
 	return selectedItem 
 		? <ItemDetails item={selectedItem} 
-			closeDialog={handleClose} 
-			defaultCopyFormat={copy.defaultFormat}
-			metadataSettings={metadata} />
+			closeDialog={handleClose} />
 		: <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} >
 			{itemList}
 		</div>;
@@ -180,7 +181,8 @@ SearchResult.propTypes = {
 };
 
 const LibraryQueryList = React.memo(function LibraryQueryList(props) {
-	const { copySettings, handleClose, isOpen, items, metadataSettings, quickCopyActive, toggleQuickCopy } = props;
+	const { handleClose, isOpen, items, quickCopyActive, toggleQuickCopy } = props;
+	const { copy: copySettings } = useContext(UserSettings);
 
 	const searchbar = useRef();
 	let [selectedItem, itemSelect] = useState(null);
@@ -250,15 +252,11 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 					itemList, 
 					{ 
 						handleClose, 
-						selectedItem,
-						settings: {
-							copy: copySettings,
-							metadata: metadataSettings
-						}
+						selectedItem
 					})}
 			</div>
 		);
-	}, [copySettings, handleClose, metadataSettings, searchbar, searchbarLeftElement, searchbarRightElement, selectedItem]);
+	}, [handleClose, searchbar, searchbarLeftElement, searchbarRightElement, selectedItem]);
 
 	useEffect(() => {
 		if(isOpen){
@@ -287,32 +285,23 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 	);
 });
 LibraryQueryList.propTypes = {
-	copySettings: PropTypes.shape({
-		always: PropTypes.bool,
-		defaultFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
-		overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
-		useQuickCopy: PropTypes.bool
-	}),
 	handleClose: PropTypes.func,
 	isOpen: PropTypes.bool,
 	items: customPropTypes.cleanLibraryReturnArrayType,
-	metadataSettings: PropTypes.object,
 	quickCopyActive: PropTypes.bool,
 	toggleQuickCopy: PropTypes.func
 };
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { closePanel, copySettings, dataRequests, metadataSettings, portalTarget, shortcutsSettings, status } = props;
+	const { closePanel, status } = props;
+	const { dataRequests } = useContext(ExtensionContext);
+	const [roamCitekeys,] = useRoamCitekeys();
+	const { copy: { useQuickCopy}, shortcuts: shortcutsSettings } = useContext(UserSettings);
 
-	let [quickCopyActive, setQuickCopy] = useState(copySettings.useQuickCopy); // Is QuickCopy active by default ?
-	let [roamCitekeys, setRoamCitekeys] = useState(getCitekeyPages());
+	let [quickCopyActive, setQuickCopy] = useState(useQuickCopy); // Is QuickCopy active by default ?
 
 	const items = useGetItems(dataRequests, roamCitekeys, { enabled: status == "on" });
-
-	const handleOpen = useCallback(() => {
-		setRoamCitekeys(getCitekeyPages()); 
-	}, []);
 
 	const toggleQuickCopy = useCallback(() => { setQuickCopy(!quickCopyActive); }, [quickCopyActive]);
 
@@ -351,15 +340,11 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			isOpen={isOpen}
 			isSidePanelOpen={isSidePanelOpen}
 			lazy={false}
-			onClose={closePanel}
-			onOpening={handleOpen}
-			portalTarget={portalTarget}>
+			onClose={closePanel} >
 			<LibraryQueryList 
-				copySettings={copySettings}
 				handleClose={closePanel}
 				isOpen={isOpen}
 				items={items}
-				metadataSettings={metadataSettings}
 				quickCopyActive={quickCopyActive}
 				toggleQuickCopy={toggleQuickCopy} />
 		</DialogOverlay>
@@ -368,20 +353,10 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 });
 SearchPanel.propTypes = {
 	closePanel: PropTypes.func,
-	copySettings: PropTypes.shape({
-		always: PropTypes.bool,
-		defaultFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
-		overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
-		useQuickCopy: PropTypes.bool
-	}),
-	dataRequests: PropTypes.array,
-	metadataSettings: PropTypes.object,
 	panelState: PropTypes.shape({
 		isOpen: PropTypes.bool,
 		isSidePanelOpen: PropTypes.bool
 	}),
-	portalTarget: PropTypes.string,
-	shortcutsSettings: PropTypes.object,
 	status: PropTypes.bool
 };
 

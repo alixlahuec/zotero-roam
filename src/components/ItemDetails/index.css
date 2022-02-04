@@ -1,0 +1,107 @@
+#zr-item-details {
+    width: 97%;
+    margin: 20px auto;
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+
+.selected-item-header, 
+.selected-item-body{ display:flex;justify-content:space-around; }
+.selected-item-body{ flex-wrap:wrap; }
+
+.item-basic-metadata, 
+.item-additional-metadata{ flex: 0 1 60%;padding: 20px;background:#f5f8fa;}
+.item-basic-metadata{ padding-top:10px; }
+.item-additional-metadata{ padding-top:0px; }
+
+h4.item-title{
+    margin-bottom:5px;
+}
+
+.item-citekey-section, 
+.item-actions{
+    flex:0 1 33%;
+}
+
+.item-abstract{
+    padding:15px;
+    border-top: 1px #e6e6e6 solid;
+    border-bottom: 1px #e6e6e6 solid;
+    white-space: break-spaces;
+}
+
+.item-additional-metadata p strong ~ span {
+    margin:3px;
+}
+
+.item-actions > .bp3-card{ 
+    background-color: #eff8ff;
+    box-shadow:none;
+    padding: 10px;
+ }
+
+.item-citekey-section .bp3-button-group .bp3-button,
+.item-actions .bp3-button-group .bp3-button {
+    flex: 0 1 auto;
+    word-break: break-word;
+}
+
+.item-actions .bp3-button.item-pdf-link {font-weight: 600;}
+
+.item-citekey-section{
+    margin:10px 0px;
+    overflow-wrap:break-word;
+}
+
+.item-citekey-section .citekey-element{
+    padding:6px 10px;
+    display:flex;
+    align-items:center;
+    overflow-wrap:anywhere;
+}
+
+/* SMALLER DISPLAYS */
+
+/* To prevent weird resizing of flex container on smaller displays */
+.item-weblink {
+    overflow-wrap: anywhere;
+}
+/**/
+
+@media (max-width:900px){
+    .selected-item-header{flex-direction:column-reverse;}
+    .selected-item-body{flex-direction:column;}
+}
+
+@media (max-width:600px){
+    #zr-item-details .item-citekey-section{margin:0px 0px;}
+    #zr-item-details .selected-item-header .copy-buttons{display:none;}
+    #zr-item-details .selected-item-header{flex-direction:column-reverse;}
+    #zr-item-details .selected-item-body{flex-direction:column;}
+}
+
+/* DARK THEMES */
+
+@media (prefers-color-scheme: dark){
+    .item-basic-metadata,
+    .item-additional-metadata,
+    .citekey-element,
+    .item-actions button[type="button"],
+    .item-actions .bp3-button-group .bp3-button {
+        color: var(--zr-dark-text-co,#76a0cb);
+    }
+    .item-abstract {
+        border-top-color: var(--zr-dark-border-color,#363a3f);
+        border-bottom-color: var(--zr-dark-border-color,#363a3f);
+    }
+    .item-citekey-section .bp3-button-group .bp3-button:hover,
+    .item-actions .bp3-button-group .bp3-button:hover {
+        background-color: var(--zr-dark-selected-bc,#191919);
+        color: var(--zr-dark-text-co, #76a0cb);
+    }
+    .item-basic-metadata,
+    .item-additional-metadata,
+    .item-actions > .bp3-card {
+        background-color: var(--zr-dark-elem-bg, #2B3143);
+    }
+}

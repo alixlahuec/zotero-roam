@@ -83,7 +83,7 @@
 }
 
 .zr-semantic-panel--side {
-    flex: 1 0 0%;
+    flex: 0 0 0%;
     overflow: auto;
     transition: 0.5s;
 }

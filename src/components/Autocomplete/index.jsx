@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useMemo } from "react";
-import PropTypes from "prop-types";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import Tribute from "tributejs";
 
-import { formatItemReference, escapeRegExp } from "../../../utils";
-import { useQuery_Items } from "../../../api/queries";
+import { formatItemReference, escapeRegExp } from "../../utils";
+import { useQuery_Items } from "../../api/queries";
+
+import { ExtensionContext, UserSettings } from "../App";
 import "./index.css";
 
 const tributeClass = "zotero-roam-tribute";
@@ -63,9 +64,9 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 	return data;
 };
 
-const Autocomplete = React.memo(function Autocomplete(props) {
-	const { config, dataRequests } = props;
-	const { trigger, display = "citekey", format = "citation" } = config;
+const Autocomplete = React.memo(function Autocomplete() {
+	const { dataRequests } = useContext(ExtensionContext);
+	const { autocomplete: { trigger, display = "citekey", format = "citation" } } = useContext(UserSettings);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const formattedLib = useGetItems(dataRequests, format, display) || [];
@@ -130,13 +131,5 @@ const Autocomplete = React.memo(function Autocomplete(props) {
 
 	return null;
 });
-Autocomplete.propTypes = {
-	dataRequests: PropTypes.array,
-	config: PropTypes.shape({
-		trigger: PropTypes.string,
-		display: PropTypes.oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),
-		format: PropTypes.oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"])
-	})
-};
 
 export default Autocomplete;

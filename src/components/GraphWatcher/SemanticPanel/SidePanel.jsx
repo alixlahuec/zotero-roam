@@ -33,7 +33,7 @@ SelectedImportItem.propTypes = {
 };
 
 const SidePanel = React.memo(function SidePanel(props) {
-	const { libraries, selectProps } = props;
+	const { selectProps } = props;
 	const { handleRemove } = selectProps;
 
 	const identifiers = useMemo(() => {
@@ -42,7 +42,7 @@ const SidePanel = React.memo(function SidePanel(props) {
 
 	return (
 		<div className="zr-semantic-panel--side">
-			<ZoteroImport identifiers={identifiers} libraries={libraries} selectProps={selectProps} />
+			<ZoteroImport identifiers={identifiers} selectProps={selectProps} />
 			<ul className={[Classes.LIST_UNSTYLED, "import-items"].join(" ")}>
 				{selectProps.items.map(item => <SelectedImportItem key={[item.doi, item.url].join("-")} handleRemove={handleRemove} item={item} />)}
 			</ul>
@@ -50,7 +50,6 @@ const SidePanel = React.memo(function SidePanel(props) {
 	);
 });
 SidePanel.propTypes = {
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	selectProps: PropTypes.shape({
 		handleRemove: PropTypes.func,
 		handleSelect: PropTypes.func,

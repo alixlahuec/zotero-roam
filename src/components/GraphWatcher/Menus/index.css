@@ -16,7 +16,7 @@
 .zr-citekey-menu--header{display:flex;}
 .zr-citekey-menu--actions{flex-wrap:wrap;flex: 1 1 auto;}
 .zr-citekey-menu--actions.bp3-button-group .bp3-button {flex: 0 1 auto;}
-.zr-citekey-menu--actions [zr-role="pdf-link"] {font-weight:600;text-align:left!important;}
+.zr-citekey-menu--actions [zr-role="pdf-link"] {font-weight:600;}
 
 /* RelatedBar */
 .zotero-roam-page-menu-citations{display:flex;padding:5px;flex-wrap:wrap;padding-bottom:0px;border-top: 1px #f1f1f1 solid;}
@@ -40,14 +40,12 @@ button[class*='zr-page-menu-show--'] {
 .zr-backlink-item--info > *:not(.zr-item-title), .zr-backlink-item--year{line-height:2em;}
 .zr-backlink-item--state{flex: 1 0 auto;overflow-wrap:anywhere;}
 
-.zr-backlink-item[data-backlink-type="reference"] .zr-backlink-item--year, 
-.zr-backlink-item[data-backlink-type="reference"] a {
-    color:#136fce!important;
+.zr-backlink-item[data-backlink-type="reference"] .zr-backlink-item--year {
+    color: var(--zr-dark-highlight,#3fb8ff);
 }
 
-.zr-backlink-item[data-backlink-type="citation"] .zr-backlink-item--year, 
-.zr-backlink-item[data-backlink-type="citation"] a {
-    color:#e09f26!important;
+.zr-backlink-item[data-backlink-type="citation"] .zr-backlink-item--year {
+    color: var(--zr-dark-highlight-2,#d9822b);
 }
 
 /* SMALLER DISPLAYS */

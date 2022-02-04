@@ -13,7 +13,7 @@ import "./index.css";
 const labelId = "zr-semantic-panel-label";
 
 const SemanticTabList = React.memo(function SemanticTabList(props) {
-	const { defaultTab, items, metadataSettings, onClose, selectProps, title, updateRoamCitekeys } = props;
+	const { defaultTab, items, onClose, selectProps, title } = props;
 	const [isActiveTab, setActiveTab] = useState(defaultTab);
 	
 	useEffect(() => {
@@ -51,10 +51,8 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 			<Tab id="is_reference" 
 				panel={<SemanticQuery
 					items={references}
-					metadataSettings={metadataSettings}
 					selectProps={selectProps}
 					type="is_reference"
-					updateRoamCitekeys={updateRoamCitekeys}
 				/>} 
 				disabled={references.length == 0}
 				title={references_title}
@@ -62,10 +60,8 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 			<Tab id="is_citation" 
 				panel={<SemanticQuery
 					items={citations}
-					metadataSettings={metadataSettings}
 					selectProps={selectProps}
 					type="is_citation"
-					updateRoamCitekeys={updateRoamCitekeys}
 				/>}
 				disabled={citations.length == 0}
 				title={citations_title}
@@ -79,7 +75,6 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 SemanticTabList.propTypes = {
 	defaultTab: PropTypes.string,
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
 	selectProps: PropTypes.shape({
 		handleRemove: PropTypes.func,
@@ -87,12 +82,11 @@ SemanticTabList.propTypes = {
 		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 		resetImport: PropTypes.func
 	}),
-	title: PropTypes.string,
-	updateRoamCitekeys: PropTypes.func
+	title: PropTypes.string
 };
 
 const SemanticPanel = React.memo(function SemanticPanel(props){
-	const { isOpen, items, libraries, metadataSettings, onClose, portalId, show, updateRoamCitekeys } = props;
+	const { isOpen, items, onClose, show } = props;
 	const [itemsForImport, setItemsForImport] = useState([]);
 
 	const has_selected_items = itemsForImport.length > 0;
@@ -137,21 +131,18 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 			extraClasses={has_selected_items ? ["has-selected-items"] : []}
 			isOpen={isOpen}
 			onClose={handleClose}
-			portalId={portalId}
 		>
 			<div className={ Classes.DIALOG_BODY }>
 				<div className="zr-semantic-panel--main">
 					<SemanticTabList 
 						defaultTab={show.type}
 						items={items}
-						metadataSettings={metadataSettings}
 						onClose={handleClose}
 						selectProps={selectProps}
 						title={show.title}
-						updateRoamCitekeys={updateRoamCitekeys}
 					/>
 				</div>
-				<SidePanel libraries={libraries} selectProps={selectProps} />
+				<SidePanel selectProps={selectProps} />
 			</div>
 		</AuxiliaryDialog>
 	);
@@ -159,15 +150,11 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 SemanticPanel.propTypes = {
 	isOpen: PropTypes.bool,
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
-	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
-	portalId: PropTypes.string,
 	show: PropTypes.shape({
 		title: PropTypes.string,
 		type: PropTypes.oneOf(["is_citation", "is_reference"])
-	}),
-	updateRoamCitekeys: PropTypes.func
+	})
 };
 
 export default SemanticPanel;

@@ -1,16 +1,19 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
 import ExtensionIcon from "../ExtensionIcon";
 import GraphWatcher from "../GraphWatcher";
+import { RoamCitekeysProvider } from "../RoamCitekeysContext";
 import SearchPanel from "../SearchPanel";
 
 import { _getChildren, _getItems, _getTags } from "../../api/public";
 import { addPaletteCommand } from "../../roam";
 
 import * as customPropTypes from "../../propTypes";
+
+const ExtensionContext = React.createContext();
+const UserSettings = React.createContext();
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -58,48 +61,27 @@ class App extends Component {
 	}
 
 	render() {
-		let { 
-			apiKeys, 
-			dataRequests, 
-			extension: { portalId, version }, 
-			libraries, 
-			userSettings 
-		} = this.props;
-		let { autocomplete, copy, metadata, render_inline, shortcuts } = userSettings;
 		let { status, searchPanel } = this.state;
-
+		let { extension, userSettings } = this.props;
+		
 		return (
 			<HotkeysTarget2 hotkeys={this.hotkeys} options={this.hotkeysOptions}>
 				<QueryClientProvider client={queryClient}>
-					<ExtensionIcon 
-						apiKeys={apiKeys}
-						dataRequests={dataRequests} 
-						libraries={libraries}
-						openSearchPanel={this.openSearchPanel}
-						status={status} 
-						toggleExtension={this.toggleExtension}
-						userSettings={userSettings}
-						version={version}
-					/>
-					{status == "on"
-						? <GraphWatcher 
-							autocompleteSettings={autocomplete} 
-							dataRequests={dataRequests} 
-							libraries={libraries}
-							metadataSettings={metadata} 
-							portalId={portalId}
-							renderInline={render_inline} />
-						: null}
-					<SearchPanel
-						closePanel={this.closeSearchPanel}
-						copySettings={copy}
-						dataRequests={dataRequests}
-						metadataSettings={metadata}
-						panelState={searchPanel}
-						portalTarget={portalId}
-						shortcutsSettings={shortcuts}
-						status={status}
-					/>
+					<ExtensionContext.Provider value={extension}>
+						<UserSettings.Provider value={userSettings}>
+							<ExtensionIcon
+								openSearchPanel={this.openSearchPanel}
+								status={status} 
+								toggleExtension={this.toggleExtension} />
+							<RoamCitekeysProvider>
+								{status == "on" ? <GraphWatcher /> : null}
+								<SearchPanel
+									closePanel={this.closeSearchPanel}
+									panelState={searchPanel}
+									status={status} />
+							</RoamCitekeysProvider>
+						</UserSettings.Provider>
+					</ExtensionContext.Provider>
 				</QueryClientProvider>
 			</HotkeysTarget2>
 		);
@@ -175,26 +157,8 @@ class App extends Component {
 
 }
 App.propTypes = {
-	apiKeys: PropTypes.arrayOf(PropTypes.string),
-	dataRequests: PropTypes.array,
-	extension: PropTypes.shape({
-		version: PropTypes.string,
-		portalId: PropTypes.string
-	}),
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
-	userSettings: PropTypes.shape({
-		autocomplete: PropTypes.object,
-		autoload: PropTypes.bool,
-		copy: PropTypes.shape({
-			always: PropTypes.bool,
-			defaultFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag"]),
-			overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
-			useQuickCopy: PropTypes.bool
-		}),
-		metadata: PropTypes.object,
-		render_inline: PropTypes.bool,
-		shortcuts: PropTypes.object
-	}),
+	extension: customPropTypes.extensionType,
+	userSettings: customPropTypes.userSettingsType
 };
 
 // Utilities to be exposed via global zoteroRoam variable, for consumption by users :
@@ -204,7 +168,9 @@ const getTags = (library) => _getTags(library, queryClient);
 
 export {
 	App,
+	ExtensionContext,
 	getChildren,
 	getItems,
-	getTags
+	getTags,
+	UserSettings
 };

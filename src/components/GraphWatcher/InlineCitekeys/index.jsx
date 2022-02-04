@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
@@ -6,6 +6,8 @@ import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/cor
 import { useQuery_Items } from "../../../api/queries";
 import { importItemMetadata } from "../../../roam";
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, parseDOI } from "../../../utils";
+
+import { ExtensionContext, UserSettings } from "../../App";
 import "./index.css";
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation
@@ -70,7 +72,8 @@ const useGetItems = (reqs) => {
 };
 
 const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
-	const { coords, isOpen, itemsMap, metadataSettings, onClose, target } = props;
+	const { coords, isOpen, itemsMap, onClose, target } = props;
+	const { metadata: metadataSettings } = useContext(UserSettings);
 
 	const citekey = target?.parentElement.dataset.linkTitle;
 	const pageUID = target?.parentElement.dataset.linkUid;
@@ -182,14 +185,15 @@ CitekeyContextMenu.propTypes = {
 	}),
 	isOpen: PropTypes.bool,
 	itemsMap: PropTypes.instanceOf(Map),
-	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
 	portalId: PropTypes.string,
 	target: PropTypes.node
 };
 
-const InlineCitekeys = React.memo(function InlineCitekeys(props) {
-	const { dataRequests, metadataSettings, portalId, renderInline } = props;
+const InlineCitekeys = React.memo(function InlineCitekeys() {
+	const { dataRequests, portalId } = useContext(ExtensionContext);
+	const { render_inline } = useContext(UserSettings);
+	
 	const [isContextMenuOpen, setContextMenuOpen] = useState(false);
 	const [contextMenuCoordinates, setContextMenuCoordinates] = useState({left: 0, top:0});
 	const [contextMenuTarget, setContextMenuTarget] = useState(null);
@@ -230,18 +234,18 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 					continue;
 				} else if(current_status == "true"){
 					linkElement.textContent = itemsMap.get(citekey).citation;
-					if(renderInline == true){
+					if(render_inline == true){
 						linkElement.addEventListener("contextmenu", openContextMenu);
 					}
 				} else {
 					linkElement.textContent = citekey;
-					if(renderInline == true){
+					if(render_inline == true){
 						linkElement.removeEventListener("contextmenu", openContextMenu);
 					}
 				}
 			}
 		}
-	}, [itemsMap, renderInline, openContextMenu]);
+	}, [itemsMap, render_inline, openContextMenu]);
 
 	const cleanupCitekeyRefs = useCallback(() => {
 		let refCitekeys = document.querySelectorAll("span[data-link-title^='@'][data-in-library]");
@@ -249,11 +253,11 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 			ck.removeAttribute("data-in-library");
 			let linkElement = ck.getElementsByClassName("rm-page-ref")[0];
 			linkElement.textContent = ck.getAttribute("data-link-title");
-			if(renderInline == true){
+			if(render_inline == true){
 				linkElement.removeEventListener("contextmenu", openContextMenu);   
 			}
 		});
-	}, [renderInline, openContextMenu]);
+	}, [render_inline, openContextMenu]);
 
 	useEffect(() => {		
 		const watcher = setInterval(
@@ -265,7 +269,7 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 			clearInterval(watcher);
 			cleanupCitekeyRefs();
 		};
-	}, [renderInline, renderCitekeyRefs, cleanupCitekeyRefs]);
+	}, [renderCitekeyRefs, cleanupCitekeyRefs]);
 
 	return (
 		createPortal(
@@ -273,17 +277,10 @@ const InlineCitekeys = React.memo(function InlineCitekeys(props) {
 				coords={contextMenuCoordinates} 
 				isOpen={isContextMenuOpen} 
 				itemsMap={itemsMap}
-				metadataSettings={metadataSettings}
 				onClose={closeContextMenu}
 				target={contextMenuTarget} />, 
 			document.getElementById(portalId))
 	);
 });
-InlineCitekeys.propTypes = {
-	dataRequests: PropTypes.arrayOf(PropTypes.object),
-	metadataSettings: PropTypes.object,
-	portalId: PropTypes.string,
-	renderInline: PropTypes.bool,
-};
 
 export default InlineCitekeys;

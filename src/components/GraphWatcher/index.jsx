@@ -1,21 +1,16 @@
 import React, { PureComponent } from "react";
-import PropTypes from "prop-types";
 
-import { menuPrefix } from "./classes";
-import "./index.css";
-
-import { 
-	addPageMenus,
-	findPageMenus,
-	CitekeyMenuFactory, 
-	DNPMenuFactory, 
-	TagMenuFactory 
-} from "./Menus";
-import Autocomplete from "./Autocomplete";
+import Autocomplete from "../Autocomplete";
 import InlineCitekeys from "./InlineCitekeys";
-import { getCitekeyPages } from "../../roam";
+import { CitekeyMenuFactory, DNPMenuFactory, TagMenuFactory } from "./Menus";
+import { UserSettings } from "../App";
 
-import * as customPropTypes from "../../propTypes";
+import { addPageMenus, findPageMenus } from "./Menus/utils";
+import { addWebimportDivs, findWebimportDivs } from "./WebImport/utils";
+import { hasNodeListChanged } from "../../utils";
+import { menuPrefix, webimportClass } from "./classes";
+import "./index.css";
+import WebImportFactory from "./WebImport";
 
 class GraphWatcher extends PureComponent {
 	constructor(props){
@@ -24,10 +19,9 @@ class GraphWatcher extends PureComponent {
 			citekeyMenus: [],
 			dnpMenus: [],
 			tagMenus: [],
-			roamCitekeys: getCitekeyPages()
+			webimportDivs: []
 		};
 		this.updatePageElements = this.updatePageElements.bind(this);
-		this.updateRoamCitekeys = this.updateRoamCitekeys.bind(this);
 	}
 
 	componentDidMount() {
@@ -39,7 +33,7 @@ class GraphWatcher extends PureComponent {
 		this.watcher = setInterval(
 			() => {
 				addPageMenus();
-				// TODO: Add other page elems (explo, etc)
+				addWebimportDivs(this.context.webimport.tags);
 
 				if(this._isMounted){
 					this.updatePageElements();
@@ -54,26 +48,20 @@ class GraphWatcher extends PureComponent {
 		this._isMounted = false;
 		clearInterval(this.watcher);
 		Array.from(document.querySelectorAll(`[class*=${menuPrefix}]`)).forEach(div => div.remove());
+		Array.from(document.querySelectorAll(`[class=${webimportClass}]`)).forEach(div => div.remove());
 	}
 
 	render() {
-		let { citekeyMenus, dnpMenus, tagMenus, roamCitekeys } = this.state;
-		let { autocompleteSettings, dataRequests, libraries, metadataSettings, portalId, renderInline } = this.props;
-
-		let sharedProps = {
-			dataRequests,
-			metadataSettings,
-			portalId,
-			roamCitekeys,
-			updateRoamCitekeys: this.updateRoamCitekeys
-		};
+		let { citekeyMenus, dnpMenus, tagMenus, webimportDivs } = this.state;
+		let { autocomplete: autocompleteSettings } = this.context;
         
 		return <>
-			{citekeyMenus ? <CitekeyMenuFactory libraries={libraries} menus={citekeyMenus} {...sharedProps} /> : null}
-			{dnpMenus ? <DNPMenuFactory menus={dnpMenus} {...sharedProps} /> : null}
-			{tagMenus ? <TagMenuFactory menus={tagMenus} {...sharedProps} /> : null}
-			{autocompleteSettings.trigger ? <Autocomplete config={autocompleteSettings} dataRequests={dataRequests} /> : null}
-			<InlineCitekeys dataRequests={dataRequests} metadataSettings={metadataSettings} portalId={portalId} renderInline={renderInline} />
+			{citekeyMenus ? <CitekeyMenuFactory menus={citekeyMenus} /> : null}
+			{dnpMenus ? <DNPMenuFactory menus={dnpMenus} /> : null}
+			{tagMenus ? <TagMenuFactory menus={tagMenus} /> : null}
+			{autocompleteSettings.trigger ? <Autocomplete /> : null}
+			<WebImportFactory divs={webimportDivs} />
+			<InlineCitekeys />
 		</>;
 	}
 
@@ -81,14 +69,19 @@ class GraphWatcher extends PureComponent {
 		// TODO: Add other page elems (explo, etc)
 		this.setState((prevState) => {
 			let update = {};
-			const currentElems = findPageMenus();
-			for(let key of Object.keys(currentElems)){
-				let prev = prevState[key];
-				let current = currentElems[key];
-				// From mauroc8 on SO: https://stackoverflow.com/questions/51958759/how-can-i-test-the-equality-of-two-nodelists
-				if((prev.length + current.length) != 0 && (prev.length !== current.length || prev.some((el, i) => el !== current[i]))){
-					update[key] = currentElems[key];
+
+			// Page menus
+			const currentMenus = findPageMenus();
+			for(let key of Object.keys(currentMenus)){
+				if(hasNodeListChanged(prevState[key], currentMenus[key])){
+					update[key] = currentMenus[key];
 				}
+			}
+
+			// Webimport divs
+			const currentDivs = findWebimportDivs();
+			if(hasNodeListChanged(prevState.webimportDivs, currentDivs)){
+				update.webimportDivs = currentDivs;
 			}
 
 			if(JSON.stringify(update) === "{}"){
@@ -98,20 +91,7 @@ class GraphWatcher extends PureComponent {
 			}
 		});
 	}
-
-	updateRoamCitekeys(){
-		this.setState({
-			roamCitekeys: getCitekeyPages()
-		});
-	}
 }
-GraphWatcher.propTypes = {
-	autocompleteSettings: PropTypes.object,
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
-	metadataSettings: PropTypes.object,
-	dataRequests: PropTypes.array,
-	portalId: PropTypes.string,
-	renderInline: PropTypes.bool,
-};
+GraphWatcher.contextType = UserSettings;
 
 export default GraphWatcher;

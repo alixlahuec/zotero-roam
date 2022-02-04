@@ -10,3 +10,5 @@ export const showClasses = ["references", "citations", "backlinks"].reduce((obj,
 	obj[elem] = showPrefix + elem;
 	return obj;
 }, {});
+
+export const webimportClass = "zr-webimport-div";

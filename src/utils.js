@@ -370,6 +370,11 @@ function getWebLink(item, {format = "markdown", text = "Web library"} = {}){
 	}
 }
 
+// From mauroc8 on SO: https://stackoverflow.com/questions/51958759/how-can-i-test-the-equality-of-two-nodelists
+function hasNodeListChanged(prev, current){
+	return (prev.length + current.length) != 0 && (prev.length !== current.length || prev.some((el, i) => el !== current[i]));
+}
+
 /** Creates a dictionary from a String Array
  * @param {String[]} arr - The array from which to make the dictionary
  * @returns {Object<String,String[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array who begin with that letter or character (in any case).
@@ -560,7 +565,7 @@ function searchEngine_string(string, text, {any_case = true, match = "partial", 
 		} else if(match == "exact"){
 			let searchReg = new RegExp("^" + escapeRegExp(searchString) + "$", "g");
 			return searchReg.test(target);
-		} else {
+		} else if(match == "word") {
 			let searchReg = new RegExp("(?:\\W|^)" + escapeRegExp(searchString) + "(?:\\W|$)", "g");
 			return searchReg.test(target);
 		}
@@ -584,13 +589,24 @@ function searchEngine_string(string, text, {any_case = true, match = "partial", 
 
 		// Then carry on with the search op
 		if(word_order == "loose"){
-			let searchArrayReg = searchArray.map(t => "(?:\\W|^)" + t + "(?:\\W|$)");
-			return searchArrayReg.every(exp => {
-				let regex = new RegExp(exp, "g");
-				return regex.test(target);
-			});
+			if(match == "word"){
+				let searchArrayReg = searchArray.map(t => "(?:\\W|^)" + t + "(?:\\W|$)");
+				return searchArrayReg.every(exp => {
+					let regex = new RegExp(exp, "g");
+					return regex.test(target);
+				});
+			} else {
+				// Partial matching
+				return searchArray.every(exp => {
+					let regex = new RegExp(exp, "g");
+					return regex.test(target);
+				});
+			}
 		} else {
-			if(match == "exact"){
+			if(match == "partial"){
+				let searchReg = new RegExp(searchArray.join(" "), "g");
+				return searchReg.test(target);
+			} else if(match == "exact"){
 				let searchReg = new RegExp("^" + searchArray.join(" ") + "$", "g");
 				return searchReg.test(target);
 			} else {
@@ -717,6 +733,7 @@ export {
 	formatItemReference,
 	getLocalLink,
 	getWebLink,
+	hasNodeListChanged,
 	makeDictionary,
 	makeDNP,
 	makeTimestamp,

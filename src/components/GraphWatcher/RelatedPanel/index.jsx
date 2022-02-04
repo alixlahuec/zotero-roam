@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
-import CitekeyPopover from "../CitekeyPopover";
+import CitekeyPopover from "../../CitekeyPopover";
 import { pluralize, sortElems } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
@@ -11,66 +11,63 @@ import "./index.css";
 
 const labelId = "zr-related-panel-label";
 
-const RelatedItem = React.memo(function RelatedItem(props) {
-	const { allAbstractsShown, closeDialog, inGraph, item, metadataSettings, type, updateRoamCitekeys } = props;
-	const { children: { pdfs, notes }, raw } = item;
-	const [isAbstractVisible, setAbstractVisible] = useState(allAbstractsShown);
+const Abstract = React.memo(function Abstract({ abstract, allAbstractsShown }) {
+	const [isVisible, setVisible] = useState(allAbstractsShown);
 
 	const toggleAbstract = useCallback(() => {
-		setAbstractVisible(prevState => !prevState);
+		setVisible(prevState => !prevState);
 	}, []);
 
-	const has_timestamp = useMemo(() => {
-		return type == "added_on"
-			? <span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zr-related-item--timestamp"].join(" ")}>
-				{item.timestamp}
-			</span>
-			: null;
-	}, [item.timestamp, type]);
-
-	const has_abstract = useMemo(() => {
-		if(!item.abstract){
-			return null;
-		} else {
-			return (
-				<div className="zr-related-item--abstract">
-					<Button className="zr-text-small"
-						zr-role="abstract-toggle"
-						icon={isAbstractVisible ? "chevron-down" : "chevron-right"}
-						onClick={toggleAbstract} 
-						intent="primary" 
-						minimal={true} 
-						small={true}
-					>
-                        Abstract
-					</Button>
-					{isAbstractVisible
-						? <span zr-role="abstract-text" className="zr-text-small zr-auxiliary">{item.abstract}</span>
-						: null}
-				</div>
-			);
-		}
-	}, [isAbstractVisible, item.abstract, toggleAbstract]);
-
-	const itemActions = useMemo(() => {
-		return <CitekeyPopover 
-			closeDialog={closeDialog} 
-			inGraph={inGraph} 
-			item={raw} 
-			metadataSettings={metadataSettings} 
-			notes={notes} 
-			pdfs={pdfs}
-			updateRoamCitekeys={updateRoamCitekeys} />;
-	}, [closeDialog, inGraph, metadataSettings, notes, pdfs, raw, updateRoamCitekeys]);
-
 	useEffect(() => {
-		setAbstractVisible(allAbstractsShown);
+		setVisible(allAbstractsShown);
 	}, [allAbstractsShown]);
+
+	if(!abstract){
+		return null;
+	} else {
+		return (
+			<div className="zr-related-item--abstract">
+				<Button className="zr-text-small"
+					zr-role="abstract-toggle"
+					icon={isVisible ? "chevron-down" : "chevron-right"}
+					onClick={toggleAbstract} 
+					intent="primary" 
+					minimal={true} 
+					small={true} >
+					Abstract
+				</Button>
+				{isVisible
+					? <span zr-role="abstract-text" className="zr-text-small zr-auxiliary">{abstract}</span>
+					: null}
+			</div>
+		);
+	}
+});
+Abstract.propTypes = {
+	abstract: PropTypes.string,
+	allAbstractsShown: PropTypes.bool
+};
+
+const Timestamp = React.memo(function Timestamp({ timestamp, type }){
+	return type == "added_on"
+		? <span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zr-related-item--timestamp"].join(" ")}>
+			{timestamp}
+		</span>
+		: null;
+});
+Timestamp.propTypes = {
+	timestamp: PropTypes.string,
+	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
+};
+
+const RelatedItem = React.memo(function RelatedItem(props) {
+	const { allAbstractsShown, closeDialog, inGraph, item, type } = props;
+	const { children: { pdfs, notes }, raw } = item;
 
 	return (
 		<li className="zr-related-item" data-item-type={item.itemType} data-in-graph={(inGraph != false).toString()}>
 			<div className={ Classes.MENU_ITEM } label={item.key}>
-				{has_timestamp}
+				<Timestamp timestamp={item.timestamp} type={type} />
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{display: "flex"}}>
 						<div className="zr-related-item-contents--metadata">
@@ -78,10 +75,15 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 							<span className="zr-highlight">{item.meta}</span>
 						</div>
 						<span className="zr-related-item-contents--actions">
-							{itemActions}
+							<CitekeyPopover 
+								closeDialog={closeDialog} 
+								inGraph={inGraph} 
+								item={raw}
+								notes={notes} 
+								pdfs={pdfs} />
 						</span>
 					</div>
-					{has_abstract}
+					<Abstract abstract={item.abstract} allAbstractsShown={allAbstractsShown} />
 				</div>
 			</div>
 		</li>
@@ -92,13 +94,11 @@ RelatedItem.propTypes = {
 	closeDialog: PropTypes.func,
 	inGraph: PropTypes.oneOf([PropTypes.string, false]),
 	item: customPropTypes.cleanRelatedItemType,
-	metadataSettings: PropTypes.object,
-	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"]),
-	updateRoamCitekeys: PropTypes.func
+	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
 };
 
 const RelatedList = React.memo(function RelatedList(props) {
-	const { allAbstractsShown, closeDialog, items, metadataSettings, type, updateRoamCitekeys } = props;
+	const { allAbstractsShown, closeDialog, items, type } = props;
 
 	const sortedItems = useMemo(() => {
 		let sort = type == "added_on" ? "added" : "meta";
@@ -112,10 +112,8 @@ const RelatedList = React.memo(function RelatedList(props) {
 					allAbstractsShown={allAbstractsShown} 
 					closeDialog={closeDialog}
 					inGraph={it.inGraph} 
-					item={it} 
-					metadataSettings={metadataSettings}
-					type={type}
-					updateRoamCitekeys={updateRoamCitekeys} />;
+					item={it}
+					type={type} />;
 			})
 			}
 		</ul>
@@ -125,13 +123,11 @@ RelatedList.propTypes = {
 	allAbstractsShown: PropTypes.bool,
 	closeDialog: PropTypes.func,
 	items: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
-	metadataSettings: PropTypes.object,
-	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag"]),
-	updateRoamCitekeys: PropTypes.func
+	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag"])
 };
 
 const RelatedPanel = React.memo(function RelatedPanel(props) {
-	const { isOpen, items, metadataSettings, onClose, portalId, show, updateRoamCitekeys } = props;
+	const { isOpen, items, onClose, show } = props;
 	const [isShowingAllAbstracts, setShowingAllAbstracts] = useState(false);
 
 	const relationship = useMemo(() => {
@@ -177,7 +173,6 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 			className="related"
 			isOpen={isOpen}
 			onClose={onClose}
-			portalId={portalId}
 		>
 			<div className={ Classes.DIALOG_BODY }>
 				<div className="header-content">
@@ -187,8 +182,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 							icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} 
 							minimal={true} 
 							onClick={toggleAbstracts}
-							zr-role="toggle-abstracts"
-						>
+							zr-role="toggle-abstracts" >
 							{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts
 						</Button>
 					</div>
@@ -199,9 +193,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 						allAbstractsShown={isShowingAllAbstracts}
 						closeDialog={onClose}
 						items={items}
-						metadataSettings={metadataSettings}
 						type={show.type}
-						updateRoamCitekeys={updateRoamCitekeys}
 					/>
 				</div>
 			</div>
@@ -211,14 +203,11 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 RelatedPanel.propTypes = {
 	isOpen: PropTypes.bool,
 	items: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
-	metadataSettings: PropTypes.object,
 	onClose: PropTypes.func,
-	portalId: PropTypes.string,
 	show: PropTypes.shape({
 		title: PropTypes.string,
 		type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag"])
-	}),
-	updateRoamCitekeys: PropTypes.func
+	})
 };
 
 export default RelatedPanel;

@@ -25,7 +25,7 @@ const zoteroLibraryType = PropTypes.shape({
 
 
 /**
- * @see cleanLibrary
+ * @see cleanLibraryItem
  */
 const cleanLibraryItemType = PropTypes.shape({
 	abstract: PropTypes.string,
@@ -119,6 +119,41 @@ const cleanSemanticReturnObjectType = PropTypes.shape({
 	references: PropTypes.arrayOf(cleanSemanticReturnType),
 });
 
+/**
+ * USER SETTINGS
+ */
+const copySettingsType = PropTypes.shape({
+	always: PropTypes.bool,
+	defaultFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
+	overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
+	useQuickCopy: PropTypes.bool
+});
+
+const extensionType = PropTypes.shape({
+	apiKeys: PropTypes.arrayOf(PropTypes.string),
+	dataRequests: PropTypes.array,
+	libraries: PropTypes.arrayOf(zoteroLibraryType),
+	portalId: PropTypes.string,
+	version: PropTypes.string
+});
+
+const userSettingsType = PropTypes.shape({
+	autocomplete: PropTypes.shape({
+		trigger: PropTypes.string,
+		display: PropTypes.oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),
+		format: PropTypes.oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"])
+	}),
+	autoload: PropTypes.bool,
+	copy: copySettingsType,
+	metadata: PropTypes.object,
+	render_inline: PropTypes.bool,
+	shortcuts: PropTypes.object,
+	typemap: PropTypes.object,
+	webimport: PropTypes.shape({
+		tags: PropTypes.arrayOf(PropTypes.string)
+	})
+});
+
 export {
 	zoteroCollectionType,
 	zoteroItemType,
@@ -127,5 +162,8 @@ export {
 	cleanLibraryReturnArrayType,
 	cleanRelatedItemType,
 	cleanSemanticReturnType,
-	cleanSemanticReturnObjectType
+	cleanSemanticReturnObjectType,
+	copySettingsType,
+	extensionType,
+	userSettingsType
 };

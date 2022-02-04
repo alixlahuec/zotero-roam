@@ -7,7 +7,7 @@
     margin: 0px 15px;
 }
 .bp3-dialog.zr-auxiliary-dialog--related [zr-role="abstract-toggle"] {
-    background: none!important;
+    background: none;
 }
 .bp3-dialog.zr-auxiliary-dialog--related [zr-role="abstract-text"] {
     display: block;

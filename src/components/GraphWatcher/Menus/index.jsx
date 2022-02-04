@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 
@@ -9,22 +9,13 @@ import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
-import { addPageMenus, cleanRelatedItem, findPageMenus } from "./utils";
+import { ExtensionContext } from "../../App";
+import { useRoamCitekeys } from "../../RoamCitekeysContext";
+import { cleanRelatedItem } from "./utils";
 import "./index.css";
-import * as customPropTypes from "../../../propTypes";
 
-const sharedPropTypes = { 
-	dataRequests: PropTypes.array,
-	menus: PropTypes.arrayOf(PropTypes.node),
-	metadataSettings: PropTypes.object,
-	portalId: PropTypes.string,
-	roamCitekeys: PropTypes.instanceOf(Map),
-	updateRoamCitekeys: PropTypes.func
-};
-
-function CitekeyMenuFactory(props){
-	const { dataRequests, libraries, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys } = props;
-
+function CitekeyMenuFactory({ menus }){
+	const { dataRequests } = useContext(ExtensionContext);
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -46,21 +37,22 @@ function CitekeyMenuFactory(props){
 				.map((menu, i) => {
 					let { item, div } = menu;
 					return (
-						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} libraries={libraries} metadataSettings={metadataSettings} portalId={portalId} roamCitekeys={roamCitekeys} updateRoamCitekeys={updateRoamCitekeys} />, div)
+						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} />, div)
 					);
 				});
 		}
-	}, [citekeyItems, itemList, libraries, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys]);
+	}, [citekeyItems, itemList, menus]);
 
 	return citekeyMenus;
 }
-CitekeyMenuFactory.propTypes = {
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
-	...sharedPropTypes
+CitekeyMenuFactory.propTypes = { 
+	menus: PropTypes.arrayOf(PropTypes.node)
 };
 
-function DNPMenuFactory(props){
-	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys } = props;
+function DNPMenuFactory({ menus }){
+	const { dataRequests } = useContext(ExtensionContext);
+	const [roamCitekeys,] = useRoamCitekeys();
+
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -88,20 +80,22 @@ function DNPMenuFactory(props){
 					let { added, date, div, title } = menu;
 					return (
 						createPortal(<DNPMenu key={i} 
-							added={added} date={date} title={title} 
-							metadataSettings={metadataSettings} portalId={portalId}
-							updateRoamCitekeys={updateRoamCitekeys} />, div)
+							added={added} date={date} title={title} />, div)
 					);
 				});
 		}
-	}, [itemList, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys]);
+	}, [itemList, menus, roamCitekeys]);
 
 	return dnpPortals;
 }
-DNPMenuFactory.propTypes = sharedPropTypes;
+DNPMenuFactory.propTypes = { 
+	menus: PropTypes.arrayOf(PropTypes.node)
+};
 
-function TagMenuFactory(props){
-	const { dataRequests, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys } = props;
+function TagMenuFactory({ menus }){
+	const { dataRequests } = useContext(ExtensionContext);
+	const [roamCitekeys,] = useRoamCitekeys();
+	
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -149,21 +143,19 @@ function TagMenuFactory(props){
 					let { with_tags, with_abstract, div, tag } = menu;
 					return (
 						createPortal(<TagMenu key={i} 
-							tag={tag} inAbstract={with_abstract} tagged={with_tags} 
-							metadataSettings={metadataSettings} portalId={portalId}
-							updateRoamCitekeys={updateRoamCitekeys} />, div)
+							tag={tag} inAbstract={with_abstract} tagged={with_tags} />, div)
 					);
 				});
 		}
-	}, [itemList, menus, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys, with_tags_or_abstract]);
+	}, [itemList, menus, roamCitekeys, with_tags_or_abstract]);
 
 	return tagPortals;
 }
-TagMenuFactory.propTypes = sharedPropTypes;
+TagMenuFactory.propTypes = { 
+	menus: PropTypes.arrayOf(PropTypes.node)
+};
 
 export {
-	addPageMenus,
-	findPageMenus,
 	CitekeyMenuFactory,
 	DNPMenuFactory,
 	TagMenuFactory

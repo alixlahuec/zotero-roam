@@ -3,10 +3,6 @@
     min-width:25%;
 }
 
-.scite-badge[style*='position: fixed; right: 1%;'] {
-    display: none!important;
-}
-
 /* SMALLER DISPLAYS */
 
 .roam-body.mobile .scite-badge{

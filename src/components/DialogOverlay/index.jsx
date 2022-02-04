@@ -1,7 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import PropTypes from "prop-types";
 import { createPortal } from "react-dom";
 import { Classes, Dialog } from "@blueprintjs/core";
+
+import { ExtensionContext } from "../App";
 import "./index.css";
 
 const DialogOverlay = React.memo(function DialogOverlay(props) {
@@ -14,9 +16,9 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 		lazy = true,
 		onClose,
 		onOpening,
-		portalTarget,
 		...otherProps
 	} = props;
+	const { portalId } = useContext(ExtensionContext);
     
 	const dialog_class = useMemo(() => "zr-dialog-overlay--" + dialogClass, [dialogClass]);
 	const mainPanelStyle = useMemo(() => {
@@ -32,8 +34,7 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 
 	/* const sidePanelStyle = useMemo(() => {
 		return {
-			flex: "1 0 0%",
-			flexBasis: isSidePanelOpen ? "20vw!important" : "0%"
+			flex: isSidePanelOpen ? "1 0 20vw" : "0 0 0%";
 		};
 	}, [isSidePanelOpen]); */
 
@@ -58,7 +59,7 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 					</div>
 				</div>
 			</Dialog>,
-			document.getElementById(portalTarget))
+			document.getElementById(portalId))
 	);
 });
 DialogOverlay.propTypes = {
@@ -69,8 +70,7 @@ DialogOverlay.propTypes = {
 	isSidePanelOpen: PropTypes.bool,
 	lazy: PropTypes.bool,
 	onClose: PropTypes.func,
-	onOpening: PropTypes.func,
-	portalTarget: PropTypes.string
+	onOpening: PropTypes.func
 };
 
 export default DialogOverlay;

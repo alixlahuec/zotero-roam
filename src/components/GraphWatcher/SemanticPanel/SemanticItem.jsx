@@ -2,12 +2,12 @@ import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import { Button, Classes, Icon, Tag } from "@blueprintjs/core";
 
-import CitekeyPopover from "../CitekeyPopover";
+import CitekeyPopover from "../../CitekeyPopover";
 
 import * as customPropTypes from "../../../propTypes";
 
 const SemanticItem = React.memo(function SemanticItem(props) {
-	const { handleRemove, handleSelect, inGraph, isSelected, item, metadataSettings, type, updateRoamCitekeys } = props;
+	const { handleRemove, handleSelect, inGraph, isSelected, item, type } = props;
 	const { inLibrary } = item;
 
 	const handleClick = useCallback(() => {
@@ -42,10 +42,36 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 		} else {
 			let { children: { pdfs, notes }, raw} = inLibrary;
 			return (
-				<CitekeyPopover inGraph={inGraph} item={raw} metadataSettings={metadataSettings} notes={notes} pdfs={pdfs} updateRoamCitekeys={updateRoamCitekeys} />
+				<CitekeyPopover inGraph={inGraph} item={raw} notes={notes} pdfs={pdfs} />
 			);
 		}
-	}, [handleClick, inGraph, inLibrary, isSelected, item.doi, item.url, metadataSettings, updateRoamCitekeys]);
+	}, [handleClick, inGraph, inLibrary, isSelected, item.doi, item.url]);
+
+	const itemIntents = useMemo(() => {
+		return (
+			<div className="zr-related-item--intents">
+				{item.intent.length > 0
+					? item.intent.map(int => {
+						let capitalizedIntent = int.charAt(0).toUpperCase() + int.slice(1);
+						return <Tag key={int} data-semantic-intent={int} htmlTitle={"This citation was classified as related to " + capitalizedIntent + " by Semantic Scholar"} minimal={true}>{capitalizedIntent}</Tag>;})
+					: null}
+			</div>
+		);
+	}, [item.intent]);
+
+	const itemLinks = useMemo(() => {
+		return (
+			<div className="zr-related-item--links">
+				{Object.keys(item.links).map((key) => {
+					return (
+						<span key={key} data-service={key}>
+							<a href={item.links[key]} className="zr-text-small" target="_blank" rel="noreferrer">{key.split("-").map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(" ")}</a>
+						</span>
+					);
+				})}
+			</div>
+		);
+	}, [item.links]);
 
 	return (
 		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
@@ -62,27 +88,13 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 								? <Icon className="zr-related-item--decorating-icon" color="#f8c63a" htmlTitle="This item was classified as influential by Semantic Scholar" icon="trending-up" />
 								: null}
 							<span className="zr-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
-							<div className="zr-related-item--links">
-								{Object.keys(item.links).map((key) => {
-									return (
-										<span key={key} data-service={key}>
-											<a href={item.links[key]} className="zr-text-small" target="_blank" rel="noreferrer">{key.split("-").map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(" ")}</a>
-										</span>
-									);
-								})}
-							</div>
+							{itemLinks}
 						</div>
 						<span className="zr-related-item-contents--actions">
 							{itemActions}
 						</span>
 					</div>
-					<div className="zr-related-item--intents">
-						{item.intent.length > 0
-							? item.intent.map(int => {
-								let capitalizedIntent = int.charAt(0).toUpperCase() + int.slice(1);
-								return <Tag key={int} data-semantic-intent={int} htmlTitle={"This citation was classified as related to " + capitalizedIntent + " by Semantic Scholar"} minimal={true}>{capitalizedIntent}</Tag>;})
-							: null}
-					</div>
+					{itemIntents}
 				</div>
 			</div>
 		</li>
@@ -94,9 +106,7 @@ SemanticItem.propTypes = {
 	inGraph: PropTypes.oneOf([PropTypes.string, false]),
 	isSelected: PropTypes.bool,
 	item: customPropTypes.cleanSemanticReturnType,
-	metadataSettings: PropTypes.object,
-	type: PropTypes.oneOf(["is_reference", "is_citation"]),
-	updateRoamCitekeys: PropTypes.func
+	type: PropTypes.oneOf(["is_reference", "is_citation"])
 };
 
 export default SemanticItem;

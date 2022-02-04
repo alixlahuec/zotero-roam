@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
 
 import ButtonLink from "../../ButtonLink";
-import CitekeyPopover from "../CitekeyPopover";
+import CitekeyPopover from "../../CitekeyPopover";
 import SciteBadge from "../../SciteBadge";
 import SemanticPanel from "../SemanticPanel";
 
@@ -11,10 +11,15 @@ import { showClasses } from "../classes";
 import { useQuery_Semantic } from "../../../api/queries";
 import { findRoamPage, importItemMetadata } from "../../../roam";
 import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
-import * as customPropTypes from "../../../propTypes";
+import AuxiliaryDialog from "../AuxiliaryDialog";
+import ItemDetails from "../../ItemDetails";
+import { UserSettings } from "../../App";
 
-function BacklinksItem(props) {
-	const { entry, metadataSettings, updateRoamCitekeys } = props;
+import * as customPropTypes from "../../../propTypes";
+import { cleanLibraryItem } from "../../SearchPanel/utils";
+import { useRoamCitekeys } from "../../RoamCitekeysContext";
+
+function BacklinksItem({ entry }) {
 	const { _type, inLibrary, inGraph } = entry;
 	const { children: { pdfs, notes }, raw: item} = inLibrary;
 	const { key, data, meta } = item;
@@ -25,12 +30,10 @@ function BacklinksItem(props) {
 	const itemActions = useMemo(() => {
 		return <CitekeyPopover 
 			inGraph={inGraph} 
-			item={item} 
-			metadataSettings={metadataSettings}
+			item={item}
 			notes={notes}
-			pdfs={pdfs}
-			updateRoamCitekeys={updateRoamCitekeys} />;
-	}, [inGraph, item, metadataSettings, notes, pdfs, updateRoamCitekeys]);
+			pdfs={pdfs} />;
+	}, [inGraph, item, notes, pdfs]);
 
 	return (
 		<li className="zr-backlink-item" 
@@ -52,13 +55,11 @@ function BacklinksItem(props) {
 	);
 }
 BacklinksItem.propTypes = {
-	entry: customPropTypes.cleanSemanticReturnType,
-	metadataSettings: PropTypes.object,
-	updateRoamCitekeys: PropTypes.func
+	entry: customPropTypes.cleanSemanticReturnType
 };
 
 const Backlinks = React.memo(function Backlinks(props) {
-	const { isOpen, items, metadataSettings, origin, updateRoamCitekeys } = props;
+	const { isOpen, items, origin } = props;
 
 	if(items.length == 0){
 		return null;
@@ -68,16 +69,6 @@ const Backlinks = React.memo(function Backlinks(props) {
 		const references = sortedItems.filter(it => it._type == "cited");
 		const citations = sortedItems.filter(it => it._type == "citing");
 
-		const refList = references.length > 0 
-			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="references">
-				{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} metadataSettings={metadataSettings} updateRoamCitekeys={updateRoamCitekeys} />)}
-			</ul> 
-			: null;
-		const citList = citations.length > 0 
-			? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="citations">
-				{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} metadataSettings={metadataSettings} updateRoamCitekeys={updateRoamCitekeys} />)}
-			</ul> 
-			: null;
 		const separator = <span>
 			<Tag className="zr-backlinks-divider--tag" minimal={true} multiline={true}>{origin}</Tag>
 			<Divider />
@@ -86,11 +77,19 @@ const Backlinks = React.memo(function Backlinks(props) {
 		return (
 			<Collapse isOpen={isOpen} keepChildrenMounted={true}>
 				<ul className={[ Classes.LIST_UNSTYLED, "zr-citekey-menu--backlinks"].join(" ")}>
-					{refList}
+					{references.length > 0 
+						? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="references">
+							{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} />)}
+						</ul> 
+						: null}
 					{(references.length > 0 && citations.length > 0)
 						? separator
 						: null}
-					{citList}
+					{citations.length > 0 
+						? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="citations">
+							{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} />)}
+						</ul> 
+						: null}
 				</ul>
 			</Collapse>
 		);
@@ -99,13 +98,12 @@ const Backlinks = React.memo(function Backlinks(props) {
 Backlinks.propTypes = {
 	isOpen: PropTypes.bool,
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-	metadataSettings: PropTypes.object,
-	origin: PropTypes.string,
-	updateRoamCitekeys: PropTypes.func
+	origin: PropTypes.string
 };
 
 function RelatedItemsBar(props) {
-	const { doi, itemList, libraries, metadataSettings, origin, portalId, roamCitekeys, title, updateRoamCitekeys } = props;
+	const { doi, itemList, origin, title } = props;
+	const [roamCitekeys,] = useRoamCitekeys();
 	const { isLoading, isError, data = {}, error } = useQuery_Semantic(doi);
 	
 	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
@@ -179,14 +177,10 @@ function RelatedItemsBar(props) {
 						? <SemanticPanel
 							isOpen={isDialogOpen} 
 							items={cleanSemanticData}
-							libraries={libraries}
-							metadataSettings={metadataSettings}
 							onClose={closeDialog}
-							portalId={portalId}
-							show={isShowing}
-							updateRoamCitekeys={updateRoamCitekeys} />
+							show={isShowing} />
 						: null}
-					<Backlinks isOpen={isBacklinksListOpen} items={cleanSemanticData.backlinks} metadataSettings={metadataSettings} origin={origin} updateRoamCitekeys={updateRoamCitekeys} />
+					<Backlinks isOpen={isBacklinksListOpen} items={cleanSemanticData.backlinks} origin={origin} />
 				</>
 			}
 		</div>
@@ -199,17 +193,46 @@ RelatedItemsBar.propTypes = {
 		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 	}),
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
-	metadataSettings: PropTypes.object,
 	origin: PropTypes.string,
-	portalId: PropTypes.string,
-	roamCitekeys: PropTypes.instanceOf(Map),
-	title: PropTypes.string,
-	updateRoamCitekeys: PropTypes.func
+	title: PropTypes.string
+};
+
+function ViewItem(props) {
+	const { item } = props;
+	const [isPanelOpen, setPanelOpen] = useState(false);
+
+	const closePanel = useCallback(() => {
+		setPanelOpen(false);
+	}, []);
+
+	const openPanel = useCallback(() => {
+		setPanelOpen(true);
+	}, []);
+
+	return (
+		<>
+			<Button icon="info-sign" onClick={openPanel}>View item information</Button>
+			<AuxiliaryDialog
+				className="view-item-information"
+				isOpen={isPanelOpen}
+				onClose={closePanel}
+			>
+				<ItemDetails
+					closeDialog={closePanel}
+					item={item}
+				/>
+			</AuxiliaryDialog>
+		</>
+	);
+}
+ViewItem.propTypes = {
+	item: customPropTypes.cleanLibraryItemType
 };
 
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
-	const { item, itemList, libraries, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys } = props;
+	const { item, itemList } = props;
+	const { metadata: metadataSettings } = useContext(UserSettings);
+	const [roamCitekeys,] = useRoamCitekeys();
 
 	const doi = parseDOI(item.data.DOI);
 	const pageUID = findRoamPage("@" + item.key);
@@ -239,6 +262,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 					let href = (["linked_file", "imported_file", "imported_url"].includes(pdf.data.linkMode)) ? `zotero://open-pdf/${location}/items/${pdf.data.key}` : pdf.data.url;
 					return (
 						<ButtonLink zr-role="pdf-link" key={pdf.key}
+							alignText="left"
 							href={href}
 							icon="paperclip"
 							minimal={true}
@@ -281,15 +305,14 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 			? <RelatedItemsBar doi={doi}
 				itemList={itemList}
 				origin={item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : ""} 
-				libraries={libraries}
-				metadataSettings={metadataSettings}
-				portalId={portalId}
-				roamCitekeys={roamCitekeys}
 				title={"@" + item.key}
-				updateRoamCitekeys={updateRoamCitekeys}
 			/>
 			: null;
-	}, [doi, item.key, item.meta.parsedDate, itemList, libraries, metadataSettings, portalId, roamCitekeys, updateRoamCitekeys]);
+	}, [doi, item.key, item.meta.parsedDate, itemList]);
+
+	const clean_item = useMemo(() => {
+		return cleanLibraryItem(item, has_pdfs, has_notes, roamCitekeys);
+	}, [has_pdfs, has_notes, item, roamCitekeys]);
 
 	return (
 		<>
@@ -299,7 +322,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 					<ButtonGroup className="zr-citekey-menu--actions" minimal={true}>
 						<Button icon="add" onClick={importMetadata}>Add metadata</Button>
 						{importNotes}
-						<Button icon="info-sign">View item information</Button>
+						<ViewItem item={clean_item} />
 						{open_zotero}
 						{pdfLinks}
 						{ext_links}
@@ -317,12 +340,7 @@ CitekeyMenu.propTypes = {
 		items: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
 		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
-	}),
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
-	metadataSettings: PropTypes.object,
-	portalId: PropTypes.string,
-	roamCitekeys: PropTypes.instanceOf(Map),
-	updateRoamCitekeys: PropTypes.func
+	})
 };
 
 export default CitekeyMenu;

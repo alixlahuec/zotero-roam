@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
@@ -6,8 +6,12 @@ import { Popover2 } from "@blueprintjs/popover2";
 import ButtonLink from "../ButtonLink";
 import { importItemMetadata, openPageByUID } from "../../roam";
 import { copyToClipboard } from "../../utils";
-import { formatItemReferenceForCopy } from "./utils";
+import { formatItemReferenceForCopy } from "../SearchPanel/utils";
+
+import { UserSettings } from "../App";
+import { useRoamCitekeys } from "../RoamCitekeysContext";
 import * as customPropTypes from "../../propTypes";
+import "./index.css";
 
 function CopyOption(props){
 	let { citekey, format, item, text } = props;
@@ -45,11 +49,16 @@ CopyOption.propTypes = {
 };
 
 function CopyButtons(props){
-	const { citekey, defaultCopyFormat, inGraph, item } = props;
+	const { citekey, inGraph, item } = props;
+	const { copy: { defaultFormat: defaultCopyFormat} } = useContext(UserSettings);
 
 	const defaultCopyText = useMemo(() => {
 		return formatItemReferenceForCopy(item, defaultCopyFormat);
 	}, [defaultCopyFormat, item]);
+
+	const copyDefault = useCallback(() => {
+		copyToClipboard(defaultCopyText);
+	}, [defaultCopyText]);
 
 	const optionsMenu = useMemo(() => {
 		let options = [
@@ -72,7 +81,7 @@ function CopyButtons(props){
 				icon="clipboard"
 				intent={inGraph ? "success" : "warning"}
 				text={defaultCopyText} 
-				onClick={() => copyToClipboard(defaultCopyText)} />
+				onClick={copyDefault} />
 			<Popover2 interactionKind="hover" placement="right-start" popoverClassName="zr-popover" content={optionsMenu} >
 				<Button icon="caret-right" intent={inGraph ? "success" : "warning"} />
 			</Popover2>
@@ -80,14 +89,13 @@ function CopyButtons(props){
 	);
 }
 CopyButtons.propTypes = {
-	defaultCopyFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
 	citekey: PropTypes.string,
 	inGraph: PropTypes.bool,
 	item: PropTypes.object
 };
 
 function ItemDetails(props) {
-	const { closeDialog, defaultCopyFormat, item, metadataSettings } = props;
+	const { closeDialog, item } = props;
 	const {
 		abstract, 
 		authors, 
@@ -102,11 +110,17 @@ function ItemDetails(props) {
 		weblink, 
 		year,
 		zotero} = item;
+	const { metadata: metadataSettings } = useContext(UserSettings);
+	const [, updateRoamCitekeys] = useRoamCitekeys();
 
 	const importMetadata = useCallback(async() => {
-		let { pdfs = [], notes = [] } = children;
-		return await importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings);
-	}, [children, inGraph, item.raw, metadataSettings]);
+		const { pdfs = [], notes = [] } = children;
+		const outcome = await importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings);
+		if(outcome.success){
+			updateRoamCitekeys();
+		}
+		return outcome;
+	}, [children, inGraph, item.raw, metadataSettings, updateRoamCitekeys]);
 	
 	const navigateToPage = useCallback(() => {
 		if(inGraph != false){
@@ -150,7 +164,7 @@ function ItemDetails(props) {
 		}
 	}, [children.notes, showNotes]);
 
-	return <div id="zotero-roam-search-selected-item">
+	return <div id="zr-item-details">
 		<div className="selected-item-header">
 			<div className="item-basic-metadata">
 				<h4 className="item-title">{title}</h4>
@@ -166,7 +180,7 @@ function ItemDetails(props) {
 			</div>
 			<div className="item-citekey-section" data-in-graph={inGraph.toString()}>
 				{navigator.clipboard
-					? <CopyButtons citekey={key} inGraph={inGraph != false} item={props.item} defaultCopyFormat={defaultCopyFormat} />
+					? <CopyButtons citekey={key} inGraph={inGraph != false} item={props.item} />
 					: <div className={[Classes.FILL, "citekey-element"].join(" ")}>@{key}</div>}
 			</div>
 		</div>
@@ -215,9 +229,7 @@ function ItemDetails(props) {
 }
 ItemDetails.propTypes = {
 	closeDialog: PropTypes.func,
-	defaultCopyFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
-	item: customPropTypes.cleanLibraryItemType,
-	metadataSettings: PropTypes.object
+	item: customPropTypes.cleanLibraryItemType
 };
 
 export default ItemDetails;

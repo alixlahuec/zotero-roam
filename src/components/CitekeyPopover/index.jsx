@@ -1,13 +1,26 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import PropTypes from "prop-types";
 import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import { importItemMetadata, openInSidebarByUID, openPageByUID } from "../../roam";
 import { getLocalLink, getWebLink } from "../../utils";
+import { UserSettings } from "../App";
+import { useRoamCitekeys } from "../RoamCitekeysContext";
+
+const popoverMenuProps = {
+	autoFocus: true,
+	className: "zr-library-item-popover",
+	interactionKind: "hover",
+	lazy: true,
+	placement: "right-start",
+	popoverClassName: "zr-popover"
+};
 
 const CitekeyPopover = React.memo(function CitekeyPopover(props) {
-	const { closeDialog, inGraph, item, metadataSettings, notes = [], pdfs = [], updateRoamCitekeys } = props;
+	const { closeDialog, inGraph, item, notes = [], pdfs = [] } = props;
+	const { metadata: metadataSettings } = useContext(UserSettings);
+	const [, updateRoamCitekeys] = useRoamCitekeys();
 
 	const handleClose = useCallback(() => {
 		if(closeDialog){
@@ -15,20 +28,9 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 		}
 	}, [closeDialog]);
 
-	const popoverMenuProps = useMemo(() => {
-		return {
-			autoFocus: true,
-			className: "zr-library-item-popover",
-			interactionKind: "hover",
-			lazy: true,
-			placement: "right-start",
-			popoverClassName: "zr-popover"
-		};
-	}, []);
-
 	const buttonProps = useMemo(() => {
 		return inGraph
-			? {intent: "success", onClick: () => openPageByUID(inGraph), className: "zr-text-small"}
+			? {className: "zr-text-small", intent: "success", onClick: () => openPageByUID(inGraph)}
 			: {className: ["zr-text-small", "zr-auxiliary"].join(" ")};
 	}, [inGraph]);
 
@@ -59,7 +61,6 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 
 	const importMetadataAndOpen = useCallback(async() => {
 		let { success, args: { uid }} = await importMetadata();
-		
 		if(success){
 			openInSidebarByUID(uid);
 		}
@@ -72,9 +73,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 		}
 	}, [handleClose, inGraph]);
 
-	const openPageInSidebar = useCallback(() => {
-		openInSidebarByUID(inGraph);
-	}, [inGraph]);
+	const openPageInSidebar = useCallback(() => openInSidebarByUID(inGraph), [inGraph]);
 
 	const actionsMenu = useMemo(() => {
 		if(!inGraph){
@@ -114,10 +113,8 @@ CitekeyPopover.propTypes = {
 	closeDialog: PropTypes.func,
 	inGraph: PropTypes.oneOf(PropTypes.string, false),
 	item: PropTypes.object,
-	metadataSettings: PropTypes.object,
 	notes: PropTypes.arrayOf(PropTypes.object),
-	pdfs: PropTypes.arrayOf(PropTypes.object),
-	updateRoamCitekeys: PropTypes.func
+	pdfs: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default CitekeyPopover;

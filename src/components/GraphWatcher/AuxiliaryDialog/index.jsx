@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import { Dialog, } from "@blueprintjs/core";
 
+import { ExtensionContext } from "../../App";
 import "./index.css";
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
@@ -11,9 +12,9 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 		className: dialogClass,
 		extraClasses = [],
 		isOpen,
-		onClose,
-		portalId
+		onClose
 	} = props;
+	const { portalId } = useContext(ExtensionContext);
 
 	const dialog_class = useMemo(() => ["zr-auxiliary-dialog--" + dialogClass, ...extraClasses].join(" "), [dialogClass, extraClasses]);
 
@@ -41,8 +42,7 @@ AuxiliaryDialog.propTypes = {
 	className: PropTypes.string,
 	extraClasses: PropTypes.arrayOf(PropTypes.string),
 	isOpen: PropTypes.bool,
-	onClose: PropTypes.func,
-	portalId: PropTypes.string
+	onClose: PropTypes.func
 };
 
 export default AuxiliaryDialog;

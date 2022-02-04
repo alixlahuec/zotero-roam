@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
 
@@ -10,6 +10,7 @@ import { useQuery_Citoid, useQuery_Collections, useQuery_Permissions } from "../
 import { useImportCitoids } from "../../api/write";
 import { sortCollections } from "../../utils";
 
+import { ExtensionContext } from "../App";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
@@ -171,7 +172,8 @@ ImportPanel.propTypes = {
 };
 
 const ZoteroImport = React.memo(function ZoteroImport(props) {
-	const { identifiers, libraries, selectProps: { resetImport } } = props;
+	const { identifiers, selectProps: { resetImport } } = props;
+	const { libraries } = useContext(ExtensionContext);
 	const selectionNotEmpty = identifiers.length > 0;
 
 	const apiKeys = Array.from(new Set(libraries.map(lib => lib.apikey)));
@@ -218,7 +220,6 @@ const ZoteroImport = React.memo(function ZoteroImport(props) {
 });
 ZoteroImport.propTypes = {
 	identifiers: PropTypes.arrayOf(PropTypes.string),
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
 	selectProps: PropTypes.shape({
 		handleRemove: PropTypes.func,
 		handleSelect: PropTypes.func,

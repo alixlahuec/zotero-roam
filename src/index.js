@@ -7,6 +7,7 @@ import { setDefaultHooks } from "./events";
 import { registerSmartblockCommands } from "./smartblocks";
 import zrToaster from "./components/ExtensionToaster";
 import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
+import { default_typemap } from "./variables";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./index.css";
@@ -31,7 +32,9 @@ window.zoteroRoam = {};
 		copy = {},
 		metadata = {},
 		render_inline = false,
-		shortcuts = {}
+		shortcuts = {},
+		typemap = {},
+		webimport = { tags: [] }
 	} = window.zoteroRoam_settings;
 
 	// Use object merging to handle undefined settings
@@ -55,7 +58,12 @@ window.zoteroRoam = {};
 				"toggleSearchPanel": "alt+E",
 				"toggleQuickCopy": false,
 				...shortcuts
-			}
+			},
+			typemap: {
+				...default_typemap,
+				...typemap
+			},
+			webimport
 		}
 	};
 
@@ -64,7 +72,7 @@ window.zoteroRoam = {};
 	window.zoteroRoam.getTags = getTags;
 
 	try {
-		window.zoteroRoam.config.requests = analyzeUserRequests(dataRequests);
+		const requests = analyzeUserRequests(dataRequests);
 		setupDependencies([
 			{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"} // Scite.ai Badge
 		]);
@@ -74,8 +82,7 @@ window.zoteroRoam = {};
 		ReactDOMRender(
 			<HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
 				<App
-					extension={extension}
-					{...window.zoteroRoam.config.requests}
+					extension={{...extension, ...requests}}
 					userSettings={window.zoteroRoam.config.userSettings}
 				/>
 			</HotkeysProvider>,

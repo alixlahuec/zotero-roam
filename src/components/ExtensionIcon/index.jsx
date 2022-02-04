@@ -1,10 +1,24 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import PropTypes from "prop-types";
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
+
 import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/queries";
 import { makeTimestamp } from "../../utils";
+
+import { ExtensionContext } from "../App";
 import "./index.css";
+
+const IconTooltipFooter = React.memo(function IconTooltipFooter() {
+	const { version } = useContext(ExtensionContext);
+
+	return (
+		<span className="zr-icon-tooltip-footer">
+			<a href="https://alix-lahuec.gitbook.io/zotero-roam/changelog" target="_blank" rel="noreferrer">Changelog</a>
+			<Tag className="zr-version-tag">v{version}</Tag>
+		</span>
+	);
+});
 
 function QueriesStatusIcon(props) {
 	let { queries } = props;
@@ -78,11 +92,8 @@ QueriesStatusList.propTypes = {
 };
 
 const ExtensionIcon = React.memo(function ExtensionIcon(props) {
-
-	const { status, version,
-		dataRequests, apiKeys, libraries,
-		openSearchPanel,
-		toggleExtension } = props;
+	const { openSearchPanel, status, toggleExtension } = props;
+	const { apiKeys, dataRequests, libraries } = useContext(ExtensionContext);
     
 	const queryOpts = useMemo(() => {
 		return {
@@ -113,10 +124,7 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
             
 		</span>
 		<Divider />
-		<span className="zr-icon-tooltip-footer">
-			<a href="https://alix-lahuec.gitbook.io/zotero-roam/changelog" target="_blank" rel="noreferrer">Changelog</a>
-			<Tag className="zr-version-tag">v{version}</Tag>
-		</span>
+		<IconTooltipFooter />
 	</>;
 
 	const contextMenu = useMemo(() => {
@@ -153,12 +161,8 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 	);
 });
 ExtensionIcon.propTypes = {
-	status: PropTypes.oneOf(["on", "off"]),
-	version: PropTypes.string,
-	dataRequests: PropTypes.array,
-	apiKeys: PropTypes.array,
-	libraries: PropTypes.array,
 	openSearchPanel: PropTypes.func,
+	status: PropTypes.oneOf(["on", "off"]),
 	toggleExtension: PropTypes.func
 };
 

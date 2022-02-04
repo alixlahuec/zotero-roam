@@ -23,7 +23,7 @@ function itemListPredicate(query, items){
 	));
 }
 
-function listItemRenderer(item, _itemProps, metadataSettings, selectProps, type, updateRoamCitekeys) {
+function listItemRenderer(item, _itemProps, selectProps, type) {
 	// let { handleClick, modifiers, query } = itemProps;
 	let { handleRemove, handleSelect, items: selectedItems } = selectProps;
 	let isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
@@ -34,13 +34,11 @@ function listItemRenderer(item, _itemProps, metadataSettings, selectProps, type,
 		inGraph={item.inGraph} 
 		isSelected={isSelected}
 		item={item} 
-		metadataSettings={metadataSettings} 
-		type={type}
-		updateRoamCitekeys={updateRoamCitekeys} />;
+		type={type} />;
 }
 
 const SemanticQuery = React.memo(function SemanticQuery(props) {
-	const { items, metadataSettings, selectProps, type, updateRoamCitekeys } = props;
+	const { items, selectProps, type } = props;
 
 	const [query, setQuery] = useState();
 	const searchbar = useRef();
@@ -54,12 +52,10 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 				handleSelect={handleSelect} 
 				inGraph={it.inGraph} 
 				isSelected={isSelected}
-				item={it} 
-				metadataSettings={metadataSettings} 
-				type={type}
-				updateRoamCitekeys={updateRoamCitekeys} />;
+				item={it}
+				type={type} />;
 		});
-	}, [items, metadataSettings, selectProps, type, updateRoamCitekeys]);
+	}, [items, selectProps, type]);
 
 	const handleQueryChange = useCallback((query) => {
 		setQuery(query);
@@ -67,8 +63,8 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 	}, []);
 
 	const itemRenderer = useCallback((item, itemProps) => {
-		return listItemRenderer(item, itemProps, metadataSettings, selectProps, type, updateRoamCitekeys);
-	}, [metadataSettings, selectProps, type, updateRoamCitekeys]);
+		return listItemRenderer(item, itemProps, selectProps, type);
+	}, [selectProps, type]);
 
 	function listRenderer(listProps) {
 		let { handleKeyDown, handleKeyUp, handleQueryChange } = listProps;
@@ -106,15 +102,13 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 });
 SemanticQuery.propTypes = {
 	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-	metadataSettings: PropTypes.object,
 	selectProps: PropTypes.shape({
 		handleRemove: PropTypes.func,
 		handleSelect: PropTypes.func,
 		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
 		resetImport: PropTypes.func
 	}),
-	type: PropTypes.oneOf(["is_citation", "is_reference"]),
-	updateRoamCitekeys: PropTypes.func
+	type: PropTypes.oneOf(["is_citation", "is_reference"])
 };
 
 export default SemanticQuery;
