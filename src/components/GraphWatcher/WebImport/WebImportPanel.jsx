@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Checkbox, Classes, Spinner } from "@blueprintjs/core";
 
@@ -12,45 +12,31 @@ function useGetCitoids(urls, opts = {}) {
 		...opts,
 		select: (data) => {
 			const { item, query } = data;
-
-			try{
-				const { 
-					abstractNote: abstract = "", 
-					itemType, 
-					title = "" } = item;
-    
-				return {
-					abstract,
-					creators: item.creators.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
-					itemType, 
-					publication: item.publicationTitle || item.bookTitle || item.websiteTitle || "",
-					title,
-					url: query
-				};
-			} catch(e){
-				// For debugging
-				console.error(e);
-				console.log(data);
-				return {
-					abstract: "Some abstract",
-					creators: "Author et al.",
-					itemType: "Item Type",
-					publication: "Journal of Publication",
-					title: "Lorem ipsum paper",
-					url: "https://www.example.com"
-				};
-			}
+			
+			return {
+				abstract: item.abstractNote || "",
+				creators: item.creators.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
+				itemType: item.itemType, 
+				publication: item.publicationTitle || item.bookTitle || item.websiteTitle || "",
+				title: item.title,
+				url: query
+			};
 		},
 		notifyOnChangeProps: ["data"]
 	});
 }
 
 const WebImportItem = React.memo(function WebImportItem(props){
-	const { isSelected, item, onSelect } = props;
+	const { isSelected, item = {}, onSelect } = props;
 
 	const handleCheckUncheck = useCallback(() => {
 		onSelect(item.url);
 	}, [item.url, onSelect]);
+
+	useEffect(() => {
+		// For debugging
+		console.log(item);
+	}, [item]);
     
 	return (
 		<li className="zr-webimport-item" data-item-type={item.itemType}>
