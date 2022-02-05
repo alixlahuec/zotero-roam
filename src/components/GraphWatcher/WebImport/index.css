@@ -3,7 +3,35 @@
     right:0px;
     opacity:0.7;
 }
-    
+
+
+/* Dialog */
+
+.bp3-dialog.zr-auxiliary-dialog--webimport {
+    width: calc(95% - 40vw);
+    margin-left: calc(20vw + 2.5%);
+    transition: 0.5s;
+}
+.bp3-dialog.zr-auxiliary-dialog--webimport.has-selected-items {
+    width: calc(95% - 20vw);
+}
+
+.bp3-dialog.zr-auxiliary-dialog--webimport > .bp3-dialog-body {
+    display: flex;
+}
+
+.zr-webimport-panel--side {
+    flex: 0 0 0%;
+    overflow: auto;
+    transition: 0.5s;
+}
+
+.has-selected-items .zr-webimport-panel--side {
+    flex: 1 0 22vw;
+    display: block;
+    padding: 0px 15px;
+}
+
 .zr-webimport-item > .bp3-menu-item{flex-wrap:wrap;}
 .zr-webimport-item > .bp3-menu-item:hover {
     background-color:unset;

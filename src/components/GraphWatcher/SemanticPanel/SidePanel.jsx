@@ -33,11 +33,11 @@ SelectedImportItem.propTypes = {
 };
 
 const SidePanel = React.memo(function SidePanel({ selectProps }) {
-	const { handleRemove, resetImport } = selectProps;
+	const { handleRemove, items, resetImport } = selectProps;
 
 	const identifiers = useMemo(() => {
-		return selectProps.items.map(it => it.doi ? ("https://doi.org/" + it.doi) : it.url);
-	}, [selectProps.items]);
+		return items.map(it => it.doi ? ("https://doi.org/" + it.doi) : it.url);
+	}, [items]);
 
 	return (
 		<div className="zr-semantic-panel--side">
