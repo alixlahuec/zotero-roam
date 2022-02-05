@@ -8,7 +8,7 @@ const findWebimportDivs = () => {
 const setWebimportDivs = (tags) => {
 	// Old blocks - are they still valid ?
 	findWebimportDivs()
-		.filter(b => !matchArrays(tags, JSON.parse(b.getAttribute("data-page-links"))))
+		.filter(b => !matchArrays(tags, JSON.parse(b.parentElement.getAttribute("data-page-links"))))
 		.forEach(b => b.remove());
 
 	// New blocks

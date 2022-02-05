@@ -12,19 +12,34 @@ function useGetCitoids(urls, opts = {}) {
 		...opts,
 		select: (data) => {
 			const { item, query } = data;
-			const { 
-				abstractNote: abstract = "", 
-				itemType, 
-				title = "" } = item.data;
 
-			return {
-				abstract,
-				creators: item.data.creators.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
-				itemType, 
-				publication: item.data.publicationTitle || item.data.bookTitle || item.data.websiteTitle || "",
-				title,
-				url: query
-			};
+			try{
+				const { 
+					abstractNote: abstract = "", 
+					itemType, 
+					title = "" } = item.data;
+    
+				return {
+					abstract,
+					creators: item.data.creators.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
+					itemType, 
+					publication: item.data.publicationTitle || item.data.bookTitle || item.data.websiteTitle || "",
+					title,
+					url: query
+				};
+			} catch(e){
+				// For debugging
+				console.error(e);
+				console.log(data);
+				return {
+					abstract: "Some abstract",
+					creators: "Author et al.",
+					itemType: "Item Type",
+					publication: "Journal of Publication",
+					title: "Lorem ipsum paper",
+					url: "https://www.example.com"
+				};
+			}
 		},
 		notifyOnChangeProps: ["data"]
 	});

@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { Button } from "@blueprintjs/core";
 
 import WebImportPanel from "./WebImportPanel";
+import "./index.css";
 
 const WebImportButton = React.memo(function WebImportButton({ urls }){
 	const [isDialogOpen, setDialogOpen] = useState(false);
