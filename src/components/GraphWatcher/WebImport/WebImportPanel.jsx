@@ -17,13 +17,13 @@ function useGetCitoids(urls, opts = {}) {
 				const { 
 					abstractNote: abstract = "", 
 					itemType, 
-					title = "" } = item.data;
+					title = "" } = item;
     
 				return {
 					abstract,
-					creators: item.data.creators.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
+					creators: item.creators.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
 					itemType, 
-					publication: item.data.publicationTitle || item.data.bookTitle || item.data.websiteTitle || "",
+					publication: item.publicationTitle || item.bookTitle || item.websiteTitle || "",
 					title,
 					url: query
 				};
@@ -90,7 +90,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 
 	const citoidQueries = useGetCitoids(urls, { enabled: isOpen });
 	const isDataReady = citoidQueries.every(q => q.data);
-	const citoids = citoidQueries.map(q => q.data).filter(Boolean);
+	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data);
 
 	const handleItemSelection = useCallback((url) => {
 		setSelected(currentSelection => {
