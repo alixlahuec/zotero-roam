@@ -1,0 +1,15 @@
+.zr-webimport-div {
+    position:absolute;
+    right:0px;
+    opacity:0.7;
+}
+    
+.zr-webimport-item .bp3-menu-item{flex-wrap:wrap;}
+
+.zr-webimport-item .zr-webimport-item--publication, 
+.zr-webimport-item .zr-webimport-item--abstract {
+    display:block;
+    white-space:break-spaces;
+}
+
+.zr-webimport-item .zr-webimport-item--contents{padding-left:30px;}

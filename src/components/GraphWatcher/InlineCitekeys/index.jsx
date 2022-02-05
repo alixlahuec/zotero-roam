@@ -100,7 +100,8 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const importMetadata = useCallback(() => {
 		let { pdfs = [], notes = [] } = itemData.children;
 		importItemMetadata({item: itemData.raw, pdfs, notes }, pageUID, metadataSettings);
-	}, [itemData.raw, itemData.children, metadataSettings, pageUID]);
+		onClose();
+	}, [itemData.raw, itemData.children, metadataSettings, onClose, pageUID]);
 
 	const pdfChildren = useMemo(() => {
 		if(!(itemData?.children?.pdfs?.length > 0)){

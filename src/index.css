@@ -7,13 +7,6 @@
 .zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
 .header-right .zotero-roam-sequence {background: unset;color: #c79f0c;}
 
-.zotero-roam-explo-import{position:absolute;right:0px;opacity:0.7;z-index:10;}
-.zr-explo-list-item .bp3-menu-item{flex-wrap:wrap;}
-.zr-explo-title{flex:1 0 100%;}
-.zr-explo-title .bp3-checkbox{margin-bottom:0px;}
-.zr-explo-publication, .zr-explo-abstract{display:block;white-space:break-spaces;}
-.zr-explo-list-item .zotero-roam-item-contents{padding-left:30px;}
-
 .zotero-roam-dashboard-overlay .main-panel {display: flex;}
 .zotero-roam-dashboard-overlay .side-section {padding:15px;}
 .zotero-roam-dashboard-overlay .side-section {flex: 1 0 20%;}

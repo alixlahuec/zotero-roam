@@ -102,6 +102,23 @@ async function fetchBibliography(req, { include = "bib", style, linkwrap, locale
 		});
 }
 
+/** Requests data from the `/data/citation/zotero` endpoint of the Wikipedia API
+ * @param {String} query - The URL for which to request Zotero metadata
+ * @returns {Promise<{item: Object, query: String}>} The metadata for the URL
+ */
+async function fetchCitoid(query) {
+	return citoidClient.get(encodeURIComponent(query))
+		.then((response) => {
+			return {
+				item: response.data[0],
+				query
+			};
+		})
+		.catch((error) => {
+			return error;
+		});
+}
+
 /** Requests data from the `/[library]/collections` endpoint of the Zotero API
  * @fires zotero-roam:update-collections
  * @param {ZoteroLibrary} library - The targeted Zotero library
@@ -299,20 +316,6 @@ async function fetchTags(library) {
 				data: makeTagList(data), 
 				lastUpdated: Number(lastUpdated)
 			};
-		})
-		.catch((error) => {
-			return error;
-		});
-}
-
-/** Requests data from the `/data/citation/zotero` endpoint of the Wikipedia API
- * @param {String} query - The URL for which to request Zotero metadata
- * @returns {Promise<Object>} The Zotero metadata for the URL
- */
-async function fetchCitoid(query) {
-	return citoidClient.get(encodeURIComponent(query))
-		.then((response) => {
-			return response.data[0];
 		})
 		.catch((error) => {
 			return error;

@@ -19,7 +19,10 @@ const NoWriteableLibraries = <Callout>No writeable libraries were found. Please 
 const ImportButton = React.memo(function ImportButton(props) {
 	const { identifiers, importProps, isActive, resetImport } = props;
 
-	const citoidQueries = useQuery_Citoid(identifiers, { enabled: isActive > 0 && identifiers.length > 0});
+	const citoidQueries = useQuery_Citoid(identifiers, { 
+		enabled: isActive && identifiers.length > 0,
+		select: (data) => data.item
+	});
 	const isDataReady = citoidQueries.every(q => q.data);
 	const citoids = citoidQueries.map(q => q.data).filter(Boolean);
 

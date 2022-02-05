@@ -76,8 +76,8 @@
 
 .zr-semantic-panel--main .zr-related-item--intents {margin: 5px 0px;}
 .zr-semantic-panel--main .zr-related-item--intents .bp3-tag[data-semantic-intent] {
-    background-color: #e8ddff;
-    color: #a05fba;
+    background-color: #ece2ff;
+    color: #c981ed;
     opacity: 0.6;
     margin-right: 8px;
 }

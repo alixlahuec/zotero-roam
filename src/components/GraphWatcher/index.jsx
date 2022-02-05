@@ -6,7 +6,7 @@ import { CitekeyMenuFactory, DNPMenuFactory, TagMenuFactory } from "./Menus";
 import { UserSettings } from "../App";
 
 import { addPageMenus, findPageMenus } from "./Menus/utils";
-import { addWebimportDivs, findWebimportDivs } from "./WebImport/utils";
+import {  findWebimportDivs, setWebimportDivs } from "./WebImport/utils";
 import { hasNodeListChanged } from "../../utils";
 import { menuPrefix, webimportClass } from "./classes";
 import "./index.css";
@@ -17,7 +17,7 @@ const GraphWatcher = React.memo(function GraphWatcher(){
 	// https://jasonwatmore.com/post/2021/08/27/react-how-to-check-if-a-component-is-mounted-or-unmounted
 	const mounted = useRef(false);
 	const [{ citekeyMenus, dnpMenus, tagMenus }, setMenus] = useState({ citekeyMenus: [], dnpMenus: [], tagMenus: []});
-	const [webimportDivs, setWebimportDivs] = useState([]);
+	const [webimports, setWebimports] = useState([]);
 	const { autocomplete: { trigger }, webimport: { tags }} = useContext(UserSettings);
 
 	const updatePageElements = useCallback(() => {
@@ -43,7 +43,7 @@ const GraphWatcher = React.memo(function GraphWatcher(){
 		});
 
 		// Webimport divs
-		setWebimportDivs((prevState) => {
+		setWebimports((prevState) => {
 			const currentDivs = findWebimportDivs();
 			if(hasNodeListChanged(prevState, currentDivs)){
 				return currentDivs;
@@ -60,7 +60,7 @@ const GraphWatcher = React.memo(function GraphWatcher(){
 		const watcher = setInterval(
 			() => {
 				addPageMenus();
-				addWebimportDivs(tags);
+				setWebimportDivs(tags);
 
 				if(mounted.current){
 					updatePageElements();
@@ -82,7 +82,7 @@ const GraphWatcher = React.memo(function GraphWatcher(){
 		{dnpMenus ? <DNPMenuFactory menus={dnpMenus} /> : null}
 		{tagMenus ? <TagMenuFactory menus={tagMenus} /> : null}
 		{trigger ? <Autocomplete /> : null}
-		<WebImportFactory divs={webimportDivs} />
+		<WebImportFactory divs={webimports} />
 		<InlineCitekeys />
 	</>;
 });

@@ -12,7 +12,8 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 		className: dialogClass,
 		extraClasses = [],
 		isOpen,
-		onClose
+		onClose,
+		title = null
 	} = props;
 	const { portalId } = useContext(ExtensionContext);
 
@@ -28,6 +29,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 				enforceFocus={false}
 				isOpen={isOpen}
 				lazy={true}
+				title={title}
 				usePortal={false}
 				onClose={onClose}
 			>
@@ -42,7 +44,8 @@ AuxiliaryDialog.propTypes = {
 	className: PropTypes.string,
 	extraClasses: PropTypes.arrayOf(PropTypes.string),
 	isOpen: PropTypes.bool,
-	onClose: PropTypes.func
+	onClose: PropTypes.func,
+	title: PropTypes.string
 };
 
 export default AuxiliaryDialog;

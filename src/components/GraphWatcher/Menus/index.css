@@ -41,11 +41,17 @@ button[class*='zr-page-menu-show--'] {
 .zr-backlink-item--state{flex: 1 0 auto;overflow-wrap:anywhere;}
 
 .zr-backlink-item[data-backlink-type="reference"] .zr-backlink-item--year {
-    color: var(--zr-dark-highlight,#3fb8ff);
+    color: var(--zr-highlight,#206fe6);
 }
 
 .zr-backlink-item[data-backlink-type="citation"] .zr-backlink-item--year {
-    color: var(--zr-dark-highlight-2,#d9822b);
+    color: var(--zr-highlight-2,#d9822b);
+}
+
+/* ViewItem */
+.bp3-dialog.zr-auxiliary-dialog--view-item-information {
+    width: calc(95% - 26vw);
+    margin-left: calc(13vw + 2.5%);
 }
 
 /* SMALLER DISPLAYS */
@@ -91,5 +97,13 @@ button[class*='zr-page-menu-show--'] {
     .zr-backlink-item[data-backlink-type="reference"]:hover,
     .zr-backlink-item[data-backlink-type="citation"]:hover {
         background-color: var(--zr-dark-selected-bc,#191919);
+    }
+
+    .zr-backlink-item[data-backlink-type="reference"] .zr-backlink-item--year {
+        color: var(--zr-dark-highlight,#3fb8ff);
+    }
+    
+    .zr-backlink-item[data-backlink-type="citation"] .zr-backlink-item--year {
+        color: var(--zr-dark-highlight-2,#d9822b);
     }
 }

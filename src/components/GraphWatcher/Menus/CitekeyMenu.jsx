@@ -216,7 +216,7 @@ function ViewItem(props) {
 				className="view-item-information"
 				isOpen={isPanelOpen}
 				onClose={closePanel}
-			>
+				title={"@" + item.key}>
 				<ItemDetails
 					closeDialog={closePanel}
 					item={item}
