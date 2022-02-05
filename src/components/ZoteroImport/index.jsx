@@ -175,7 +175,7 @@ ImportPanel.propTypes = {
 };
 
 const ZoteroImport = React.memo(function ZoteroImport(props) {
-	const { identifiers, selectProps: { resetImport } } = props;
+	const { identifiers, resetImport } = props;
 	const { libraries } = useContext(ExtensionContext);
 	const selectionNotEmpty = identifiers.length > 0;
 
@@ -223,12 +223,7 @@ const ZoteroImport = React.memo(function ZoteroImport(props) {
 });
 ZoteroImport.propTypes = {
 	identifiers: PropTypes.arrayOf(PropTypes.string),
-	selectProps: PropTypes.shape({
-		handleRemove: PropTypes.func,
-		handleSelect: PropTypes.func,
-		items: PropTypes.arrayOf(PropTypes.string),
-		resetImport: PropTypes.func
-	})
+	resetImport: PropTypes.func
 };
 
 export default ZoteroImport;

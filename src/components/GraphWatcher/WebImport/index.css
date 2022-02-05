@@ -4,7 +4,11 @@
     opacity:0.7;
 }
     
-.zr-webimport-item .bp3-menu-item{flex-wrap:wrap;}
+.zr-webimport-item > .bp3-menu-item{flex-wrap:wrap;}
+.zr-webimport-item > .bp3-menu-item:hover {
+    background-color:unset;
+    cursor:unset;
+}
 
 .zr-webimport-item .zr-webimport-item--publication, 
 .zr-webimport-item .zr-webimport-item--abstract {

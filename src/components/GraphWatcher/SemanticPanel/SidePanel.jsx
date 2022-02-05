@@ -32,9 +32,8 @@ SelectedImportItem.propTypes = {
 	item: customPropTypes.cleanSemanticReturnType
 };
 
-const SidePanel = React.memo(function SidePanel(props) {
-	const { selectProps } = props;
-	const { handleRemove } = selectProps;
+const SidePanel = React.memo(function SidePanel({ selectProps }) {
+	const { handleRemove, resetImport } = selectProps;
 
 	const identifiers = useMemo(() => {
 		return selectProps.items.map(it => it.doi ? ("https://doi.org/" + it.doi) : it.url);
@@ -42,7 +41,7 @@ const SidePanel = React.memo(function SidePanel(props) {
 
 	return (
 		<div className="zr-semantic-panel--side">
-			<ZoteroImport identifiers={identifiers} selectProps={selectProps} />
+			<ZoteroImport identifiers={identifiers} resetImport={resetImport} />
 			<ul className={[Classes.LIST_UNSTYLED, "import-items"].join(" ")}>
 				{selectProps.items.map(item => <SelectedImportItem key={[item.doi, item.url].join("-")} handleRemove={handleRemove} item={item} />)}
 			</ul>

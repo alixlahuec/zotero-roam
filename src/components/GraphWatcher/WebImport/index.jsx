@@ -12,10 +12,8 @@ const WebImportButton = React.memo(function WebImportButton({ urls }){
 	const closePanel = useCallback(() => setDialogOpen(false), []);
 
 	const showImport = useCallback(() => {
-		// For testing
-		console.log(urls);
 		setDialogOpen(true);
-	}, [urls]);
+	}, []);
 
 	return <>
 		<Button className="zr-webimport-button" icon="geosearch" minimal={true} onClick={showImport} />
