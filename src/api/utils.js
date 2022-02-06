@@ -109,12 +109,21 @@ async function fetchBibliography(req, { include = "bib", style, linkwrap, locale
 async function fetchCitoid(query) {
 	return citoidClient.get(encodeURIComponent(query))
 		.then((response) => {
+			// For debugging
+			console.log("Response is : ", response);
+			return response.data;
+		})
+		.then((data) => {
+			// For debugging
+			console.log("Data is : ", data);
 			return {
-				item: response.data[0],
+				item: data[0],
 				query
 			};
 		})
 		.catch((error) => {
+			// For debugging
+			console.log("Error is : ", error);
 			return error;
 		});
 }
