@@ -69,7 +69,8 @@ button[class*='zr-page-menu-show--'] {
         background-color: var(--zr-dark-dialog-bg, #242424);
     }
 
-    .zr-citekey-menu .bp3-button {
+    .zr-citekey-menu .bp3-button-group .bp3-button,
+    .zr-citekey-menu .bp3-button-group .bp3-button:hover {
         color: var(--zr-dark-text-co,#76a0cb);
     }
 

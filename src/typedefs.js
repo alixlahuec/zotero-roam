@@ -19,10 +19,11 @@
 /**
  * @typedef {{
  * data: Object,
+ * has_citekey?: Boolean,
+ * key: String,
  * library: Object,
  * links: Object,
  * meta: Object,
- * key: String,
  * version: Integer
  * }} 
  * ZoteroItem
@@ -30,11 +31,11 @@
 
 /**
  * @typedef {{
+ * data: Object,
+ * key: String,
  * library: Object,
  * links: Object,
  * meta: Object,
- * data: Object,
- * key: String,
  * version: Integer
  * }}
  * ZoteroCollection

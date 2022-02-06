@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, string } from "prop-types";
 import { Button } from "@blueprintjs/core";
 
 import RelatedPanel from "../RelatedPanel";
@@ -68,9 +68,9 @@ function TagMenu(props){
 	);
 }
 TagMenu.propTypes = {
-	inAbstract: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
-	tag: PropTypes.string,
-	tagged: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType)
+	inAbstract: arrayOf(customPropTypes.cleanRelatedItemType),
+	tag: string,
+	tagged: arrayOf(customPropTypes.cleanRelatedItemType)
 };
 
 export default TagMenu;

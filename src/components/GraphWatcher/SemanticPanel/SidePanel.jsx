@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, func, shape } from "prop-types";
 import { Button, ButtonGroup, Classes } from "@blueprintjs/core";
 
 import ZoteroImport from "../../ZoteroImport";
@@ -28,12 +28,14 @@ const SelectedImportItem = React.memo(function SelectedImportItem(props) {
 	);
 });
 SelectedImportItem.propTypes = {
-	handleRemove: PropTypes.func,
+	handleRemove: func,
 	item: customPropTypes.cleanSemanticReturnType
 };
 
 const SidePanel = React.memo(function SidePanel({ selectProps }) {
 	const { handleRemove, items, resetImport } = selectProps;
+
+	const importActive = items.length > 0;
 
 	const identifiers = useMemo(() => {
 		return items.map(it => it.doi ? ("https://doi.org/" + it.doi) : it.url);
@@ -41,7 +43,7 @@ const SidePanel = React.memo(function SidePanel({ selectProps }) {
 
 	return (
 		<div className="zr-semantic-panel--side">
-			<ZoteroImport identifiers={identifiers} resetImport={resetImport} />
+			<ZoteroImport identifiers={identifiers} isActive={importActive} resetImport={resetImport} />
 			<ul className={[Classes.LIST_UNSTYLED, "import-items"].join(" ")}>
 				{selectProps.items.map(item => <SelectedImportItem key={[item.doi, item.url].join("-")} handleRemove={handleRemove} item={item} />)}
 			</ul>
@@ -49,11 +51,11 @@ const SidePanel = React.memo(function SidePanel({ selectProps }) {
 	);
 });
 SidePanel.propTypes = {
-	selectProps: PropTypes.shape({
-		handleRemove: PropTypes.func,
-		handleSelect: PropTypes.func,
-		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-		resetImport: PropTypes.func
+	selectProps: shape({
+		handleRemove: func,
+		handleSelect: func,
+		items: arrayOf(customPropTypes.cleanSemanticReturnType),
+		resetImport: func
 	})
 };
 

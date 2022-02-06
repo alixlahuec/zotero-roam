@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import PropTypes from "prop-types";
+import { node } from "prop-types";
 
 import { getCitekeyPages } from "../../roam";
 
@@ -23,7 +23,7 @@ const RoamCitekeysProvider = ({ children }) => {
 	);
 };
 RoamCitekeysProvider.propTypes = {
-	children: PropTypes.node
+	children: node
 };
 
 const useRoamCitekeys = () => {

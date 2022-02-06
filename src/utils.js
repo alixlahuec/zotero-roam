@@ -46,7 +46,7 @@ function analyzeUserRequests(reqs){
 
 /** Categorize library items according to their type (items, PDFs attachments, notes)
  * @param {Object[]} datastore - The items to categorize 
- * @returns {{items: ZoteroItem[]|Object[], pdfs: Object[], notes: Object[]}} The categorized object
+ * @returns {{items: ZoteroItem[], pdfs: ZoteroItem[], notes: ZoteroItem[]}} The categorized object
  */
 function categorizeLibraryItems(datastore){
 	return datastore.reduce((obj, item) => {
@@ -64,6 +64,23 @@ function categorizeLibraryItems(datastore){
 		return obj;
 
 	}, { items: [], pdfs: [], notes: [] });
+}
+
+/** Removes newlines at the beginning and end of a string
+ * @param {String} text - The string to be trimmed
+ * @returns The clean string
+ */
+function cleanNewlines(text){
+	let cleanText = text;
+	if(cleanText.startsWith("\n")){
+		cleanText = cleanText.slice(1);
+		cleanText = cleanNewlines(cleanText);
+	} else if(cleanText.endsWith("\n")){
+		cleanText = cleanText.slice(0, -1);
+		cleanText = cleanNewlines(cleanText);
+	}
+
+	return cleanText;
 }
 
 /** Formats the metadata of a Semantic Scholar entry
@@ -190,7 +207,7 @@ function cleanSemanticMatch(semanticItem, {items = [], pdfs = [], notes = []} = 
 }
 
 /** Formats a list of Semantic Scholar entries for display
- * @param {ZoteroItem[]|Object[]} datastore - The list of Zotero items to match against 
+ * @param {ZoteroItem[]} datastore - The list of Zotero items to match against 
  * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to format 
  * @param {Map} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
  * @returns {{
@@ -229,8 +246,8 @@ function cleanSemantic(datastore, semantic, roamCitekeys){
 }
 
 /** Compares two Zotero items by publication year then alphabetically, to determine sort order
- * @param {ZoteroItem|Object} a - The first item to compare
- * @param {ZoteroItem|Object} b - The second item to compare
+ * @param {ZoteroItem} a - The first item to compare
+ * @param {ZoteroItem} b - The second item to compare
  * @returns {(0|1)} The comparison outcome
  */
 function compareItemsByYear(a, b) {
@@ -306,8 +323,20 @@ function executeFunctionByName(functionName, context /*, args */) {
 	return context[func].apply(context, args);
 }
 
+/** Default formatter for notes
+ * @param {{ZoteroItem}[]]} notes - The (raw) array of notes to be formatted
+ * @param {String} split_char - The string on which to split notes into blocks
+ * @returns A flat array of strings, separated according to `split_char`, and ready for import into Roam.
+ */
+function formatItemNotes(notes, split_char){
+	return splitNotes(notes, split_char)
+		.flat(1)
+		.map(b => parseNoteBlock(b))
+		.filter(b => b.trim());
+}
+
 /** Converts an item into a given string format
- * @param {ZoteroItem|Object} item - The item to convert 
+ * @param {ZoteroItem} item - The item to convert 
  * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} format - The format to convert into 
  * @param {{accent_class: String}} config - Additional parameters 
  * @returns {String} The formatted reference
@@ -336,8 +365,25 @@ function formatItemReference(item, format, {accent_class = "zr-highlight"} = {})
 	}
 }
 
+/** Formats an array of Zotero notes into String blocks, with optional configuration
+ * @param {ZoteroItem[]} notes 
+ * @param {{func: String, split_char: String, use:("raw"|"text")}} config - Additional settings
+ * @returns 
+ */
+function formatNotes(notes, config){
+	const { func = null, split_char, use } = config;
+
+	if(func){
+		// If the user has provided a function, execute it with the desired input
+		return executeFunctionByName(func, window, use == "raw" ? notes : splitNotes(notes, split_char));
+	} else {
+		// Otherwise use the default formatter
+		return formatItemNotes(notes, split_char);
+	}
+}
+
 /** Creates a local link to a specific Zotero item, which opens in the standalone app.
- * @param {ZoteroItem|Object} item - The targeted Zotero item
+ * @param {ZoteroItem} item - The targeted Zotero item
  * @param {{format: ("markdown"|"target"), text?: String}} config - Additional settings
  * @returns A link to the item, either as a Markdown link or a URI
  */
@@ -354,7 +400,7 @@ function getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
 }
 
 /** Creates a web link to a specific Zotero item, which opens in the browser.
- * @param {ZoteroItem|Object} item - The targeted Zotero item 
+ * @param {ZoteroItem} item - The targeted Zotero item 
  * @param {{format: ("markdown"|"target"), text?: String}} config - Additional settings 
  * @returns A link to the item, either as a Markdown link or a URL
  */
@@ -488,6 +534,47 @@ function parseDOI(doi){
 			return false;
 		}
 	}
+}
+/** Default parser for cleaning up HTML tags in raw Zotero notes.
+ * @param {String} block - The note block to be cleaned
+ * @returns The clean, HTML-free contents of the block
+ */
+function parseNoteBlock(block){
+	let cleanBlock = block;
+	let formattingSpecs = {
+		"</p>": "",
+		"</div>": "",
+		"</span>": "",
+		"<blockquote>": "> ",
+		"</blockquote>": "",
+		"<strong>": "**",
+		"</strong>": "**",
+		"<em>": "__",
+		"</em>": "__",
+		"<b>": "**",
+		"</b>": "**",
+		"<br />": "\n",
+		"<br>": "\n",
+		"<u>": "",
+		"</u>": ""
+	};
+	for(let prop in formattingSpecs){
+		cleanBlock = cleanBlock.replaceAll(`${prop}`, `${formattingSpecs[prop]}`);
+	}
+
+	// HTML tags that might have attributes : p, div, span, headers
+	let richTags = ["p", "div", "span", "h1", "h2", "h3"];
+	richTags.forEach(tag => {
+		let tagRegex = new RegExp(`<${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag>, and the case with modifiers : <tag :modifier>
+		cleanBlock = cleanBlock.replaceAll(tagRegex, "");
+	});
+
+	let linkRegex = /<a href="(.+?)">(.+?)<\/a>/g;
+	cleanBlock = cleanBlock.replaceAll(linkRegex, "[$2]($1)");
+
+	cleanBlock = cleanNewlines(cleanBlock);
+
+	return cleanBlock;
 }
 
 /** Quantifies an ordinary English noun
@@ -713,6 +800,15 @@ function sortCollections(arr){
 	}
 }
 
+/** Splits Zotero notes on a given string
+ * @param {Object[]} notes - The raw array of notes to split
+ * @param {String} split_char - The string on which to split notes
+ * @returns {String[][]} A nested array of strings, where each entry contains the splitting results for a given note
+ */
+function splitNotes(notes, split_char){
+	return notes.map(n => n.data.note.split(split_char));
+}
+
 /** Sorts an array of objects on a given string key, in A-Z order
  * @param {Object[]} items - The list of elements to sort 
  * @param {String} sort - The key to sort elements on 
@@ -730,7 +826,9 @@ export {
 	copyToClipboard,
 	escapeRegExp,
 	executeFunctionByName,
+	formatItemNotes,
 	formatItemReference,
+	formatNotes,
 	getLocalLink,
 	getWebLink,
 	hasNodeListChanged,

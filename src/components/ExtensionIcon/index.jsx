@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import PropTypes from "prop-types";
+import { array, func, oneOf } from "prop-types";
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 
@@ -69,7 +69,7 @@ function QueriesStatusIcon(props) {
 	);
 }
 QueriesStatusIcon.propTypes = {
-	queries: PropTypes.array
+	queries: array
 };
 
 function QueriesStatusList(props){
@@ -88,7 +88,7 @@ function QueriesStatusList(props){
 	);
 }
 QueriesStatusList.propTypes = {
-	queries: PropTypes.array
+	queries: array
 };
 
 const ExtensionIcon = React.memo(function ExtensionIcon(props) {
@@ -161,9 +161,9 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 	);
 });
 ExtensionIcon.propTypes = {
-	openSearchPanel: PropTypes.func,
-	status: PropTypes.oneOf(["on", "off"]),
-	toggleExtension: PropTypes.func
+	openSearchPanel: func,
+	status: oneOf(["on", "off"]),
+	toggleExtension: func
 };
 
 export default ExtensionIcon;

@@ -9,7 +9,7 @@ const events = [
     * @property {({blocks: Array, uid: String}|{new: Boolean, smartblock: Object, uid: String})} args - The configuration used for the import
     * @property {error|null} error - The error thrown during the import, if failed
 	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-    * @property {{item: ZoteroItem|Object, notes: Object[], pdfs: Object[]}} raw - The raw data provided as input
+    * @property {{item: ZoteroItem, notes: ZoteroItem[], pdfs: ZoteroItem[]}} raw - The raw data provided as input
     * @property {Boolean|null} success - Indicates if the update was successful
     * @see importItemMetadata
     */
@@ -18,13 +18,19 @@ const events = [
     * Signals a notes import has terminated
     * @event zotero-roam:notes-added
     * @type {object}
+	* @property {{blocks: Array, uid: String}} args - The configuration used for the import
+	@property {error|null} error - The error thrown during the import, if failed
+	@property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
+	@property {{item: ZoteroItem, notes: ZoteroItem[]}} raw - The raw data provided as input
+	@property {Boolean|null} success - Indicates if the update was successful
+	@see importItemNotes
     */
 	"notes-added",
 	/**
     * Signals a data update for items has terminated
      * @event zotero-roam:update
      * @type {object}
-     * @property {ZoteroItem[]|Object[]} [data] - The data contained in the update, if successful
+     * @property {ZoteroItem[]} [data] - The data contained in the update, if successful
      * @property {error} [error] - The error thrown during the update, if failed
      * @property {{apikey: String, dataURI: String, library: String, name: String, params: String}} request - The data request that yielded the update
      * @property {Boolean} success - Indicates if the update was successful

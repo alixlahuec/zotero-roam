@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import PropTypes from "prop-types";
+import { array, bool, func, object } from "prop-types";
 import { Checkbox, Spinner } from "@blueprintjs/core";
 
 const CollectionOption = React.memo(function CollectionOption(props) {
@@ -22,9 +22,9 @@ const CollectionOption = React.memo(function CollectionOption(props) {
 	);
 });
 CollectionOption.propTypes = {
-	collection: PropTypes.object,
-	isChecked: PropTypes.bool,
-	onSelect: PropTypes.func
+	collection: object,
+	isChecked: bool,
+	onSelect: func
 };
 
 const CollectionsSelector = React.memo(function CollectionsSelector(props) {
@@ -39,9 +39,9 @@ const CollectionsSelector = React.memo(function CollectionsSelector(props) {
 	);
 });
 CollectionsSelector.propTypes = {
-	collections: PropTypes.array,
-	onSelect: PropTypes.func,
-	selectedCollections: PropTypes.array
+	collections: array,
+	onSelect: func,
+	selectedCollections: array
 };
 
 export default CollectionsSelector;

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
@@ -73,16 +73,16 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 	);
 });
 SemanticTabList.propTypes = {
-	defaultTab: PropTypes.string,
-	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-	onClose: PropTypes.func,
-	selectProps: PropTypes.shape({
-		handleRemove: PropTypes.func,
-		handleSelect: PropTypes.func,
-		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-		resetImport: PropTypes.func
+	defaultTab: string,
+	items: arrayOf(customPropTypes.cleanSemanticReturnType),
+	onClose: func,
+	selectProps: shape({
+		handleRemove: func,
+		handleSelect: func,
+		items: arrayOf(customPropTypes.cleanSemanticReturnType),
+		resetImport: func
 	}),
-	title: PropTypes.string
+	title: string
 };
 
 const SemanticPanel = React.memo(function SemanticPanel(props){
@@ -148,12 +148,12 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 	);
 });
 SemanticPanel.propTypes = {
-	isOpen: PropTypes.bool,
-	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-	onClose: PropTypes.func,
-	show: PropTypes.shape({
-		title: PropTypes.string,
-		type: PropTypes.oneOf(["is_citation", "is_reference"])
+	isOpen: bool,
+	items: arrayOf(customPropTypes.cleanSemanticReturnType),
+	onClose: func,
+	show: shape({
+		title: string,
+		type: oneOf(["is_citation", "is_reference"])
 	})
 };
 

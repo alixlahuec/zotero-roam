@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import PropTypes from "prop-types";
+import { bool, func, instanceOf, node, number, shape, string } from "prop-types";
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
 import { useQuery_Items } from "../../../api/queries";
@@ -180,15 +180,15 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	);
 });
 CitekeyContextMenu.propTypes = {
-	coords: PropTypes.shape({
-		left: PropTypes.number,
-		top: PropTypes.number
+	coords: shape({
+		left: number,
+		top: number
 	}),
-	isOpen: PropTypes.bool,
-	itemsMap: PropTypes.instanceOf(Map),
-	onClose: PropTypes.func,
-	portalId: PropTypes.string,
-	target: PropTypes.node
+	isOpen: bool,
+	itemsMap: instanceOf(Map),
+	onClose: func,
+	portalId: string,
+	target: node
 };
 
 const InlineCitekeys = React.memo(function InlineCitekeys() {

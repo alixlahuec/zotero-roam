@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import PropTypes from "prop-types";
+import { bool, func, node, string } from "prop-types";
 import { createPortal } from "react-dom";
 import { Classes, Dialog } from "@blueprintjs/core";
 
@@ -45,6 +45,7 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 				canEscapeKeyClose={true}
 				canOutsideClickClose={true}
 				className={dialog_class}
+				enforceFocus={false}
 				isOpen={isOpen}
 				lazy={lazy}
 				onClose={onClose}
@@ -63,14 +64,14 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 	);
 });
 DialogOverlay.propTypes = {
-	ariaLabelledBy: PropTypes.string,
-	children: PropTypes.node,
-	className: PropTypes.string,
-	isOpen: PropTypes.bool,
-	isSidePanelOpen: PropTypes.bool,
-	lazy: PropTypes.bool,
-	onClose: PropTypes.func,
-	onOpening: PropTypes.func
+	ariaLabelledBy: string,
+	children: node,
+	className: string,
+	isOpen: bool,
+	isSidePanelOpen: bool,
+	lazy: bool,
+	onClose: func,
+	onOpening: func
 };
 
 export default DialogOverlay;

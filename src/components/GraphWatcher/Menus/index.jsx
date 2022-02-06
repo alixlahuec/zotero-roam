@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { createPortal } from "react-dom";
-import PropTypes from "prop-types";
+import { arrayOf, node } from "prop-types";
 
 import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems } from "../../../utils";
@@ -46,7 +46,7 @@ function CitekeyMenuFactory({ menus }){
 	return citekeyMenus;
 }
 CitekeyMenuFactory.propTypes = { 
-	menus: PropTypes.arrayOf(PropTypes.node)
+	menus: arrayOf(node)
 };
 
 function DNPMenuFactory({ menus }){
@@ -89,7 +89,7 @@ function DNPMenuFactory({ menus }){
 	return dnpPortals;
 }
 DNPMenuFactory.propTypes = { 
-	menus: PropTypes.arrayOf(PropTypes.node)
+	menus: arrayOf(node)
 };
 
 function TagMenuFactory({ menus }){
@@ -152,7 +152,7 @@ function TagMenuFactory({ menus }){
 	return tagPortals;
 }
 TagMenuFactory.propTypes = { 
-	menus: PropTypes.arrayOf(PropTypes.node)
+	menus: arrayOf(node)
 };
 
 export {

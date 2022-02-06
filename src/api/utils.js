@@ -399,7 +399,7 @@ function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
 }
 
 /** Adds new items to a Zotero library, with optional collections & tags.
- * @param {ZoteroItem[]|Object[]} citoids -  The items to be added to Zotero.
+ * @param {Object[]} citoids -  The items to be added to Zotero.
  * @param {{library: {apikey: String, path: String}, collections: String[], tags: String[]}} config - The options to be used for the import. 
  * @returns 
  */

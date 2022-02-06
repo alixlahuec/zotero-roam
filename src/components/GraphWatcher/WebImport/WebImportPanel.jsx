@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
-import PropTypes from "prop-types";
-import { Checkbox, Classes, Spinner } from "@blueprintjs/core";
+import { arrayOf, bool, func, object, string } from "prop-types";
+import { Checkbox, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
 
@@ -40,19 +40,19 @@ const WebImportItem = React.memo(function WebImportItem(props){
 				<Checkbox
 					checked={isSelected}
 					className="zr-webimport-item--title"
-					defaultChecked={true}
+					defaultChecked={false}
 					inline={false}
 					labelElement={<a target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>}
 					onChange={handleCheckUncheck}
 				/>
-				<div className={[ Classes.TEXT_OVERFLOW_ELLIPSIS, Classes.FILL, "zr-webimport-item--contents" ].join(" ")}>
-					<span className="zr-explo-metadata">
+				<div className={[ Classes.FILL, "zr-webimport-item--contents" ].join(" ")}>
+					<span className="zr-auxiliary">
 						{[item.itemType, item.creators].join(" | ")}
 					</span>
 					{item.publication 
-						? <span className={["zr-webimport-item--publication", "zr-text-small", "zr-auxiliary"].join(" ")}>{item.publication}</span> 
+						? <span className={["zr-webimport-item--publication", "zr-text-small", "zr-secondary"].join(" ")}>{item.publication}</span> 
 						: null}
-					<span className={["zr-webimport-item--abstract", "zr-text-small", "zr-secondary"].join(" ")}>
+					<span className={["zr-webimport-item--abstract", "zr-text-small", "zr-auxiliary"].join(" ")}>
 						{item.abstract}
 					</span>
 				</div>
@@ -61,18 +61,18 @@ const WebImportItem = React.memo(function WebImportItem(props){
 	);
 });
 WebImportItem.propTypes = {
-	isSelected: PropTypes.bool,
-	item: PropTypes.object,
-	onSelect: PropTypes.func
+	isSelected: bool,
+	item: object,
+	onSelect: func
 };
 
 const WebImportPanel = React.memo(function WebImportPanel(props){
 	const { isOpen, onClose, urls } = props;
-	const [selected, setSelected] = useState(urls);
+	const [selected, setSelected] = useState([]);
 	const has_selected_items = selected.length > 0;
 
 	const citoidQueries = useGetCitoids(urls, { enabled: isOpen });
-	const isDataReady = citoidQueries.every(q => q.data);
+	const areQueriesSettled = citoidQueries.every(q => ["error", "success"].includes(q.status));
 	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data);
 
 	const handleItemSelection = useCallback((url) => {
@@ -101,11 +101,10 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 					<div className="header-content">
 						<div className="header-left">
 							<h5 id="zr-webimport-dialog--title" className="panel-tt">
-								{isDataReady
+								{areQueriesSettled
 									? pluralize(citoids.length, "link", " found")
 									: "Parsing links..."}
 							</h5>
-							{!isDataReady ? <Spinner value={citoids.length / urls.length} /> : null}
 						</div>
 					</div>
 					<div className="rendered-div">
@@ -115,16 +114,16 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 					</div>
 				</div>
 				<div className="zr-webimport-panel--side">
-					<ZoteroImport identifiers={selected} resetImport={resetImport} />
+					<ZoteroImport identifiers={selected} isActive={has_selected_items} resetImport={resetImport} />
 				</div>
 			</div>
 		</AuxiliaryDialog>
 	);
 });
 WebImportPanel.propTypes = {
-	isOpen: PropTypes.bool,
-	onClose: PropTypes.func,
-	urls: PropTypes.arrayOf(PropTypes.string)
+	isOpen: bool,
+	onClose: func,
+	urls: arrayOf(string)
 };
 
 export default WebImportPanel;

@@ -31,6 +31,7 @@ window.zoteroRoam = {};
 		autoload = false,
 		copy = {},
 		metadata = {},
+		notes = {},
 		render_inline = false,
 		shortcuts = {},
 		typemap = {},
@@ -52,6 +53,11 @@ window.zoteroRoam = {};
 			metadata: {
 				use: "function",
 				...metadata
+			},
+			notes: {
+				split_char: "/n",
+				use: "text",
+				...notes
 			},
 			render_inline,
 			shortcuts: {

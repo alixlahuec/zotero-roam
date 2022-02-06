@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { bool, node, string } from "prop-types";
 import { AnchorButton } from "@blueprintjs/core";
 
 function ButtonLink(props) {
@@ -12,9 +12,9 @@ function ButtonLink(props) {
 	);
 }
 ButtonLink.propTypes = {
-	children: PropTypes.node,
-	href: PropTypes.string,
-	minimal: PropTypes.bool
+	children: node,
+	href: string,
+	minimal: bool
 };
 
 export default ButtonLink;

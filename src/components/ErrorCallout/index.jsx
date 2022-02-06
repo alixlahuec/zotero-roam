@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { error } from "prop-types";
 import { Callout } from "@blueprintjs/core";
 
 function ErrorCallout(props) {
@@ -16,7 +16,7 @@ function ErrorCallout(props) {
 	);
 }
 ErrorCallout.propTypes = {
-	error: PropTypes.error
+	error: error
 };
 
 export default ErrorCallout;

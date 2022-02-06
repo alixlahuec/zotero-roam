@@ -1,7 +1,7 @@
 import { emitCustomEvent } from "./events";
 import { getItemMetadata } from "./formatters/getItemMetadata";
 import { use_smartblock_metadata } from "./smartblocks";
-import { executeFunctionByName } from "./utils";
+import { executeFunctionByName, formatNotes } from "./utils";
 
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
@@ -181,10 +181,10 @@ function getInitialedPages(keys){
 
 /** Imports an item's metadata as Roam blocks
  * @fires zotero-roam:metadata-added
- * @param {{item: ZoteroItem|Object, pdfs: Array, notes: Array}} itemData - The item's Zotero data and its children, if any
+ * @param {{item: ZoteroItem, pdfs: ZoteroItem[], notes: ZoteroItem[]}} itemData - The item's Zotero data and its children, if any
  * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
  * @param {Object} config - The user's `metadata` settings 
- * @returns 
+ * @returns IF successful, a detailed outcome of the import ; otherwise, the first error encountered.
  */
 async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, config){
 	let title = "@" + item.key;
@@ -238,6 +238,48 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 	}
 }
 
+/** Imports an item's notes as Roam blocks
+ * @fires zotero-roam:notes-added
+ * @param {{item: ZoteroItem, notes: ZoteroItem[]}} itemData - The item's Zotero data and its notes, if any 
+ * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value
+ * @param {Object} config - The user's `notes` settings
+ * @returns If successful, a detailed outcome of the immport ; otherwise, the first error encountered.
+ */
+async function importItemNotes({item, notes = []} = {}, uid, config){
+	let title = "@" + item.key;
+	let pageUID = uid || window.roamAlphaAPI.util.generateUID();
+	let page = { new: null, title, uid: pageUID };
+
+	if(pageUID != uid){
+		window.roamAlphaAPI.createPage({ page: { title, "uid": pageUID}});
+		page.new = true;
+	} else {
+		page.new = false;
+	}
+
+	try {
+		let formattedNotes = formatNotes(notes, config);
+		let { args, error, success } = await addBlocksArray(pageUID, formattedNotes);
+
+		let outcome = {
+			args,
+			error,
+			page,
+			raw: {
+				item,
+				notes
+			},
+			success
+		};
+		emitCustomEvent("notes-added", outcome);
+		
+		return outcome;
+
+	} catch(e) {
+		return await Promise.reject(e);
+	}
+}
+
 /** Opens a Roam block or page in the right sidebar, based on its UID.
  * @param {String} uid - The UID of the Roam entity (block or page)
  * @param {String} type - The type of window that should be added to the sidebar. See the Roam Alpha API documentation for the complete list of available options.
@@ -263,6 +305,7 @@ export {
 	getCitekeyPages,
 	getInitialedPages,
 	importItemMetadata,
+	importItemNotes,
 	openInSidebarByUID,
 	openPageByUID
 };

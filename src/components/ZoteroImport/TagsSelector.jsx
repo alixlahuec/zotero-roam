@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, func, string } from "prop-types";
 import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect } from "@blueprintjs/select";
 
@@ -84,9 +84,9 @@ const TagsSelector = React.memo(function TagsSelector(props) {
 	);
 });
 TagsSelector.propTypes = {
-	onRemove: PropTypes.func,
-	onSelect: PropTypes.func,
-	selectedTags: PropTypes.arrayOf(PropTypes.string)
+	onRemove: func,
+	onSelect: func,
+	selectedTags: arrayOf(string)
 };
 
 export default TagsSelector;

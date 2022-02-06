@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import PropTypes from "prop-types";
+import { bool, func, node, object, shape } from "prop-types";
 import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
@@ -140,12 +140,12 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 	)	;
 });
 SearchInputGroup.propTypes = {
-	handleKeyDown: PropTypes.func,
-	handleKeyUp: PropTypes.func,
-	handleQueryChange: PropTypes.func,
-	searchbar: PropTypes.node,
-	searchbarLeftElement: PropTypes.node,
-	searchbarRightElement: PropTypes.node
+	handleKeyDown: func,
+	handleKeyUp: func,
+	handleQueryChange: func,
+	searchbar: node,
+	searchbarLeftElement: node,
+	searchbarRightElement: node
 };
 
 const SearchResult = React.memo(function SearchResult(props) {
@@ -176,8 +176,8 @@ const SearchResult = React.memo(function SearchResult(props) {
 });
 SearchResult.propTypes = {
 	item: customPropTypes.cleanLibraryItemType,
-	handleClick: PropTypes.func,
-	modifiers: PropTypes.object
+	handleClick: func,
+	modifiers: object
 };
 
 const LibraryQueryList = React.memo(function LibraryQueryList(props) {
@@ -285,11 +285,11 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 	);
 });
 LibraryQueryList.propTypes = {
-	handleClose: PropTypes.func,
-	isOpen: PropTypes.bool,
+	handleClose: func,
+	isOpen: bool,
 	items: customPropTypes.cleanLibraryReturnArrayType,
-	quickCopyActive: PropTypes.bool,
-	toggleQuickCopy: PropTypes.func
+	quickCopyActive: bool,
+	toggleQuickCopy: func
 };
 
 const SearchPanel = React.memo(function SearchPanel(props) {
@@ -352,12 +352,12 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 });
 SearchPanel.propTypes = {
-	closePanel: PropTypes.func,
-	panelState: PropTypes.shape({
-		isOpen: PropTypes.bool,
-		isSidePanelOpen: PropTypes.bool
+	closePanel: func,
+	panelState: shape({
+		isOpen: bool,
+		isSidePanelOpen: bool
 	}),
-	status: PropTypes.bool
+	status: bool
 };
 
 export default SearchPanel;

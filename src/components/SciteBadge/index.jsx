@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import PropTypes from "prop-types";
+import { number, oneOf, string} from "prop-types";
 import "./index.css";
 
 /** Create a Scite badge element, for manual rendering through window.__SCITE.insertBadges()
@@ -39,13 +39,13 @@ const SciteBadge = React.memo(function SciteBadge(props) {
 	);
 });
 SciteBadge.propTypes = {
-	doi: PropTypes.string,
-	layout: PropTypes.oneOf(["horizontal", "vertical"]),
-	showLabels: PropTypes.oneOf(["false", "true"]),
-	showZero: PropTypes.oneOf(["false", "true"]),
-	small: PropTypes.oneOf(["false", "true"]),
-	tooltipPlacement: PropTypes.oneOf(["auto", "top", "right", "bottom", "left"]),
-	tooltipSlide: PropTypes.number
+	doi: string,
+	layout: oneOf(["horizontal", "vertical"]),
+	showLabels: oneOf(["false", "true"]),
+	showZero: oneOf(["false", "true"]),
+	small: oneOf(["false", "true"]),
+	tooltipPlacement: oneOf(["auto", "top", "right", "bottom", "left"]),
+	tooltipSlide: number
 };
 
 export default SciteBadge;

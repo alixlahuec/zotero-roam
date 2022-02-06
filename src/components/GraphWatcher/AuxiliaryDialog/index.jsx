@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { createPortal } from "react-dom";
-import PropTypes from "prop-types";
+import { arrayOf, bool, func, node, string } from "prop-types";
 import { Dialog, } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
@@ -39,13 +39,13 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 	);
 });
 AuxiliaryDialog.propTypes = {
-	ariaLabelledBy: PropTypes.string,
-	children: PropTypes.node,
-	className: PropTypes.string,
-	extraClasses: PropTypes.arrayOf(PropTypes.string),
-	isOpen: PropTypes.bool,
-	onClose: PropTypes.func,
-	title: PropTypes.string
+	ariaLabelledBy: string,
+	children: node,
+	className: string,
+	extraClasses: arrayOf(string),
+	isOpen: bool,
+	onClose: func,
+	title: string
 };
 
 export default AuxiliaryDialog;

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, func, object, oneOf, string } from "prop-types";
 import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
@@ -110,11 +110,11 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 	);
 });
 CitekeyPopover.propTypes = {
-	closeDialog: PropTypes.func,
-	inGraph: PropTypes.oneOf(PropTypes.string, false),
-	item: PropTypes.object,
-	notes: PropTypes.arrayOf(PropTypes.object),
-	pdfs: PropTypes.arrayOf(PropTypes.object)
+	closeDialog: func,
+	inGraph: oneOf(string, false),
+	item: object,
+	notes: arrayOf(object),
+	pdfs: arrayOf(object)
 };
 
 export default CitekeyPopover;

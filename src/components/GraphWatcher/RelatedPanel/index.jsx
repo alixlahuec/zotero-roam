@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
 import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
@@ -44,8 +44,8 @@ const Abstract = React.memo(function Abstract({ abstract, allAbstractsShown }) {
 	}
 });
 Abstract.propTypes = {
-	abstract: PropTypes.string,
-	allAbstractsShown: PropTypes.bool
+	abstract: string,
+	allAbstractsShown: bool
 };
 
 const Timestamp = React.memo(function Timestamp({ timestamp, type }){
@@ -56,8 +56,8 @@ const Timestamp = React.memo(function Timestamp({ timestamp, type }){
 		: null;
 });
 Timestamp.propTypes = {
-	timestamp: PropTypes.string,
-	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
+	timestamp: string,
+	type: oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
 };
 
 const RelatedItem = React.memo(function RelatedItem(props) {
@@ -90,11 +90,11 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 	);
 });
 RelatedItem.propTypes = {
-	allAbstractsShown: PropTypes.bool,
-	closeDialog: PropTypes.func,
-	inGraph: PropTypes.oneOf([PropTypes.string, false]),
+	allAbstractsShown: bool,
+	closeDialog: func,
+	inGraph: oneOf([string, false]),
 	item: customPropTypes.cleanRelatedItemType,
-	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
+	type: oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
 };
 
 const RelatedList = React.memo(function RelatedList(props) {
@@ -120,10 +120,10 @@ const RelatedList = React.memo(function RelatedList(props) {
 	);
 });
 RelatedList.propTypes = {
-	allAbstractsShown: PropTypes.bool,
-	closeDialog: PropTypes.func,
-	items: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
-	type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag"])
+	allAbstractsShown: bool,
+	closeDialog: func,
+	items: arrayOf(customPropTypes.cleanRelatedItemType),
+	type: oneOf(["added_on", "with_abstract", "with_tag"])
 };
 
 const RelatedPanel = React.memo(function RelatedPanel(props) {
@@ -201,12 +201,12 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 	);
 });
 RelatedPanel.propTypes = {
-	isOpen: PropTypes.bool,
-	items: PropTypes.arrayOf(customPropTypes.cleanRelatedItemType),
-	onClose: PropTypes.func,
-	show: PropTypes.shape({
-		title: PropTypes.string,
-		type: PropTypes.oneOf(["added_on", "with_abstract", "with_tag"])
+	isOpen: bool,
+	items: arrayOf(customPropTypes.cleanRelatedItemType),
+	onClose: func,
+	show: shape({
+		title: string,
+		type: oneOf(["added_on", "with_abstract", "with_tag"])
 	})
 };
 

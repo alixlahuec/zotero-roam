@@ -38,10 +38,27 @@
     cursor:unset;
 }
 
-.zr-webimport-item .zr-webimport-item--publication, 
+.bp3-control.zr-webimport-item--title {
+    margin-bottom: 0px;
+}
+
+.zr-webimport-item .zr-webimport-item--publication,
 .zr-webimport-item .zr-webimport-item--abstract {
     display:block;
-    white-space:break-spaces;
+}
+
+.zr-webimport-item .zr-webimport-item--abstract {
+    background: #e8ecf6;
+    border-radius: 6px;
+    margin-top: 5px;
 }
 
 .zr-webimport-item .zr-webimport-item--contents{padding-left:30px;}
+
+/* DARK THEMES */
+
+@media (prefers-color-scheme: dark){
+    .zr-webimport-item .zr-webimport-item--abstract {
+        background-color: var(--zr-dark-selected-bc,#191919);
+    }
+}

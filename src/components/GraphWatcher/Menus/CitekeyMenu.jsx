@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, bool, shape, string } from "prop-types";
 import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
 
 import ButtonLink from "../../ButtonLink";
@@ -9,7 +9,7 @@ import SemanticPanel from "../SemanticPanel";
 
 import { showClasses } from "../classes";
 import { useQuery_Semantic } from "../../../api/queries";
-import { findRoamPage, importItemMetadata } from "../../../roam";
+import { findRoamPage, importItemMetadata, importItemNotes } from "../../../roam";
 import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
 import AuxiliaryDialog from "../AuxiliaryDialog";
 import ItemDetails from "../../ItemDetails";
@@ -96,9 +96,9 @@ const Backlinks = React.memo(function Backlinks(props) {
 	}
 });
 Backlinks.propTypes = {
-	isOpen: PropTypes.bool,
-	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-	origin: PropTypes.string
+	isOpen: bool,
+	items: arrayOf(customPropTypes.cleanSemanticReturnType),
+	origin: string
 };
 
 function RelatedItemsBar(props) {
@@ -187,14 +187,14 @@ function RelatedItemsBar(props) {
 	);
 }
 RelatedItemsBar.propTypes = {
-	doi: PropTypes.string,
-	itemList: PropTypes.shape({
-		items: PropTypes.arrayOf(customPropTypes.zoteroItemType),
-		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
-		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
+	doi: string,
+	itemList: shape({
+		items: arrayOf(customPropTypes.zoteroItemType),
+		pdfs: arrayOf(customPropTypes.zoteroItemType),
+		notes: arrayOf(customPropTypes.zoteroItemType),
 	}),
-	origin: PropTypes.string,
-	title: PropTypes.string
+	origin: string,
+	title: string
 };
 
 function ViewItem(props) {
@@ -231,7 +231,7 @@ ViewItem.propTypes = {
 
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	const { item, itemList } = props;
-	const { metadata: metadataSettings } = useContext(UserSettings);
+	const { metadata: metadataSettings, notes: notesSettings } = useContext(UserSettings);
 	const [roamCitekeys,] = useRoamCitekeys();
 
 	const doi = parseDOI(item.data.DOI);
@@ -250,7 +250,9 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 		return await importItemMetadata({ item, pdfs: has_pdfs, notes: has_notes}, pageUID, metadataSettings);
 	}, [has_pdfs, has_notes, item, metadataSettings, pageUID]);
     
-	const importNotes = has_notes ? <Button icon="comment">Import notes</Button> : null;
+	const importNotes = useCallback(async() => {
+		return await importItemNotes({item, notes: has_notes}, pageUID, notesSettings);
+	}, [has_notes, item, notesSettings, pageUID]);
 
 	const pdfLinks = useMemo(() => {
 		if(has_pdfs.length == 0) {
@@ -321,7 +323,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				<div className="zr-citekey-menu--header">
 					<ButtonGroup className="zr-citekey-menu--actions" minimal={true}>
 						<Button icon="add" onClick={importMetadata}>Add metadata</Button>
-						{importNotes}
+						{has_notes ? <Button icon="comment" onClick={importNotes}>Import notes</Button> : null}
 						<ViewItem item={clean_item} />
 						{open_zotero}
 						{pdfLinks}
@@ -336,10 +338,10 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 });
 CitekeyMenu.propTypes = {
 	item: customPropTypes.zoteroItemType,
-	itemList: PropTypes.shape({
-		items: PropTypes.arrayOf(customPropTypes.zoteroItemType),
-		pdfs: PropTypes.arrayOf(customPropTypes.zoteroItemType),
-		notes: PropTypes.arrayOf(customPropTypes.zoteroItemType),
+	itemList: shape({
+		items: arrayOf(customPropTypes.zoteroItemType),
+		pdfs: arrayOf(customPropTypes.zoteroItemType),
+		notes: arrayOf(customPropTypes.zoteroItemType),
 	})
 };
 

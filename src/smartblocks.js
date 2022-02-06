@@ -99,10 +99,10 @@ function registerSmartblockCommands(getItems){
 /** Triggers a given SmartBlock to import an item's metadata
  * @param {Object} config - The identification for the SmartBlock to be used.
  * @param {{
- * item: ZoteroItem|Object, 
- * notes: Array, 
+ * item: ZoteroItem,
+ * notes: ZoteroItem[],
  * page: {new: Boolean, title: String, uid: String}, 
- * pdfs: Array}} context - The context variables provided by the extension to the SmartBlock
+ * pdfs: ZoteroItem[]}} context - The context variables provided by the extension to the SmartBlock
  * @returns {Promise} If successful, `{success:true}` - otherwise an object containing the error encountered and the arguments with which the function was called.
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */

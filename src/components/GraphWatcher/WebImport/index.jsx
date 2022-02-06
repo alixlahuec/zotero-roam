@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, element, string } from "prop-types";
 import { createPortal } from "react-dom";
 import { Button } from "@blueprintjs/core";
 
@@ -21,7 +21,7 @@ const WebImportButton = React.memo(function WebImportButton({ urls }){
 	</>;
 });
 WebImportButton.propTypes = {
-	urls: PropTypes.arrayOf(PropTypes.string)
+	urls: arrayOf(string)
 };
 
 function WebImportFactory({ divs }){
@@ -40,7 +40,7 @@ function WebImportFactory({ divs }){
 	);
 }
 WebImportFactory.propTypes = {
-	divs: PropTypes.arrayOf(PropTypes.element)
+	divs: arrayOf(element)
 };
 
 export default WebImportFactory;

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, bool, func, shape, string} from "prop-types";
 import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
 
 import CollectionsSelector from "./CollectionsSelector";
@@ -69,14 +69,14 @@ const ImportButton = React.memo(function ImportButton(props) {
 	);
 });
 ImportButton.propTypes = {
-	identifiers: PropTypes.arrayOf(PropTypes.string),
-	importProps: PropTypes.shape({
-		collections: PropTypes.arrayOf(PropTypes.string),
+	identifiers: arrayOf(string),
+	importProps: shape({
+		collections: arrayOf(string),
 		library: customPropTypes.zoteroLibraryType,
-		tags: PropTypes.arrayOf(PropTypes.string)
+		tags: arrayOf(string)
 	}),
-	isActive: PropTypes.bool,
-	resetImport: PropTypes.func
+	isActive: bool,
+	resetImport: func
 };
 
 const ImportPanel = React.memo(function ImportPanel(props) {
@@ -167,17 +167,16 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 
 });
 ImportPanel.propTypes = {
-	collections: PropTypes.arrayOf(customPropTypes.zoteroCollectionType),
-	identifiers: PropTypes.arrayOf(PropTypes.string),
-	isActive: PropTypes.bool,
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
-	resetImport: PropTypes.func
+	collections: arrayOf(customPropTypes.zoteroCollectionType),
+	identifiers: arrayOf(string),
+	isActive: bool,
+	libraries: arrayOf(customPropTypes.zoteroLibraryType),
+	resetImport: func
 };
 
 const ZoteroImport = React.memo(function ZoteroImport(props) {
-	const { identifiers, resetImport } = props;
+	const { identifiers, isActive, resetImport } = props;
 	const { libraries } = useContext(ExtensionContext);
-	const selectionNotEmpty = identifiers.length > 0;
 
 	const apiKeys = Array.from(new Set(libraries.map(lib => lib.apikey)));
 	const permissionQueries = useQuery_Permissions(apiKeys, {
@@ -216,14 +215,15 @@ const ZoteroImport = React.memo(function ZoteroImport(props) {
 				: <ImportPanel 
 					collections={collections}
 					identifiers={identifiers}
-					isActive={selectionNotEmpty}
+					isActive={isActive}
 					libraries={writeableLibraries} 
 					resetImport={resetImport} />
 	);
 });
 ZoteroImport.propTypes = {
-	identifiers: PropTypes.arrayOf(PropTypes.string),
-	resetImport: PropTypes.func
+	identifiers: arrayOf(string),
+	isActive: bool,
+	resetImport: func
 };
 
 export default ZoteroImport;

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, func, oneOf, shape} from "prop-types";
 import { InputGroup, NonIdealState } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
@@ -101,14 +101,14 @@ const SemanticQuery = React.memo(function SemanticQuery(props) {
 	);
 });
 SemanticQuery.propTypes = {
-	items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-	selectProps: PropTypes.shape({
-		handleRemove: PropTypes.func,
-		handleSelect: PropTypes.func,
-		items: PropTypes.arrayOf(customPropTypes.cleanSemanticReturnType),
-		resetImport: PropTypes.func
+	items: arrayOf(customPropTypes.cleanSemanticReturnType),
+	selectProps: shape({
+		handleRemove: func,
+		handleSelect: func,
+		items: arrayOf(customPropTypes.cleanSemanticReturnType),
+		resetImport: func
 	}),
-	type: PropTypes.oneOf(["is_citation", "is_reference"])
+	type: oneOf(["is_citation", "is_reference"])
 };
 
 export default SemanticQuery;

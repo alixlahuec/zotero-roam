@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import PropTypes from "prop-types";
+import { arrayOf, func } from "prop-types";
 import { RadioGroup } from "@blueprintjs/core";
 
 import * as customPropTypes from "../../propTypes";
@@ -26,8 +26,8 @@ const LibrarySelector = React.memo(function LibrarySelector(props) {
 	);
 });
 LibrarySelector.propTypes = {
-	libraries: PropTypes.arrayOf(customPropTypes.zoteroLibraryType),
-	onSelect: PropTypes.func,
+	libraries: arrayOf(customPropTypes.zoteroLibraryType),
+	onSelect: func,
 	selectedLib: customPropTypes.zoteroLibraryType
 };
 

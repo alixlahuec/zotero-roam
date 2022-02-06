@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useMemo } from "react";
-import PropTypes from "prop-types";
-import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag } from "@blueprintjs/core";
+import React, { useCallback, useContext, useMemo, useState } from "react";
+import { arrayOf, bool, func, object, oneOf, string } from "prop-types";
+import { Button, ButtonGroup, Classes, Divider, Drawer, Menu, MenuItem, Tag } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ButtonLink from "../ButtonLink";
 import { importItemMetadata, openPageByUID } from "../../roam";
-import { copyToClipboard } from "../../utils";
+import { copyToClipboard, formatItemNotes } from "../../utils";
 import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 
 import { UserSettings } from "../App";
@@ -42,10 +42,10 @@ function CopyOption(props){
 	return <MenuItem icon="clipboard" onClick={formatCitekey} text={text} />;
 }
 CopyOption.propTypes = {
-	citekey: PropTypes.string,
-	format: PropTypes.oneOf(["citation", "citekey", "page-reference", "tag"]),
-	item: PropTypes.object,
-	text: PropTypes.string,
+	citekey: string,
+	format: oneOf(["citation", "citekey", "page-reference", "tag"]),
+	item: object,
+	text: string,
 };
 
 function CopyButtons(props){
@@ -89,9 +89,37 @@ function CopyButtons(props){
 	);
 }
 CopyButtons.propTypes = {
-	citekey: PropTypes.string,
-	inGraph: PropTypes.bool,
-	item: PropTypes.object
+	citekey: string,
+	inGraph: bool,
+	item: object
+};
+
+const NotesDrawer = React.memo(function NotesDrawer(props){
+	const { isOpen, notes, onClose, title } = props;
+	const { notes: { split_char } } = useContext(UserSettings);
+
+	const cleanNotes = useMemo(() => {
+		return formatItemNotes(notes, split_char);
+	}, [notes, split_char]);
+
+	return (
+		<Drawer
+			canEscapeKeyClose={false}
+			canOutsideClickClose={true}
+			isOpen={isOpen}
+			lazy={false}
+			onClose={onClose}
+			size="25%"
+			title={title} >
+			<div>{cleanNotes}</div>
+		</Drawer>
+	);
+});
+NotesDrawer.propTypes = {
+	isOpen: bool,
+	notes: arrayOf(object),
+	onClose: func,
+	title: string
 };
 
 function ItemDetails(props) {
@@ -110,6 +138,7 @@ function ItemDetails(props) {
 		weblink, 
 		year,
 		zotero} = item;
+	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
 	const { metadata: metadataSettings } = useContext(UserSettings);
 	const [, updateRoamCitekeys] = useRoamCitekeys();
 
@@ -133,7 +162,12 @@ function ItemDetails(props) {
 	const showNotes = useCallback(() => {
 		// For testing
 		console.log(children.notes);
+		setNotesDrawerOpen(true);
 	}, [children.notes]);
+
+	const closeNotes = useCallback(() => {
+		setNotesDrawerOpen(false);
+	}, []);
 
 	const pdfs = useMemo(() => {
 		if(children.pdfs.length == 0){
@@ -158,12 +192,15 @@ function ItemDetails(props) {
 			return null;
 		} else {
 			return (
-				<ButtonGroup minimal={true} fill={true} alignText="left">
-					<Button icon="comment" text="Show notes" onClick={showNotes} />
-				</ButtonGroup>
+				<>
+					<ButtonGroup minimal={true} fill={true} alignText="left">
+						<Button icon="comment" text="Show notes" onClick={showNotes} />
+					</ButtonGroup>
+					<NotesDrawer isOpen={isNotesDrawerOpen} notes={children.notes} onClose={closeNotes} title={"Notes for @" + key} />
+				</>
 			);
 		}
-	}, [children.notes, showNotes]);
+	}, [children.notes, closeNotes, isNotesDrawerOpen, key, showNotes]);
 
 	return <div id="zr-item-details">
 		<div className="selected-item-header">
@@ -229,7 +266,7 @@ function ItemDetails(props) {
 	</div>;
 }
 ItemDetails.propTypes = {
-	closeDialog: PropTypes.func,
+	closeDialog: func,
 	item: customPropTypes.cleanLibraryItemType
 };
 

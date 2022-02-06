@@ -1,156 +1,161 @@
-import PropTypes from "prop-types";
+import { array, arrayOf, bool, func, instanceOf, number, object, oneOf, shape, string } from "prop-types";
 
-const zoteroCollectionType = PropTypes.shape({
-	data: PropTypes.object,
-	key: PropTypes.string,
-	library: PropTypes.object,
-	links: PropTypes.object,
-	meta: PropTypes.object,
-	version: PropTypes.number
+const zoteroCollectionType = shape({
+	data: object,
+	key: string,
+	library: object,
+	links: object,
+	meta: object,
+	version: number
 });
 
-const zoteroItemType = PropTypes.shape({
-	data: PropTypes.object,
-	has_citekey: PropTypes.bool,
-	key: PropTypes.string,
-	library: PropTypes.object,
-	meta: PropTypes.object,
-	version: PropTypes.number
+const zoteroItemType = shape({
+	data: object,
+	has_citekey: bool,
+	key: string,
+	library: object,
+	meta: object,
+	version: number
 });
 
-const zoteroLibraryType = PropTypes.shape({
-	apikey: PropTypes.string,
-	path: PropTypes.string
+const zoteroLibraryType = shape({
+	apikey: string,
+	path: string
 });
 
 
 /**
  * @see cleanLibraryItem
  */
-const cleanLibraryItemType = PropTypes.shape({
-	abstract: PropTypes.string,
-	authors: PropTypes.string,
-	authorsFull: PropTypes.arrayOf(PropTypes.string),
-	authorsLastNames: PropTypes.arrayOf(PropTypes.string),
-	authorsRoles: PropTypes.arrayOf(PropTypes.string),
-	children: PropTypes.shape({
-		pdfs: PropTypes.arrayOf(zoteroItemType),
-		notes: PropTypes.arrayOf(zoteroItemType),
+const cleanLibraryItemType = shape({
+	abstract: string,
+	authors: string,
+	authorsFull: arrayOf(string),
+	authorsLastNames: arrayOf(string),
+	authorsRoles: arrayOf(string),
+	children: shape({
+		pdfs: arrayOf(zoteroItemType),
+		notes: arrayOf(zoteroItemType),
 	}),
-	inGraph: PropTypes.oneOf([PropTypes.string, false]),
-	itemKey: PropTypes.string,
-	itemType: PropTypes.string,
-	key: PropTypes.string,
-	location: PropTypes.string,
-	publication: PropTypes.string,
-	tags: PropTypes.array,
-	title: PropTypes.string,
-	weblink: PropTypes.string,
-	year: PropTypes.oneOf([PropTypes.instanceOf(Date), ""]),
-	zotero: PropTypes.shape({
-		local: PropTypes.string,
-		web: PropTypes.string
+	inGraph: oneOf([string, false]),
+	itemKey: string,
+	itemType: string,
+	key: string,
+	location: string,
+	publication: string,
+	tags: array,
+	title: string,
+	weblink: string,
+	year: oneOf([instanceOf(Date), ""]),
+	zotero: shape({
+		local: string,
+		web: string
 	}),
-	_multiField: PropTypes.string,
+	_multiField: string,
 	raw: zoteroItemType
 });
-const cleanLibraryReturnArrayType = PropTypes.arrayOf(cleanLibraryItemType);
+const cleanLibraryReturnArrayType = arrayOf(cleanLibraryItemType);
 
 /**
  * @see cleanRelatedItem
  */
-const cleanRelatedItemType = PropTypes.shape({
-	abstract: PropTypes.string,
-	added: PropTypes.instanceOf(Date),
-	children: PropTypes.shape({
-		pdfs: PropTypes.arrayOf(zoteroItemType),
-		notes: PropTypes.arrayOf(zoteroItemType)
+const cleanRelatedItemType = shape({
+	abstract: string,
+	added: instanceOf(Date),
+	children: shape({
+		pdfs: arrayOf(zoteroItemType),
+		notes: arrayOf(zoteroItemType)
 	}),
-	inGraph: PropTypes.bool,
-	itemType: PropTypes.string,
-	key: PropTypes.string,
-	location: PropTypes.string,
-	meta: PropTypes.string,
+	inGraph: bool,
+	itemType: string,
+	key: string,
+	location: string,
+	meta: string,
 	raw: zoteroItemType,
-	timestamp: PropTypes.string,
-	title: PropTypes.string
+	timestamp: string,
+	title: string
 });
 
 /**
  * @see cleanSemanticItem
  */
-const cleanSemanticItemType = PropTypes.shape({
-	authors: PropTypes.string,
-	authorsLastNames: PropTypes.string,
-	authorsString: PropTypes.string,
-	doi: PropTypes.oneOf([PropTypes.string, false]),
-	intent: PropTypes.arrayOf(PropTypes.string),
-	isInfluential: PropTypes.bool,
-	links: PropTypes.object,
-	meta: PropTypes.string,
-	title: PropTypes.string,
-	url: PropTypes.string,
-	year: PropTypes.string,
-	_multiField: PropTypes.string
+const cleanSemanticItemType = shape({
+	authors: string,
+	authorsLastNames: string,
+	authorsString: string,
+	doi: oneOf([string, false]),
+	intent: arrayOf(string),
+	isInfluential: bool,
+	links: object,
+	meta: string,
+	title: string,
+	url: string,
+	year: string,
+	_multiField: string
 });
 
 /**
  * @see cleanSemanticMatch
  */
-const cleanSemanticReturnType = PropTypes.shape({
+const cleanSemanticReturnType = shape({
 	...cleanSemanticItemType,
-	inGraph: PropTypes.oneOf([false, PropTypes.string]),
-	inLibrary: PropTypes.oneOf([false, PropTypes.shape({
+	inGraph: oneOf([false, string]),
+	inLibrary: oneOf([false, shape({
 		children: {
-			pdfs: PropTypes.arrayOf(zoteroItemType),
-			notes: PropTypes.arrayOf(zoteroItemType)
+			pdfs: arrayOf(zoteroItemType),
+			notes: arrayOf(zoteroItemType)
 		},
 		raw: zoteroItemType
 	})]),
-	_type: PropTypes.oneOf(["cited", "citing"])
+	_type: oneOf(["cited", "citing"])
 });
 
 /**
  * @see cleanSemantic
  */
-const cleanSemanticReturnObjectType = PropTypes.shape({
-	backlinks: PropTypes.arrayOf(cleanSemanticReturnType),
-	citations: PropTypes.arrayOf(cleanSemanticReturnType),
-	references: PropTypes.arrayOf(cleanSemanticReturnType),
+const cleanSemanticReturnObjectType = shape({
+	backlinks: arrayOf(cleanSemanticReturnType),
+	citations: arrayOf(cleanSemanticReturnType),
+	references: arrayOf(cleanSemanticReturnType),
 });
 
 /**
  * USER SETTINGS
  */
-const copySettingsType = PropTypes.shape({
-	always: PropTypes.bool,
-	defaultFormat: PropTypes.oneOf(["citation", "citekey", "page-reference", "raw", "tag", PropTypes.func]),
-	overrideKey: PropTypes.oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
-	useQuickCopy: PropTypes.bool
+const copySettingsType = shape({
+	always: bool,
+	defaultFormat: oneOf(["citation", "citekey", "page-reference", "raw", "tag", func]),
+	overrideKey: oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
+	useQuickCopy: bool
 });
 
-const extensionType = PropTypes.shape({
-	apiKeys: PropTypes.arrayOf(PropTypes.string),
-	dataRequests: PropTypes.array,
-	libraries: PropTypes.arrayOf(zoteroLibraryType),
-	portalId: PropTypes.string,
-	version: PropTypes.string
+const extensionType = shape({
+	apiKeys: arrayOf(string),
+	dataRequests: array,
+	libraries: arrayOf(zoteroLibraryType),
+	portalId: string,
+	version: string
 });
 
-const userSettingsType = PropTypes.shape({
-	autocomplete: PropTypes.shape({
-		trigger: PropTypes.string,
-		display: PropTypes.oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),
-		format: PropTypes.oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"])
+const userSettingsType = shape({
+	autocomplete: shape({
+		trigger: string,
+		display: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),
+		format: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"])
 	}),
-	autoload: PropTypes.bool,
+	autoload: bool,
 	copy: copySettingsType,
-	metadata: PropTypes.object,
-	render_inline: PropTypes.bool,
-	shortcuts: PropTypes.object,
-	typemap: PropTypes.object,
-	webimport: PropTypes.shape({
-		tags: PropTypes.arrayOf(PropTypes.string)
+	metadata: object,
+	notes: shape({
+		func: string,
+		split_char: string,
+		use: oneOf(["raw", "text"])
+	}),
+	render_inline: bool,
+	shortcuts: object,
+	typemap: object,
+	webimport: shape({
+		tags: arrayOf(string)
 	})
 });
 
