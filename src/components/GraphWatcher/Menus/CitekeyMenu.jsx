@@ -38,9 +38,10 @@ function BacklinksItem({ entry }) {
 	return (
 		<li className="zr-backlink-item" 
 			data-backlink-type={pub_type} 
-			data-key={"@" + key} 
+			data-in-graph={(inGraph != false).toString()}
 			data-item-type={data.itemType} 
 			data-item-year={pub_year}
+			data-key={"@" + key}
 		>
 			<div className="zr-backlink-item--year">{pub_year}</div>
 			<div className="zr-backlink-item--info">
@@ -237,8 +238,13 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	const doi = parseDOI(item.data.DOI);
 	const pageUID = findRoamPage("@" + item.key);
 
-	const has_pdfs = itemList.pdfs.filter(pdf => pdf.data.parentItem == item.data.key && pdf.library.id == item.library.id);
-	const has_notes = itemList.notes.filter(note => note.data.parentItem == item.data.key && note.library.id == item.library.id);
+	const pdfs = useMemo(() => {
+		return itemList.pdfs.filter(pdf => pdf.data.parentItem == item.data.key && pdf.library.id == item.library.id);
+	}, [itemList.pdfs, item]);
+
+	const notes = useMemo(() => {
+		return itemList.notes.filter(note => note.data.parentItem == item.data.key && note.library.id == item.library.id);
+	}, [itemList.notes, item]);
 
 	const doiHeader = useMemo(() => {
 		return doi 
@@ -247,19 +253,19 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	}, [doi]);
 
 	const importMetadata = useCallback(async() => {
-		return await importItemMetadata({ item, pdfs: has_pdfs, notes: has_notes}, pageUID, metadataSettings);
-	}, [has_pdfs, has_notes, item, metadataSettings, pageUID]);
+		return await importItemMetadata({ item, pdfs, notes }, pageUID, metadataSettings);
+	}, [pdfs, notes, item, metadataSettings, pageUID]);
     
 	const importNotes = useCallback(async() => {
-		return await importItemNotes({item, notes: has_notes}, pageUID, notesSettings);
-	}, [has_notes, item, notesSettings, pageUID]);
+		return await importItemNotes({item, notes }, pageUID, notesSettings);
+	}, [notes, item, notesSettings, pageUID]);
 
 	const pdfLinks = useMemo(() => {
-		if(has_pdfs.length == 0) {
+		if(pdfs.length == 0) {
 			return null;
 		} else {
 			return (
-				has_pdfs.map(pdf => {
+				pdfs.map(pdf => {
 					let location = pdf.library.type == "group" ? `groups/${pdf.library.id}` : "library";
 					let href = (["linked_file", "imported_file", "imported_url"].includes(pdf.data.linkMode)) ? `zotero://open-pdf/${location}/items/${pdf.data.key}` : pdf.data.url;
 					return (
@@ -273,7 +279,15 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				})
 			);
 		}
-	}, [has_pdfs]);
+	}, [pdfs]);
+
+	const notesButton = useMemo(() => {
+		if(notes.length == 0){
+			return null;
+		} else {
+			return <Button icon="comment" onClick={importNotes}>Import notes</Button>;
+		}
+	}, [importNotes, notes.length]);
     
 	const open_zotero = useMemo(() => {
 		return (
@@ -313,8 +327,8 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	}, [doi, item.key, item.meta.parsedDate, itemList]);
 
 	const clean_item = useMemo(() => {
-		return cleanLibraryItem(item, has_pdfs, has_notes, roamCitekeys);
-	}, [has_pdfs, has_notes, item, roamCitekeys]);
+		return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
+	}, [pdfs, notes, item, roamCitekeys]);
 
 	return (
 		<>
@@ -323,7 +337,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				<div className="zr-citekey-menu--header">
 					<ButtonGroup className="zr-citekey-menu--actions" minimal={true}>
 						<Button icon="add" onClick={importMetadata}>Add metadata</Button>
-						{has_notes ? <Button icon="comment" onClick={importNotes}>Import notes</Button> : null}
+						{notesButton}
 						<ViewItem item={clean_item} />
 						{open_zotero}
 						{pdfLinks}

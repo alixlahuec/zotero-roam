@@ -9,7 +9,6 @@ import { addPageMenus, findPageMenus } from "./Menus/utils";
 import {  findWebimportDivs, setWebimportDivs } from "./WebImport/utils";
 import { hasNodeListChanged } from "../../utils";
 import { menuPrefix, webimportClass } from "./classes";
-import "./index.css";
 import WebImportFactory from "./WebImport";
 
 const GraphWatcher = React.memo(function GraphWatcher(){

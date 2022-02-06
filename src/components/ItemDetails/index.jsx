@@ -113,9 +113,7 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 			size="33%"
 			style={{ overflowY: "scroll" }}
 			title={title} >
-			<div className="zr-drawer--notes-contents">
-				{cleanNotes.map((n, i) => <Card key={i}>{n}</Card>)}
-			</div>
+			{cleanNotes.map((n, i) => <Card key={i} className="zr-drawer--notes-block-card">{n}</Card>)}
 		</Drawer>
 	);
 });

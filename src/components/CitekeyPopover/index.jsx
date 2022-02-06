@@ -8,6 +8,8 @@ import { getLocalLink, getWebLink } from "../../utils";
 import { UserSettings } from "../App";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
+import "./index.css";
+
 const popoverMenuProps = {
 	autoFocus: true,
 	className: "zr-library-item-popover",
