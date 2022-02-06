@@ -2,6 +2,7 @@
     position:absolute;
     right:0px;
     opacity:0.7;
+    z-index: 10;
 }
 
 
@@ -51,9 +52,10 @@
     background: #e8ecf6;
     border-radius: 6px;
     margin-top: 5px;
+    padding: 10px;
 }
 
-.zr-webimport-item .zr-webimport-item--contents{padding-left:30px;}
+.zr-webimport-item .zr-webimport-item--contents{padding-left:25px;}
 
 /* DARK THEMES */
 

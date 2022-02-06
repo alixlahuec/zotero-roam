@@ -117,13 +117,14 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 	let tooltipContent = <>
 		<span><strong>Status : </strong> {status}</span>
 		<Divider />
-		<span className= "zr-icon-tooltip-body">
-			{status == "on"
-				? <QueriesStatusList queries={ { "Permissions": permissionQueries, "Collections": collectionQueries, "Tags": tagQueries, "Items": itemQueries } } />
-				: null}
-            
-		</span>
-		<Divider />
+		{status == "on"
+			? <>
+				<span className="zr-icon-tooltip-body">
+					<QueriesStatusList queries={ { "Permissions": permissionQueries, "Collections": collectionQueries, "Tags": tagQueries, "Items": itemQueries } } />
+				</span>
+				<Divider />
+			</>
+			: null}
 		<IconTooltipFooter />
 	</>;
 
