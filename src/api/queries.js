@@ -15,7 +15,12 @@ const useQuery_Citoid = (urls, opts = {}) => {
 		let queryKey = ["citoid", { url }];
 		return {
 			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchCitoid(url),
+			queryFn: (_queryKey) => {
+				let res = fetchCitoid(url);
+				// For debugging
+				console.log("fetchCitoid returned : ", res);
+				return res;
+			},
 			cacheTime,
 			...rest
 		};

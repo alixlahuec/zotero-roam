@@ -11,7 +11,14 @@ import ZoteroImport from "../../ZoteroImport";
 function useGetCitoids(urls, opts = {}) {
 	return useQuery_Citoid(urls, {
 		...opts,
+		onSettled: (data, error) => {
+			// For debugging
+			console.log("useGetCitoids settled with the following data : ", data);
+			console.log("useGetCtioids settled with the following error : ", error);
+		},
 		select: (data) => {
+			// For debugging
+			console.log("select function received the following data input : ", data);
 			const { item, query } = data;
 			
 			return {
