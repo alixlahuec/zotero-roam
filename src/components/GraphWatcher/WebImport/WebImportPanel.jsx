@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
 import { Checkbox, Classes } from "@blueprintjs/core";
 
@@ -88,6 +88,11 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 	const resetImport = useCallback(() => {
 		setSelected([]);
 	}, []);
+
+	useEffect(() => {
+		// For debugging
+		console.log(citoidQueries);
+	}, [citoidQueries]);
 
 	return (
 		<AuxiliaryDialog

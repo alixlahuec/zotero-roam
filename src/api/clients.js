@@ -53,13 +53,13 @@ const citoidClient = axios.create({
 axiosRetry(citoidClient, {
 	retries: 2,
 	retryCondition: (error) => {
-		if(error.response){
-			let { status } = error.response;
-			if(status == 404){
-				return false;
-			} else {
-				return true;
-			}
+		// For debugging
+		console.log("axiosRetry got this error : ");
+		console.log(error);
+
+		let { status } = error;
+		if(status == 404){
+			return false;
 		} else {
 			return true;
 		}
