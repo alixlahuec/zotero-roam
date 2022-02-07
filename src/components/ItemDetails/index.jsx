@@ -110,10 +110,9 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose}
-			size="33%"
-			style={{ overflowY: "scroll" }}
+			size="40%"
 			title={title} >
-			{cleanNotes.map((n, i) => <Card key={i} className="zr-drawer--notes-block-card">{n}</Card>)}
+			{cleanNotes.map((n, i) => <Card key={i} className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>{n}</Card>)}
 		</Drawer>
 	);
 });

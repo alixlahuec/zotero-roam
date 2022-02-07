@@ -60,8 +60,13 @@ h4.item-title{
     overflow-wrap:anywhere;
 }
 
-.zr-drawer--notes-block-card {
+.zr-drawer--notes {
+    overflow-y: scroll;
+}
+
+.zr-drawer--notes-card {
     margin: 10px;
+    flex: 0 0 auto;
 }
 
 /* SMALLER DISPLAYS */
@@ -116,7 +121,7 @@ h4.item-title{
     .zr-drawer--notes h4.bp3-heading {
         color: var(--zr-dark-text-co, #76a0cb);
     }
-    .zr-drawer--notes-block-card {
+    .zr-drawer--notes-card {
         background-color: var(--zr-dark-elem-bg, #2B3143);
     }
 }

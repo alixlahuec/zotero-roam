@@ -103,16 +103,21 @@ function listItemRenderer(item, itemProps) {
 	/>;
 }
 
-function renderListDiv(handleKeyDown, handleKeyUp, itemList, config){
-	const { handleClose, selectedItem } = config;
-
+const RenderedList = React.memo(function RenderedList({ handleClose, handleKeyDown, handleKeyUp, itemList, selectedItem }){
 	return selectedItem 
 		? <ItemDetails item={selectedItem} 
 			closeDialog={handleClose} />
 		: <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} >
 			{itemList}
 		</div>;
-}
+});
+RenderedList.propTypes = {
+	handleClose: func,
+	handleKeyDown: func,
+	handleKeyUp: func,
+	itemList: node,
+	selectedItem: customPropTypes.cleanLibraryItemType
+};
 
 function testItemsEquality(a,b){
 	return (a.itemKey == b.itemKey && a.location == b.location);
@@ -185,13 +190,14 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 	const { copy: copySettings } = useContext(UserSettings);
 
 	const searchbar = useRef();
-	let [selectedItem, itemSelect] = useState(null);
+	let [selectedItemID, itemSelect] = useState(null);
 	let [query, setQuery] = useState();
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	const [debouncedCallback, ] = useDebounceCallback(_query => { }, query_debounce);
 
 	const handleItemSelect = useCallback((item, e) => {
-		if(item === selectedItem){ 
+		const { key, location } = item;
+		if(key == selectedItemID.key && location == selectedItemID.location){ 
 			return; 
 		} else if(!item){
 			itemSelect(null);
@@ -201,7 +207,7 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 				copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
 				if(copySettings.overrideKey && e[copySettings.overrideKey] == true){
 					searchbar.current.blur();
-					itemSelect(item);
+					itemSelect({ key, location });
 				} else {
 					handleClose();
 				}
@@ -210,10 +216,15 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 					copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
 				}
 				searchbar.current.blur();
-				itemSelect(item);
+				itemSelect({ key, location });
 			}
 		}
-	}, [copySettings, handleClose, quickCopyActive, searchbar, selectedItem]);
+	}, [copySettings, handleClose, quickCopyActive, searchbar, selectedItemID]);
+
+	const selectedItem = useMemo(() => {
+		const { key, location } = selectedItemID;
+		return items.find(it => it.key == key && it.location == location);
+	}, [items, selectedItemID]);
 
 	const handleQueryChange = useCallback((query, _e) => {
 		handleItemSelect(null);
@@ -246,14 +257,7 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 					searchbar={searchbar}
 					searchbarLeftElement={searchbarLeftElement}
 					searchbarRightElement={searchbarRightElement} />
-				{renderListDiv(
-					handleKeyDown, 
-					handleKeyUp, 
-					itemList, 
-					{ 
-						handleClose, 
-						selectedItem
-					})}
+				<RenderedList handleClose={handleClose} handleKeyDown={handleKeyDown} handleKeyUp={handleKeyUp} itemList={itemList} selectedItem={selectedItem} />
 			</div>
 		);
 	}, [handleClose, searchbar, searchbarLeftElement, searchbarRightElement, selectedItem]);

@@ -11,7 +11,7 @@ const RoamCitekeysProvider = ({ children }) => {
 	const [roamCitekeys, setRoamCitekeys] = useState(() => getCitekeyPages());
 
 	const update = useCallback(() => {
-		setRoamCitekeys(getCitekeyPages());
+		setRoamCitekeys(() => getCitekeyPages());
 	}, []);
 
 	const contextValue = useMemo(() => [roamCitekeys, update], [roamCitekeys, update]);

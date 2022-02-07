@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
 import { Checkbox, Classes } from "@blueprintjs/core";
 
@@ -75,6 +75,11 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 	const areQueriesSettled = citoidQueries.every(q => q.isSuccess || q.isError);
 	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data);
 
+	const handleClose = useCallback(() => {
+		resetImport();
+		onClose();
+	}, [onClose, resetImport]);
+
 	const handleItemSelection = useCallback((url) => {
 		setSelected(currentSelection => {
 			if(currentSelection.includes(url)){
@@ -89,18 +94,13 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 		setSelected([]);
 	}, []);
 
-	useEffect(() => {
-		// For debugging
-		console.log(citoidQueries);
-	}, [citoidQueries]);
-
 	return (
 		<AuxiliaryDialog
 			ariaLabelledBy="zr-webimport-dialog--title"
 			className="webimport"
 			extraClasses={has_selected_items ? ["has-selected-items"] : []}
 			isOpen={isOpen}
-			onClose={onClose} >
+			onClose={handleClose} >
 			<div className={ Classes.DIALOG_BODY }>
 				<div className="zr-webimport-panel--main">
 					<div className="header-content">

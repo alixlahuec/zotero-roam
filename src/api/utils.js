@@ -1,4 +1,3 @@
-import { useQueryClient } from "react-query";
 
 import { zoteroClient, semanticClient, citoidClient } from "./clients";
 import { emitCustomEvent } from "../events";
@@ -72,26 +71,32 @@ async function fetchAdditionalData(req, totalResults) {
 		apiCalls.push(zoteroClient.get(`${dataURI}?${reqParams.toString()}`, { headers: { "Zotero-API-Key": apikey } }));
 	}
 
-	return Promise.all(apiCalls)
-		.then(([...responses]) => responses.map(res => res.data).flat(1))
-		.catch((error) => Promise.reject(error));
+	try {
+		let [...responses] = await Promise.all(apiCalls);
+		return responses.map(res => res.data).flat(1);
+	} catch(error){
+		return Promise.reject(error);
+	}
 }
 
 async function fetchBibliography(req, { include = "bib", style, linkwrap, locale } = {}) {
 	let { apikey, itemKey, location } = req;
 
-	return zoteroClient.get(`${location}/items/${itemKey}`, {
-		headers: {
-			"Zotero-API-Key": apikey
-		},
-		params: {
-			include,
-			linkwrap,
-			locale,
-			style
-		}})
-		.then((response) => response[include])
-		.catch((error) => Promise.reject(error));
+	try {
+		let response = await zoteroClient.get(`${location}/items/${itemKey}`, {
+			headers: {
+				"Zotero-API-Key": apikey
+			},
+			params: {
+				include,
+				linkwrap,
+				locale,
+				style
+			}});
+		return response[include];
+	} catch(error){
+		return Promise.reject(error);
+	}
 }
 
 /** Requests data from the `/data/citation/zotero` endpoint of the Wikipedia API
@@ -120,42 +125,40 @@ async function fetchCitoid(query) {
 async function fetchCollections(library, since = 0, { match = [] } = {}) {
 	const { apikey, path } = library;
 
-	return zoteroClient.get(`${path}/collections?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
-		.then(async (response) => {
-			let { data: modified, headers } = response;
-			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
-			totalResults = Number(totalResults);
-			if(totalResults > 100){
-				let additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since}, totalResults);
-				modified.push(...additional);
-			}
+	try {
+		let { data: modified, headers } = await zoteroClient.get(`${path}/collections?since=${since}`, { headers: { "Zotero-API-Key": apikey } });
+		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
+		totalResults = Number(totalResults);
+		if(totalResults > 100){
+			let additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since}, totalResults);
+			modified.push(...additional);
+		}
 
-			let deleted = [];
-			// DO NOT request deleted items since X if since = 0 (aka, initial data request)
-			// It's a waste of a call
-			if(since > 0 && modified.length > 0){
-				deleted = await fetchDeleted(...library, since);
+		let deleted = [];
+		// DO NOT request deleted items since X if since = 0 (aka, initial data request)
+		// It's a waste of a call
+		if(since > 0 && modified.length > 0){
+			deleted = await fetchDeleted(...library, since);
 
-				emitCustomEvent("update-collections", {
-					success: true,
-					library,
-					data: modified
-				});
-			}
-
-			return {
-				data: matchWithCurrentData({ modified, deleted: deleted.collections }, match),
-				lastUpdated: Number(lastUpdated)
-			};
-		})
-		.catch((error) => {
 			emitCustomEvent("update-collections", {
-				success: false,
+				success: true,
 				library,
-				error
+				data: modified
 			});
-			return Promise.reject(error);
+		}
+
+		return {
+			data: matchWithCurrentData({ modified, deleted: deleted.collections }, match),
+			lastUpdated: Number(lastUpdated)
+		};
+	} catch(error){
+		emitCustomEvent("update-collections", {
+			success: false,
+			library,
+			error
 		});
+		return Promise.reject(error);
+	}
 }
 
 /** Requests data from the `/[library]/deleted` endpoint of the Zotero API
@@ -165,11 +168,13 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
  */
 async function fetchDeleted(library, since) {
 	const { apikey, path } = library;
-	return zoteroClient.get(`${path}/deleted?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
-		.then((response) => response.data)
-		.catch((error) => {
-			return Promise.reject(error);
-		});
+
+	try {
+		let { data } = await zoteroClient.get(`${path}/deleted?since=${since}`, { headers: { "Zotero-API-Key": apikey } });
+		return data;
+	} catch(error){
+		return Promise.reject(error);
+	}
 }
 
 /** Requests data from the Zotero API, based on a specific data URI
@@ -178,60 +183,60 @@ async function fetchDeleted(library, since) {
  * @param {{match: Object[]}} config - Additional parameters
  * @returns {Promise<{data: Object[], lastUpdated: Integer}>}
  */
-async function fetchItems(req, { match = [] } = {}) {
+async function fetchItems(req, { match = [] } = {}, queryClient) {
 	let { apikey, dataURI, params, library, since = 0 } = req;
 	let paramsQuery = new URLSearchParams(params);
 	paramsQuery.set("since", since);
 	paramsQuery.set("start", 0);
 	paramsQuery.set("limit", 100);
 
-	return zoteroClient.get(`${dataURI}?${paramsQuery.toString()}`, { headers: { "Zotero-API-Key": apikey } })
-		.then(async (response) => {
-			let { data: modified, headers } = response;
-			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
-			totalResults = Number(totalResults);
-			if(totalResults > 100){
-				let additional = await fetchAdditionalData({ dataURI, apikey, params, since }, totalResults);
-				modified.push(...additional);
-			}
-
-			let deleted = [];
-			// DO NOT request deleted items since X if since = 0 (aka, initial data request)
-			// It's a waste of a call
-			if(since > 0){
-				// Retrieve deleted items, if any
-				deleted = await fetchDeleted({ apikey, path: library }, since);
-
-				if(modified.length > 0){
-					// Refetch tags data
-					const client = useQueryClient();
-					let tagsQueryKey = ["tags", { library: library, apikey: apikey }];
-					let { lastUpdated: latest_tags_version } = client.getQueryData(tagsQueryKey) || {}; // TODO: Check if getQueryData needs exact matching - if not, remove the apikey portion of line above
-					if(Number(latest_tags_version) < Number(lastUpdated)){
-						client.refetchQueries(tagsQueryKey);
-					}
-
-					emitCustomEvent("update", {
-						success: true,
-						request: req,
-						data: modified
-					});
-				}
-			}
-
-			return {
-				data: matchWithCurrentData({ modified, deleted: deleted.items }, match, { with_citekey: true }),
-				lastUpdated: Number(lastUpdated)
-			};
-		})
-		.catch((error) => {
-			emitCustomEvent("update", {
-				success: false,
-				request: req,
-				error
+	try {
+		let { data: modified, headers } = await zoteroClient.get(`${dataURI}?${paramsQuery.toString()}`, 
+			{ 
+				headers: { "Zotero-API-Key": apikey } 
 			});
-			return Promise.reject(error);
+		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
+		totalResults = Number(totalResults);
+		if(totalResults > 100){
+			let additional = await fetchAdditionalData({ dataURI, apikey, params, since }, totalResults);
+			modified.push(...additional);
+		}
+
+		let deleted = [];
+		// DO NOT request deleted items since X if since = 0 (aka, initial data request)
+		// It's a waste of a call
+		if(since > 0){
+			// Retrieve deleted items, if any
+			deleted = await fetchDeleted({ apikey, path: library }, since);
+
+			if(modified.length > 0){
+				// Refetch tags data
+				let tagsQueryKey = ["tags", { library: library, apikey: apikey }];
+				let { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {}; // TODO: Check if getQueryData needs exact matching - if not, remove the apikey portion of line above
+				if(Number(latest_tags_version) < Number(lastUpdated)){
+					queryClient.refetchQueries(tagsQueryKey);
+				}
+
+				emitCustomEvent("update", {
+					success: true,
+					request: req,
+					data: modified
+				});
+			}
+		}
+
+		return {
+			data: matchWithCurrentData({ modified, deleted: deleted.items }, match, { with_citekey: true }),
+			lastUpdated: Number(lastUpdated)
+		};
+	} catch(error){
+		emitCustomEvent("update", {
+			success: false,
+			request: req,
+			error
 		});
+		return Promise.reject(error);
+	}
 }
 
 /** Requests data from the `/keys` endpoint of the Zotero API
@@ -239,9 +244,12 @@ async function fetchItems(req, { match = [] } = {}) {
  * @returns {Promise<ZoteroKey>} The API key's permissions
  */
 async function fetchPermissions(apikey) {
-	return zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } })
-		.then((response) => response.data)
-		.catch((error) => Promise.reject(error));
+	try {
+		let { data } = await zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } });
+		return data;
+	} catch(error){
+		return Promise.reject(error);
+	}
 }
 
 /** Requests data from the `/paper` endpoint of the Semantic Scholar API
@@ -249,33 +257,16 @@ async function fetchPermissions(apikey) {
  * @returns {Promise<{doi: String, citations: Object[], references: Object[]}>} Citation data for the item
 **/
 async function fetchSemantic(doi) {
-	return semanticClient.get(`${doi}`)
-		.then((response) => {
-			let { citations, references } = response.data;
-			// Select & transform citations with valid DOIs
-			citations = citations
-				.map(cit => {
-					let { doi, ...rest } = cit;
-					return {
-						doi: parseDOI(doi),
-						...rest
-					};
-				})
-				.filter(cit => cit.doi);
-			// Select & transform references with valid DOIs
-			references = references
-				.map(ref => {
-					let { doi, ...rest } = ref;
-					return {
-						doi: parseDOI(doi),
-						...rest
-					};
-				})
-				.filter(ref => ref.doi);
-        
-			return { doi, citations, references };
-		})
-		.catch((error) => Promise.reject(error));
+	try {
+		let { data: { citations, references } } = await semanticClient.get(`${doi}`);
+		return { 
+			doi, 
+			citations: parseSemanticDOIs(citations), 
+			references: parseSemanticDOIs(references) 
+		};
+	} catch(error){
+		return Promise.reject(error);
+	}
 }
 
 /** Requests data from the `/[library]/tags` endpoint of the Zotero API
@@ -284,21 +275,22 @@ async function fetchSemantic(doi) {
  */
 async function fetchTags(library) {
 	const { apikey, path } = library;
-	return zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } })
-		.then(async (response) => {
-			let { data, headers } = response;
-			let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
-			totalResults = Number(totalResults);
-			if(totalResults > 100){
-				let additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey}, totalResults);
-				data.push(...additional);
-			}
-			return { 
-				data: makeTagList(data), 
-				lastUpdated: Number(lastUpdated)
-			};
-		})
-		.catch((error) => Promise.reject(error));
+
+	try {
+		let { data, headers } = await zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } });
+		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
+		totalResults = Number(totalResults);
+		if(totalResults > 100){
+			let additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey}, totalResults);
+			data.push(...additional);
+		}
+		return { 
+			data: makeTagList(data), 
+			lastUpdated: Number(lastUpdated)
+		};
+	} catch(error){
+		return Promise.reject(error);
+	}
 }
 
 function makeTagList(tags){
@@ -375,6 +367,20 @@ function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
 		});
 		return datastore;
 	}
+}
+
+/** Selects and transforms Semantic items with valid DOIs
+ * @param {Object[]} arr - The array of Semantic items to clean
+ * @returns The clean Semantic array
+ */
+function parseSemanticDOIs(arr){
+	return arr.map(elem => {
+		let { doi, ...rest } = elem;
+		return {
+			doi: parseDOI(doi),
+			...rest
+		};
+	}).filter(elem => elem.doi);
 }
 
 /** Adds new items to a Zotero library, with optional collections & tags.
