@@ -50,21 +50,6 @@ axiosRetry(semanticClient, {
 const citoidClient = axios.create({
 	baseURL: "https://en.wikipedia.org/api/rest_v1/data/citation/zotero"
 });
-axiosRetry(citoidClient, {
-	retries: 2,
-	retryCondition: (error) => {
-		// For debugging
-		console.log("axiosRetry got this error : ");
-		console.log(error.toJSON());
-
-		let { status } = error.toJSON();
-		if(status == 404){
-			return false;
-		} else {
-			return true;
-		}
-	}
-});
 
 export {
 	zoteroClient,

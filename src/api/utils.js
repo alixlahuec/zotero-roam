@@ -105,9 +105,6 @@ async function fetchCitoid(query) {
 			query
 		}))
 		.catch((error) => {
-			// For debugging
-			console.log(error);
-			console.log(error.toJSON());
 			return Promise.reject(error);
 		});
 }
@@ -295,8 +292,6 @@ async function fetchTags(library) {
 				let additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey}, totalResults);
 				data.push(...additional);
 			}
-			// For debugging:
-			console.log(data);
 			return { 
 				data: makeTagList(data), 
 				lastUpdated: Number(lastUpdated)
