@@ -196,34 +196,40 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 	const [debouncedCallback, ] = useDebounceCallback(_query => { }, query_debounce);
 
 	const handleItemSelect = useCallback((item, e) => {
-		const { key, location } = item;
-		if(key == selectedItemID.key && location == selectedItemID.location){ 
-			return; 
-		} else if(!item){
+		if(!item){
 			itemSelect(null);
 		} else {
-			if(quickCopyActive){
-				// Mode: Quick Copy
-				copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
-				if(copySettings.overrideKey && e[copySettings.overrideKey] == true){
+			const { key, location } = item;
+			if(JSON.stringify(selectedItemID) === JSON.stringify({ key, location })){
+				return;
+			} else {
+				if(quickCopyActive){
+					// Mode: Quick Copy
+					copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
+					if(copySettings.overrideKey && e[copySettings.overrideKey] == true){
+						searchbar.current.blur();
+						itemSelect({ key, location });
+					} else {
+						handleClose();
+					}
+				} else {
+					if(copySettings.always == true){
+						copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
+					}
 					searchbar.current.blur();
 					itemSelect({ key, location });
-				} else {
-					handleClose();
 				}
-			} else {
-				if(copySettings.always == true){
-					copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
-				}
-				searchbar.current.blur();
-				itemSelect({ key, location });
 			}
 		}
 	}, [copySettings, handleClose, quickCopyActive, searchbar, selectedItemID]);
 
 	const selectedItem = useMemo(() => {
-		const { key, location } = selectedItemID;
-		return items.find(it => it.key == key && it.location == location);
+		if(selectedItemID == null){
+			return null;
+		} else {
+			const { key, location } = selectedItemID;
+			return items.find(it => it.key == key && it.location == location);
+		}
 	}, [items, selectedItemID]);
 
 	const handleQueryChange = useCallback((query, _e) => {
