@@ -73,12 +73,8 @@ async function fetchAdditionalData(req, totalResults) {
 	}
 
 	return Promise.all(apiCalls)
-		.then(([...responses]) => {
-			return responses.map(res => res.data).flat(1);
-		})
-		.catch((error) => {
-			return error;
-		});
+		.then(([...responses]) => responses.map(res => res.data).flat(1))
+		.catch((error) => Promise.reject(error));
 }
 
 async function fetchBibliography(req, { include = "bib", style, linkwrap, locale } = {}) {
@@ -94,12 +90,8 @@ async function fetchBibliography(req, { include = "bib", style, linkwrap, locale
 			locale,
 			style
 		}})
-		.then((response) => {
-			return response[include];
-		})
-		.catch((error) => {
-			return error;
-		});
+		.then((response) => response[include])
+		.catch((error) => Promise.reject(error));
 }
 
 /** Requests data from the `/data/citation/zotero` endpoint of the Wikipedia API
@@ -108,24 +100,8 @@ async function fetchBibliography(req, { include = "bib", style, linkwrap, locale
  */
 async function fetchCitoid(query) {
 	return citoidClient.get(encodeURIComponent(query))
-		.then((response) => {
-			// For debugging
-			console.log("Response is : ", response);
-			return response.data;
-		})
-		.then((data) => {
-			// For debugging
-			console.log("Data is : ", data);
-			return {
-				item: data[0],
-				query
-			};
-		})
-		.catch((error) => {
-			// For debugging
-			console.log("Error is : ", error);
-			return error;
-		});
+		.then((response) => response.data[0])
+		.catch((error) => Promise.reject(error));
 }
 
 /** Requests data from the `/[library]/collections` endpoint of the Zotero API
@@ -172,7 +148,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 				library,
 				error
 			});
-			return error;
+			return Promise.reject(error);
 		});
 }
 
@@ -184,11 +160,9 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 async function fetchDeleted(library, since) {
 	const { apikey, path } = library;
 	return zoteroClient.get(`${path}/deleted?since=${since}`, { headers: { "Zotero-API-Key": apikey } })
-		.then((response) => {
-			return response.data;
-		})
+		.then((response) => response.data)
 		.catch((error) => {
-			return error;
+			return Promise.reject(error);
 		});
 }
 
@@ -250,7 +224,7 @@ async function fetchItems(req, { match = [] } = {}) {
 				request: req,
 				error
 			});
-			return error;
+			return Promise.reject(error);
 		});
 }
 
@@ -260,12 +234,8 @@ async function fetchItems(req, { match = [] } = {}) {
  */
 async function fetchPermissions(apikey) {
 	return zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } })
-		.then((response) => {
-			return response.data;
-		})
-		.catch((error) => {
-			return error;
-		});
+		.then((response) => response.data)
+		.catch((error) => Promise.reject(error));
 }
 
 /** Requests data from the `/paper` endpoint of the Semantic Scholar API
@@ -299,9 +269,7 @@ async function fetchSemantic(doi) {
         
 			return { doi, citations, references };
 		})
-		.catch((error) => {
-			return error;
-		});
+		.catch((error) => Promise.reject(error));
 }
 
 /** Requests data from the `/[library]/tags` endpoint of the Zotero API
@@ -326,9 +294,7 @@ async function fetchTags(library) {
 				lastUpdated: Number(lastUpdated)
 			};
 		})
-		.catch((error) => {
-			return error;
-		});
+		.catch((error) => Promise.reject(error));
 }
 
 function makeTagList(tags){
