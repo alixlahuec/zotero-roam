@@ -72,7 +72,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 	const has_selected_items = selected.length > 0;
 
 	const citoidQueries = useGetCitoids(urls, { enabled: isOpen });
-	const areQueriesSettled = citoidQueries.every(q => ["error", "success"].includes(q.status));
+	const areQueriesSettled = citoidQueries.every(q => q.isSuccess || q.isError);
 	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data);
 
 	const handleItemSelection = useCallback((url) => {

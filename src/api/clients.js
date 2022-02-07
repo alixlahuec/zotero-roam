@@ -55,9 +55,9 @@ axiosRetry(citoidClient, {
 	retryCondition: (error) => {
 		// For debugging
 		console.log("axiosRetry got this error : ");
-		console.log(error);
+		console.log(error.toJSON());
 
-		let { status } = error;
+		let { status } = error.toJSON();
 		if(status == 404){
 			return false;
 		} else {
