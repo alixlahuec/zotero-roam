@@ -51,7 +51,19 @@ const citoidClient = axios.create({
 	baseURL: "https://en.wikipedia.org/api/rest_v1/data/citation/zotero"
 });
 axiosRetry(citoidClient, {
-	retries: 3
+	retries: 2,
+	retryCondition: (error) => {
+		if(error.response){
+			let { status } = error.response;
+			if(status == 404){
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
 });
 
 export {

@@ -100,7 +100,10 @@ async function fetchBibliography(req, { include = "bib", style, linkwrap, locale
  */
 async function fetchCitoid(query) {
 	return citoidClient.get(encodeURIComponent(query))
-		.then((response) => response.data[0])
+		.then((response) => ({
+			item: response.data[0],
+			query
+		}))
 		.catch((error) => Promise.reject(error));
 }
 
