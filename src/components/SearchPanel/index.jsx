@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { bool, func, node, object, shape } from "prop-types";
+import { bool, func, node, object } from "prop-types";
 import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
@@ -303,8 +303,7 @@ LibraryQueryList.propTypes = {
 };
 
 const SearchPanel = React.memo(function SearchPanel(props) {
-	const { isOpen, isSidePanelOpen } = props.panelState;
-	const { closePanel, status } = props;
+	const { isOpen, onClose, status } = props;
 	const { dataRequests } = useContext(ExtensionContext);
 	const [roamCitekeys,] = useRoamCitekeys();
 	const { copy: { useQuickCopy}, shortcuts: shortcutsSettings } = useContext(UserSettings);
@@ -348,11 +347,10 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			ariaLabelledBy={dialogLabel}
 			className={dialogClass}
 			isOpen={isOpen}
-			isSidePanelOpen={isSidePanelOpen}
 			lazy={false}
-			onClose={closePanel} >
+			onClose={onClose} >
 			<LibraryQueryList 
-				handleClose={closePanel}
+				handleClose={onClose}
 				isOpen={isOpen}
 				items={items}
 				quickCopyActive={quickCopyActive}
@@ -362,11 +360,8 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 });
 SearchPanel.propTypes = {
-	closePanel: func,
-	panelState: shape({
-		isOpen: bool,
-		isSidePanelOpen: bool
-	}),
+	isOpen: bool,
+	onClose: func,
 	status: bool
 };
 

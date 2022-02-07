@@ -12,7 +12,6 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 		children, 
 		className: dialogClass,
 		isOpen,
-		isSidePanelOpen,
 		lazy = true,
 		onClose,
 		onOpening,
@@ -26,11 +25,14 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 			flex: "1 1 100%"
 		};
 	}, []);
-	const dialogStyle = useMemo(() => {
+
+	const dialogStyle = useMemo(() => ({ width: "calc(95% - 40vw)" }), []);
+
+	/* const dialogStyle = useMemo(() => {
 		return {
 			width: isSidePanelOpen ? "calc(95% - 20vw)" : "calc(95% - 40vw)"
 		};
-	}, [isSidePanelOpen]);
+	}, [isSidePanelOpen]); */
 
 	/* const sidePanelStyle = useMemo(() => {
 		return {
@@ -68,7 +70,6 @@ DialogOverlay.propTypes = {
 	children: node,
 	className: string,
 	isOpen: bool,
-	isSidePanelOpen: bool,
 	lazy: bool,
 	onClose: func,
 	onOpening: func

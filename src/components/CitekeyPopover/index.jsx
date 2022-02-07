@@ -108,6 +108,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 					<MenuItem icon="inheritance" text="Import & open in sidebar" onClick={importMetadataAndOpen} />
 					<MenuDivider />
 					{zoteroLinks}
+					{pdfChildren}
 				</Menu>
 			);
 		} else {

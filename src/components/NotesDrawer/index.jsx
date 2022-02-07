@@ -4,6 +4,7 @@ import { Card, Drawer } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
 import { formatNotes } from "../../utils";
+import "./index.css";
 
 const NotesDrawer = React.memo(function NotesDrawer(props){
 	const { isOpen, notes, onClose, title } = props;

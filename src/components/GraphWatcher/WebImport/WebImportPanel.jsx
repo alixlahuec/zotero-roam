@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useState } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
 import { Checkbox, Classes } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../AuxiliaryDialog";
+import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ZoteroImport from "../../ZoteroImport";
 
 import { UserSettings } from "../../App";
@@ -24,7 +24,7 @@ function useGetCitoids(urls, opts = {}) {
 				url: query
 			};
 		},
-		notifyOnChangeProps: ["data"]
+		notifyOnChangeProps: ["data", "errorUpdatedAt"]
 	});
 }
 

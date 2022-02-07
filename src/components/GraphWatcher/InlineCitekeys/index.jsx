@@ -105,7 +105,10 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		onClose();
 	}, [itemData.raw, itemData.children, metadataSettings, onClose, pageUID]);
 
-	const showNotesDrawer = useCallback(() => setNotesDrawerOpen(true), []);
+	const showNotesDrawer = useCallback(() => {
+		setNotesDrawerOpen(true);
+		onClose();
+	}, [onClose]);
 
 	const closeNotesDrawer = useCallback(() => setNotesDrawerOpen(false), []);
 
@@ -147,7 +150,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 						text="Show notes"
 						onClick={showNotesDrawer}
 					/>
-					<NotesDrawer isOpen={isNotesDrawerOpen} notes={notes} onClose={closeNotesDrawer} title={"@" + citekey} />
+					<NotesDrawer isOpen={isNotesDrawerOpen} notes={notes} onClose={closeNotesDrawer} title={"Notes for " + citekey} />
 				</>
 			);
 		}

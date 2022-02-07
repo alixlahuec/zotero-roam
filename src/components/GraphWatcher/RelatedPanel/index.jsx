@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
 import { Button, Classes } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../AuxiliaryDialog";
+import AuxiliaryDialog from "../../AuxiliaryDialog";
 import CitekeyPopover from "../../CitekeyPopover";
 import { pluralize, sortElems } from "../../../utils";
 

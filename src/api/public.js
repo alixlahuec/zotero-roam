@@ -64,8 +64,8 @@ function _getItems(select = "all", filters = {}, queryClient) {
  */
 function _getTags(library, queryClient) {
 	const { apikey, path } = library;
-	let data = queryClient.getQueryData(["tags", { apikey, library: path }]);
-	return data;
+	let datastore = queryClient.getQueryData(["tags", { apikey, library: path }]);
+	return datastore.data;
 }
 
 export {

@@ -11,7 +11,7 @@ import { showClasses } from "../classes";
 import { useQuery_Semantic } from "../../../api/queries";
 import { findRoamPage, importItemMetadata, importItemNotes } from "../../../roam";
 import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
-import AuxiliaryDialog from "../AuxiliaryDialog";
+import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ItemDetails from "../../ItemDetails";
 import { UserSettings } from "../../App";
 
@@ -38,13 +38,12 @@ function BacklinksItem({ entry }) {
 	return (
 		<li className="zr-backlink-item" 
 			data-backlink-type={pub_type} 
-			data-in-graph={(inGraph != false).toString()}
-			data-item-type={data.itemType} 
+			data-in-graph={(inGraph != false).toString()} 
 			data-item-year={pub_year}
 			data-key={"@" + key}
 		>
 			<div className="zr-backlink-item--year">{pub_year}</div>
-			<div className="zr-backlink-item--info">
+			<div className="zr-backlink-item--info" data-item-type={data.itemType} >
 				<span zr-role="item-authors" className={pub_type == "reference" ? "zr-highlight" : "zr-highlight-2"}>{meta.creatorSummary || ""}</span>
 				<span zr-role="item-publication" className="zr-secondary">{data.publicationTitle || data.bookTitle || data.university || ""}</span>
 				<span zr-role="item-title" className="zr-item-title">{data.title}</span>

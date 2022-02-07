@@ -41,6 +41,13 @@
     .bp3-dialog[class*="zr-dialog-overlay--"] {margin-left: calc(min(20vw, 30px) + 2.5%);}
 }
 
+/* @media (max-width:600px){
+    .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] {width:calc(95% - min(40vw, 60px));}
+    .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] {width:calc(95% - min(20vw, 30px));}
+    .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel {flex-basis:min(20vw, 30px)!important;}
+}*/
+
+
 /* DARK THEMES */
 
 @media (prefers-color-scheme: dark){

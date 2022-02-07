@@ -79,12 +79,12 @@ window.zoteroRoam = {};
 		const requests = analyzeUserRequests(dataRequests);
 		window.zoteroRoam.config.requests = requests;
 
-		window.zoteroRoam.getBibliography = (item, config = {}) => {
+		window.zoteroRoam.getBibliography = async(item, config = {}) => {
 			let { libraries } = requests;
 			let location = item.library.type + "s/" + item.library.id;
 			let library = libraries.find(lib => lib.path == location);
 
-			return getBibliography(item, config, library);
+			return await getBibliography(item, config, library);
 		};
 
 		window.zoteroRoam.getTags = (location) => {

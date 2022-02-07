@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../AuxiliaryDialog";
+import AuxiliaryDialog from "../../AuxiliaryDialog";
 import SemanticQuery from "./SemanticQuery";
 import SidePanel from "./SidePanel";
 
@@ -20,9 +20,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 		setActiveTab(defaultTab);
 	}, [defaultTab]);
 
-	const selectTab = useCallback((newtab, _prevtab, _event) => {
-		setActiveTab(newtab);
-	}, []);
+	const selectTab = useCallback((newtab, _prevtab, _event) => setActiveTab(newtab), []);
 
 	const references = useMemo(() =>  sortElems(items.references, "year"), [items.references]);
 

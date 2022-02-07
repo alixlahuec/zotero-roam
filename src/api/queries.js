@@ -147,11 +147,39 @@ const useQuery_Tags = (libraries, opts = {}) => {
 	return useQueries(queriesDefs);
 };
 
+const useWriteableLibraries = (libraries) => {
+	const apiKeys = Array.from(new Set(libraries.map(lib => lib.apikey)));
+	const permissionQueries = useQuery_Permissions(apiKeys, {
+		notifyOnChangeProps: ["data", "isLoading"]
+	});
+	const isLoading = permissionQueries.some(q => q.isLoading);
+	const permissions = permissionQueries.map(q => q.data || []).flat(1);
+
+	const data = libraries
+		.filter(lib => {
+			let keyData = permissions.find(k => k.key == lib.apikey);
+			if(!keyData){
+				return false;
+			} else {
+				let { access } = keyData;
+				let [libType, libId] = lib.path.split("/");
+				let permissions = libType == "users" ? (access.user || {}) : (access.groups[libId] || access.groups.all);
+				return permissions?.write || false;
+			}
+		});
+	
+	return {
+		data,
+		isLoading
+	};
+};
+
 export {
 	useQuery_Citoid,
 	useQuery_Collections,
 	useQuery_Items,
 	useQuery_Permissions,
 	useQuery_Semantic,
-	useQuery_Tags
+	useQuery_Tags,
+	useWriteableLibraries
 };

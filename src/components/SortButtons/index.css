@@ -1,0 +1,29 @@
+.zr-sort-option {
+    padding: 3px 10px;
+}
+
+.zr-sort-option:first-child {
+    padding-left:0px;
+}
+
+.zr-sort-option:last-child {
+    padding-right:0px;
+}
+
+.zr-sort-option label {
+    cursor: pointer;
+    display: inline-block;
+    font-weight:500;
+    margin-bottom: 0px;
+    text-align: center;
+    width: auto;
+}
+
+.zr-sort-option input:checked, 
+.zr-sort-option input:checked ~ span, 
+.zr-sort-option input:checked ~ label {
+    color: #3081e4;
+}
+.zr-sort-option .bp3-icon {
+    padding-right:5px;
+}

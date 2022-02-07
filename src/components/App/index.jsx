@@ -11,6 +11,7 @@ import { _getBibliography, _getChildren, _getItems, _getTags } from "../../api/p
 import { addPaletteCommand } from "../../roam";
 
 import * as customPropTypes from "../../propTypes";
+import Dashboard from "../Dashboard";
 
 const ExtensionContext = React.createContext();
 const UserSettings = React.createContext();
@@ -32,26 +33,41 @@ class App extends Component {
 		super(props);
 		this.state = {
 			status: this.props.userSettings.autoload ? "on" : "off",
-			searchPanel: {
-				isOpen: false,
-				isSidePanelOpen: false
-			}
+			isDashboardOpen: false,
+			isSearchPanelOpen: false
 		};
 		this.toggleExtension = this.toggleExtension.bind(this);
 		this.closeSearchPanel = this.closeSearchPanel.bind(this);
 		this.openSearchPanel = this.openSearchPanel.bind(this);
 		this.toggleSearchPanel = this.toggleSearchPanel.bind(this);
-		this.hotkeys = this.props.userSettings.shortcuts.toggleSearchPanel == false
-			? []
-			: [
-				{
-					allowInInput: true,
-					combo: this.props.userSettings.shortcuts.toggleSearchPanel,
-					global: true,
-					label: "Toggle Search Panel",
-					onKeyDown: () => this.toggleSearchPanel()
+		this.closeDashboard = this.closeDashboard.bind(this);
+		this.openDashboard = this.openDashboard.bind(this);
+		this.toggleDashboard = this.toggleDashboard.bind(this);
+
+		this.shortcutsConfig = {
+			"toggleDashboard": {
+				label: "Show/hide the dashboard",
+				onKeyDown: () => this.toggleDashboard()
+			},
+			"toggleSearchPanel": {
+				label: "Show/hide the search panel",
+				onKeyDown: () => this.toggleSearchPanel()
+			}
+		};
+		this.hotkeys = Object.keys(this.shortcutsConfig)
+			.map(cmd => {
+				let combo = this.props.userSettings.shortcuts[cmd];
+				if(combo != false){
+					return {
+						allowInInput: true,
+						combo,
+						global: true,
+						...this.shortcutsConfig[cmd]
+					};
+				} else {
+					return false;
 				}
-			];
+			}).filter(Boolean);
 		this.hotkeysOptions = {
 			showDialogKeyCombo: "shift+Z+R"
 		};
@@ -59,10 +75,11 @@ class App extends Component {
 
 	componentDidMount(){
 		addPaletteCommand("zoteroRoam : Open the search panel", this.openSearchPanel);
+		addPaletteCommand("zoteroRoam : Open the dashboard", this.openDashboard);
 	}
 
 	render() {
-		let { status, searchPanel } = this.state;
+		let { status, isDashboardOpen, isSearchPanelOpen } = this.state;
 		let { extension, userSettings } = this.props;
 		
 		return (
@@ -71,16 +88,18 @@ class App extends Component {
 					<ExtensionContext.Provider value={extension}>
 						<UserSettings.Provider value={userSettings}>
 							<ExtensionIcon
+								openDashboard={this.openDashboard}
 								openSearchPanel={this.openSearchPanel}
 								status={status} 
 								toggleExtension={this.toggleExtension} />
 							<RoamCitekeysProvider>
 								{status == "on" ? <GraphWatcher /> : null}
 								<SearchPanel
-									closePanel={this.closeSearchPanel}
-									panelState={searchPanel}
+									isOpen={isSearchPanelOpen}
+									onClose={this.closeSearchPanel}
 									status={status} />
 							</RoamCitekeysProvider>
+							<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
 						</UserSettings.Provider>
 					</ExtensionContext.Provider>
 				</QueryClientProvider>
@@ -102,60 +121,28 @@ class App extends Component {
 	}
 
 	closeSearchPanel() {
-		this.setState((prevState) => {
-			let { isOpen, isSidePanelOpen, ...rest } = prevState.searchPanel;
-			if (isOpen) {
-				return {
-					searchPanel: {
-						isOpen: false,
-						isSidePanelOpen: false,
-						...rest
-					}
-				};
-			} else {
-				return {};
-			}
-		});
+		this.setState((_prev) => ({ isSearchPanelOpen: false }));
 	}
 
 	openSearchPanel() {
-		this.setState((prevState) => {
-			let { isOpen, ...rest } = prevState.searchPanel;
-			if (!isOpen) {
-				return {
-					searchPanel: {
-						isOpen: true,
-						...rest
-					}
-				};
-			} else {
-				return {};
-			}
-		});
+		this.setState((_prev) => ({ isSearchPanelOpen: true }));
 	}
 
 	toggleSearchPanel() {
-		this.setState((prevState) => {
-			let { isOpen, ...rest } = prevState.searchPanel;
-			if(isOpen){
-				return {
-					searchPanel: {
-						...rest,
-						isOpen: false,
-						isSidePanelOpen: false
-					}
-				};
-			} else {
-				return {
-					searchPanel: {
-						...rest,
-						isOpen: true
-					}
-				};
-			}
-		});
+		this.setState((prev) => ({ isSearchPanelOpen: !prev.isSearchPanelOpen }));
 	}
 
+	closeDashboard() {
+		this.setState((_prev) => ({ isDashboardOpen: false }));
+	}
+
+	openDashboard() {
+		this.setState((_prev) => ({ isDashboardOpen: true }));
+	}
+
+	toggleDashboard(){
+		this.setState((prev) => ({ isDashboardOpen: !prev.isDashboardOpen }));
+	}
 }
 App.propTypes = {
 	extension: customPropTypes.extensionType,
@@ -163,7 +150,7 @@ App.propTypes = {
 };
 
 // Utilities to be exposed via global zoteroRoam variable, for consumption by users :
-const getBibliography = (item, config, library) => _getBibliography(item, config, library, queryClient);
+const getBibliography = async(item, config, library) => await _getBibliography(item, config, library, queryClient);
 const getChildren = (item) => _getChildren(item, queryClient);
 const getItems = (select = "all", filters = {}) => _getItems(select, filters, queryClient);
 const getTags = (library) => _getTags(library, queryClient);

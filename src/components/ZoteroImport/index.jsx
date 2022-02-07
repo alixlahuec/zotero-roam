@@ -6,7 +6,7 @@ import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
 import TagsSelector from "./TagsSelector";
 
-import { useQuery_Citoid, useQuery_Collections, useQuery_Permissions } from "../../api/queries";
+import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
 import { sortCollections } from "../../utils";
 
@@ -178,26 +178,7 @@ const ZoteroImport = React.memo(function ZoteroImport(props) {
 	const { identifiers, isActive, resetImport } = props;
 	const { libraries } = useContext(ExtensionContext);
 
-	const apiKeys = Array.from(new Set(libraries.map(lib => lib.apikey)));
-	const permissionQueries = useQuery_Permissions(apiKeys, {
-		notifyOnChangeProps: ["data"]
-	});
-	const isLoading = permissionQueries.some(q => q.isLoading);
-	const permissions = permissionQueries.map(q => q.data || []).flat(1);
-
-	const writeableLibraries = useMemo(() => {
-		return libraries.filter(lib => {
-			let keyData = permissions.find(k => k.key == lib.apikey);
-			if(!keyData){
-				return false;
-			} else {
-				let { access } = keyData;
-				let [libType, libId] = lib.path.split("/");
-				let permissions = libType == "users" ? (access.user || {}) : (access.groups[libId] || access.groups.all);
-				return permissions?.write || false;
-			}
-		});
-	}, [libraries, permissions]);
+	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
 
 	const collectionQueries = useQuery_Collections(libraries, {
 		enabled: writeableLibraries.length > 0,

@@ -3,12 +3,12 @@ import { createPortal } from "react-dom";
 import { arrayOf, bool, func, node, string } from "prop-types";
 import { Dialog, } from "@blueprintjs/core";
 
-import { ExtensionContext } from "../../App";
+import { ExtensionContext } from "../App";
 import "./index.css";
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 	const {
-		ariaLabelledBy,
+		ariaLabelledBy = null,
 		className: dialogClass,
 		extraClasses = [],
 		isOpen,
