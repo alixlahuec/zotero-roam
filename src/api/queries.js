@@ -14,8 +14,8 @@ const useQuery_Citoid = (urls, opts = {}) => {
 		retry = (failureCount, error) => {
 			// For debugging
 			console.log("ReactQuery is looking to retry : ");
-			console.log(error);
-			return (failureCount < 2);
+			console.log(error.toJSON());
+			return (failureCount < 1 && error.toJSON().status != 404);
 		}, 
 		...rest } = opts;
 	// Factory

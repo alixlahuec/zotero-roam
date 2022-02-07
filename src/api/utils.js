@@ -99,14 +99,15 @@ async function fetchBibliography(req, { include = "bib", style, linkwrap, locale
  * @returns {Promise<{item: Object, query: String}>} The metadata for the URL
  */
 async function fetchCitoid(query) {
-	return citoidClient.get(encodeURIComponent(query))
-		.then((response) => ({
-			item: response.data[0],
+	try {
+		let { data } = await citoidClient.get(encodeURIComponent(query));
+		return {
+			item: data[0],
 			query
-		}))
-		.catch((error) => {
-			return Promise.reject(error);
-		});
+		};
+	} catch(error){
+		return Promise.reject(error);
+	}
 }
 
 /** Requests data from the `/[library]/collections` endpoint of the Zotero API
