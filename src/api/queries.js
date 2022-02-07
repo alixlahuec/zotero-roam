@@ -9,7 +9,7 @@ import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSeman
  */
 const useQuery_Citoid = (urls, opts = {}) => {
 	// Defaults for this query
-	let { cacheTime = Infinity, ...rest } = opts;
+	let { cacheTime = Infinity, staleTime = Infinity, ...rest } = opts;
 	// Factory
 	let queriesDefs = urls.map((url) => {
 		let queryKey = ["citoid", { url }];
@@ -17,6 +17,7 @@ const useQuery_Citoid = (urls, opts = {}) => {
 			queryKey: queryKey,
 			queryFn: (_queryKey) => fetchCitoid(url),
 			cacheTime,
+			staleTime,
 			...rest
 		};
 	});

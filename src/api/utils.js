@@ -104,7 +104,12 @@ async function fetchCitoid(query) {
 			item: response.data[0],
 			query
 		}))
-		.catch((error) => Promise.reject(error));
+		.catch((error) => {
+			// For debugging
+			console.log(error);
+			console.log(error.toJSON());
+			return Promise.reject(error);
+		});
 }
 
 /** Requests data from the `/[library]/collections` endpoint of the Zotero API
