@@ -9,6 +9,7 @@ import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, 
 
 import { ExtensionContext, UserSettings } from "../../App";
 import "./index.css";
+import NotesDrawer from "../../NotesDrawer";
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation
  * @param {Object[]} reqs - The data requests to use to retrieve items
@@ -74,6 +75,7 @@ const useGetItems = (reqs) => {
 const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, onClose, target } = props;
 	const { metadata: metadataSettings } = useContext(UserSettings);
+	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
 
 	const citekey = target?.parentElement.dataset.linkTitle;
 	const pageUID = target?.parentElement.dataset.linkUid;
@@ -102,6 +104,10 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		importItemMetadata({item: itemData.raw, pdfs, notes }, pageUID, metadataSettings);
 		onClose();
 	}, [itemData.raw, itemData.children, metadataSettings, onClose, pageUID]);
+
+	const showNotesDrawer = useCallback(() => setNotesDrawerOpen(true), []);
+
+	const closeNotesDrawer = useCallback(() => setNotesDrawerOpen(false), []);
 
 	const pdfChildren = useMemo(() => {
 		if(!(itemData?.children?.pdfs?.length > 0)){
@@ -139,12 +145,13 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 					<MenuItem className="zr-context-menu--option"
 						icon="comment"
 						text="Show notes"
-						onClick={() => console.log(notes)}
+						onClick={showNotesDrawer}
 					/>
+					<NotesDrawer isOpen={isNotesDrawerOpen} notes={notes} onClose={closeNotesDrawer} title={"@" + citekey} />
 				</>
 			);
 		}
-	}, [itemData.children]);
+	}, [citekey, closeNotesDrawer, isNotesDrawerOpen, itemData.children, showNotesDrawer]);
 
 	return (
 		<Overlay

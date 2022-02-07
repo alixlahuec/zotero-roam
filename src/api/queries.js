@@ -1,8 +1,9 @@
 import { useQueries, useQuery, useQueryClient } from "react-query";
 import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
 
-/** Uses a React query to retrieve Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity`.
+/** Uses a React query to retrieve Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity` and `staleTime = 10min`.
  *  There is no refetch scheduled, since the data should not change over the course of a session.
+ *  Requests are retried only once (except for 404 errors, which should never be retried).
  * @param {String[]} urls - The targeted URLs 
  * @param {Object} opts - Optional configuration to use with the queries
  * @returns The React query that corresponds to the URLs' Wikipedia metadata
@@ -10,10 +11,11 @@ import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSeman
 const useQuery_Citoid = (urls, opts = {}) => {
 	// Defaults for this query
 	let { 
-		cacheTime = Infinity, 
+		cacheTime = Infinity,
 		retry = (failureCount, error) => {
 			return (failureCount < 1 && error.toJSON().status != 404);
 		}, 
+		staleTime = 1000 * 60 * 10,
 		...rest } = opts;
 	// Factory
 	let queriesDefs = urls.map((url) => {
@@ -23,6 +25,7 @@ const useQuery_Citoid = (urls, opts = {}) => {
 			queryFn: (_queryKey) => fetchCitoid(url),
 			cacheTime,
 			retry,
+			staleTime,
 			...rest
 		};
 	});
@@ -131,12 +134,12 @@ const useQuery_Tags = (libraries, opts = {}) => {
 	// Defaults for this query
 	let { staleTime = 1000 * 60 * 3, ...rest } = opts;
 	// Factory
-	let queriesDefs = libraries.map((library) => {
-		let { path, apikey } = library;
-		let queryKey = ["tags", { library: path, apikey }];
+	let queriesDefs = libraries.map((lib) => {
+		let { apikey, path } = lib;
+		let queryKey = ["tags", { apikey, library: path }];
 		return {
 			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchTags(library),
+			queryFn: (_queryKey) => fetchTags({ apikey, path }),
 			staleTime,
 			...rest
 		};

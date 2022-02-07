@@ -1,11 +1,12 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { arrayOf, bool, func, object, oneOf, string } from "prop-types";
-import { Button, ButtonGroup, Card, Classes, Divider, Drawer, Menu, MenuItem, Tag } from "@blueprintjs/core";
+import { bool, func, object, oneOf, string } from "prop-types";
+import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ButtonLink from "../ButtonLink";
+import NotesDrawer from "../NotesDrawer";
 import { importItemMetadata, importItemNotes, openPageByUID } from "../../roam";
-import { copyToClipboard, formatNotes } from "../../utils";
+import { copyToClipboard } from "../../utils";
 import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 
 import { UserSettings } from "../App";
@@ -92,35 +93,6 @@ CopyButtons.propTypes = {
 	citekey: string,
 	inGraph: bool,
 	item: object
-};
-
-const NotesDrawer = React.memo(function NotesDrawer(props){
-	const { isOpen, notes, onClose, title } = props;
-	const { notes: notesSettings } = useContext(UserSettings);
-
-	const cleanNotes = useMemo(() => {
-		return formatNotes(notes, notesSettings);
-	}, [notes, notesSettings]);
-
-	return (
-		<Drawer
-			canEscapeKeyClose={false}
-			canOutsideClickClose={true}
-			className="zr-drawer--notes"
-			isOpen={isOpen}
-			lazy={false}
-			onClose={onClose}
-			size="40%"
-			title={title} >
-			{cleanNotes.map((n, i) => <Card key={i} className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>{n}</Card>)}
-		</Drawer>
-	);
-});
-NotesDrawer.propTypes = {
-	isOpen: bool,
-	notes: arrayOf(object),
-	onClose: func,
-	title: string
 };
 
 function ItemDetails(props) {

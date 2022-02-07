@@ -60,15 +60,6 @@ h4.item-title{
     overflow-wrap:anywhere;
 }
 
-.zr-drawer--notes {
-    overflow-y: scroll;
-}
-
-.zr-drawer--notes-card {
-    margin: 10px;
-    flex: 0 0 auto;
-}
-
 /* SMALLER DISPLAYS */
 
 /* To prevent weird resizing of flex container on smaller displays */
@@ -111,17 +102,6 @@ h4.item-title{
     .item-basic-metadata,
     .item-additional-metadata,
     .item-actions > .bp3-card {
-        background-color: var(--zr-dark-elem-bg, #2B3143);
-    }
-
-    .zr-drawer--notes {
-        background-color: var(--zr-dark-dialog-bg, #242424);
-        color: var(--zr-dark-text-co, #76a0cb);
-    }
-    .zr-drawer--notes h4.bp3-heading {
-        color: var(--zr-dark-text-co, #76a0cb);
-    }
-    .zr-drawer--notes-card {
         background-color: var(--zr-dark-elem-bg, #2B3143);
     }
 }

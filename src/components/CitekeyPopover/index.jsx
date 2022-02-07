@@ -8,6 +8,7 @@ import { getLocalLink, getWebLink } from "../../utils";
 import { UserSettings } from "../App";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
+import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 const popoverMenuProps = {
@@ -77,6 +78,28 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 
 	const openPageInSidebar = useCallback(() => openInSidebarByUID(inGraph), [inGraph]);
 
+	const pdfChildren = useMemo(() => {
+		if(pdfs.length > 0){
+			let libLoc = item.library.type == "group" ? ("groups/" + item.library.id) : "library";
+			return (
+				<>
+					<MenuDivider title="PDF Attachments" />
+					{pdfs.map((p,i) => {
+						let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
+						return <MenuItem key={i} 
+							href={pdfHref} 
+							icon="paperclip"
+							rel="noreferrer" 
+							target="_blank"
+							text={p.data.filename || p.data.title} />;
+					})}
+				</>
+			);
+		} else {
+			return null;
+		}
+	}, [item.library, pdfs]);
+
 	const actionsMenu = useMemo(() => {
 		if(!inGraph){
 			return (
@@ -100,10 +123,11 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 						onClick={openPageInSidebar} />
 					<MenuDivider />
 					{zoteroLinks}
+					{pdfChildren}
 				</Menu>
 			);
 		}
-	}, [importMetadata, importMetadataAndOpen, inGraph, navigateToPage, openPageInSidebar, zoteroLinks]);
+	}, [importMetadata, importMetadataAndOpen, inGraph, navigateToPage, openPageInSidebar, pdfChildren, zoteroLinks]);
 
 	return (
 		<Popover2 {...popoverMenuProps} content={actionsMenu}>
@@ -114,7 +138,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 CitekeyPopover.propTypes = {
 	closeDialog: func,
 	inGraph: oneOf(string, false),
-	item: object,
+	item: customPropTypes.zoteroItemType,
 	notes: arrayOf(object),
 	pdfs: arrayOf(object)
 };

@@ -1,12 +1,13 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
 import { Checkbox, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
+import ZoteroImport from "../../ZoteroImport";
 
+import { UserSettings } from "../../App";
 import { useQuery_Citoid } from "../../../api/queries";
 import { pluralize } from "../../../utils";
-import ZoteroImport from "../../ZoteroImport";
 
 function useGetCitoids(urls, opts = {}) {
 	return useQuery_Citoid(urls, {
@@ -29,6 +30,7 @@ function useGetCitoids(urls, opts = {}) {
 
 const WebImportItem = React.memo(function WebImportItem(props){
 	const { isSelected, item, onSelect } = props;
+	const { typemap } = useContext(UserSettings);
 
 	const handleCheckUncheck = useCallback(() => {
 		onSelect(item.url);
@@ -47,7 +49,7 @@ const WebImportItem = React.memo(function WebImportItem(props){
 				/>
 				<div className={[ Classes.FILL, "zr-webimport-item--contents" ].join(" ")}>
 					<span className="zr-auxiliary">
-						{[item.itemType, item.creators].join(" | ")}
+						{[typemap[item.itemType] || item.itemType, item.creators].join(" | ")}
 					</span>
 					{item.publication 
 						? <span className={["zr-webimport-item--publication", "zr-text-small", "zr-secondary"].join(" ")}>{item.publication}</span> 

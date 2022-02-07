@@ -2,7 +2,7 @@ import React from "react";
 import { render as ReactDOMRender } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
-import { App, getChildren, getItems, getTags } from "./components/App";
+import { App, getBibliography, getChildren, getItems, getTags } from "./components/App";
 import { setDefaultHooks } from "./events";
 import { registerSmartblockCommands } from "./smartblocks";
 import zrToaster from "./components/ExtensionToaster";
@@ -22,7 +22,6 @@ window.zoteroRoam = {};
 	};
 
 	const extensionSlot = "zotero-roam-slot";
-	
 	setupPortals(extensionSlot, extension.portalId);
 
 	let {
@@ -75,10 +74,26 @@ window.zoteroRoam = {};
 
 	window.zoteroRoam.getChildren = getChildren;
 	window.zoteroRoam.getItems = getItems;
-	window.zoteroRoam.getTags = getTags;
 
 	try {
 		const requests = analyzeUserRequests(dataRequests);
+		window.zoteroRoam.config.requests = requests;
+
+		window.zoteroRoam.getBibliography = (item, config = {}) => {
+			let { libraries } = requests;
+			let location = item.library.type + "s/" + item.library.id;
+			let library = libraries.find(lib => lib.path == location);
+
+			return getBibliography(item, config, library);
+		};
+
+		window.zoteroRoam.getTags = (location) => {
+			let { libraries } = requests;
+			let library = libraries.find(lib => lib.path == location);
+
+			return getTags(library);
+		};
+
 		setupDependencies([
 			{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"} // Scite.ai Badge
 		]);

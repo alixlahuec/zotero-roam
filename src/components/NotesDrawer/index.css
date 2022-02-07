@@ -1,0 +1,21 @@
+.zr-drawer--notes {
+    overflow-y: scroll;
+}
+
+.zr-drawer--notes-card {
+    margin: 10px;
+    flex: 0 0 auto;
+}
+
+@media (prefers-color-scheme: dark){
+    .zr-drawer--notes {
+        background-color: var(--zr-dark-dialog-bg, #242424);
+        color: var(--zr-dark-text-co, #76a0cb);
+    }
+    .zr-drawer--notes h4.bp3-heading {
+        color: var(--zr-dark-text-co, #76a0cb);
+    }
+    .zr-drawer--notes-card {
+        background-color: var(--zr-dark-elem-bg, #2B3143);
+    }
+}

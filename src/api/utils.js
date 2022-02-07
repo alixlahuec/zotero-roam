@@ -79,11 +79,19 @@ async function fetchAdditionalData(req, totalResults) {
 	}
 }
 
-async function fetchBibliography(req, { include = "bib", style, linkwrap, locale } = {}) {
-	let { apikey, itemKey, location } = req;
-
+/** Retrieves an item's formatted bibliographic entry as returned by the Zotero API
+ * @param {String} itemKey - The item's Zotero key
+ * @param {ZoteroLibrary} library - The item's Zotero library
+ * @param {{include: String, linkwrap: Boolean, locale: String, style: String}} config - Optional parameters to use in the API call
+ * @returns
+ */
+async function fetchBibliography(itemKey, library, config = {}) {
+	const { apikey, path } = library;
+	// See https://www.zotero.org/support/dev/web_api/v3/basics#parameters_for_format_bib_includecontent_bib_includecontent_citation
+	const { include = "bib", linkwrap = 0, locale = "en-US", style = "chicago-note-bibliography" } = config;
+	
 	try {
-		let response = await zoteroClient.get(`${location}/items/${itemKey}`, {
+		let response = await zoteroClient.get(`${path}/items/${itemKey}`, {
 			headers: {
 				"Zotero-API-Key": apikey
 			},
@@ -211,7 +219,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 
 			if(modified.length > 0){
 				// Refetch tags data
-				let tagsQueryKey = ["tags", { library: library, apikey: apikey }];
+				let tagsQueryKey = ["tags", { apikey, library }];
 				let { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {}; // TODO: Check if getQueryData needs exact matching - if not, remove the apikey portion of line above
 				if(Number(latest_tags_version) < Number(lastUpdated)){
 					queryClient.refetchQueries(tagsQueryKey);
