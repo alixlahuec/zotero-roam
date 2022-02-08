@@ -12,9 +12,8 @@ const useQuery_Citoid = (urls, opts = {}) => {
 	// Defaults for this query
 	let { 
 		cacheTime = Infinity,
-		retry = (failureCount, error) => {
-			return (failureCount < 1 && error.toJSON().status != 404);
-		}, 
+		retry = false,
+		retryOnMount = false, 
 		staleTime = 1000 * 60 * 10,
 		...rest } = opts;
 	// Factory
@@ -25,6 +24,7 @@ const useQuery_Citoid = (urls, opts = {}) => {
 			queryFn: (_queryKey) => fetchCitoid(url),
 			cacheTime,
 			retry,
+			retryOnMount,
 			staleTime,
 			...rest
 		};

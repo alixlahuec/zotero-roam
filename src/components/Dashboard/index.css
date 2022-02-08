@@ -19,8 +19,12 @@
     margin: 10px;
 }
 
-.zr-tab-panel-toolbar {align-items: baseline;display: flex;justify-content: space-between;border-bottom: 1px #cccccc solid;}
-.zr-tab-panel-toolbar > .bp3-button-group > span {font-size: 0.9em;}
+.zr-tagmanager--datalist .zr-datalist--toolbar {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px #cccccc solid;
+}
 
 .zr-tab-panel-popover .bp3-dialog:not(.bp3-dark){background:white;}
 .zr-tab-panel-popover .bp3-dialog {box-shadow:none;border: 1px #ececec solid;padding-bottom:0px;margin: 30px auto;width:80%;}

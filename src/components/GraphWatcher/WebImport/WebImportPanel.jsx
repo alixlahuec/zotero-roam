@@ -49,7 +49,7 @@ const WebImportItem = React.memo(function WebImportItem(props){
 				/>
 				<div className={[ Classes.FILL, "zr-webimport-item--contents" ].join(" ")}>
 					<span className="zr-auxiliary">
-						{[typemap[item.itemType] || item.itemType, item.creators].join(" | ")}
+						{[typemap[item.itemType] || item.itemType, item.creators].filter(Boolean).join(" | ")}
 					</span>
 					{item.publication 
 						? <span className={["zr-webimport-item--publication", "zr-text-small", "zr-secondary"].join(" ")}>{item.publication}</span> 
@@ -74,7 +74,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 	const has_selected_items = selected.length > 0;
 
 	const citoidQueries = useGetCitoids(urls, { enabled: isOpen });
-	const areQueriesSettled = citoidQueries.every(q => q.isSuccess || q.isError);
+	const noQueriesLoaded = citoidQueries.every(q => q.isLoading);
 	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data);
 
 	const handleClose = useCallback(() => {
@@ -108,9 +108,9 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 					<div className="header-content">
 						<div className="header-left">
 							<h5 id="zr-webimport-dialog--title" className="panel-tt">
-								{areQueriesSettled
-									? pluralize(citoids.length, "link", " found")
-									: "Parsing links..."}
+								{noQueriesLoaded
+									? "Parsing links..."
+									: pluralize(citoids.length, "link", " found")}
 							</h5>
 						</div>
 					</div>

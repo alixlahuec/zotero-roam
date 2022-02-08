@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf } from "prop-types";
-import { Callout, HTMLSelect, Spinner } from "@blueprintjs/core";
+import { Callout, Classes, Spinner } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
@@ -16,8 +16,6 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 	const { libraries } = props;
 	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);
 	const [sortBy, setSortBy] = useState("usage");
-
-	const libOptions = useMemo(() => libraries.map(lib => ({ value: lib.path })), [libraries]);
     
 	const sortOptions = useMemo(() => [
 		{ icon: "sort-desc", label: "Most Used", value: "usage" },
@@ -30,13 +28,15 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 		console.log(event);
 		console.log(libraries);
 
-		let path = event.target.currentValue;
-		setSelectedLibrary(() => libraries.find(lib => lib.path == path));
+		let path = event.target?.currentValue;
+		if(path){
+			setSelectedLibrary(() => libraries.find(lib => lib.path == path));
+		}
 	}, [libraries]);
 
 	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
 		notifyOnChangeProps: ["data"], 
-		select: (data) => matchTagData(data) 
+		select: (datastore) => matchTagData(datastore.data) 
 	})[0];
 
 	const sortedItems = useMemo(() => data ? sortTags(data, sortBy) : [], [data, sortBy]);
@@ -49,7 +49,11 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 			<div className="zr-tagmanager--datalist">
 				<div className="zr-datalist--toolbar">
 					<SortButtons name="zr-tagmanager-sort" onSelect={setSortBy} options={sortOptions} selectedOption={sortBy} />
-					<HTMLSelect minimal={true} onChange={handleLibrarySelect} options={libOptions} value={selectedLibrary.path} />
+					<div className={ Classes.MINIMAL }>
+						<select onChange={handleLibrarySelect} value={selectedLibrary.path}>
+							{libraries.map(lib => <option key={lib.path} value={lib.path}>{lib.path}</option>)}
+						</select>
+					</div>
 				</div>
 				{isLoading
 					? <Spinner />
