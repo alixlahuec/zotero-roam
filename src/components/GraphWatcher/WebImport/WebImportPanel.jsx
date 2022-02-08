@@ -17,14 +17,14 @@ function useGetCitoids(urls, opts = {}) {
 			
 			return {
 				abstract: item.abstractNote || "",
-				creators: item.creators.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
+				creators: item.creators?.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
 				itemType: item.itemType, 
 				publication: item.publicationTitle || item.bookTitle || item.websiteTitle || "",
 				title: item.title,
 				url: query
 			};
 		},
-		notifyOnChangeProps: ["data", "errorUpdatedAt"]
+		notifyOnChangeProps: ["data"]
 	});
 }
 

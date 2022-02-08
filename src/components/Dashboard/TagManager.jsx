@@ -5,8 +5,9 @@ import { Callout, HTMLSelect, Spinner } from "@blueprintjs/core";
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
 
-import { useWriteableLibraries } from "../../api/queries";
+import { useQuery_Tags, useWriteableLibraries } from "../../api/queries";
 import * as customPropTypes from "../../propTypes";
+import { matchTagData, sortTags } from "../../utils";
 
 // TODO: Convert to globally accessible constant
 const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
@@ -25,9 +26,20 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 	], []);
 
 	const handleLibrarySelect = useCallback((event) => {
+		// For debugging
+		console.log(event);
+		console.log(libraries);
+
 		let path = event.target.currentValue;
-		setSelectedLibrary(libraries.find(lib => lib.path == path));
+		setSelectedLibrary(() => libraries.find(lib => lib.path == path));
 	}, [libraries]);
+
+	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
+		notifyOnChangeProps: ["data"], 
+		select: (data) => matchTagData(data) 
+	})[0];
+
+	const sortedItems = useMemo(() => data ? sortTags(data, sortBy) : [], [data, sortBy]);
 
 	return (
 		<>
@@ -39,6 +51,9 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 					<SortButtons name="zr-tagmanager-sort" onSelect={setSortBy} options={sortOptions} selectedOption={sortBy} />
 					<HTMLSelect minimal={true} onChange={handleLibrarySelect} options={libOptions} value={selectedLibrary.path} />
 				</div>
+				{isLoading
+					? <Spinner />
+					: sortedItems.slice(0,10).map(el => <span key={el.token}>{JSON.stringify(el)}</span>)}
 			</div>
 		</>
 	);

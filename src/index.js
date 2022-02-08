@@ -60,6 +60,7 @@ window.zoteroRoam = {};
 			},
 			render_inline,
 			shortcuts: {
+				"toggleDashboard": false,
 				"toggleSearchPanel": "alt+E",
 				"toggleQuickCopy": false,
 				...shortcuts
@@ -84,7 +85,7 @@ window.zoteroRoam = {};
 			let location = item.library.type + "s/" + item.library.id;
 			let library = libraries.find(lib => lib.path == location);
 
-			return await getBibliography(item, config, library);
+			return await getBibliography(item, library, config);
 		};
 
 		window.zoteroRoam.getTags = (location) => {

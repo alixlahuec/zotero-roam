@@ -1,10 +1,25 @@
-.zotero-roam-dashboard-overlay .side-section .bp3-tab-list {width: 100%;}
-.zotero-roam-dashboard-overlay .bp3-tab-panel {display: flex;flex-wrap: wrap;justify-content: space-between;margin-top: 0px;}
+.bp3-dialog.zr-auxiliary-dialog--dashboard {
+    width: calc(95% - 36vw);
+    margin-left: calc(18vw + 2.5%);
+}
 
-.zr-tab-panel-header, .zr-tab-panel-contents {flex: 0 0 100%;}
-.zr-tab-panel-header {display:flex;justify-content:space-between;align-items:flex-start;}
+.zr-dashboard--main {
+    padding: 10px;
+}
 
-.zr-tab-panel-toolbar {display: flex;align-items: baseline;padding: 10px 0px;justify-content: space-between;flex: 0 0 100%;flex-wrap: wrap;border-bottom: 1px #cccccc solid;}
+.zr-dashboard--main .bp3-tab-panel {
+    flex: 0 1 100%;
+}
+
+.zr-tagmanager--header {
+    margin: 5px 0px;
+}
+
+.zr-tagmanager--datalist {
+    margin: 10px;
+}
+
+.zr-tab-panel-toolbar {align-items: baseline;display: flex;justify-content: space-between;border-bottom: 1px #cccccc solid;}
 .zr-tab-panel-toolbar > .bp3-button-group > span {font-size: 0.9em;}
 
 .zr-tab-panel-popover .bp3-dialog:not(.bp3-dark){background:white;}

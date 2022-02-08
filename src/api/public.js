@@ -2,23 +2,14 @@ import { fetchBibliography } from "./utils";
 
 /** Returns an item's formatted bibliography as returned by the Zotero API
  * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {ZoteroLibrary} library - The library where the Zotero item is located
  * @param {{include: String, linkwrap: Boolean, locale: String, style: String}} config - Optional parameters to use in the API call
- * @param {ZoteroLibrary[]} libraries - The list of available Zotero libraries
- * @param {*} queryClient - The React Query client to use
  * @returns 
  */
-async function _getBibliography(item, config, library, queryClient){
+async function _getBibliography(item, library, config){
 	let itemKey = item.data.key;
 
-	// Specify API defaults explicitly, so that they are registered in the query key
-	// See https://www.zotero.org/support/dev/web_api/v3/basics#parameters_for_format_bib_includecontent_bib_includecontent_citation
-	const { include = "bib", linkwrap = 0, locale = "en-US", style = "chicago-note-bibliography" } = config;
-	const apiConfig = { include, linkwrap, locale, style };
-
-	return await queryClient.fetchQuery(
-		["bibliography", { itemKey, ...library, ...apiConfig }],
-		(_queryKey) => fetchBibliography(itemKey, library, apiConfig)
-	);
+	return await fetchBibliography(itemKey, library, config);
 }
 
 /** Returns all children of a given item available in the query cache

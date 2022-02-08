@@ -399,6 +399,10 @@ function getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
 	}
 }
 
+function getTagUsage(token, {count_roam = false} = {}){
+	return token.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? token.roam.length : 0);
+}
+
 /** Creates a web link to a specific Zotero item, which opens in the browser.
  * @param {ZoteroItem} item - The targeted Zotero item 
  * @param {{format: ("markdown"|"target"), text?: String}} config - Additional settings 
@@ -800,6 +804,15 @@ function sortCollections(arr){
 	}
 }
 
+/** Sorts an array of objects on a given string key, in A-Z order
+ * @param {Object[]} items - The list of elements to sort 
+ * @param {String} sort - The key to sort elements on 
+ * @returns {Object[]} The sorted array
+ */
+function sortElems(arr, sort){
+	return arr.sort((a,b) => (a[`${sort}`].toLowerCase() < b[`${sort}`].toLowerCase() ? -1 : 1));
+}
+
 /** Splits Zotero notes on a given string
  * @param {Object[]} notes - The raw array of notes to split
  * @param {String} split_char - The string on which to split notes
@@ -809,13 +822,19 @@ function splitNotes(notes, split_char){
 	return notes.map(n => n.data.note.split(split_char));
 }
 
-/** Sorts an array of objects on a given string key, in A-Z order
- * @param {Object[]} items - The list of elements to sort 
- * @param {String} sort - The key to sort elements on 
- * @returns {Object[]} The sorted array
- */
-function sortElems(arr, sort){
-	return arr.sort((a,b) => (a[`${sort}`].toLowerCase() < b[`${sort}`].toLowerCase() ? -1 : 1));
+function sortTags(tagList, by = "alphabetical"){
+	let arr = [...tagList];
+	switch(by){
+	case "usage":
+		return arr.sort((a,b) => {
+			return getTagUsage(a) > getTagUsage(b) ? -1 : 1;
+		});
+	case "roam":
+		return arr.sort((a,b) => a.roam.length > b.roam.length ? -1 : 1);
+	case "alphabetical":
+	default:
+		return arr;
+	}
 }
 
 export {
@@ -844,5 +863,6 @@ export {
 	setupDependencies,
 	setupPortals,
 	sortCollections,
-	sortElems
+	sortElems,
+	sortTags
 };

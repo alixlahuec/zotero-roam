@@ -10,6 +10,11 @@
     padding-right:0px;
 }
 
+.zr-sort-option input, 
+.zr-sort-option input:focus {
+    appearance: none;
+}
+
 .zr-sort-option label {
     cursor: pointer;
     display: inline-block;
