@@ -849,6 +849,7 @@ export {
 	formatItemReference,
 	formatNotes,
 	getLocalLink,
+	getTagUsage,
 	getWebLink,
 	hasNodeListChanged,
 	makeDictionary,

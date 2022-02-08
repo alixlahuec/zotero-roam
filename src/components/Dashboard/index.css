@@ -17,6 +17,8 @@
 
 .zr-tagmanager--datalist {
     margin: 10px;
+    max-height: 70vh;
+    overflow-y: scroll;
 }
 
 .zr-tagmanager--datalist .zr-datalist--toolbar {
@@ -41,7 +43,13 @@
 .zr-tab-panel-datalist {flex: 0 0 100%;padding:0px;max-height:70vh;overflow-y:scroll;background:unset;border-radius:0px;}
 .zr-tab-panel-datalist-footer{display:flex;justify-content: space-between;border-top:1px #e6e6e6 solid;align-items:baseline;}
 
-.zr-datalist--item {background:white;padding:5px 10px;display:flex;border-bottom:1px #f5f5f5 solid;}
+.zr-datalist--item {
+    background:white;
+    border-bottom:1px #f5f5f5 solid;
+    display:flex;
+    justify-content: space-between;
+    padding:5px 10px;
+}
 .zr-datalist--item:last-child{border-bottom:1px white solid;}
 .zr-datalist--item [zr-role="title"] {font-weight:600;margin-right:15px;}
 .zr-datalist--item [zr-role="title"]::before {content: '# '}

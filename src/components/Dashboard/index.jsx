@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { bool, func, oneOf } from "prop-types";
-import { Classes, Tab, Tabs } from "@blueprintjs/core";
+import { Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
 import TagManager from "./TagManager";
@@ -19,7 +19,7 @@ const TabList = React.memo(function TabList(props){
 
 	return(
 		<Tabs animate={false} id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
-			<Tab id="tag-manager" panel={<TagManager />} title="Tag Manager" />
+			<Tab id="tag-manager" panel={<TagManager />} title={<><Icon icon="tag" /><span>Tag Manager</span></>} />
 		</Tabs>
 	);
 });
