@@ -498,8 +498,8 @@ function matchArrays(arr1, arr2){
  * @returns 
  */
 function matchRoamTags(r_data, z_data){
-	let rdata = [...r_data].sort((a,b) => a.title > b.title ? -1 : 1);
-	let zdata = [...z_data];
+	let [...rdata] = r_data.sort((a,b) => a.title > b.title ? -1 : 1);
+	let [...zdata] = z_data;
 
 	for(let elem of rdata){
 		let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));

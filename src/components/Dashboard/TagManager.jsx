@@ -1,21 +1,35 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf } from "prop-types";
-import { Callout, Classes, Spinner } from "@blueprintjs/core";
+import { Callout, HTMLSelect, MenuItem, Spinner } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../api/queries";
-import * as customPropTypes from "../../propTypes";
 import { matchTagData, sortTags } from "../../utils";
+import * as customPropTypes from "../../propTypes";
 
 // TODO: Convert to globally accessible constant
 const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
 
+const DatalistItem = React.memo(function DatalistItem({ entry }){
+	return (
+		<MenuItem className="zr-datalist--item" multiline={true} tagName="span" text={entry.token} />
+	);
+});
+DatalistItem.propTypes = {
+	entry: customPropTypes.taglistEntry
+};
+
 const TagsDatalist = React.memo(function TagsDatalist(props){
 	const { libraries } = props;
-	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);
+	const [selectedLibrary, /* Removed setter for now, due to select not working */] = useState(libraries[0]);
 	const [sortBy, setSortBy] = useState("usage");
+
+	const handleLibrarySelect = useCallback((event) => {
+		// For debugging
+		console.log(event);
+	}, []);
     
 	const sortOptions = useMemo(() => [
 		{ icon: "sort-desc", label: "Most Used", value: "usage" },
@@ -23,20 +37,9 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 		{ icon: "star", label: "In Roam", value: "roam" }
 	], []);
 
-	const handleLibrarySelect = useCallback((event) => {
-		// For debugging
-		console.log(event);
-		console.log(libraries);
-
-		let path = event.target?.currentValue;
-		if(path){
-			setSelectedLibrary(() => libraries.find(lib => lib.path == path));
-		}
-	}, [libraries]);
-
 	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
 		notifyOnChangeProps: ["data"], 
-		select: (datastore) => matchTagData(datastore.data) 
+		select: (datastore) => matchTagData(datastore.data).slice(10)
 	})[0];
 
 	const sortedItems = useMemo(() => data ? sortTags(data, sortBy) : [], [data, sortBy]);
@@ -49,15 +52,11 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 			<div className="zr-tagmanager--datalist">
 				<div className="zr-datalist--toolbar">
 					<SortButtons name="zr-tagmanager-sort" onSelect={setSortBy} options={sortOptions} selectedOption={sortBy} />
-					<div className={ Classes.MINIMAL }>
-						<select onChange={handleLibrarySelect} value={selectedLibrary.path}>
-							{libraries.map(lib => <option key={lib.path} value={lib.path}>{lib.path}</option>)}
-						</select>
-					</div>
+					<HTMLSelect defaultValue={selectedLibrary.path} minimal={true} onChange={handleLibrarySelect} options={libraries.map(lib => lib.path)} />
 				</div>
 				{isLoading
 					? <Spinner />
-					: sortedItems.slice(0,10).map(el => <span key={el.token}>{JSON.stringify(el)}</span>)}
+					: sortedItems.map(el => <DatalistItem key={el.token} entry={el} />)}
 			</div>
 		</>
 	);

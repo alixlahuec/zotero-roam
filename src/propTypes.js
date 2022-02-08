@@ -23,6 +23,24 @@ const zoteroLibraryType = shape({
 	path: string
 });
 
+const zoteroTagType = shape({
+	links: object,
+	meta: shape({
+		numItems: number,
+		type: oneOf([0,1])
+	}),
+	tag: string
+});
+
+/**
+ * @see matchTagData
+ */
+
+const taglistEntry = shape({
+	roam: arrayOf(shape({ title: string, uid: string })),
+	token: string,
+	zotero: arrayOf(zoteroTagType)
+});
 
 /**
  * @see cleanLibraryItem
@@ -163,6 +181,8 @@ export {
 	zoteroCollectionType,
 	zoteroItemType,
 	zoteroLibraryType,
+	zoteroTagType,
+	taglistEntry,
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,
 	cleanRelatedItemType,
