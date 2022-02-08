@@ -1,6 +1,6 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { arrayOf } from "prop-types";
-import { Callout, HTMLSelect, MenuItem, Spinner } from "@blueprintjs/core";
+import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
@@ -13,8 +13,29 @@ import * as customPropTypes from "../../propTypes";
 const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
 
 const DatalistItem = React.memo(function DatalistItem({ entry }){
+	let is_singleton = entry.zotero.length == 1 && (entry.roam.length == 0 || (entry.roam.length == 1 && entry.zotero[0].tag == entry.roam[0].title));
+
 	return (
-		<MenuItem className="zr-datalist--item" multiline={true} tagName="span" text={entry.token} />
+		<div className="zr-datalist--item" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
+			<div>
+				<span zr-role="title">{entry.token}</span>
+				<span className={["zr-auxiliary", "zr-text-small"].join(" ")}>XX items</span>
+				<div zr-role="taglist" className="zr-text-small">
+					{is_singleton
+						? null
+						: entry.roam.map(elem => <span key={elem.title} data-tag={elem.title} data-uid={elem.uid} data-tag-source="roam" >{elem.title}</span> )}
+					{is_singleton
+						? null
+						: entry.zotero.map((elem,i) => <span key={i}>{elem}</span>)}
+				</div>
+			</div>
+			<span>
+				<ButtonGroup minimal={true} >
+					<Button icon="git-merge" intent="primary" text="Edit" />
+					<Button intent="danger" text="Delete" />
+				</ButtonGroup>
+			</span>
+		</div>
 	);
 });
 DatalistItem.propTypes = {
@@ -25,11 +46,6 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 	const { libraries } = props;
 	const [selectedLibrary, /* Removed setter for now, due to select not working */] = useState(libraries[0]);
 	const [sortBy, setSortBy] = useState("usage");
-
-	const handleLibrarySelect = useCallback((event) => {
-		// For debugging
-		console.log(event);
-	}, []);
     
 	const sortOptions = useMemo(() => [
 		{ icon: "sort-desc", label: "Most Used", value: "usage" },
@@ -39,10 +55,10 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 
 	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
 		notifyOnChangeProps: ["data"], 
-		select: (datastore) => matchTagData(datastore.data).slice(10)
+		select: (datastore) => matchTagData(datastore.data)
 	})[0];
 
-	const sortedItems = useMemo(() => data ? sortTags(data, sortBy) : [], [data, sortBy]);
+	const sortedItems = useMemo(() => data ? sortTags(data.slice(0,20), sortBy) : [], [data, sortBy]);
 
 	return (
 		<>
@@ -52,7 +68,6 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 			<div className="zr-tagmanager--datalist">
 				<div className="zr-datalist--toolbar">
 					<SortButtons name="zr-tagmanager-sort" onSelect={setSortBy} options={sortOptions} selectedOption={sortBy} />
-					<HTMLSelect defaultValue={selectedLibrary.path} minimal={true} onChange={handleLibrarySelect} options={libraries.map(lib => lib.path)} />
 				</div>
 				{isLoading
 					? <Spinner />

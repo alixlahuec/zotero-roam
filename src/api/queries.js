@@ -13,6 +13,10 @@ const useQuery_Citoid = (urls, opts = {}) => {
 	let { 
 		cacheTime = Infinity,
 		retry = (failureCount, error) => {
+			// For debugging
+			const { status, ...rest} = error;
+			console.log(status, rest, error.toJSON());
+
 			return (failureCount < 1 && error.toJSON().status != 404);
 		}, 
 		staleTime = 1000 * 60 * 10,
