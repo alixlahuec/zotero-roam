@@ -505,7 +505,13 @@ function matchTagData(tagList){
 		for(let elem of rdata){
 			let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));
 			if(in_table >= 0){
-				zdata[in_table].roam.push(elem);
+				let { roam, ...rest } = zdata[in_table];
+				zdata[in_table] = { 
+					// Spread is required because array cloning via Array.from, spread, etc. is only shallow
+					// i.e, nested arrays will be copied as references not values
+					roam: [...roam, elem],
+					...rest
+				};
 			}
 		}
 	

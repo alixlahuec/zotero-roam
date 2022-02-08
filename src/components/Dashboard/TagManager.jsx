@@ -35,16 +35,14 @@ const DatalistItem = React.memo(function DatalistItem({ entry }){
 			<div>
 				<span zr-role="title">{entry.token}</span>
 				<span className={["zr-auxiliary", "zr-text-small"].join(" ")}>{pluralize(usage, "item")}</span>
-				<div zr-role="taglist" className="zr-text-small">
-					{is_singleton
-						? null
-						: entry.roam.map(elem => <span key={elem.title} data-tag={elem.title} data-uid={elem.uid} data-tag-source="roam" >{elem.title}</span> )}
-					{is_singleton
-						? null
-						: entry.zotero.map((elem) => <ZoteroTag key={[elem.tag, elem.meta.type].join("_")} tagElement={elem} /> )}
-				</div>
+				{is_singleton
+					? null
+					: <div zr-role="taglist" className="zr-text-small">
+						{entry.roam.map(elem => <span key={elem.title} data-tag={elem.title} data-uid={elem.uid} data-tag-source="roam" >{elem.title}</span> )}
+						{entry.zotero.map((elem) => <ZoteroTag key={[elem.tag, elem.meta.type].join("_")} tagElement={elem} /> )}
+					</div>}
 			</div>
-			<span>
+			<span className="zr-datalist--item-actions">
 				<ButtonGroup minimal={true} >
 					<Button icon="git-merge" intent="primary" text="Edit" />
 					<Button intent="danger" text="Delete" />

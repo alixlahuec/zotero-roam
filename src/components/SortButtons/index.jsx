@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
 import { ButtonGroup, Icon } from "@blueprintjs/core";
 
@@ -8,8 +8,10 @@ function SortButton(props){
 	const { icon, isSelected, label, name, onClick, value } = props;
 	const uniqueId = [name, value].join("_");
 
+	const handleClick = useCallback(() => onClick(value), [onClick, value]);
+
 	return (
-		<span className="zr-sort-option" onClick={onClick} >
+		<span className="zr-sort-option" onClick={handleClick} >
 			<input type="radio" checked={isSelected ? "true" : null} id={uniqueId} name={name} value={value} />
 			<Icon icon={icon} />
 			<label className="zr-text-small" htmlFor={uniqueId}>{label}</label>
