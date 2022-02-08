@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, bool } from "prop-types";
 import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
 
@@ -60,6 +60,12 @@ DatalistItem.propTypes = {
 const ListRenderer = React.memo(function ItemRenderer(props){
 	const { items } = props;
 	const [sortBy, setSortBy] = useState("usage");
+
+	const handleSort = useCallback((value) => {
+		// For debugging
+		console.log(value);
+		setSortBy(() => value);
+	}, []);
     
 	const sortOptions = useMemo(() => [
 		{ icon: "sort-desc", label: "Most Used", value: "usage" },
@@ -68,13 +74,13 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 	], []);
 
 	const sortedItems = useMemo(() => {
-		return sortTags(items.slice(0,50), sortBy);
+		return sortTags(items.slice(0,20), sortBy);
 	}, [items, sortBy]);
 
 	return (
 		<>
 			<div className="zr-datalist--toolbar">
-				<SortButtons name="zr-tagmanager-sort" onSelect={setSortBy} options={sortOptions} selectedOption={sortBy} />
+				<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
 			</div>
 			{sortedItems.map(el => <DatalistItem key={el.token} entry={el} />)}
 		</>

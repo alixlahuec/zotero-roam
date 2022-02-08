@@ -10,7 +10,7 @@ import { makeDictionary, parseDOI, searchEngine } from "../utils";
  */
 function categorizeZoteroTags(z_data, tagMap){
 	let output = [];
-	let zdata = [...z_data].sort((a,b) => a > b ? -1 : 1);
+	let zdata = Array.from(z_data).sort((a,b) => a > b ? -1 : 1);
 	
 	for(let elem of zdata){
 		let in_table = output.findIndex(tk => searchEngine(elem, tk.token, { any_case: true, match: "exact", search_compounds: true}));

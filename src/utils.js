@@ -492,33 +492,25 @@ function matchArrays(arr1, arr2){
 	return arr1.some(el => arr2.includes(el));
 }
 
-/** Matches
- * @param {{title: String, uid: String}[]} r_data 
- * @param {{token: String, roam: [], zotero: Object[]}[]} tagList 
- * @returns 
- */
-function matchRoamTags(r_data, z_data){
-	let [...rdata] = r_data.sort((a,b) => a.title > b.title ? -1 : 1);
-	let [...zdata] = z_data;
-
-	for(let elem of rdata){
-		let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));
-		if(in_table >= 0){
-			zdata[in_table].roam.push(elem);
-		}
-	}
-
-	return(zdata);
-}
-
 /** Matches Zotero tags with existing Roam pages
  * @param {Object<String, Array>} tagList - The list of tokenized Zotero tags
  * @returns {{}[]}
  */
 function matchTagData(tagList){
 	return Object.keys(tagList).map(initial => {
-		let r_data = getInitialedPages(Array.from(new Set([initial, initial.toUpperCase()])));
-		return matchRoamTags(r_data, tagList[initial]);
+		let rdata = getInitialedPages(Array.from(new Set([initial, initial.toUpperCase()])))
+			.sort((a,b) => a.title > b.title ? -1 : 1);
+		let zdata = Array.from(tagList[initial]);
+		
+		for(let elem of rdata){
+			let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));
+			if(in_table >= 0){
+				zdata[in_table].roam.push(elem);
+			}
+		}
+	
+		return zdata ;
+		
 	}).flat(1);
 }
 
@@ -823,7 +815,7 @@ function splitNotes(notes, split_char){
 }
 
 function sortTags(tagList, by = "alphabetical"){
-	let arr = [...tagList];
+	let [...arr] = tagList;
 	switch(by){
 	case "usage":
 		return arr.sort((a,b) => {
