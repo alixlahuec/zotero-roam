@@ -26,7 +26,7 @@ const DatalistItem = React.memo(function DatalistItem({ entry }){
 						: entry.roam.map(elem => <span key={elem.title} data-tag={elem.title} data-uid={elem.uid} data-tag-source="roam" >{elem.title}</span> )}
 					{is_singleton
 						? null
-						: entry.zotero.map((elem,i) => <span key={i}>{elem}</span>)}
+						: entry.zotero.map((elem,i) => <span key={i}>{JSON.stringify(elem)}</span>)}
 				</div>
 			</div>
 			<span>
