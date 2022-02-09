@@ -58,7 +58,7 @@ DatalistItem.propTypes = {
 	entry: customPropTypes.taglistEntry
 };
 
-const Stats = React.memo(function Stats(stats){
+const Stats = React.memo(function Stats({ stats }){
 	if(!stats){
 		return null;
 	} else {
@@ -77,14 +77,14 @@ const Stats = React.memo(function Stats(stats){
 });
 Stats.propTypes = {
 	stats: shape({
-		nTags: number,
-		nRoam: number,
 		nAuto: number,
+		nRoam: number,
+		nTags: number,
 		nTotal: number
 	})
 };
 
-const ListRenderer = React.memo(function ItemRenderer(props){
+const TagsDatalist = React.memo(function ItemRenderer(props){
 	const { items } = props;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [sortBy, setSortBy] = useState("usage");
@@ -105,7 +105,10 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
 	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
 
-	const handleSort = useCallback((value) => setSortBy(() => value), []);
+	const handleSort = useCallback((value) => {
+		setSortBy(() => value);
+		setCurrentPage(1);
+	}, []);
     
 	const sortOptions = useMemo(() => [
 		{ icon: "sort-desc", label: "Most Used", value: "usage" },
@@ -117,10 +120,9 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 		if(!matchedTags){
 			return [];
 		} else {
-			let currentPageItems = matchedTags.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage);
-			return sortTags(currentPageItems.slice(0,30), sortBy);
+			return sortTags(matchedTags, sortBy);
 		}
-	}, [currentPage, matchedTags, sortBy]);
+	}, [matchedTags, sortBy]);
 
 	return (
 		matchedTags == null
@@ -128,21 +130,22 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 			: <>
 				<div className="zr-datalist--toolbar">
 					<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
+					<span><strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, matchedTags.length)}</strong> / {matchedTags.length}</span>
 					<ControlGroup className="zr-datalist--page-controls">
 						<Button disabled={currentPage == 1} icon="chevron-left" onClick={previousPage} />
 						<Button disabled={currentPage == nbPages} icon="chevron-right" onClick={nextPage} />
 					</ControlGroup>
 				</div>
-				{sortedItems.map(el => <DatalistItem key={el.token} entry={el} />)}
+				{sortedItems.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage).map(el => <DatalistItem key={el.token} entry={el} />)}
 				<Stats stats={stats} />
 			</>
 	);
 });
-ListRenderer.propTypes = {
+TagsDatalist.propTypes = {
 	items: arrayOf(customPropTypes.taglistEntry)
 };
 
-const TagsDatalist = React.memo(function TagsDatalist(props){
+const TabContents = React.memo(function TabContents(props){
 	const { libraries } = props;
 	const [selectedLibrary,] = useState(libraries[0]);
 
@@ -159,12 +162,12 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 			<div className="zr-tagmanager--datalist">
 				{isLoading
 					? <Spinner />
-					: <ListRenderer items={data} /> }
+					: <TagsDatalist items={data} /> }
 			</div>
 		</>
 	);
 });
-TagsDatalist.propTypes = {
+TabContents.propTypes = {
 	libraries: arrayOf(customPropTypes.zoteroLibraryType)
 };
 
@@ -177,7 +180,7 @@ const TagManager = React.memo(function TagManager(){
 			? <Spinner />
 			: writeableLibraries.length == 0
 				? <NoWriteableLibraries />
-				: <TagsDatalist libraries={writeableLibraries} />
+				: <TabContents libraries={writeableLibraries} />
 	);
 });
 TagManager.propTypes = {
