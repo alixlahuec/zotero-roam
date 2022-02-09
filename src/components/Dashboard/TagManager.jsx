@@ -64,7 +64,8 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 		if(!items){
 			setMatchedTags([]);
 		} else {
-			setMatchedTags(() => matchTagData(items));
+			matchTagData(items)
+				.then(data => setMatchedTags(data));
 		}
 	}, [items]);
 
