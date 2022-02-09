@@ -1,6 +1,6 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
-import { arrayOf, bool } from "prop-types";
-import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { arrayOf } from "prop-types";
+import { Button, ButtonGroup, Callout, HTMLSelect, Spinner } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
@@ -58,12 +58,17 @@ DatalistItem.propTypes = {
 const ListRenderer = React.memo(function ItemRenderer(props){
 	const { items } = props;
 	const [sortBy, setSortBy] = useState("usage");
+	const [matchedTags, setMatchedTags] = useState([]);
 
-	const handleSort = useCallback((value) => {
-		// For debugging
-		console.log(value);
-		setSortBy(() => value);
-	}, []);
+	useEffect(() => {
+		if(!items){
+			setMatchedTags([]);
+		} else {
+			setMatchedTags(() => matchTagData(items));
+		}
+	}, [items]);
+
+	const handleSort = useCallback((value) => setSortBy(() => value), []);
     
 	const sortOptions = useMemo(() => [
 		{ icon: "sort-desc", label: "Most Used", value: "usage" },
@@ -72,8 +77,8 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 	], []);
 
 	const sortedItems = useMemo(() => {
-		return sortTags(items.slice(0,20), sortBy);
-	}, [items, sortBy]);
+		return sortTags(matchedTags.slice(0,20), sortBy);
+	}, [matchedTags, sortBy]);
 
 	return (
 		<>
@@ -85,36 +90,35 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 	);
 });
 ListRenderer.propTypes = {
-	isLoading: bool,
 	items: arrayOf(customPropTypes.taglistEntry)
 };
 
 const TagsDatalist = React.memo(function TagsDatalist(props){
 	const { libraries } = props;
-	const [selectedLibrary, /* Removed setter for now, due to select not working */] = useState(libraries[0]);
+	const [selectedLibrary,] = useState(libraries[0]);
+
+	const libOptions = useMemo(() => libraries.map(lib => lib.path), [libraries]);
+
+	const handleSelectLibrary = useCallback((event) => {
+		// For debugging
+		console.log(event);
+	}, []);
 
 	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
 		notifyOnChangeProps: ["data"], 
 		select: (datastore) => datastore.data
 	})[0];
 
-	const matchedData = useMemo(() => {
-		if(!data){
-			return [];
-		} else {
-			return matchTagData(data);
-		}
-	}, [data]);
-
 	return (
 		<>
 			<div className={["zr-tagmanager--header", "zr-auxiliary"].join(" ")}>
                 Rename, merge, and delete tags between <span data-tag-source="roam">Roam</span> and <span data-tag-source="zotero">Zotero</span>
 			</div>
+			<HTMLSelect minimal={true} onChange={handleSelectLibrary} options={libOptions} value={selectedLibrary} />
 			<div className="zr-tagmanager--datalist">
 				{isLoading
 					? <Spinner />
-					: <ListRenderer isLoading={isLoading} items={matchedData} /> }
+					: <ListRenderer items={data} /> }
 			</div>
 		</>
 	);

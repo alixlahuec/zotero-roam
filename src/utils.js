@@ -494,30 +494,34 @@ function matchArrays(arr1, arr2){
 
 /** Matches Zotero tags with existing Roam pages
  * @param {Object<String, Array>} tagList - The list of tokenized Zotero tags
- * @returns {{}[]}
+ * @returns {Promise<{}[]>}
  */
 function matchTagData(tagList){
-	return Object.keys(tagList).map(initial => {
-		let rdata = getInitialedPages(Array.from(new Set([initial, initial.toUpperCase()])))
-			.sort((a,b) => a.title > b.title ? -1 : 1);
-		let zdata = Array.from(tagList[initial]);
-		
-		for(let elem of rdata){
-			let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));
-			if(in_table >= 0){
-				let { roam, ...rest } = zdata[in_table];
-				zdata[in_table] = { 
-					// Spread is required because array cloning via Array.from, spread, etc. is only shallow
-					// i.e, nested arrays will be copied as references not values
-					roam: [...roam, elem],
-					...rest
-				};
+	return new Promise((resolve) => {
+		const data = Object.keys(tagList).map(initial => {
+			let rdata = getInitialedPages(Array.from(new Set([initial, initial.toUpperCase()])))
+				.sort((a,b) => a.title > b.title ? -1 : 1);
+			let zdata = Array.from(tagList[initial]);
+			
+			for(let elem of rdata){
+				let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));
+				if(in_table >= 0){
+					let { roam, ...rest } = zdata[in_table];
+					zdata[in_table] = { 
+						// Spread is required because array cloning via Array.from, spread, etc. is only shallow
+						// i.e, nested arrays will be copied as references not values
+						roam: [...roam, elem],
+						...rest
+					};
+				}
 			}
-		}
-	
-		return zdata ;
 		
-	}).flat(1);
+			return zdata ;
+			
+		}).flat(1);
+
+		resolve(data);
+	});
 }
 
 /** Extracts a valid DOI from a string
