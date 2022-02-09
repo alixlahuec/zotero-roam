@@ -64,7 +64,7 @@ const Stats = React.memo(function Stats({ stats }){
 	} else {
 		const { nTags, nRoam, nAuto, nTotal} = stats;
 		return (
-			<div className="zr-tag-stats">
+			<div className={["zr-datalist--stats", "zr-text-small"]}>
 				<span>
 					Zotero has {nTags} tags ({nAuto} / {Math.round(nAuto / nTags*100)}% automatic), matched in {nTotal} groups
 				</span>
@@ -130,11 +130,15 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 			: <>
 				<div className="zr-datalist--toolbar">
 					<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
-					<span><strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, matchedTags.length)}</strong> / {matchedTags.length}</span>
-					<ControlGroup className="zr-datalist--page-controls">
-						<Button disabled={currentPage == 1} icon="chevron-left" onClick={previousPage} />
-						<Button disabled={currentPage == nbPages} icon="chevron-right" onClick={nextPage} />
-					</ControlGroup>
+					<div className="zr-datalist--pagination">
+						<span zr-role="items-count">
+							<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, matchedTags.length)}</strong> / {matchedTags.length} entries
+						</span>
+						<ControlGroup>
+							<Button disabled={currentPage == 1} icon="chevron-left" minimal={true} onClick={previousPage} />
+							<Button disabled={currentPage == nbPages} icon="chevron-right" minimal={true} onClick={nextPage} />
+						</ControlGroup>
+					</div>
 				</div>
 				{sortedItems.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage).map(el => <DatalistItem key={el.token} entry={el} />)}
 				<Stats stats={stats} />

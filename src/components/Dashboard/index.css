@@ -22,10 +22,14 @@
 }
 
 .zr-tagmanager--datalist .zr-datalist--toolbar {
-    align-items: baseline;
     display: flex;
     justify-content: space-between;
     border-bottom: 1px #cccccc solid;
+    padding: 5px 0px;
+}
+
+.zr-datalist--pagination [zr-role="items-count"] {
+    padding: 5px 10px;
 }
 
 .zr-tab-panel-popover .bp3-dialog:not(.bp3-dark){background:white;}
@@ -75,8 +79,12 @@
     background-color: #e7f5ff;
 }
 
-.zr-tag-stats span {
-    display:block;
+.zr-datalist--stats {
+    padding: 5px 0px;
+    text-align: right;
+}
+.zr-datalist--stats span {
+    display: block;
 }
 
 /* Popover */
