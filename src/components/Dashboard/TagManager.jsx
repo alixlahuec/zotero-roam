@@ -101,7 +101,7 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 		}
 	}, [items]);
 
-	const nbPages = useMemo(() => Math.ceil(matchedTags.length / itemsPerPage), [matchedTags.length]);
+	const nbPages = useMemo(() => !matchedTags ? 0 : Math.ceil(matchedTags.length / itemsPerPage), [matchedTags]);
 	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
 	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
 
@@ -123,19 +123,19 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 	}, [currentPage, matchedTags, sortBy]);
 
 	return (
-		<>
-			<div className="zr-datalist--toolbar">
-				<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
-				<ControlGroup className="zr-datalist--page-controls">
-					<Button disabled={currentPage == 1} icon="chevron-left" onClick={previousPage} />
-					<Button disabled={currentPage == nbPages} icon="chevron-right" onClick={nextPage} />
-				</ControlGroup>
-			</div>
-			{matchedTags == null
-				? <NonIdealState icon="refresh" title="Loading tags" />
-				: sortedItems.map(el => <DatalistItem key={el.token} entry={el} />)}
-			<Stats stats={stats} />
-		</>
+		matchedTags == null
+			? <NonIdealState icon="refresh" title="Loading tags" />
+			: <>
+				<div className="zr-datalist--toolbar">
+					<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
+					<ControlGroup className="zr-datalist--page-controls">
+						<Button disabled={currentPage == 1} icon="chevron-left" onClick={previousPage} />
+						<Button disabled={currentPage == nbPages} icon="chevron-right" onClick={nextPage} />
+					</ControlGroup>
+				</div>
+				{sortedItems.map(el => <DatalistItem key={el.token} entry={el} />)}
+				<Stats stats={stats} />
+			</>
 	);
 });
 ListRenderer.propTypes = {
