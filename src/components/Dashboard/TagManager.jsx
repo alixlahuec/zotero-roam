@@ -1,13 +1,16 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { arrayOf } from "prop-types";
-import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
+import { arrayOf, shape } from "prop-types";
+import { Button, ButtonGroup, Callout, ControlGroup, NonIdealState, Spinner } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../api/queries";
-import { getTagUsage, matchTagData, pluralize, sortTags } from "../../utils";
+import { getTagStats, getTagUsage, matchTagData, pluralize, sortTags } from "../../utils";
 import * as customPropTypes from "../../propTypes";
+import { number } from "prop-types";
+
+const itemsPerPage = 30;
 
 // TODO: Convert to globally accessible constant
 const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
@@ -55,19 +58,52 @@ DatalistItem.propTypes = {
 	entry: customPropTypes.taglistEntry
 };
 
+const Stats = React.memo(function Stats(stats){
+	if(!stats){
+		return null;
+	} else {
+		const { nTags, nRoam, nAuto, nTotal} = stats;
+		return (
+			<div className="zr-tag-stats">
+				<span>
+					Zotero has {nTags} tags ({nAuto} / {Math.round(nAuto / nTags*100)}% automatic), matched in {nTotal} groups
+				</span>
+				<span>
+					{nRoam} are in Roam ({Math.round(nRoam / nTotal *100)}%)
+				</span>
+			</div>
+		);
+	}
+});
+Stats.propTypes = {
+	stats: shape({
+		nTags: number,
+		nRoam: number,
+		nAuto: number,
+		nTotal: number
+	})
+};
+
 const ListRenderer = React.memo(function ItemRenderer(props){
 	const { items } = props;
+	const [currentPage, setCurrentPage] = useState(1);
 	const [sortBy, setSortBy] = useState("usage");
-	const [matchedTags, setMatchedTags] = useState([]);
+	const [matchedTags, setMatchedTags] = useState(null);
+	const [stats, setStats] = useState(null);
 
 	useEffect(() => {
-		if(!items){
-			setMatchedTags([]);
-		} else {
+		if(items) {
 			matchTagData(items)
-				.then(data => setMatchedTags(data));
+				.then(data => {
+					setMatchedTags(data);
+					setStats(() => getTagStats(data));
+				});
 		}
 	}, [items]);
+
+	const nbPages = useMemo(() => Math.ceil(matchedTags.length / itemsPerPage), [matchedTags.length]);
+	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
+	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
 
 	const handleSort = useCallback((value) => setSortBy(() => value), []);
     
@@ -78,15 +114,27 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 	], []);
 
 	const sortedItems = useMemo(() => {
-		return sortTags(matchedTags.slice(0,30), sortBy);
-	}, [matchedTags, sortBy]);
+		if(!matchedTags){
+			return [];
+		} else {
+			let currentPageItems = matchedTags.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage);
+			return sortTags(currentPageItems.slice(0,30), sortBy);
+		}
+	}, [currentPage, matchedTags, sortBy]);
 
 	return (
 		<>
 			<div className="zr-datalist--toolbar">
 				<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
+				<ControlGroup className="zr-datalist--page-controls">
+					<Button disabled={currentPage == 1} icon="chevron-left" onClick={previousPage} />
+					<Button disabled={currentPage == nbPages} icon="chevron-right" onClick={nextPage} />
+				</ControlGroup>
 			</div>
-			{sortedItems.map(el => <DatalistItem key={el.token} entry={el} />)}
+			{matchedTags == null
+				? <NonIdealState icon="refresh" title="Loading tags" />
+				: sortedItems.map(el => <DatalistItem key={el.token} entry={el} />)}
+			<Stats stats={stats} />
 		</>
 	);
 });

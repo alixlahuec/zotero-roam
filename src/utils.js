@@ -399,6 +399,22 @@ function getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
 	}
 }
 
+function getTagStats(tagListData){
+	return tagListData.map(t => {
+		return {
+			nTags: t.zotero.length,
+			nAuto: t.zotero.length == 0 ? 0 : t.zotero.filter(tag => tag.meta.type == 1).length,
+			in_roam: t.roam.length > 0 ? 1 : 0
+		};
+	}).reduce((out, tk) => {
+		out.nTags += tk.nTags;
+		out.nAuto += tk.nAuto;
+		out.nRoam += tk.in_roam;
+		return out;
+	}, 
+	{nTags: 0, nAuto: 0, nRoam: 0, nTotal: tagListData.length});
+}
+
 function getTagUsage(token, {count_roam = false} = {}){
 	return token.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? token.roam.length : 0);
 }
@@ -853,6 +869,7 @@ export {
 	formatItemReference,
 	formatNotes,
 	getLocalLink,
+	getTagStats,
 	getTagUsage,
 	getWebLink,
 	hasNodeListChanged,
