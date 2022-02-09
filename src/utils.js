@@ -498,29 +498,31 @@ function matchArrays(arr1, arr2){
  */
 function matchTagData(tagList){
 	return new Promise((resolve) => {
-		const data = Object.keys(tagList).map(initial => {
-			let rdata = getInitialedPages(Array.from(new Set([initial, initial.toUpperCase()])))
-				.sort((a,b) => a.title > b.title ? -1 : 1);
-			let zdata = Array.from(tagList[initial]);
-			
-			for(let elem of rdata){
-				let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));
-				if(in_table >= 0){
-					let { roam, ...rest } = zdata[in_table];
-					zdata[in_table] = { 
-						// Spread is required because array cloning via Array.from, spread, etc. is only shallow
-						// i.e, nested arrays will be copied as references not values
-						roam: [...roam, elem],
-						...rest
-					};
+		setTimeout(() => {
+			const data = Object.keys(tagList).map(initial => {
+				let rdata = getInitialedPages(Array.from(new Set([initial, initial.toUpperCase()])))
+					.sort((a,b) => a.title > b.title ? -1 : 1);
+				let zdata = Array.from(tagList[initial]);
+				
+				for(let elem of rdata){
+					let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));
+					if(in_table >= 0){
+						let { roam, ...rest } = zdata[in_table];
+						zdata[in_table] = { 
+							// Spread is required because array cloning via Array.from, spread, etc. is only shallow
+							// i.e, nested arrays will be copied as references not values
+							roam: [...roam, elem],
+							...rest
+						};
+					}
 				}
-			}
-		
-			return zdata ;
 			
-		}).flat(1);
-
-		resolve(data);
+				return zdata ;
+				
+			}).flat(1);
+	
+			resolve(data);
+		}, 0);
 	});
 }
 

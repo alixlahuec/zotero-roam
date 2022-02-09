@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf } from "prop-types";
-import { Button, ButtonGroup, Callout, HTMLSelect, Spinner } from "@blueprintjs/core";
+import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
@@ -78,7 +78,7 @@ const ListRenderer = React.memo(function ItemRenderer(props){
 	], []);
 
 	const sortedItems = useMemo(() => {
-		return sortTags(matchedTags.slice(0,20), sortBy);
+		return sortTags(matchedTags.slice(0,30), sortBy);
 	}, [matchedTags, sortBy]);
 
 	return (
@@ -98,13 +98,6 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 	const { libraries } = props;
 	const [selectedLibrary,] = useState(libraries[0]);
 
-	const libOptions = useMemo(() => libraries.map(lib => lib.path), [libraries]);
-
-	const handleSelectLibrary = useCallback((event) => {
-		// For debugging
-		console.log(event);
-	}, []);
-
 	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
 		notifyOnChangeProps: ["data"], 
 		select: (datastore) => datastore.data
@@ -115,7 +108,6 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 			<div className={["zr-tagmanager--header", "zr-auxiliary"].join(" ")}>
                 Rename, merge, and delete tags between <span data-tag-source="roam">Roam</span> and <span data-tag-source="zotero">Zotero</span>
 			</div>
-			<HTMLSelect minimal={true} onChange={handleSelectLibrary} options={libOptions} value={selectedLibrary} />
 			<div className="zr-tagmanager--datalist">
 				{isLoading
 					? <Spinner />
