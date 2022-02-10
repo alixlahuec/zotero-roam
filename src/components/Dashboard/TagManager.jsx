@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { arrayOf, bool, func, shape, string } from "prop-types";
+import { arrayOf, func, shape, string } from "prop-types";
 import { Button, ButtonGroup, Callout, Classes, ControlGroup, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
@@ -15,6 +15,8 @@ const itemsPerPage = 30;
 // TODO: Convert to globally accessible constant
 const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
 
+const isSingleton = (entry) => entry.zotero.length == 1 && (entry.roam.length == 0 || (entry.roam.length == 1 && entry.zotero[0].tag == entry.roam[0].title));
+
 function ZoteroTag({ tagElement }){
 	const { tag, meta: { numItems, type = 0 } } = tagElement;
 
@@ -29,8 +31,7 @@ ZoteroTag.propTypes = {
 };
 
 const DatalistItem = React.memo(function DatalistItem({ entry }){
-	const is_singleton = entry.zotero.length == 1 && (entry.roam.length == 0 || (entry.roam.length == 1 && entry.zotero[0].tag == entry.roam[0].title));
-
+	const is_singleton = isSingleton(entry);
 	const usage = getTagUsage(entry);
 
 	return (
@@ -58,28 +59,19 @@ DatalistItem.propTypes = {
 	entry: customPropTypes.taglistEntry
 };
 
-const LibraryOption = React.memo(function LibraryOption({ isSelected, onSelect, value }){
-	const handleClick = useCallback(() => {
-		if(!isSelected){
-			onSelect(value);
-		}
-	}, [isSelected, onSelect, value]);
-	return (
-		<option onClick={handleClick} value={value}>{value}</option>
-	);
-});
-LibraryOption.propTypes = {
-	isSelected: bool,
-	onSelect: func,
-	value: string
-};
-
 const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
-	const { currentPath, onSelect, options } = libProps;
+	const { currentPath, options } = libProps;
+	const handleSelect = useCallback((event) => {
+		// For testing
+		let target = event.currentTarget;
+		let value = event.currentTarget?.value;
+		console.log(target, value);
+	}, []);
+
 	return (
 		<div className={ Classes.MINIMAL }>
-			<select value={currentPath}>
-				{options.map(op => <LibraryOption key={op} isSelected={op == currentPath} onSelect={onSelect} value={op} />)}
+			<select onChange={handleSelect} value={currentPath}>
+				{options.map(op => <option key={op} value={op}>{op}</option>)}
 			</select>
 		</div>
 	);
@@ -136,12 +128,7 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 		}
 	}, [items]);
 
-	const handleFilter = useCallback((event) => {
-		// For testing
-		let target = event.currentTarget;
-		let value = event.currentTarget?.value;
-		console.log(target, value);
-
+	const handleFilter = useCallback((_event) => {
 		setFilter((prevFilter) => prevFilter == "select" ? "all" : "select");
 	}, []);
 
@@ -150,7 +137,7 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 			return [];
 		} else {
 			if(filter == "select"){
-				return matchedTags.filter(el => el.zotero.length > 1 || (el.roam.length == 1 && el.zotero[0].token != el.roam[0].title));
+				return matchedTags.filter(el => !isSingleton(el));
 			} else if(filter == "all"){
 				return matchedTags;
 			}
