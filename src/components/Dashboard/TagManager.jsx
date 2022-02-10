@@ -67,10 +67,7 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 	}, [onSelect]);
 
 	return (
-		<div className={ Classes.MINIMAL }>
-			<select onChange={handleSelect} value={currentPath}>
-				{options.map(op => <option key={op} value={op}>{op}</option>)}
-			</select>
+		<div className={[Classes.MINIMAL, "zr-text-small"].join(" ")}>
 			<HTMLSelect minimal={true} onChange={handleSelect} options={options} value={currentPath} />
 		</div>
 	);
@@ -124,6 +121,7 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 					setMatchedTags(data);
 					setStats(() => getTagStats(data));
 				});
+			setCurrentPage(1);
 		}
 	}, [items]);
 
@@ -147,6 +145,16 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
 	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
 
+	const itemsCount = useMemo(() => {
+		if(filteredItems.length == 0){
+			return null;
+		} else {
+			return <>
+				<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, filteredItems.length)}</strong> / {filteredItems.length} entries
+			</>;
+		}
+	}, [currentPage, filteredItems.length]);
+
 	const handleSort = useCallback((value) => {
 		setSortBy(() => value);
 		setCurrentPage(1);
@@ -169,14 +177,14 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 					<LibrarySelect libProps={libProps} />
 				</div>
 				<div className="zr-datalist--listwrapper">
-					{sortedItems.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage).map(el => <DatalistItem key={el.token} entry={el} />)}
+					{sortedItems.length > 0
+						? sortedItems.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage).map(el => <DatalistItem key={el.token} entry={el} />)
+						: <NonIdealState description="No items in the current view" />}
 				</div>
 				<div className="zr-datalist--toolbar">
 					<Switch checked={filter == "all"} className="zr-text-small" label="Show all tags" onChange={handleFilter} />
 					<div className="zr-datalist--pagination">
-						<span className="zr-text-small" zr-role="items-count">
-							<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, filteredItems.length)}</strong> / {filteredItems.length} entries
-						</span>
+						<span className="zr-text-small" zr-role="items-count">{itemsCount}</span>
 						<ControlGroup>
 							<Button disabled={currentPage == 1} icon="chevron-left" minimal={true} onClick={previousPage} />
 							<Button disabled={currentPage == nbPages} icon="chevron-right" minimal={true} onClick={nextPage} />
