@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, shape, string } from "prop-types";
-import { Button, ButtonGroup, Callout, Classes, ControlGroup, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
+import { Button, ButtonGroup, Callout, Classes, ControlGroup, HTMLSelect, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
@@ -60,19 +60,18 @@ DatalistItem.propTypes = {
 };
 
 const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
-	const { currentPath, options } = libProps;
+	const { currentPath, onSelect, options } = libProps;
 	const handleSelect = useCallback((event) => {
-		// For testing
-		let target = event.currentTarget;
 		let value = event.currentTarget?.value;
-		console.log(target, value);
-	}, []);
+		if(value){ onSelect(value); }
+	}, [onSelect]);
 
 	return (
 		<div className={ Classes.MINIMAL }>
 			<select onChange={handleSelect} value={currentPath}>
 				{options.map(op => <option key={op} value={op}>{op}</option>)}
 			</select>
+			<HTMLSelect minimal={true} onChange={handleSelect} options={options} value={currentPath} />
 		</div>
 	);
 });
@@ -184,7 +183,9 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 						</ControlGroup>
 					</div>
 				</div>
-				<Stats stats={stats} />
+				{filter == "all"
+					? <Stats stats={stats} />
+					: null}
 			</>
 	);
 });
