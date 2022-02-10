@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, shape } from "prop-types";
-import { Button, ButtonGroup, Callout, ControlGroup, NonIdealState, Spinner } from "@blueprintjs/core";
+import { Button, ButtonGroup, Callout, ControlGroup, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
@@ -87,6 +87,7 @@ Stats.propTypes = {
 const TagsDatalist = React.memo(function ItemRenderer(props){
 	const { items } = props;
 	const [currentPage, setCurrentPage] = useState(1);
+	const [filter, ] = useState("select");
 	const [sortBy, setSortBy] = useState("usage");
 	const [matchedTags, setMatchedTags] = useState(null);
 	const [stats, setStats] = useState(null);
@@ -105,6 +106,23 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
 	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
 
+	const handleFilter = useCallback((event) => {
+		// For testing
+		console.log(event);
+	}, []);
+
+	const filteredItems = useMemo(() => {
+		if(!matchedTags){
+			return [];
+		} else {
+			if(filter == "select"){
+				return matchedTags.filter(el => el.zotero.length > 1 || (el.roam.length == 1 && el.zotero[0].token == el.roam[0].title));
+			} else if(filter == "all"){
+				return matchedTags;
+			}
+		}
+	}, [filter, matchedTags]);
+
 	const handleSort = useCallback((value) => {
 		setSortBy(() => value);
 		setCurrentPage(1);
@@ -116,13 +134,7 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 		{ icon: "star", label: "In Roam", value: "roam" }
 	], []);
 
-	const sortedItems = useMemo(() => {
-		if(!matchedTags){
-			return [];
-		} else {
-			return sortTags(matchedTags, sortBy);
-		}
-	}, [matchedTags, sortBy]);
+	const sortedItems = useMemo(() => sortTags(filteredItems, sortBy), [filteredItems, sortBy]);
 
 	return (
 		matchedTags == null
@@ -139,6 +151,9 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 							<Button disabled={currentPage == nbPages} icon="chevron-right" minimal={true} onClick={nextPage} />
 						</ControlGroup>
 					</div>
+				</div>
+				<div className="zr-datalist--toolbar">
+					<Switch checked={filter == "all"} label="Show all tags" onChange={handleFilter} />
 				</div>
 				{sortedItems.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage).map(el => <DatalistItem key={el.token} entry={el} />)}
 				<Stats stats={stats} />

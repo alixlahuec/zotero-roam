@@ -43,7 +43,6 @@ class App extends Component {
 		this.closeDashboard = this.closeDashboard.bind(this);
 		this.openDashboard = this.openDashboard.bind(this);
 		this.toggleDashboard = this.toggleDashboard.bind(this);
-		this.areShortcutsDisabled = this.areShortcutsDisabled.bind(this);
 
 		this.shortcutsConfig = {
 			"toggleDashboard": {
@@ -62,7 +61,6 @@ class App extends Component {
 					return {
 						allowInInput: true,
 						combo,
-						disabled: () => this.areShortcutsDisabled(),
 						global: true,
 						...this.shortcutsConfig[cmd]
 					};
@@ -131,7 +129,9 @@ class App extends Component {
 	}
 
 	toggleSearchPanel() {
-		this.setState((prev) => ({ isSearchPanelOpen: !prev.isSearchPanelOpen }));
+		if(this.state.status == "on"){
+			this.setState((prev) => ({ isSearchPanelOpen: !prev.isSearchPanelOpen }));
+		}
 	}
 
 	closeDashboard() {
@@ -143,12 +143,11 @@ class App extends Component {
 	}
 
 	toggleDashboard(){
-		this.setState((prev) => ({ isDashboardOpen: !prev.isDashboardOpen }));
+		if(this.state.status == "on"){
+			this.setState((prev) => ({ isDashboardOpen: !prev.isDashboardOpen }));
+		}
 	}
 
-	areShortcutsDisabled(){
-		return !this.state.status == "on";
-	}
 }
 App.propTypes = {
 	extension: customPropTypes.extensionType,
