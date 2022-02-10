@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { arrayOf, shape } from "prop-types";
-import { Button, ButtonGroup, Callout, ControlGroup, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
+import { arrayOf, bool, func, shape, string } from "prop-types";
+import { Button, ButtonGroup, Callout, Classes, ControlGroup, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
@@ -58,6 +58,40 @@ DatalistItem.propTypes = {
 	entry: customPropTypes.taglistEntry
 };
 
+const LibraryOption = React.memo(function LibraryOption({ isSelected, onSelect, value }){
+	const handleClick = useCallback(() => {
+		if(!isSelected){
+			onSelect(value);
+		}
+	}, [isSelected, onSelect, value]);
+	return (
+		<option onClick={handleClick} value={value}>{value}</option>
+	);
+});
+LibraryOption.propTypes = {
+	isSelected: bool,
+	onSelect: func,
+	value: string
+};
+
+const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
+	const { currentPath, onSelect, options } = libProps;
+	return (
+		<div className={ Classes.MINIMAL }>
+			<select value={currentPath}>
+				{options.map(op => <LibraryOption key={op} isSelected={op == currentPath} onSelect={onSelect} value={op} />)}
+			</select>
+		</div>
+	);
+});
+LibrarySelect.propTypes = {
+	libProps: shape({
+		currentPath: string,
+		onSelect: func,
+		options: arrayOf(string)
+	})
+};
+
 const Stats = React.memo(function Stats({ stats }){
 	if(!stats){
 		return null;
@@ -85,9 +119,9 @@ Stats.propTypes = {
 };
 
 const TagsDatalist = React.memo(function ItemRenderer(props){
-	const { items } = props;
+	const { items, libProps } = props;
 	const [currentPage, setCurrentPage] = useState(1);
-	const [filter, ] = useState("select");
+	const [filter, setFilter] = useState("select");
 	const [sortBy, setSortBy] = useState("usage");
 	const [matchedTags, setMatchedTags] = useState(null);
 	const [stats, setStats] = useState(null);
@@ -102,13 +136,13 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 		}
 	}, [items]);
 
-	const nbPages = useMemo(() => !matchedTags ? 0 : Math.ceil(matchedTags.length / itemsPerPage), [matchedTags]);
-	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
-	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
-
 	const handleFilter = useCallback((event) => {
 		// For testing
-		console.log(event);
+		let target = event.currentTarget;
+		let value = event.currentTarget?.value;
+		console.log(target, value);
+
+		setFilter((prevFilter) => prevFilter == "select" ? "all" : "select");
 	}, []);
 
 	const filteredItems = useMemo(() => {
@@ -116,12 +150,16 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 			return [];
 		} else {
 			if(filter == "select"){
-				return matchedTags.filter(el => el.zotero.length > 1 || (el.roam.length == 1 && el.zotero[0].token == el.roam[0].title));
+				return matchedTags.filter(el => el.zotero.length > 1 || (el.roam.length == 1 && el.zotero[0].token != el.roam[0].title));
 			} else if(filter == "all"){
 				return matchedTags;
 			}
 		}
 	}, [filter, matchedTags]);
+
+	const nbPages = useMemo(() => filteredItems.length == 0 ? 0 : Math.ceil(filteredItems.length / itemsPerPage), [filteredItems.length]);
+	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
+	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
 
 	const handleSort = useCallback((value) => {
 		setSortBy(() => value);
@@ -142,9 +180,16 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 			: <>
 				<div className="zr-datalist--toolbar">
 					<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
+					<LibrarySelect libProps={libProps} />
+				</div>
+				<div className="zr-datalist--listwrapper">
+					{sortedItems.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage).map(el => <DatalistItem key={el.token} entry={el} />)}
+				</div>
+				<div className="zr-datalist--toolbar">
+					<Switch checked={filter == "all"} className="zr-text-small" label="Show all tags" onChange={handleFilter} />
 					<div className="zr-datalist--pagination">
 						<span className="zr-text-small" zr-role="items-count">
-							<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, matchedTags.length)}</strong> / {matchedTags.length} entries
+							<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, filteredItems.length)}</strong> / {filteredItems.length} entries
 						</span>
 						<ControlGroup>
 							<Button disabled={currentPage == 1} icon="chevron-left" minimal={true} onClick={previousPage} />
@@ -152,26 +197,37 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 						</ControlGroup>
 					</div>
 				</div>
-				<div className="zr-datalist--toolbar">
-					<Switch checked={filter == "all"} label="Show all tags" onChange={handleFilter} />
-				</div>
-				{sortedItems.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage).map(el => <DatalistItem key={el.token} entry={el} />)}
 				<Stats stats={stats} />
 			</>
 	);
 });
 TagsDatalist.propTypes = {
-	items: arrayOf(customPropTypes.taglistEntry)
+	items: arrayOf(customPropTypes.taglistEntry),
+	libProps: shape({
+		currentPath: string,
+		onSelect: func,
+		options: arrayOf(string)
+	})
 };
 
 const TabContents = React.memo(function TabContents(props){
 	const { libraries } = props;
-	const [selectedLibrary,] = useState(libraries[0]);
+	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);
 
 	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
 		notifyOnChangeProps: ["data"], 
 		select: (datastore) => datastore.data
 	})[0];
+	
+	const libOptions = useMemo(() => libraries.map(lib => lib.path), [libraries]);
+	const handleLibrarySelect = useCallback((path) => setSelectedLibrary(libraries.find(lib => lib.path == path)), [libraries]);
+	const libProps = useMemo(() => {
+		return {
+			currentPath: selectedLibrary.path,
+			onSelect: handleLibrarySelect,
+			options: libOptions
+		};
+	}, [handleLibrarySelect, libOptions, selectedLibrary.path]);
 
 	return (
 		<>
@@ -181,7 +237,7 @@ const TabContents = React.memo(function TabContents(props){
 			<div className="zr-tagmanager--datalist">
 				{isLoading
 					? <Spinner />
-					: <TagsDatalist items={data} /> }
+					: <TagsDatalist items={data} libProps={libProps} /> }
 			</div>
 		</>
 	);

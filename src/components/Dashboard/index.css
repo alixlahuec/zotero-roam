@@ -21,16 +21,26 @@
 
 .zr-tagmanager--datalist {
     margin: 20px 0px;
-    max-height: 70vh;
-    overflow-y: scroll;
 }
 
 .zr-tagmanager--datalist .zr-datalist--toolbar {
-    border-bottom: 1px #cccccc solid;
+    align-items: center;
     border-radius: 5px 5px 0px 0px;
     display: flex;
     justify-content: space-between;
-    padding: 5px 15px;
+    padding: 0px 15px;
+    padding-bottom: 10px;
+}
+
+.zr-datalist--listwrapper {
+    border-top: 1px #cccccc solid;
+    border-bottom: 1px #cccccc solid;
+    max-height: 60vh;
+    overflow-y: scroll;
+}
+
+.zr-tagmanager--datalist .zr-datalist--toolbar > .bp3-switch {
+    margin-bottom: 0px;
 }
 
 .zr-datalist--pagination {
@@ -63,6 +73,7 @@
     display:flex;
     justify-content: space-between;
     padding: 3px 15px;
+    padding-top: 10px;
 }
 .zr-datalist--item:last-child{border-bottom:1px white solid;}
 .zr-datalist--item [zr-role="title"] {font-weight:600;margin-right:15px;}
@@ -116,10 +127,10 @@ label[data-tag-source] {color: #b3b3b3;background:#f9f9f9;border: 1px #e9e9e9 so
     .zr-dashboard--main > .bp3-tabs > .bp3-tab-list > .bp3-tab[aria-selected="true"] {
         background: var(--zr-dark-selected-bc,#191919);
     }
-    .zr-tagmanager--datalist .zr-datalist--toolbar,
+    .zr-datalist--listwrapper,
     .zr-datalist--item {
         background: var(--zr-dark-selected-bc,#191919);
-        border-bottom-color: var(--zr-dark-border-color,#363a3f);
+        border-color: var(--zr-dark-border-color,#363a3f);
     }
     .zr-datalist--pagination {
         color: var(--zr-dark-text-co, #76a0cb);
