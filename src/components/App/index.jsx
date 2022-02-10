@@ -43,6 +43,7 @@ class App extends Component {
 		this.closeDashboard = this.closeDashboard.bind(this);
 		this.openDashboard = this.openDashboard.bind(this);
 		this.toggleDashboard = this.toggleDashboard.bind(this);
+		this.areShortcutsDisabled = this.areShortcutsDisabled.bind(this);
 
 		this.shortcutsConfig = {
 			"toggleDashboard": {
@@ -61,7 +62,7 @@ class App extends Component {
 					return {
 						allowInInput: true,
 						combo,
-						disabled: !(this.state.status == "on"),
+						disabled: () => this.areShortcutsDisabled(),
 						global: true,
 						...this.shortcutsConfig[cmd]
 					};
@@ -143,6 +144,10 @@ class App extends Component {
 
 	toggleDashboard(){
 		this.setState((prev) => ({ isDashboardOpen: !prev.isDashboardOpen }));
+	}
+
+	areShortcutsDisabled(){
+		return !this.state.status == "on";
 	}
 }
 App.propTypes = {
