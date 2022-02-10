@@ -36,8 +36,8 @@ const DatalistItem = React.memo(function DatalistItem({ entry }){
 	return (
 		<div className="zr-datalist--item" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
 			<div>
-				<span zr-role="title">{entry.token}</span>
-				<span className={["zr-auxiliary", "zr-text-small"].join(" ")}>{pluralize(usage, "item")}</span>
+				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
+				<span className={["zr-secondary", "zr-text-small"].join(" ")}>{pluralize(usage, "item")}</span>
 				{is_singleton
 					? null
 					: <div zr-role="taglist" className="zr-text-small">
@@ -47,8 +47,8 @@ const DatalistItem = React.memo(function DatalistItem({ entry }){
 			</div>
 			<span className="zr-datalist--item-actions">
 				<ButtonGroup minimal={true} >
-					<Button icon="git-merge" intent="primary" text="Edit" />
-					<Button intent="danger" text="Delete" />
+					<Button className="zr-text-small" icon="git-merge" intent="primary" text="Edit" />
+					<Button className="zr-text-small" intent="danger" text="Delete" />
 				</ButtonGroup>
 			</span>
 		</div>
@@ -64,7 +64,7 @@ const Stats = React.memo(function Stats({ stats }){
 	} else {
 		const { nTags, nRoam, nAuto, nTotal} = stats;
 		return (
-			<div className={["zr-datalist--stats", "zr-text-small"]}>
+			<div className={["zr-datalist--stats", "zr-auxiliary", "zr-text-small"].join(" ")}>
 				<span>
 					Zotero has {nTags} tags ({nAuto} / {Math.round(nAuto / nTags*100)}% automatic), matched in {nTotal} groups
 				</span>
@@ -131,7 +131,7 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 				<div className="zr-datalist--toolbar">
 					<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
 					<div className="zr-datalist--pagination">
-						<span zr-role="items-count">
+						<span className="zr-text-small" zr-role="items-count">
 							<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, matchedTags.length)}</strong> / {matchedTags.length} entries
 						</span>
 						<ControlGroup>

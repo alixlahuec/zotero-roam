@@ -24,11 +24,25 @@
     width: auto;
 }
 
-.zr-sort-option input:checked, 
+.zr-sort-option:hover,
 .zr-sort-option input:checked ~ span, 
 .zr-sort-option input:checked ~ label {
-    color: #3081e4;
+    color: var(--zr-highlight,#206fe6);
+    cursor: default;
 }
 .zr-sort-option .bp3-icon {
     padding-right:5px;
+}
+
+/* DARK THEMES */
+
+@media (prefers-color-scheme: dark){
+    .zr-sort-option {
+        color: var(--zr-dark-text-co, #76a0cb);
+    }
+    .zr-sort-option:hover,
+    .zr-sort-option input:checked ~ span,
+    .zr-sort-option input:checked ~ label {
+        color: var(--zr-dark-highlight,#3fb8ff);
+    }
 }

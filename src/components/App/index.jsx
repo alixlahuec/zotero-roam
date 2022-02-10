@@ -61,6 +61,7 @@ class App extends Component {
 					return {
 						allowInInput: true,
 						combo,
+						disabled: !(this.state.status == "on"),
 						global: true,
 						...this.shortcutsConfig[cmd]
 					};
