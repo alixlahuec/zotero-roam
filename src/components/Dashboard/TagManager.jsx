@@ -236,7 +236,7 @@ const TabContents = React.memo(function TabContents(props){
                 Rename, merge, and delete tags between <span data-tag-source="roam">Roam</span> and <span data-tag-source="zotero">Zotero</span>
 			</div>
 			<div className="zr-tagmanager--datalist">
-				{isLoadingList
+				{isLoadingList || !dataList
 					? <Spinner intent="success" />
 					: dataList.map(el => <DatalistItem key={el.token} entry={el} />)}
 				{isLoading
