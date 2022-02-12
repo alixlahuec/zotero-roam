@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, shape, string } from "prop-types";
-import { Button, ButtonGroup, Callout, ControlGroup, FormGroup, HTMLSelect, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
+import { Button, ButtonGroup, Callout, ControlGroup, FormGroup, HTMLSelect, InputGroup, NonIdealState, Spinner, Switch, Tag } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
@@ -33,6 +33,9 @@ ZoteroTag.propTypes = {
 const DatalistItem = React.memo(function DatalistItem({ entry }){
 	const is_singleton = isSingleton(entry);
 	const usage = getTagUsage(entry);
+	const [tagSelected, setTagSelected] = useState(true);
+
+	const toggleTag = useCallback(() => setTagSelected(prev => !prev), []);
 
 	return (
 		<div className="zr-datalist--item" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
@@ -44,12 +47,17 @@ const DatalistItem = React.memo(function DatalistItem({ entry }){
 					: <div zr-role="taglist" className="zr-text-small">
 						{entry.roam.map(elem => <span key={elem.title} data-tag={elem.title} data-uid={elem.uid} data-tag-source="roam" >{elem.title}</span> )}
 						{entry.zotero.map((elem) => <ZoteroTag key={[elem.tag, elem.meta.type].join("_")} tagElement={elem} /> )}
+						<Tag active={tagSelected} className="test-tag" interactive={true} multiline={true} onClick={toggleTag} />
 					</div>}
 			</div>
 			<span className="zr-datalist--item-actions">
+				<InputGroup 
+					defaultValue={entry.roam[0]?.title || null}
+					leftIcon="git-merge"
+					rightElement={<Button minimal={true} text="Merge tags" />}
+					round={true} />
 				<ButtonGroup minimal={true} >
-					<Button className="zr-text-small" icon="git-merge" intent="primary" text="Edit" />
-					<Button className="zr-text-small" intent="danger" text="Delete" />
+					<Button className="zr-text-small" icon="trash" intent="danger" text="Delete" />
 				</ButtonGroup>
 			</span>
 		</div>
@@ -214,11 +222,6 @@ const TabContents = React.memo(function TabContents(props){
 		notifyOnChangeProps: ["data"], 
 		select: (datastore) => datastore.data
 	})[0];
-
-	const { isLoadingList, dataList } = useQuery_Tags([selectedLibrary], {
-		notifyOnChangeProps: ["data"],
-		select: (datastore) => matchTagData(datastore.data)
-	});
 	
 	const libOptions = useMemo(() => libraries.map(lib => lib.path), [libraries]);
 	const handleLibrarySelect = useCallback((path) => setSelectedLibrary(libraries.find(lib => lib.path == path)), [libraries]);
@@ -236,9 +239,6 @@ const TabContents = React.memo(function TabContents(props){
                 Rename, merge, and delete tags between <span data-tag-source="roam">Roam</span> and <span data-tag-source="zotero">Zotero</span>
 			</div>
 			<div className="zr-tagmanager--datalist">
-				{isLoadingList || !dataList
-					? <Spinner intent="success" />
-					: dataList.map(el => <DatalistItem key={el.token} entry={el} />)}
 				{isLoading
 					? <Spinner />
 					: <TagsDatalist items={data} libProps={libProps} /> }

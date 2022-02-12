@@ -69,7 +69,7 @@
     justify-content: space-between;
     padding: 5px 15px;
 }
-.zr-datalist--item:last-child{border-bottom:1px white solid;}
+.zr-datalist--item:last-child{border-bottom-width: 0px;}
 .zr-datalist--item [zr-role="title"] {font-weight:600;margin-right:15px;}
 .zr-datalist--item [zr-role="title"]::before {content: '# '}
 .zr-datalist--item [zr-role="taglist"] {margin:5px;}
