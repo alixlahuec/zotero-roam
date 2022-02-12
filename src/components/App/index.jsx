@@ -7,7 +7,7 @@ import GraphWatcher from "../GraphWatcher";
 import { RoamCitekeysProvider } from "../RoamCitekeysContext";
 import SearchPanel from "../SearchPanel";
 
-import { _getBibliography, _getChildren, _getItems, _getTags } from "../../api/public";
+import { _getBibliography, _getCollections, _getChildren, _getItems, _getTags } from "../../api/public";
 import { addPaletteCommand } from "../../roam";
 
 import * as customPropTypes from "../../propTypes";
@@ -157,6 +157,7 @@ App.propTypes = {
 // Utilities to be exposed via global zoteroRoam variable, for consumption by users :
 const getBibliography = (item, library, config = {}) => _getBibliography(item, library, config);
 const getChildren = (item) => _getChildren(item, queryClient);
+const getCollections = (library) => _getCollections(library, queryClient);
 const getItems = (select = "all", filters = {}) => _getItems(select, filters, queryClient);
 const getTags = (library) => _getTags(library, queryClient);
 
@@ -164,6 +165,7 @@ export {
 	App,
 	ExtensionContext,
 	getBibliography,
+	getCollections,
 	getChildren,
 	getItems,
 	getTags,

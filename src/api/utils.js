@@ -101,6 +101,9 @@ async function fetchBibliography(itemKey, library, config = {}) {
 				locale,
 				style
 			}});
+		// For debugging
+		console.log(response);
+		
 		return response[include];
 	} catch(error){
 		return Promise.reject(error);

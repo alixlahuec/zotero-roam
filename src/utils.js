@@ -843,7 +843,7 @@ function splitNotes(notes, split_char){
 }
 
 function sortTags(tagList, by = "alphabetical"){
-	let [...arr] = tagList;
+	let arr = [...tagList];
 	switch(by){
 	case "usage":
 		return arr.sort((a,b) => {

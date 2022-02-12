@@ -14,6 +14,10 @@ ul.zr-datalist--listwrapper {
     padding-left: 0px;
 }
 
+.zr-datalist--item {
+    border-bottom:1px #f5f5f5 solid;
+}
+
 .zr-datalist--toolbar > .bp3-form-group {
     margin-bottom: 0px;
 }
@@ -32,10 +36,8 @@ ul.zr-datalist--listwrapper {
 /* DARK THEMES */
 
 @media (prefers-color-scheme: dark){
-    .zr-datalist--listwrapper,
     .zr-datalist--item {
-        background: var(--zr-dark-selected-bc,#191919);
-        border-color: var(--zr-dark-border-color,#363a3f);
+        border-bottom-color: var(--zr-dark-border-color,#363a3f);
     }
     .zr-datalist--toolbar label,
     .zr-datalist--toolbar .bp3-html-select select,

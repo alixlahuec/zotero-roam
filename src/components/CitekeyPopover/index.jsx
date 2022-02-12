@@ -13,6 +13,7 @@ import "./index.css";
 
 const popoverMenuProps = {
 	autoFocus: true,
+	className: "zr-library-item-popover",
 	interactionKind: "hover",
 	lazy: true,
 	placement: "right-start",

@@ -12,6 +12,11 @@ async function _getBibliography(item, library, config){
 	return await fetchBibliography(itemKey, library, config);
 }
 
+function _getCollections(library, queryClient){
+	const { apikey, path } = library;
+	return queryClient.getQueryData(["collections", { apikey, library: path }]);
+}
+
 /** Returns all children of a given item available in the query cache
  * @param {ZoteroItem} item - The targeted Zotero item
  * @param {*} queryClient - The React Query client to use
@@ -61,6 +66,7 @@ function _getTags(library, queryClient) {
 
 export {
 	_getBibliography,
+	_getCollections,
 	_getChildren,
 	_getItems,
 	_getTags

@@ -2,7 +2,7 @@ import React from "react";
 import { render as ReactDOMRender } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
-import { App, getBibliography, getChildren, getItems, getTags } from "./components/App";
+import { App, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
 import { setDefaultHooks } from "./events";
 import { registerSmartblockCommands } from "./smartblocks";
 import zrToaster from "./components/ExtensionToaster";
@@ -86,6 +86,14 @@ window.zoteroRoam = {};
 			let library = libraries.find(lib => lib.path == location);
 
 			return await getBibliography(item, library, config);
+		};
+
+		window.zoteroRoam.getCollections = (item) => {
+			let { libraries } = requests;
+			let location = item.library.type + "s/" + item.library.id;
+			let library = libraries.find(lib => lib.path == location);
+
+			return getCollections(library);
 		};
 
 		window.zoteroRoam.getTags = (location) => {

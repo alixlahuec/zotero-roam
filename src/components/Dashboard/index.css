@@ -21,8 +21,6 @@
 
 .zr-tagmanager--datalist .zr-datalist--item {
     align-items: center;
-    background:white;
-    border-bottom:1px #f5f5f5 solid;
     display:flex;
     justify-content: space-between;
     padding: 5px 15px;
@@ -40,7 +38,7 @@
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="title"]::before {content: '# '}
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] {
-    align-items: center;
+    align-items: end;
     display: flex;
     flex: 0 0 33%;
     flex-direction: column;
