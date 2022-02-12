@@ -18,8 +18,8 @@
   margin-right: 8px;
 }
 
-.bp3-non-ideal-state {
-  padding-bottom: 25px;
+[class^="zr"] .bp3-non-ideal-state {
+  padding: 25px 0px;
 }
 
 /* Variables */

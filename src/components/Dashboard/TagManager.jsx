@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, shape, string } from "prop-types";
-import { Button, ButtonGroup, Callout, Classes, ControlGroup, HTMLSelect, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
+import { Button, ButtonGroup, Callout, ControlGroup, FormGroup, HTMLSelect, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
 
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
@@ -22,7 +22,7 @@ function ZoteroTag({ tagElement }){
 
 	return (
 		<span data-tag-source="zotero" data-tag={tag} data-tag-type={type} >
-			{tag} ({numItems})
+			{tag + "(" + numItems + ")"}
 		</span>
 	);
 }
@@ -67,9 +67,13 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 	}, [onSelect]);
 
 	return (
-		<div className={[Classes.MINIMAL, "zr-text-small"].join(" ")}>
-			<HTMLSelect minimal={true} onChange={handleSelect} options={options} value={currentPath} />
-		</div>
+		<FormGroup
+			className="zr-text-small"
+			inline={true}
+			label="Library :"
+			labelFor="zr-select--library">
+			<HTMLSelect id="zr-select--library" minimal={true} onChange={handleSelect} options={options} value={currentPath} />
+		</FormGroup>
 	);
 });
 LibrarySelect.propTypes = {
@@ -145,16 +149,6 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
 	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
 
-	const itemsCount = useMemo(() => {
-		if(filteredItems.length == 0){
-			return null;
-		} else {
-			return <>
-				<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, filteredItems.length)}</strong> / {filteredItems.length} entries
-			</>;
-		}
-	}, [currentPage, filteredItems.length]);
-
 	const handleSort = useCallback((value) => {
 		setSortBy(() => value);
 		setCurrentPage(1);
@@ -170,7 +164,7 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 
 	return (
 		matchedTags == null
-			? <NonIdealState icon="refresh" title="Loading tags" />
+			? <Spinner />
 			: <>
 				<div className="zr-datalist--toolbar">
 					<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
@@ -184,11 +178,17 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 				<div className="zr-datalist--toolbar">
 					<Switch checked={filter == "all"} className="zr-text-small" label="Show all tags" onChange={handleFilter} />
 					<div className="zr-datalist--pagination">
-						<span className="zr-text-small" zr-role="items-count">{itemsCount}</span>
-						<ControlGroup>
-							<Button disabled={currentPage == 1} icon="chevron-left" minimal={true} onClick={previousPage} />
-							<Button disabled={currentPage == nbPages} icon="chevron-right" minimal={true} onClick={nextPage} />
-						</ControlGroup>
+						{filteredItems.length > 0
+							? <>
+								<span className="zr-text-small" zr-role="items-count">
+									<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, filteredItems.length)}</strong> / {filteredItems.length} entries
+								</span>
+								<ControlGroup>
+									<Button disabled={currentPage == 1} icon="chevron-left" minimal={true} onClick={previousPage} />
+									<Button disabled={currentPage >= nbPages} icon="chevron-right" minimal={true} onClick={nextPage} />
+								</ControlGroup>
+							</>
+							: null}
 					</div>
 				</div>
 				{filter == "all"
@@ -214,6 +214,11 @@ const TabContents = React.memo(function TabContents(props){
 		notifyOnChangeProps: ["data"], 
 		select: (datastore) => datastore.data
 	})[0];
+
+	const { isLoadingList, dataList } = useQuery_Tags([selectedLibrary], {
+		notifyOnChangeProps: ["data"],
+		select: (datastore) => matchTagData(datastore.data)
+	});
 	
 	const libOptions = useMemo(() => libraries.map(lib => lib.path), [libraries]);
 	const handleLibrarySelect = useCallback((path) => setSelectedLibrary(libraries.find(lib => lib.path == path)), [libraries]);
@@ -231,6 +236,9 @@ const TabContents = React.memo(function TabContents(props){
                 Rename, merge, and delete tags between <span data-tag-source="roam">Roam</span> and <span data-tag-source="zotero">Zotero</span>
 			</div>
 			<div className="zr-tagmanager--datalist">
+				{isLoadingList
+					? <Spinner intent="success" />
+					: dataList.map(el => <DatalistItem key={el.token} entry={el} />)}
 				{isLoading
 					? <Spinner />
 					: <TagsDatalist items={data} libProps={libProps} /> }
