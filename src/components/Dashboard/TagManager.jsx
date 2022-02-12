@@ -1,14 +1,14 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { arrayOf, func, shape, string } from "prop-types";
-import { Button, ButtonGroup, Callout, Classes, ControlGroup, FormGroup, HTMLSelect, InputGroup, NonIdealState, Spinner, Switch, Tag } from "@blueprintjs/core";
+import { arrayOf, func, number, shape, string } from "prop-types";
+import { Button, ButtonGroup, Callout, Classes, FormGroup, HTMLSelect, InputGroup, NonIdealState, Spinner, Switch, Tag } from "@blueprintjs/core";
 
+import { ListItem, ListWrapper, Pagination, Toolbar } from "../DataList";
 import SortButtons from "../SortButtons";
 import { ExtensionContext } from "../App";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../api/queries";
 import { getTagStats, getTagUsage, matchTagData, pluralize, sortTags } from "../../utils";
 import * as customPropTypes from "../../propTypes";
-import { number } from "prop-types";
 
 const itemsPerPage = 30;
 
@@ -57,12 +57,12 @@ ZoteroTag.propTypes = {
 	tagElement: customPropTypes.zoteroTagType
 };
 
-const DatalistItem = React.memo(function DatalistItem({ entry }){
+const Item = React.memo(function Item({ entry }){
 	const is_singleton = isSingleton(entry);
 	const usage = getTagUsage(entry);
 
 	return (
-		<div className="zr-datalist--item" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
+		<ListItem data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
 			<div>
 				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
 				<span className={["zr-secondary", "zr-text-small"].join(" ")}>{pluralize(usage, "item")}</span>
@@ -73,11 +73,11 @@ const DatalistItem = React.memo(function DatalistItem({ entry }){
 						{entry.zotero.map((elem) => <ZoteroTag key={[elem.tag, elem.meta.type].join("_")} tagElement={elem} /> )}
 					</div>}
 			</div>
-			<span className="zr-datalist--item-actions">
+			<span zr-role="item-actions" >
 				{is_singleton
 					? <ButtonGroup>
 						<Button intent="primary" text="Edit" />
-						<Button icon="trash" intent="danger" />
+						<Button icon="trash" intent="danger" text="Delete" />
 					</ButtonGroup>
 					: <>
 						<InputGroup 
@@ -85,14 +85,14 @@ const DatalistItem = React.memo(function DatalistItem({ entry }){
 							rightElement={<Button className="zr-text-small" intent="primary" minimal={true} text="Merge tags" />}
 							small={true} />
 						<ButtonGroup minimal={true} >
-							<Button className="zr-text-small" icon="trash" intent="danger" />
+							<Button className="zr-text-small" icon="trash" intent="danger" text="Delete" />
 						</ButtonGroup>
 					</>}
 			</span>
-		</div>
+		</ListItem>
 	);
 });
-DatalistItem.propTypes = {
+Item.propTypes = {
 	entry: customPropTypes.taglistEntry
 };
 
@@ -127,7 +127,7 @@ const Stats = React.memo(function Stats({ stats }){
 	} else {
 		const { nTags, nRoam, nAuto, nTotal} = stats;
 		return (
-			<div className={["zr-datalist--stats", "zr-auxiliary", "zr-text-small"].join(" ")}>
+			<div className={["zr-auxiliary", "zr-text-small"].join(" ")} zr-role="list-stats" >
 				<span>
 					Zotero has {nTags} tags ({nAuto} / {Math.round(nAuto / nTags*100)}% automatic), matched in {nTotal} groups
 				</span>
@@ -154,6 +154,8 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 	const [sortBy, setSortBy] = useState("usage");
 	const [matchedTags, setMatchedTags] = useState(null);
 	const [stats, setStats] = useState(null);
+
+	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
 
 	useEffect(() => {
 		if(items) {
@@ -182,10 +184,6 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 		}
 	}, [filter, matchedTags]);
 
-	const nbPages = useMemo(() => filteredItems.length == 0 ? 0 : Math.ceil(filteredItems.length / itemsPerPage), [filteredItems.length]);
-	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
-	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
-
 	const handleSort = useCallback((value) => {
 		setSortBy(() => value);
 		setCurrentPage(1);
@@ -201,36 +199,29 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 
 	return (
 		matchedTags == null
-			? <Spinner />
+			? <Spinner size={15} />
 			: <>
-				<div className="zr-datalist--toolbar">
+				<Toolbar>
 					<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
 					<LibrarySelect libProps={libProps} />
-				</div>
-				<div className="zr-datalist--listwrapper">
+				</Toolbar>
+				<ListWrapper>
 					{sortedItems.length > 0
-						? sortedItems.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage).map(el => <DatalistItem key={el.token} entry={el} />)
-						: <NonIdealState description="No items in the current view" />}
-				</div>
-				<div className="zr-datalist--toolbar">
+						? sortedItems
+							.slice(...pageLimits)
+							.map(el => 
+								<Item key={el.token} entry={el} />)
+						: <NonIdealState className="zr-auxiliary" description="No items in the current view" />}
+				</ListWrapper>
+				<Toolbar>
 					<Switch checked={filter == "all"} className="zr-text-small" label="Show all tags" onChange={handleFilter} />
-					<div className="zr-datalist--pagination">
-						{filteredItems.length > 0
-							? <>
-								<span className="zr-text-small" zr-role="items-count">
-									<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, filteredItems.length)}</strong> / {filteredItems.length} entries
-								</span>
-								<ControlGroup>
-									<Button disabled={currentPage == 1} icon="chevron-left" minimal={true} onClick={previousPage} />
-									<Button disabled={currentPage >= nbPages} icon="chevron-right" minimal={true} onClick={nextPage} />
-								</ControlGroup>
-							</>
-							: null}
-					</div>
-				</div>
-				{filter == "all"
-					? <Stats stats={stats} />
-					: null}
+					<Pagination 
+						currentPage={currentPage} 
+						itemsPerPage={itemsPerPage} 
+						nbItems={filteredItems.length} 
+						setCurrentPage={setCurrentPage} />
+				</Toolbar>
+				{filter == "all" && <Stats stats={stats} />}
 			</>
 	);
 });

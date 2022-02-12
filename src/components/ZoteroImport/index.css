@@ -12,6 +12,8 @@
 
 .options-tags .bp3-input.bp3-multi-select {
     background: unset;
+    box-shadow: none;
+    border-bottom: 1px #cccccc solid;
 }
 
 /* DARK THEMES*/

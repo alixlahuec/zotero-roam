@@ -1,0 +1,49 @@
+.zr-datalist--toolbar {
+    align-items: center;
+    border-radius: 5px 5px 0px 0px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+}
+
+ul.zr-datalist--listwrapper {
+    list-style-type: none;
+    margin-bottom: 0px;
+    max-height: 60vh;
+    overflow-y: scroll;
+    padding-left: 0px;
+}
+
+.zr-datalist--toolbar > .bp3-form-group {
+    margin-bottom: 0px;
+}
+.zr-datalist--toolbar > .bp3-switch {
+    margin-bottom: 0px;
+}
+
+.zr-datalist--pagination {
+    display: flex;
+}
+
+.zr-datalist--pagination [zr-role="items-count"] {
+    padding: 5px 10px;
+}
+
+/* DARK THEMES */
+
+@media (prefers-color-scheme: dark){
+    .zr-datalist--listwrapper,
+    .zr-datalist--item {
+        background: var(--zr-dark-selected-bc,#191919);
+        border-color: var(--zr-dark-border-color,#363a3f);
+    }
+    .zr-datalist--toolbar label,
+    .zr-datalist--toolbar .bp3-html-select select,
+    .zr-datalist--toolbar .bp3-html-select select:hover,
+    .zr-datalist--pagination {
+        color: var(--zr-dark-text-co, #76a0cb);
+    }
+    .zr-datalist--toolbar .bp3-html-select select:hover {
+        background: var(--zr-dark-selected-bc, #191919);
+    }
+}

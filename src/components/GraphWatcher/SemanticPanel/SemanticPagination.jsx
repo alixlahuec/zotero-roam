@@ -1,15 +1,16 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape} from "prop-types";
-import { Button, ControlGroup, InputGroup, NonIdealState } from "@blueprintjs/core";
+import { InputGroup, NonIdealState } from "@blueprintjs/core";
 
 import SemanticItem from "./SemanticItem";
-import { searchEngine } from "../../../utils";
+import { ListWrapper, Pagination, Toolbar } from "../../DataList";
 
+import { searchEngine } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
 
 const itemsPerPage = 30;
 
-function itemListPredicate(query, items){
+function search(query, items){
 	return items.filter(it => searchEngine(
 		query, 
 		it._multiField,
@@ -22,7 +23,7 @@ function itemListPredicate(query, items){
 	));
 }
 
-function DatalistItem({item, selectProps, type}){
+function Item({item, selectProps, type}){
 	let { handleRemove, handleSelect, items: selectedItems } = selectProps;
 	let isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
 
@@ -34,7 +35,7 @@ function DatalistItem({item, selectProps, type}){
 		item={item} 
 		type={type} />;
 }
-DatalistItem.propTypes = {
+Item.propTypes = {
 	item: customPropTypes.cleanSemanticReturnType,
 	selectProps: shape({
 		handleRemove: func,
@@ -45,25 +46,23 @@ DatalistItem.propTypes = {
 	type: oneOf(["is_citation", "is_reference"])
 };
 
-const SemanticPagination = React.memo(function Pagination(props){
+const SemanticPagination = React.memo(function SemanticPagination(props){
 	const { items, selectProps, type } = props;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [query, setQuery] = useState();
+
+	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
 
 	const handleSearch = useCallback((event) => {
 		let search = event.target?.value;
 		setQuery(search || null);
 	}, []);
 
-	const filteredItems = useMemo(() => !query ? items : itemListPredicate(query, items), [items, query]);
-
-	const nbPages = useMemo(() => filteredItems.length == 0 ? 0 : Math.ceil(filteredItems.length / itemsPerPage), [filteredItems.length]);
-	const previousPage = useCallback(() => setCurrentPage((current) => current > 1 ? (current - 1) : current), []);
-	const nextPage = useCallback(() => setCurrentPage((current) => current < nbPages ? (current + 1) : current), [nbPages]);
+	const filteredItems = useMemo(() => !query ? items : search(query, items), [items, query]);
 
 	return (
-		<>
-			<div className="zr-datalist--toolbar">
+		<div className="rendered-div">
+			<Toolbar>
 				<InputGroup
 					autoComplete="off"
 					id={"semantic-search--" + type}
@@ -72,28 +71,25 @@ const SemanticPagination = React.memo(function Pagination(props){
 					spellCheck="false"
 					onChange={handleSearch}
 					value={query} />
-			</div>
-			<div className="zr-datalist--listwrapper">
+			</Toolbar>
+			<ListWrapper>
 				{filteredItems.length > 0
-					? filteredItems.slice(itemsPerPage*(currentPage - 1), itemsPerPage*currentPage).map(el => <DatalistItem key={[el.doi, el.url, el.title].filter(Boolean).join("-")} item={el} selectProps={selectProps} type={type} />)
+					? filteredItems
+						.slice(...pageLimits)
+						.map(el => 
+							<Item key={[el.doi, el.url, el.title].filter(Boolean).join("-")} 
+								item={el} selectProps={selectProps} type={type} />)
 					: <NonIdealState className="zr-auxiliary" description="No results found" /> }
-			</div>
-			<div className="zr-datalist--toolbar">
-				<div className="zr-datalist--pagination">
-					{filteredItems.length > 0
-						? <>
-							<span className="zr-text-small" zr-role="items-count">
-								<strong>{(currentPage - 1)*30 + 1}-{Math.min(currentPage*30, filteredItems.length)}</strong> / {filteredItems.length} entries
-							</span>
-							<ControlGroup>
-								<Button disabled={currentPage == 1} icon="chevron-left" minimal={true} onClick={previousPage} />
-								<Button disabled={currentPage >= nbPages} icon="chevron-right" minimal={true} onClick={nextPage} />
-							</ControlGroup>
-						</>
-						: null}
-				</div>
-			</div>
-		</>
+			</ListWrapper>
+			<Toolbar>
+				<Pagination
+					arrows="first"
+					currentPage={currentPage} 
+					itemsPerPage={itemsPerPage}
+					nbItems={filteredItems.length} 
+					setCurrentPage={setCurrentPage} />
+			</Toolbar>
+		</div>
 	);
 });
 SemanticPagination.propTypes = {

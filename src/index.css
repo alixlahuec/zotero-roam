@@ -22,6 +22,10 @@
   padding: 25px 0px;
 }
 
+.zr-popover {
+  max-width: 300px;
+}
+
 /* Variables */
 
 [class*="zr"] [aria-selected="true"]{background-color: var(--zr-selected-bc,#eaf3fc);}
