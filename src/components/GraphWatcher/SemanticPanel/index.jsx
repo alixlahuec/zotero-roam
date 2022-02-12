@@ -3,7 +3,7 @@ import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
-import SemanticQuery from "./SemanticQuery";
+import SemanticPagination from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
 import { pluralize, sortElems } from "../../../utils";
@@ -47,7 +47,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 	return (
 		<Tabs id="zr-semantic-panel" selectedTabId={isActiveTab} onChange={selectTab} animate={false}>
 			<Tab id="is_reference" 
-				panel={<SemanticQuery
+				panel={<SemanticPagination
 					items={references}
 					selectProps={selectProps}
 					type="is_reference"
@@ -56,7 +56,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 				title={references_title}
 			/>
 			<Tab id="is_citation" 
-				panel={<SemanticQuery
+				panel={<SemanticPagination
 					items={citations}
 					selectProps={selectProps}
 					type="is_citation"

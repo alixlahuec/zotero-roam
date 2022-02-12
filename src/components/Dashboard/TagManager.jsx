@@ -17,6 +17,23 @@ const NoWriteableLibraries = <Callout>No writeable libraries were found. Please 
 
 const isSingleton = (entry) => entry.zotero.length == 1 && (entry.roam.length == 0 || (entry.roam.length == 1 && entry.zotero[0].tag == entry.roam[0].title));
 
+function RoamTag({ text, uid = null }){
+	return (
+		<Tag 
+			active={true} 
+			className="zr-tag--roam" 
+			minimal={true} 
+			multiline={true}
+			data-tag-source="roam" data-tag={text} data-uid={uid} >
+			{text}
+		</Tag>
+	);
+}
+RoamTag.propTypes = {
+	text: string,
+	uid: string
+};
+
 function ZoteroTag({ tagElement }){
 	const { tag, meta: { numItems, type = 0 } } = tagElement;
 	const [isSelected, setIsSelected] = useState(true);
@@ -51,8 +68,8 @@ const DatalistItem = React.memo(function DatalistItem({ entry }){
 				<span className={["zr-secondary", "zr-text-small"].join(" ")}>{pluralize(usage, "item")}</span>
 				{is_singleton
 					? null
-					: <div zr-role="taglist" className="zr-text-small">
-						{entry.roam.map(elem => <span key={elem.title} data-tag={elem.title} data-uid={elem.uid} data-tag-source="roam" >{elem.title}</span> )}
+					: <div className="zr-text-small">
+						{entry.roam.map(elem => <RoamTag key={elem.title} text={elem.title} uid={elem.uid} /> )}
 						{entry.zotero.map((elem) => <ZoteroTag key={[elem.tag, elem.meta.type].join("_")} tagElement={elem} /> )}
 					</div>}
 			</div>
@@ -65,8 +82,8 @@ const DatalistItem = React.memo(function DatalistItem({ entry }){
 					: <>
 						<InputGroup 
 							defaultValue={entry.roam[0]?.title || null}
-							rightElement={<Button icon="git-merge" intent="primary" minimal={true} text="Merge tags" />}
-							round={true} />
+							rightElement={<Button className="zr-text-small" intent="primary" minimal={true} text="Merge tags" />}
+							small={true} />
 						<ButtonGroup minimal={true} >
 							<Button className="zr-text-small" icon="trash" intent="danger" />
 						</ButtonGroup>
@@ -248,7 +265,7 @@ const TabContents = React.memo(function TabContents(props){
 	return (
 		<>
 			<div className={["zr-tagmanager--header", "zr-auxiliary"].join(" ")}>
-                Rename, merge, and delete tags between <span data-tag-source="roam">Roam</span> and <Tag active={true} className={["zr-tag--zotero", Classes.ACTIVE, Classes.MINIMAL].join(" ")}>Zotero</Tag>
+                Rename, merge, and delete tags between <RoamTag text="Roam" /> and <Tag active={true} className={["zr-tag--zotero", Classes.ACTIVE, Classes.MINIMAL].join(" ")}>Zotero</Tag>
 			</div>
 			<div className="zr-tagmanager--datalist">
 				{isLoading
