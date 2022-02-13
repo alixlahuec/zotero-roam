@@ -60,7 +60,7 @@ const Item = React.memo(function Item({ entry, library }){
 					</div>}
 			</div>
 			<span zr-role="item-actions" >
-				<ButtonGroup alignText="right" minimal={true} vertical={!is_singleton} >
+				<ButtonGroup minimal={true} vertical={!is_singleton} >
 					{is_singleton
 						? <>
 							<Button intent="primary" small={true} text="Edit" />

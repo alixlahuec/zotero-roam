@@ -8,7 +8,7 @@ import TagManager from "./TagManager";
 import "./index.css";
 
 const TabList = React.memo(function TabList(props){
-	const { defaultTab } = props;
+	const { defaultTab, onClose } = props;
 	const [isActiveTab, setActiveTab] = useState(defaultTab);
 
 	useEffect(() => {
@@ -19,12 +19,13 @@ const TabList = React.memo(function TabList(props){
 
 	return(
 		<Tabs animate={false} id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
-			<Tab id="tag-manager" panel={<TagManager />} title={<><Icon icon="tag" /><span>Tag Manager</span></>} />
+			<Tab id="tag-manager" panel={<TagManager onClose={onClose} />} title={<><Icon icon="tag" /><span>Tag Manager</span></>} />
 		</Tabs>
 	);
 });
 TabList.propTypes = {
-	defaultTab: oneOf(["tag-manager"])
+	defaultTab: oneOf(["tag-manager"]),
+	onClose: func
 };
 
 const Dashboard = React.memo(function Dashboard(props){
@@ -37,7 +38,7 @@ const Dashboard = React.memo(function Dashboard(props){
 			onClose={onClose} >
 			<div className={ Classes.DIALOG_BODY }>
 				<div className="zr-dashboard--main">
-					<TabList defaultTab="tag-manager" />
+					<TabList defaultTab="tag-manager" onClose={onClose} />
 				</div>
 			</div>
 		</AuxiliaryDialog>
