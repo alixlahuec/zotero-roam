@@ -102,8 +102,13 @@ async function fetchBibliography(itemKey, library, config = {}) {
 				style
 			}
 		});
-		
-		return response[0].data[include];
+		// For debugging
+		console.log(response);
+		const { data, ...rest } = response;
+		console.log(data);
+		console.log(rest);
+
+		return response;
 	} catch(error){
 		return Promise.reject(error);
 	}
