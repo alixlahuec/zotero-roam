@@ -231,7 +231,7 @@ ViewItem.propTypes = {
 
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	const { item, itemList } = props;
-	const { metadata: metadataSettings, notes: notesSettings } = useContext(UserSettings);
+	const { metadata: metadataSettings, notes: notesSettings, pageMenu: { defaults } } = useContext(UserSettings);
 	const [roamCitekeys,] = useRoamCitekeys();
 
 	const doi = parseDOI(item.data.DOI);
@@ -260,7 +260,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	}, [notes, item, notesSettings, pageUID]);
 
 	const pdfLinks = useMemo(() => {
-		if(pdfs.length == 0) {
+		if(pdfs.length == 0 || !defaults.includes("pdfLinks")) {
 			return null;
 		} else {
 			return (
@@ -278,33 +278,43 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				})
 			);
 		}
-	}, [pdfs]);
+	}, [defaults, pdfs]);
 
 	const notesButton = useMemo(() => {
-		if(notes.length == 0){
+		if(notes.length == 0 || !defaults.includes("importNotes")){
 			return null;
 		} else {
 			return <Button icon="comment" onClick={importNotes}>Import notes</Button>;
 		}
-	}, [importNotes, notes.length]);
+	}, [defaults, importNotes, notes.length]);
     
 	const open_zotero = useMemo(() => {
 		return (
 			<>
-				<ButtonLink icon="application" text="Open in Zotero" href={getLocalLink(item, { format: "target" })} />
-				<ButtonLink icon="cloud" text="Open in Zotero [Web library]" href={getWebLink(item, { format: "target" })} />
+				{defaults.includes("openZoteroLocal")
+					? <ButtonLink icon="application" text="Open in Zotero" href={getLocalLink(item, { format: "target" })} />
+					: null}
+				{defaults.includes("openZoteroWeb")
+					? <ButtonLink icon="cloud" text="Open in Zotero [Web library]" href={getWebLink(item, { format: "target" })} />
+					: null}
 			</>
 		);
-	},[item]);
+	},[defaults, item]);
 
 	const sciteBadge = useMemo(() => {
-		return doi ? <SciteBadge doi={doi} /> : null;
-	}, [doi]);
+		return doi && defaults.includes("sciteBadge") ? <SciteBadge doi={doi} /> : null;
+	}, [defaults, doi]);
 
 	const ext_links = useMemo(() => {
-		let connectedPapersLink = <ButtonLink icon="layout" text="Connected Papers" href={"https://www.connectedpapers.com/" + (doi ? "api/redirect/doi/" + doi : "search?q=" + encodeURIComponent(item.data.title)) } />;
-		let semanticLink = doi ? <ButtonLink icon="bookmark" text="Semantic Scholar" href={"https://api.semanticscholar.org/" + doi} /> : null;
-		let googleScholarLink = <ButtonLink icon="learning" text="Google Scholar" href={"https://scholar.google.com/scholar?q=" + (doi || encodeURIComponent(item.data.title))} />;
+		let connectedPapersLink = defaults.includes("connectedPapers")
+			? <ButtonLink icon="layout" text="Connected Papers" href={"https://www.connectedpapers.com/" + (doi ? "api/redirect/doi/" + doi : "search?q=" + encodeURIComponent(item.data.title)) } />
+			: null;
+		let semanticLink = doi && defaults.includes("semanticScholar") 
+			? <ButtonLink icon="bookmark" text="Semantic Scholar" href={"https://api.semanticscholar.org/" + doi} /> 
+			: null;
+		let googleScholarLink = defaults.includes("googleScholar")
+			? <ButtonLink icon="learning" text="Google Scholar" href={"https://scholar.google.com/scholar?q=" + (doi || encodeURIComponent(item.data.title))} />
+			: null;
 
 		return (
 			<>
@@ -313,17 +323,17 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				{googleScholarLink}
 			</>
 		);
-	}, [doi, item.data.title]);
+	}, [defaults, doi, item.data.title]);
     
 	const relatedBar = useMemo(() => {
-		return doi
+		return doi && defaults.includes("citingPapers")
 			? <RelatedItemsBar doi={doi}
 				itemList={itemList}
 				origin={item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : ""} 
 				title={"@" + item.key}
 			/>
 			: null;
-	}, [doi, item.key, item.meta.parsedDate, itemList]);
+	}, [defaults, doi, item.key, item.meta.parsedDate, itemList]);
 
 	const clean_item = useMemo(() => {
 		return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
@@ -335,9 +345,13 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 			<Card elevation={0} className="zr-citekey-menu">
 				<div className="zr-citekey-menu--header">
 					<ButtonGroup className="zr-citekey-menu--actions" minimal={true}>
-						<Button icon="add" onClick={importMetadata}>Add metadata</Button>
+						{defaults.includes("addMetadata")
+							? <Button icon="add" onClick={importMetadata}>Add metadata</Button>
+							: null}
 						{notesButton}
-						<ViewItem item={clean_item} />
+						{defaults.includes("viewItemInfo")
+							? <ViewItem item={clean_item} />
+							: null}
 						{open_zotero}
 						{pdfLinks}
 						{ext_links}

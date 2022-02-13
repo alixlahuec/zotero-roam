@@ -169,6 +169,10 @@ const userSettingsType = shape({
 		split_char: string,
 		use: oneOf(["raw", "text"])
 	}),
+	pageMenu: shape({
+		defaults: arrayOf(string),
+		trigger: func
+	}),
 	render_inline: bool,
 	shortcuts: object,
 	typemap: object,

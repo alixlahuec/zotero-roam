@@ -33,6 +33,24 @@ function categorizeZoteroTags(z_data, tagMap){
 	return output.sort((a,b) => a.token < b.token ? -1 : 1);
 }
 
+// Process the XHTML bibliography into a Roam format
+// TODO: Explore whether there are other potential tags or styles to convert, besides italics
+function cleanBibliographyHTML(bib){
+	// Grab only the string (strip outer divs)
+	let bibString = bib.match("csl-entry\">(.+)</div>")[1];
+	// Use a textarea element to decode HTML
+	let formatter = document.createElement("textarea");
+	formatter.innerHTML = bibString;
+	let formattedBib = formatter.innerText;
+	// Convert italics
+	formattedBib = formattedBib.replaceAll(/<\/?i>/g, "__");
+	// Convert links
+	let linkRegex = /<a href="(.+)">(.+)<\/a>/g;
+	formattedBib = formattedBib.replaceAll(linkRegex, "[$2]($1)");
+
+	return formattedBib;
+}
+
 /** Extracts pinned citekeys from a dataset
  * @param {ZoteroItem[]} arr - The dataset of Zotero items to scan
  * @returns {Object[]} The processed dataset : each item gains a `has_citekey` property, and its `key` property is assigned its citekey 
@@ -102,13 +120,8 @@ async function fetchBibliography(itemKey, library, config = {}) {
 				style
 			}
 		});
-		// For debugging
-		console.log(response);
-		const { data, ...rest } = response;
-		console.log(data);
-		console.log(rest);
 
-		return response;
+		return response.data[include];
 	} catch(error){
 		return Promise.reject(error);
 	}
@@ -423,6 +436,7 @@ async function writeItems(items, {library, collections = [], tags = []} = {}){
 }
 
 export {
+	cleanBibliographyHTML,
 	fetchBibliography,
 	fetchCitoid,
 	fetchCollections,

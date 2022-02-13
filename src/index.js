@@ -27,12 +27,13 @@ window.zoteroRoam = {};
 	setupPortals(extensionSlot, extension.portalId);
 
 	let {
-		dataRequests = [],
 		autocomplete = {},
 		autoload = false,
 		copy = {},
+		dataRequests = [],
 		metadata = {},
 		notes = {},
+		pageMenu = {},
 		render_inline = false,
 		shortcuts = {},
 		typemap = {},
@@ -59,6 +60,11 @@ window.zoteroRoam = {};
 				split_char: "/n",
 				use: "text",
 				...notes
+			},
+			pageMenu: {
+				defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
+				trigger: (title) => title.length > 3 || false,
+				...pageMenu
 			},
 			render_inline,
 			shortcuts: {

@@ -1,4 +1,4 @@
-import { fetchBibliography } from "./utils";
+import { cleanBibliographyHTML, fetchBibliography } from "./utils";
 
 /** Returns an item's formatted bibliography as returned by the Zotero API
  * @param {ZoteroItem} item - The targeted Zotero item
@@ -8,8 +8,8 @@ import { fetchBibliography } from "./utils";
  */
 async function _getBibliography(item, library, config){
 	let itemKey = item.data.key;
-
-	return await fetchBibliography(itemKey, library, config);
+	let bib = await fetchBibliography(itemKey, library, config);
+	return cleanBibliographyHTML(bib);
 }
 
 /** Returns all children of a given item available in the query cache

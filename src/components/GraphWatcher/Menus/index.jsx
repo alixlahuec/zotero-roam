@@ -9,13 +9,14 @@ import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
-import { ExtensionContext } from "../../App";
+import { ExtensionContext, UserSettings } from "../../App";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
 import { cleanRelatedItem } from "./utils";
 import "./index.css";
 
 function CitekeyMenuFactory({ menus }){
 	const { dataRequests } = useContext(ExtensionContext);
+	const { pageMenu: { trigger } } = useContext(UserSettings);
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -29,10 +30,19 @@ function CitekeyMenuFactory({ menus }){
 		if (!citekeyItems) {
 			return null;
 		} else {
-			return menus.map(menu => {
-				let item = citekeyItems.find(it => it.key == menu.getAttribute("data-citekey"));
-				return { div: menu, item };
-			})
+			return menus
+				.filter(menu => {
+					if(trigger.constructor === Boolean){
+						return trigger;
+					} else {
+						let title = menu.getAttribute("data-citekey");
+						return trigger(title);
+					}
+				})
+				.map(menu => {
+					let item = citekeyItems.find(it => it.key == menu.getAttribute("data-citekey"));
+					return { div: menu, item };
+				})
 				.filter(menu => menu.item)
 				.map((menu, i) => {
 					let { item, div } = menu;
@@ -41,7 +51,7 @@ function CitekeyMenuFactory({ menus }){
 					);
 				});
 		}
-	}, [citekeyItems, itemList, menus]);
+	}, [citekeyItems, itemList, menus, trigger]);
 
 	return citekeyMenus;
 }
@@ -51,6 +61,7 @@ CitekeyMenuFactory.propTypes = {
 
 function DNPMenuFactory({ menus }){
 	const { dataRequests } = useContext(ExtensionContext);
+	const { pageMenu: { trigger } } = useContext(UserSettings);
 	const [roamCitekeys,] = useRoamCitekeys();
 
 	const itemQueries = useQuery_Items(dataRequests, { 
@@ -67,14 +78,23 @@ function DNPMenuFactory({ menus }){
 		if(!items){
 			return null;
 		} else {
-			return menus.map(menu => {
-				let title = menu.getAttribute("data-title");
-				let dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date"))).toDateString();
-				let added = items
-					.filter(it => new Date(it.data.dateAdded).toDateString() == dnp_date)
-					.map(it => cleanRelatedItem(it, {pdfs, notes}, roamCitekeys));
-				return { div: menu, added, date: dnp_date, title};
-			})
+			return menus
+				.filter(menu => {
+					if(trigger.constructor === Boolean){
+						return trigger;
+					} else {
+						let title = menu.getAttribute("data-title");
+						return trigger(title);
+					}
+				})
+				.map(menu => {
+					let title = menu.getAttribute("data-title");
+					let dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date"))).toDateString();
+					let added = items
+						.filter(it => new Date(it.data.dateAdded).toDateString() == dnp_date)
+						.map(it => cleanRelatedItem(it, {pdfs, notes}, roamCitekeys));
+					return { div: menu, added, date: dnp_date, title};
+				})
 				.filter(menu => menu.added)
 				.map((menu, i) => {
 					let { added, date, div, title } = menu;
@@ -84,7 +104,7 @@ function DNPMenuFactory({ menus }){
 					);
 				});
 		}
-	}, [itemList, menus, roamCitekeys]);
+	}, [itemList, menus, roamCitekeys, trigger]);
 
 	return dnpPortals;
 }
@@ -94,6 +114,7 @@ DNPMenuFactory.propTypes = {
 
 function TagMenuFactory({ menus }){
 	const { dataRequests } = useContext(ExtensionContext);
+	const { pageMenu: { trigger } } = useContext(UserSettings);
 	const [roamCitekeys,] = useRoamCitekeys();
 	
 	const itemQueries = useQuery_Items(dataRequests, { 
@@ -124,20 +145,29 @@ function TagMenuFactory({ menus }){
 		if(!items){
 			return null;
 		} else {
-			return menus.map(menu => {
-				let title = menu.getAttribute("data-title");
-				let results = with_tags_or_abstract.reduce((obj, item) => {
-					if(item.abstract.includes(title)){
-						obj.with_abstract.push(cleanRelatedItem(item.itemData, { pdfs, notes }, roamCitekeys));
+			return menus
+				.filter(menu => {
+					if(trigger.constructor === Boolean){
+						return trigger;
+					} else {
+						let title = menu.getAttribute("data-title");
+						return trigger(title);
 					}
-					if(item.tagList.includes(title)){
-						obj.with_tags.push(cleanRelatedItem(item.itemData, { pdfs, notes }, roamCitekeys));
-					}
-					return obj;
-				}, { with_tags: [], with_abstract: []});
-                
-				return { div: menu, tag: title, ...results };
-			})
+				})
+				.map(menu => {
+					let title = menu.getAttribute("data-title");
+					let results = with_tags_or_abstract.reduce((obj, item) => {
+						if(item.abstract.includes(title)){
+							obj.with_abstract.push(cleanRelatedItem(item.itemData, { pdfs, notes }, roamCitekeys));
+						}
+						if(item.tagList.includes(title)){
+							obj.with_tags.push(cleanRelatedItem(item.itemData, { pdfs, notes }, roamCitekeys));
+						}
+						return obj;
+					}, { with_tags: [], with_abstract: []});
+					
+					return { div: menu, tag: title, ...results };
+				})
 				.filter(menu => menu.with_tags.length > 0 || menu.with_abstract.length > 0)
 				.map((menu,i) => {
 					let { with_tags, with_abstract, div, tag } = menu;
@@ -147,7 +177,7 @@ function TagMenuFactory({ menus }){
 					);
 				});
 		}
-	}, [itemList, menus, roamCitekeys, with_tags_or_abstract]);
+	}, [itemList, menus, roamCitekeys, trigger, with_tags_or_abstract]);
 
 	return tagPortals;
 }
