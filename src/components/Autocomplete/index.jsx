@@ -7,10 +7,10 @@ import { useQuery_Items } from "../../api/queries";
 import { ExtensionContext, UserSettings } from "../App";
 import "./index.css";
 
-const tributeClass = "zotero-roam-tribute";
+const tributeClass = "zr-tribute";
 
 const tributeConfig = {
-	selectClass: "zotero-roam-tribute-selected",
+	selectClass: "zr-tribute--selected",
 	containerClass: tributeClass,
 	lookup: "display",
 	menuShowMinLength: 1,
@@ -19,7 +19,7 @@ const tributeConfig = {
 		let { itemType, display } = item.original;
 		return `
         <span data-item-type="${itemType}"></span>
-        <span>${display}</span>
+        <span class="zr-tribute--item-details">${display}</span>
         `;
 	},
 	noMatchTemplate: function () {
