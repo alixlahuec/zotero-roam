@@ -161,7 +161,7 @@ const Item = React.memo(function Item({ entry, library }){
 						</>
 						: <>
 							<MergeInput 
-								defaultValue={entry.roam[0]?.title || null} 
+								defaultValue={entry.roam[0]?.title || ""} 
 								disabled={deleteStatus == "loading"} 
 								library={library} 
 								selectedTags={selectedTags} />
