@@ -12,11 +12,6 @@ async function _getBibliography(item, library, config){
 	return await fetchBibliography(itemKey, library, config);
 }
 
-function _getCollections(library, queryClient){
-	const { apikey, path } = library;
-	return queryClient.getQueryData(["collections", { apikey, library: path }]);
-}
-
 /** Returns all children of a given item available in the query cache
  * @param {ZoteroItem} item - The targeted Zotero item
  * @param {*} queryClient - The React Query client to use
@@ -26,6 +21,12 @@ function _getChildren(item, queryClient) {
 	let location = item.library.type + "s/" + item.library.id;
 	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, queryClient)
 		.filter(el => el.data.parentItem == item.data.key);
+}
+
+function _getCollections(library, queryClient){
+	const { apikey, path } = library;
+	let datastore = queryClient.getQueryData(["collections", { apikey, library: path }]);
+	return datastore.data;
 }
 
 /** Returns the current items in the query cache, with optional configuration

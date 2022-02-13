@@ -100,11 +100,10 @@ async function fetchBibliography(itemKey, library, config = {}) {
 				linkwrap,
 				locale,
 				style
-			}});
-		// For debugging
-		console.log(response);
+			}
+		});
 		
-		return response[include];
+		return response[0].data[include];
 	} catch(error){
 		return Promise.reject(error);
 	}

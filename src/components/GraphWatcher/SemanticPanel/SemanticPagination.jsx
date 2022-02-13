@@ -113,7 +113,6 @@ const SemanticPagination = React.memo(function SemanticPagination(props){
 				<InputGroup
 					autoComplete="off"
 					id={"semantic-search--" + type}
-					fill={true}
 					leftIcon="search"
 					onChange={handleSearch}
 					placeholder="Search by title, authors (last names), or year"

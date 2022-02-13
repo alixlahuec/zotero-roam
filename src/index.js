@@ -2,10 +2,12 @@ import React from "react";
 import { render as ReactDOMRender } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
+import zrToaster from "./components/ExtensionToaster";
+
 import { App, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
 import { setDefaultHooks } from "./events";
+import { getItemCreators, getItemTags, _getItemCollections, _getItemRelated, _getItemType } from "./public";
 import { registerSmartblockCommands } from "./smartblocks";
-import zrToaster from "./components/ExtensionToaster";
 import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
 import { default_typemap } from "./variables";
 
@@ -88,13 +90,25 @@ window.zoteroRoam = {};
 			return await getBibliography(item, library, config);
 		};
 
-		window.zoteroRoam.getCollections = (item) => {
-			let { libraries } = requests;
+		window.zoteroRoam.getItemCollections = (item, { brackets = true } = {}) => {
 			let location = item.library.type + "s/" + item.library.id;
-			let library = libraries.find(lib => lib.path == location);
+			let library = requests.libraries.find(lib => lib.path == location);
+			let collectionList = getCollections(library);
 
-			return getCollections(library);
+			return _getItemCollections(item, collectionList, { brackets });
 		};
+
+		window.zoteroRoam.getItemCreators = getItemCreators;
+		window.zoteroRoam.getItemTags = getItemTags;
+
+		window.zoteroRoam.getItemRelated = (item, { return_as = "citekeys", brackets = true } = {}) => {
+			const { type: libType, id: libID } = item.library;
+			const datastore = getItems("items").filter(it => it.library.id == libID && it.library.type == libType);
+			
+			return _getItemRelated(item, datastore, { return_as, brackets });
+		};
+
+		window.zoteroRoam.getItemType = (item, { brackets = true } = {}) => _getItemType(item, window.zoteroRoam.config.userSettings.typemap, { brackets });
 
 		window.zoteroRoam.getTags = (location) => {
 			let { libraries } = requests;
