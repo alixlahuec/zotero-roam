@@ -33,8 +33,11 @@ function categorizeZoteroTags(z_data, tagMap){
 	return output.sort((a,b) => a.token < b.token ? -1 : 1);
 }
 
-// Process the XHTML bibliography into a Roam format
 // TODO: Explore whether there are other potential tags or styles to convert, besides italics
+/** Parses the XHTML bibliography for a Zotero item into Roam formatting
+ * @param {String} bib - The item's XHTML bibliography
+ * @returns The clean bibliography string
+ */
 function cleanBibliographyHTML(bib){
 	// Grab only the string (strip outer divs)
 	let bibString = bib.match("csl-entry\">(.+)</div>")[1];
@@ -51,6 +54,12 @@ function cleanBibliographyHTML(bib){
 	return formattedBib;
 }
 
+/** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
+ * @param {String[]} tags - The names of the tags to be deleted
+ * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @param {Number} version - The last known version of the Zotero library
+ * @returns The outcome of the Axios API call
+ */
 function deleteTags(tags, library, version){
 	const { apikey, path } = library;
 	// TODO: Handle case where more than 50 tags need to be deleted
@@ -448,6 +457,11 @@ function writeCitoids(items, {library, collections = [], tags = []} = {}){
 	return zoteroClient.post(`${path}/items`, JSON.stringify(data), { headers: { "Zotero-API-Key": apikey } });
 }
 
+/** Modifies data for existing items in a Zotero library
+ * @param {Object[]} dataList - The data array containing the modifications
+ * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @returns The outcome of the Axios API call
+ */
 function writeItems(dataList, library){
 	const { apikey, path } = library;
 	// TODO: Handle case where more than 50 items are selected for import

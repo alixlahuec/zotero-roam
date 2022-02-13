@@ -1,16 +1,19 @@
 import { useMutation, useQueryClient } from "react-query";
-
-import { emitCustomEvent } from "../events";
 import { deleteTags, writeCitoids, writeItems } from "./utils";
+import { emitCustomEvent } from "../events";
 
+/** Delete tags from a Zotero library
+ * @fires zotero-roam:write
+ * @returns 
+ */
 const useDeleteTags = () => {
 	let client = useQueryClient();
 
 	return useMutation((variables) => {
-		const { library, tags } = variables;
-		let { version } = client.getQueryData(["tags", library]);
+		const { library: { apikey, path }, tags } = variables;
+		let { lastUpdated: version } = client.getQueryData(["tags", { apikey, library: path }]);
 
-		return deleteTags(tags, library, version);
+		return deleteTags(tags, { apikey, path }, version);
 	}, {
 		onSettled: (data, error, variables, _context) => {
 			const { library: { path }, tags } = variables;
@@ -67,6 +70,10 @@ const useImportCitoids = () => {
 	});
 };
 
+/** Modifies tags in a Zotero library
+ * @fires zotero-roam:write
+ * @returns
+ */
 const useModifyTags = () => {
 	let client = useQueryClient();
 

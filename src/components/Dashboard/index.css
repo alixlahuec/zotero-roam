@@ -3,7 +3,7 @@
     margin-left: calc(15vw + 2.5%);
 }
 
-.zr-dashboard--main {
+.zr-dashboard--main > .bp3-tabs > * {
     padding: 10px;
 }
 
@@ -15,8 +15,9 @@
     margin-right: 8px;
 }
 
-.zr-tagmanager--header {
-    margin: 5px 0px;
+.zr-tagmanager--datalist .zr-datalist--listwrapper {
+    border-top: 1px #cccccc solid;
+    border-bottom: 1px #cccccc solid;
 }
 
 .zr-tagmanager--datalist .zr-datalist--item {
@@ -40,7 +41,7 @@
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] {
     align-items: end;
     display: flex;
-    flex: 0 0 33%;
+    flex: 0 0 40%;
     flex-direction: column;
 }
 
@@ -82,6 +83,10 @@
 @media (prefers-color-scheme: dark){
     .zr-dashboard--main > .bp3-tabs > .bp3-tab-list > .bp3-tab[aria-selected="true"] {
         background: var(--zr-dark-selected-bc,#191919);
+    }
+    .zr-tagmanager--datalist .zr-datalist--listwrapper {
+        border-top: 1px var(--zr-dark-border-color,#363a3f) solid;
+        border-bottom: 1px var(--zr-dark-border-color,#363a3f) solid;
     }
     .zr-tag--roam.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {
         background-color: #e7f5ff14;
