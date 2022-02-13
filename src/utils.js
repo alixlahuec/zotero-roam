@@ -4,7 +4,7 @@ import "./typedefs";
 
 /** Generates a data requests configuration object
  * @param {Array} reqs - Data requests provided by the user
- * @returns {{dataRequests: Array, apiKeys: Array, libraries: Array}} A configuration object for the extension to use
+ * @returns {{dataRequests: {dataURI: String, apikey: String, params: String, name: String, library: String}[], apiKeys: Array, libraries: Array}} A configuration object for the extension to use
  */
 function analyzeUserRequests(reqs){
 	if(reqs.length == 0){

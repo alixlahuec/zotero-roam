@@ -1,12 +1,13 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { arrayOf, func, number, shape, string } from "prop-types";
+import { arrayOf, bool, func, number, shape, string } from "prop-types";
 import { Button, ButtonGroup, Callout, Classes, FormGroup, HTMLSelect, InputGroup, NonIdealState, Spinner, Switch, Tag } from "@blueprintjs/core";
 
+import { ExtensionContext } from "../App";
 import { ListItem, ListWrapper, Pagination, Toolbar } from "../DataList";
 import SortButtons from "../SortButtons";
-import { ExtensionContext } from "../App";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../api/queries";
+import { useDeleteTags, useModifyTags } from "../../api/write";
 import { getTagStats, getTagUsage, matchTagData, pluralize, sortTags } from "../../utils";
 import * as customPropTypes from "../../propTypes";
 
@@ -34,11 +35,10 @@ RoamTag.propTypes = {
 	uid: string
 };
 
-function ZoteroTag({ tagElement }){
+function ZoteroTag({ handleSelect = () => {}, isSelected = true, tagElement }){
 	const { tag, meta: { numItems, type = 0 } } = tagElement;
-	const [isSelected, setIsSelected] = useState(true);
 
-	const handleSelect = useCallback(() => setIsSelected(prev => !prev), []);
+	const onClick = useCallback(() => handleSelect(tag), [handleSelect, tag]);
 
 	return (
 		<Tag 
@@ -47,19 +47,90 @@ function ZoteroTag({ tagElement }){
 			interactive={true} 
 			minimal={true} 
 			multiline={true} 
-			onClick={handleSelect}
+			onClick={onClick}
 			data-tag-source="zotero" data-tag={tag} data-tag-type={type} >
 			{tag + "(" + numItems + ")"}
 		</Tag>
 	);
 }
 ZoteroTag.propTypes = {
+	handleSelect: func,
+	isSelected: bool,
 	tagElement: customPropTypes.zoteroTagType
 };
 
-const Item = React.memo(function Item({ entry }){
+function MergeInput(props){
+	const { defaultValue, disabled, library, selectedTags } = props;
+	const [value, setValue] = useState(defaultValue);
+	const { mutate, status } = useModifyTags();
+
+	const handleChange = useCallback((event) => {
+		let val = event.target?.value;
+		setValue(val);
+	}, []);
+
+	const triggerMerge = useCallback(() => {
+		mutate({
+			into: value,
+			library,
+			tags: selectedTags
+		}, {
+			onSettled: (data, error, variables) => console.log(data, error, variables)
+		});
+	}, [library, mutate, selectedTags, value]);
+
+	const mergeButton = useMemo(() => {
+		return <Button 
+			className="zr-text-small" 
+			disabled={disabled || selectedTags.length == 0 || value.length == 0} 
+			intent="primary"
+			loading={status == "loading"}
+			minimal={true} 
+			onClick={triggerMerge}
+			text="Merge tags" />;
+	}, [disabled, status, selectedTags.length, triggerMerge, value]);
+
+	return (
+		<InputGroup 
+			disabled={disabled || selectedTags.length == 0 || status == "loading"}
+			onChange={handleChange}
+			rightElement={mergeButton}
+			small={true}
+			value={value} />
+	);
+}
+MergeInput.propTypes = {
+	defaultValue: string,
+	disabled: bool,
+	library: customPropTypes.zoteroLibraryType,
+	selectedTags: arrayOf(string)
+};
+
+const Item = React.memo(function Item({ entry, library }){
+	const [selectedTags, setSelectedTags] = useState(Array.from(new Set(entry.zotero.map(t => t.tag))));
+	const { mutate, status: deleteStatus } = useDeleteTags();
+	
 	const is_singleton = isSingleton(entry);
 	const usage = getTagUsage(entry);
+
+	const handleSelect = useCallback((tag) => {
+		setSelectedTags(prevSelection => {
+			if(prevSelection.includes(tag)){
+				return prevSelection.filter(el => el != tag);
+			} else {
+				return [...prevSelection, tag];
+			}
+		});
+	}, []);
+
+	const triggerDelete = useCallback(() => {
+		mutate({
+			library,
+			tags: selectedTags
+		}, {
+			onSettled: (data, error, variables) => console.log(data, error, variables)
+		});
+	}, [library, mutate, selectedTags]);
 
 	return (
 		<ListItem data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
@@ -70,34 +141,51 @@ const Item = React.memo(function Item({ entry }){
 					? null
 					: <div className="zr-text-small">
 						{entry.roam.map(elem => <RoamTag key={elem.title} text={elem.title} uid={elem.uid} /> )}
-						{entry.zotero.map((elem) => <ZoteroTag key={[elem.tag, elem.meta.type].join("_")} tagElement={elem} /> )}
+						{entry.zotero.map((elem) => {
+							const { tag, meta: { type }} = elem;
+							return <ZoteroTag key={[tag, type].join("_")} handleSelect={handleSelect} isSelected={selectedTags.includes(tag)} tagElement={elem} />;
+						} )}
 					</div>}
 			</div>
 			<span zr-role="item-actions" >
-				{is_singleton
-					? <ButtonGroup>
-						<Button intent="primary" text="Edit" />
-						<Button icon="trash" intent="danger" text="Delete" />
-					</ButtonGroup>
-					: <>
-						<InputGroup 
-							defaultValue={entry.roam[0]?.title || null}
-							rightElement={<Button className="zr-text-small" intent="primary" minimal={true} text="Merge tags" />}
-							small={true} />
-						<ButtonGroup minimal={true} >
-							<Button className="zr-text-small" icon="trash" intent="danger" text="Delete" />
-						</ButtonGroup>
-					</>}
+				<ButtonGroup minimal={true} >
+					{is_singleton
+						? <>
+							<Button intent="primary" text="Edit" />
+							<Button 
+								icon="trash" 
+								intent="danger" 
+								loading={deleteStatus == "loading"} 
+								onClick={triggerDelete} 
+								text="Delete" />
+						</>
+						: <>
+							<MergeInput 
+								defaultValue={entry.roam[0]?.title || null} 
+								disabled={deleteStatus == "loading"} 
+								library={library} 
+								selectedTags={selectedTags} />
+							<Button 
+								className="zr-text-small" 
+								disabled={selectedTags.length == 0} 
+								icon="trash" 
+								intent="danger"
+								loading={deleteStatus == "loading"}
+								onClick={triggerDelete} 
+								text="Delete" />
+						</>}
+				</ButtonGroup>
 			</span>
 		</ListItem>
 	);
 });
 Item.propTypes = {
-	entry: customPropTypes.taglistEntry
+	entry: customPropTypes.taglistEntry,
+	library: customPropTypes.zoteroLibraryType
 };
 
 const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
-	const { currentPath, onSelect, options } = libProps;
+	const { currentLibrary: { path }, onSelect, options } = libProps;
 	const handleSelect = useCallback((event) => {
 		let value = event.currentTarget?.value;
 		if(value){ onSelect(value); }
@@ -109,13 +197,13 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 			inline={true}
 			label="Library :"
 			labelFor="zr-select--library">
-			<HTMLSelect id="zr-select--library" minimal={true} onChange={handleSelect} options={options} value={currentPath} />
+			<HTMLSelect id="zr-select--library" minimal={true} onChange={handleSelect} options={options} value={path} />
 		</FormGroup>
 	);
 });
 LibrarySelect.propTypes = {
 	libProps: shape({
-		currentPath: string,
+		currentLibrary: customPropTypes.zoteroLibraryType,
 		onSelect: func,
 		options: arrayOf(string)
 	})
@@ -210,7 +298,7 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 						? sortedItems
 							.slice(...pageLimits)
 							.map(el => 
-								<Item key={el.token} entry={el} />)
+								<Item key={el.token} entry={el} library={libProps.currentLibrary} />)
 						: <NonIdealState className="zr-auxiliary" description="No items in the current view" />}
 				</ListWrapper>
 				<Toolbar>
@@ -228,7 +316,7 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 TagsDatalist.propTypes = {
 	items: arrayOf(customPropTypes.taglistEntry),
 	libProps: shape({
-		currentPath: string,
+		currentLibrary: customPropTypes.zoteroLibraryType,
 		onSelect: func,
 		options: arrayOf(string)
 	})
@@ -247,11 +335,11 @@ const TabContents = React.memo(function TabContents(props){
 	const handleLibrarySelect = useCallback((path) => setSelectedLibrary(libraries.find(lib => lib.path == path)), [libraries]);
 	const libProps = useMemo(() => {
 		return {
-			currentPath: selectedLibrary.path,
+			currentLibrary: selectedLibrary,
 			onSelect: handleLibrarySelect,
 			options: libOptions
 		};
-	}, [handleLibrarySelect, libOptions, selectedLibrary.path]);
+	}, [handleLibrarySelect, libOptions, selectedLibrary]);
 
 	return (
 		<>

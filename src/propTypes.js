@@ -171,7 +171,7 @@ const userSettingsType = shape({
 	}),
 	pageMenu: shape({
 		defaults: arrayOf(string),
-		trigger: func
+		trigger: oneOf(func, bool)
 	}),
 	render_inline: bool,
 	shortcuts: object,

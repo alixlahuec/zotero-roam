@@ -51,6 +51,19 @@ function cleanBibliographyHTML(bib){
 	return formattedBib;
 }
 
+function deleteTags(tags, library, version){
+	const { apikey, path } = library;
+	// TODO: Handle case where more than 50 tags need to be deleted
+	// https://www.zotero.org/support/dev/web_api/v3/write_requests#deleting_multiple_tags
+	let tagList = tags.map(t => encodeURIComponent(t)).join("||");
+	return zoteroClient.delete(`${path}/tags?tag=${tagList}`, { 
+		headers: { 
+			"Zotero-API-Key": apikey,
+			"If-Unmodified-Since-Version": version
+		} 
+	});
+}
+
 /** Extracts pinned citekeys from a dataset
  * @param {ZoteroItem[]} arr - The dataset of Zotero items to scan
  * @returns {Object[]} The processed dataset : each item gains a `has_citekey` property, and its `key` property is assigned its citekey 
@@ -416,7 +429,7 @@ function parseSemanticDOIs(arr){
  * @param {{library: {apikey: String, path: String}, collections: String[], tags: String[]}} config - The options to be used for the import. 
  * @returns 
  */
-async function writeItems(items, {library, collections = [], tags = []} = {}){
+function writeCitoids(items, {library, collections = [], tags = []} = {}){
 	const { apikey, path } = library;
 	const clean_tags = tags.map(t => { return { tag: t }; });
 
@@ -435,8 +448,16 @@ async function writeItems(items, {library, collections = [], tags = []} = {}){
 	return zoteroClient.post(`${path}/items`, JSON.stringify(data), { headers: { "Zotero-API-Key": apikey } });
 }
 
+function writeItems(dataList, library){
+	const { apikey, path } = library;
+	// TODO: Handle case where more than 50 items are selected for import
+	// https://www.zotero.org/support/dev/web_api/v3/write_requests#updating_multiple_objects
+	return zoteroClient.post(`${path}/items`, JSON.stringify(dataList), { headers: { "Zotero-API-Key": apikey } });
+}
+
 export {
 	cleanBibliographyHTML,
+	deleteTags,
 	fetchBibliography,
 	fetchCitoid,
 	fetchCollections,
@@ -444,5 +465,6 @@ export {
 	fetchPermissions,
 	fetchSemantic,
 	fetchTags,
+	writeCitoids,
 	writeItems
 };
