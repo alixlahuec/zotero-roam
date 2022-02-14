@@ -19,10 +19,11 @@
     font-size: 0.85em;
     line-height: 1.5em;
     display: flex;
+    justify-content: space-between;
 }
 
 .zr-tribute--item-details {
-    padding: 0px 6px;
+    flex: 0 1 100%;
 }
 
 .zr-tribute--selected {

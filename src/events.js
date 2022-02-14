@@ -19,13 +19,23 @@ const events = [
     * @event zotero-roam:notes-added
     * @type {object}
 	* @property {{blocks: Array, uid: String}} args - The configuration used for the import
-	@property {error|null} error - The error thrown during the import, if failed
-	@property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-	@property {{item: ZoteroItem, notes: ZoteroItem[]}} raw - The raw data provided as input
-	@property {Boolean|null} success - Indicates if the update was successful
-	@see importItemNotes
+	* @property {error|null} error - The error thrown during the import, if failed
+	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
+	* @property {{item: ZoteroItem, notes: ZoteroItem[]}} raw - The raw data provided as input
+	* @property {Boolean|null} success - Indicates if the update was successful
+	* @see importItemNotes
     */
 	"notes-added",
+	/**
+	 * Signals a tag deletion has terminated
+	 * @event zotero-roam:tags-deleted
+	 * @type {object}
+	 * @property {error|null} error - The error thrown during the import, if failed
+	 * @property {String} library - The path of the targeted library
+	 * @property {String[]} tags - The array of targeted tags
+	 * @see useDeleteTags
+	 */
+	"tags-deleted",
 	/**
     * Signals a data update for items has terminated
      * @event zotero-roam:update

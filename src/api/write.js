@@ -23,6 +23,8 @@ const useDeleteTags = () => {
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
 					refetchInactive: true
+				}, {
+					throwOnError: true
 				});
 			}
 
