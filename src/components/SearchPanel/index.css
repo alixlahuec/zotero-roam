@@ -72,6 +72,10 @@ label.zr-quick-copy {
     #zotero-roam-search-autocomplete {
         background: var(--zr-dark-dialog-bg, #242424);
         border-bottom-color: var(--zr-dark-border-color,#363a3f);
+        color: var(--zr-dark-text-co,#76a0cb);
+    }
+    #zotero-roam-search-autocomplete::placeholder {
+        opacity:0.8;
     }
     .zr-dialog-overlay--search-library .zotero-roam-search_result[data-in-graph="true"] .zr-library-item--key {
         background-color: var(--zr-dark-positive-bc, #5863582e);

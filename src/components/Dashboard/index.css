@@ -16,6 +16,12 @@
     margin-right: 8px;
 }
 
+.zr-tagmanager--header {
+    align-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
 .zr-tagmanager--datalist .zr-datalist--listwrapper {
     border-top: 1px #cccccc solid;
     border-bottom: 1px #cccccc solid;
@@ -42,7 +48,7 @@
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] {
     align-items: end;
     display: flex;
-    flex: 0 0 36%;
+    flex: 0 0 33%;
     flex-direction: column;
 }
 
@@ -71,12 +77,14 @@
 }
 
 .zr-tagmanager--datalist [zr-role="list-stats"] {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
     padding: 5px 0px;
-    text-align: center;
 }
 
 .zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-text"] {
-    display: block;
+    flex: 0 0 100%;
 }
 
 .zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-figures"] {
@@ -84,9 +92,9 @@
 }
 
 .zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-bar"] {
-    display: flex;
-    flex: 0 0 50%;
+    flex: 0 0 auto;
     flex-direction: column;
+    margin: 3px 10px;
 }
 
 .zr-tagmanager--datalist [zr-role="list-stats"] .bp3-progress-bar {
@@ -96,9 +104,7 @@
 /* DARK THEMES */
 
 @media (prefers-color-scheme: dark){
-    .zr-dashboard--main .bp3-tab-panel {
-        background: var(--zr-dark-dialog-bg, #242424);
-    }
+    .zr-dashboard--main .bp3-tab-panel,
     .zr-dashboard--main > .bp3-tabs > .bp3-tab-list > .bp3-tab[aria-selected="true"] {
         background: var(--zr-dark-selected-bc,#191919);
     }

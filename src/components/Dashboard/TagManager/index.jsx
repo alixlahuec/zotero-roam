@@ -33,7 +33,9 @@ const TabContents = React.memo(function TabContents({ libraries, onClose }){
 	return (
 		<>
 			<div className={["zr-tagmanager--header", "zr-auxiliary"].join(" ")}>
-                Rename, merge, and delete tags between <RoamTag text="Roam" /> and <Tag active={true} className={["zr-tag--zotero", Classes.ACTIVE, Classes.MINIMAL].join(" ")}>Zotero</Tag>
+				<span>
+					Rename, merge, and delete tags between <RoamTag text="Roam" /> and <Tag active={true} className={["zr-tag--zotero", Classes.ACTIVE, Classes.MINIMAL].join(" ")}>Zotero</Tag>
+				</span>
 				<Button icon="small-cross" minimal={true} onClick={onClose} />
 			</div>
 			<div className="zr-tagmanager--datalist">

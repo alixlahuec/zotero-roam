@@ -28,7 +28,6 @@ function MergeInput(props){
 
 	const mergeButton = useMemo(() => {
 		const sharedProps = {
-			active: true,
 			className: "zr-text-small",
 			disabled: disabled || selectedTags.length == 0 || value.length == 0 || status == "success",
 			loading: status == "loading",
@@ -39,7 +38,7 @@ function MergeInput(props){
 		return <Button 
 			{...sharedProps}
 			icon={status == "success" ? "small-tick" : "arrow-right"}
-			intent={status == "success" ? "success" : "primary"}
+			intent={status == "success" ? "success" : "none"}
 			text={status == "success" ? "Done" : "Merge"} />;
 	}, [disabled, status, selectedTags.length, triggerMerge, value]);
 

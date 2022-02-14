@@ -104,6 +104,21 @@ function setDefaultHooks(){
 			});
 		}
 	});
+	document.addEventListener("zotero-roam:tags-deleted", (e) => {
+		let { error, library, tags } = e.detail;
+		if(error){
+			console.error(error);
+			zrToaster.show({
+				intent: "danger",
+				message: `Tag deletion failed : \n ${error}`
+			});
+		} else {
+			zrToaster.show({
+				intent: "success",
+				message: pluralize(tags.length, "tag", ` deleted from ${library}`)
+			});
+		}
+	});
 }
 
 export {
