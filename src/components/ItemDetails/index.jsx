@@ -119,7 +119,6 @@ function ItemDetails(props) {
 		const { pdfs = [], notes = [] } = children;
 		const outcome = await importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings);
 		if(outcome.success){
-			// TODO: This isn't updating the item view, debug
 			updateRoamCitekeys();
 		}
 		return outcome;

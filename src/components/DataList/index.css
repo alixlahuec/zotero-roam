@@ -35,6 +35,18 @@ ul.zr-datalist--listwrapper {
     padding: 5px 10px;
 }
 
+/* SMALLER DISPLAYS */
+
+@media (max-width: 700px){
+    .zr-datalist--toolbar {
+        flex-direction: column;
+    }
+    .zr-datalist--toolbar > * {
+        justify-content: space-between;
+        width: 100%;
+    }
+}
+
 /* DARK THEMES */
 
 @media (prefers-color-scheme: dark){

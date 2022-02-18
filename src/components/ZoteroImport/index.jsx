@@ -1,9 +1,10 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, bool, func, shape, string} from "prop-types";
-import { Button, ButtonGroup, Callout, Spinner } from "@blueprintjs/core";
+import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
+import NoWriteableLibraries from "../Errors/NoWriteableLibraries";
 import TagsSelector from "./TagsSelector";
 
 import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
@@ -13,8 +14,6 @@ import { sortCollections } from "../../utils";
 import { ExtensionContext } from "../App";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
-
-const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
 
 const ImportButton = React.memo(function ImportButton(props) {
 	const { identifiers, importProps, isActive, resetImport } = props;

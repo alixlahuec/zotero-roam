@@ -17,9 +17,10 @@
 }
 
 .zr-tagmanager--header {
-    align-content: space-between;
     align-items: center;
     display: flex;
+    flex: 0 0 100%;
+    justify-content: space-between;
 }
 
 .zr-tagmanager--datalist .zr-datalist--item {
@@ -94,6 +95,21 @@
 
 .zr-tagmanager--datalist [zr-role="list-stats"] .bp3-progress-bar {
     max-width: 100px;
+}
+
+/* SMALLER DISPLAYS */
+
+@media (max-width: 1000px){
+    .bp3-dialog.zr-auxiliary-dialog--dashboard {
+        width: calc(95% - 10vw);
+        margin-left: calc(5vw + 2.5%);
+    }
+    .zr-dashboard--main .bp3-tab-list .bp3-tab .bp3-icon {
+        margin-right: 0px;
+    }
+    .zr-dashboard--main .bp3-tab-list .bp3-tab .bp3-icon + * {
+        display: none;
+    }
 }
 
 /* DARK THEMES */

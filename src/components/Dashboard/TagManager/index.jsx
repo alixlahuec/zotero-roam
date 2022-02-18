@@ -1,16 +1,14 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, func } from "prop-types";
-import { Button, Callout, Classes, Spinner, Tag } from "@blueprintjs/core";
+import { Button, Classes, Spinner, Tag } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
+import NoWriteableLibraries from "../../Errors/NoWriteableLibraries";
 import { RoamTag } from "./Tags";
 import TagsDatalist from "./TagsDatalist";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 import * as customPropTypes from "../../../propTypes";
-
-// TODO: Convert to globally accessible constant
-const NoWriteableLibraries = <Callout>No writeable libraries were found. Please check that your API key(s) have the permission to write to at least one of the Zotero libraries you use. <a href="https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials" target="_blank" rel="noreferrer">Refer to the extension docs</a> for more details.</Callout>;
 
 const TabContents = React.memo(function TabContents({ libraries, onClose }){
 	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);

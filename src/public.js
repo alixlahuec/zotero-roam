@@ -1,4 +1,23 @@
 import { findRoamPage } from "./roam";
+import { getPDFLink } from "./utils";
+
+function formatPDFs(pdfs, as = "links"){
+	if(!pdfs){
+		return [];
+	} else {
+		switch(as){
+		case "identity":
+			return pdfs.map(file => ({
+				title: file.data.title, 
+				key: file.key, 
+				link: getPDFLink(file, as = "href")
+			}));
+		case "links":
+		default:
+			return pdfs.map(file => getPDFLink(file, as = "markdown"));
+		}
+	}
+}
 
 function _getItemCollections(item, collectionList, { brackets = true } = {}){
 	if(item.data.collections.length > 0){
@@ -81,6 +100,7 @@ function _getItemType(item, typemap, { brackets = true } = {}){
 }
 
 export {
+	formatPDFs,
 	getItemCreators,
 	getItemTags,
 	_getItemCollections,

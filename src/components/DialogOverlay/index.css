@@ -1,8 +1,9 @@
 .bp3-dialog[class*="zr-dialog-overlay--"] {
     align-self: baseline;
+    box-shadow: none;
     margin-left: calc(20vw + 2.5%);
     padding-bottom: 0px;
-    box-shadow: none;
+    width: calc(95% - 40vw);
 }
 
 .bp3-dialog[class*="zr-dialog-overlay--"] {
@@ -15,30 +16,20 @@
     margin:0px;
 }
 
-/* SIDE PANEL */
-
-.bp3-dialog[class*="zr-dialog-overlay--"]:not(.bp3-dark) .side-panel {
-    background: white;
-}
-.bp3-dialog[class*="zr-dialog-overlay--"] .side-panel {
-    transition:0.5s;
-    font-size:0.8em;
-    overflow:auto;
-    border-radius: 0 6px 6px 0;
-}
-
-.bp3-dialog[class*="zr-dialog-overlay--"] .side-panel-contents {
-    width:20vw;
-}
-
 /* SMALLER DISPLAYS */
 
-@media (max-width:900px){
-    .side-panel-contents{width:min(20vw, 30px);}
+@media (max-width:1000px){
+    .bp3-dialog[class*="zr-dialog-overlay--"] {
+        margin-left: calc(10vw + 2.5%);
+        width: calc(95% - 20vw);
+    }
 }
 
-@media (max-width: 600px){
-    .bp3-dialog[class*="zr-dialog-overlay--"] {margin-left: calc(min(20vw, 30px) + 2.5%);}
+@media (max-width: 700px){
+    .bp3-dialog[class*="zr-dialog-overlay--"] {
+        margin-left: calc(5vw + 2.5%);
+        width: calc(95% - 10vw);
+    }
 }
 
 /* @media (max-width:600px){

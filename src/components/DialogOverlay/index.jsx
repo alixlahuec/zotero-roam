@@ -26,20 +26,6 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 		};
 	}, []);
 
-	const dialogStyle = useMemo(() => ({ width: "calc(95% - 40vw)" }), []);
-
-	/* const dialogStyle = useMemo(() => {
-		return {
-			width: isSidePanelOpen ? "calc(95% - 20vw)" : "calc(95% - 40vw)"
-		};
-	}, [isSidePanelOpen]); */
-
-	/* const sidePanelStyle = useMemo(() => {
-		return {
-			flex: isSidePanelOpen ? "1 0 20vw" : "0 0 0%";
-		};
-	}, [isSidePanelOpen]); */
-
 	return (
 		createPortal(
 			<Dialog
@@ -52,7 +38,6 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 				lazy={lazy}
 				onClose={onClose}
 				onOpening={onOpening}
-				style={dialogStyle}
 				usePortal={false}
 				{...otherProps}
 			>

@@ -10,7 +10,7 @@ import SemanticPanel from "../SemanticPanel";
 import { showClasses } from "../classes";
 import { useQuery_Semantic } from "../../../api/queries";
 import { findRoamPage, importItemMetadata, importItemNotes } from "../../../roam";
-import { cleanSemantic, compareItemsByYear, getLocalLink, getWebLink, parseDOI, pluralize } from "../../../utils";
+import { cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, parseDOI, pluralize } from "../../../utils";
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ItemDetails from "../../ItemDetails";
 import { UserSettings } from "../../App";
@@ -265,12 +265,10 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 		} else {
 			return (
 				pdfs.map(pdf => {
-					let location = pdf.library.type == "group" ? `groups/${pdf.library.id}` : "library";
-					let href = (["linked_file", "imported_file", "imported_url"].includes(pdf.data.linkMode)) ? `zotero://open-pdf/${location}/items/${pdf.data.key}` : pdf.data.url;
 					return (
 						<ButtonLink zr-role="pdf-link" key={pdf.key}
 							alignText="left"
-							href={href}
+							href={getPDFLink(pdf, "href")}
 							icon="paperclip"
 							minimal={true}
 							text={pdf.data.filename || pdf.data.title} />

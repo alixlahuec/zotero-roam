@@ -33,7 +33,6 @@ function categorizeZoteroTags(z_data, tagMap){
 	return output.sort((a,b) => a.token < b.token ? -1 : 1);
 }
 
-// TODO: Explore whether there are other potential tags or styles to convert, besides italics
 /** Parses the XHTML bibliography for a Zotero item into Roam formatting
  * @param {String} bib - The item's XHTML bibliography
  * @returns The clean bibliography string

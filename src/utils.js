@@ -357,7 +357,7 @@ function formatItemReference(item, format, {accent_class = "zr-highlight"} = {})
 	case "popover":
 		return `{{=: ${pub_summary || item.key} | {{embed: [[${citekey}]]}} }}`;
 	case "zettlr":
-		return [`<span class="${accent_class}">${pub_summary || item.key}</span>`, item.data.title].filter(Boolean).join(" : ");
+		return [`<span class="${accent_class}">${pub_summary || item.key}</span>`, item.data.title].filter(Boolean);
 	case "citekey":
 	default:
 		return citekey;
@@ -395,6 +395,33 @@ function getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
 	case "target":
 	default:
 		return target;
+	}
+}
+
+/** Creates a link to a specific PDF attachment in Zotero.
+ * If the PDF is a `linked_file`, `imported_file` or `imported_url`, the link opens through the local Zotero app ; otherwise, it's the PDF's URL.
+ * @param {ZoteroItem} pdfItem - The targeted Zotero PDF item
+ * @returns The link to the PDF
+ */
+function getPDFLink(pdfItem, as = "href"){
+	let libLoc = pdfItem.library.type == "group" ? `groups/${pdfItem.library.id}` : "library";
+	let href = "";
+	let name = "";
+	
+	if(["linked_file", "imported_file", "imported_url"].includes(pdfItem.data.linkMode)){
+		href = "zotero://open-pdf/" + libLoc + "/items/" + pdfItem.data.key;
+		name = pdfItem.data.filename || pdfItem.data.title;
+	} else {
+		href = pdfItem.data.url;
+		name = pdfItem.data.title;
+	}
+
+	switch(as){
+	case "markdown":
+		return `[${name}](${href})`;
+	case "href":
+	default:
+		return href;
 	}
 }
 
@@ -798,6 +825,7 @@ export {
 	formatItemNotes,
 	formatItemReference,
 	formatNotes,
+	getPDFLink,
 	getLocalLink,
 	getWebLink,
 	hasNodeListChanged,
