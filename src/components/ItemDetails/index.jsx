@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { bool, func, object, oneOf, string } from "prop-types";
-import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag/*, useHotkeys*/ } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ButtonLink from "../ButtonLink";
@@ -138,7 +138,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 	const showNotes = useCallback(() => setNotesDrawerOpen(true), []);
 	const closeNotes = useCallback(() => setNotesDrawerOpen(false), []);
-	const toggleNotes = useCallback(() => setNotesDrawerOpen(prev => !prev), []);
+	/*const toggleNotes = useCallback(() => setNotesDrawerOpen(prev => !prev), []);*/
 
 	const goToPageButton = useMemo(() => {
 		let btnText = <>
@@ -194,7 +194,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		}
 	}, [children.notes, closeNotes, isNotesDrawerOpen, key, shortcutsSettings, showNotes]);
 
-	const hotkeys = useMemo(() => {
+	/*const hotkeys = useMemo(() => {
 		const { goToItemPage: pageCombo, toggleNotes: notesCombo } = shortcutsSettings;
 		let shortcutsList = [];
 		if(pageCombo){
@@ -222,7 +222,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 	}, [children.notes, inGraph, navigateToPage, shortcutsSettings, toggleNotes]);
 
-	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
+	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});*/
 
 	return <div id="zr-item-details">
 		<div className="selected-item-header">

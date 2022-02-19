@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { array, func, object, objectOf, oneOf } from "prop-types";
+import { array, func, objectOf, oneOf } from "prop-types";
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 
@@ -88,7 +88,7 @@ function QueriesStatusList(props){
 	);
 }
 QueriesStatusList.propTypes = {
-	queries: objectOf(object)
+	queries: objectOf(array)
 };
 
 const ExtensionIcon = React.memo(function ExtensionIcon(props) {

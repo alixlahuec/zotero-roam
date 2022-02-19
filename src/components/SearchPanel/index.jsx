@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { bool, element, func, node, object, oneOf } from "prop-types";
+import { bool, func, node, object, oneOf } from "prop-types";
 import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
@@ -154,7 +154,7 @@ SearchInputGroup.propTypes = {
 	handleKeyDown: func,
 	handleKeyUp: func,
 	handleQueryChange: func,
-	searchbar: element,
+	searchbar: object,
 	searchbarLeftElement: node,
 	searchbarRightElement: node
 };
