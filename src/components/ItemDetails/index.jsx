@@ -198,7 +198,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		const { goToItemPage: pageCombo, toggleNotes: notesCombo } = shortcutsSettings;
 		const defaultProps = {
 			allowInInput: false,
-			group: "Item Details",
+			global: true,
 			preventDefault: true,
 			stopPropagation: true
 		};
@@ -228,9 +228,9 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 	}, [children.notes, inGraph, navigateToPage, shortcutsSettings, toggleNotes]);
 
-	const { handleKeyUp, handleKeyDown } = useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
+	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
-	return <div id="zr-item-details" tabIndex={0} onKeyUp={handleKeyUp} onKeyDown={handleKeyDown} >
+	return <div id="zr-item-details">
 		<div className="selected-item-header">
 			<div className="item-basic-metadata">
 				<h4 className="item-title">{title}</h4>

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { bool, func, node, object, oneOf } from "prop-types";
+import { bool, func, node, object, oneOf, shape } from "prop-types";
 import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
@@ -130,7 +130,57 @@ function testItemsEquality(a,b){
 }
 
 const SearchInputGroup = React.memo(function SearchInputGroup(props) {
-	const { handleKeyDown, handleKeyUp, handleQueryChange, searchbar, searchbarLeftElement, searchbarRightElement } = props;
+	const { handleClose, 
+		handleKeyDown, handleKeyUp, handleQueryChange, 
+		quickCopyProps: { isActive: isQCActive, toggle: toggleQC }, 
+		searchbar } = props;
+	const { shortcuts: shortcutsSettings } = useContext(UserSettings);
+
+	const searchbarLeftElement = useMemo(() => 
+		<Icon id={dialogLabel} 
+			title="Search in Zotero items"
+			htmlTitle="Search in Zotero items"
+			intent="primary"
+			icon="learning" />
+	, []);
+
+	const searchbarRightElement = useMemo(() => {
+		return (
+			<>
+				<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={isQCActive} onChange={toggleQC} />
+				<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />
+			</>
+		);
+	}, [handleClose, isQCActive, toggleQC]);
+
+	const hotkeys = useMemo(() => {
+		let defaultProps = {
+			allowInInput: true,
+			global: true,
+			preventDefault: true,
+			stopPropagation: true
+		};
+
+		let configs = {
+			"toggleQuickCopy": {
+				label: "Toggle QuickCopy",
+				onKeyDown: () => toggleQC()
+			}
+		};
+
+		return Object.keys(shortcutsSettings)
+			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] != false)
+			.map(k => {
+				return {
+					...defaultProps,
+					...configs[k],
+					combo: shortcutsSettings[k]
+				};
+			});
+		
+	}, [toggleQC, shortcutsSettings]);
+
+	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
 	return (
 		<InputGroup
@@ -151,12 +201,15 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 	)	;
 });
 SearchInputGroup.propTypes = {
+	handleClose: func,
 	handleKeyDown: func,
 	handleKeyUp: func,
 	handleQueryChange: func,
-	searchbar: object,
-	searchbarLeftElement: node,
-	searchbarRightElement: node
+	quickCopyProps: shape({
+		isActive: bool,
+		toggle: func
+	}),
+	searchbar: object
 };
 
 const SearchResult = React.memo(function SearchResult(props) {
@@ -192,7 +245,7 @@ SearchResult.propTypes = {
 };
 
 const LibraryQueryList = React.memo(function LibraryQueryList(props) {
-	const { handleClose, isOpen, items, quickCopyActive, toggleQuickCopy } = props;
+	const { handleClose, isOpen, items, quickCopyProps } = props;
 	const { copy: copySettings } = useContext(UserSettings);
 
 	const searchbar = useRef();
@@ -209,7 +262,7 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 			if(JSON.stringify(selectedItemID) === JSON.stringify({ key, location })){
 				return;
 			} else {
-				if(quickCopyActive){
+				if(quickCopyProps.isActive){
 					// Mode: Quick Copy
 					copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
 					if(copySettings.overrideKey && e[copySettings.overrideKey] == true){
@@ -227,7 +280,7 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 				}
 			}
 		}
-	}, [copySettings, handleClose, quickCopyActive, searchbar, selectedItemID]);
+	}, [copySettings, handleClose, quickCopyProps.isActive, searchbar, selectedItemID]);
 
 	const selectedItem = useMemo(() => {
 		if(selectedItemID == null){
@@ -244,35 +297,21 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 		debouncedCallback(query);
 	}, [handleItemSelect, debouncedCallback]);
 
-	const searchbarLeftElement = useMemo(() => <Icon id={dialogLabel} title="Search in Zotero items"
-		htmlTitle="Search in Zotero items"
-		intent="primary"
-		icon="learning" />, []);
-
-	const searchbarRightElement = useMemo(() => {
-		return (
-			<>
-				<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={quickCopyActive} onChange={toggleQuickCopy} />
-				<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />
-			</>
-		);
-	}, [quickCopyActive, toggleQuickCopy, handleClose]);
-
 	const listRenderer = useCallback((listProps) => {
 		const { handleKeyUp, handleKeyDown, handleQueryChange, itemList } = listProps;
 		return (
 			<div className="zr-querylist">
 				<SearchInputGroup 
+					handleClose={handleClose}
 					handleKeyDown={handleKeyDown} 
 					handleKeyUp={handleKeyUp} 
 					handleQueryChange={handleQueryChange}
-					searchbar={searchbar}
-					searchbarLeftElement={searchbarLeftElement}
-					searchbarRightElement={searchbarRightElement} />
+					quickCopyProps={quickCopyProps}
+					searchbar={searchbar} />
 				<RenderedList handleClose={handleClose} handleKeyDown={handleKeyDown} handleKeyUp={handleKeyUp} itemList={itemList} selectedItem={selectedItem} />
 			</div>
 		);
-	}, [handleClose, searchbar, searchbarLeftElement, searchbarRightElement, selectedItem]);
+	}, [handleClose, quickCopyProps, searchbar, selectedItem]);
 
 	useEffect(() => {
 		if(isOpen){
@@ -304,58 +343,35 @@ LibraryQueryList.propTypes = {
 	handleClose: func,
 	isOpen: bool,
 	items: customPropTypes.cleanLibraryReturnArrayType,
-	quickCopyActive: bool,
-	toggleQuickCopy: func
+	quickCopyProps: shape({
+		isActive: bool,
+		toggle: func
+	})
 };
 
 const SearchPanel = React.memo(function SearchPanel(props) {
 	const { isOpen, onClose, status } = props;
 	const { dataRequests } = useContext(ExtensionContext);
 	const [roamCitekeys,] = useRoamCitekeys();
-	const { copy: { useQuickCopy}, shortcuts: shortcutsSettings } = useContext(UserSettings);
+	const { copy: { useQuickCopy} } = useContext(UserSettings);
 
 	let [quickCopyActive, setQuickCopy] = useState(useQuickCopy); // Is QuickCopy active by default ?
 
 	const items = useGetItems(dataRequests, roamCitekeys, { enabled: status == "on" });
 
-	const toggleQuickCopy = useCallback(() => { setQuickCopy(!quickCopyActive); }, [quickCopyActive]);
+	const toggleQuickCopy = useCallback(() => { setQuickCopy(prev => !prev); }, []);
 
-	const hotkeys = useMemo(() => {
-		let defaultProps = {
-			allowInInput: true,
-			group: "Search Panel",
-			preventDefault: true,
-			stopPropagation: true
+	const quickCopyProps = useMemo(() => {
+		return {
+			isActive: quickCopyActive,
+			toggle: toggleQuickCopy
 		};
-
-		let configs = {
-			"toggleQuickCopy": {
-				disabled: !isOpen,
-				label: "Toggle QuickCopy",
-				onKeyDown: toggleQuickCopy
-			}
-		};
-
-		return Object.keys(shortcutsSettings)
-			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] != false)
-			.map(k => {
-				return {
-					...defaultProps,
-					...configs[k],
-					combo: shortcutsSettings[k]
-				};
-			});
-		
-	}, [isOpen, shortcutsSettings, toggleQuickCopy]);
-
-	const { handleKeyUp, handleKeyDown } = useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
+	}, [quickCopyActive, toggleQuickCopy]);
 
 	return (
 		<DialogOverlay
 			ariaLabelledBy={dialogLabel}
 			className={dialogClass}
-			handleKeyDown={handleKeyDown}
-			handleKeyUp={handleKeyUp}
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose} >
@@ -363,8 +379,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 				handleClose={onClose}
 				isOpen={isOpen}
 				items={items}
-				quickCopyActive={quickCopyActive}
-				toggleQuickCopy={toggleQuickCopy} />
+				quickCopyProps={quickCopyProps} />
 		</DialogOverlay>
 	);
 
