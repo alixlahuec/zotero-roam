@@ -37,7 +37,7 @@ window.zoteroRoam = {};
 		render_inline = false,
 		shortcuts = {},
 		typemap = {},
-		webimport = { tags: [] }
+		webimport = {}
 	} = window.zoteroRoam_settings;
 
 	// Use object merging to handle undefined settings
@@ -68,7 +68,9 @@ window.zoteroRoam = {};
 			},
 			render_inline,
 			shortcuts: {
+				"goToItemPage": false,
 				"toggleDashboard": false,
+				"toggleNotes": "alt+N",
 				"toggleSearchPanel": "alt+E",
 				"toggleQuickCopy": false,
 				...shortcuts
@@ -77,7 +79,10 @@ window.zoteroRoam = {};
 				...default_typemap,
 				...typemap
 			},
-			webimport
+			webimport: {
+				tags: [],
+				...webimport
+			}
 		}
 	};
 

@@ -74,8 +74,8 @@ class App extends Component {
 	}
 
 	componentDidMount(){
-		addPaletteCommand("zoteroRoam : Open the search panel", this.openSearchPanel);
-		addPaletteCommand("zoteroRoam : Open the dashboard", this.openDashboard);
+		addPaletteCommand("zoteroRoam : Open Search Panel", this.openSearchPanel);
+		addPaletteCommand("zoteroRoam : Open Dashboard", this.openDashboard);
 	}
 
 	render() {

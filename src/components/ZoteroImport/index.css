@@ -25,6 +25,7 @@
 
     .options-tags .bp3-input.bp3-multi-select {
         background-color: var(--zr-dark-selected-bc,#191919);
+        border-bottom-color: var(--zr-dark-border-color,#363a3f);
         color: var(--zr-dark-text-co,#76a0cb);
     }
 

@@ -13,7 +13,7 @@
 
     [data-in-graph="false"] .zr-library-item-popover button.bp3-button,
     [data-in-graph="false"] .zr-library-item-popover button.bp3-button:hover {
-        background-color: var(--zr-dark-selected-bc,#191919);
+        background-color: var(--zr-dark-selected-bc,#19191970);
     }
 
     [data-in-graph="false"] .zr-library-item-popover button.bp3-button:hover {

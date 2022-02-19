@@ -1,16 +1,18 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { bool, func, object, oneOf, string } from "prop-types";
-import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ButtonLink from "../ButtonLink";
 import NotesDrawer from "../NotesDrawer";
+import ShortcutSequence from "../ShortcutSequence";
+import { useRoamCitekeys } from "../RoamCitekeysContext";
+
 import { importItemMetadata, importItemNotes, openPageByUID } from "../../roam";
 import { copyToClipboard } from "../../utils";
 import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 
 import { UserSettings } from "../App";
-import { useRoamCitekeys } from "../RoamCitekeysContext";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
@@ -112,7 +114,7 @@ function ItemDetails(props) {
 		year,
 		zotero} = item;
 	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
-	const { metadata: metadataSettings, notes: notesSettings  } = useContext(UserSettings);
+	const { metadata: metadataSettings, notes: notesSettings, shortcuts: shortcutsSettings } = useContext(UserSettings);
 	const [, updateRoamCitekeys] = useRoamCitekeys();
 
 	const importMetadata = useCallback(async() => {
@@ -136,8 +138,23 @@ function ItemDetails(props) {
 	}, [closeDialog, inGraph]);
 
 	const showNotes = useCallback(() => setNotesDrawerOpen(true), []);
-
 	const closeNotes = useCallback(() => setNotesDrawerOpen(false), []);
+	const toggleNotes = useCallback(() => setNotesDrawerOpen(prev => !prev), []);
+
+	const goToPageButton = useMemo(() => {
+		let btnText = <>
+			Go to Roam page
+			{shortcutsSettings.goToItemPage != false
+				? <ShortcutSequence text={shortcutsSettings.goToItemPage} />
+				: null}
+		</>;
+		return inGraph 
+			? <Button text={btnText}
+				className="item-go-to-page"
+				icon="arrow-right"
+				onClick={navigateToPage} />
+			: null;
+	}, [inGraph, navigateToPage, shortcutsSettings]);
 
 	const pdfs = useMemo(() => {
 		if(children.pdfs.length == 0){
@@ -161,16 +178,52 @@ function ItemDetails(props) {
 		if(children.notes.length == 0){
 			return null;
 		} else {
+			let btnText = <>
+				Show notes
+				{shortcutsSettings.toggleNotes != false
+					? <ShortcutSequence text={shortcutsSettings.toggleNotes} />
+					: null}
+			</>;
 			return (
 				<>
 					<ButtonGroup minimal={true} fill={true} alignText="left">
-						<Button icon="comment" text="Show notes" onClick={showNotes} />
+						<Button icon="comment" text={btnText} onClick={showNotes} />
 					</ButtonGroup>
 					<NotesDrawer isOpen={isNotesDrawerOpen} notes={children.notes} onClose={closeNotes} title={"Notes for @" + key} />
 				</>
 			);
 		}
-	}, [children.notes, closeNotes, isNotesDrawerOpen, key, showNotes]);
+	}, [children.notes, closeNotes, isNotesDrawerOpen, key, shortcutsSettings, showNotes]);
+
+	const hotkeys = useMemo(() => {
+		const { goToItemPage: pageCombo, toggleNotes: notesCombo } = shortcutsSettings;
+		let shortcutsList = [];
+		if(pageCombo){
+			shortcutsList.push({
+				allowInInput: false,
+				combo: pageCombo,
+				disabled: !inGraph,
+				global: true,
+				label: "Go to the item's Roam page",
+				onKeyDown: navigateToPage
+			});
+		}
+		if(notesCombo){
+			shortcutsList.push({
+				allowInInput: false,
+				combo: notesCombo,
+				disabled: children.notes.length == 0,
+				global: true,
+				label: "Show the item's linked notes",
+				onKeyDown: toggleNotes
+			});
+		}
+
+		return shortcutsList;
+
+	}, [children.notes, inGraph, navigateToPage, shortcutsSettings, toggleNotes]);
+
+	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
 	return <div id="zr-item-details">
 		<div className="selected-item-header">
@@ -211,13 +264,7 @@ function ItemDetails(props) {
 			<div className="item-actions">
 				<div className={Classes.CARD}>
 					<ButtonGroup alignText="left" fill={true} minimal={true} vertical={true} >
-						{ inGraph 
-							? <Button text="Go to Roam page"
-								className="item-go-to-page"
-								icon="arrow-right"
-								onClick={navigateToPage} />
-							: null  
-						}
+						{goToPageButton}
 						<Button text="Import item metadata"
 							className="item-add-metadata"
 							icon="add"

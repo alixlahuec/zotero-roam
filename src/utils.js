@@ -15,13 +15,16 @@ function analyzeUserRequests(reqs){
 		} else {
 			const dataRequests = reqs.map((req, i) => {
 				let { dataURI, apikey = fallbackAPIKey, params = "", name = `${i}`} = req;
-				let library = dataURI.match(/(users|groups)\/(.+?)\//g)[0].slice(0,-1);
-
 				if(!dataURI){
 					throw new Error("Each data request must be assigned a data URI. See the documentation here : https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/api");
+				} else {
+					let library = dataURI.match(/(users|groups)\/(\d+?)(?=\/items)/g)?.[0];
+					if(!library){
+						throw new Error(`An incorrect data URI was provided for a request : ${dataURI}. See the documentation here : https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
+					} else {
+						return { dataURI, apikey, params, name, library };
+					}
 				}
-
-				return { dataURI, apikey, params, name, library };
 			});
 
 			const apiKeys = Array.from(new Set(dataRequests.map(req => req.apikey)));

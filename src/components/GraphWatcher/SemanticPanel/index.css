@@ -52,6 +52,11 @@
     margin-top: 5px;
 }
 
+#zr-semantic-panel-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .zr-semantic-panel--main input[id*="semantic-search--"] {
     background: 0;
     box-shadow: none;
@@ -121,9 +126,8 @@ li.import-items_selected {
     .bp3-dialog.zr-auxiliary-dialog--citations.has-selected-items {
         width: calc(97% - 11vw);
     }
-    #zr-semantic-panel-label {
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .has-selected-items .zr-semantic-panel--side {
+        flex: 1 0 11vw;
     }
     .zr-related-item-contents--actions {
         flex: 0 1 auto;
@@ -138,12 +142,13 @@ li.import-items_selected {
 }
 
 @media (max-width: 700px){
-    .bp3-dialog.zr-auxiliary-dialog--citations {
-        width:calc(97% - 5vw);
+    .bp3-dialog.zr-auxiliary-dialog--citations,
+    .bp3-dialog.zr-auxiliary-dialog--citations.has-selected-items {
+        width: calc(97% - 5vw);
         margin-left: calc(2.5vw + 1.5%);
     }
-    .bp3-dialog.zr-auxiliary-dialog--citations.has-selected-items {
-        width: calc(97% - 2.5vw);
+    .has-selected-items .zr-semantic-panel--side {
+        flex: 1 0 30vw;
     }
 }
 

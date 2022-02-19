@@ -34,7 +34,7 @@ const tributeConfig = {
 	}
 };
 
-/** Custom hook to retrieve library items and return them in a convenient format for the Tribute
+/** Custom hook to retrieve library items and return them in a convenient format for the Tribute, sorted by last-modified
  * @param {Object[]} reqs - The data requests to use to retrieve items 
  * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} format - The format the item should be pasted as
  * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} display - The format the item should be displayed in 
@@ -61,7 +61,7 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 	});
 	const data = itemQueries.map(q => q.data || []).flat(1);
     
-	return data;
+	return data.sort((a,b) => a.data.dateModified > b.data.dateModified ? -1 : 1);
 };
 
 const Autocomplete = React.memo(function Autocomplete() {
