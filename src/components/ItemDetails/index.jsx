@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { bool, func, object, oneOf, string } from "prop-types";
-import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag/*, useHotkeys*/ } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ButtonLink from "../ButtonLink";
@@ -138,7 +138,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 	const showNotes = useCallback(() => setNotesDrawerOpen(true), []);
 	const closeNotes = useCallback(() => setNotesDrawerOpen(false), []);
-	/*const toggleNotes = useCallback(() => setNotesDrawerOpen(prev => !prev), []);*/
+	const toggleNotes = useCallback(() => setNotesDrawerOpen(prev => !prev), []);
 
 	const goToPageButton = useMemo(() => {
 		let btnText = <>
@@ -194,25 +194,31 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		}
 	}, [children.notes, closeNotes, isNotesDrawerOpen, key, shortcutsSettings, showNotes]);
 
-	/*const hotkeys = useMemo(() => {
+	const hotkeys = useMemo(() => {
 		const { goToItemPage: pageCombo, toggleNotes: notesCombo } = shortcutsSettings;
+		const defaultProps = {
+			allowInInput: false,
+			group: "Item Details",
+			preventDefault: true,
+			stopPropagation: true
+		};
+
 		let shortcutsList = [];
+
 		if(pageCombo){
 			shortcutsList.push({
-				allowInInput: false,
+				...defaultProps,
 				combo: pageCombo,
 				disabled: !inGraph,
-				global: true,
 				label: "Go to the item's Roam page",
 				onKeyDown: navigateToPage
 			});
 		}
 		if(notesCombo){
 			shortcutsList.push({
-				allowInInput: false,
+				...defaultProps,
 				combo: notesCombo,
 				disabled: children.notes.length == 0,
-				global: true,
 				label: "Show the item's linked notes",
 				onKeyDown: toggleNotes
 			});
@@ -222,9 +228,9 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 	}, [children.notes, inGraph, navigateToPage, shortcutsSettings, toggleNotes]);
 
-	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});*/
+	const { handleKeyUp, handleKeyDown } = useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
-	return <div id="zr-item-details">
+	return <div id="zr-item-details" onKeyUp={handleKeyUp} onKeyDown={handleKeyDown} >
 		<div className="selected-item-header">
 			<div className="item-basic-metadata">
 				<h4 className="item-title">{title}</h4>

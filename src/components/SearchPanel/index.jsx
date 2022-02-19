@@ -222,11 +222,7 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 					if(copySettings.always == true){
 						copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
 					}
-					// For debugging:
-					console.log("Trying to blur the searchbar");
 					searchbar.current.blur();
-					// For debugging:
-					console.log("Trying to select the item");
 					itemSelect({ key, location });
 				}
 			}

@@ -64,7 +64,7 @@ const Backlinks = React.memo(function Backlinks(props) {
 	if(items.length == 0){
 		return null;
 	} else {
-		let [...itemList] = items;
+		let itemList = [...items];
 		const sortedItems = itemList.sort((a,b) => compareItemsByYear(a.inLibrary.raw, b.inLibrary.raw));
 		const references = sortedItems.filter(it => it._type == "cited");
 		const citations = sortedItems.filter(it => it._type == "citing");
@@ -142,8 +142,16 @@ function RelatedItemsBar(props) {
 	const citCount = data.citations?.length || null;
 
 	const cleanSemanticData = useMemo(() => {
-		let { citations = [], references = [] } = data;
-		return cleanSemantic(itemList, { citations, references }, roamCitekeys);
+		if(!data){
+			return {
+				backlinks: [],
+				citations: [],
+				references: []
+			};
+		} else {
+			let { citations = [], references = [] } = data;
+			return cleanSemantic(itemList, { citations, references }, roamCitekeys);
+		}
 	}, [data, itemList, roamCitekeys]);
 
 	const showBacklinksButtonProps = useMemo(() => {

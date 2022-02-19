@@ -222,7 +222,7 @@ function cleanSemantic(datastore, semantic, roamCitekeys){
 	let { items = [], pdfs = [], notes = []} = datastore;
 	let itemsWithDOIs = items.filter(it => it.data.DOI);
 	// Note: DOIs from the Semantic Scholar queries are sanitized at fetch
-	let { citations, references } = semantic;
+	let { citations = [], references = [] } = semantic;
 
 	let clean_citations = citations.map((cit) => {
 		let cleanProps = cleanSemanticMatch(cit, {items: itemsWithDOIs, pdfs, notes}, roamCitekeys);
