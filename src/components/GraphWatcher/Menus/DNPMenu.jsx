@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { arrayOf, date, string } from "prop-types";
+import { arrayOf, instanceOf, string } from "prop-types";
 import { Button } from "@blueprintjs/core";
 
 import RelatedPanel from "../RelatedPanel";
@@ -50,7 +50,7 @@ function DNPMenu(props){
 }
 DNPMenu.propTypes = {
 	added: arrayOf(customPropTypes.cleanRelatedItemType),
-	date: date,
+	date: instanceOf(Date),
 	title: string
 };
 

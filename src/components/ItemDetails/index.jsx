@@ -211,7 +211,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				combo: pageCombo,
 				disabled: !inGraph,
 				label: "Go to the item's Roam page",
-				onKeyDown: navigateToPage
+				onKeyDown: () => navigateToPage()
 			});
 		}
 		if(notesCombo){
@@ -220,7 +220,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				combo: notesCombo,
 				disabled: children.notes.length == 0,
 				label: "Show the item's linked notes",
-				onKeyDown: toggleNotes
+				onKeyDown: () => toggleNotes()
 			});
 		}
 
@@ -230,7 +230,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 	const { handleKeyUp, handleKeyDown } = useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
-	return <div id="zr-item-details" onKeyUp={handleKeyUp} onKeyDown={handleKeyDown} >
+	return <div id="zr-item-details" tabIndex={0} onKeyUp={handleKeyUp} onKeyDown={handleKeyDown} >
 		<div className="selected-item-header">
 			<div className="item-basic-metadata">
 				<h4 className="item-title">{title}</h4>

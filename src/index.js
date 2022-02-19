@@ -71,7 +71,7 @@ window.zoteroRoam = {};
 				"goToItemPage": false,
 				"toggleDashboard": false,
 				"toggleNotes": "alt+N",
-				"toggleSearchPanel": "alt+Q",
+				"toggleSearchPanel": "alt+E",
 				"toggleQuickCopy": false,
 				...shortcuts
 			},

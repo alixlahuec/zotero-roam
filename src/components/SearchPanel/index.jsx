@@ -323,7 +323,9 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	const hotkeys = useMemo(() => {
 		let defaultProps = {
 			allowInInput: true,
-			global: true
+			group: "Search Panel",
+			preventDefault: true,
+			stopPropagation: true
 		};
 
 		let configs = {
@@ -346,12 +348,14 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 		
 	}, [isOpen, shortcutsSettings, toggleQuickCopy]);
 
-	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
+	const { handleKeyUp, handleKeyDown } = useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
 	return (
 		<DialogOverlay
 			ariaLabelledBy={dialogLabel}
 			className={dialogClass}
+			handleKeyDown={handleKeyDown}
+			handleKeyUp={handleKeyUp}
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose} >

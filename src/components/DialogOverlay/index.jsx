@@ -11,6 +11,8 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 		ariaLabelledBy,
 		children, 
 		className: dialogClass,
+		handleKeyDown = () => {},
+		handleKeyUp = () => {},
 		isOpen,
 		lazy = true,
 		onClose,
@@ -41,7 +43,7 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 				usePortal={false}
 				{...otherProps}
 			>
-				<div className={Classes.DIALOG_BODY}>
+				<div className={Classes.DIALOG_BODY} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex={0}>
 					<div className="main-panel" style={mainPanelStyle}>
 						{children}
 					</div>
@@ -54,6 +56,8 @@ DialogOverlay.propTypes = {
 	ariaLabelledBy: string,
 	children: node,
 	className: string,
+	handleKeyDown: func,
+	handleKeyUp: func,
 	isOpen: bool,
 	lazy: bool,
 	onClose: func,
