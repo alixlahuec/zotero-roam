@@ -46,6 +46,7 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 			return datastore.data
 				? datastore.data
 					.filter(item => !["attachment", "note", "annotation"].includes(item.data.itemType))
+					.sort((a,b) => a.data.dateModified > b.data.dateModified ? -1 : 1)
 					.map(item => {
 						return {
 							key: item.key,
@@ -61,7 +62,7 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 	});
 	const data = itemQueries.map(q => q.data || []).flat(1);
     
-	return data.sort((a,b) => a.data.dateModified > b.data.dateModified ? -1 : 1);
+	return data;
 };
 
 const Autocomplete = React.memo(function Autocomplete() {
