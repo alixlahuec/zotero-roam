@@ -1,0 +1,9 @@
+.zr-shortcut-sequence {
+    margin-left: 15px;
+}
+
+@media (prefers-color-scheme: dark){
+    .zr-shortcut-sequence {
+        color: beige;
+    }
+}

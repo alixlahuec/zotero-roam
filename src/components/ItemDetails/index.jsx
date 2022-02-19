@@ -97,8 +97,7 @@ CopyButtons.propTypes = {
 	item: object
 };
 
-function ItemDetails(props) {
-	const { closeDialog, item } = props;
+const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	const {
 		abstract, 
 		authors, 
@@ -241,7 +240,7 @@ function ItemDetails(props) {
 			</div>
 			<div className="item-citekey-section" data-in-graph={inGraph.toString()}>
 				{navigator.clipboard
-					? <CopyButtons citekey={key} inGraph={inGraph != false} item={props.item} />
+					? <CopyButtons citekey={key} inGraph={inGraph != false} item={item} />
 					: <div className={[Classes.FILL, "citekey-element"].join(" ")}>@{key}</div>}
 			</div>
 		</div>
@@ -284,7 +283,7 @@ function ItemDetails(props) {
 			</div>
 		</div>
 	</div>;
-}
+});
 ItemDetails.propTypes = {
 	closeDialog: func,
 	item: customPropTypes.cleanLibraryItemType

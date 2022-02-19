@@ -34,11 +34,15 @@ h4.item-title{
     margin:3px;
 }
 
+.item-actions > * {
+    margin-bottom: 15px;
+}
+
 .item-actions > .bp3-card{ 
     background-color: #eff8ff;
     box-shadow:none;
     padding: 10px;
- }
+}
 
 .item-citekey-section .bp3-button-group .bp3-button,
 .item-actions .bp3-button-group .bp3-button {

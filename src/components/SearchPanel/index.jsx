@@ -103,7 +103,13 @@ function listItemRenderer(item, itemProps) {
 	/>;
 }
 
-const RenderedList = React.memo(function RenderedList({ handleClose, handleKeyDown, handleKeyUp, itemList, selectedItem }){
+const RenderedList = React.memo(function RenderedList(props){
+	const { handleClose, handleKeyDown, handleKeyUp, itemList, selectedItem } = props;
+	// For debugging:
+	useEffect(() => {
+		console.log("Rendering RenderedList with props : ", props);
+	}, [props]);
+
 	return selectedItem 
 		? <ItemDetails item={selectedItem} 
 			closeDialog={handleClose} />
@@ -128,7 +134,7 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 
 	return (
 		<InputGroup
-			className={(Classes.INPUT, Classes.FILL)}
+			className={[Classes.INPUT, Classes.FILL].join(" ")}
 			id="zotero-roam-search-autocomplete"
 			placeholder="Search by title, authors (last names), year, tags, or citekey"
 			spellCheck="false"
@@ -216,7 +222,11 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 					if(copySettings.always == true){
 						copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
 					}
+					// For debugging:
+					console.log("Trying to blur the searchbar");
 					searchbar.current.blur();
+					// For debugging:
+					console.log("Trying to select the item");
 					itemSelect({ key, location });
 				}
 			}
