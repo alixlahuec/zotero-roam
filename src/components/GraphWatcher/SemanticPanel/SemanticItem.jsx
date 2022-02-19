@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { bool, func, oneOf, string } from "prop-types";
+import { bool, func, oneOf, oneOfType, string } from "prop-types";
 import { Button, Classes, Icon, Tag } from "@blueprintjs/core";
 
 import CitekeyPopover from "../../CitekeyPopover";
@@ -103,7 +103,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 SemanticItem.propTypes = {
 	handleRemove: func,
 	handleSelect: func,
-	inGraph: oneOf([string, false]),
+	inGraph: oneOfType([string, oneOf([false])]),
 	isSelected: bool,
 	item: customPropTypes.cleanSemanticReturnType,
 	type: oneOf(["is_reference", "is_citation"])

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { bool, func, node, object } from "prop-types";
+import { bool, element, func, node, object, oneOf } from "prop-types";
 import { Button, Classes, Icon, InputGroup, MenuItem, Switch, useHotkeys } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
 
@@ -104,7 +104,7 @@ function listItemRenderer(item, itemProps) {
 }
 
 const RenderedList = React.memo(function RenderedList(props){
-	const { handleClose, handleKeyDown, handleKeyUp, itemList, selectedItem } = props;
+	const { handleClose, /*handleKeyDown, handleKeyUp,*/ itemList, selectedItem } = props;
 	// For debugging:
 	useEffect(() => {
 		console.log("Rendering RenderedList with props : ", props);
@@ -113,7 +113,7 @@ const RenderedList = React.memo(function RenderedList(props){
 	return selectedItem 
 		? <ItemDetails item={selectedItem} 
 			closeDialog={handleClose} />
-		: <div id="zotero-roam-library-rendered" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} >
+		: <div id="zotero-roam-library-rendered" >
 			{itemList}
 		</div>;
 });
@@ -154,7 +154,7 @@ SearchInputGroup.propTypes = {
 	handleKeyDown: func,
 	handleKeyUp: func,
 	handleQueryChange: func,
-	searchbar: node,
+	searchbar: element,
 	searchbarLeftElement: node,
 	searchbarRightElement: node
 };
@@ -372,7 +372,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 SearchPanel.propTypes = {
 	isOpen: bool,
 	onClose: func,
-	status: bool
+	status: oneOf(["on", "off"])
 };
 
 export default SearchPanel;

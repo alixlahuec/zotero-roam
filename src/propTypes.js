@@ -1,4 +1,4 @@
-import { array, arrayOf, bool, func, instanceOf, number, object, oneOf, shape, string } from "prop-types";
+import { array, arrayOf, bool, func, instanceOf, number, object, oneOf, oneOfType, shape, string } from "prop-types";
 
 const zoteroCollectionType = shape({
 	data: object,
@@ -55,7 +55,7 @@ const cleanLibraryItemType = shape({
 		pdfs: arrayOf(zoteroItemType),
 		notes: arrayOf(zoteroItemType),
 	}),
-	inGraph: oneOf([string, false]),
+	inGraph: oneOfType([string, oneOf([false])]),
 	itemKey: string,
 	itemType: string,
 	key: string,
@@ -63,8 +63,8 @@ const cleanLibraryItemType = shape({
 	publication: string,
 	tags: array,
 	title: string,
-	weblink: string,
-	year: oneOf([instanceOf(Date), ""]),
+	weblink: oneOfType([shape({ href: string, title: string }), oneOf([false])]),
+	year: oneOfType([instanceOf(Date), string]),
 	zotero: shape({
 		local: string,
 		web: string
@@ -101,7 +101,7 @@ const cleanSemanticItemType = shape({
 	authors: string,
 	authorsLastNames: string,
 	authorsString: string,
-	doi: oneOf([string, false]),
+	doi: oneOfType([string, oneOf([false])]),
 	intent: arrayOf(string),
 	isInfluential: bool,
 	links: object,
@@ -117,14 +117,17 @@ const cleanSemanticItemType = shape({
  */
 const cleanSemanticReturnType = shape({
 	...cleanSemanticItemType,
-	inGraph: oneOf([false, string]),
-	inLibrary: oneOf([false, shape({
-		children: {
-			pdfs: arrayOf(zoteroItemType),
-			notes: arrayOf(zoteroItemType)
-		},
-		raw: zoteroItemType
-	})]),
+	inGraph: oneOfType([string, oneOf([false])]),
+	inLibrary: oneOfType([
+		shape({
+			children: {
+				pdfs: arrayOf(zoteroItemType),
+				notes: arrayOf(zoteroItemType)
+			},
+			raw: zoteroItemType
+		}),
+		oneOf([false])
+	]),
 	_type: oneOf(["cited", "citing"])
 });
 
@@ -142,7 +145,7 @@ const cleanSemanticReturnObjectType = shape({
  */
 const copySettingsType = shape({
 	always: bool,
-	defaultFormat: oneOf(["citation", "citekey", "page-reference", "raw", "tag", func]),
+	defaultFormat: oneOfType([func, oneOf(["citation", "citekey", "page-reference", "raw", "tag"])]),
 	overrideKey: oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
 	useQuickCopy: bool
 });

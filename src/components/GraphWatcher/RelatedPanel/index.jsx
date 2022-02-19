@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
+import { arrayOf, bool, func, oneOf, oneOfType, shape, string } from "prop-types";
 import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
@@ -92,7 +92,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 RelatedItem.propTypes = {
 	allAbstractsShown: bool,
 	closeDialog: func,
-	inGraph: oneOf([string, false]),
+	inGraph: oneOfType([string, oneOf([false])]),
 	item: customPropTypes.cleanRelatedItemType,
 	type: oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
 };

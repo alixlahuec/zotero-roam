@@ -72,7 +72,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 });
 SemanticTabList.propTypes = {
 	defaultTab: string,
-	items: arrayOf(customPropTypes.cleanSemanticReturnType),
+	items: customPropTypes.cleanSemanticReturnObjectType,
 	onClose: func,
 	selectProps: shape({
 		handleRemove: func,
@@ -147,7 +147,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 });
 SemanticPanel.propTypes = {
 	isOpen: bool,
-	items: arrayOf(customPropTypes.cleanSemanticReturnType),
+	items: customPropTypes.cleanSemanticReturnObjectType,
 	onClose: func,
 	show: shape({
 		title: string,

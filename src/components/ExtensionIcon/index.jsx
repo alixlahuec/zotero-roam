@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { array, func, oneOf } from "prop-types";
+import { array, func, object, objectOf, oneOf } from "prop-types";
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 
@@ -88,7 +88,7 @@ function QueriesStatusList(props){
 	);
 }
 QueriesStatusList.propTypes = {
-	queries: array
+	queries: objectOf(object)
 };
 
 const ExtensionIcon = React.memo(function ExtensionIcon(props) {
@@ -114,19 +114,30 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 	const data_status = useMemo(() => hasLoadingError ? "error" : (isCurrentlyLoading ? "loading" : "ready"), [isCurrentlyLoading, hasLoadingError]);
 	const button_icon = useMemo(() => hasLoadingError ? "issue" : "manual", [hasLoadingError]);
 
-	let tooltipContent = <>
-		<span><strong>Status : </strong> {status}</span>
-		<Divider />
-		{status == "on"
-			? <>
-				<span className="zr-icon-tooltip-body">
-					<QueriesStatusList queries={ { "Permissions": permissionQueries, "Collections": collectionQueries, "Tags": tagQueries, "Items": itemQueries } } />
-				</span>
-				<Divider />
-			</>
-			: null}
-		<IconTooltipFooter />
-	</>;
+	const queries = useMemo(() => {
+		return {
+			"Permissions": permissionQueries,
+			"Collections": collectionQueries,
+			"Tags": tagQueries,
+			"Items": itemQueries
+		};
+	}, [collectionQueries, itemQueries, permissionQueries, tagQueries]);
+
+	const tooltipContent = useMemo(() => {
+		return <>
+			<span><strong>Status : </strong> {status}</span>
+			<Divider />
+			{status == "on"
+				? <>
+					<span className="zr-icon-tooltip-body">
+						<QueriesStatusList queries={queries} />
+					</span>
+					<Divider />
+				</>
+				: null}
+			<IconTooltipFooter />
+		</>;
+	}, [queries, status]);
 
 	const contextMenu = useMemo(() => {
 		return (

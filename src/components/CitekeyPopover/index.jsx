@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { arrayOf, func, object, oneOf, string } from "prop-types";
+import { arrayOf, func, object, oneOf, oneOfType, string } from "prop-types";
 import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
@@ -138,7 +138,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 });
 CitekeyPopover.propTypes = {
 	closeDialog: func,
-	inGraph: oneOf(string, false),
+	inGraph: oneOfType([string, oneOf([false])]),
 	item: customPropTypes.zoteroItemType,
 	notes: arrayOf(object),
 	pdfs: arrayOf(object)

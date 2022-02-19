@@ -59,7 +59,7 @@ BacklinksItem.propTypes = {
 };
 
 const Backlinks = React.memo(function Backlinks(props) {
-	const { isOpen, items, origin } = props;
+	const { isOpen, items = [], origin } = props;
 
 	if(items.length == 0){
 		return null;
@@ -327,7 +327,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 		return doi && defaults.includes("citingPapers")
 			? <RelatedItemsBar doi={doi}
 				itemList={itemList}
-				origin={item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : ""} 
+				origin={item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear().toString() : ""} 
 				title={"@" + item.key}
 			/>
 			: null;
