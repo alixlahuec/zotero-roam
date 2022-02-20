@@ -113,17 +113,17 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		year,
 		zotero} = item;
 	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
-	const { metadata: metadataSettings, notes: notesSettings, shortcuts: shortcutsSettings } = useContext(UserSettings);
+	const { metadata: metadataSettings, notes: notesSettings, shortcuts: shortcutsSettings, typemap } = useContext(UserSettings);
 	const [, updateRoamCitekeys] = useRoamCitekeys();
 
 	const importMetadata = useCallback(async() => {
 		const { pdfs = [], notes = [] } = children;
-		const outcome = await importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings);
+		const outcome = await importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings, typemap, notesSettings);
 		if(outcome.success){
 			updateRoamCitekeys();
 		}
 		return outcome;
-	}, [children, inGraph, item.raw, metadataSettings, updateRoamCitekeys]);
+	}, [children, inGraph, item.raw, metadataSettings, notesSettings, typemap, updateRoamCitekeys]);
 
 	const importNotes = useCallback(async() => {
 		return await importItemNotes({ item, notes: children.notes }, inGraph, notesSettings);

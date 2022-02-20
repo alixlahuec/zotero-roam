@@ -59,11 +59,16 @@ function cleanBibliographyHTML(bib){
  * @param {Number} version - The last known version of the Zotero library
  * @returns The outcome of the Axios API call
  */
-function deleteTags(tags, library, version){
+async function deleteTags(tags, library, version){
 	const { apikey, path } = library;
-	// TODO: Handle case where more than 50 tags need to be deleted
+	// Only 50 tags can be deleted at once
+	// Since each deletion is version-dependent, the extension won't support deleting more for now
 	// https://www.zotero.org/support/dev/web_api/v3/write_requests#deleting_multiple_tags
-	let tagList = tags.map(t => encodeURIComponent(t)).join("||");
+	if(tags.length > 50){
+		console.warn("Only 50 Zotero tags can be deleted at once : any additional tags provided will be ignored.");
+	}
+
+	let tagList = tags.slice(0,50).map(t => encodeURIComponent(t)).join("||");
 	return zoteroClient.delete(`${path}/tags?tag=${tagList}`, { 
 		headers: { 
 			"Zotero-API-Key": apikey,
@@ -111,7 +116,7 @@ async function fetchAdditionalData(req, totalResults) {
 	}
 
 	try {
-		let [...responses] = await Promise.all(apiCalls);
+		let responses = await Promise.all(apiCalls);
 		return responses.map(res => res.data).flat(1);
 	} catch(error){
 		return Promise.reject(error);
@@ -261,7 +266,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			if(modified.length > 0){
 				// Refetch tags data
 				let tagsQueryKey = ["tags", { apikey, library }];
-				let { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {}; // TODO: Check if getQueryData needs exact matching - if not, remove the apikey portion of line above
+				let { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {};
 				if(Number(latest_tags_version) < Number(lastUpdated)){
 					queryClient.refetchQueries(tagsQueryKey);
 				}
@@ -440,20 +445,28 @@ function parseSemanticDOIs(arr){
 function writeCitoids(items, {library, collections = [], tags = []} = {}){
 	const { apikey, path } = library;
 	const clean_tags = tags.map(t => { return { tag: t }; });
-
-	const data = items.map(citoid => {
-		// Remove key and version from the data object
-		const { key, version, ...item } = citoid;
-
-		return {
-			...item,
-			collections,
-			tags: clean_tags
-		};
-	});
-	// TODO: Handle case where more than 50 items are selected for import
+	// Only 50 items can be added at once
 	// https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
-	return zoteroClient.post(`${path}/items`, JSON.stringify(data), { headers: { "Zotero-API-Key": apikey } });
+	let apiCalls = [];
+	let nbCalls = Math.ceil(items.length / 50);
+
+	for(let i=1; i <= nbCalls; i++){
+		let itemsData = items
+			.slice(50*(i-1),50*i)
+			.map(citoid => {
+				// Remove key and version from the data object
+				const { key, version, ...item } = citoid;
+		
+				return {
+					...item,
+					collections,
+					tags: clean_tags
+				};
+			});
+		apiCalls.push(zoteroClient.post(`${path}/items`, JSON.stringify(itemsData), { headers: { "Zotero-API-Key": apikey } }));
+	}
+
+	return Promise.allSettled(apiCalls);
 }
 
 /** Modifies data for existing items in a Zotero library
@@ -463,9 +476,17 @@ function writeCitoids(items, {library, collections = [], tags = []} = {}){
  */
 function writeItems(dataList, library){
 	const { apikey, path } = library;
-	// TODO: Handle case where more than 50 items are selected for import
+	// Only 50 items can be added at once
 	// https://www.zotero.org/support/dev/web_api/v3/write_requests#updating_multiple_objects
-	return zoteroClient.post(`${path}/items`, JSON.stringify(dataList), { headers: { "Zotero-API-Key": apikey } });
+	let apiCalls = [];
+	let nbCalls = Math.ceil(dataList.length / 50);
+
+	for(let i=1; i <= nbCalls; i++){
+		let itemsData = dataList.slice(50*(i-1),50*i);
+		apiCalls.push(zoteroClient.post(`${path}/items`, JSON.stringify(itemsData), { headers: { "Zotero-API-Key": apikey } }));
+	}
+
+	return Promise.allSettled(apiCalls);
 }
 
 export {

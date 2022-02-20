@@ -6,7 +6,7 @@ import zrToaster from "./components/ExtensionToaster";
 
 import { App, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
 import { setDefaultHooks } from "./events";
-import { formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemRelated, _getItemType } from "./public";
+import { formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemMetadata, _getItemRelated, _getItemType } from "./public";
 import { registerSmartblockCommands } from "./smartblocks";
 import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
 import { default_typemap } from "./variables";
@@ -112,6 +112,8 @@ window.zoteroRoam = {};
 
 		window.zoteroRoam.getItemCreators = getItemCreators;
 		window.zoteroRoam.getItemTags = getItemTags;
+
+		window.zoteroRoam.getItemMetadata = (item, pdfs, notes) => _getItemMetadata(item, pdfs, notes, window.zoteroRoam.config.userSettings.typemap, window.zoteroRoam.config.userSettings.notes);
 
 		window.zoteroRoam.getItemRelated = (item, { return_as = "citekeys", brackets = true } = {}) => {
 			const { type: libType, id: libID } = item.library;

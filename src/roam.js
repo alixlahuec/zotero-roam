@@ -1,5 +1,5 @@
 import { emitCustomEvent } from "./events";
-import { getItemMetadata } from "./formatters/getItemMetadata";
+import { _getItemMetadata } from "./public";
 import { use_smartblock_metadata } from "./smartblocks";
 import { executeFunctionByName, formatNotes } from "./utils";
 
@@ -186,7 +186,7 @@ function getInitialedPages(keys){
  * @param {Object} config - The user's `metadata` settings 
  * @returns IF successful, a detailed outcome of the import ; otherwise, the first error encountered.
  */
-async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, config){
+async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, config, typemap, notesSettings){
 	let title = "@" + item.key;
 	let pageUID = uid || window.roamAlphaAPI.util.generateUID();
 	let page = { new: null, title, uid: pageUID };
@@ -200,7 +200,7 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 	
 	let { use, func = null, smartblock = {}} = config;
 
-	// TODO: Add support or options for passing formatted children (PDFs/notes), for both `use` parameters
+	// TODO: Add support or options for passing formatted children (PDFs/notes) to SmartBlock
 	if(use == "smartblock"){
 		let context = { item, notes, page, pdfs };
 		try {
@@ -214,7 +214,7 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 		}
 	} else {
 		try {
-			let metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : getItemMetadata(item, pdfs, notes);
+			let metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : _getItemMetadata(item, pdfs, notes, typemap, notesSettings);
 			let { args, error, success } = await addBlocksArray(pageUID, metadata);
 
 			let outcome = {

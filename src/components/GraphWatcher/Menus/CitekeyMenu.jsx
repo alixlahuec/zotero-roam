@@ -239,7 +239,7 @@ ViewItem.propTypes = {
 
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	const { item, itemList } = props;
-	const { metadata: metadataSettings, notes: notesSettings, pageMenu: { defaults } } = useContext(UserSettings);
+	const { metadata: metadataSettings, notes: notesSettings, pageMenu: { defaults }, typemap } = useContext(UserSettings);
 	const [roamCitekeys,] = useRoamCitekeys();
 
 	const doi = parseDOI(item.data.DOI);
@@ -260,8 +260,8 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	}, [doi]);
 
 	const importMetadata = useCallback(async() => {
-		return await importItemMetadata({ item, pdfs, notes }, pageUID, metadataSettings);
-	}, [pdfs, notes, item, metadataSettings, pageUID]);
+		return await importItemMetadata({ item, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings);
+	}, [pdfs, notes, item, metadataSettings, notesSettings, pageUID, typemap]);
     
 	const importNotes = useCallback(async() => {
 		return await importItemNotes({item, notes }, pageUID, notesSettings);

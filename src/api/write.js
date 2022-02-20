@@ -51,17 +51,26 @@ const useImportCitoids = () => {
 		onSettled: (data, error, variables, _context) => {
 			const { collections, items, library: { path }, tags } = variables;
 
-			if(!error){
+			const outcome = data.reduce((obj, res) => {
+				if(res.status == "fulfilled"){
+					obj.success.push(res.value);
+				} else {
+					obj.error.push(res.reason);
+				}
+				return obj;
+			},{ success: [], error: [] });
+
+			if(!error && outcome.success.length > 0){
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
 					refetchInactive: true
-				});	
+				});
 			}
 
 			emitCustomEvent("write", {
 				collections,
-				data: data.data,
+				data: outcome,
 				error,
 				items,
 				library: path,
@@ -110,7 +119,16 @@ const useModifyTags = () => {
 		onSettled: (data, error, variables, _context) => {
 			const { into, library: { path }, tags } = variables;
 
-			if(!error){
+			const outcome = data.reduce((obj, res) => {
+				if(res.status == "fulfilled"){
+					obj.success.push(res.value);
+				} else {
+					obj.error.push(res.reason);
+				}
+				return obj;
+			},{ success: [], error: [] });
+
+			if(!error && outcome.success.length > 0){
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
@@ -119,7 +137,7 @@ const useModifyTags = () => {
 			}
 
 			emitCustomEvent("write", {
-				data: data.data,
+				data: outcome,
 				error,
 				into,
 				library: path,

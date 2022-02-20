@@ -74,7 +74,7 @@ const useGetItems = (reqs) => {
 
 const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, onClose, target } = props;
-	const { metadata: metadataSettings } = useContext(UserSettings);
+	const { metadata: metadataSettings, notes: notesSettings, typemap } = useContext(UserSettings);
 	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
 
 	const citekey = target?.parentElement.dataset.linkTitle;
@@ -101,9 +101,9 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 
 	const importMetadata = useCallback(() => {
 		let { pdfs = [], notes = [] } = itemData.children;
-		importItemMetadata({item: itemData.raw, pdfs, notes }, pageUID, metadataSettings);
+		importItemMetadata({item: itemData.raw, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings);
 		onClose();
-	}, [itemData.raw, itemData.children, metadataSettings, onClose, pageUID]);
+	}, [itemData.raw, itemData.children, metadataSettings, notesSettings, onClose, pageUID, typemap]);
 
 	const showNotesDrawer = useCallback(() => {
 		setNotesDrawerOpen(true);

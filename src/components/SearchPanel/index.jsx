@@ -105,10 +105,6 @@ function listItemRenderer(item, itemProps) {
 
 const RenderedList = React.memo(function RenderedList(props){
 	const { handleClose, /*handleKeyDown, handleKeyUp,*/ itemList, selectedItem } = props;
-	// For debugging:
-	useEffect(() => {
-		console.log("Rendering RenderedList with props : ", props);
-	}, [props]);
 
 	return selectedItem 
 		? <ItemDetails item={selectedItem} 
