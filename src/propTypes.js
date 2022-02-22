@@ -79,7 +79,7 @@ const cleanLibraryReturnArrayType = arrayOf(cleanLibraryItemType);
  */
 const cleanRelatedItemType = shape({
 	abstract: string,
-	added: instanceOf(Date),
+	added: string,
 	children: shape({
 		pdfs: arrayOf(zoteroItemType),
 		notes: arrayOf(zoteroItemType)

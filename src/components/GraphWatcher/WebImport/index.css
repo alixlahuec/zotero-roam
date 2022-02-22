@@ -9,12 +9,12 @@
 /* Dialog */
 
 .bp3-dialog.zr-auxiliary-dialog--webimport {
-    width: calc(95% - 40vw);
-    margin-left: calc(20vw + 2.5%);
+    width: calc(95% - 32vw);
+    margin-left: calc(16vw + 2.5%);
     transition: 0.5s;
 }
 .bp3-dialog.zr-auxiliary-dialog--webimport.has-selected-items {
-    width: calc(95% - 20vw);
+    width: calc(95% - 16vw);
 }
 
 .bp3-dialog.zr-auxiliary-dialog--webimport > .bp3-dialog-body {

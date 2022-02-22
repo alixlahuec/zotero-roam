@@ -41,7 +41,7 @@ const addPageMenus = () => {
  * @param {Map} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.  
  * @returns {{
  * abstract: String,
- * added: Date,
+ * added: String,
  * children: {pdfs: Array, notes: Array},
  * inGraph: Boolean,
  * itemType: String,

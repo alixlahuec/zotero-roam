@@ -27,7 +27,12 @@
     align-items: center;
     display:flex;
     justify-content: space-between;
-    padding: 5px 15px;
+    padding: 0px 15px;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-details"],
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] {
+    padding: 5px;
 }
 
 .zr-tagmanager--datalist .zr-datalist--item:last-child{
@@ -43,17 +48,26 @@
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] {
     align-items: end;
+    background: #f3f3f3;
     display: flex;
-    flex: 0 0 33%;
+    flex: 0 0 40%;
     flex-direction: column;
+    opacity: 0.5;
 }
 
-.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] .bp3-button-group .bp3-button {
-    opacity: 0.7;
+.zr-tagmanager--datalist .zr-datalist--item:hover [zr-role="item-actions"] {
+    opacity: 0.8;
+    transition: 0.2s;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item:hover [zr-role="item-actions"] .bp3-input-group {
+    background: white;
+    border: 2px #e1dfdf solid;
+    border-radius: 5px;
 }
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] input.bp3-input {
-    background: #95949412;
+    background: unset;
     box-shadow: none;
 }
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState} from "react";
-import { arrayOf, func, shape, string } from "prop-types";
+import { arrayOf, func, objectOf, shape, string } from "prop-types";
 import { Button, ButtonGroup, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
 
 import { ListItem, ListWrapper, Pagination, Toolbar } from "../../DataList";
@@ -39,14 +39,12 @@ const Item = React.memo(function Item({ entry, library }){
 		mutate({
 			library,
 			tags: selectedTags
-		}, {
-			onSettled: (data, error, variables) => console.log(data, error, variables)
 		});
 	}, [library, mutate, selectedTags]);
 
 	return (
 		<ListItem data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
-			<div>
+			<div zr-role="item-details">
 				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
 				<span className={["zr-secondary", "zr-text-small"].join(" ")}>{pluralize(usage, "item")}</span>
 				{is_singleton
@@ -80,12 +78,12 @@ const Item = React.memo(function Item({ entry, library }){
 								selectedTags={selectedTags} />
 							<Button 
 								className="zr-text-small" 
-								disabled={selectedTags.length == 0} 
+								disabled={selectedTags.length == 0}
+								htmlTitle="Delete tag(s)" 
 								icon="trash" 
 								intent="danger"
 								loading={deleteStatus == "loading"}
-								onClick={triggerDelete} 
-								text="Delete" />
+								onClick={triggerDelete} />
 						</>}
 				</ButtonGroup>
 			</span>
@@ -97,7 +95,7 @@ Item.propTypes = {
 	library: customPropTypes.zoteroLibraryType
 };
 
-const TagsDatalist = React.memo(function ItemRenderer(props){
+const TagsDatalist = React.memo(function TagsDatalist(props){
 	const { items, libProps } = props;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [filter, setFilter] = useState("select");
@@ -176,7 +174,7 @@ const TagsDatalist = React.memo(function ItemRenderer(props){
 	);
 });
 TagsDatalist.propTypes = {
-	items: arrayOf(customPropTypes.taglistEntry),
+	items: objectOf(arrayOf(customPropTypes.taglistEntry)),
 	libProps: shape({
 		currentLibrary: customPropTypes.zoteroLibraryType,
 		onSelect: func,

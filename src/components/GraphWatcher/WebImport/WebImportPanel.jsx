@@ -42,7 +42,6 @@ const WebImportItem = React.memo(function WebImportItem(props){
 				<Checkbox
 					checked={isSelected}
 					className="zr-webimport-item--title"
-					defaultChecked={false}
 					inline={false}
 					labelElement={<a target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>}
 					onChange={handleCheckUncheck}

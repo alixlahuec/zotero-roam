@@ -37,7 +37,7 @@ function MergeInput(props){
 
 		return <Button 
 			{...sharedProps}
-			icon={status == "success" ? "small-tick" : "arrow-right"}
+			icon={status == "success" ? "small-tick" : "group-objects"}
 			intent={status == "success" ? "success" : "none"}
 			text={status == "success" ? "Done" : "Merge"} />;
 	}, [disabled, status, selectedTags.length, triggerMerge, value]);

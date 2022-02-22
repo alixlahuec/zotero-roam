@@ -65,12 +65,12 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 	const { children: { pdfs, notes }, raw } = item;
 
 	return (
-		<li className="zr-related-item" data-item-type={item.itemType} data-in-graph={(inGraph != false).toString()}>
+		<li className="zr-related-item" data-in-graph={(inGraph != false).toString()}>
 			<div className={ Classes.MENU_ITEM } label={item.key}>
 				<Timestamp timestamp={item.timestamp} type={type} />
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{display: "flex"}}>
-						<div className="zr-related-item-contents--metadata">
+						<div className="zr-related-item-contents--metadata" data-item-type={item.itemType} >
 							<span className="zr-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
 							<span className="zr-highlight">{item.meta}</span>
 						</div>

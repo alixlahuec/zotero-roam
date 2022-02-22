@@ -81,7 +81,7 @@ const useImportCitoids = () => {
 };
 
 /** Modifies tags in a Zotero library
- * @fires zotero-roam:write
+ * @fires zotero-roam:tags-modified
  * @returns
  */
 const useModifyTags = () => {
@@ -121,14 +121,14 @@ const useModifyTags = () => {
 
 			const outcome = data.reduce((obj, res) => {
 				if(res.status == "fulfilled"){
-					obj.success.push(res.value);
+					obj.successful.push(res.value);
 				} else {
-					obj.error.push(res.reason);
+					obj.failed.push(res.reason);
 				}
 				return obj;
-			},{ success: [], error: [] });
+			},{ successful: [], failed: [] });
 
-			if(!error && outcome.success.length > 0){
+			if(!error && outcome.successful.length > 0){
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
@@ -136,7 +136,7 @@ const useModifyTags = () => {
 				});
 			}
 
-			emitCustomEvent("write", {
+			emitCustomEvent("tags-modified", {
 				data: outcome,
 				error,
 				into,

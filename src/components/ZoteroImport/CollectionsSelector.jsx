@@ -14,7 +14,6 @@ const CollectionOption = React.memo(function CollectionOption(props) {
 		<Checkbox
 			checked={isChecked}
 			className={["zr-text-small", `depth-${depth}`].join(" ")}
-			defaultChecked={false}
 			inline={false}
 			label={name}
 			onChange={handleCheckUncheck}

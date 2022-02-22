@@ -37,6 +37,18 @@ const events = [
 	 */
 	"tags-deleted",
 	/**
+	 * Signals a tag modification has terminated
+	 * @event zotero-roam:tags-modified
+	 * @type {object}
+	 * @property {{failed: Object[], successful: Object[]}} data - The outcome of all requests
+	 * @property {error|null} error - The error thrown during the modification, if failed
+	 * @property {String} into - The string used for the renaming
+	 * @property {String} library - The path of the targeted library
+	 * @property {String[]} tags - The array of targeted tags
+	 * @see useModifyTags
+	 */
+	"tags-modified",
+	/**
     * Signals a data update for items has terminated
      * @event zotero-roam:update
      * @type {object}
@@ -127,6 +139,36 @@ function setDefaultHooks(){
 				intent: "success",
 				message: pluralize(tags.length, "tag", ` deleted from ${library}`)
 			});
+		}
+	});
+	document.addEventListener("zotero-roam:tags-modified", (e) => {
+		let { data: { failed, successful }, error, library } = e.detail;
+		if(error){ console.error(error); }
+		if(failed.length > 0){ console.log(failed); }
+
+		if(error || (failed.length > 0 && successful.length == 0)){
+			zrToaster.show({
+				intent: "danger",
+				message: `Tag modification failed : \n ${[error, failed].filter(Boolean).join("\n")}`
+			});
+		} else {
+			let itemsOutcome = successful.reduce((counts, res) => {
+				counts.success += Object.keys(res.data.successful).length;
+				counts.error += Object.keys(res.data.failed).length;
+			}, { error: 0, success : 0 });
+			let isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
+
+			if(isFullSuccess){
+				zrToaster.show({
+					intent: "success",
+					message: `${itemsOutcome.success} items successfully modified in ${library}.`
+				});
+			} else {
+				zrToaster.show({
+					intent: "primary",
+					message: `${itemsOutcome.success} items were modified in ${library}, however some problems occurred (${itemsOutcome.error} failed modifications, ${failed.length} failed requests). \n Please check the browser's console for more details.`
+				});
+			}
 		}
 	});
 }

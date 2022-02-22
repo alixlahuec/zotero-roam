@@ -373,8 +373,10 @@ function makeTagMap(tags){
 					if(entry.every(el => el.tag != tag || el.meta.type != type)){
 						map.set(tag, [...entry, t]);
 					}
-				} else {
-					map.set(tag, [entry, t]);
+				} else if(entry.constructor === Object) {
+					if(entry.tag != tag || entry.meta.type != type){
+						map.set(tag, [entry, t]);
+					}
 				}
 			} else{
 				map.set(tag,t);

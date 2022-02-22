@@ -12,7 +12,7 @@ function SortButton(props){
 
 	return (
 		<span className="zr-sort-option" onClick={handleClick} >
-			<input type="radio" checked={isSelected ? "true" : null} disabled={isSelected} id={uniqueId} name={name} value={value} />
+			<input type="radio" checked={isSelected ? true : null} disabled={isSelected} id={uniqueId} name={name} value={value} />
 			<Icon icon={icon} />
 			<label className="zr-text-small" htmlFor={uniqueId}>{label}</label>
 		</span>

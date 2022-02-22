@@ -1,9 +1,9 @@
 .bp3-dialog[class*="zr-dialog-overlay--"] {
     align-self: baseline;
     box-shadow: none;
-    margin-left: calc(20vw + 2.5%);
+    margin-left: calc(16vw + 2.5%);
     padding-bottom: 0px;
-    width: calc(95% - 40vw);
+    width: calc(95% - 32vw);
 }
 
 .bp3-dialog[class*="zr-dialog-overlay--"] {
@@ -31,13 +31,6 @@
         width: calc(95% - 10vw);
     }
 }
-
-/* @media (max-width:600px){
-    .zotero-roam-dialog-overlay .bp3-dialog[side-panel="hidden"] {width:calc(95% - min(40vw, 60px));}
-    .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] {width:calc(95% - min(20vw, 30px));}
-    .zotero-roam-dialog-overlay .bp3-dialog[side-panel="visible"] .side-panel {flex-basis:min(20vw, 30px)!important;}
-}*/
-
 
 /* DARK THEMES */
 

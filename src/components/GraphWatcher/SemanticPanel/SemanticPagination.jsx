@@ -81,7 +81,7 @@ Item.propTypes = {
 const SemanticPagination = React.memo(function SemanticPagination(props){
 	const { items, selectProps, type } = props;
 	const [currentPage, setCurrentPage] = useState(1);
-	const [query, setQuery] = useState();
+	const [query, setQuery] = useState("");
 	const [sortBy, setSortBy] = useState("year");
 
 	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
