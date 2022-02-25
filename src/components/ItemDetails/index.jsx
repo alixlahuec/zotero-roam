@@ -80,6 +80,7 @@ function CopyButtons(props){
 	return (
 		<ButtonGroup className="copy-buttons" fill={true} minimal={true} >
 			<Button className="zr-text-small"
+				alignText="left"
 				fill={true} 
 				icon="clipboard"
 				intent={inGraph ? "success" : "warning"}
@@ -166,7 +167,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				<ButtonGroup minimal={true} fill={true} alignText="left">
 					{children.pdfs.map((p, i) => {
 						let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
-						return <ButtonLink key={i} className="item-pdf-link" href={pdfHref} icon="paperclip" text={p.data.filename || p.data.title} />;
+						return <ButtonLink key={i} className={["item-pdf-link", "zr-text-small"].join(" ")} href={pdfHref} icon="paperclip" text={p.data.filename || p.data.title} />;
 					} )}
 				</ButtonGroup>
 			);

@@ -26,10 +26,6 @@
   max-width: 300px;
 }
 
-[data-item-type]::before {
-  margin-right: 5px;
-}
-
 /* Variables */
 
 [class*="zr"] [aria-selected="true"]{background-color: var(--zr-selected-bc,#eaf3fc);}

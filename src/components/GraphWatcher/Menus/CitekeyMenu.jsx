@@ -313,13 +313,13 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 
 	const ext_links = useMemo(() => {
 		let connectedPapersLink = defaults.includes("connectedPapers")
-			? <ButtonLink icon="layout" text="Connected Papers" href={"https://www.connectedpapers.com/" + (doi ? "api/redirect/doi/" + doi : "search?q=" + encodeURIComponent(item.data.title)) } />
+			? <ButtonLink icon="layout" intent="primary" text="Connected Papers" href={"https://www.connectedpapers.com/" + (doi ? "api/redirect/doi/" + doi : "search?q=" + encodeURIComponent(item.data.title)) } />
 			: null;
 		let semanticLink = doi && defaults.includes("semanticScholar") 
-			? <ButtonLink icon="bookmark" text="Semantic Scholar" href={"https://api.semanticscholar.org/" + doi} /> 
+			? <ButtonLink icon="bookmark" intent="primary" text="Semantic Scholar" href={"https://api.semanticscholar.org/" + doi} /> 
 			: null;
 		let googleScholarLink = defaults.includes("googleScholar")
-			? <ButtonLink icon="learning" text="Google Scholar" href={"https://scholar.google.com/scholar?q=" + (doi || encodeURIComponent(item.data.title))} />
+			? <ButtonLink icon="learning" intent="primary" text="Google Scholar" href={"https://scholar.google.com/scholar?q=" + (doi || encodeURIComponent(item.data.title))} />
 			: null;
 
 		return (

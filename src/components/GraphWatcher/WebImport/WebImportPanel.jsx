@@ -37,13 +37,13 @@ const WebImportItem = React.memo(function WebImportItem(props){
 	}, [item.url, onSelect]);
     
 	return (
-		<li className="zr-webimport-item" data-item-type={item.itemType}>
+		<li className="zr-webimport-item" >
 			<div className={ Classes.MENU_ITEM } label={item.url}>
 				<Checkbox
 					checked={isSelected}
 					className="zr-webimport-item--title"
 					inline={false}
-					labelElement={<a target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>}
+					labelElement={<a data-item-type={item.itemType} target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>}
 					onChange={handleCheckUncheck}
 				/>
 				<div className={[ Classes.FILL, "zr-webimport-item--contents" ].join(" ")}>

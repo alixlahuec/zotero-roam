@@ -53,14 +53,14 @@ const useImportCitoids = () => {
 
 			const outcome = data.reduce((obj, res) => {
 				if(res.status == "fulfilled"){
-					obj.success.push(res.value);
+					obj.successful.push(res.value);
 				} else {
-					obj.error.push(res.reason);
+					obj.failed.push(res.reason);
 				}
 				return obj;
-			},{ success: [], error: [] });
+			},{ successful: [], failed: [] });
 
-			if(!error && outcome.success.length > 0){
+			if(!error && outcome.successful.length > 0){
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {

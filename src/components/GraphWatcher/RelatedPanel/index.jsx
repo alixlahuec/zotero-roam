@@ -70,8 +70,8 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 				<Timestamp timestamp={item.timestamp} type={type} />
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{display: "flex"}}>
-						<div className="zr-related-item-contents--metadata" data-item-type={item.itemType} >
-							<span className="zr-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
+						<div className="zr-related-item-contents--metadata" >
+							<span className="zr-item-title" data-item-type={item.itemType} style={{ whiteSpace: "normal" }}>{item.title}</span>
 							<span className="zr-highlight">{item.meta}</span>
 						</div>
 						<span className="zr-related-item-contents--actions">

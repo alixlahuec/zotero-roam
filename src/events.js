@@ -112,18 +112,33 @@ function setDefaultHooks(){
 		}
 	});
 	document.addEventListener("zotero-roam:write", (e) => {
-		let { data, error, library } = e.detail;
-		if(error){
-			console.error(error);
+		let { data: { failed, successful }, error, library } = e.detail;
+		if(error){ console.error(error); }
+		if(failed.length > 0){ console.log(failed); }
+
+		if(error || (failed.length > 0 && successful.length == 0)){
 			zrToaster.show({
 				intent: "danger",
-				message: `Import to Zotero failed : \n ${error}`
+				message: `Import to Zotero failed : \n ${[error, failed].filter(Boolean).join("\n")}`
 			});
 		} else {
-			zrToaster.show({
-				intent: "success",
-				message: pluralize(Object.keys(data.successful)?.length, "item", ` added to ${library}`)
-			});
+			let itemsOutcome = successful.reduce((counts, res) => {
+				counts.success += Object.keys(res.data.successful).length;
+				counts.error += Object.keys(res.data.failed).length;
+			}, { error: 0, success: 0 });
+			let isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
+
+			if(isFullSuccess){
+				zrToaster.show({
+					intent: "success",
+					message: pluralize(itemsOutcome.success, "item", ` added to ${library}.`)
+				});
+			} else {
+				zrToaster.show({
+					intent: "primary",
+					message: `${pluralize(itemsOutcome.success, "item", "")} added to ${library}, with some problems (${pluralize(itemsOutcome.error, "failed modification", "")}, ${pluralize(failed.length, "failed request", "")}). \n Please check the browser's console for more details.`
+				});
+			}
 		}
 	});
 	document.addEventListener("zotero-roam:tags-deleted", (e) => {
@@ -161,12 +176,12 @@ function setDefaultHooks(){
 			if(isFullSuccess){
 				zrToaster.show({
 					intent: "success",
-					message: `${itemsOutcome.success} items successfully modified in ${library}.`
+					message: pluralize(itemsOutcome.success, "item", ` successfully modified in ${library}.`)
 				});
 			} else {
 				zrToaster.show({
 					intent: "primary",
-					message: `${itemsOutcome.success} items were modified in ${library}, however some problems occurred (${itemsOutcome.error} failed modifications, ${failed.length} failed requests). \n Please check the browser's console for more details.`
+					message: `${pluralize(itemsOutcome.success, "item", "")} modified in ${library}, with some problems (${pluralize(itemsOutcome.error, "failed modification", "")}, ${pluralize(failed.length, "failed request", "")}). \n Please check the browser's console for more details.`
 				});
 			}
 		}
