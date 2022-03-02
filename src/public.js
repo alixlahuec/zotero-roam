@@ -1,5 +1,5 @@
 import { findRoamPage } from "./roam";
-import { formatNotes, getLocalLink, getPDFLink, getWebLink, makeDNP } from "./utils";
+import { formatZoteroNotes, getLocalLink, getPDFLink, getWebLink, makeDNP } from "./utils";
 
 /** Converts Zotero PDF items into a specific format
  * @param {ZoteroItem[]} pdfs - The Array of Zotero PDFs
@@ -93,7 +93,7 @@ function _getItemMetadata(item, pdfs, notes, typemap, notesSettings) {
 	if(notes.length > 0){
 		metadata.push({
 			string: "[[Notes]]",
-			children: formatNotes(notes, notesSettings)
+			children: formatZoteroNotes(notes, notesSettings)
 		});
 	}
 

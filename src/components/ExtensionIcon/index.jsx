@@ -13,7 +13,7 @@ const IconTooltipFooter = React.memo(function IconTooltipFooter() {
 	const { version } = useContext(ExtensionContext);
 
 	return <>
-		<a href="https://alix-lahuec.gitbook.io/zotero-roam/" target="_blank" rel="noreferrer">Extension documentation</a>
+		<a href="https://alix-lahuec.gitbook.io/zotero-roam/" target="_blank" rel="noreferrer">Read the docs</a>
 		<Divider />
 		<span className="zr-icon-tooltip-footer">
 			<a href="https://alix-lahuec.gitbook.io/zotero-roam/changelog" target="_blank" rel="noreferrer">Changelog</a>

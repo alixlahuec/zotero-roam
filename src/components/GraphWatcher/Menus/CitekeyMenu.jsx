@@ -55,7 +55,7 @@ function BacklinksItem({ entry }) {
 	);
 }
 BacklinksItem.propTypes = {
-	entry: customPropTypes.cleanSemanticReturnType
+	entry: customPropTypes.cleanSemanticReturnType.isRequired
 };
 
 const Backlinks = React.memo(function Backlinks(props) {

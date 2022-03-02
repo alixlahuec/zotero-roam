@@ -3,7 +3,7 @@ import { arrayOf, bool, func, object, string } from "prop-types";
 import { Card, Drawer } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
-import { formatNotes } from "../../utils";
+import { formatZoteroNotes } from "../../utils";
 import "./index.css";
 
 const NotesDrawer = React.memo(function NotesDrawer(props){
@@ -11,7 +11,7 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 	const { notes: notesSettings } = useContext(UserSettings);
 
 	const cleanNotes = useMemo(() => {
-		return formatNotes(notes, notesSettings);
+		return formatZoteroNotes(notes, notesSettings);
 	}, [notes, notesSettings]);
 
 	return (

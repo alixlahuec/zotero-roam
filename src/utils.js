@@ -368,13 +368,11 @@ function formatItemReference(item, format, {accent_class = "zr-highlight"} = {})
 }
 
 /** Formats an array of Zotero notes into String blocks, with optional configuration
- * @param {ZoteroItem[]} notes 
+ * @param {ZoteroItem[]} notes - The Zotero notes to format
  * @param {{func: String, split_char: String, use:("raw"|"text")}} config - Additional settings
- * @returns 
+ * @returns The formatted notes
  */
-function formatNotes(notes, config){
-	const { func = null, split_char, use } = config;
-
+function formatZoteroNotes(notes, { func = null, split_char = "\n", use = "raw" } = {}){
 	if(func){
 		// If the user has provided a function, execute it with the desired input
 		return executeFunctionByName(func, window, use == "raw" ? notes : splitNotes(notes, split_char));
@@ -827,7 +825,7 @@ export {
 	executeFunctionByName,
 	formatItemNotes,
 	formatItemReference,
-	formatNotes,
+	formatZoteroNotes,
 	getPDFLink,
 	getLocalLink,
 	getWebLink,

@@ -1,10 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { arrayOf, object, string } from "prop-types";
 import { createPortal } from "react-dom";
 import { Button } from "@blueprintjs/core";
 
 import WebImportPanel from "./WebImportPanel";
 import "./index.css";
+import { hasNodeListChanged } from "../../../utils";
 
 const WebImportButton = React.memo(function WebImportButton({ urls }){
 	const [isDialogOpen, setDialogOpen] = useState(false);
@@ -25,8 +26,44 @@ WebImportButton.propTypes = {
 };
 
 function WebImportFactory({ divs }){
+	// From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
+	// https://jasonwatmore.com/post/2021/08/27/react-how-to-check-if-a-component-is-mounted-or-unmounted
+	const mounted = useRef(false);
+	const [blocksWithLinks, setBlocksWithLinks] = useState([]);
+
+	const updateBlocksWithLinks = useCallback(() => {
+		setBlocksWithLinks((prevState) => {
+			let currentBlocks = divs.filter(div => {
+				let links = div.parentElement.querySelectorAll(".rm-block a:not(.rm-alias--page):not(.rm-alias--block)") || [];
+				return links.length > 0;
+			});
+			if(hasNodeListChanged(prevState, currentBlocks)){
+				return currentBlocks;
+			} else {
+				return prevState;
+			}
+		});
+	}, [divs]);
+
+	useEffect(() => {
+		mounted.current = true;
+		const watcher = setInterval(
+			() => {
+				if(mounted.current){
+					updateBlocksWithLinks();
+				}
+			},
+			1000
+		);
+
+		return () => {
+			mounted.current = false;
+			clearInterval(watcher);
+		};
+	}, [updateBlocksWithLinks]);
+
 	return (
-		divs.map(div => ({
+		blocksWithLinks.map(div => ({
 			div,
 			links: div.parentElement.querySelectorAll(".rm-block a:not(.rm-alias--page):not(.rm-alias--block)") || []
 		})).filter(div => div.links.length > 0)

@@ -1,7 +1,7 @@
 import { emitCustomEvent } from "./events";
 import { _getItemMetadata } from "./public";
 import { use_smartblock_metadata } from "./smartblocks";
-import { executeFunctionByName, formatNotes } from "./utils";
+import { executeFunctionByName, formatZoteroNotes } from "./utils";
 
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
@@ -258,7 +258,7 @@ async function importItemNotes({item, notes = []} = {}, uid, config){
 	}
 
 	try {
-		let formattedNotes = formatNotes(notes, config);
+		let formattedNotes = formatZoteroNotes(notes, config);
 		let { args, error, success } = await addBlocksArray(pageUID, formattedNotes);
 
 		let outcome = {

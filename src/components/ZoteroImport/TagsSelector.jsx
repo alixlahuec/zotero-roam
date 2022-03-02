@@ -6,6 +6,8 @@ import { MultiSelect } from "@blueprintjs/select";
 import { getAllPages } from "../../roam";
 import { searchEngine } from "../../utils";
 
+const results_limit = 30;
+
 const createNewItemFromQuery = (tag) => tag;
 const tagRenderer = (tag) => tag;
 
@@ -27,7 +29,8 @@ function itemListPredicate(query, items) {
 			search_compounds: true,
 			word_order: "loose"
 		}))
-		.sort((a,b) => a.length < b.length ? -1 : 1);
+		.sort((a,b) => a.length < b.length ? -1 : 1)
+		.slice(0, results_limit);
 }
 
 const TagsSelector = React.memo(function TagsSelector(props) {
