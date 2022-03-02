@@ -15,7 +15,7 @@ function createNewItemRenderer(query, active, handleClick){
 
 function itemRenderer(item, itemProps) {
 	let { handleClick, modifiers: { active } } = itemProps;
-	return <MenuItem active={active} onClick={handleClick} text={item} />;
+	return <MenuItem active={active} key={item} onClick={handleClick} text={item} />;
 }
 
 function itemListPredicate(query, items) {

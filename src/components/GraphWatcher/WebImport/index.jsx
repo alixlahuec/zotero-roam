@@ -28,8 +28,8 @@ function WebImportFactory({ divs }){
 	return (
 		divs.map(div => ({
 			div,
-			links: div.parentElement.querySelectorAll(".rm-block a:not(.rm-alias--page):not(.rm-alias--block)") || false
-		})).filter(div => div.links)
+			links: div.parentElement.querySelectorAll(".rm-block a:not(.rm-alias--page):not(.rm-alias--block)") || []
+		})).filter(div => div.links.length > 0)
 			.map((d, i) => {
 				const { div, links } = d;
 				const urls = Array.from(links).map(lk => lk.href);

@@ -9,16 +9,20 @@
 /* Dialog */
 
 .bp3-dialog.zr-auxiliary-dialog--webimport {
-    width: calc(95% - 32vw);
-    margin-left: calc(16vw + 2.5%);
+    width: calc(95% - 44vw);
+    margin-left: calc(22vw + 2.5%);
     transition: 0.5s;
 }
 .bp3-dialog.zr-auxiliary-dialog--webimport.has-selected-items {
-    width: calc(95% - 16vw);
+    width: calc(95% - 22vw);
 }
 
 .bp3-dialog.zr-auxiliary-dialog--webimport > .bp3-dialog-body {
     display: flex;
+}
+
+.zr-webimport-panel--main {
+    flex: 1 1 auto;
 }
 
 .zr-webimport-panel--side {
