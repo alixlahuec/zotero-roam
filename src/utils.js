@@ -703,8 +703,7 @@ function searchEngine_string(string, text, {any_case = true, match = "partial", 
 }
 
 function setupDarkTheme(use_dark = false){
-	let body = document.getElementsByTagName("body")[0];
-	body.setAttribute("zr-dark-theme", (use_dark == true).toString());
+	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
 }
 
 /** Injects external scripts into the page

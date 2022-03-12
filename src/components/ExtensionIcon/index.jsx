@@ -13,9 +13,8 @@ function DarkThemeToggle ({ dark = false}){
 	const [useDark, setUseDark] = useState(dark);
 	
 	const toggleDarkTheme = useCallback(() => {
-		let body = document.getElementsByTagName("body")[0];
-		let is_currently_dark = body.getAttribute("zr-dark-theme") == "true";
-		body.setAttribute("zr-dark-theme", (!is_currently_dark).toString());
+		let is_currently_dark = document.getElementsByTagName("body")[0].getAttribute("zr-dark-theme") == "true";
+		document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (!is_currently_dark).toString());
 		setUseDark(!is_currently_dark);
 	}, []);
 
