@@ -34,15 +34,13 @@
     padding-right:5px;
 }
 
-/* DARK THEMES */
+/* DARK THEME */
 
-@media (prefers-color-scheme: dark){
-    .zr-sort-option {
-        color: var(--zr-dark-text-co, #76a0cb);
-    }
-    .zr-sort-option:hover,
-    .zr-sort-option input:checked ~ span,
-    .zr-sort-option input:checked ~ label {
-        color: var(--zr-dark-highlight,#3fb8ff);
-    }
+[zr-dark-theme="true"] .zr-sort-option {
+    color: var(--zr-dark-text-co, #76a0cb);
+}
+[zr-dark-theme="true"] .zr-sort-option:hover,
+[zr-dark-theme="true"] .zr-sort-option input:checked ~ span,
+[zr-dark-theme="true"] .zr-sort-option input:checked ~ label {
+    color: var(--zr-dark-highlight,#3fb8ff);
 }

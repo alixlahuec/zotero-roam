@@ -72,37 +72,35 @@
 .zr-related-item-contents--actions a[zr-role="item-url"] {display:block;}
 .zr-related-item-contents--actions a[zr-role="item-url"]:hover {text-decoration: none;}
 
-/* DARK THEMES */
+/* DARK THEME */
 
-@media (prefers-color-scheme: dark){
-    .bp3-dialog[class*="zr-auxiliary-dialog--"],
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] > .bp3-dialog-header {
-        background: var(--zr-dark-dialog-bg, #242424);
-    }
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu {
-        background: var(--zr-dark-dialog-bg, #242424);
-        border-width: 1px;
-        border-style: solid;
-        border-color: var(--zr-dark-border-color,#363a3f);
-    }
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu::-webkit-scrollbar-thumb,
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div > ul::-webkit-scrollbar-thumb {
-        background: var(--zr-dark-border-color,#363a3f);
-    }
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] h4.bp3-heading,
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu,
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] h5.panel-tt,
-    .zr-related-item,
-    .zr-related-item-contents--actions a[zr-role="item-url"],
-    .zr-related-item-contents--actions a[zr-role="item-url"]:hover {
-        color: var(--zr-dark-text-co, #76a0cb);
-    }
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary {
-        color: var(--zr-dark-text-co, #76a0cb);
-        background-color: var(--zr-dark-elem-bg, #2B3143);
-    }
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary.bp3-active {
-        background-color: var(--zr-dark-text-co, #76a0cb);
-        color: var(--zr-dark-elem-bg, #2B3143);
-    }
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"],
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] > .bp3-dialog-header {
+    background: var(--zr-dark-dialog-bg, #242424);
+}
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu {
+    background: var(--zr-dark-dialog-bg, #242424);
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--zr-dark-border-color,#363a3f);
+}
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu::-webkit-scrollbar-thumb,
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div > ul::-webkit-scrollbar-thumb {
+    background: var(--zr-dark-border-color,#363a3f);
+}
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] h4.bp3-heading,
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu,
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] h5.panel-tt,
+[zr-dark-theme="true"] .zr-related-item,
+[zr-dark-theme="true"] .zr-related-item-contents--actions a[zr-role="item-url"],
+[zr-dark-theme="true"] .zr-related-item-contents--actions a[zr-role="item-url"]:hover {
+    color: var(--zr-dark-text-co, #76a0cb);
+}
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary {
+    color: var(--zr-dark-text-co, #76a0cb);
+    background-color: var(--zr-dark-elem-bg, #2B3143);
+}
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary.bp3-active {
+    background-color: var(--zr-dark-text-co, #76a0cb);
+    color: var(--zr-dark-elem-bg, #2B3143);
 }

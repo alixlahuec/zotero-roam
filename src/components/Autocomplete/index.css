@@ -30,15 +30,12 @@
     background-color: #eaf3fc;
 }
 
-/* DARK THEMES */
+/* DARK THEME */
+[zr-dark-theme="true"] .zr-tribute {
+    background-color: var(--zr-dark-selected-bc,#191919);
+    color: var(--zr-dark-auxiliary,#95a8b7);
+}
 
-@media (prefers-color-scheme: dark){
-    .zr-tribute {
-        background-color: var(--zr-dark-selected-bc,#191919);
-        color: var(--zr-dark-auxiliary,#95a8b7);
-    }
-
-    .zr-tribute--selected {
-        background-color: var(--zr-dark-elem-bg, #2B3143);
-    }
+[zr-dark-theme="true"] .zr-tribute--selected {
+    background-color: var(--zr-dark-elem-bg, #2B3143);
 }

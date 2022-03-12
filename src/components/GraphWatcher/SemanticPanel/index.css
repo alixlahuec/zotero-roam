@@ -152,34 +152,32 @@ li.import-items_selected {
     }
 }
 
-/* DARK THEMES */
+/* DARK THEME */
 
-@media (prefers-color-scheme: dark){
-    .zr-semantic-panel--main .bp3-tab {
-        color: var(--zr-dark-text-co, #76a0cb);
-    }
-    .zr-semantic-panel--main .bp3-tab[data-tab-id="is_reference"][aria-selected="true"],
-    .zr-semantic-panel--main .bp3-tab[data-tab-id="is_reference"]:not([aria-disabled="true"]):hover {
-        color: var(--zr-dark-highlight,#3fb8ff);
-        background-color: var(--zr-dark-selected-bc,#191919);
-    }
+[zr-dark-theme="true"] .zr-semantic-panel--main .bp3-tab {
+    color: var(--zr-dark-text-co, #76a0cb);
+}
+[zr-dark-theme="true"] .zr-semantic-panel--main .bp3-tab[data-tab-id="is_reference"][aria-selected="true"],
+[zr-dark-theme="true"] .zr-semantic-panel--main .bp3-tab[data-tab-id="is_reference"]:not([aria-disabled="true"]):hover {
+    color: var(--zr-dark-highlight,#3fb8ff);
+    background-color: var(--zr-dark-selected-bc,#191919);
+}
 
-    .zr-semantic-panel--main .bp3-tab[data-tab-id="is_citation"][aria-selected="true"],
-    .zr-semantic-panel--main .bp3-tab[data-tab-id="is_citation"]:not([aria-disabled="true"]):hover {
-        color: var(--zr-dark-highlight-2,#d9822b);
-        background-color: var(--zr-dark-selected-bc,#191919);
-    }
+[zr-dark-theme="true"] .zr-semantic-panel--main .bp3-tab[data-tab-id="is_citation"][aria-selected="true"],
+[zr-dark-theme="true"] .zr-semantic-panel--main .bp3-tab[data-tab-id="is_citation"]:not([aria-disabled="true"]):hover {
+    color: var(--zr-dark-highlight-2,#d9822b);
+    background-color: var(--zr-dark-selected-bc,#191919);
+}
 
-    .zr-semantic-panel--main .zr-related-item--intents .bp3-tag[data-semantic-intent] {
-        background-color: var(--zr-dark-selected-bc,#191919);
-    }
+[zr-dark-theme="true"] .zr-semantic-panel--main .zr-related-item--intents .bp3-tag[data-semantic-intent] {
+    background-color: var(--zr-dark-selected-bc,#191919);
+}
 
-    .zr-semantic-panel--main .zr-related-item[data-in-library="true"] .zr-related-item--timestamp {
-        background-color: var(--zr-dark-positive-bc, #5863582e);
-        color: var(--zr-dark-positive-co, #86f686);
-    }
+[zr-dark-theme="true"] .zr-semantic-panel--main .zr-related-item[data-in-library="true"] .zr-related-item--timestamp {
+    background-color: var(--zr-dark-positive-bc, #5863582e);
+    color: var(--zr-dark-positive-co, #86f686);
+}
 
-    li.import-items_selected {
-        background-color: var(--zr-dark-selected-bc,#191919);
-    }
+[zr-dark-theme="true"] li.import-items_selected {
+    background-color: var(--zr-dark-selected-bc,#191919);
 }

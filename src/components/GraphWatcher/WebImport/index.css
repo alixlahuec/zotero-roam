@@ -62,10 +62,8 @@
 
 .zr-webimport-item .zr-webimport-item--contents{padding-left:25px;}
 
-/* DARK THEMES */
+/* DARK THEME */
 
-@media (prefers-color-scheme: dark){
-    .zr-webimport-item .zr-webimport-item--abstract {
-        background-color: var(--zr-dark-selected-bc,#191919);
-    }
+[zr-dark-theme="true"] .zr-webimport-item .zr-webimport-item--abstract {
+    background-color: var(--zr-dark-selected-bc,#191919);
 }

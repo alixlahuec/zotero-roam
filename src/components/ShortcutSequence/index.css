@@ -2,8 +2,8 @@
     margin-left: 15px;
 }
 
-@media (prefers-color-scheme: dark){
-    .zr-shortcut-sequence {
-        color: beige;
-    }
+/* DARK THEME */
+
+[zr-dark-theme="true"] .zr-shortcut-sequence {
+    color: beige;
 }

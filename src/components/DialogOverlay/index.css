@@ -32,10 +32,8 @@
     }
 }
 
-/* DARK THEMES */
+/* DARK THEME */
 
-@media (prefers-color-scheme: dark){
-    .bp3-dialog[class*="zr-dialog-overlay--"] {
-        background: var(--zr-dark-dialog-bg, #242424);
-    }
+[zr-dark-theme="true"] .bp3-dialog[class*="zr-dialog-overlay--"] {
+    background: var(--zr-dark-dialog-bg, #242424);
 }

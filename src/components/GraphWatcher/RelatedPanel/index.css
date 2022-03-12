@@ -43,14 +43,12 @@
     }
 }
 
-/* DARK THEMES */
+/* DARK THEME */
 
-@media (prefers-color-scheme: dark){
-    .bp3-dialog.zr-auxiliary-dialog--related [zr-role="toggle-abstracts"]{
-        background-color: var(--zr-dark-elem-bg, #2B3143);
-        color: var(--zr-dark-text-co, #76a0cb);
-    }
-    .zr-related-item--abstract {
-        background-color: var(--zr-dark-selected-bc,#191919);
-    }
+[zr-dark-theme="true"] .bp3-dialog.zr-auxiliary-dialog--related [zr-role="toggle-abstracts"]{
+    background-color: var(--zr-dark-elem-bg, #2B3143);
+    color: var(--zr-dark-text-co, #76a0cb);
+}
+[zr-dark-theme="true"] .zr-related-item--abstract {
+    background-color: var(--zr-dark-selected-bc,#191919);
 }

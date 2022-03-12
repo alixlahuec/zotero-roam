@@ -16,21 +16,19 @@
     border-bottom: 1px #cccccc solid;
 }
 
-/* DARK THEMES*/
+/* DARK THEME */
 
-@media (prefers-color-scheme: dark){
-    .import-options {
-        color: var(--zr-dark-text-co,#76a0cb);
-    }
+[zr-dark-theme="true"] .import-options {
+    color: var(--zr-dark-text-co,#76a0cb);
+}
 
-    .options-tags .bp3-input.bp3-multi-select {
-        background-color: var(--zr-dark-selected-bc,#191919);
-        border-bottom-color: var(--zr-dark-border-color,#363a3f);
-        color: var(--zr-dark-text-co,#76a0cb);
-    }
+[zr-dark-theme="true"] .options-tags .bp3-input.bp3-multi-select {
+    background-color: var(--zr-dark-selected-bc,#191919);
+    border-bottom-color: var(--zr-dark-border-color,#363a3f);
+    color: var(--zr-dark-text-co,#76a0cb);
+}
 
-    .options-tags .bp3-input.bp3-multi-select .bp3-tag {
-        background-color: var(--zr-dark-elem-bg, #2B3143);
-        color: var(--zr-dark-text-co,#76a0cb);
-    }
+[zr-dark-theme="true"] .options-tags .bp3-input.bp3-multi-select .bp3-tag {
+    background-color: var(--zr-dark-elem-bg, #2B3143);
+    color: var(--zr-dark-text-co,#76a0cb);
 }
