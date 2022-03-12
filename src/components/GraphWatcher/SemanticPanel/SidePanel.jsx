@@ -20,7 +20,7 @@ const SelectedImportItem = React.memo(function SelectedImportItem(props) {
 				<span className={["zr-secondary", "selected_origin"].join(" ")}>{item.meta}</span>
 			</div>
 			<div className="selected_state">
-				<ButtonGroup minimal={true} small={true}>
+				<ButtonGroup minimal={true} >
 					<Button className="selected_remove-button" icon="cross" intent="danger" onClick={removeItemFromImport} />
 				</ButtonGroup>
 			</div>

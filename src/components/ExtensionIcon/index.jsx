@@ -1,18 +1,43 @@
-import React, { useCallback, useContext, useMemo } from "react";
-import { array, func, objectOf, oneOf } from "prop-types";
-import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Tag } from "@blueprintjs/core";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { array, bool, func, objectOf, oneOf } from "prop-types";
+import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 
 import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/queries";
 import { makeTimestamp } from "../../utils";
 
-import { ExtensionContext } from "../App";
+import { ExtensionContext, UserSettings } from "../App";
 import "./index.css";
+
+function DarkThemeToggle ({ dark = false}){
+	const [useDark, setUseDark] = useState(dark);
+	
+	const toggleDarkTheme = useCallback(() => {
+		let body = document.getElementsByTagName("body")[0];
+		let is_currently_dark = body.getAttribute("zr-dark-theme") == "true";
+		body.setAttribute("zr-dark-theme", (!is_currently_dark).toString());
+		setUseDark(!is_currently_dark);
+	}, []);
+
+	useEffect(() => setUseDark(dark), [dark]);
+
+	return <Switch 
+		alignIndicator="right" 
+		checked={useDark} 
+		inline={false} 
+		labelElement={<span><Icon icon="moon" /> Dark Theme</span>} 
+		onChange={toggleDarkTheme} />;
+}
+DarkThemeToggle.propTypes = {
+	dark: bool
+};
 
 const IconTooltipFooter = React.memo(function IconTooltipFooter() {
 	const { version } = useContext(ExtensionContext);
+	const { darkTheme } = useContext(UserSettings);
 
 	return <>
+		<DarkThemeToggle dark={darkTheme} />
 		<a href="https://alix-lahuec.gitbook.io/zotero-roam/" target="_blank" rel="noreferrer">Read the docs</a>
 		<Divider />
 		<span className="zr-icon-tooltip-footer">

@@ -702,6 +702,11 @@ function searchEngine_string(string, text, {any_case = true, match = "partial", 
 
 }
 
+function setupDarkTheme(use_dark = false){
+	let body = document.getElementsByTagName("body")[0];
+	body.setAttribute("zr-dark-theme", (use_dark == true).toString());
+}
+
 /** Injects external scripts into the page
  * @param {{id: String, src: String}[]} deps - List of scripts to inject 
  */
@@ -838,6 +843,7 @@ export {
 	pluralize,
 	readDNP,
 	searchEngine,
+	setupDarkTheme,
 	setupDependencies,
 	setupPortals,
 	sortCollections,

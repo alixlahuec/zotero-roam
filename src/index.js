@@ -8,7 +8,7 @@ import { App, getBibliography, getChildren, getCollections, getItems, getTags } 
 import { setDefaultHooks } from "./events";
 import { formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemMetadata, _getItemRelated, _getItemType } from "./public";
 import { registerSmartblockCommands } from "./smartblocks";
-import { analyzeUserRequests, setupDependencies, setupPortals } from "./utils";
+import { analyzeUserRequests, setupDarkTheme, setupDependencies, setupPortals } from "./utils";
 import { default_typemap } from "./variables";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
@@ -30,6 +30,7 @@ window.zoteroRoam = {};
 		autocomplete = {},
 		autoload = false,
 		copy = {},
+		darkTheme = false,
 		dataRequests = [],
 		metadata = {},
 		notes = {},
@@ -52,6 +53,7 @@ window.zoteroRoam = {};
 				useQuickCopy: false,
 				...copy
 			},
+			darkTheme,
 			metadata: {
 				use: "function",
 				...metadata
@@ -131,6 +133,7 @@ window.zoteroRoam = {};
 			return getTags(library);
 		};
 
+		setupDarkTheme(darkTheme);
 		setupDependencies([
 			{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"} // Scite.ai Badge
 		]);

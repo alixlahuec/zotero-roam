@@ -1,0 +1,110 @@
+.zr-tagmanager--header {
+    align-items: center;
+    display: flex;
+    flex: 0 0 100%;
+    justify-content: space-between;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item {
+    align-items: center;
+    display:flex;
+    justify-content: space-between;
+    padding: 0px 15px;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-details"],
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] {
+    padding: 5px;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item:last-child{
+    border-bottom-width: 0px;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="title"] {
+    font-weight:600;
+    margin-right:15px;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="title"]::before {content: '# '}
+
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] {
+    align-items: end;
+    background: #f3f3f3;
+    display: flex;
+    flex: 0 0 40%;
+    flex-direction: column;
+    opacity: 0.5;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item:hover [zr-role="item-actions"] {
+    opacity: 0.8;
+    transition: 0.2s;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item:hover [zr-role="item-actions"] .bp3-input-group {
+    background: white;
+    border: 2px #e1dfdf solid;
+    border-radius: 5px;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] input.bp3-input {
+    background: unset;
+    box-shadow: none;
+}
+
+.zr-tag--roam,
+.zr-tag--zotero {
+    margin: 5px;
+}
+
+.zr-tag--zotero.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {
+    color: var(--zr-highlight-2,#d9822b);;
+    background-color: #fff5e7;
+}
+
+.zr-tag--roam.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {
+    color: var(--zr-highlight,#206fe6);
+    background-color: #e7f5ff;
+}
+
+.zr-tagmanager--datalist [zr-role="list-stats"] {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding: 5px 0px;
+}
+
+.zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-text"] {
+    flex: 0 0 100%;
+}
+
+.zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-figures"] {
+    display: flex;
+}
+
+.zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-bar"] {
+    flex: 0 0 auto;
+    flex-direction: column;
+    margin: 3px 10px;
+}
+
+.zr-tagmanager--datalist [zr-role="list-stats"] .bp3-progress-bar {
+    max-width: 100px;
+}
+
+/* DARK THEMES */
+
+@media (prefers-color-scheme: dark){
+    .zr-tag--roam.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {
+        background-color: #e7f5ff14;
+        color: var(--zr-dark-highlight,#3fb8ff);
+    }
+    .zr-tag--zotero.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {
+        background-color: #fff5e714;
+        color: var(--zr-dark-highlight-2,#d9822b);
+    }
+    .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] input.bp3-input {
+        color: var(--zr-dark-text-co, #76a0cb);
+    }
+}

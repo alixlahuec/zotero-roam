@@ -78,12 +78,12 @@ const Item = React.memo(function Item({ entry, library }){
 								selectedTags={selectedTags} />
 							<Button 
 								className="zr-text-small" 
-								disabled={selectedTags.length == 0}
-								htmlTitle="Delete tag(s)" 
+								disabled={selectedTags.length == 0} 
 								icon="trash" 
 								intent="danger"
 								loading={deleteStatus == "loading"}
-								onClick={triggerDelete} />
+								onClick={triggerDelete}
+								title="Delete tag(s)" />
 						</>}
 				</ButtonGroup>
 			</span>

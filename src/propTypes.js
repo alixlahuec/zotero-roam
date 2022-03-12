@@ -166,6 +166,7 @@ const userSettingsType = shape({
 	}),
 	autoload: bool,
 	copy: copySettingsType,
+	darkTheme: bool,
 	metadata: object,
 	notes: shape({
 		func: string,

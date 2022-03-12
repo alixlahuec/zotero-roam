@@ -10,6 +10,8 @@ import TagsDatalist from "./TagsDatalist";
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 import * as customPropTypes from "../../../propTypes";
 
+import "./index.css";
+
 const TabContents = React.memo(function TabContents({ libraries, onClose }){
 	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);
 

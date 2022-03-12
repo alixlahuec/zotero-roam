@@ -23,6 +23,7 @@
 
 .zr-webimport-panel--main {
     flex: 1 1 auto;
+    padding-bottom: 20px;
 }
 
 .zr-webimport-panel--side {
