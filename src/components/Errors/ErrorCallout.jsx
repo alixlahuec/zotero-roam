@@ -2,7 +2,7 @@ import React from "react";
 import { error, func } from "prop-types";
 import { Button, Callout } from "@blueprintjs/core";
 
-function ErrorCallout({ error, reset = null }) {
+function ErrorCallout({ error, resetErrorBoundary = null }) {
 
 	return (
 		<Callout
@@ -11,13 +11,13 @@ function ErrorCallout({ error, reset = null }) {
 			title={error.name}
 		>
 			{error.message}
-			{reset != null && <Button onClick={reset} text="Go back" />}
+			{resetErrorBoundary != null && <Button onClick={resetErrorBoundary} text="Go back" />}
 		</Callout>
 	);
 }
 ErrorCallout.propTypes = {
 	error: error,
-	reset: func
+	resetErrorBoundary: func
 };
 
 export default ErrorCallout;

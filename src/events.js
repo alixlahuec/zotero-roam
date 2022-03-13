@@ -112,6 +112,8 @@ function setDefaultHooks(){
 		}
 	});
 	document.addEventListener("zotero-roam:write", (e) => {
+		// For debugging:
+		console.log(e.detail);
 		let { data: { failed, successful }, error, library } = e.detail;
 		if(error){ console.error(error); }
 		if(failed.length > 0){ console.log(failed); }
@@ -126,6 +128,8 @@ function setDefaultHooks(){
 				counts.success += Object.keys(res.data.successful).length;
 				counts.error += Object.keys(res.data.failed).length;
 			}, { error: 0, success: 0 });
+			// For debugging:
+			console.log(itemsOutcome);
 			let isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
 
 			if(isFullSuccess){

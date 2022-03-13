@@ -31,11 +31,9 @@
     }
 }
 
-/* DARK THEMES */
+/* DARK THEME */
 
-@media (prefers-color-scheme: dark){
-    .zr-dashboard--main .bp3-tab-panel,
-    .zr-dashboard--main > .bp3-tabs > .bp3-tab-list > .bp3-tab[aria-selected="true"] {
-        background: var(--zr-dark-selected-bc,#191919);
-    }
+[zr-dark-theme="true"] .zr-dashboard--main .bp3-tab-panel,
+[zr-dark-theme="true"] .zr-dashboard--main > .bp3-tabs > .bp3-tab-list > .bp3-tab[aria-selected="true"] {
+    background: var(--zr-dark-selected-bc,#191919);
 }
