@@ -8,16 +8,6 @@
   color: #b71c1c;
 }
 
-.zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-arrow-fill {
-  fill: black;
-}
-.zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-content {
-  background-color: black;
-}
-
-.zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-content a {
-  color: #79b0f3;
-}
 
 .zr-icon-tooltip-footer,
 li.zr-queries-status {
@@ -27,12 +17,10 @@ li.zr-queries-status {
 }
 .zr-queries-status [zr-role="entry"] {
   font-weight: 500;
-  color: #c5c5c5;
 }
 .zr-queries-status [zr-role="timestamp"] {
   margin-left: 14px;
   margin-right: 8px;
-  color: #bbbbbb;
 }
 .zr-queries-status [zr-role="status"] {
   display: flex;
@@ -44,4 +32,25 @@ li.zr-queries-status {
 
 .zr-version-tag {
   margin-left: 10px;
+}
+
+/* DARK THEME */
+
+[zr-dark-theme="true"] .zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-arrow-fill {
+  fill: black;
+}
+[zr-dark-theme="true"] .zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-content {
+  background-color: black;
+}
+
+[zr-dark-theme="true"] .zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-content a {
+  color: #79b0f3;
+}
+
+[zr-dark-theme="true"] .zr-queries-status [zr-role="entry"] {
+  color: #c5c5c5;
+}
+
+[zr-dark-theme="true"] .zr-queries-status [zr-role="timestamp"] {
+  color: #bbbbbb;
 }

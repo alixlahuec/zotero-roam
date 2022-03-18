@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
-import { Checkbox, Classes } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ZoteroImport from "../../ZoteroImport";
@@ -24,7 +24,7 @@ function useGetCitoids(urls, opts = {}) {
 				url: query
 			};
 		},
-		notifyOnChangeProps: ["data"]
+		notifyOnChangeProps: ["data", "isLoading"]
 	});
 }
 
@@ -37,19 +37,22 @@ const WebImportItem = React.memo(function WebImportItem(props){
 	}, [item.url, onSelect]);
     
 	return (
-		<li className="zr-webimport-item" >
+		<li className="zr-webimport-item" onClick={handleCheckUncheck} >
 			<div className={ Classes.MENU_ITEM } label={item.url}>
 				<Checkbox
 					checked={isSelected}
 					className="zr-webimport-item--title"
 					inline={false}
-					labelElement={<a data-item-type={item.itemType} target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>}
+					labelElement={<a target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>}
 					onChange={handleCheckUncheck}
 				/>
+				{item.itemType
+					? <Tag minimal={true}><span data-item-type={item.itemType} >
+						{typemap[item.itemType] || item.itemType}</span>
+					</Tag>
+					: null}
 				<div className={[ Classes.FILL, "zr-webimport-item--contents" ].join(" ")}>
-					<span className="zr-auxiliary">
-						{[typemap[item.itemType] || item.itemType, item.creators].filter(Boolean).join(" | ")}
-					</span>
+					<span className="zr-auxiliary">{item.creators}</span>
 					{item.publication 
 						? <span className={["zr-webimport-item--publication", "zr-text-small", "zr-secondary"].join(" ")}>{item.publication}</span> 
 						: null}
@@ -111,6 +114,9 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 									? "Parsing links..."
 									: pluralize(citoids.length, "link", " found")}
 							</h5>
+						</div>
+						<div className={["header-right", "zr-auxiliary"].join(" ")}>
+							<Button icon="small-cross" minimal={true} onClick={handleClose} />
 						</div>
 					</div>
 					<div className="rendered-div">

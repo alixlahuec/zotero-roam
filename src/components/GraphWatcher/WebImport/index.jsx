@@ -34,7 +34,7 @@ function WebImportFactory({ divs }){
 	const updateBlocksWithLinks = useCallback(() => {
 		setBlocksWithLinks((prevState) => {
 			let currentBlocks = divs.filter(div => {
-				let links = div.parentElement.querySelectorAll(".rm-block a:not(.rm-alias--page):not(.rm-alias--block)") || [];
+				let links = div?.parentElement?.querySelectorAll(".rm-block a:not(.rm-alias--page):not(.rm-alias--block)") || [];
 				return links.length > 0;
 			});
 			if(hasNodeListChanged(prevState, currentBlocks)){

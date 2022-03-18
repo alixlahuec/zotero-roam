@@ -70,9 +70,13 @@
 
 .zr-tagmanager--datalist [zr-role="list-stats"] {
     align-items: center;
+    background: #f5f5f5;
+    border: 1px #ececec solid;
     display: flex;
     flex-direction: column;
-    padding: 5px 0px;
+    margin: 0 auto;
+    padding: 10px 15px;
+    width: fit-content;
 }
 
 .zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-text"] {
