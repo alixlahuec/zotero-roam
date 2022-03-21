@@ -17,8 +17,8 @@ function getTagStats(tagListData){
 	{nTags: 0, nAuto: 0, nRoam: 0, nTotal: tagListData.length});
 }
 
-function getTagUsage(token, {count_roam = false} = {}){
-	return token.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? token.roam.length : 0);
+function getTagUsage(entry, {count_roam = false} = {}){
+	return entry.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? entry.roam.length : 0);
 }
 
 /** Matches Zotero tags with existing Roam pages

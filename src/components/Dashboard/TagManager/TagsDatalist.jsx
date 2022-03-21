@@ -1,15 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState} from "react";
-import { arrayOf, func, objectOf, shape, string } from "prop-types";
-import { Button, ButtonGroup, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
+import { arrayOf, func, objectOf, oneOf, shape, string } from "prop-types";
+import { Button, NonIdealState, Spinner, Tag} from "@blueprintjs/core";
 
 import { ListItem, ListWrapper, Pagination, Toolbar } from "../../DataList";
-import LibrarySelect from "./LibrarySelect";
-import MergeInput from "./MergeInput";
+import SuggestionActions from "./SuggestionActions";
 import SortButtons from "../../SortButtons";
 import Stats from "./Stats";
 import { RoamTag, ZoteroTag } from "./Tags";
 
-import { useDeleteTags } from "../../../api/write";
 import { pluralize } from "../../../utils";
 import { getTagUsage, getTagStats, matchTagData, sortTags } from "./utils";
 
@@ -18,87 +16,72 @@ import * as customPropTypes from "../../../propTypes";
 const itemsPerPage = 30;
 const isSingleton = (entry) => entry.zotero.length == 1 && (entry.roam.length == 0 || (entry.roam.length == 1 && entry.zotero[0].tag == entry.roam[0].title));
 
-const Item = React.memo(function Item({ entry, library }){
-	const [selectedTags, setSelectedTags] = useState(Array.from(new Set(entry.zotero.map(t => t.tag))));
-	const { mutate, status: deleteStatus } = useDeleteTags();
-	
+const ItemEntry = React.memo(function ItemEntry({ entry/*, library*/ }){
 	const is_singleton = isSingleton(entry);
 	const usage = getTagUsage(entry);
-
-	const handleSelect = useCallback((tag) => {
-		setSelectedTags(prevSelection => {
-			if(prevSelection.includes(tag)){
-				return prevSelection.filter(el => el != tag);
-			} else {
-				return [...prevSelection, tag];
-			}
-		});
-	}, []);
-
-	const triggerDelete = useCallback(() => {
-		mutate({
-			library,
-			tags: selectedTags
-		});
-	}, [library, mutate, selectedTags]);
+	const [isCollapsed, setIsCollapsed] = useState(true);
+	const toggleCollapse = useCallback(() => setIsCollapsed(prevState => !prevState), []);
 
 	return (
-		<ListItem data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
-			<div zr-role="item-details">
+		<ListItem className="zr-tag-entry" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
+			<span zr-role="item-header">
 				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
 				<span className={["zr-secondary", "zr-text-small"].join(" ")}>{pluralize(usage, "item")}</span>
-				{is_singleton
-					? null
-					: <div className="zr-text-small">
-						{entry.roam.map(elem => <RoamTag key={elem.title} text={elem.title} uid={elem.uid} /> )}
-						{entry.zotero.map((elem) => {
-							const { tag, meta: { type }} = elem;
-							return <ZoteroTag key={[tag, type].join("_")} handleSelect={handleSelect} isSelected={selectedTags.includes(tag)} tagElement={elem} />;
-						} )}
-					</div>}
-			</div>
-			<span zr-role="item-actions" >
-				<ButtonGroup minimal={true} vertical={!is_singleton} >
-					{is_singleton
-						? <>
-							<Button intent="primary" small={true} text="Edit" />
-							<Button 
-								icon="trash" 
-								intent="danger" 
-								loading={deleteStatus == "loading"} 
-								onClick={triggerDelete} 
-								small={true}
-								text="Delete" />
-						</>
-						: <>
-							<MergeInput 
-								defaultValue={entry.roam[0]?.title || ""} 
-								disabled={deleteStatus == "loading"} 
-								library={library} 
-								selectedTags={selectedTags} />
-							<Button 
-								className="zr-text-small" 
-								disabled={selectedTags.length == 0} 
-								icon="trash" 
-								intent="danger"
-								loading={deleteStatus == "loading"}
-								onClick={triggerDelete}
-								title="Delete tag(s)" />
-						</>}
-				</ButtonGroup>
+				<span zr-role="item-actions">
+					<Button icon={isCollapsed ? "chevron-down" : "chevron-up"} onClick={toggleCollapse} />
+				</span>
+			</span>
+			{!is_singleton && <span className="zr-text-small" zr-role="item-additional">
+				{entry.roam.map(elem => <RoamTag key={elem.title} text={elem.title} uid={elem.uid} /> )}
+				{entry.zotero.map((elem) => {
+					const { tag, meta: { type }} = elem;
+					return <ZoteroTag key={[tag, type].join("_")} tagElement={elem} />;
+				} )}
+			</span>}
+			<span zr-role="item-details">
+
 			</span>
 		</ListItem>
 	);
 });
-Item.propTypes = {
+ItemEntry.propTypes = {
+	entry: customPropTypes.taglistEntry,
+	library: customPropTypes.zoteroLibraryType
+};
+
+const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
+	const [isCollapsed, setIsCollapsed] = useState(true);
+	const toggleCollapse = useCallback(() => setIsCollapsed(prevState => !prevState), []);
+
+	return (
+		<ListItem className="zr-tag-suggestion" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
+			<span zr-role="item-header">
+				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
+				<Tag intent="warning" icon="tag" minimal={true}>{pluralize(entry.zotero.length, "tag")}</Tag>
+				<span zr-role="item-actions">
+					<SuggestionActions entry={entry} library={library} />
+					<Button icon={isCollapsed ? "chevron-down" : "chevron-up"} onClick={toggleCollapse} />
+				</span>
+			</span>
+			{entry.roam.length > 0 && 
+			<span zr-role="item-additional">
+				<b>In Roam : </b>
+				{entry.roam.map(el => <RoamTag key={el.title} text={el.title} uid={el.uid} />)}
+			</span>}
+			<span zr-role="item-details">
+
+			</span>
+		</ListItem>
+	);
+});
+ItemSuggestion.propTypes = {
 	entry: customPropTypes.taglistEntry,
 	library: customPropTypes.zoteroLibraryType
 };
 
 const TagsDatalist = React.memo(function TagsDatalist(props){
-	const { items, libProps } = props;
+	const { filter, items, libProps } = props;
 	const [currentPage, setCurrentPage] = useState(1);
-	const [filter, setFilter] = useState("select");
 	const [sortBy, setSortBy] = useState("usage");
 	const [matchedTags, setMatchedTags] = useState(null);
 	const [stats, setStats] = useState(null);
@@ -116,15 +99,11 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 		}
 	}, [items]);
 
-	const handleFilter = useCallback((_event) => {
-		setFilter((prevFilter) => prevFilter == "select" ? "all" : "select");
-	}, []);
-
 	const filteredItems = useMemo(() => {
 		if(!matchedTags){
 			return [];
 		} else {
-			if(filter == "select"){
+			if(filter == "suggestions"){
 				return matchedTags.filter(el => !isSingleton(el));
 			} else if(filter == "all"){
 				return matchedTags;
@@ -151,29 +130,28 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 			: <>
 				<Toolbar>
 					<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
-					<LibrarySelect libProps={libProps} />
-				</Toolbar>
-				<ListWrapper>
-					{sortedItems.length > 0
-						? sortedItems
-							.slice(...pageLimits)
-							.map(el => 
-								<Item key={el.token} entry={el} library={libProps.currentLibrary} />)
-						: <NonIdealState className="zr-auxiliary" description="No items in the current view" />}
-				</ListWrapper>
-				<Toolbar>
-					<Switch checked={filter == "all"} className="zr-text-small" label="Show all tags" onChange={handleFilter} />
 					<Pagination 
 						currentPage={currentPage} 
 						itemsPerPage={itemsPerPage} 
 						nbItems={filteredItems.length} 
 						setCurrentPage={setCurrentPage} />
 				</Toolbar>
+				<ListWrapper>
+					{sortedItems.length > 0
+						? sortedItems
+							.slice(...pageLimits)
+							.map(el =>
+								filter == "suggestions" 
+									? <ItemSuggestion key={el.token} entry={el} library={libProps.currentLibrary} /> 
+									: <ItemEntry key={el.token} entry={el} library={libProps.currentLibrary} />)
+						: <NonIdealState className="zr-auxiliary" description="No items in the current view" />}
+				</ListWrapper>
 				{filter == "all" && <Stats stats={stats} />}
 			</>
 	);
 });
 TagsDatalist.propTypes = {
+	filter: oneOf(["all", "suggestions"]),
 	items: objectOf(arrayOf(customPropTypes.taglistEntry)),
 	libProps: shape({
 		currentLibrary: customPropTypes.zoteroLibraryType,

@@ -1,5 +1,5 @@
-import React, { useCallback} from "react";
-import { bool, func, string } from "prop-types";
+import React from "react";
+import { string } from "prop-types";
 import { Tag } from "@blueprintjs/core";
 
 import * as customPropTypes from "../../../propTypes";
@@ -21,27 +21,21 @@ RoamTag.propTypes = {
 	uid: string
 };
 
-function ZoteroTag({ handleSelect = () => {}, isSelected = true, tagElement }){
+function ZoteroTag({ tagElement }){
 	const { tag, meta: { numItems, type = 0 } } = tagElement;
-
-	const onClick = useCallback(() => handleSelect(tag), [handleSelect, tag]);
 
 	return (
 		<Tag 
-			active={isSelected} 
-			className="zr-tag--zotero"
-			interactive={true} 
+			active={true} 
+			className="zr-tag--zotero" 
 			minimal={true} 
-			multiline={true} 
-			onClick={onClick}
+			multiline={true}
 			data-tag-source="zotero" data-tag={tag} data-tag-type={type} >
 			{tag + "(" + numItems + ")"}
 		</Tag>
 	);
 }
 ZoteroTag.propTypes = {
-	handleSelect: func,
-	isSelected: bool,
 	tagElement: customPropTypes.zoteroTagType
 };
 

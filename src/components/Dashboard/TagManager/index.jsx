@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { arrayOf, func } from "prop-types";
-import { Button, Classes, Spinner, Tag } from "@blueprintjs/core";
+import { arrayOf, func, objectOf, shape, string } from "prop-types";
+import { Button, Classes, Spinner, Tab, Tabs, Tag } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import NoWriteableLibraries from "../../Errors/NoWriteableLibraries";
@@ -11,6 +11,38 @@ import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 import * as customPropTypes from "../../../propTypes";
 
 import "./index.css";
+import LibrarySelect from "./LibrarySelect";
+
+function TagLists({ items, libProps }){
+	const [activeTab, setActiveTab] = useState("suggestions");
+	const selectTab = useCallback((newtab, _prevtab, _event) => setActiveTab(newtab), []);
+  
+	return (
+		<Tabs 
+			animate={false} 
+			id="tag-lists" 
+			onChange={selectTab}
+			renderActiveTabPanelOnly={true}
+			selectedTabId={activeTab} >
+			<Tab id="suggestions" title="Suggestions" 
+				panel={<TagsDatalist filter="suggestions" items={items} libProps={libProps} />} 
+			/>
+			<Tab id="all-items" title="All items" 
+				panel={<TagsDatalist filter="all" items={items} libProps={libProps} />} 
+			/>
+			<Tabs.Expander />
+			<LibrarySelect libProps={libProps} />
+		</Tabs>
+	);
+}
+TagLists.propTypes = {
+	items: objectOf(arrayOf(customPropTypes.taglistEntry)),
+	libProps: shape({
+		currentLibrary: customPropTypes.zoteroLibraryType,
+		onSelect: func,
+		options: arrayOf(string)
+	})
+};
 
 const TabContents = React.memo(function TabContents({ libraries, onClose }){
 	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);
@@ -41,7 +73,7 @@ const TabContents = React.memo(function TabContents({ libraries, onClose }){
 			<div className="zr-tagmanager--datalist">
 				{isLoading
 					? <Spinner />
-					: <TagsDatalist items={data} libProps={libProps} /> }
+					: <TagLists items={data} libProps={libProps} /> }
 			</div>
 		</>
 	);

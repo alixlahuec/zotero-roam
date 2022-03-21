@@ -39,20 +39,24 @@ const WebImportItem = React.memo(function WebImportItem(props){
 	return (
 		<li className="zr-webimport-item" onClick={handleCheckUncheck} >
 			<div className={ Classes.MENU_ITEM } label={item.url}>
-				<Checkbox
-					checked={isSelected}
-					className="zr-webimport-item--title"
-					inline={false}
-					labelElement={<a target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>}
-					onChange={handleCheckUncheck}
-				/>
-				{item.itemType
-					? <Tag minimal={true}><span data-item-type={item.itemType} >
-						{typemap[item.itemType] || item.itemType}</span>
-					</Tag>
-					: null}
+				<div className={[ Classes.FILL, "zr-webimport-item--header" ].join(" ")}>
+					<Checkbox
+						checked={isSelected}
+						className="zr-webimport-item--title"
+						inline={false}
+						labelElement={<a target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>}
+						onChange={handleCheckUncheck}
+					/>
+					{item.itemType
+						? <Tag minimal={true}><span data-item-type={item.itemType} >
+							{typemap[item.itemType] || item.itemType}</span>
+						</Tag>
+						: null}
+				</div>
 				<div className={[ Classes.FILL, "zr-webimport-item--contents" ].join(" ")}>
-					<span className="zr-auxiliary">{item.creators}</span>
+					{item.creators
+						? <span className="zr-auxiliary" style="margin-right: 10px;" >{item.creators}</span>
+						: null}
 					{item.publication 
 						? <span className={["zr-webimport-item--publication", "zr-text-small", "zr-secondary"].join(" ")}>{item.publication}</span> 
 						: null}
@@ -116,7 +120,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 							</h5>
 						</div>
 						<div className={["header-right", "zr-auxiliary"].join(" ")}>
-							<Button icon="small-cross" minimal={true} onClick={handleClose} />
+							<Button icon="cross" minimal={true} onClick={handleClose} />
 						</div>
 					</div>
 					<div className="rendered-div">

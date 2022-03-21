@@ -36,15 +36,14 @@ function DarkThemeToggle (){
 const IconTooltipFooter = React.memo(function IconTooltipFooter() {
 	const { version } = useContext(ExtensionContext);
 	
-	return <>
+	return <div className="zr-icon-tooltip-footer">
 		<DarkThemeToggle />
 		<a href="https://alix-lahuec.gitbook.io/zotero-roam/" target="_blank" rel="noreferrer">Read the docs</a>
-		<Divider />
-		<span className="zr-icon-tooltip-footer">
+		<span className="zr-icon-tooltip-footer--row">
 			<a href="https://alix-lahuec.gitbook.io/zotero-roam/changelog" target="_blank" rel="noreferrer">Changelog</a>
 			<Tag className="zr-version-tag">v{version}</Tag>
 		</span>
-	</>;
+	</div>;
 });
 
 function QueriesStatusIcon(props) {
