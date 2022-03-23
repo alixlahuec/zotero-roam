@@ -55,7 +55,7 @@ const WebImportItem = React.memo(function WebImportItem(props){
 				</div>
 				<div className={[ Classes.FILL, "zr-webimport-item--contents" ].join(" ")}>
 					{item.creators
-						? <span className="zr-auxiliary" style="margin-right: 10px;" >{item.creators}</span>
+						? <span className="zr-auxiliary" style={{ marginRight: "10px" }} >{item.creators}</span>
 						: null}
 					{item.publication 
 						? <span className={["zr-webimport-item--publication", "zr-text-small", "zr-secondary"].join(" ")}>{item.publication}</span> 

@@ -7,13 +7,12 @@
     padding: 10px;
 }
 
-.zr-dashboard--main .bp3-tab-panel {
+.zr-dashboard--main > .bp3-tabs > .bp3-tab-list {
     background: white;
-    flex: 0 1 100%;
 }
 
-.zr-dashboard--main .bp3-tab > .bp3-icon {
-    margin-right: 8px;
+.zr-dashboard--main .bp3-tab-panel {
+    flex: 0 1 100%;
 }
 
 /* SMALLER DISPLAYS */
@@ -32,6 +31,10 @@
 }
 
 /* DARK THEME */
+
+[zr-dark-theme="true"] .zr-dashboard--main > .bp3-tabs > .bp3-tab-list {
+    background: var(--zr-dark-dialog-bg, #242424);
+}
 
 [zr-dark-theme="true"] .zr-dashboard--main .bp3-tab-panel,
 [zr-dark-theme="true"] .zr-dashboard--main > .bp3-tabs > .bp3-tab-list > .bp3-tab[aria-selected="true"] {

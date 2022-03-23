@@ -28,7 +28,7 @@ const ItemEntry = React.memo(function ItemEntry({ entry/*, library*/ }){
 				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
 				<span className={["zr-secondary", "zr-text-small"].join(" ")}>{pluralize(usage, "item")}</span>
 				<span zr-role="item-actions">
-					<Button icon={isCollapsed ? "chevron-down" : "chevron-up"} onClick={toggleCollapse} />
+					<Button icon={isCollapsed ? "chevron-down" : "chevron-up"} minimal={true} onClick={toggleCollapse} />
 				</span>
 			</span>
 			{!is_singleton && <span className="zr-text-small" zr-role="item-additional">
@@ -57,10 +57,10 @@ const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
 		<ListItem className="zr-tag-suggestion" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
 			<span zr-role="item-header">
 				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
-				<Tag intent="warning" icon="tag" minimal={true}>{pluralize(entry.zotero.length, "tag")}</Tag>
+				<Tag htmlTitle={entry.zotero.map(t => t.tag).join(" - ")} intent="warning" icon="tag" minimal={true}>{pluralize(entry.zotero.length, "tag")}</Tag>
 				<span zr-role="item-actions">
 					<SuggestionActions entry={entry} library={library} />
-					<Button icon={isCollapsed ? "chevron-down" : "chevron-up"} onClick={toggleCollapse} />
+					<Button icon={isCollapsed ? "chevron-down" : "chevron-up"} minimal={true} onClick={toggleCollapse} />
 				</span>
 			</span>
 			{entry.roam.length > 0 && 

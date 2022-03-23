@@ -23,14 +23,14 @@ const makeSuggestionFor = (entry) => {
 		zotero: zoteroTags
 	};
 
-	if (roamTags.length === 0) {
-		if (entry.zotero.length === 1) {
+	if (roamTags.length == 0) {
+		if (entry.zotero.length == 1) {
 			return {
 				recommend: zoteroTags[0],
 				type: null,
 				use
 			};
-		} else if (zoteroTags.length === 1) {
+		} else if (zoteroTags.length == 1) {
 			return {
 				recommend: zoteroTags[0],
 				type: "auto",
@@ -43,8 +43,8 @@ const makeSuggestionFor = (entry) => {
 				use
 			};
 		}
-	} else if (roamTags.length === 1) {
-		if (zoteroTags.length === 0) {
+	} else if (roamTags.length == 1) {
+		if (zoteroTags.length == 0) {
 			return {
 				recommend: roamTags[0],
 				type: null,
@@ -179,7 +179,7 @@ function AutoMerge({ library, suggestion }){
 	}, [status]);
 
 	return <Button
-		className="zr-tag-suggestion--auto-merge"
+		className={["zr-tag-suggestion--auto-merge", "zr-text-small"].join(" ")}
 		loading={status == "loading"}
 		onClick={triggerMerge}
 		text="Auto-merge"
@@ -204,7 +204,7 @@ function ManualMerge({ library, suggestion }){
 		content={<Menu><MergeAsOptions library={library} options={suggestion.use} /></Menu>}
 		interactionKind="click"
 	>
-		<Button icon="caret-down" text="Merge as" />
+		<Button className={["zr-tag-suggestion--merge-as", "zr-text-small"].join(" ")} rightIcon="caret-down" text="Merge as" />
 	</Popover2>;
 }
 ManualMerge.propTypes = {

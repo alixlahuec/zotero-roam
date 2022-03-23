@@ -3,6 +3,7 @@ import { func, node, number, oneOf, string } from "prop-types";
 import { Button, ControlGroup } from "@blueprintjs/core";
 
 import "./index.css";
+import { pluralize } from "../../utils";
 
 const ListItem = ({ className, children, ...rest }) => 
 	<li className={[className, "zr-datalist--item"].filter(Boolean).join(" ")} {...rest}>
@@ -33,7 +34,7 @@ const Pagination = React.memo(function Pagination({ arrows = "last", currentPage
 
 	const itemsCount = (
 		<span className="zr-text-small" zr-role="items-count">
-			<strong>{(currentPage - 1)*itemsPerPage + 1}-{Math.min(currentPage*itemsPerPage, nbItems)}</strong> / {nbItems} entries
+			<strong>{(currentPage - 1)*itemsPerPage + 1}-{Math.min(currentPage*itemsPerPage, nbItems)}</strong> / {pluralize(nbItems, "item")}
 		</span>);
 
 	const controls = (

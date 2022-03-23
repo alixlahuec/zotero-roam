@@ -22,12 +22,12 @@ function TagLists({ items, libProps }){
 			animate={false} 
 			id="tag-lists" 
 			onChange={selectTab}
-			renderActiveTabPanelOnly={true}
+			renderActiveTabPanelOnly={false}
 			selectedTabId={activeTab} >
 			<Tab id="suggestions" title="Suggestions" 
 				panel={<TagsDatalist filter="suggestions" items={items} libProps={libProps} />} 
 			/>
-			<Tab id="all-items" title="All items" 
+			<Tab id="all-items" title="All tags" 
 				panel={<TagsDatalist filter="all" items={items} libProps={libProps} />} 
 			/>
 			<Tabs.Expander />

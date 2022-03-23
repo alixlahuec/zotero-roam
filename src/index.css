@@ -28,7 +28,7 @@
 
 /* Variables */
 
-[class*="zr"] [aria-selected="true"]{background-color: var(--zr-selected-bc,#eaf3fc);}
+[class*="zr"] li[aria-selected="true"]{background-color: var(--zr-selected-bc,#eaf3fc);}
 
 .zr-auxiliary, button.bp3-button.zr-auxiliary{color: var(--zr-auxiliary-co,#5c7080);}
 
@@ -49,7 +49,7 @@
 
 /* DARK THEME */
 
-[zr-dark-theme="true"] [class*="zr"] [aria-selected="true"]{background-color: var(--zr-dark-selected-bc,#191919);}
+[zr-dark-theme="true"] [class*="zr"] li[aria-selected="true"]{background-color: var(--zr-dark-selected-bc,#191919);}
 
 [zr-dark-theme="true"] [class*="zr"] .bp3-divider,
 [zr-dark-theme="true"] [class*="zr"] .bp3-menu-divider,
