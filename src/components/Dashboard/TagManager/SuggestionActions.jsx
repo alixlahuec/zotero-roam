@@ -47,7 +47,7 @@ const makeSuggestionFor = (entry) => {
 		if (zoteroTags.length == 0) {
 			return {
 				recommend: roamTags[0],
-				type: null,
+				type: entry.zotero.length == 1 ? null : "auto", // To support case where tag is in Roam + duplicate in Zotero
 				use
 			};
 		} else {
@@ -171,7 +171,8 @@ function AutoMerge({ library, suggestion }){
 			return {
 				disabled: true,
 				icon: "tick",
-				intent: "success"
+				intent: "success",
+				text: "Merged"
 			};
 		} else {
 			return {};

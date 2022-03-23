@@ -174,6 +174,7 @@ function setDefaultHooks(){
 			let itemsOutcome = successful.reduce((counts, res) => {
 				counts.success += Object.keys(res.data.successful).length;
 				counts.error += Object.keys(res.data.failed).length;
+				return counts;
 			}, { error: 0, success : 0 });
 			let isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
 

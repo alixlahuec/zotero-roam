@@ -263,13 +263,11 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			// Retrieve deleted items, if any
 			deleted = await fetchDeleted({ apikey, path: library }, since);
 
-			if(modified.length > 0){
+			let tagsQueryKey = ["tags", { apikey, library }];
+			let { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {};
+			if(modified.length > 0 || Number(latest_tags_version) < Number(lastUpdated)){
 				// Refetch tags data
-				let tagsQueryKey = ["tags", { apikey, library }];
-				let { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {};
-				if(Number(latest_tags_version) < Number(lastUpdated)){
-					queryClient.refetchQueries(tagsQueryKey);
-				}
+				queryClient.refetchQueries(tagsQueryKey);
 
 				emitCustomEvent("update", {
 					success: true,

@@ -9,6 +9,7 @@
 
 .zr-dashboard--main > .bp3-tabs > .bp3-tab-list {
     background: white;
+    padding: 5px;
 }
 
 .zr-dashboard--main .bp3-tab-panel {

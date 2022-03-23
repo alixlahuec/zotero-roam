@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState} from "react";
 import { arrayOf, func, objectOf, oneOf, shape, string } from "prop-types";
-import { Button, NonIdealState, Spinner, Tag} from "@blueprintjs/core";
+import { Button, Icon, NonIdealState, Spinner, Tag} from "@blueprintjs/core";
 
 import { ListItem, ListWrapper, Pagination, Toolbar } from "../../DataList";
 import SuggestionActions from "./SuggestionActions";
@@ -57,17 +57,14 @@ const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
 		<ListItem className="zr-tag-suggestion" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
 			<span zr-role="item-header">
 				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
+				{entry.roam.length > 0 &&
+				<Icon htmlTitle={"This tag exists in Roam as " + entry.roam.map(el => el.title).join(", ")} icon="endorsed" />}
 				<Tag htmlTitle={entry.zotero.map(t => t.tag).join(" - ")} intent="warning" icon="tag" minimal={true}>{pluralize(entry.zotero.length, "tag")}</Tag>
 				<span zr-role="item-actions">
 					<SuggestionActions entry={entry} library={library} />
 					<Button icon={isCollapsed ? "chevron-down" : "chevron-up"} minimal={true} onClick={toggleCollapse} />
 				</span>
 			</span>
-			{entry.roam.length > 0 && 
-			<span zr-role="item-additional">
-				<b>In Roam : </b>
-				{entry.roam.map(el => <RoamTag key={el.title} text={el.title} uid={el.uid} />)}
-			</span>}
 			<span zr-role="item-details">
 
 			</span>

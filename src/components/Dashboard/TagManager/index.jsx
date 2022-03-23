@@ -1,10 +1,9 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, func, objectOf, shape, string } from "prop-types";
-import { Button, Classes, Spinner, Tab, Tabs, Tag } from "@blueprintjs/core";
+import { Button, Spinner, Tab, Tabs} from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import NoWriteableLibraries from "../../Errors/NoWriteableLibraries";
-import { RoamTag } from "./Tags";
 import TagsDatalist from "./TagsDatalist";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
@@ -13,7 +12,7 @@ import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 import LibrarySelect from "./LibrarySelect";
 
-function TagLists({ items, libProps }){
+function TagLists({ items, libProps, onClose }){
 	const [activeTab, setActiveTab] = useState("suggestions");
 	const selectTab = useCallback((newtab, _prevtab, _event) => setActiveTab(newtab), []);
   
@@ -32,6 +31,7 @@ function TagLists({ items, libProps }){
 			/>
 			<Tabs.Expander />
 			<LibrarySelect libProps={libProps} />
+			<Button icon="cross" minimal={true} onClick={onClose} />
 		</Tabs>
 	);
 }
@@ -41,7 +41,8 @@ TagLists.propTypes = {
 		currentLibrary: customPropTypes.zoteroLibraryType,
 		onSelect: func,
 		options: arrayOf(string)
-	})
+	}),
+	onClose: func
 };
 
 const TabContents = React.memo(function TabContents({ libraries, onClose }){
@@ -62,21 +63,11 @@ const TabContents = React.memo(function TabContents({ libraries, onClose }){
 		};
 	}, [handleLibrarySelect, libOptions, selectedLibrary]);
 
-	return (
-		<>
-			<div className={["zr-tagmanager--header", "zr-auxiliary"].join(" ")}>
-				<span>
-					Rename, merge, and delete tags between <RoamTag text="Roam" /> and <Tag active={true} className={["zr-tag--zotero", Classes.ACTIVE, Classes.MINIMAL].join(" ")}>Zotero</Tag>
-				</span>
-				<Button icon="small-cross" minimal={true} onClick={onClose} />
-			</div>
-			<div className="zr-tagmanager--datalist">
-				{isLoading
-					? <Spinner />
-					: <TagLists items={data} libProps={libProps} /> }
-			</div>
-		</>
-	);
+	return <div className="zr-tagmanager--datalist">
+		{isLoading
+			? <Spinner />
+			: <TagLists items={data} libProps={libProps} onClose={onClose} /> }
+	</div>;
 });
 TabContents.propTypes = {
 	libraries: arrayOf(customPropTypes.zoteroLibraryType),

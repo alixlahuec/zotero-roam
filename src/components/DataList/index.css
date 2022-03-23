@@ -7,8 +7,6 @@
 }
 
 ul.zr-datalist--listwrapper {
-    border-top: 1px #cccccc solid;
-    border-bottom: 1px #cccccc solid;
     list-style-type: none;
     margin-bottom: 0px;
     max-height: 60vh;
@@ -45,10 +43,6 @@ ul.zr-datalist--listwrapper {
 
 /* DARK THEME */
 
-[zr-dark-theme="true"] ul.zr-datalist--listwrapper {
-    border-top: 1px var(--zr-dark-border-color,#363a3f) solid;
-    border-bottom: 1px var(--zr-dark-border-color,#363a3f) solid;
-}
 [zr-dark-theme="true"] .zr-datalist--toolbar label,
 [zr-dark-theme="true"] .zr-datalist--toolbar .bp3-html-select select,
 [zr-dark-theme="true"] .zr-datalist--toolbar .bp3-html-select select:hover,
