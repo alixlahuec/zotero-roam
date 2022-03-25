@@ -1,6 +1,6 @@
 import React, { useCallback} from "react";
 import { arrayOf, func, shape, string } from "prop-types";
-import { Button } from "@blueprintjs/core";
+import { Button, MenuItem } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
 import * as customPropTypes from "../../../propTypes";
@@ -9,6 +9,12 @@ const popoverProps = {
 	minimal: true,
 	popoverClassName: "zr-popover"
 };
+
+function itemRenderer(item, itemProps) {
+	const { handleClick, modifiers: { active } } = itemProps;
+
+	return <MenuItem active={active} key={item} onClick={handleClick} text={item} />;
+}
 
 const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 	const { currentLibrary: { path }, onSelect, options } = libProps;
@@ -20,6 +26,7 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 	return (
 		<Select 
 			filterable={false}
+			itemRenderer={itemRenderer}
 			items={options} 
 			onItemSelect={handleSelect} 
 			placement="bottom-right"
