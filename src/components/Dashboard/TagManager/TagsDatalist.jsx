@@ -25,8 +25,11 @@ const ItemEntry = React.memo(function ItemEntry({ entry/*, library*/ }){
 	return (
 		<ListItem className="zr-tag-entry" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
 			<span zr-role="item-header">
+				{entry.roam.length > 0
+					? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" />
+					: <Icon icon="blank" />}
 				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
-				<span className={["zr-secondary", "zr-text-small"].join(" ")}>{pluralize(usage, "item")}</span>
+				<span className={["zr-secondary", "zr-text-small"].join(" ")} zr-role="item-count">{pluralize(usage, "item")}</span>
 				<span zr-role="item-actions">
 					<Button icon={isCollapsed ? "chevron-down" : "chevron-up"} minimal={true} onClick={toggleCollapse} />
 				</span>
@@ -57,10 +60,17 @@ const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
 		<ListItem className="zr-tag-suggestion" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
 			<span zr-role="item-header">
 				{entry.roam.length > 0
-					? <Icon htmlTitle={"This tag exists in Roam as (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="endorsed" />
+					? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" />
 					: <Icon icon="blank" />}
 				<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
-				<Tag htmlTitle={entry.zotero.map(t => t.tag).join(" - ")} intent="warning" icon="tag" minimal={true}>{pluralize(entry.zotero.length, "tag")}</Tag>
+				<Tag 
+					htmlTitle={entry.zotero.map(t => t.tag).join(" - ")} 
+					intent="warning" 
+					icon="tag" 
+					minimal={true}
+					zr-role="item-count" >
+					{pluralize(entry.zotero.length, "tag")}
+				</Tag>
 				<span zr-role="item-actions">
 					<SuggestionActions entry={entry} library={library} />
 					<Button icon={isCollapsed ? "chevron-down" : "chevron-up"} minimal={true} onClick={toggleCollapse} />
@@ -127,7 +137,7 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 			? <Spinner size={15} />
 			: <>
 				<Toolbar>
-					<SortButtons name="zr-tagmanager-sort" onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
+					<SortButtons name={"zr-tagmanager-sort-" + filter} onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
 					<Pagination 
 						currentPage={currentPage} 
 						itemsPerPage={itemsPerPage} 
@@ -142,7 +152,7 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 								filter == "suggestions" 
 									? <ItemSuggestion key={el.token} entry={el} library={libProps.currentLibrary} /> 
 									: <ItemEntry key={el.token} entry={el} library={libProps.currentLibrary} />)
-						: <NonIdealState className="zr-auxiliary" description="No items in the current view" />}
+						: <NonIdealState className="zr-auxiliary" description="No items to display" />}
 				</ListWrapper>
 				{filter == "all" && <Stats stats={stats} />}
 			</>

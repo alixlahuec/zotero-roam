@@ -64,7 +64,9 @@
 [zr-dark-theme="true"] .zr-popover.bp3-popover2 .bp3-popover2-arrow-fill {
   fill: var(--zr-dark-selected-bc,#191919);
 }
-
+[zr-dark-theme="true"] .zr-popover.bp3-popover2 .bp3-popover2-content {
+  background: none;
+}
 [zr-dark-theme="true"] .zr-popover .bp3-menu {
   background-color: var(--zr-dark-selected-bc,#191919);
   color: var(--zr-dark-text-co, #76a0cb);

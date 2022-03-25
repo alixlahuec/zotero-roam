@@ -10,6 +10,7 @@
     opacity: 0.5;
 }
 .zr-tagmanager--datalist .bp3-tab-list .bp3-tab[aria-selected="true"] {
+    box-shadow: none;
     color: var(--zr-highlight,#206fe6);
     font-weight: 500;
     opacity: 1;
@@ -36,6 +37,10 @@
     justify-content: space-between;
 }
 
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-header"] > * {
+    margin: 0px 4px;
+}
+
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="title"] {
     flex: 0 1 50%;
     font-weight:600;
@@ -44,15 +49,8 @@
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="title"]::before {content: '# '}
 
-.zr-tagmanager--datalist .zr-datalist--item[in-graph="true"] [zr-role="title"]::after {
-    content: 'R';
-    background: #93c193;
-    border-radius: 5px;
-    color: white;
-    padding: 0px 3px;
-    font-size: 0.65em;
-    margin-left: 8px;
-    vertical-align: super;
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-count"] {
+    flex: 0 0 auto;
 }
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-details"][is-collapsed="true"] {
@@ -82,10 +80,7 @@
 
 .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge,
 .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge:hover,
-.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge .bp3-icon,
-.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as,
-.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as:hover,
-.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as .bp3-icon {
+.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge .bp3-icon {
     color: white;
 }
 
@@ -93,7 +88,9 @@
     background-color: #3798d1;
 }
 
-.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as {
+.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as,
+.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as:hover,
+.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as .bp3-icon {
     background-color: #ece2ff;
     color: #c981ed;
 }
@@ -150,10 +147,6 @@
 }
 [zr-dark-theme="true"] .zr-tagmanager--datalist .zr-datalist--item {
     background: var(--zr-dark-dialog-bg, #242424);
-}
-[zr-dark-theme="true"] .zr-tagmanager--datalist .zr-datalist--item[in-graph="true"] [zr-role="title"]::after {
-    background-color: var(--zr-dark-positive-bc, #5863582e);
-    color: var(--zr-dark-positive-co, #86f686);
 }
 [zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge,
 [zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge:hover,
