@@ -68,7 +68,7 @@ async function deleteTags(tags, library, version){
 		console.warn("Only 50 Zotero tags can be deleted at once : any additional tags provided will be ignored.");
 	}
 
-	let tagList = tags.slice(0,50).map(t => encodeURIComponent(t)).join("||");
+	let tagList = tags.slice(0,50).map(t => encodeURIComponent(t)).join(" || ");
 	return zoteroClient.delete(`${path}/tags?tag=${tagList}`, { 
 		headers: { 
 			"Zotero-API-Key": apikey,
