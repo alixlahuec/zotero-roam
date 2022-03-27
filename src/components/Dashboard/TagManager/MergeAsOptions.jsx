@@ -5,6 +5,7 @@ import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag } from 
 import { useModifyTags } from "../../../api/write";
 
 import * as customPropTypes from "../../../propTypes";
+import { useEffect } from "react/cjs/react.production.min";
 
 function MergeAsCustom({ disabled, library, tags }){
 	const [isDialogOpen, setDialogOpen] = useState(false);
@@ -30,6 +31,12 @@ function MergeAsCustom({ disabled, library, tags }){
 		});
 	}, [closeDialog, library, mutate, tags, value]);
 
+	useEffect(() => {
+		if(isDialogOpen == true){
+			inputField.current.focus();
+		}
+	}, [isDialogOpen]);
+
 	return (
 		<>
 			<MenuItem
@@ -37,6 +44,7 @@ function MergeAsCustom({ disabled, library, tags }){
 				intent="primary"
 				multiline={true}
 				onClick={openDialog}
+				shouldDismissPopover={false}
 				text="Choose custom value..."
 			/>
 			<Dialog
@@ -51,7 +59,6 @@ function MergeAsCustom({ disabled, library, tags }){
 						disabled={status == "loading"}
 						fill={true}
 						inputRef={inputField}
-						intent="primary"
 						onChange={handleChange}
 						placeholder="Enter a value"
 						value={value}
@@ -59,7 +66,7 @@ function MergeAsCustom({ disabled, library, tags }){
 				</div>
 				<div className={Classes.DIALOG_FOOTER}>
 					<div className={Classes.DIALOG_FOOTER_ACTIONS}>
-						<Button loading={status == "loading" || value.length == 0} onClick={triggerMerge} text="OK" />
+						<Button disabled={value.length == 0} loading={status == "loading"} onClick={triggerMerge} text="OK" />
 					</div>
 				</div>
 			</Dialog>
