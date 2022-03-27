@@ -21,6 +21,69 @@ function getTagUsage(entry, {count_roam = false} = {}){
 	return entry.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? entry.roam.length : 0);
 }
 
+function isSingleton(entry){
+	return entry.zotero.length == 1 && (entry.roam.length == 0 || (entry.roam.length == 1 && entry.zotero[0].tag == entry.roam[0].title));
+}
+
+function makeSuggestionFor(entry){
+	let roamTags = entry.roam.map((el) => el.title);
+	let zoteroTags = entry.zotero.reduce((arr, el) => {
+		if (roamTags.includes(el.tag) || arr.includes(el.tag)) {
+		// Do nothing
+		} else {
+			arr.push(el.tag);
+		}
+		return arr;
+	}, []);
+
+	let use = {
+		roam: roamTags,
+		zotero: zoteroTags
+	};
+
+	if (roamTags.length == 0) {
+		if (entry.zotero.length == 1) {
+			return {
+				recommend: zoteroTags[0],
+				type: null,
+				use
+			};
+		} else if (zoteroTags.length == 1) {
+			return {
+				recommend: zoteroTags[0],
+				type: "auto",
+				use
+			};
+		} else {
+			return {
+				recommend: null,
+				type: "manual",
+				use
+			};
+		}
+	} else if (roamTags.length == 1) {
+		if (zoteroTags.length == 0) {
+			return {
+				recommend: roamTags[0],
+				type: entry.zotero.length == 1 ? null : "auto", // To support case where tag is in Roam + duplicate in Zotero
+				use
+			};
+		} else {
+			return {
+				recommend: roamTags[0],
+				type: "auto",
+				use
+			};
+		}
+	} else {
+		return {
+			recommend: null,
+			type: "manual",
+			use
+		};
+	}
+}
+
 /** Matches Zotero tags with existing Roam pages
  * @param {Object<String, Array>} tagList - The list of tokenized Zotero tags
  * @returns {Promise<{}[]>}
@@ -38,8 +101,8 @@ function matchTagData(tagList){
 					if(in_table >= 0){
 						let { roam, ...rest } = zdata[in_table];
 						zdata[in_table] = { 
-							// Spread is required because array cloning via Array.from, spread, etc. is only shallow
-							// i.e, nested arrays will be copied as references not values
+							// * Spread is required because array cloning via Array.from, spread, etc. is only shallow
+							// * i.e, nested arrays will be copied as references not values
 							roam: [...roam, elem],
 							...rest
 						};
@@ -73,6 +136,8 @@ function sortTags(tagList, by = "alphabetical"){
 export {
 	getTagStats,
 	getTagUsage,
+	isSingleton,
+	makeSuggestionFor,
 	matchTagData,
 	sortTags
 };

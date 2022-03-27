@@ -2,6 +2,8 @@ import React from "react";
 import { number, shape } from "prop-types";
 import { ProgressBar } from "@blueprintjs/core";
 
+import "./index.css";
+
 const Stats = React.memo(function Stats({ stats }){
 	if(!stats){
 		return null;

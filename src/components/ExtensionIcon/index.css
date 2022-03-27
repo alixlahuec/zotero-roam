@@ -13,12 +13,16 @@
   color: #4e567f;
 }
 
-.zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-content .bp3-control.bp3-switch {
-  margin-bottom: 0px;
+.zr-icon-tooltip-footer {
+  line-height: 1.7em;
 }
 
-.zr-icon-tooltip-footer > * {
-  margin: 5px 0px;
+.zr-icon-tooltip.bp3-tooltip2 .bp3-popover2-content .bp3-control.bp3-switch {
+  align-items: center;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  margin-bottom: 0px;
 }
 
 .zr-icon-tooltip-footer--row,

@@ -1,0 +1,35 @@
+.zr-tagmanager--datalist [zr-role="list-stats"] {
+    align-items: center;
+    background: #f5f5f5;
+    border: 1px #ececec solid;
+    display: flex;
+    flex-direction: column;
+    margin: 10px auto;
+    padding: 10px 15px;
+    width: fit-content;
+}
+
+.zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-text"] {
+    flex: 0 0 100%;
+}
+
+.zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-figures"] {
+    display: flex;
+}
+
+.zr-tagmanager--datalist [zr-role="list-stats"] [zr-role="stats-bar"] {
+    flex: 0 0 auto;
+    flex-direction: column;
+    margin: 3px 10px;
+}
+
+.zr-tagmanager--datalist [zr-role="list-stats"] .bp3-progress-bar {
+    max-width: 100px;
+}
+
+/* DARK THEME */
+
+[zr-dark-theme="true"] .zr-tagmanager--datalist [zr-role="list-stats"] {
+    background: var(--zr-dark-dialog-bg, #242424);
+    border-color: var(--zr-dark-border-color,#363a3f);
+}

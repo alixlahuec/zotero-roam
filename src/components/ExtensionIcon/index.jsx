@@ -29,7 +29,7 @@ function DarkThemeToggle (){
 		alignIndicator="right" 
 		checked={useDark} 
 		inline={false} 
-		labelElement={<span><Icon icon="moon" /> Dark Theme</span>} 
+		label="Dark Theme"
 		onChange={toggleDarkTheme} />;
 }
 

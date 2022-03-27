@@ -1,4 +1,4 @@
-import React, { useCallback} from "react";
+import React from "react";
 import { arrayOf, func, shape, string } from "prop-types";
 import { Button, MenuItem } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
@@ -18,20 +18,16 @@ function itemRenderer(item, itemProps) {
 
 const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 	const { currentLibrary: { path }, onSelect, options } = libProps;
-	const handleSelect = useCallback((event) => {
-		let value = event.currentTarget?.value;
-		if(value){ onSelect(value); }
-	}, [onSelect]);
 
 	return (
 		<Select 
 			filterable={false}
 			itemRenderer={itemRenderer}
 			items={options} 
-			onItemSelect={handleSelect} 
+			onItemSelect={onSelect} 
 			placement="bottom-right"
 			popoverProps={popoverProps}>
-			<Button className="zr-text-small" icon="double-caret-vertical" minimal={true} text={path} />
+			<Button active={true} className="zr-text-small" minimal={true} text={path} />
 		</Select>
 	);
 });

@@ -10,7 +10,6 @@ const addPageMenus = () => {
 	for(const page of newPages) {
 		let title = page.querySelector("span") ? page.querySelector("span").innerText : page.innerText;
 		let pageUID = findRoamPage(title);
-		// DEP: page menu trigger setting
 		
 		let menu = document.createElement("div");
 		menu.setAttribute("data-title", title);

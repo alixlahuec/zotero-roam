@@ -107,12 +107,12 @@ function setDefaultHooks(){
 				message: "Metadata added to " + title
 			});
 		} else {
-			// For testing
+			// ? For testing
 			console.log(e);
 		}
 	});
 	document.addEventListener("zotero-roam:write", (e) => {
-		// For debugging:
+		// ! For debugging:
 		console.log(e.detail);
 		let { data: { failed, successful }, error, library } = e.detail;
 		if(error){ console.error(error); }
@@ -128,7 +128,7 @@ function setDefaultHooks(){
 				counts.success += Object.keys(res.data.successful).length;
 				counts.error += Object.keys(res.data.failed).length;
 			}, { error: 0, success: 0 });
-			// For debugging:
+			// ! For debugging:
 			console.log(itemsOutcome);
 			let isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
 

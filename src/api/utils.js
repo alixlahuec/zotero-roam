@@ -61,8 +61,8 @@ function cleanBibliographyHTML(bib){
  */
 async function deleteTags(tags, library, version){
 	const { apikey, path } = library;
-	// Only 50 tags can be deleted at once
-	// Since each deletion is version-dependent, the extension won't support deleting more for now
+	// * Only 50 tags can be deleted at once
+	// * Since each deletion is version-dependent, the extension won't support deleting more for now
 	// https://www.zotero.org/support/dev/web_api/v3/write_requests#deleting_multiple_tags
 	if(tags.length > 50){
 		console.warn("Only 50 Zotero tags can be deleted at once : any additional tags provided will be ignored.");
@@ -445,8 +445,8 @@ function parseSemanticDOIs(arr){
 function writeCitoids(items, {library, collections = [], tags = []} = {}){
 	const { apikey, path } = library;
 	const clean_tags = tags.map(t => { return { tag: t }; });
-	// Only 50 items can be added at once
-	// https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
+	// * Only 50 items can be added at once
+	// * https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
 	let apiCalls = [];
 	let nbCalls = Math.ceil(items.length / 50);
 
@@ -476,8 +476,8 @@ function writeCitoids(items, {library, collections = [], tags = []} = {}){
  */
 function writeItems(dataList, library){
 	const { apikey, path } = library;
-	// Only 50 items can be added at once
-	// https://www.zotero.org/support/dev/web_api/v3/write_requests#updating_multiple_objects
+	// * Only 50 items can be added at once
+	// * https://www.zotero.org/support/dev/web_api/v3/write_requests#updating_multiple_objects
 	let apiCalls = [];
 	let nbCalls = Math.ceil(dataList.length / 50);
 

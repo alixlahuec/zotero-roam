@@ -135,7 +135,7 @@ window.zoteroRoam = {};
 
 		setupDarkTheme(darkTheme);
 		setupDependencies([
-			{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"} // Scite.ai Badge
+			{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"}
 		]);
 		setDefaultHooks();
 		registerSmartblockCommands(getItems);

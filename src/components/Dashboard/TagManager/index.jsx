@@ -63,7 +63,7 @@ const TabContents = React.memo(function TabContents({ libraries, onClose }){
 		};
 	}, [handleLibrarySelect, libOptions, selectedLibrary]);
 
-	return <div className="zr-tagmanager--datalist">
+	return <div>
 		{isLoading
 			? <Spinner />
 			: <TagLists items={data} libProps={libProps} onClose={onClose} /> }

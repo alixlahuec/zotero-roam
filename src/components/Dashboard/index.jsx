@@ -19,7 +19,7 @@ const TabList = React.memo(function TabList(props){
 
 	return(
 		<Tabs animate={false} id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
-			<Tab id="tag-manager" panel={<TagManager onClose={onClose} />} title={<Icon htmlTitle="Tag Manager" icon="tag" />} />
+			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager onClose={onClose} />} title={<Icon htmlTitle="Tag Manager" icon="tag" />} />
 		</Tabs>
 	);
 });

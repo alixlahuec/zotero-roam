@@ -1,0 +1,32 @@
+.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge,
+.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge.bp3-active,
+.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge:hover,
+.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge .bp3-icon {
+    background-color: #3798d1;
+    color: white;
+}
+
+.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as,
+.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as.bp3-active,
+.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as:hover,
+.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as .bp3-icon {
+    background-color: #ece2ff;
+    color: #c981ed;
+}
+
+/* DARK THEME */
+
+[zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge,
+[zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge.bp3-active,
+[zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge:hover,
+[zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge .bp3-icon {
+    background-color: var(--zr-dark-elem-bg, #2B3143);
+    color: var(--zr-dark-text-co,#76a0cb);
+}
+
+[zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--merge-as,
+[zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--merge-as.bp3-active,
+[zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--merge-as:hover,
+[zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--merge-as .bp3-icon {
+    background-color: var(--zr-dark-selected-bc,#191919);
+}
