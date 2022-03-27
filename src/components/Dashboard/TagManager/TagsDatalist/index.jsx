@@ -11,6 +11,7 @@ import Stats from "../Stats";
 import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
 
 import * as customPropTypes from "../../../../propTypes";
+import "./index.css";
 
 const itemsPerPage = 30;
 
