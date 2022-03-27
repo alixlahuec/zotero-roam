@@ -1,11 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { arrayOf, bool, shape, string } from "prop-types";
 import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag } from "@blueprintjs/core";
 
 import { useModifyTags } from "../../../api/write";
 
 import * as customPropTypes from "../../../propTypes";
-import { useEffect } from "react/cjs/react.production.min";
 
 function MergeAsCustom({ disabled, library, tags }){
 	const [isDialogOpen, setDialogOpen] = useState(false);
