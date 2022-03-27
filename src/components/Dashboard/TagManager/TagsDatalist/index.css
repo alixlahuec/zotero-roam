@@ -1,5 +1,6 @@
 .zr-tagmanager--datalist .zr-datalist--item {
     background: white;
+    border-radius: 5px;
     display:flex;
     flex-direction: column;
     margin: 10px;

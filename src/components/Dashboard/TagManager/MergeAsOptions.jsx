@@ -1,15 +1,36 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { arrayOf, bool, shape, string } from "prop-types";
+import { arrayOf, bool, func, shape, string } from "prop-types";
 import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag } from "@blueprintjs/core";
 
 import { useModifyTags } from "../../../api/write";
 
 import * as customPropTypes from "../../../propTypes";
 
+function CustomInput({ handleChange, status, value }){
+	const inputField = useRef();
+
+	useEffect(() => {
+		inputField.current.focus();
+	}, []);
+
+	return <InputGroup
+		disabled={status == "loading"}
+		fill={true}
+		inputRef={inputField}
+		onChange={handleChange}
+		placeholder="Enter a value"
+		value={value}
+	/>;
+}
+CustomInput.propTypes = {
+	handleChange: func,
+	status: string,
+	value: string
+};
+
 function MergeAsCustom({ disabled, library, tags }){
 	const [isDialogOpen, setDialogOpen] = useState(false);
 	const [value, setValue] = useState("");
-	const inputField = useRef();
 	const { mutate, status } = useModifyTags();
 
 	const openDialog = useCallback(() => setDialogOpen(true), []);
@@ -30,12 +51,6 @@ function MergeAsCustom({ disabled, library, tags }){
 		});
 	}, [closeDialog, library, mutate, tags, value]);
 
-	useEffect(() => {
-		if(isDialogOpen == true){
-			inputField.current.focus();
-		}
-	}, [isDialogOpen]);
-
 	return (
 		<>
 			<MenuItem
@@ -54,14 +69,7 @@ function MergeAsCustom({ disabled, library, tags }){
 				onClose={closeDialog}
 				title="Choose custom value" >
 				<div className={Classes.DIALOG_BODY}>
-					<InputGroup
-						disabled={status == "loading"}
-						fill={true}
-						inputRef={inputField}
-						onChange={handleChange}
-						placeholder="Enter a value"
-						value={value}
-					/>
+					<CustomInput handleChange={handleChange} status={status} value={value} />
 				</div>
 				<div className={Classes.DIALOG_FOOTER}>
 					<div className={Classes.DIALOG_FOOTER_ACTIONS}>
