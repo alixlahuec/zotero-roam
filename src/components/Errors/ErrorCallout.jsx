@@ -1,21 +1,18 @@
 import React from "react";
-import { error, func } from "prop-types";
+import { error, func, string } from "prop-types";
 import { Button, Callout } from "@blueprintjs/core";
 
-function ErrorCallout({ error, resetErrorBoundary = null }) {
+function ErrorCallout({ buttonText = "Go back", error, resetErrorBoundary = null }) {
 
 	return (
-		<Callout
-			intent="danger"
-			icon="warning"
-			title={error.name}
-		>
+		<Callout intent="danger" icon="warning" title={error.name} >
 			{error.message}
-			{resetErrorBoundary != null && <Button onClick={resetErrorBoundary} text="Go back" />}
+			{resetErrorBoundary != null && <Button onClick={resetErrorBoundary} text={buttonText} />}
 		</Callout>
 	);
 }
 ErrorCallout.propTypes = {
+	buttonText: string,
 	error: error,
 	resetErrorBoundary: func
 };

@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, bool, shape, string } from "prop-types";
-import { Button, ButtonGroup, Callout, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
+import { Button, ButtonGroup, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
 
 import ButtonLink from "../../ButtonLink";
 import CitekeyPopover from "../../CitekeyPopover";
@@ -18,6 +18,7 @@ import { UserSettings } from "../../App";
 import * as customPropTypes from "../../../propTypes";
 import { cleanLibraryItem } from "../../SearchPanel/utils";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
+import ErrorCallout from "../../Errors/ErrorCallout";
 
 function BacklinksItem({ entry }) {
 	const { _type, inLibrary, inGraph } = entry;
@@ -170,10 +171,7 @@ function RelatedItemsBar(props) {
 	return (
 		<div className="zotero-roam-page-menu-citations">
 			{isError
-				? <Callout intent="danger">
-                Citations and references could not be retrieved from SemanticScholar :
-					{error}
-				</Callout>
+				? <ErrorCallout error={error} />
 				:
 				<>
 					<ButtonGroup minimal={true} fill={true}>

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { Children, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { bool, func, node, object, shape } from "prop-types";
 import { MenuItem } from "@blueprintjs/core";
 import { QueryList } from "@blueprintjs/select";
@@ -116,6 +116,11 @@ SearchResult.propTypes = {
 
 const RenderedList = React.memo(function RenderedList(props){
 	const { handleClose, /*handleKeyDown, handleKeyUp,*/ itemList, selectedItem } = props;
+
+	useEffect(() => {
+		// ? For testing
+		console.log(Children.toArray(itemList).length);
+	}, [itemList]);
 
 	return selectedItem 
 		? <ItemDetails item={selectedItem} 
