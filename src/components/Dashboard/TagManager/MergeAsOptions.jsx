@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
-import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag } from "@blueprintjs/core";
+import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag, UL } from "@blueprintjs/core";
 
 import { useModifyTags } from "../../../api/write";
 
@@ -62,13 +62,14 @@ function MergeAsCustom({ disabled, library, tags }){
 				text="Choose custom value..."
 			/>
 			<Dialog
-				icon="text-highlight"
-				isCloseButtonShown={true}
 				isOpen={isDialogOpen}
 				lazy={true}
-				onClose={closeDialog}
-				title="Choose custom value" >
+				onClose={closeDialog} >
 				<div className={Classes.DIALOG_BODY}>
+					The following tags will be merged :
+					<UL>
+						{tags.map(el => <li key={el}>{el}</li>)}
+					</UL>
 					<CustomInput handleChange={handleChange} status={status} value={value} />
 				</div>
 				<div className={Classes.DIALOG_FOOTER}>

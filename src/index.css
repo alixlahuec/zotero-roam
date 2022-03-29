@@ -50,6 +50,11 @@
 .zr-text-small select, 
 .zr-text-small button {font-size: var(--zr-text-small, 0.85rem);}
 
+.zr-text-small .bp3-icon {
+  margin-top: 1px;
+  margin-left: 0px;
+}
+
 /* DARK THEME */
 
 [zr-dark-theme="true"] [class*="zr"] li[aria-selected="true"],

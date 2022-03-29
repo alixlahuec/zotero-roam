@@ -18,7 +18,7 @@ function ActionsMenu({ deleteTags = true, library, mergeAs = true, suggestion })
 	}, [suggestion.use, library, mutate]);
 
 	return (
-		<Menu>
+		<Menu className="zr-text-small">
 			{mergeAs && suggestion.type 
 				? <MenuItem disabled={status == "loading"} icon="group-objects" text="Merge as...">
 					<MergeAsOptions library={library} options={suggestion.use} />

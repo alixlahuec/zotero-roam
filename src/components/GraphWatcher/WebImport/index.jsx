@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { arrayOf, object, string } from "prop-types";
 import { createPortal } from "react-dom";
+import { arrayOf, object, string } from "prop-types";
 import { Button } from "@blueprintjs/core";
+
+import { hasNodeListChanged } from "../../../utils";
 
 import WebImportPanel from "./WebImportPanel";
 import "./index.css";
-import { hasNodeListChanged } from "../../../utils";
 
 const WebImportButton = React.memo(function WebImportButton({ urls }){
 	const [isDialogOpen, setDialogOpen] = useState(false);

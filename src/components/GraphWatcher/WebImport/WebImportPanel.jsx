@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
-import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, H5, Tag } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ZoteroImport from "../../ZoteroImport";
@@ -8,6 +8,12 @@ import ZoteroImport from "../../ZoteroImport";
 import { UserSettings } from "../../App";
 import { useQuery_Citoid } from "../../../api/queries";
 import { pluralize } from "../../../utils";
+import Guide from "../../Guide";
+
+const CitoidGuide = () => <>
+	<H5>About the Citoid API</H5>
+	<span>Items are retrieved based on their URL, which is not error-free. The API may be unable to retrieve metadata for a given link, in which case it will not appear in the list below.</span>
+</>;
 
 function useGetCitoids(urls, opts = {}) {
 	return useQuery_Citoid(urls, {
@@ -39,7 +45,7 @@ const WebImportItem = React.memo(function WebImportItem(props){
 	return (
 		<li className="zr-webimport-item" onClick={handleCheckUncheck} >
 			<div className={ Classes.MENU_ITEM } label={item.url}>
-				<div className={[ Classes.FILL, "zr-webimport-item--header" ].join(" ")}>
+				<div className="zr-webimport-item--header" >
 					<Checkbox
 						checked={isSelected}
 						className="zr-webimport-item--title"
@@ -48,19 +54,19 @@ const WebImportItem = React.memo(function WebImportItem(props){
 						onChange={handleCheckUncheck}
 					/>
 					{item.itemType
-						? <Tag minimal={true}><span data-item-type={item.itemType} >
+						? <Tag minimal={true} zr-role="item-type"><span data-item-type={item.itemType} >
 							{typemap[item.itemType] || item.itemType}</span>
 						</Tag>
 						: null}
 				</div>
-				<div className={[ Classes.FILL, "zr-webimport-item--contents" ].join(" ")}>
+				<div className="zr-webimport-item--contents" >
 					{item.creators
-						? <span className="zr-auxiliary" style={{ marginRight: "10px" }} >{item.creators}</span>
+						? <span className="zr-auxiliary" zr-role="item-creators" >{item.creators}</span>
 						: null}
 					{item.publication 
-						? <span className={["zr-webimport-item--publication", "zr-text-small", "zr-secondary"].join(" ")}>{item.publication}</span> 
+						? <span className={["zr-text-small", "zr-secondary"].join(" ")} zr-role="item-publication">{item.publication}</span> 
 						: null}
-					<span className={["zr-webimport-item--abstract", "zr-text-small", "zr-auxiliary"].join(" ")}>
+					<span className={["zr-text-small", "zr-auxiliary"].join(" ")} zr-role="item-abstract">
 						{item.abstract}
 					</span>
 				</div>
@@ -118,6 +124,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 									? "Parsing links..."
 									: pluralize(citoids.length, "link", " found")}
 							</h5>
+							{!noQueriesLoaded && <Guide content={<CitoidGuide />} />}
 						</div>
 						<div className={["header-right", "zr-auxiliary"].join(" ")}>
 							<Button icon="cross" minimal={true} onClick={handleClose} />

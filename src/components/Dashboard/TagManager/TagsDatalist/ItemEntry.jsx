@@ -18,7 +18,7 @@ const ItemEntry = React.memo(function ItemEntry({ entry, library }){
 	return (
 		<ListItem className="zr-tag-entry" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
 			<span zr-role="item-header">
-				<div>
+				<span zr-role="item-info">
 					{entry.roam.length > 0
 						? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" />
 						: <Icon icon="blank" />}
@@ -30,7 +30,7 @@ const ItemEntry = React.memo(function ItemEntry({ entry, library }){
 							return <ZoteroTag key={[tag, type].join("_")} tagElement={elem} />;
 						} )}
 					</span>}
-				</div>
+				</span>
 				<span className={["zr-secondary", "zr-text-small"].join(" ")} zr-role="item-count">{pluralize(usage, "item")}</span>
 				<span zr-role="item-actions">
 					<ActionsMenu deleteTags={true} library={library} mergeAs={true} suggestion={suggestion} />
