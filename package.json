@@ -5,12 +5,12 @@
     "license": "Apache-2.0",
     "author": {
         "name": "Alix Lahuec",
-        "email": "alix.lahuec@mail.mcgill.ca",
+        "email": "alix.lahuec@onmail.com",
         "url": "https://ae-lhc.com"
     },
-    "repository": "greenmeen/zotero-roam",
+    "repository": "alixlahuec/zotero-roam",
     "bugs": {
-        "url": "https://github.com/greenmeen/zotero-roam/issues",
+        "url": "https://github.com/alixlahuec/zotero-roam/issues",
         "email": "alix.lahuec@mail.mcgill.ca"
     },
     "main": ".src/index.js",

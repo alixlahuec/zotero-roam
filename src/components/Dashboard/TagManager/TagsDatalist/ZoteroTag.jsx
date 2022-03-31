@@ -10,7 +10,7 @@ function ZoteroTag({ tagElement }){
 			active={true} 
 			className="zr-tag--zotero" 
 			minimal={true} 
-			multiline={true}
+			multiline={false}
 			data-tag-source="zotero" data-tag={tag} data-tag-type={type} >
 			{tag + " (" + numItems + ")"}
 		</Tag>

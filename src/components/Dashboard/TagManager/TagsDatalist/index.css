@@ -1,6 +1,7 @@
 .zr-tagmanager--datalist .zr-datalist--item {
     background: white;
     border-radius: 5px;
+    box-shadow: 2px 2px 4px 1px #d7dced4d;
     display:flex;
     flex-direction: column;
     margin: 10px;
@@ -19,24 +20,25 @@
 }
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="title"] {
-    flex: 0 1 50%;
     font-weight:600;
 }
-
-.zr-tagmanager--datalist .zr-datalist--item [zr-role="title"]::before {content: '# '}
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-count"] {
     flex: 0 0 auto;
 }
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-info"] {
-    flex: 1 1 40%;
+    flex: 2 1 40%;
 }
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] {
     justify-content: end;
     display: flex;
-    flex: 0 0 33%;
+    flex: 1 1 33%;
+}
+
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] > .bp3-menu {
+    min-width: auto;
 }
 
 .zr-tag--roam,

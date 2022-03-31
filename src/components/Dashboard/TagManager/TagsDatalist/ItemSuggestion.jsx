@@ -12,11 +12,11 @@ const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
 
 	return (
 		<ListItem className="zr-tag-suggestion" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
-			<span zr-role="item-header">
+			<div zr-role="item-header">
 				<span zr-role="item-info">
 					{entry.roam.length > 0
-						? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" />
-						: <Icon icon="blank" />}
+						? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" size={12} />
+						: <Icon icon="blank" size={12} />}
 					<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
 				</span>
 				<Tag 
@@ -27,10 +27,10 @@ const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
 					zr-role="item-count" >
 					{pluralize(entry.zotero.length, "tag")}
 				</Tag>
-				<span zr-role="item-actions">
+				<div zr-role="item-actions">
 					<Suggest entry={entry} library={library} />
-				</span>
-			</span>
+				</div>
+			</div>
 		</ListItem>
 	);
 });

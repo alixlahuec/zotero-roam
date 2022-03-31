@@ -46,7 +46,7 @@ li.zr-webimport-item {
 }
 
 .zr-webimport-item > .bp3-menu-item {
-    flex-direction: column;
+    flex-wrap: wrap;
 }
 
 .zr-webimport-item > .bp3-menu-item:hover {
@@ -71,7 +71,9 @@ li.zr-webimport-item {
 
 .zr-webimport-item--header,
 .zr-webimport-item--contents {
+    align-items: baseline;
     display: flex;
+    flex: 0 0 100%;
     justify-content: space-between;
 }
 

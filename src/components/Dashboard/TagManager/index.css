@@ -6,7 +6,7 @@
 }
 
 .zr-tagmanager .bp3-tab-list .bp3-tab {
-    font-weight: 300;
+    font-weight: 400;
     opacity: 0.5;
 }
 .zr-tagmanager .bp3-tab-list .bp3-tab[aria-selected="true"] {
@@ -14,6 +14,11 @@
     color: var(--zr-highlight,#206fe6);
     font-weight: 500;
     opacity: 1;
+}
+
+.zr-tagmanager--library-select {
+    background: #ffffff7a;
+    font-weight: bold;
 }
 
 /* DARK THEME */
@@ -25,4 +30,8 @@
 }
 [zr-dark-theme="true"] .zr-tagmanager .bp3-tab-list .bp3-tab[aria-selected="true"] {
     color: var(--zr-dark-highlight,#3fb8ff);
+}
+
+[zr-dark-theme="true"] .zr-tagmanager--library-select {
+    background: var(--zr-dark-selected-bc,#191919);
 }

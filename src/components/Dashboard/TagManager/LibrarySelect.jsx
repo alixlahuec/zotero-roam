@@ -27,7 +27,7 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 			onItemSelect={onSelect} 
 			placement="bottom-right"
 			popoverProps={popoverProps}>
-			<Button active={true} className={["zr-tagmanager--library-select", "zr-text-small"].join(" ")} minimal={true} text={path} />
+			<Button active={true} className={["zr-tagmanager--library-select", "zr-auxiliary", "zr-text-small"].join(" ")} minimal={true} text={path} />
 		</Select>
 	);
 });
