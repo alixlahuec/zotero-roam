@@ -326,13 +326,11 @@ function formatItemAnnotations(annotations){
 
 	return annots.map(ann => {
 		if(ann.type == "highlight"){
-			let { comment, pageLabel, library, parentItem, position: { pageIndex }, tags, text } = ann;
-			let libLoc = library.startsWith("groups/") ? library : "library";
-			let pdfHref = "zotero://open-pdf/" + libLoc + "/items/" + parentItem;
+			let { comment, pageLabel, link_page, tags, text } = ann;
 			let tagsString = tags.length > 0 ? " \n " + tags.map(t => "#[[" + t + "]]").join(" ") : "";
 	
 			return {
-				string: "[[>]] " + text + ` ([p. ${pageLabel}](${pdfHref}?page=${pageIndex + 1}))` + tagsString,
+				string: "[[>]] " + text + ` ([p. ${pageLabel}](${link_page})` + tagsString,
 				children: comment ? [comment] : []
 			};
 
@@ -502,15 +500,37 @@ function makeDictionary(arr){
 	}, {});
 }
 
+function makeDateFromAgo(date){
+	let thisdate = date.constructor === Date ? date : new Date(date);
+	// Vars
+	let today = new Date();
+	today.setHours(0,0,0);
+	let yesterday = new Date();
+	yesterday.setDate(today.getDate() - 1);
+	yesterday.setHours(0,0,0);
+
+	if(thisdate > today){
+		return `Today at ${thisdate.getHours()}:${thisdate.getMinutes()}`;
+	} else if(thisdate > yesterday){
+		return `Yesterday at ${thisdate.getHours()}:${thisdate.getMinutes()}`;
+	} else {
+		let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		let monthDay =`${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}`;
+		let maybeYear = thisdate.getFullYear() != today.getFullYear() ? thisdate.getFullYear : false;
+
+		return [monthDay, maybeYear].filter(Boolean).join(" ");
+	}
+}
+
 /** Converts a date into Roam DNP format
  * @param {Date|*} date - The date to parse and convert 
  * @param {{brackets: Boolean}} config - Additional parameters 
  * @returns 
  */
 function makeDNP(date, {brackets = true} = {}){
-	if(date.constructor !== Date){ date = new Date(date); }
+	let thisdate = date.constructor === Date ? date : new Date(date);
 	let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-	let dateString = `${months[date.getMonth()]} ${makeOrdinal(date.getDate())}, ${date.getFullYear()}`;
+	let dateString = `${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}, ${thisdate.getFullYear()}`;
 	if(brackets){
 		return `[[${dateString}]]`;
 	} else{
@@ -802,7 +822,7 @@ function simplifyAnnotations(annotations){
 			annotationColor: color, 
 			annotationComment: comment, 
 			annotationPageLabel: pageLabel,
-			annotationPosition: position,
+			annotationPosition,
 			annotationText: text,
 			annotationType: type,
 			dateAdded,
@@ -811,16 +831,25 @@ function simplifyAnnotations(annotations){
 			tags
 		} = annot.data;
 
+		let library = annot.library.type + "s/" + annot.library.id;
+		let libLoc = library.startsWith("groups/") ? library : "library";
+		let position = JSON.parse(annotationPosition);
+		let link_pdf = `zotero://open-pdf/${libLoc}/items/${parentItem}`;
+		let link_page = link_pdf + `?page=${position.pageIndex + 1}`;
+
 		return {
 			color,
 			comment,
 			dateAdded,
 			dateModified,
 			key: annot.key,
-			library: annot.library.type + "s/" + annot.library.id,
+			library,
+			link_pdf,
+			link_page,
 			pageLabel,
 			parentItem,
-			position: JSON.parse(position),
+			position,
+			raw: annot,
 			tags: tags.map(t => t.tag),
 			text,
 			type,
@@ -910,6 +939,7 @@ export {
 	getWebLink,
 	hasNodeListChanged,
 	identifyChildren,
+	makeDateFromAgo,
 	makeDictionary,
 	makeDNP,
 	makeTimestamp,
@@ -921,6 +951,7 @@ export {
 	setupDarkTheme,
 	setupDependencies,
 	setupPortals,
+	simplifyAnnotations,
 	sortCollections,
 	sortElems
 };

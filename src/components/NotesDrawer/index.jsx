@@ -1,22 +1,35 @@
 import React, { useContext, useMemo } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
-import { Button, Card, Classes, Drawer, Icon, Tabs, Tab, Tag } from "@blueprintjs/core";
+import { Button, Card, Drawer, Tabs, Tab, Tag, Divider, Icon } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
-import { formatZoteroNotes } from "../../utils";
+import ButtonLink from "../ButtonLink";
+import { formatZoteroNotes, makeDateFromAgo, simplifyAnnotations } from "../../utils";
 
 import "./index.css";
 
 function PanelAnnotations({ annots }){
-	return annots.map(ann => {
-		let { annotationColor, annotationComment, annotationPageLabel, annotationText, dateModified, tags } = ann.data;
+	let clean_annotations = simplifyAnnotations(annots);
+
+	return clean_annotations.map(ann => {
+		let { color, comment, pageLabel, text, dateModified, link_page, link_pdf, tags } = ann.data;
+		let highlightStyle = {
+			"background": `linear-gradient(120deg, ${color}50 0%, ${color}50 100%)`
+		};
 
 		return <Card key={ann.key} className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>
-			{annotationText && <div className={Classes.BLOCKQUOTE}>{annotationText} (page {annotationPageLabel}))</div>}
-			{annotationComment}
-			{tags.map((t, j) => <Tag key={j} >{t.tag}</Tag>)}
-			<Icon color={annotationColor} icon="chat" />
-			{dateModified}
+			<div className="zr-annotation--header">
+				<ButtonLink href={link_pdf}><Icon icon="document-open" />Open PDF</ButtonLink>
+				<a href={link_page} rel="noreferrer" target="_blank" >Page {pageLabel}</a>
+			</div>
+			<Divider />
+			{text && <span className="zr-annotation--highlight" style={highlightStyle}>{text}</span>}
+			{comment}
+			<Divider />
+			<div className="zr-annotation--footer">
+				{tags.map((t, j) => <Tag key={j} >{t.tag}</Tag>)}
+				<span className="zr-auxiliary">{makeDateFromAgo(dateModified)}</span>
+			</div>
 		</Card>;
 	});
 }

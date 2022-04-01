@@ -7,6 +7,12 @@
     flex: 0 0 auto;
 }
 
+.zr-annotation--highlight {
+    background-repeat: no-repeat;
+    background-size: 100% 85%;
+    font-family: monospace;
+}
+
 /* DARK THEME */
 
 [zr-dark-theme="true"] .zr-drawer--notes {
