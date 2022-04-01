@@ -12,7 +12,7 @@ function PanelAnnotations({ annots }){
 	let clean_annotations = simplifyAnnotations(annots);
 
 	return clean_annotations.map(ann => {
-		let { color, comment, pageLabel, text, dateModified, link_page, link_pdf, tags } = ann.data;
+		let { color, comment, pageLabel, text, dateModified, link_page, link_pdf, tags } = ann;
 		let highlightStyle = {
 			"background": `linear-gradient(120deg, ${color}50 0%, ${color}50 100%)`
 		};
