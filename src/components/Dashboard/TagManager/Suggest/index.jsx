@@ -69,6 +69,7 @@ function ManualMerge({ library, suggestion }){
 	return <Popover2
 		content={<Menu><MergeAsOptions library={library} options={suggestion.use} /></Menu>}
 		interactionKind="click"
+		popoverClassName="zr-popover"
 	>
 		<Button className={["zr-tag-suggestion--merge-as", "zr-text-small"].join(" ")} rightIcon="caret-down" text="Merge as" />
 	</Popover2>;

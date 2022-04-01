@@ -17,6 +17,11 @@
     margin-top: 10px;
 }
 
+.zr-dashboard--library-select {
+    background: #ffffff7a;
+    font-weight: bold;
+}
+
 /* SMALLER DISPLAYS */
 
 @media (max-width: 1000px){
@@ -41,4 +46,9 @@
 [zr-dark-theme="true"] .zr-dashboard--main .bp3-tab-panel,
 [zr-dark-theme="true"] .zr-dashboard--main > .bp3-tabs > .bp3-tab-list > .bp3-tab[aria-selected="true"] {
     background: var(--zr-dark-selected-bc,#191919);
+}
+
+[zr-dark-theme="true"] .zr-dashboard--library-select.bp3-button.bp3-minimal {
+    background: var(--zr-dark-selected-bc,#191919);
+    color: var(--zr-dark-text-co, #76a0cb);
 }

@@ -48,7 +48,7 @@ function analyzeUserRequests(reqs){
 
 /** Categorize library items according to their type (items, PDFs attachments, notes)
  * @param {Object[]} datastore - The items to categorize 
- * @returns {{items: ZoteroItem[], pdfs: ZoteroItem[], notes: ZoteroItem[]}} The categorized object
+ * @returns {{items: ZoteroItem[], pdfs: ZoteroItem[], notes: Object[]}} The categorized object
  */
 function categorizeLibraryItems(datastore){
 	return datastore.reduce((obj, item) => {
@@ -325,6 +325,28 @@ function executeFunctionByName(functionName, context /*, args */) {
 	return context[func].apply(context, args);
 }
 
+function formatItemAnnotations(annotations){
+	let annots = simplifyAnnotations(annotations);
+
+	return annots.map(ann => {
+		if(ann.type == "highlight"){
+			let { comment, pageLabel, library, parentItem, position: { pageIndex }, tags, text } = ann;
+			let libLoc = library.startsWith("groups/") ? library : "library";
+			let pdfHref = "zotero://open-pdf/" + libLoc + "/items/" + parentItem;
+			let tagsString = tags.length > 0 ? " \n " + tags.map(t => "#[[" + t + "]]").join(" ") : "";
+	
+			return {
+				string: "[[>]] " + text + ` ([p. ${pageLabel}](${pdfHref}?page=${pageIndex + 1}))` + tagsString,
+				children: comment ? [comment] : []
+			};
+
+		} else if(ann.type == "image"){
+			// let { pageIndex, rects } = ann.position;
+			// TODO: Can rect selections be extracted into an image ?
+		}
+	});
+}
+
 /** Default formatter for notes
  * @param {{ZoteroItem}[]]} notes - The (raw) array of notes to be formatted
  * @param {String} split_char - The string on which to split notes into blocks
@@ -364,6 +386,15 @@ function formatItemReference(item, format, {accent_class = "zr-highlight"} = {})
 	case "citekey":
 	default:
 		return citekey;
+	}
+}
+
+function formatZoteroAnnotations(annotations, { func = null, use = "raw" } = {}){
+	if(func){
+		// If the user has provided a function, execute it with the desired input
+		return executeFunctionByName(func, window, use == "raw" ? annotations : simplifyAnnotations(annotations));
+	} else {
+		return formatItemAnnotations(annotations);
 	}
 }
 
@@ -758,6 +789,39 @@ function setupPortals(slotID, portalID){
 	document.getElementById("app").appendChild(zrPortal);
 }
 
+function simplifyAnnotations(annotations){
+	return annotations.map(annot => {
+		let { 
+			annotationColor: color, 
+			annotationComment: comment, 
+			annotationPageLabel: pageLabel,
+			annotationPosition: position,
+			annotationText: text,
+			annotationType: type,
+			dateAdded,
+			dateModified,
+			parentItem,
+			tags
+		} = annot.data;
+
+		return {
+			color,
+			comment,
+			dateAdded,
+			dateModified,
+			key: annot.key,
+			library: annot.library.type + "s/" + annot.library.id,
+			pageLabel,
+			parentItem,
+			position: JSON.parse(position),
+			tags: tags.map(t => t.tag),
+			text,
+			type,
+			version: annot.version
+		};
+	});
+}
+
 function sortCollectionChildren(parent, children, depth = 0){
 	let parColl = parent;
 	parColl.depth = depth;
@@ -829,8 +893,10 @@ export {
 	copyToClipboard,
 	escapeRegExp,
 	executeFunctionByName,
+	formatItemAnnotations,
 	formatItemNotes,
 	formatItemReference,
+	formatZoteroAnnotations,
 	formatZoteroNotes,
 	getPDFLink,
 	getLocalLink,

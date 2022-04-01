@@ -1,7 +1,7 @@
 import { categorizeLibraryItems, getLocalLink, getWebLink, parseDOI } from "../../utils";
 
 /** Converts library data into a simplified list of top-level items, with their metadata, children, and links
- * @param {Object[]} arr - The library's contents, including top-level items, attachments and notes 
+ * @param {Object[]} arr - The library's contents, including top-level items, attachments and notes/annotations
  * @param {Map} roamCitekeys - The map of citekey pages present in Roam 
  * @returns {Object[]} The simplified items
  * @see cleanLibraryReturnArrayType
@@ -25,7 +25,7 @@ function cleanLibrary(arr, roamCitekeys){
  * 
  * @param {ZoteroItem|Object} item - The Zotero item
  * @param {Object[]} pdfs - The Zotero item's attached PDFs
- * @param {Object[]} notes - The Zotero item's notes
+ * @param {Object[]} notes - The Zotero item's notes and annotations
  * @param {Map} roamCitekeys - The map of citekey pages present in Roam 
  * @returns {Object} The simplified item
  * @see cleanLibraryItemType

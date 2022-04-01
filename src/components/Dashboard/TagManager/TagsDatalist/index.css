@@ -60,6 +60,7 @@
 
 [zr-dark-theme="true"] .zr-tagmanager--datalist .zr-datalist--item {
     background: var(--zr-dark-dialog-bg, #242424);
+    box-shadow: 2px 2px 4px 1px #0b0b0c4d;
 }
 
 [zr-dark-theme="true"] .zr-tag--roam.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {

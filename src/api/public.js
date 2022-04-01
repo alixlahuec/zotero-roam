@@ -30,7 +30,7 @@ function _getCollections(library, queryClient){
 }
 
 /** Returns the current items in the query cache, with optional configuration
- * @param {("all"|"attachments"|"children"|"items"|"notes"|"pdfs")} select - The type of items to retrieve
+ * @param {("all"|"annotations"|"attachments"|"children"|"items"|"notes"|"pdfs")} select - The type of items to retrieve
  * @param {Object} filters - Optional filters for the item queries
  * @param {*} queryClient - The React Query client to use
  * @returns {ZoteroItem[]} - The requested items
@@ -43,7 +43,9 @@ function _getItems(select = "all", filters = {}, queryClient) {
 	case "attachments":
 		return items.filter(it => it.data.itemType == "attachment");
 	case "children":
-		return items.filter(it => it.data.itemType == "note" || it.data.itemType == "attachment" && it.data.contentType == "application/pdf");
+		return items.filter(it => ["note", "annotation"].includes(it.data.itemType) || (it.data.itemType == "attachment" && it.data.contentType == "application/pdf"));
+	case "annotations":
+		return items.filter(it => it.data.itemType == "annotation");
 	case "notes":
 		return items.filter(it => it.data.itemType == "note");
 	case "pdfs":

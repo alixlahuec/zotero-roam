@@ -16,22 +16,12 @@
     opacity: 1;
 }
 
-.zr-tagmanager--library-select {
-    background: #ffffff7a;
-    font-weight: bold;
-}
-
 /* DARK THEME */
 
 [zr-dark-theme="true"] .zr-tagmanager .bp3-tab-list .bp3-tab,
-[zr-dark-theme="true"] .zr-tagmanager label,
-[zr-dark-theme="true"] .zr-tagmanager .zr-tagmanager--library-select.bp3-button.bp3-minimal.bp3-active {
+[zr-dark-theme="true"] .zr-tagmanager label {
     color: var(--zr-dark-text-co, #76a0cb);
 }
 [zr-dark-theme="true"] .zr-tagmanager .bp3-tab-list .bp3-tab[aria-selected="true"] {
     color: var(--zr-dark-highlight,#3fb8ff);
-}
-
-[zr-dark-theme="true"] .zr-tagmanager--library-select {
-    background: var(--zr-dark-selected-bc,#191919);
 }

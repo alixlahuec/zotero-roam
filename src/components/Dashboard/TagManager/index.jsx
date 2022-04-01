@@ -10,7 +10,7 @@ import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 import * as customPropTypes from "../../../propTypes";
 
 import "./index.css";
-import LibrarySelect from "./LibrarySelect";
+import LibrarySelect from "../LibrarySelect";
 
 function TagLists({ items, libProps, onClose }){
 	const [activeTab, setActiveTab] = useState("suggestions");

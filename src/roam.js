@@ -1,7 +1,7 @@
 import { emitCustomEvent } from "./events";
 import { _getItemMetadata } from "./public";
 import { use_smartblock_metadata } from "./smartblocks";
-import { executeFunctionByName, formatZoteroNotes } from "./utils";
+import { executeFunctionByName, formatZoteroAnnotations, formatZoteroNotes } from "./utils";
 
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
@@ -164,6 +164,29 @@ function getCitekeyPages(){
 		]`));
 }
 
+/** Retrieves the list of citekey pages (i.e, starting with `@`) in the Roam graph, with their last-edit time
+ * @returns {{edited: Date, title: String, uid: String}[]} The Array of citekey pages
+ * @returns 
+ */
+function getCitekeyPagesWithEditTime(){
+	return window.roamAlphaAPI.q(`[
+		:find [(pull ?e [:node/title :edit/time :block/uid {:block/_parents [:edit/time]}])...] 
+		:where
+			[?e :node/title ?t]
+			[(clojure.string/starts-with? ?t "@")]
+		]`)
+		.filter(p => p.time)
+		.map(p => {
+			let { title, uid } = p;
+			let latest_edit = p["_parents"] ? Math.max(...p["_parents"].map(c => c.time)) : p.time;
+			return {
+				title,
+				uid, 
+				edited: new Date(Math.max(latest_edit, p.time))
+			};
+		});
+}
+
 /** Retrieves the full list of Roam pages whose title begins with any of the keys provided
  * @param {String[]} keys - The Array of keys for which to retrieve Roam pages 
  * @returns {{title: String, uid: String}[]} The Array of pages whose title begins with any of the specified initials
@@ -258,8 +281,9 @@ async function importItemNotes({item, notes = []} = {}, uid, config){
 	}
 
 	try {
-		let formattedNotes = formatZoteroNotes(notes, config);
-		let { args, error, success } = await addBlocksArray(pageUID, formattedNotes);
+		let formattedAnnots = formatZoteroAnnotations(notes.filter(n => n.data.itemType == "annotation"));
+		let formattedNotes = formatZoteroNotes(notes.filter(n => n.data.itemType == "note"), config);
+		let { args, error, success } = await addBlocksArray(pageUID, [...formattedAnnots, ...formattedNotes]);
 
 		let outcome = {
 			args,
@@ -303,6 +327,7 @@ export {
 	findRoamPage,
 	getAllPages,
 	getCitekeyPages,
+	getCitekeyPagesWithEditTime,
 	getInitialedPages,
 	importItemMetadata,
 	importItemNotes,

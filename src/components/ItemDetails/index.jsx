@@ -179,7 +179,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			return null;
 		} else {
 			let btnText = <>
-				Show notes
+				Highlights & Notes
 				{shortcutsSettings.toggleNotes != false
 					? <ShortcutSequence text={shortcutsSettings.toggleNotes} />
 					: null}
