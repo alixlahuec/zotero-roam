@@ -5,7 +5,7 @@ import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/cor
 
 import { useQuery_Items } from "../../../api/queries";
 import { importItemMetadata } from "../../../roam";
-import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, parseDOI } from "../../../utils";
+import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
 
 import { ExtensionContext, UserSettings } from "../../App";
 import "./index.css";
@@ -39,18 +39,14 @@ const useGetItems = (reqs) => {
 							: false;
 					let location = item.library.type + "s/" + item.library.id;
 
-					let pdfs = lib.pdfs.filter(p => p.library.type + "s/" + p.library.id == location && p.data.parentItem == item.data.key);
-					let notes = lib.notes.filter(n => n.library.type + "s/" + n.library.id == location && n.data.parentItem == item.data.key);
+					let children = identifyChildren(item.data.key, location, { pdfs: lib.pdfs, notes: lib.notes });
 
 					return [
 						"@" + item.key,
 						{
 							citation: formatItemReference(item, "inline") || "@" + item.key,
 							data: {
-								children: {
-									pdfs,
-									notes
-								},
+								children,
 								location,
 								raw: item,
 								weblink,

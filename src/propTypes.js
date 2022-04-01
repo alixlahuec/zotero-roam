@@ -53,7 +53,7 @@ const cleanLibraryItemType = shape({
 	authorsRoles: arrayOf(string),
 	children: shape({
 		pdfs: arrayOf(zoteroItemType),
-		notes: arrayOf(oneOf([zoteroItemType, object])),
+		notes: arrayOf(oneOfType([zoteroItemType, object])),
 	}),
 	inGraph: oneOfType([string, oneOf([false])]),
 	itemKey: string,

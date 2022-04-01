@@ -187,20 +187,16 @@ function cleanSemanticMatch(semanticItem, {items = [], pdfs = [], notes = []} = 
 				inGraph: false,
 				inLibrary: false
 			};	
-		} else {
-			let location = libItem.library.type + "s/" + libItem.library.id;
+		} else { 
 			let itemKey = libItem.data.key;
-			let pdfItems = pdfs.filter(p => p.library.type + "s/" + p.library.id == location && p.data.parentItem == itemKey);
-			let noteItems = notes.filter(n => n.library.type + "s/" + n.library.id == location && n.data.parentItem == itemKey);
+			let location = libItem.library.type + "s/" + libItem.library.id;
+			let children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
 
 			return {
 				...cleanSemantic,
 				inGraph: roamCitekeys.has("@" + libItem.key) ? roamCitekeys.get("@" + libItem.key) : false,
 				inLibrary: {
-					children: {
-						pdfs: pdfItems,
-						notes: noteItems
-					},
+					children,
 					raw: libItem
 				}
 			};
@@ -477,6 +473,17 @@ function getWebLink(item, {format = "markdown", text = "Web library"} = {}){
 // From mauroc8 on SO: https://stackoverflow.com/questions/51958759/how-can-i-test-the-equality-of-two-nodelists
 function hasNodeListChanged(prev, current){
 	return (prev.length + current.length) != 0 && (prev.length !== current.length || prev.some((el, i) => el !== current[i]));
+}
+
+function identifyChildren(itemKey, location, {pdfs = [], notes = []} = {}){
+	let pdfItems = pdfs.filter(p => p.data.parentItem == itemKey && (p.library.type + "s/" + p.library.id == location));
+	let pdfKeys = pdfItems.map(p => p.key);
+	let noteItems = notes.filter(n => ((n.data.itemType == "note" && n.data.parentItem == itemKey) || (n.data.itemType == "annotation" && pdfKeys.includes(n.data.parentItem))) && n.library.type + "s/" + n.library.id == location);
+
+	return {
+		pdfs: pdfItems,
+		notes: noteItems
+	};
 }
 
 /** Creates a dictionary from a String Array
@@ -902,6 +909,7 @@ export {
 	getLocalLink,
 	getWebLink,
 	hasNodeListChanged,
+	identifyChildren,
 	makeDictionary,
 	makeDNP,
 	makeTimestamp,

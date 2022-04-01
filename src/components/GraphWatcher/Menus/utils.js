@@ -1,6 +1,6 @@
 import { menuPrefix, menuClasses } from "../classes";
 import { findRoamPage } from "../../../roam";
-import { makeTimestamp, readDNP } from "../../../utils";
+import { identifyChildren, makeTimestamp, readDNP } from "../../../utils";
 
 const dnpRegex = new RegExp(/(.+) ([0-9]+).{2}, ([0-9]{4})/g);
 
@@ -56,19 +56,15 @@ const addPageMenus = () => {
 function cleanRelatedItem(item, {pdfs = [], notes = []} = {}, roamCitekeys){
 	let creator = item.meta.creatorSummary || "";
 	let pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
-	let location = item.library.type + "s/" + item.library.id;
 	let itemKey = item.data.key;
+	let location = item.library.type + "s/" + item.library.id;
 
-	let pdfItems = pdfs.filter(p => p.library.type + "s/" + p.library.id == location && p.data.parentItem == itemKey);
-	let noteItems = notes.filter(n => n.library.type + "s/" + n.library.id == location && n.data.parentItem == itemKey);
+	let children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
 
 	return {
 		abstract: item.data.abstractNote || "",
 		added: item.data.dateAdded,
-		children: {
-			pdfs: pdfItems,
-			notes: noteItems
-		},
+		children,
 		inGraph: roamCitekeys.has("@" + item.key) ? roamCitekeys.get("@" + item.key) : false,
 		itemType: item.data.itemType,
 		key: item.key,

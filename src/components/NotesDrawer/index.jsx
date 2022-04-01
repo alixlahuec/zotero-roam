@@ -1,11 +1,9 @@
 import React, { useContext, useMemo } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
-import { Card, Classes, Drawer, Icon, Tabs, Tab, Tag } from "@blueprintjs/core";
+import { Button, Card, Classes, Drawer, Icon, Tabs, Tab, Tag } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
 import { formatZoteroAnnotations, formatZoteroNotes } from "../../utils";
-
-import * as customPropTypes from "../../propTypes";
 
 import "./index.css";
 
@@ -34,11 +32,11 @@ function PanelNotes({ notes }){
 	);
 }
 PanelNotes.propTypes = {
-	notes: arrayOf(customPropTypes.zoteroItemType)
+	notes: arrayOf(string)
 };
 
 const NotesDrawer = React.memo(function NotesDrawer(props){
-	const { isOpen, notes, onClose, title } = props;
+	const { isOpen, notes, onClose/*, title*/ } = props;
 	const { notes: notesSettings } = useContext(UserSettings);
 
 	const cleanAnnots = useMemo(() => {
@@ -56,14 +54,16 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 			canEscapeKeyClose={false}
 			canOutsideClickClose={true}
 			className="zr-drawer--notes"
+			isCloseButtonShown={false}
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose}
-			size="40%"
-			title={title} >
+			size="40%" >
 			<Tabs id="zr-drawer--notes" >
 				{cleanNotes.length > 0 && <Tab id="notes" panel={<PanelNotes notes={cleanNotes} />} title="Notes" />}
 				{cleanAnnots.length > 0 && <Tab id="annotations" panel={<PanelAnnotations annots={cleanAnnots} />} title="Annotations" />}
+				<Tabs.Expander />
+				<Button icon="cross" minimal={true} onClick={onClose} />
 			</Tabs>
 		</Drawer>
 	);

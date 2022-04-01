@@ -1,4 +1,4 @@
-import { categorizeLibraryItems, getLocalLink, getWebLink, parseDOI } from "../../utils";
+import { categorizeLibraryItems, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../utils";
 
 /** Converts library data into a simplified list of top-level items, with their metadata, children, and links
  * @param {Object[]} arr - The library's contents, including top-level items, attachments and notes/annotations
@@ -13,9 +13,7 @@ function cleanLibrary(arr, roamCitekeys){
 		.map(item => {
 			let itemKey = item.data.key;
 			let location = item.library.type + "s/" + item.library.id;
-			
-			let pdfs = lib.pdfs.filter(p => p.data.parentItem == itemKey && p.library.type + "s/" + p.library.id == location);
-			let notes = lib.notes.filter(n => n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location);
+			let { pdfs, notes } = identifyChildren(itemKey, location, { pdfs: lib.pdfs, notes: lib.notes });
 
 			return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
 		});

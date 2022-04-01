@@ -10,7 +10,7 @@ import SemanticPanel from "../SemanticPanel";
 import { showClasses } from "../classes";
 import { useQuery_Semantic } from "../../../api/queries";
 import { findRoamPage, importItemMetadata, importItemNotes } from "../../../roam";
-import { cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, parseDOI, pluralize } from "../../../utils";
+import { cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ItemDetails from "../../ItemDetails";
 import { UserSettings } from "../../App";
@@ -243,13 +243,13 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	const doi = parseDOI(item.data.DOI);
 	const pageUID = findRoamPage("@" + item.key);
 
-	const pdfs = useMemo(() => {
-		return itemList.pdfs.filter(pdf => pdf.data.parentItem == item.data.key && pdf.library.id == item.library.id);
-	}, [itemList.pdfs, item]);
+	const children = useMemo(() => {
+		let itemKey = item.data.key;
+		let location = item.library.type + "s/" + item.library.id;
+		let { pdfs, notes } = itemList;
 
-	const notes = useMemo(() => {
-		return itemList.notes.filter(note => note.data.parentItem == item.data.key && note.library.id == item.library.id);
-	}, [itemList.notes, item]);
+		return identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
+	}, [itemList, item]);
 
 	const doiHeader = useMemo(() => {
 		return doi 
@@ -258,19 +258,20 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	}, [doi]);
 
 	const importMetadata = useCallback(async() => {
+		let { pdfs, notes } = children;
 		return await importItemMetadata({ item, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings);
-	}, [pdfs, notes, item, metadataSettings, notesSettings, pageUID, typemap]);
+	}, [children, item, metadataSettings, notesSettings, pageUID, typemap]);
     
 	const importNotes = useCallback(async() => {
-		return await importItemNotes({item, notes }, pageUID, notesSettings);
-	}, [notes, item, notesSettings, pageUID]);
+		return await importItemNotes({item, notes: children.notes }, pageUID, notesSettings);
+	}, [children.notes, item, notesSettings, pageUID]);
 
 	const pdfLinks = useMemo(() => {
-		if(pdfs.length == 0 || !defaults.includes("pdfLinks")) {
+		if(children.pdfs.length == 0 || !defaults.includes("pdfLinks")) {
 			return null;
 		} else {
 			return (
-				pdfs.map(pdf => {
+				children.pdfs.map(pdf => {
 					return (
 						<ButtonLink zr-role="pdf-link" key={pdf.key}
 							alignText="left"
@@ -282,15 +283,15 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				})
 			);
 		}
-	}, [defaults, pdfs]);
+	}, [defaults, children.pdfs]);
 
 	const notesButton = useMemo(() => {
-		if(notes.length == 0 || !defaults.includes("importNotes")){
+		if(children.notes.length == 0 || !defaults.includes("importNotes")){
 			return null;
 		} else {
 			return <Button icon="comment" onClick={importNotes}>Import notes</Button>;
 		}
-	}, [defaults, importNotes, notes.length]);
+	}, [defaults, importNotes, children.notes.length]);
     
 	const open_zotero = useMemo(() => {
 		return (
@@ -340,8 +341,8 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	}, [defaults, doi, item.key, item.meta.parsedDate, itemList]);
 
 	const clean_item = useMemo(() => {
-		return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
-	}, [pdfs, notes, item, roamCitekeys]);
+		return cleanLibraryItem(item, children.pdfs, children.notes, roamCitekeys);
+	}, [children, item, roamCitekeys]);
 
 	return (
 		<>
