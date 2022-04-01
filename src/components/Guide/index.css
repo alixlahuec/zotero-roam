@@ -1,3 +1,13 @@
 .zr-guide-popover .bp3-popover2-content {
-    padding: 5px;
+    padding: 10px;
+}
+
+.zr-guide-popover--target .bp3-icon {
+    color: var(--zr-highlight,#206fe6);
+}
+
+/* DARK THEME */
+
+[zr-dark-theme="true"] .zr-guide-popover--target .bp3-icon {
+    color: var(--zr-dark-highlight,#3fb8ff);
 }

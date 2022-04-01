@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
-import { Button, Checkbox, Classes, H5, Tag } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, H6, Tag } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ZoteroImport from "../../ZoteroImport";
@@ -11,8 +11,9 @@ import { pluralize } from "../../../utils";
 import Guide from "../../Guide";
 
 const CitoidGuide = () => <>
-	<H5>About the Citoid API</H5>
-	<span>Items are retrieved based on their URL, which is not error-free. The API may be unable to retrieve metadata for a given link, in which case it will not appear in the list below.</span>
+	<H6>About this data</H6>
+	<p>Metadata is obtained through the <a href="https://en.wikipedia.org/api/rest_v1/#/Citation/getCitation" rel="noreferrer" target="_blank">Wikimedia API</a>. It should give the same results as the Zotero Connector.</p> 
+	<p>If the API was unable to retrieve metadata for a given URL, the item will not appear below.</p>
 </>;
 
 function useGetCitoids(urls, opts = {}) {
@@ -50,22 +51,21 @@ const WebImportItem = React.memo(function WebImportItem(props){
 						checked={isSelected}
 						className="zr-webimport-item--title"
 						inline={false}
-						labelElement={<a target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>}
+						labelElement={<>
+							<a target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>
+							{item.creators
+								? <span className="zr-secondary" zr-role="item-creators" > ({item.creators})</span>
+								: null}
+						</>}
 						onChange={handleCheckUncheck}
 					/>
 					{item.itemType
-						? <Tag minimal={true} zr-role="item-type"><span data-item-type={item.itemType} >
-							{typemap[item.itemType] || item.itemType}</span>
+						? <Tag htmlTitle={item.publication} minimal={true} zr-role="item-type">
+							<span data-item-type={item.itemType} >{typemap[item.itemType] || item.itemType}</span>
 						</Tag>
 						: null}
 				</div>
 				<div className="zr-webimport-item--contents" >
-					{item.creators
-						? <span className="zr-auxiliary" zr-role="item-creators" >{item.creators}</span>
-						: null}
-					{item.publication 
-						? <span className={["zr-text-small", "zr-secondary"].join(" ")} zr-role="item-publication">{item.publication}</span> 
-						: null}
 					<span className={["zr-text-small", "zr-auxiliary"].join(" ")} zr-role="item-abstract">
 						{item.abstract}
 					</span>

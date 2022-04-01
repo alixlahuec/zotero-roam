@@ -36,18 +36,19 @@
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .header-content {
-    width:100%;
-    margin:0;
+    align-items: center;
     display:flex;
     flex-wrap:wrap;
+    margin: 0px;
     margin-bottom: 15px;
+    width: 100%;
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .header-left {
     flex: 0 1 66%;
-    padding-top:5px;
-    padding-left:min(20px, 2vw);
     overflow-wrap:anywhere;
+    padding-top:5px;
+    padding-left:min(15px, 2vw);
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .header-right {

@@ -4,6 +4,6 @@
 
 /* DARK THEME */
 
-[zr-dark-theme="true"] .zr-shortcut-sequence {
-    color: beige;
+[zr-dark-theme="true"] .bp3-tag.bp3-minimal.zr-shortcut-sequence {
+    color: var(--zr-dark-shortcut,beige);
 }

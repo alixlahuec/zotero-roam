@@ -18,7 +18,8 @@ function TagLists({ items, libProps, onClose }){
   
 	return (
 		<Tabs 
-			animate={false} 
+			animate={false}
+			className="zr-tabs-minimal" 
 			id="tag-lists" 
 			onChange={selectTab}
 			renderActiveTabPanelOnly={false}

@@ -2,9 +2,18 @@
     overflow-y: scroll;
 }
 
+.zr-drawer--notes > .bp3-tabs > .bp3-tab-list {
+    margin-left: 20px;
+}
+
 .zr-drawer--notes-card {
     margin: 10px;
     flex: 0 0 auto;
+}
+
+.zr-annotation--header, .zr-annotation--footer {
+    display: flex;
+    justify-content: space-between;
 }
 
 .zr-annotation--highlight {
