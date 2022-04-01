@@ -3,18 +3,18 @@ import { arrayOf, bool, func, object, string } from "prop-types";
 import { Button, Card, Classes, Drawer, Icon, Tabs, Tab, Tag } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
-import { formatZoteroAnnotations, formatZoteroNotes } from "../../utils";
+import { formatZoteroNotes } from "../../utils";
 
 import "./index.css";
 
 function PanelAnnotations({ annots }){
-	return annots.map((a, i) => {
-		let { annotationColor, annotationComment, annotationPageLabel, annotationText, dateModified, tags } = a;
+	return annots.map(ann => {
+		let { annotationColor, annotationComment, annotationPageLabel, annotationText, dateModified, tags } = ann.data;
 
-		return <Card key={i} className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>
+		return <Card key={ann.key} className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>
 			{annotationText && <div className={Classes.BLOCKQUOTE}>{annotationText} (page {annotationPageLabel}))</div>}
 			{annotationComment}
-			{tags.map((t, i) => <Tag key={i} >t.tag</Tag>)}
+			{tags.map((t, j) => <Tag key={j} >{t.tag}</Tag>)}
 			<Icon color={annotationColor} icon="chat" />
 			{dateModified}
 		</Card>;
@@ -39,10 +39,7 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 	const { isOpen, notes, onClose/*, title*/ } = props;
 	const { notes: notesSettings } = useContext(UserSettings);
 
-	const cleanAnnots = useMemo(() => {
-		let annots = notes.filter(n => n.data.itemType == "annotation");
-		return formatZoteroAnnotations(annots);
-	}, [notes]);
+	const annots = useMemo(() => notes.filter(n => n.data.itemType == "annotation"), [notes]);
 
 	const cleanNotes = useMemo(() => {
 		let noteItems = notes.filter(n => n.data.itemType == "note");
@@ -54,14 +51,13 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 			canEscapeKeyClose={false}
 			canOutsideClickClose={true}
 			className="zr-drawer--notes"
-			isCloseButtonShown={false}
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
 			<Tabs id="zr-drawer--notes" >
 				{cleanNotes.length > 0 && <Tab id="notes" panel={<PanelNotes notes={cleanNotes} />} title="Notes" />}
-				{cleanAnnots.length > 0 && <Tab id="annotations" panel={<PanelAnnotations annots={cleanAnnots} />} title="Annotations" />}
+				{annots.length > 0 && <Tab id="annotations" panel={<PanelAnnotations annots={annots} />} title="Annotations" />}
 				<Tabs.Expander />
 				<Button icon="cross" minimal={true} onClick={onClose} />
 			</Tabs>
