@@ -1,17 +1,17 @@
 import React, { useContext, useMemo } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
-import { Button, Card, Drawer, Tabs, Tab, Tag } from "@blueprintjs/core";
+import { Button, Card, Classes, Drawer, Tabs, Tab, Tag, ButtonGroup } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
 import ButtonLink from "../ButtonLink";
-import { formatZoteroNotes, makeDateFromAgo, simplifyAnnotations } from "../../utils";
+import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyAnnotations } from "../../utils";
 
 import * as customPropTypes from "../../propTypes";
 
 import "./index.css";
 
 function Annotation({ annot }){
-	let { color, comment, pageLabel, text, dateModified, link_page, link_pdf, tags } = annot;
+	let { color, comment, pageLabel, text, dateModified, link_page, link_pdf, tags, type } = annot;
 
 	// https://shannonpayne.com.au/how-to-create-a-low-highlight-text-effect-using-css/
 	let highlightStyle = useMemo(() => ({
@@ -21,15 +21,18 @@ function Annotation({ annot }){
 	return <div className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>
 		<div className="zr-annotation--header">
 			<span>{tags.map((tag, j) => <Tag key={j} >{tag}</Tag>)}</span>
-			<a href={link_page} rel="noreferrer" target="_blank" >Page {pageLabel}</a>
+			<ButtonGroup minimal={true}>
+				<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >Open PDF</ButtonLink>
+				<ButtonLink className="zr-text-small" href={link_page}>Page {pageLabel}</ButtonLink>
+			</ButtonGroup>
 		</div>
 		{text && <div className="zr-annotation--highlight">
 			<span style={highlightStyle}>{text}</span>
 		</div>}
-		<div className="zr-annotation--comment">{comment}</div>
+		{type == "image" && <code className={Classes.CODE}>Images are currently not supported</code>}
+		{comment && <div className="zr-annotation--comment">{comment}</div>}
 		<div className="zr-annotation--footer">
 			<span className="zr-auxiliary">{makeDateFromAgo(dateModified)}</span>
-			<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >Open PDF</ButtonLink>
 		</div>
 	</div>;
 }
@@ -39,9 +42,7 @@ Annotation.propTypes = {
 
 function PanelAnnotations({ annots }){
 	let clean_annotations = simplifyAnnotations(annots)
-		.sort((a,b) => {
-			return a.sortIndex.every((el, j) => el <= b[j]) ? -1 : 1;
-		});
+		.sort((a,b) => compareAnnotationIndices(a.sortIndex, b.sortIndex));
 
 	return clean_annotations.map(annot => <Annotation key={annot.key} annot={annot} /> );
 }

@@ -243,6 +243,29 @@ function cleanSemantic(datastore, semantic, roamCitekeys){
 	};
 }
 
+function compareAnnotationIndices(a, b){
+	let [pageA = 0, lineA = 0, colA = 0] = a;
+	let [pageB = 0, lineB = 0, colB = 0] = b;
+
+	if(pageA < pageB){
+		return -1;
+	} else if(pageA == pageB){
+		if(lineA < lineB){
+			return -1;
+		} else if(lineA == lineB){
+			if(colA <= colB){
+				return -1;
+			} else {
+				return 1;
+			}
+		} else {
+			return 1;
+		}
+	} else {
+		return 1;
+	}
+}
+
 /** Compares two Zotero items by publication year then alphabetically, to determine sort order
  * @param {ZoteroItem} a - The first item to compare
  * @param {ZoteroItem} b - The second item to compare
@@ -950,6 +973,7 @@ export {
 	categorizeLibraryItems,
 	cleanSemantic,
 	compareItemsByYear,
+	compareAnnotationIndices,
 	copyToClipboard,
 	escapeRegExp,
 	executeFunctionByName,

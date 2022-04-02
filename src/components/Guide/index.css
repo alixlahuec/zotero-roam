@@ -3,6 +3,10 @@
     padding: 10px;
 }
 
+.zr-guide-popover--target {
+    line-height: 14px;
+}
+
 .zr-guide-popover--target .bp3-icon {
     color: var(--zr-highlight,#206fe6);
 }

@@ -45,9 +45,10 @@
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .header-left {
+    align-items: center;
+    display: flex;
     flex: 0 1 66%;
     overflow-wrap:anywhere;
-    padding-top:5px;
     padding-left:min(15px, 2vw);
 }
 

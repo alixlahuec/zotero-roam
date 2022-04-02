@@ -1,20 +1,14 @@
 import React, { useCallback, useContext, useState } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
-import { Button, Checkbox, Classes, H6, Tag } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
+import { CitoidGuide } from "../../Guide";
 import ZoteroImport from "../../ZoteroImport";
 
 import { UserSettings } from "../../App";
 import { useQuery_Citoid } from "../../../api/queries";
 import { pluralize } from "../../../utils";
-import Guide from "../../Guide";
-
-const CitoidGuide = () => <>
-	<H6>About this data</H6>
-	<p>Metadata is obtained through the <a href="https://en.wikipedia.org/api/rest_v1/#/Citation/getCitation" rel="noreferrer" target="_blank">Wikimedia API</a>. It should give the same results as the Zotero Connector.</p> 
-	<p>If the API was unable to retrieve metadata for a given URL, the item will not appear below.</p>
-</>;
 
 function useGetCitoids(urls, opts = {}) {
 	return useQuery_Citoid(urls, {
@@ -124,7 +118,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 									? "Parsing links..."
 									: pluralize(citoids.length, "link", " found")}
 							</h5>
-							{!noQueriesLoaded && <Guide content={<CitoidGuide />} />}
+							{!noQueriesLoaded && <CitoidGuide />}
 						</div>
 						<div className={["header-right", "zr-auxiliary"].join(" ")}>
 							<Button icon="cross" minimal={true} onClick={handleClose} />

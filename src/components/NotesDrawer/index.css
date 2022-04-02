@@ -1,9 +1,11 @@
-.zr-drawer--notes {
-    overflow-y: scroll;
-}
-
 .zr-drawer--notes > .bp3-tabs > .bp3-tab-list {
     margin-left: 20px;
+}
+
+.zr-drawer--notes .bp3-tab-panel {
+    margin-top: 0px;
+    max-height: 95vh;
+    overflow-y: scroll;
 }
 
 .zr-drawer--notes-card {
@@ -12,7 +14,12 @@
     padding: 20px;
 }
 
+.zr-drawer--notes-card:not(:first-child) {
+    border-top: 2px dotted #ececec;
+}
+
 .zr-annotation--header, .zr-annotation--footer {
+    align-items: center;
     display: flex;
     justify-content: space-between;
 }
@@ -23,7 +30,7 @@
 
 .zr-annotation--highlight > span {
     background-repeat: no-repeat;
-    background-size: 100% 85%;
+    background-size: 100% 95%;
     font-family: monospace;
 }
 
@@ -40,4 +47,5 @@
 
 [zr-dark-theme="true"] .zr-drawer--notes-card {
     background-color: none;
+    border-color: var(--zr-dark-border-color,#363a3f);
 }
