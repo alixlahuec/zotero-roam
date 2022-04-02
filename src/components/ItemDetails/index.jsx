@@ -1,9 +1,8 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { bool, func, object, oneOf, string } from "prop-types";
-import { Button, ButtonGroup, Classes, Divider, Menu, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
-import ButtonLink from "../ButtonLink";
 import NotesDrawer from "../NotesDrawer";
 import ShortcutSequence from "../ShortcutSequence";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
@@ -41,8 +40,23 @@ function CopyOption(props){
     
 		copyToClipboard(output);
 	}, [citekey, format, item]);
+
+	const label = useMemo(() => {
+		switch(format){
+		case "page-reference":
+			return "REF";
+		case "tag":
+			return "TAG";
+		case "citation":
+			return "CIT";
+		case "citekey":
+			return "KEY";
+		default:
+			return null;
+		}
+	}, [format]);
   
-	return <MenuItem icon="clipboard" onClick={formatCitekey} text={text} />;
+	return <MenuItem icon="clipboard" labelElement={label && <Tag minimal={true}>{label}</Tag>} onClick={formatCitekey} text={text} />;
 }
 CopyOption.propTypes = {
 	citekey: string,
@@ -142,17 +156,11 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	const toggleNotes = useCallback(() => setNotesDrawerOpen(prev => !prev), []);
 
 	const goToPageButton = useMemo(() => {
-		let btnText = <>
-			Go to Roam page
-			{shortcutsSettings.goToItemPage != false
-				? <ShortcutSequence text={shortcutsSettings.goToItemPage} />
-				: null}
-		</>;
+		let label = shortcutsSettings.goToItemPage != false
+			? <ShortcutSequence text={shortcutsSettings.goToItemPage} />
+			: null;
 		return inGraph 
-			? <Button text={btnText}
-				className="item-go-to-page"
-				icon="arrow-right"
-				onClick={navigateToPage} />
+			? <MenuItem icon="arrow-right" labelElement={label} onClick={navigateToPage} text="Go to Roam page" />
 			: null;
 	}, [inGraph, navigateToPage, shortcutsSettings]);
 
@@ -163,14 +171,13 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			let firstElem = children.pdfs[0];
 			let libLoc = firstElem.library.type == "group" ? `groups/${firstElem.library.id}` : "library";
             
-			return (
-				<ButtonGroup minimal={true} fill={true} alignText="left">
-					{children.pdfs.map((p, i) => {
-						let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
-						return <ButtonLink key={i} className={["item-pdf-link", "zr-text-small"].join(" ")} href={pdfHref} icon="paperclip" text={p.data.filename || p.data.title} />;
-					} )}
-				</ButtonGroup>
-			);
+			return <>
+				<MenuDivider title="PDF Attachments" />
+				{children.pdfs.map(p => {
+					let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
+					return <MenuItem key={p.key} href={pdfHref} icon="paperclip" rel="noreferrer" target="_blank" text={p.data.filename || p.data.title} />;
+				})}
+			</>;
 		}
 	}, [children.pdfs]);
 
@@ -178,20 +185,14 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		if(children.notes.length == 0){
 			return null;
 		} else {
-			let btnText = <>
-				Highlights & Notes
-				{shortcutsSettings.toggleNotes != false
-					? <ShortcutSequence text={shortcutsSettings.toggleNotes} />
-					: null}
+			let label = shortcutsSettings.toggleNotes != false
+				? <ShortcutSequence text={shortcutsSettings.toggleNotes} />
+				: null;
+			return <>
+				<Menu.Divider />
+				<MenuItem icon="highlight" labelElement={label} onClick={showNotes} text={"Highlights & Notes (" + children.notes.length + ")"} />
+				<NotesDrawer isOpen={isNotesDrawerOpen} notes={children.notes} onClose={closeNotes} />
 			</>;
-			return (
-				<>
-					<ButtonGroup minimal={true} fill={true} alignText="left">
-						<Button icon="comment" text={btnText} onClick={showNotes} />
-					</ButtonGroup>
-					<NotesDrawer isOpen={isNotesDrawerOpen} notes={children.notes} onClose={closeNotes} />
-				</>
-			);
 		}
 	}, [children.notes, closeNotes, isNotesDrawerOpen, shortcutsSettings, showNotes]);
 
@@ -232,62 +233,53 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
 	return <div id="zr-item-details">
-		<div className="selected-item-header">
-			<div className="item-basic-metadata">
-				<h4 className="item-title">{title}</h4>
+		<div zr-role="item-metadata">
+			<div zr-role="item-metadata--header">
+				<h4>{title}</h4>
 				<span className="zr-highlight">{authors + " (" + year + ")"}</span>
 				{publication
 					? <span className="zr-secondary">{publication}</span>
 					: null}
 				{weblink
-					? <span className="item-weblink zr-secondary" style={{ display: "block" }}>
-						<a href={weblink.href} target="_blank" rel="noreferrer">{weblink.title}</a>
+					? <span zr-role="item-weblink" className="zr-secondary" >
+						<a href={weblink.href} rel="noreferrer" target="_blank" >{weblink.title}</a>
 					</span>
 					: null}
 			</div>
-			<div className="item-citekey-section" data-in-graph={inGraph.toString()}>
-				{navigator.clipboard
-					? <CopyButtons citekey={key} inGraph={inGraph != false} item={item} />
-					: <div className={[Classes.FILL, "citekey-element"].join(" ")}>@{key}</div>}
-			</div>
-		</div>
-		<div className="selected-item-body">
-			<div className="item-additional-metadata">
-				<p className={"item-abstract zr-text-small " + Classes.RUNNING_TEXT}>{abstract}</p>
+			<p zr-role="item-abstract" className={["zr-text-small", Classes.RUNNING_TEXT].join(" ")}>
+				{abstract}
+			</p>
+			<div zr-role="item-metadata--footer">
 				{authorsFull.length > 0
-					? <p className="item-creators">
+					? <p zr-role="item-creators">
 						<strong>Contributors : </strong>
-						{authorsFull.map((aut, i) => <Tag key={i} intent="primary" className="item-creator-tag" >{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
+						{authorsFull.map((aut, i) => <Tag key={i} intent="primary" >{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
 					</p>
 					: null}
 				{tags.length > 0
-					? <p className="item-tags">
+					? <p zr-role="item-tags">
 						<strong>Tags : </strong>
 						{tags.map((tag, i) => <Tag key={i}>#{tag}</Tag>)}
 					</p>
 					: null}
 			</div>
-			<div className="item-actions">
-				<div className={Classes.CARD}>
-					<ButtonGroup alignText="left" fill={true} minimal={true} vertical={true} >
-						{goToPageButton}
-						<Button text="Import item metadata"
-							className="item-add-metadata"
-							icon="add"
-							onClick={importMetadata} />
-						{children.notes.length > 0
-							? <Button text="Add notes" className="item-add-notes" icon="chat" onClick={importNotes} />
-							: null}
-					</ButtonGroup>
-					<Divider />
-					<ButtonGroup alignText="left" fill={true} minimal={true} vertical={true} >
-						<ButtonLink href={zotero.local} icon="application" text="Open in Zotero" />
-						<ButtonLink href={zotero.web} icon="cloud" text="Open in Zotero (web)" />
-					</ButtonGroup>
-				</div>
+		</div>
+		<div zr-role="item-actions">
+			<div data-in-graph={inGraph.toString()}>
+				{navigator.clipboard
+					? <CopyButtons citekey={key} inGraph={inGraph != false} item={item} />
+					: <div className={Classes.FILL}>@{key}</div>}
+			</div>
+			<Menu>
+				{goToPageButton}
+				<MenuItem icon="add" onClick={importMetadata} text="Import metadata" />
+				{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Add notes" />}
+				<MenuDivider title="Zotero links" />
+				<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
+				<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />
 				{pdfs}
 				{notes}
-			</div>
+			</Menu>
 		</div>
 	</div>;
 });

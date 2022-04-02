@@ -1,5 +1,3 @@
-/* Imported */
-
 .roam-log-page{position:relative;}
 
 #zotero-roam-portal .bp3-overlay-backdrop {
@@ -18,11 +16,11 @@
   max-width: 300px;
 }
 
-.zr-tabs-minimal.bp3-tab-list .bp3-tab {
+.zr-tabs-minimal > .bp3-tab-list > .bp3-tab {
   font-weight: 400;
   opacity: 0.5;
 }
-.zr-tabs-minimal.bp3-tab-list .bp3-tab[aria-selected="true"] {
+.zr-tabs-minimal > .bp3-tab-list > .bp3-tab[aria-selected="true"] {
   box-shadow: none;
   color: var(--zr-highlight,#206fe6);
   font-weight: 500;
@@ -70,6 +68,12 @@
 [zr-dark-theme="true"] [class*="zr"] .bp3-menu-header {
   border-color: var(--zr-dark-border-color,#363a3f);
 }
+
+[zr-dark-theme="true"] code.bp3-code {
+  background-color: var(--zr-dark-dialog-bg, #242424);
+  border: none;
+}
+
 [zr-dark-theme="true"] .zr-highlight{color: var(--zr-dark-highlight,#3fb8ff);}
 [zr-dark-theme="true"] .zr-highlight-2{color: var(--zr-dark-highlight-2,#d9822b);}
 [zr-dark-theme="true"] .zr-auxiliary{color: var(--zr-dark-auxiliary,#95a8b7);}

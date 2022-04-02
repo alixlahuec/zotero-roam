@@ -15,8 +15,8 @@ const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
 			<div zr-role="item-header">
 				<span zr-role="item-info">
 					{entry.roam.length > 0
-						? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" size={12} />
-						: <Icon icon="blank" size={12} />}
+						? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" size={14} />
+						: <Icon icon="blank" size={14} />}
 					<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
 				</span>
 				<Tag 

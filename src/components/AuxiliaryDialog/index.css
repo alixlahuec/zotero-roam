@@ -63,6 +63,9 @@
     padding-right:15px;
 }
 
+.zr-related-item:not(:first-child) {
+    border-top: 1px dotted #ccddf5;
+}
 .zr-related-item > .bp3-menu-item:hover {background-color:unset;cursor:unset;}
 .zr-related-item-contents--metadata{flex: 0 1 100%;}
 .zr-related-item-contents--metadata .zr-highlight:not(:empty),
@@ -75,6 +78,10 @@
 .zr-related-item-contents--actions a[zr-role="item-url"]:hover {text-decoration: none;}
 
 /* DARK THEME */
+
+[zr-dark-theme="true"] .zr-related-item:not(:first-child) {
+    border-color: var(--zr-dark-border-color,#363a3f);
+}
 
 [zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"],
 [zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] > .bp3-dialog-header {

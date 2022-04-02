@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape} from "prop-types";
 import { InputGroup, NonIdealState } from "@blueprintjs/core";
 
+import { SemanticGuide } from "../../Guide";
 import SemanticItem from "./SemanticItem";
 import { ListWrapper, Pagination, Toolbar } from "../../DataList";
 
@@ -115,8 +116,9 @@ const SemanticPagination = React.memo(function SemanticPagination(props){
 					id={"semantic-search--" + type}
 					leftIcon="search"
 					onChange={handleSearch}
-					placeholder="Search by title, authors (last names), or year"
+					placeholder="Search items"
 					spellCheck="false"
+					title="Search by title, authors (last names), or year"
 					value={query} />
 			</Toolbar>
 			<ListWrapper>
@@ -135,6 +137,7 @@ const SemanticPagination = React.memo(function SemanticPagination(props){
 					itemsPerPage={itemsPerPage}
 					nbItems={sortedItems.length} 
 					setCurrentPage={setCurrentPage} />
+				<SemanticGuide />
 			</Toolbar>
 		</div>
 	);

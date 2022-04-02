@@ -65,7 +65,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				{Object.keys(item.links).map((key) => {
 					return (
 						<span key={key} data-service={key}>
-							<a href={item.links[key]} className="zr-text-small" target="_blank" rel="noreferrer">{key.split("-").map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(" ")}</a>
+							<a href={item.links[key]} className={["zr-text-small", "zr-auxiliary"].join(" ")} target="_blank" rel="noreferrer">{key.split("-").map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(" ")}</a>
 						</span>
 					);
 				})}

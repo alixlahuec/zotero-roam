@@ -642,11 +642,11 @@ function parseNoteBlock(block){
 	}
 
 	// HTML tags that might have attributes : p, div, span, headers
-	let richTags = ["p", "div", "span", "h1", "h2", "h3"];
+	let richTags = ["p", "div", "span", "h1", "h2", "h3", "h4", "h5", "h6"];
 	richTags.forEach(tag => {
 		// eslint-disable-next-line no-useless-escape
 		let tagRegex = new RegExp(`<\/?${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag> or </tag>, and the case with modifiers : <tag :modifier>
-		cleanBlock = cleanBlock.replaceAll(tagRegex, "");
+		cleanBlock = cleanBlock.replaceAll(tagRegex, tag.startsWith("h") ? "**" : "");
 	});
 
 	let linkRegex = /<a href="(.+?)">(.+?)<\/a>/g;

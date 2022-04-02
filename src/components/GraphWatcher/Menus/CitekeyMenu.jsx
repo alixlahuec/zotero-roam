@@ -237,7 +237,7 @@ ViewItem.propTypes = {
 
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	const { item, itemList } = props;
-	const { metadata: metadataSettings, notes: notesSettings, pageMenu: { defaults }, typemap } = useContext(UserSettings);
+	const { metadata: metadataSettings, notes: notesSettings, pageMenu: { defaults }, sciteBadge: sciteBadgeSettings, typemap } = useContext(UserSettings);
 	const [roamCitekeys,] = useRoamCitekeys();
 
 	const doi = parseDOI(item.data.DOI);
@@ -307,8 +307,8 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	},[defaults, item]);
 
 	const sciteBadge = useMemo(() => {
-		return doi && defaults.includes("sciteBadge") ? <SciteBadge doi={doi} /> : null;
-	}, [defaults, doi]);
+		return doi && defaults.includes("sciteBadge") ? <SciteBadge doi={doi} {...sciteBadgeSettings} /> : null;
+	}, [defaults, doi, sciteBadgeSettings]);
 
 	const ext_links = useMemo(() => {
 		let connectedPapersLink = defaults.includes("connectedPapers")

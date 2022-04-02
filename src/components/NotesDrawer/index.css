@@ -36,7 +36,7 @@
     justify-content: end;
 }
 
-.zr-annotation--highlight, .zr-annotation--comment {
+.zr-annotation--highlight, .zr-annotation--comment, .zr-note--contents {
     padding: 10px;
 }
 
@@ -57,7 +57,8 @@
     color: var(--zr-dark-text-co, #76a0cb);
 }
 
-[zr-dark-theme="true"] .zr-drawer--notes-card [zr-role="card-header"] .bp3-button {
+[zr-dark-theme="true"] .zr-drawer--notes-card [zr-role="card-header"] .bp3-button,
+[zr-dark-theme="true"] .zr-drawer--notes-card [zr-role="card-header"] .bp3-tag.bp3-minimal {
     color: var(--zr-dark-text-co,#76a0cb);
 }
 

@@ -36,6 +36,7 @@ window.zoteroRoam = {};
 		notes = {},
 		pageMenu = {},
 		render_inline = false,
+		sciteBadge = {},
 		shortcuts = {},
 		typemap = {},
 		webimport = {}
@@ -69,6 +70,15 @@ window.zoteroRoam = {};
 				...pageMenu
 			},
 			render_inline,
+			sciteBadge: {
+				layout: "horizontal",
+				showLabels: "false",
+				showZero: "true",
+				small: "false",
+				tooltipPlacement: "auto",
+				tooltipSlide: 0,
+				...sciteBadge
+			},
 			shortcuts: {
 				"goToItemPage": false,
 				"toggleDashboard": false,

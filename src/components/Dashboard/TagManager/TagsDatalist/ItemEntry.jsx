@@ -20,7 +20,7 @@ const ItemEntry = React.memo(function ItemEntry({ entry, library }){
 			<div zr-role="item-header">
 				<div zr-role="item-info">
 					{entry.roam.length > 0
-						? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" />
+						? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" size={14} />
 						: <Icon icon="blank" />}
 					<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
 					{!is_singleton && <span className="zr-text-small" zr-role="item-additional">

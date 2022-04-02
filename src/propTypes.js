@@ -215,6 +215,14 @@ const userSettingsType = shape({
 		trigger: oneOfType([func, bool])
 	}),
 	render_inline: bool,
+	sciteBadge: shape({
+		layout: oneOf(["horizontal", "vertical"]),
+		showLabels: oneOf(["true", "false"]),
+		showZero: oneOf(["true", "false"]),
+		small: oneOf(["true", "false"]),
+		tooltipPlacement: oneOf(["auto", "top", "left", "right", "bottom"]),
+		tooltipSlide: number
+	}),
 	shortcuts: object,
 	typemap: object,
 	webimport: shape({

@@ -4,13 +4,7 @@ import { Tag } from "@blueprintjs/core";
 
 import "./index.css";
 
-function ShortcutSequence({ text }){
-	return (
-		<Tag className="zr-shortcut-sequence" minimal={true}>
-			{text}
-		</Tag>
-	);
-}
+const ShortcutSequence = ({ text }) => <Tag className="zr-shortcut-sequence" minimal={true}>{text}</Tag>;
 ShortcutSequence.propTypes = {
 	text: string
 };

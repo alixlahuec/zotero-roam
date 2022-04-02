@@ -3,7 +3,6 @@ import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
-import { SemanticGuide } from "../../Guide";
 import SemanticPagination from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
@@ -65,7 +64,6 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 				disabled={citations.length == 0}
 				title={citations_title}
 			/>
-			<SemanticGuide />
 			<Tabs.Expander />
 			<span className="zr-auxiliary" id={labelId}>{title}</span>
 			<Button icon="cross" minimal={true} large={true} onClick={onClose} />
