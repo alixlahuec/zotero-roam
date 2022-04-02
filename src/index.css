@@ -29,12 +29,15 @@
 
 .zr-divider-minimal {
   border-top-width: 0px;
+  margin: 10px 5px;
+  width: fit-content;
+}
+
+.zr-divider-minimal > .bp3-heading {
   font-size: var(--zr-text-small, 0.85rem);
   letter-spacing: 0.3mm;
-  margin: 10px 5px;
   opacity: 0.6;
   text-transform: uppercase;
-  width: fit-content;
 }
 
 /* Variables */

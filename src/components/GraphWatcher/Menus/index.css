@@ -50,8 +50,14 @@ button[class*='zr-page-menu-show--'] {
 
 /* ViewItem */
 .bp3-dialog.zr-auxiliary-dialog--view-item-information {
-    width: calc(95% - 26vw);
-    margin-left: calc(13vw + 2.5%);
+    background: white;
+    margin-left: calc(18vw + 2.5%);
+    width: calc(95% - 36vw);
+}
+
+.bp3-dialog.zr-auxiliary-dialog--view-item-information > .bp3-dialog-header {
+    border-bottom: 1px #f2f2f2 solid;
+    box-shadow: none;
 }
 
 /* SMALLER DISPLAYS */
@@ -60,6 +66,11 @@ button[class*='zr-page-menu-show--'] {
     .zotero-roam-page-menu-header{flex-direction:column-reverse;}
     .zr-backlink-item--state{flex: 1 2 auto;}
     .zr-citekey-menu .bp3-button {font-size: 0.85em;}
+
+    .bp3-dialog.zr-auxiliary-dialog--view-item-information {
+        width: calc(95% - 20vw);
+        margin-left: calc(10vw + 2.5%);
+    }
 }
 
 /* DARK THEME */
@@ -105,4 +116,8 @@ button[class*='zr-page-menu-show--'] {
 
 [zr-dark-theme="true"] .zr-backlink-item[data-backlink-type="citation"] .zr-backlink-item--year {
     color: var(--zr-dark-highlight-2,#d9822b);
+}
+
+[zr-dark-theme="true"] .bp3-dialog.zr-auxiliary-dialog--view-item-information > .bp3-dialog-header {
+    border-bottom-color: var(--zr-dark-border-color,#363a3f);
 }

@@ -14,6 +14,10 @@ import { UserSettings } from "../App";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
+const copyPopoverProps = {
+	popoverClassName: "zr-popover"
+};
+
 function CopyOption(props){
 	let { citekey, format, item } = props;
 
@@ -76,7 +80,13 @@ function CopyButtons(props){
 			.map(op => <CopyOption key={op} citekey={citekey} format={op} item={item} />);
 	}, [citekey, defaultCopyFormat, item]);
 
-	return <MenuItem icon="clipboard" intent={inGraph ? "success" : "warning"} multiline={true} onClick={copyDefault} text={"Copy as default : \n " + defaultCopyText} >
+	return <MenuItem 	
+		icon="clipboard" 
+		intent={inGraph ? "success" : "warning"} 
+		multiline={true} 
+		onClick={copyDefault} 
+		popoverProps={copyPopoverProps}
+		text={"Copy as default : \n " + defaultCopyText} >
 		{optionsMenu}
 	</MenuItem>;
 }
@@ -145,13 +155,10 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			let firstElem = children.pdfs[0];
 			let libLoc = firstElem.library.type == "group" ? `groups/${firstElem.library.id}` : "library";
             
-			return <>
-				<MenuDivider className="zr-divider-minimal" title="PDF Attachments" />
-				{children.pdfs.map(p => {
-					let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
-					return <MenuItem key={p.key} href={pdfHref} icon="paperclip" rel="noreferrer" target="_blank" text={p.data.filename || p.data.title} />;
-				})}
-			</>;
+			return children.pdfs.map(p => {
+				let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
+				return <MenuItem key={p.key} href={pdfHref} icon="paperclip" rel="noreferrer" target="_blank" text={p.data.filename || p.data.title} />;
+			});
 		}
 	}, [children.pdfs]);
 
@@ -163,8 +170,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				? <ShortcutSequence text={shortcutsSettings.toggleNotes} />
 				: null;
 			return <>
-				<Menu.Divider />
-				<MenuItem icon="highlight" labelElement={label} onClick={showNotes} text={"Highlights & Notes (" + children.notes.length + ")"} />
+				<MenuItem icon="highlight" labelElement={label} onClick={showNotes} text="Highlights & Notes" />
 				<NotesDrawer isOpen={isNotesDrawerOpen} notes={children.notes} onClose={closeNotes} />
 			</>;
 		}
@@ -209,7 +215,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	return <div id="zr-item-details">
 		<div zr-role="item-metadata">
 			<div zr-role="item-metadata--header">
-				<h4>{title}</h4>
+				<h5>{title}</h5>
 				<span className="zr-highlight">{authors + " (" + year + ")"}</span>
 				{publication
 					? <span className="zr-secondary">{publication}</span>
@@ -227,13 +233,13 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				{authorsFull.length > 0
 					? <p zr-role="item-creators">
 						<strong>Contributors : </strong>
-						{authorsFull.map((aut, i) => <Tag key={i} intent="primary" >{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
+						{authorsFull.map((aut, i) => <Tag key={i} className="zr-text-small" intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
 					</p>
 					: null}
 				{tags.length > 0
 					? <p zr-role="item-tags">
 						<strong>Tags : </strong>
-						{tags.map((tag, i) => <Tag key={i}>#{tag}</Tag>)}
+						{tags.map((tag, i) => <Tag key={i} className="zr-text-small" minimal={true}>#{tag}</Tag>)}
 					</p>
 					: null}
 			</div>
@@ -247,6 +253,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				<MenuDivider className="zr-divider-minimal" title="Zotero links" />
 				<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
 				<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />
+				<MenuDivider className="zr-divider-minimal" title="Linked Content" />
 				{pdfs}
 				{notes}
 			</Menu>
