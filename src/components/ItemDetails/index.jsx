@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { bool, func, object, oneOf, string } from "prop-types";
-import { Button, ButtonGroup, Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
-import { Popover2 } from "@blueprintjs/popover2";
+import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
 import NotesDrawer from "../NotesDrawer";
 import ShortcutSequence from "../ShortcutSequence";
@@ -16,30 +15,25 @@ import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 function CopyOption(props){
-	let { citekey, format, item, text } = props;
+	let { citekey, format, item } = props;
 
-	const formatCitekey = useCallback(() => {
-		let output;
+	const textOutput = useMemo(() => {
 		let pageRef = "[[@" + citekey + "]]";
   
 		switch(format){
 		case "page-reference":
-			output = pageRef;
-			break;
+			return pageRef;
 		case "tag":
-			output = "#" + pageRef;
-			break;
+			return "#" + pageRef;
 		case "citation":
-			output = "[" + item.authors + " (" + item.year + ")](" + pageRef + ")";
-			break;
+			return "[" + item.authors + " (" + item.year + ")](" + pageRef + ")";
 		case "citekey":
 		default:
-			output = "@" + citekey;
-			break;
+			return "@" + citekey;
 		}
-    
-		copyToClipboard(output);
 	}, [citekey, format, item]);
+
+	const formatCitekey = useCallback(() => copyToClipboard(textOutput), [textOutput]);
 
 	const label = useMemo(() => {
 		switch(format){
@@ -56,13 +50,12 @@ function CopyOption(props){
 		}
 	}, [format]);
   
-	return <MenuItem icon="clipboard" labelElement={label && <Tag minimal={true}>{label}</Tag>} onClick={formatCitekey} text={text} />;
+	return <MenuItem htmlTitle={textOutput} labelElement={label && <Tag minimal={true}>{label}</Tag>} onClick={formatCitekey} text={textOutput} />;
 }
 CopyOption.propTypes = {
 	citekey: string,
 	format: oneOf(["citation", "citekey", "page-reference", "tag"]),
-	item: object,
-	text: string,
+	item: object
 };
 
 function CopyButtons(props){
@@ -78,33 +71,14 @@ function CopyButtons(props){
 	}, [defaultCopyText]);
 
 	const optionsMenu = useMemo(() => {
-		let options = [
-			{ format: "citekey", text: "...as @citekey" },
-			{ format: "tag", text: "...as #@citekey" },
-			{ format: "page-reference", text: "...as [[@citekey]]" },
-			{ format: "citation", text: "...as [Citation]([[@]])" }
-		].filter(op => op.format != defaultCopyFormat);
-		return (
-			<Menu className="zr-text-small">
-				{options.map(op => <CopyOption key={op.format} citekey={citekey} item={item} {...op} />)}
-			</Menu>
-		);
+		return ["citekey", "tag", "page-reference", "citation"]
+			.filter(op => op != defaultCopyFormat)
+			.map(op => <CopyOption key={op} citekey={citekey} format={op} item={item} />);
 	}, [citekey, defaultCopyFormat, item]);
 
-	return (
-		<ButtonGroup className="copy-buttons" fill={true} minimal={true} >
-			<Button className="zr-text-small"
-				alignText="left"
-				fill={true} 
-				icon="clipboard"
-				intent={inGraph ? "success" : "warning"}
-				text={defaultCopyText} 
-				onClick={copyDefault} />
-			<Popover2 interactionKind="hover" placement="right-start" popoverClassName="zr-popover" content={optionsMenu} >
-				<Button icon="caret-right" intent={inGraph ? "success" : "warning"} />
-			</Popover2>
-		</ButtonGroup>
-	);
+	return <MenuItem icon="clipboard" intent={inGraph ? "success" : "warning"} multiline={true} onClick={copyDefault} text={"Copy as default : \n " + defaultCopyText} >
+		{optionsMenu}
+	</MenuItem>;
 }
 CopyButtons.propTypes = {
 	citekey: string,
@@ -172,7 +146,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			let libLoc = firstElem.library.type == "group" ? `groups/${firstElem.library.id}` : "library";
             
 			return <>
-				<MenuDivider title="PDF Attachments" />
+				<MenuDivider className="zr-divider-minimal" title="PDF Attachments" />
 				{children.pdfs.map(p => {
 					let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
 					return <MenuItem key={p.key} href={pdfHref} icon="paperclip" rel="noreferrer" target="_blank" text={p.data.filename || p.data.title} />;
@@ -265,16 +239,12 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			</div>
 		</div>
 		<div zr-role="item-actions">
-			<div data-in-graph={inGraph.toString()}>
-				{navigator.clipboard
-					? <CopyButtons citekey={key} inGraph={inGraph != false} item={item} />
-					: <div className={Classes.FILL}>@{key}</div>}
-			</div>
-			<Menu>
+			<Menu className="zr-text-small" data-in-graph={inGraph.toString()} >
+				{navigator.clipboard && <CopyButtons citekey={key} inGraph={inGraph != false} item={item} />}
 				{goToPageButton}
 				<MenuItem icon="add" onClick={importMetadata} text="Import metadata" />
 				{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Add notes" />}
-				<MenuDivider title="Zotero links" />
+				<MenuDivider className="zr-divider-minimal" title="Zotero links" />
 				<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
 				<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />
 				{pdfs}
