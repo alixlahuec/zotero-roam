@@ -9,14 +9,6 @@
 #zotero-roam-portal > .bp3-overlay > .bp3-dialog-container {
   justify-content: flex-start;
 }
-.zotero-roam-sequence{background-color:#c79f0c;padding:3px 6px;border-radius:3px;font-size:0.85em;font-weight:normal;color:white;}
-
-.zr-search-match {background-color: #fbde0f40;padding: 2px;border-radius: 3px;}
-
-.zr-text-small.bp3-menu-item>.bp3-icon {
-  margin-top: 0px;
-  margin-right: 8px;
-}
 
 [class^="zr"] .bp3-non-ideal-state {
   padding: 25px 0px;
@@ -97,9 +89,9 @@
   background-color: var(--zr-dark-elem-bg, #2B3143);
 }
 
-[zr-dark-theme="true"] .zr-tabs-minimal.bp3-tab-list .bp3-tab {
+[zr-dark-theme="true"] .zr-tabs-minimal > .bp3-tab-list > .bp3-tab {
   color: var(--zr-dark-text-co, #76a0cb);
 }
-[zr-dark-theme="true"] .zr-tabs-minimal.bp3-tab-list .bp3-tab[aria-selected="true"] {
+[zr-dark-theme="true"] .zr-tabs-minimal > .bp3-tab-list > .bp3-tab[aria-selected="true"] {
   color: var(--zr-dark-highlight,#3fb8ff);
 }

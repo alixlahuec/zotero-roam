@@ -43,6 +43,29 @@ const taglistEntry = shape({
 });
 
 /**
+ * @see simplifyAnnotations
+ */
+const cleanAnnotationItemType = shape({
+	color: string,
+	comment: string,
+	dateAdded: string,
+	dateModified: string,
+	key: string,
+	library: string,
+	link_pdf: string,
+	link_page: string,
+	pageLabel: string,
+	parentItem: string,
+	position: object,
+	raw: object,
+	sortIndex: arrayOf(number),
+	tags: arrayOf(string),
+	text: oneOfType([string, oneOf([null])]),
+	type: oneOf(["highlight", "image"]),
+	version: number
+});
+
+/**
  * @see cleanLibraryItem
  */
 const cleanLibraryItemType = shape({
@@ -191,6 +214,7 @@ export {
 	zoteroLibraryType,
 	zoteroTagType,
 	taglistEntry,
+	cleanAnnotationItemType,
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,
 	cleanRelatedItemType,

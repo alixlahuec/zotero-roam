@@ -1,4 +1,5 @@
 .zr-guide-popover .bp3-popover2-content {
+    font-size: var(--zr-text-small, 0.85rem);
     padding: 10px;
 }
 

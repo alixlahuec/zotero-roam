@@ -1,12 +1,41 @@
 import React, { useContext, useMemo } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
-import { Button, Card, Drawer, Tabs, Tab, Tag, Divider } from "@blueprintjs/core";
+import { Button, Card, Drawer, Tabs, Tab, Tag } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
 import ButtonLink from "../ButtonLink";
 import { formatZoteroNotes, makeDateFromAgo, simplifyAnnotations } from "../../utils";
 
+import * as customPropTypes from "../../propTypes";
+
 import "./index.css";
+
+function Annotation({ annot }){
+	let { color, comment, pageLabel, text, dateModified, link_page, link_pdf, tags } = annot;
+
+	// https://shannonpayne.com.au/how-to-create-a-low-highlight-text-effect-using-css/
+	let highlightStyle = useMemo(() => ({
+		"backgroundImage": `linear-gradient(120deg, ${color}50 0%, ${color}50 100%)`
+	}), [color]);
+
+	return <div className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>
+		<div className="zr-annotation--header">
+			<span>{tags.map((tag, j) => <Tag key={j} >{tag}</Tag>)}</span>
+			<a href={link_page} rel="noreferrer" target="_blank" >Page {pageLabel}</a>
+		</div>
+		{text && <div className="zr-annotation--highlight">
+			<span style={highlightStyle}>{text}</span>
+		</div>}
+		<div className="zr-annotation--comment">{comment}</div>
+		<div className="zr-annotation--footer">
+			<span className="zr-auxiliary">{makeDateFromAgo(dateModified)}</span>
+			<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >Open PDF</ButtonLink>
+		</div>
+	</div>;
+}
+Annotation.propTypes = {
+	annot: customPropTypes.cleanAnnotationItemType
+};
 
 function PanelAnnotations({ annots }){
 	let clean_annotations = simplifyAnnotations(annots)
@@ -14,28 +43,7 @@ function PanelAnnotations({ annots }){
 			return a.sortIndex.every((el, j) => el <= b[j]) ? -1 : 1;
 		});
 
-	return clean_annotations.map(ann => {
-		let { color, comment, pageLabel, text, dateModified, link_page, link_pdf, tags } = ann;
-
-		// https://shannonpayne.com.au/how-to-create-a-low-highlight-text-effect-using-css/
-		let highlightStyle = {
-			"background": `linear-gradient(120deg, ${color}50 0%, ${color}50 100%)`
-		};
-
-		return <Card key={ann.key} className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>
-			<div className="zr-annotation--header">
-				<ButtonLink href={link_pdf} icon="paperclip" small={true} >Open PDF</ButtonLink>
-				<a href={link_page} rel="noreferrer" target="_blank" >Page {pageLabel}</a>
-			</div>
-			<Divider />
-			{text && <span className="zr-annotation--highlight" style={highlightStyle}>{text}</span>}
-			<div className="zr-annotation--comment">{comment}</div>
-			<div className="zr-annotation--footer">
-				<span>{tags.map((tag, j) => <Tag key={j} >{tag}</Tag>)}</span>
-				<span className="zr-auxiliary">{makeDateFromAgo(dateModified)}</span>
-			</div>
-		</Card>;
-	});
+	return clean_annotations.map(annot => <Annotation key={annot.key} annot={annot} /> );
 }
 PanelAnnotations.propTypes = {
 	annots: arrayOf(object)
@@ -72,7 +80,7 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
-			<Tabs className="zr-tabs-minimal" id="zr-drawer--notes" >
+			<Tabs animate={false} className="zr-tabs-minimal" id="zr-drawer--notes" >
 				{annots.length > 0 && <Tab id="annotations" panel={<PanelAnnotations annots={annots} />} title="Annotations" />}
 				{cleanNotes.length > 0 && <Tab id="notes" panel={<PanelNotes notes={cleanNotes} />} title="Notes" />}
 				<Tabs.Expander />

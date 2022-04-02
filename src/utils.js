@@ -816,6 +816,28 @@ function setupPortals(slotID, portalID){
 	document.getElementById("app").appendChild(zrPortal);
 }
 
+/** Simplifies data structure for Zotero 6 annotations
+ * @param {Object[]} annotations - The list of annotations to simplify
+ * @returns {{
+ * color: String,
+ * comment: String,
+ * dateAdded: String,
+ * dateModified: String,
+ * key: String,
+ * library: String,
+ * link_pdf: String,
+ * link_page: String,
+ * pageLabel: String,
+ * parentItem: String,
+ * position: Object,
+ * raw: Object,
+ * sortIndex: Number[],
+ * tags: String[],
+ * text: String|null,
+ * type: ("highlight"|"image"),
+ * version: Number
+ * }[]}
+ */
 function simplifyAnnotations(annotations){
 	return annotations.map(annot => {
 		let { 

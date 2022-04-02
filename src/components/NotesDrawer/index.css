@@ -7,8 +7,9 @@
 }
 
 .zr-drawer--notes-card {
-    margin: 10px;
     flex: 0 0 auto;
+    margin: 10px;
+    padding: 20px;
 }
 
 .zr-annotation--header, .zr-annotation--footer {
@@ -16,7 +17,11 @@
     justify-content: space-between;
 }
 
-.zr-annotation--highlight {
+.zr-annotation--highlight, .zr-annotation--comment {
+    padding: 10px;
+}
+
+.zr-annotation--highlight > span {
     background-repeat: no-repeat;
     background-size: 100% 85%;
     font-family: monospace;
@@ -25,12 +30,14 @@
 /* DARK THEME */
 
 [zr-dark-theme="true"] .zr-drawer--notes {
-    background-color: var(--zr-dark-dialog-bg, #242424);
+    background-color: var(--zr-dark-selected-bc,#191919);
     color: var(--zr-dark-text-co, #76a0cb);
 }
-[zr-dark-theme="true"] .zr-drawer--notes h4.bp3-heading {
-    color: var(--zr-dark-text-co, #76a0cb);
+
+[zr-dark-theme="true"] .zr-annotation--header .bp3-button {
+    color: var(--zr-dark-text-co,#76a0cb);
 }
+
 [zr-dark-theme="true"] .zr-drawer--notes-card {
-    background-color: var(--zr-dark-elem-bg, #2B3143);
+    background-color: none;
 }
