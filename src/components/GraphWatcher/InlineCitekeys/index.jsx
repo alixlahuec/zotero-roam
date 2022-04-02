@@ -101,12 +101,12 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		onClose();
 	}, [itemData.raw, itemData.children, metadataSettings, notesSettings, onClose, pageUID, typemap]);
 
-	const showNotesDrawer = useCallback(() => {
-		setNotesDrawerOpen(true);
+	const showNotesDrawer = useCallback(() => setNotesDrawerOpen(true), []);
+
+	const closeNotesDrawer = useCallback(() => {
+		setNotesDrawerOpen(false);
 		onClose();
 	}, [onClose]);
-
-	const closeNotesDrawer = useCallback(() => setNotesDrawerOpen(false), []);
 
 	const pdfChildren = useMemo(() => {
 		if(!(itemData?.children?.pdfs?.length > 0)){

@@ -539,7 +539,7 @@ function makeDateFromAgo(date){
 	} else {
 		let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 		let monthDay =`${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}`;
-		let maybeYear = thisdate.getFullYear() != today.getFullYear() ? thisdate.getFullYear : false;
+		let maybeYear = thisdate.getFullYear() != today.getFullYear() ? thisdate.getFullYear() : false;
 
 		return [monthDay, maybeYear].filter(Boolean).join(" ");
 	}
