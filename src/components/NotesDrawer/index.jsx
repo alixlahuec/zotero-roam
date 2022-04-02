@@ -44,7 +44,7 @@ function Note({ note }){
 	let { dateModified, link_note, raw, tags } = note;
 	const { notes: notesSettings } = useContext(UserSettings);
 
-	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings)[0], [notesSettings, raw]);
+	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings), [notesSettings, raw]);
 
 	return notesList.map((nt, i) => {
 		return <div key={i} className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>
