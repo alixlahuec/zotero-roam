@@ -345,7 +345,7 @@ function executeFunctionByName(functionName, context /*, args */) {
 }
 
 function formatItemAnnotations(annotations){
-	let annots = simplifyAnnotations(annotations);
+	let annots = simplifyZoteroAnnotations(annotations);
 
 	return annots.map(ann => {
 		if(ann.type == "highlight"){
@@ -409,7 +409,7 @@ function formatItemReference(item, format, {accent_class = "zr-highlight"} = {})
 function formatZoteroAnnotations(annotations, { func = null, use = "raw" } = {}){
 	if(func){
 		// If the user has provided a function, execute it with the desired input
-		return executeFunctionByName(func, window, use == "raw" ? annotations : simplifyAnnotations(annotations));
+		return executeFunctionByName(func, window, use == "raw" ? annotations : simplifyZoteroAnnotations(annotations));
 	} else {
 		return formatItemAnnotations(annotations);
 	}
@@ -861,7 +861,7 @@ function setupPortals(slotID, portalID){
  * version: Number
  * }[]}
  */
-function simplifyAnnotations(annotations){
+function simplifyZoteroAnnotations(annotations){
 	return annotations.map(annot => {
 		let { 
 			annotationColor: color, 
@@ -899,8 +899,35 @@ function simplifyAnnotations(annotations){
 			sortIndex: annotationSortIndex.split("|").map(ind => Number(ind)),
 			tags: tags.map(t => t.tag),
 			text,
-			type,
-			version: annot.version
+			type
+		};
+	});
+}
+
+function simplifyZoteroNotes(notes){
+	return notes.map(nt => {
+		let {
+			dateAdded,
+			dateModified,
+			parentItem,
+			note,
+			tags
+		} = nt.data;
+
+		let library = nt.library.type + "s/" + nt.library.id;
+		let libLoc = library.startsWith("groups/") ? library : "library";
+		let link_note = `zotero://select/${libLoc}/items/${nt.key}`;
+
+		return {
+			dateAdded,
+			dateModified,
+			key: nt.key,
+			library,
+			link_note,
+			note,
+			parentItem,
+			raw: nt,
+			tags: tags.map(t => t.tag)
 		};
 	});
 }
@@ -999,7 +1026,8 @@ export {
 	setupDarkTheme,
 	setupDependencies,
 	setupPortals,
-	simplifyAnnotations,
+	simplifyZoteroAnnotations,
+	simplifyZoteroNotes,
 	sortCollections,
 	sortElems
 };

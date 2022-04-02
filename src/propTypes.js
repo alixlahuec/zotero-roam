@@ -43,7 +43,7 @@ const taglistEntry = shape({
 });
 
 /**
- * @see simplifyAnnotations
+ * @see simplifyZoteroAnnotations
  */
 const cleanAnnotationItemType = shape({
 	color: string,
@@ -61,8 +61,7 @@ const cleanAnnotationItemType = shape({
 	sortIndex: arrayOf(number),
 	tags: arrayOf(string),
 	text: oneOfType([string, oneOf([null])]),
-	type: oneOf(["highlight", "image"]),
-	version: number
+	type: oneOf(["highlight", "image"])
 });
 
 /**
@@ -96,6 +95,21 @@ const cleanLibraryItemType = shape({
 	raw: zoteroItemType
 });
 const cleanLibraryReturnArrayType = arrayOf(cleanLibraryItemType);
+
+/**
+ * @see simplifyZoteroNotes
+ */
+const cleanNoteItemType = shape({
+	dateAdded: string,
+	dateModified: string,
+	key: string,
+	library: string,
+	link_note: string,
+	note: string,
+	parentItem: string,
+	raw: zoteroItemType,
+	tags: arrayOf(string)
+});
 
 /**
  * @see cleanRelatedItem
@@ -217,6 +231,7 @@ export {
 	cleanAnnotationItemType,
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,
+	cleanNoteItemType,
 	cleanRelatedItemType,
 	cleanSemanticReturnType,
 	cleanSemanticReturnObjectType,

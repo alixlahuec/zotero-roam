@@ -189,11 +189,11 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 					<ButtonGroup minimal={true} fill={true} alignText="left">
 						<Button icon="comment" text={btnText} onClick={showNotes} />
 					</ButtonGroup>
-					<NotesDrawer isOpen={isNotesDrawerOpen} notes={children.notes} onClose={closeNotes} title={"Notes for @" + key} />
+					<NotesDrawer isOpen={isNotesDrawerOpen} notes={children.notes} onClose={closeNotes} />
 				</>
 			);
 		}
-	}, [children.notes, closeNotes, isNotesDrawerOpen, key, shortcutsSettings, showNotes]);
+	}, [children.notes, closeNotes, isNotesDrawerOpen, shortcutsSettings, showNotes]);
 
 	const hotkeys = useMemo(() => {
 		const { goToItemPage: pageCombo, toggleNotes: notesCombo } = shortcutsSettings;

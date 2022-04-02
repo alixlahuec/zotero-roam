@@ -145,12 +145,13 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 						icon="comment"
 						text="Show notes"
 						onClick={showNotesDrawer}
+						shouldDismissPopover={false}
 					/>
-					<NotesDrawer isOpen={isNotesDrawerOpen} notes={notes} onClose={closeNotesDrawer} title={"Notes for " + citekey} />
+					<NotesDrawer isOpen={isNotesDrawerOpen} notes={notes} onClose={closeNotesDrawer} />
 				</>
 			);
 		}
-	}, [citekey, closeNotesDrawer, isNotesDrawerOpen, itemData.children, showNotesDrawer]);
+	}, [closeNotesDrawer, isNotesDrawerOpen, itemData.children, showNotesDrawer]);
 
 	return (
 		<Overlay
