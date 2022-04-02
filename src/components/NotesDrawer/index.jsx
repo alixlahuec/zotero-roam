@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
-import { Button, Card, Classes, Drawer, Tabs, Tab, Tag, ButtonGroup } from "@blueprintjs/core";
+import { Button, Card, Classes, Drawer, Tabs, Tab, Tag, ButtonGroup, Icon } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
 import ButtonLink from "../ButtonLink";
@@ -22,7 +22,7 @@ function Annotation({ annot }){
 		<div className="zr-annotation--header">
 			<span>{tags.map((tag, j) => <Tag key={j} >{tag}</Tag>)}</span>
 			<ButtonGroup minimal={true}>
-				<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >Open PDF</ButtonLink>
+				<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >PDF</ButtonLink>
 				<ButtonLink className="zr-text-small" href={link_page}>Page {pageLabel}</ButtonLink>
 			</ButtonGroup>
 		</div>
@@ -30,9 +30,9 @@ function Annotation({ annot }){
 			<span style={highlightStyle}>{text}</span>
 		</div>}
 		{type == "image" && <code className={Classes.CODE}>Images are currently not supported</code>}
-		{comment && <div className="zr-annotation--comment">{comment}</div>}
+		{comment && <div className="zr-annotation--comment"><Icon icon="nest" intent="primary" size={12} />{comment}</div>}
 		<div className="zr-annotation--footer">
-			<span className="zr-auxiliary">{makeDateFromAgo(dateModified)}</span>
+			<span className="zr-secondary">{makeDateFromAgo(dateModified)}</span>
 		</div>
 	</div>;
 }

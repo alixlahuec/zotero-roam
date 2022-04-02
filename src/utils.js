@@ -533,9 +533,9 @@ function makeDateFromAgo(date){
 	yesterday.setHours(0,0,0);
 
 	if(thisdate > today){
-		return `Today at ${thisdate.getHours()}:${thisdate.getMinutes()}`;
+		return `Today at ${makeTimestamp(thisdate)}`;
 	} else if(thisdate > yesterday){
-		return `Yesterday at ${thisdate.getHours()}:${thisdate.getMinutes()}`;
+		return `Yesterday at ${makeTimestamp(thisdate)}`;
 	} else {
 		let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 		let monthDay =`${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}`;

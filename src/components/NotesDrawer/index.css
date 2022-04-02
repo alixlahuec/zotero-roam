@@ -21,7 +21,18 @@
 .zr-annotation--header, .zr-annotation--footer {
     align-items: center;
     display: flex;
+}
+
+.zr-annotation--header {
     justify-content: space-between;
+}
+
+.zr-annotation--header .bp3-tag {
+    margin-right: 5px;
+}
+
+.zr-annotation--footer {
+    justify-content: end;
 }
 
 .zr-annotation--highlight, .zr-annotation--comment {
