@@ -75,10 +75,14 @@ function CopyButtons(props){
 	}, [defaultCopyText]);
 
 	const optionsMenu = useMemo(() => {
-		return ["citekey", "tag", "page-reference", "citation"]
+		let standardOptions = ["citekey", "tag", "page-reference", "citation"]
 			.filter(op => op != defaultCopyFormat)
 			.map(op => <CopyOption key={op} citekey={citekey} format={op} item={item} />);
-	}, [citekey, defaultCopyFormat, item]);
+		return <>
+			<MenuItem htmlTitle={defaultCopyText} labelElement={<Tag intent="success" minimal={true}>Default</Tag>} onClick={copyDefault} text={defaultCopyText} />
+			{standardOptions}
+		</>;
+	}, [citekey, copyDefault, defaultCopyFormat, defaultCopyText, item]);
 
 	return <MenuItem 	
 		icon="clipboard" 
@@ -86,7 +90,7 @@ function CopyButtons(props){
 		multiline={true} 
 		onClick={copyDefault} 
 		popoverProps={copyPopoverProps}
-		text={"Copy as default : \n " + defaultCopyText} >
+		text="Copy reference" >
 		{optionsMenu}
 	</MenuItem>;
 }
@@ -157,7 +161,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
             
 			return children.pdfs.map(p => {
 				let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
-				return <MenuItem key={p.key} href={pdfHref} icon="paperclip" rel="noreferrer" target="_blank" text={p.data.filename || p.data.title} />;
+				return <MenuItem key={p.key} href={pdfHref} icon="paperclip" multiline={true} rel="noreferrer" target="_blank" text={p.data.filename || p.data.title} />;
 			});
 		}
 	}, [children.pdfs]);
@@ -249,7 +253,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				{navigator.clipboard && <CopyButtons citekey={key} inGraph={inGraph != false} item={item} />}
 				{goToPageButton}
 				<MenuItem icon="add" onClick={importMetadata} text="Import metadata" />
-				{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Add notes" />}
+				{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Import notes" />}
 				<MenuDivider className="zr-divider-minimal" title="Zotero links" />
 				<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
 				<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />

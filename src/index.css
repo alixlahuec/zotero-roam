@@ -34,9 +34,9 @@
 }
 
 .zr-divider-minimal > .bp3-heading {
-  font-size: var(--zr-text-small, 0.85rem);
+  font-size: 0.75rem;
   letter-spacing: 0.3mm;
-  opacity: 0.6;
+  opacity: 0.3;
   text-transform: uppercase;
 }
 
@@ -100,6 +100,7 @@
   fill: var(--zr-dark-selected-bc,#191919);
 }
 [zr-dark-theme="true"] .zr-popover.bp3-popover2 .bp3-popover2-content,
+[zr-dark-theme="true"] .zr-popover.bp3-popover .bp3-popover-content,
 [zr-dark-theme="true"] .zr-popover .bp3-menu,
 [zr-dark-theme="true"] [zr-role] .bp3-menu {
   background-color: var(--zr-dark-selected-bc,#191919);

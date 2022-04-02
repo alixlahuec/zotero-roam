@@ -1,13 +1,13 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { bool, func, node, object, shape } from "prop-types";
-import { MenuItem } from "@blueprintjs/core";
-import { QueryList } from "@blueprintjs/select";
+import { Menu, MenuItem } from "@blueprintjs/core";
+import { QueryList, renderFilteredItems } from "@blueprintjs/select";
 
 import { UserSettings } from "../App";
 import ItemDetails from "../ItemDetails";
 import SearchInputGroup from "./SearchInputGroup";
 import { formatItemReferenceForCopy } from "./utils";
-import { copyToClipboard, searchEngine } from "../../utils";
+import { copyToClipboard, pluralize, searchEngine } from "../../utils";
 
 import { resultClass, resultKeyClass } from "./classes";
 import * as customPropTypes from "../../propTypes";
@@ -45,25 +45,35 @@ function itemListPredicate(query, items) {
 	if(query.length < query_threshold){
 		return [];
 	} else {
-		let matches = [];
-
-		for(let i = 0; matches.length < results_limit && i < items.length;i++){
-			let item = items[i];
-			if(searchEngine(
-				query, 
-				[item.key, item._multiField],
-				{ 
-					any_case: true, 
-					match: "partial", 
-					search_compounds: true, 
-					word_order: "loose"
-				}
-			)){
-				matches.push(item);
+		return items.filter(item => searchEngine(
+			query, 
+			[item.key, item._multiField],
+			{ 
+				any_case: true, 
+				match: "partial", 
+				search_compounds: true, 
+				word_order: "loose"
 			}
-		}
-  
-		return matches;
+		));
+	}
+}
+
+// https://github.com/palantir/blueprint/blob/101d0feecda50a52bf62ca2e0551aff77c67923b/packages/select/src/components/query-list/queryList.tsx#L345
+function itemListRenderer(listProps){
+	const { filteredItems, itemsParentRef, ...rest } = listProps;
+	const noResults = null;
+	const initialContent = null;
+
+	const totalResults = filteredItems.length;
+	const menuContent = renderFilteredItems({ filteredItems: filteredItems.slice(0, results_limit), itemsParentRef, ...rest}, noResults, initialContent);
+
+	if(menuContent == null){
+		return null;
+	} else {
+		return <>
+			{totalResults > results_limit && <span>{pluralize(totalResults, "item", " found")}. Only the first {results_limit} are shown</span>}
+			<Menu ulRef={itemsParentRef}>{menuContent}</Menu>
+		</>;
 	}
 }
 
@@ -215,9 +225,9 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 
 	return (
 		<QueryList
-			initialContent={null}
 			items={items}
 			itemListPredicate={itemListPredicate}
+			itemListRenderer={itemListRenderer}
 			itemRenderer={listItemRenderer}
 			itemsEqual={testItemsEquality}
 			onItemSelect={handleItemSelect}

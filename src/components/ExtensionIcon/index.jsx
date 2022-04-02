@@ -9,6 +9,8 @@ import { makeTimestamp } from "../../utils";
 import { ExtensionContext, UserSettings } from "../App";
 import "./index.css";
 
+const betaTag = <Tag intent="primary" minimal={true}>Beta</Tag>;
+
 const isCurrentlyDark = () => document.getElementsByTagName("body")[0].getAttribute("zr-dark-theme") == "true";
 
 function DarkThemeToggle (){
@@ -168,7 +170,7 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 	const contextMenu = useMemo(() => {
 		return (
 			<Menu>
-				<MenuItem text="Dashboard" icon="dashboard" onClick={openDashboard} />
+				<MenuItem text="Dashboard" icon="dashboard" labelElement={betaTag} onClick={openDashboard} />
 				<MenuItem text="Search in library" icon="search" onClick={openSearchPanel} />
 			</Menu>
 		);
