@@ -56,6 +56,7 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 			pdfs,
 			notes
 		},
+		createdByUser: item.meta.createdByUser?.username || null,
 		inGraph: roamCitekeys.has("@" + item.key) ? roamCitekeys.get("@" + item.key) : false,
 		itemKey: item.data.key,
 		itemType: item.data.itemType,

@@ -107,6 +107,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		authorsFull, 
 		authorsRoles,
 		children, 
+		createdByUser,
 		inGraph, 
 		key, 
 		publication,
@@ -234,17 +235,23 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				{abstract}
 			</p>
 			<div zr-role="item-metadata--footer">
+				{createdByUser && <span className="zr-secondary">Added by {createdByUser}</span>}
+				{inGraph && <span className="zr-auxiliary">In Roam</span>}
 				{authorsFull.length > 0
-					? <p zr-role="item-creators">
-						<strong>Contributors : </strong>
-						{authorsFull.map((aut, i) => <Tag key={i} className="zr-text-small" intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
-					</p>
+					? <>
+						<span>Contributors</span>
+						<div>
+							{authorsFull.map((aut, i) => <Tag key={i} className="zr-text-small" intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
+						</div>
+					</>
 					: null}
 				{tags.length > 0
-					? <p zr-role="item-tags">
-						<strong>Tags : </strong>
-						{tags.map((tag, i) => <Tag key={i} className="zr-text-small" minimal={true}>#{tag}</Tag>)}
-					</p>
+					? <>
+						<span>Tags</span>
+						<div>
+							{tags.map((tag, i) => <Tag key={i} className="zr-text-small" minimal={true}>#{tag}</Tag>)}
+						</div>
+					</>
 					: null}
 			</div>
 		</div>

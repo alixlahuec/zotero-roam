@@ -44,10 +44,6 @@
     text-align: justify;
 }
 
-#zr-item-details [zr-role="item-metadata--footer"] p strong ~ span {
-    margin:3px;
-}
-
 #zr-item-details [zr-role="item-actions"] {
     background: #f5f8fa;
     flex: 0 1 34%;

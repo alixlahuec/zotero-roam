@@ -77,6 +77,7 @@ const cleanLibraryItemType = shape({
 		pdfs: arrayOf(zoteroItemType),
 		notes: arrayOf(oneOfType([zoteroItemType, object])),
 	}),
+	createdByUser: oneOfType([string, oneOf([null])]),
 	inGraph: oneOfType([string, oneOf([false])]),
 	itemKey: string,
 	itemType: string,

@@ -71,8 +71,8 @@ function itemListRenderer(listProps){
 		return null;
 	} else {
 		return <>
-			{totalResults > results_limit && <span>{pluralize(totalResults, "item", " found")}. Only the first {results_limit} are shown</span>}
 			<Menu ulRef={itemsParentRef}>{menuContent}</Menu>
+			{totalResults > results_limit && <div className="zr-querylist--more-results">Showing {results_limit} out of {pluralize(totalResults, "result")}</div>}
 		</>;
 	}
 }

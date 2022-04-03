@@ -41,6 +41,14 @@ label.zr-quick-copy {
   width: 0px;
 }
 
+#zotero-roam-library-rendered .zr-querylist--more-results {
+    border-top: 1px #f2f2f2 solid;
+    color: var(--zr-highlight-2,#d9822b);
+    font-size: var(--zr-text-small, 0.85rem);
+    font-weight: 500;
+    padding: 3px 10px;
+}
+
 .zr-dialog-overlay--search-library .zotero-roam-search_result {
     padding: 3px 10px;
     font-size: 0.9em;
@@ -77,6 +85,10 @@ label.zr-quick-copy {
 }
 [zr-dark-theme="true"] #zotero-roam-search-autocomplete::placeholder {
     opacity:0.8;
+}
+#zotero-roam-library-rendered .zr-querylist--more-results {
+    border-top-color: var(--zr-dark-border-color,#363a3f);
+    color: var(--zr-dark-highlight-2,#d9822b);
 }
 [zr-dark-theme="true"] .zr-dialog-overlay--search-library .zotero-roam-search_result[data-in-graph="true"] .zr-library-item--key {
     background-color: var(--zr-dark-positive-bc, #5863582e);
