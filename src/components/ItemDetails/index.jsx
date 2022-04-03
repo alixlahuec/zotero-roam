@@ -1,13 +1,13 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { bool, func, object, oneOf, string } from "prop-types";
-import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
+import { func, object, oneOf, string } from "prop-types";
+import { Classes, Icon, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
 import NotesDrawer from "../NotesDrawer";
 import ShortcutSequence from "../ShortcutSequence";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
 import { importItemMetadata, importItemNotes, openPageByUID } from "../../roam";
-import { copyToClipboard } from "../../utils";
+import { copyToClipboard, makeDNP } from "../../utils";
 import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 
 import { UserSettings } from "../App";
@@ -63,7 +63,7 @@ CopyOption.propTypes = {
 };
 
 function CopyButtons(props){
-	const { citekey, inGraph, item } = props;
+	const { citekey, item } = props;
 	const { copy: { defaultFormat: defaultCopyFormat} } = useContext(UserSettings);
 
 	const defaultCopyText = useMemo(() => {
@@ -85,8 +85,7 @@ function CopyButtons(props){
 	}, [citekey, copyDefault, defaultCopyFormat, defaultCopyText, item]);
 
 	return <MenuItem 	
-		icon="clipboard" 
-		intent={inGraph ? "success" : "warning"} 
+		icon="clipboard"
 		multiline={true} 
 		onClick={copyDefault} 
 		popoverProps={copyPopoverProps}
@@ -96,7 +95,6 @@ function CopyButtons(props){
 }
 CopyButtons.propTypes = {
 	citekey: string,
-	inGraph: bool,
 	item: object
 };
 
@@ -110,7 +108,9 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		createdByUser,
 		inGraph, 
 		key, 
+		location,
 		publication,
+		raw,
 		tags, 
 		title, 
 		weblink, 
@@ -235,8 +235,6 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				{abstract}
 			</p>
 			<div zr-role="item-metadata--footer">
-				{createdByUser && <span className="zr-secondary">Added by {createdByUser}</span>}
-				{inGraph && <span className="zr-auxiliary">In Roam</span>}
 				{authorsFull.length > 0
 					? <>
 						<span>Contributors</span>
@@ -256,12 +254,18 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			</div>
 		</div>
 		<div zr-role="item-actions">
+			<div>
+				<Tag fill={true} large={true} minimal={true} round={true}>{location}</Tag>
+				<span><Icon icon="calendar" />{makeDNP(raw.data.dateAdded, { brackets: false })}</span>
+				{createdByUser && <span><Icon icon="person" />Added by {createdByUser}</span>}
+				{inGraph && <span><Icon icon="graph" intent="success" />In Roam</span>}
+			</div>
 			<Menu className="zr-text-small" data-in-graph={inGraph.toString()} >
-				{navigator.clipboard && <CopyButtons citekey={key} inGraph={inGraph != false} item={item} />}
+				{navigator.clipboard && <CopyButtons citekey={key} item={item} />}
+				<MenuDivider className="zr-divider-minimal" title="Actions" />
 				{goToPageButton}
 				<MenuItem icon="add" onClick={importMetadata} text="Import metadata" />
 				{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Import notes" />}
-				<MenuDivider className="zr-divider-minimal" title="Zotero links" />
 				<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
 				<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />
 				<MenuDivider className="zr-divider-minimal" title="Linked Content" />
