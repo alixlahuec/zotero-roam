@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { func, object, oneOf, string } from "prop-types";
+import { func, node, object, oneOf, string } from "prop-types";
 import { Classes, Icon, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
 import NotesDrawer from "../NotesDrawer";
@@ -96,6 +96,17 @@ function CopyButtons(props){
 CopyButtons.propTypes = {
 	citekey: string,
 	item: object
+};
+
+function MetadataRow({ label, children }){
+	return <div zr-role="metadata-row">
+		<span className="zr-auxiliary">{label}</span>
+		<div>{children}</div>
+	</div>;
+}
+MetadataRow.propTypes = {
+	children: node,
+	label: string
 };
 
 const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
@@ -235,31 +246,33 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				{abstract}
 			</p>
 			<div zr-role="item-metadata--footer">
+				<MetadataRow label="Added">
+					<span><Icon icon="calendar" />{makeDNP(raw.data.dateAdded, { brackets: false })}</span>
+					{createdByUser
+						? <span>by <b>{createdByUser}</b></span>
+						: null}
+				</MetadataRow>
+				<MetadataRow label="Location">
+					<span>{location}</span>
+					{raw.data.collections.length > 0
+						? <span>{raw.data.collections.join("·")}</span>
+						: null}
+				</MetadataRow>
 				{authorsFull.length > 0
-					? <>
-						<span>Contributors</span>
-						<div>
-							{authorsFull.map((aut, i) => <Tag key={i} className="zr-text-small" intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
-						</div>
-					</>
+					? <MetadataRow label="Contributors">
+						{authorsFull.map((aut, i) => <Tag key={i} className="zr-text-small" intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
+					</MetadataRow>
 					: null}
 				{tags.length > 0
-					? <>
-						<span>Tags</span>
+					? <MetadataRow label="Tags">
 						<div>
 							{tags.map((tag, i) => <Tag key={i} className="zr-text-small" minimal={true}>#{tag}</Tag>)}
 						</div>
-					</>
+					</MetadataRow>
 					: null}
 			</div>
 		</div>
 		<div zr-role="item-actions">
-			<div>
-				<Tag fill={true} large={true} minimal={true} round={true}>{location}</Tag>
-				<span><Icon icon="calendar" />{makeDNP(raw.data.dateAdded, { brackets: false })}</span>
-				{createdByUser && <span><Icon icon="person" />Added by {createdByUser}</span>}
-				{inGraph && <span><Icon icon="graph" intent="success" />In Roam</span>}
-			</div>
 			<Menu className="zr-text-small" data-in-graph={inGraph.toString()} >
 				{navigator.clipboard && <CopyButtons citekey={key} item={item} />}
 				<MenuDivider className="zr-divider-minimal" title="Actions" />

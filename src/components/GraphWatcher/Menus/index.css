@@ -68,8 +68,8 @@ button[class*='zr-page-menu-show--'] {
     .zr-citekey-menu .bp3-button {font-size: 0.85em;}
 
     .bp3-dialog.zr-auxiliary-dialog--view-item-information {
-        width: calc(95% - 20vw);
-        margin-left: calc(10vw + 2.5%);
+        width: calc(95% - 5vw);
+        margin-left: calc(2.5vw + 2.5%);
     }
 }
 
