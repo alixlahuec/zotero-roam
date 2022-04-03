@@ -30,3 +30,5 @@
 [zr-dark-theme="true"] .bp3-button-group .bp3-button.zr-tag-suggestion--merge-as .bp3-icon {
     background-color: var(--zr-dark-selected-bc,#191919);
 }
+
+/* TODO: Fix button colors into vars */

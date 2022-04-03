@@ -10,6 +10,7 @@
 
 #zr-item-details [zr-role="item-metadata"] {
     border-bottom-left-radius: 6px;
+    color: var(--zr-text-co);
     flex: 1 0 66%;
     padding: 10px 4%;
 }
@@ -38,7 +39,7 @@
 }
 
 #zr-item-details [zr-role="item-abstract"]:not(:empty) {
-    border: 1px #efefef solid;
+    border: 1px var(--zr-border-co) solid;
     font-weight: 300;
     margin: 15px 5px;
     padding: 10px 2.5%;
@@ -46,8 +47,9 @@
 }
 
 #zr-item-details [zr-role="item-actions"] {
-    background: #f5f8fa;
+    background: var(--zr-box-bg);
     border-bottom-right-radius: 6px;
+    color: var(--zr-text-co);
     flex: 0 1 34%;
 }
 
@@ -55,13 +57,18 @@
     background: none;
 }
 
-#zr-item-details [zr-role="item-actions"] .bp3-menu-item {
+#zr-item-details [zr-role="item-actions"] > ul > li {
     font-weight: 500;
+}
+
+#zr-item-details [zr-role="item-actions"] .bp3-overlay {
+    font-weight: normal;
 }
 
 #zr-item-details [zr-role="item-actions"] .bp3-menu-item > .bp3-icon:first-child {
     opacity: 0.3;
-    color: var(--zr-highlight,#3595e7);
+    /* TODO: Once accent variations are set, change line below so that icons use a more transparent shade - was #3595e7*/
+    color: var(--zr-accent-1);
 }
 
 #zr-item-details [zr-role="metadata-row"] {
@@ -72,7 +79,7 @@
 }
 
 #zr-item-details [zr-role="metadata-row"] span {
-    flex: 1 0 20%;
+    flex: 1 0 25%;
     min-width: auto;
 }
 
@@ -96,25 +103,3 @@
         max-height: none;
     }
 }
-
-/* DARK THEME */
-
-[zr-dark-theme="true"] #zr-item-details [zr-role="item-metadata"] {
-    color: var(--zr-dark-text-co, #76a0cb);
-}
-
-[zr-dark-theme="true"] #zr-item-details [zr-role="item-actions"] {
-    background-color: var(--zr-dark-selected-bc,#191919);
-    color: var(--zr-dark-text-co, #76a0cb);
-}
-
-[zr-dark-theme="true"] #zr-item-details [zr-role="item-abstract"] {
-    border-color: var(--zr-dark-border-color,#363a3f);
-}
-
-/*
-[zr-dark-theme="true"] #zr-item-details [zr-role="item-actions"] .bp3-button:hover {
-    background-color: var(--zr-dark-selected-bc,#191919);
-    color: var(--zr-dark-text-co, #76a0cb);
-}
-*/

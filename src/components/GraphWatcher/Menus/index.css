@@ -12,14 +12,30 @@
 /* CitekeyMenu */
 
 .zr-citekey-doi {margin:10px;display:block;font-weight:600;letter-spacing:0.3mm;}
-.zr-citekey-menu{justify-content:space-between;border-width:0px;padding:5px;border-radius:5px;background-color: #f8f8f9;box-shadow:none;}
+.zr-citekey-menu{
+    justify-content:space-between;
+    border-width:0px;
+    padding:5px;
+    border-radius:5px;
+    background-color: var(--zr-box-bg);
+    box-shadow:none;}
 .zr-citekey-menu--header{display:flex;}
 .zr-citekey-menu--actions{flex-wrap:wrap;flex: 1 1 auto;}
 .zr-citekey-menu--actions.bp3-button-group .bp3-button {flex: 0 1 auto;}
 .zr-citekey-menu--actions [zr-role="pdf-link"] {font-weight:600;}
 
+.zr-citekey-menu .bp3-button-group .bp3-button,
+.zr-citekey-menu .bp3-button-group .bp3-button:hover {
+    color: var(--zr-text-co);
+}
+
 /* RelatedBar */
-.zotero-roam-page-menu-citations{display:flex;padding:5px;flex-wrap:wrap;padding-bottom:0px;border-top: 1px #f1f1f1 solid;}
+.zotero-roam-page-menu-citations{
+    display:flex;
+    padding:5px;
+    flex-wrap:wrap;
+    padding-bottom:0px;
+    border-top: 1px var(--zr-border-co) solid;}
 
 button[class*='zr-page-menu-show--'] {
     flex: 1 0 33%;
@@ -37,65 +53,52 @@ button[class*='zr-page-menu-show--'] {
 .zr-backlink-item--year, .zr-backlink-item--info{font-size:0.9em;padding: 0px 0px 6px 10px;}
 .zr-backlink-item--year{flex: 0 0 auto;}
 .zr-backlink-item--info{line-height:normal;flex: 1 2 90%;}
-.zr-backlink-item--info > *:not(.zr-item-title), .zr-backlink-item--year{line-height:2em;}
-.zr-backlink-item--state{flex: 1 0 auto;overflow-wrap:anywhere;}
+.zr-backlink-item--info > *:not([zr-role="item-title"]),
+.zr-backlink-item--year{
+    line-height:2em;
+}
+.zr-backlink-item--state{
+    flex: 1 0 auto;
+    overflow-wrap:anywhere;
+}
 
 .zr-backlink-item[data-backlink-type="reference"] .zr-backlink-item--year {
-    color: var(--zr-highlight,#206fe6);
+    color: var(--zr-accent-1);
 }
 
 .zr-backlink-item[data-backlink-type="citation"] .zr-backlink-item--year {
-    color: var(--zr-highlight-2,#d9822b);
+    color: var(--zr-accent-2);
+}
+
+.zr-backlinks-divider--tag + .bp3-divider {
+    border-color: var(--zr-border-co);
+}
+
+.zr-backlinks-divider--tag.bp3-tag.bp3-minimal,
+.zr-backlink-item--info [zr-role="item-title"] {
+    color: var(--zr-text-co);
+}
+
+.zr-backlink-item--info [zr-role="item-title"] {
+    display: block;
+    font-weight: 500;
 }
 
 /* ViewItem */
-.bp3-dialog.zr-auxiliary-dialog--view-item-information {
-    background: white;
-    margin-left: calc(18vw + 2.5%);
-    width: calc(95% - 36vw);
-}
-
-.bp3-dialog.zr-auxiliary-dialog--view-item-information > .bp3-dialog-header {
-    border-bottom: 1px #f2f2f2 solid;
-    box-shadow: none;
+.zr-auxiliary-dialog--view-item-information.bp3-dialog {
+    --zr-dialog-gutter: 2.5%;
+    --zr-dialog-margin: 18vw;
 }
 
 /* SMALLER DISPLAYS */
 
-@media (max-width:600px){
+@media (max-width: 700px){
     .zotero-roam-page-menu-header{flex-direction:column-reverse;}
     .zr-backlink-item--state{flex: 1 2 auto;}
     .zr-citekey-menu .bp3-button {font-size: 0.85em;}
-
-    .bp3-dialog.zr-auxiliary-dialog--view-item-information {
-        width: calc(95% - 5vw);
-        margin-left: calc(2.5vw + 2.5%);
-    }
 }
 
 /* DARK THEME */
-
-[zr-dark-theme="true"] .zr-citekey-menu {
-    background-color: var(--zr-dark-dialog-bg, #242424);
-}
-
-[zr-dark-theme="true"] .zr-citekey-menu .bp3-button-group .bp3-button,
-[zr-dark-theme="true"] .zr-citekey-menu .bp3-button-group .bp3-button:hover {
-    color: var(--zr-dark-text-co,#76a0cb);
-}
-
-[zr-dark-theme="true"] .zotero-roam-page-menu-citations {
-    border-color: var(--zr-dark-border-color,#363a3f);
-}
-
-[zr-dark-theme="true"] .zr-backlinks-divider--tag.bp3-tag.bp3-minimal,
-[zr-dark-theme="true"] .zr-backlink-item--info .zr-item-title {
-    color: var(--zr-dark-text-co,#76a0cb);
-}
-
-[zr-dark-theme="true"] .zr-backlinks-divider--tag + .bp3-divider {
-    border-color: var(--zr-dark-border-color,#363a3f);
-}
 
 [zr-dark-theme="true"] .zr-citekey-menu--backlinks [zr-role="sublist"][list-type="references"] li:nth-child(even) {
     background-color:var(--zr-dark-elem-bg, #2B3143);
@@ -110,14 +113,4 @@ button[class*='zr-page-menu-show--'] {
     background-color: var(--zr-dark-selected-bc,#191919);
 }
 
-[zr-dark-theme="true"] .zr-backlink-item[data-backlink-type="reference"] .zr-backlink-item--year {
-    color: var(--zr-dark-highlight,#3fb8ff);
-}
-
-[zr-dark-theme="true"] .zr-backlink-item[data-backlink-type="citation"] .zr-backlink-item--year {
-    color: var(--zr-dark-highlight-2,#d9822b);
-}
-
-[zr-dark-theme="true"] .bp3-dialog.zr-auxiliary-dialog--view-item-information > .bp3-dialog-header {
-    border-bottom-color: var(--zr-dark-border-color,#363a3f);
-}
+/* TODO: Set up system for backlinks colors, using vars */

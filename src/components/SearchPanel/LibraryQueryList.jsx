@@ -108,9 +108,9 @@ const SearchResult = React.memo(function SearchResult(props) {
 		tagName="div"
 		text={
 			<>
-				<span className="zr-item-title">{title}</span>
+				<span className="zr-library-item--title">{title}</span>
 				<span className="zr-details">
-					<span className="zr-highlight">{authors + " (" + year + ")"}</span>
+					<span className="zr-accent-1">{authors + " (" + year + ")"}</span>
 					<span className="zr-secondary">{publication}</span>
 				</span>
 			</>

@@ -154,12 +154,10 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 					collections={selectedLibCollections}
 					onSelect={handleCollSelection}
 					selectedCollections={selectedColls} />
-				<div className="options-tags">
-					<TagsSelector 
-						onRemove={handleTagRemoval}
-						onSelect={handleTagSelection}
-						selectedTags={selectedTags} />
-				</div>
+				<TagsSelector 
+					onRemove={handleTagRemoval}
+					onSelect={handleTagSelection}
+					selectedTags={selectedTags} />
 			</div>
 		</>
 	);

@@ -1,14 +1,9 @@
 .zr-context-menu {
+    background: var(--zr-dialog-bg);
+    color: var(--zr-text-co);
     max-width: 300px;
 }
 
-/* DARK THEME */
-
-[zr-dark-theme="true"] .zr-context-menu {
-    background-color: var(--zr-dark-selected-bc,#191919);
-    color: var(--zr-dark-text-co, #76a0cb);
-}
-
-[zr-dark-theme="true"] .zr-context-menu .bp3-menu-item:hover {
-    background-color: var(--zr-dark-elem-bg, #2B3143);
+.zr-context-menu .bp3-menu-item:hover {
+    background: var(--zr-box-bg);
 }

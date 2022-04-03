@@ -1,4 +1,5 @@
 .zr-sort-option {
+    color: var(--zr-text-co);
     padding: 3px 10px;
 }
 
@@ -16,6 +17,7 @@
 }
 
 .zr-sort-option label {
+    color: var(--zr-text-co);
     cursor: pointer;
     display: inline-block;
     font-weight:500;
@@ -33,7 +35,6 @@
     opacity: 0.7;
 }
 
-.zr-sort-option:hover,
 .zr-sort-option input:checked ~ span, 
 .zr-sort-option input:checked ~ label {
     cursor: default;
@@ -43,11 +44,9 @@
 
 /* DARK THEME */
 
-[zr-dark-theme="true"] .zr-sort-option {
-    color: var(--zr-dark-text-co, #76a0cb);
-}
-[zr-dark-theme="true"] .zr-sort-option:hover,
 [zr-dark-theme="true"] .zr-sort-option input:checked ~ span,
 [zr-dark-theme="true"] .zr-sort-option input:checked ~ label {
-    color: var(--zr-dark-highlight,#3fb8ff);
+    color: var(--zr-dark-accent-1,#3fb8ff);
 }
+
+/* TODO: Fix sort options appearance in light vs dark (currently, dark theme uses accent-1 but light theme uses inherit) */

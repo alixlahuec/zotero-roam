@@ -45,7 +45,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 	}, [citations.length]);
 
 	return (
-		<Tabs id="zr-semantic-panel" selectedTabId={isActiveTab} onChange={selectTab} animate={false}>
+		<Tabs id="zr-semantic-panel" className="zr-tabs" selectedTabId={isActiveTab} onChange={selectTab} animate={false}>
 			<Tab id="is_reference" 
 				panel={<SemanticPagination
 					items={references}

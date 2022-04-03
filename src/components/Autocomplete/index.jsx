@@ -52,8 +52,8 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 							key: item.key,
 							itemType: item.data.itemType,
 							source: "zotero",
-							value: formatItemReference(item, format, {accent_class: "zr-highlight"}) || item.key,
-							display: formatItemReference(item, display, {accent_class: "zr-highlight"}) || item.key
+							value: formatItemReference(item, format, {accent_class: "zr-accent-1"}) || item.key,
+							display: formatItemReference(item, display, {accent_class: "zr-accent-1"}) || item.key
 						};
 					})
 				: [];

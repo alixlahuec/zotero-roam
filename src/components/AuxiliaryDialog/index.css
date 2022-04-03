@@ -1,11 +1,24 @@
 .bp3-dialog[class*="zr-auxiliary-dialog--"] {
+    --zr-dialog-gutter: 2.5%;
+    --zr-dialog-margin: 15vw;
     align-self: baseline;
+    background: var(--zr-dialog-bg);
+    box-shadow: none;
+    margin-left: calc(var(--zr-dialog-margin) + var(--zr-dialog-gutter));
     padding-bottom:0px;
+    width: calc(100% - 2*(var(--zr-dialog-gutter) + var(--zr-dialog-margin)));
+}
+
+.bp3-dialog[class*="zr-auxiliary-dialog--"] > .bp3-dialog-header {
+    background: var(--zr-dialog-bg);
+    border-bottom: 1px var(--zr-border-co) solid;
     box-shadow: none;
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] h4.bp3-heading {
-    font-size: 1rem;
+    color: var(--zr-secondary-co);
+    font-weight: var(--zr-secondary-fw);
+    font-size: var(--zr-text-small);
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-dialog-body {
@@ -13,8 +26,8 @@
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div {
+    font-size: var(--zr-text-small);
     padding: 0px 20px;
-    font-size: 0.9em;
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu,
@@ -32,7 +45,7 @@
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu::-webkit-scrollbar-thumb,
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div > ul::-webkit-scrollbar-thumb {
-    background: #cccccc;
+    background: var(--zr-border-co);
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .header-content {
@@ -58,58 +71,51 @@
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] h5.panel-tt {
+    color: var(--zr-text-co);
     font-weight:600;
     display:inline-block;
     padding-right:15px;
 }
 
+.zr-related-item {
+    color: var(--zr-text-co);
+}
+
 .zr-related-item:not(:first-child) {
-    border-top: 1px dotted #ccddf5;
+    border-top: 1px var(--zr-border-co) dotted;
 }
 .zr-related-item > .bp3-menu-item:hover {background-color:unset;cursor:unset;}
 .zr-related-item-contents--metadata{flex: 0 1 100%;}
-.zr-related-item-contents--metadata .zr-highlight:not(:empty),
-.zr-related-item-contents--metadata .zr-highlight-2:not(:empty) {padding-right: 8px;}
+.zr-related-item-contents--metadata .zr-accent-1:not(:empty),
+.zr-related-item-contents--metadata .zr-accent-2:not(:empty) {padding-right: 8px;}
 .zr-related-item-contents--metadata .zr-related-item--decorating-icon {margin: 0px 10px;}
 .zr-related-item-contents--actions{text-align:right;flex: 1 0 auto;}
 .zr-related-item-contents--actions button.bp3-small, .zr-related-item-contents--actions a{opacity:0.6;overflow-wrap: break-word;}
 .zr-related-item-contents--actions button .bp3-button-text {overflow-wrap: anywhere;}
-.zr-related-item-contents--actions a[zr-role="item-url"] {display:block;}
-.zr-related-item-contents--actions a[zr-role="item-url"]:hover {text-decoration: none;}
 
-/* DARK THEME */
-
-[zr-dark-theme="true"] .zr-related-item:not(:first-child) {
-    border-color: var(--zr-dark-border-color,#363a3f);
+.zr-related-item a[zr-role="item-url"] {
+    color: var(--zr-text-co);
+    display:block;
+}
+.zr-related-item a[zr-role="item-url"]:hover {
+    color: var(--zr-text-co);
+    text-decoration: none;
 }
 
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"],
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] > .bp3-dialog-header {
-    background: var(--zr-dark-dialog-bg, #242424);
+/* SMALLER DISPLAYS */
+
+@media (max-width: 1000px){
+    .bp3-dialog[class*="zr-auxiliary-dialog--"] {
+        --zr-dialog-gutter: 1.5%;
+        --zr-dialog-margin: 5vw;
+    }
 }
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu {
-    background: var(--zr-dark-dialog-bg, #242424);
-    border-width: 1px;
-    border-style: solid;
-    border-color: var(--zr-dark-border-color,#363a3f);
+
+@media (max-width: 700px){
+    .bp3-dialog[class*="zr-auxiliary-dialog--"] {
+        --zr-dialog-gutter: 1.5%;
+        --zr-dialog-margin: 2.5vw;
+    }
 }
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu::-webkit-scrollbar-thumb,
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div > ul::-webkit-scrollbar-thumb {
-    background: var(--zr-dark-border-color,#363a3f);
-}
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] h4.bp3-heading,
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu,
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] h5.panel-tt,
-[zr-dark-theme="true"] .zr-related-item,
-[zr-dark-theme="true"] .zr-related-item-contents--actions a[zr-role="item-url"],
-[zr-dark-theme="true"] .zr-related-item-contents--actions a[zr-role="item-url"]:hover {
-    color: var(--zr-dark-text-co, #76a0cb);
-}
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary {
-    color: var(--zr-dark-text-co, #76a0cb);
-    background-color: var(--zr-dark-elem-bg, #2B3143);
-}
-[zr-dark-theme="true"] .bp3-dialog[class*="zr-auxiliary-dialog--"] .bp3-button.bp3-minimal.bp3-intent-primary.bp3-active {
-    background-color: var(--zr-dark-text-co, #76a0cb);
-    color: var(--zr-dark-elem-bg, #2B3143);
-}
+
+/* TODO: Once accent gradients are available, set styling for .bp3-button.bp3-minimal.bp3-intent-primary, which from what I can tell is specifically the "Add to Zotero" button in SemanticItem. Style was [color: var(--zr-dark-text-co, #76a0cb);background-color: var(--zr-dark-elem-bg, #2B3143);] The .bp3-active version was the opposite */

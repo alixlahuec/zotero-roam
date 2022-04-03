@@ -45,9 +45,9 @@ function BacklinksItem({ entry }) {
 		>
 			<div className="zr-backlink-item--year">{pub_year}</div>
 			<div className="zr-backlink-item--info" data-item-type={data.itemType} >
-				<span zr-role="item-authors" className={pub_type == "reference" ? "zr-highlight" : "zr-highlight-2"}>{meta.creatorSummary || ""}</span>
+				<span zr-role="item-authors" className={pub_type == "reference" ? "zr-accent-1" : "zr-accent-2"}>{meta.creatorSummary || ""}</span>
 				<span zr-role="item-publication" className="zr-secondary">{data.publicationTitle || data.bookTitle || data.university || ""}</span>
-				<span zr-role="item-title" className="zr-item-title">{data.title}</span>
+				<span zr-role="item-title">{data.title}</span>
 			</div>
 			<div className="zr-backlink-item--state">
 				{itemActions}

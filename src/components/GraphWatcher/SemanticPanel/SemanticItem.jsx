@@ -82,12 +82,12 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{display: "flex"}}>
 						<div className="zr-related-item-contents--metadata">
-							<span className={type == "is_reference" ? "zr-highlight" : "zr-highlight-2"}>{item.authors}</span>
+							<span className={type == "is_reference" ? "zr-accent-1" : "zr-accent-2"}>{item.authors}</span>
 							<span className="zr-secondary">{item.meta}</span>
 							{item.isInfluential
 								? <Icon className="zr-related-item--decorating-icon" color="#f8c63a" htmlTitle="This item was classified as influential by Semantic Scholar" icon="trending-up" />
 								: null}
-							<span className="zr-item-title" style={{ whiteSpace: "normal" }}>{item.title}</span>
+							<span className="zr-related-item--title">{item.title}</span>
 							{itemLinks}
 						</div>
 						<span className="zr-related-item-contents--actions">

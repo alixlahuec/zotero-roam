@@ -1,9 +1,4 @@
-.zr-shortcut-sequence {
+.zr-shortcut-sequence.bp3-tag.bp3-minimal {
+    color: var(--zr-shortcut-co);
     margin-left: 15px;
-}
-
-/* DARK THEME */
-
-[zr-dark-theme="true"] .bp3-tag.bp3-minimal.zr-shortcut-sequence {
-    color: var(--zr-dark-shortcut,beige);
 }

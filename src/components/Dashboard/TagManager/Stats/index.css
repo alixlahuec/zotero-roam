@@ -1,7 +1,7 @@
 .zr-tagmanager--datalist [zr-role="list-stats"] {
     align-items: center;
-    background: #f5f5f5;
-    border: 1px #ececec solid;
+    background: var(--zr-box-bg);
+    border: 1px var(--zr-border-co) solid;
     display: flex;
     flex-direction: column;
     margin: 10px auto;
@@ -25,11 +25,4 @@
 
 .zr-tagmanager--datalist [zr-role="list-stats"] .bp3-progress-bar {
     max-width: 100px;
-}
-
-/* DARK THEME */
-
-[zr-dark-theme="true"] .zr-tagmanager--datalist [zr-role="list-stats"] {
-    background: var(--zr-dark-dialog-bg, #242424);
-    border-color: var(--zr-dark-border-color,#363a3f);
 }

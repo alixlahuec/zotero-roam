@@ -18,8 +18,8 @@ const TabList = React.memo(function TabList(props){
 	const selectTab = useCallback((newtab, _prevtab, _event) => setActiveTab(newtab), []);
 
 	return(
-		<Tabs animate={false} id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
-			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager onClose={onClose} />} title={<Icon htmlTitle="Tag Manager" icon="tag" />} />
+		<Tabs animate={false} className="zr-tabs" id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
+			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager onClose={onClose} />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} />
 		</Tabs>
 	);
 });

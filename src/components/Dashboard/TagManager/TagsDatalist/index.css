@@ -1,5 +1,5 @@
 .zr-tagmanager--datalist .zr-datalist--item {
-    background: white;
+    border: 1px var(--zr-border-co) solid;
     border-radius: 5px;
     box-shadow: 2px 2px 4px 1px #d7dced4d;
     display:flex;
@@ -46,28 +46,20 @@
     margin: 5px;
 }
 
-.zr-tag--zotero.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {
-    color: var(--zr-highlight-2,#d9822b);;
+.zr-tag--zotero.bp3-tag.bp3-minimal {
+    color: var(--zr-accent-2);;
     background-color: #fff5e7;
 }
 
-.zr-tag--roam.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {
-    color: var(--zr-highlight,#206fe6);
+.zr-tag--roam.bp3-tag.bp3-minimal {
+    color: var(--zr-accent-1);
     background-color: #e7f5ff;
 }
 
 /* DARK THEME */
 
 [zr-dark-theme="true"] .zr-tagmanager--datalist .zr-datalist--item {
-    background: var(--zr-dark-dialog-bg, #242424);
     box-shadow: 2px 2px 4px 1px #0b0b0c4d;
 }
 
-[zr-dark-theme="true"] .zr-tag--roam.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {
-    background-color: #e7f5ff14;
-    color: var(--zr-dark-highlight,#3fb8ff);
-}
-[zr-dark-theme="true"] .zr-tag--zotero.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]).bp3-active {
-    background-color: #fff5e714;
-    color: var(--zr-dark-highlight-2,#d9822b);
-}
+/* TODO: Once accent gradients are available, use them to set backgrounds for tags + box-shadow for item boxes */

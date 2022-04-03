@@ -8,11 +8,5 @@
 }
 
 .zr-guide-popover--target .bp3-icon {
-    color: var(--zr-highlight,#206fe6);
-}
-
-/* DARK THEME */
-
-[zr-dark-theme="true"] .zr-guide-popover--target .bp3-icon {
-    color: var(--zr-dark-highlight,#3fb8ff);
+    color: var(--zr-accent-1);
 }

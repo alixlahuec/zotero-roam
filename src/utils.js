@@ -382,7 +382,7 @@ function formatItemNotes(notes, split_char){
  * @param {{accent_class: String}} config - Additional parameters 
  * @returns {String} The formatted reference
  */
-function formatItemReference(item, format, {accent_class = "zr-highlight"} = {}){
+function formatItemReference(item, format, {accent_class = "zr-accent-1"} = {}){
 	const citekey = "@" + item.key;
 	const pub_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "";
 	const pub_summary = [item.meta.creatorSummary || "", pub_year ? `(${pub_year})` : ""].filter(Boolean).join(" ");

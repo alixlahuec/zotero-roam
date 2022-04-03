@@ -1,26 +1,12 @@
 .zr-library-item-popover button {
+    background: var(--zr-box-bg);
+    color: var(--zr-text-co);
     font-weight: 500;
-    background-color: #ececec;
     padding-left: 5px;
 }
 
-/* DARK THEMES */
-
-[zr-dark-theme="true"] .zr-library-item-popover button {
-    background-color: var(--zr-dark-selected-bc,#191919);
-}
-
-[zr-dark-theme="true"] [data-in-graph="false"] .zr-library-item-popover button.bp3-button,
-[zr-dark-theme="true"] [data-in-graph="false"] .zr-library-item-popover button.bp3-button:hover {
-    background-color: var(--zr-dark-selected-bc,#19191970);
-}
-
-[zr-dark-theme="true"] [data-in-graph="false"] .zr-library-item-popover button.bp3-button:hover {
-    color: var(--zr-dark-text-co,#76a0cb);
-}
-
-[zr-dark-theme="true"] [data-in-graph="true"] .zr-library-item-popover button.bp3-button,
-[zr-dark-theme="true"] [data-in-graph="true"] .zr-library-item-popover button.bp3-button:hover {
-    background-color: var(--zr-dark-positive-bc, #5863582e);
-    color: var(--zr-dark-positive-co, #86f686);
+[data-in-graph="true"] .zr-library-item-popover button.bp3-button,
+[data-in-graph="true"] .zr-library-item-popover button.bp3-button:hover {
+    background: var(--zr-positive-bg);
+    color: var(--zr-positive-co);
 }

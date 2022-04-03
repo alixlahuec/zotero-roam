@@ -122,7 +122,7 @@ const cleanRelatedItemType = shape({
 		pdfs: arrayOf(zoteroItemType),
 		notes: arrayOf(zoteroItemType)
 	}),
-	inGraph: bool,
+	inGraph: oneOfType([string, oneOf([false])]),
 	itemType: string,
 	key: string,
 	location: string,

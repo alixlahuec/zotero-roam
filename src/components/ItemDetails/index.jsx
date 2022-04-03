@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { func, node, object, oneOf, string } from "prop-types";
-import { Classes, Icon, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
+import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
 import NotesDrawer from "../NotesDrawer";
 import ShortcutSequence from "../ShortcutSequence";
@@ -118,8 +118,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		children, 
 		createdByUser,
 		inGraph, 
-		key, 
-		location,
+		key,
 		publication,
 		raw,
 		tags, 
@@ -232,7 +231,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		<div zr-role="item-metadata">
 			<div zr-role="item-metadata--header">
 				<h5>{title}</h5>
-				<span className="zr-highlight">{authors + " (" + year + ")"}</span>
+				<span className="zr-accent-1">{authors + " (" + year + ")"}</span>
 				{publication
 					? <span className="zr-secondary">{publication}</span>
 					: null}
@@ -247,15 +246,11 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			</p>
 			<div zr-role="item-metadata--footer">
 				<MetadataRow label="Added">
-					<span><Icon icon="calendar" />{makeDNP(raw.data.dateAdded, { brackets: false })}</span>
+					<span className="zr-secondary">
+						{makeDNP(raw.data.dateAdded, { brackets: false })}
+					</span>
 					{createdByUser
 						? <span>by <b>{createdByUser}</b></span>
-						: null}
-				</MetadataRow>
-				<MetadataRow label="Location">
-					<span>{location}</span>
-					{raw.data.collections.length > 0
-						? <span>{raw.data.collections.join("·")}</span>
 						: null}
 				</MetadataRow>
 				{authorsFull.length > 0

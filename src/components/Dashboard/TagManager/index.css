@@ -1,12 +1,4 @@
-.zr-tagmanager--header {
-    align-items: center;
-    display: flex;
-    flex: 0 0 100%;
-    justify-content: space-between;
-}
-
-/* DARK THEME */
-
-[zr-dark-theme="true"] .zr-tagmanager label {
-    color: var(--zr-dark-text-co, #76a0cb);
+.zr-tagmanager .bp3-tab-panel {
+    flex: 0 1 100%;
+    margin-top: 10px;
 }
