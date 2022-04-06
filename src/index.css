@@ -143,7 +143,7 @@ button.bp3-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 .zr-tabs.bp3-tabs > .bp3-tab-list > .bp3-tab .bp3-icon,
 .zr-tabs-minimal.bp3-tabs > .bp3-tab-list > .bp3-tab .bp3-icon {
-  margin-right: 5px;
+  margin-right: 8px;
 }
 
 /* Dividers */

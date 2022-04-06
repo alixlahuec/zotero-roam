@@ -1,9 +1,9 @@
-import React, { useContext, useMemo } from "react";
-import { func, object } from "prop-types";
-import { Button, Spinner } from "@blueprintjs/core";
+import React, { useCallback, useContext, useMemo, useState } from "react";
+import { func, number, object } from "prop-types";
+import { Button, Slider, Spinner } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
-import { ListItem, ListWrapper } from "../../DataList";
+import { ListItem, ListWrapper, Toolbar } from "../../DataList";
 
 import { useQuery_Items } from "../../../api/queries";
 import { getCitekeyPagesWithEditTime } from "../../../roam";
@@ -63,9 +63,13 @@ function makeLogFromItems(items, recently = 7){
 
 }
 
-function LogView({ itemList, onClose }){
+function LogView({ itemList, onClose, recency, setRecency }){
+
 	return <>
-		<Button icon="cross" onClick={onClose} />
+		<Button icon="cross" minimal={true} onClick={onClose} />
+		<Toolbar>
+			<Slider min={3} max={30} onRelease={setRecency} stepSize={1} value={recency} />
+		</Toolbar>
 		<ListWrapper>
 			<h5>Today</h5>
 			{itemList.today.length > 0
@@ -75,20 +79,23 @@ function LogView({ itemList, onClose }){
 			{itemList.yesterday.length > 0
 				? itemList.yesterday.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)
 				: <span className="zr-secondary">No items</span>}
-			<h5>Today</h5>
+			<h5>Earlier</h5>
 			{itemList.recent.length > 0
-				? itemList.today.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)
+				? itemList.recent.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)
 				: <span className="zr-secondary">No items</span>}
 		</ListWrapper>
 	</>;
 }
 LogView.propTypes = {
 	itemList: object,
-	onClose: func
+	onClose: func,
+	recency: number,
+	setRecency: func
 };
 
 const RecentItems = React.memo(function RecentItems({ onClose }){
 	const { dataRequests } = useContext(ExtensionContext);
+	const [asRecentAs, setAsRecentAs] = useState(7);
 	const itemQueries = useQuery_Items(dataRequests, {
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => datastore.data
@@ -96,12 +103,14 @@ const RecentItems = React.memo(function RecentItems({ onClose }){
 
 	const isLoading = itemQueries.some(q => q.isLoading);
 	const data = itemQueries.map(q => q.data || []).flat(1);
-	const itemList = useMemo(() => makeLogFromItems(data), [data]);
+	const itemList = useMemo(() => makeLogFromItems(data, asRecentAs), [asRecentAs, data]);
+
+	const setRecency = useCallback((val) => setAsRecentAs(val), []);
 	
 	return <div>
 		{isLoading
 			? <Spinner />
-			: <LogView itemList={itemList} onClose={onClose} /> }
+			: <LogView itemList={itemList} onClose={onClose} recency={asRecentAs} setRecency={setRecency} /> }
 	</div>;
 });
 RecentItems.propTypes = {

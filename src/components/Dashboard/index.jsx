@@ -3,6 +3,7 @@ import { bool, func, oneOf } from "prop-types";
 import { Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
+import Explorer from "./Explorer";
 import RecentItems from "./RecentItems";
 import TagManager from "./TagManager";
 
@@ -20,13 +21,15 @@ const TabList = React.memo(function TabList(props){
 
 	return(
 		<Tabs animate={false} className="zr-tabs" id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
-			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager onClose={onClose} />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} />
 			<Tab className="zr-recentitems" id="recent-items" panel={<RecentItems onClose={onClose} />} title={<><Icon htmlTitle="Recent Items" icon="history" /><span>Recent Items</span></>} />
+			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager onClose={onClose} />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} />
+			<Tabs.Expander />
+			<Tab className="zr-explorer" id="explorer" panel={<Explorer onClose={onClose} />} title={<><Icon htmlTitle="Explorer" icon="code-block" /><span>Explorer</span></>} />
 		</Tabs>
 	);
 });
 TabList.propTypes = {
-	defaultTab: oneOf(["tag-manager"]),
+	defaultTab: oneOf(["tag-manager", "recent-items", "explorer"]),
 	onClose: func
 };
 
@@ -40,7 +43,7 @@ const Dashboard = React.memo(function Dashboard(props){
 			onClose={onClose} >
 			<div className={ Classes.DIALOG_BODY }>
 				<div className="zr-dashboard--main">
-					<TabList defaultTab="tag-manager" onClose={onClose} />
+					<TabList defaultTab="recent-items" onClose={onClose} />
 				</div>
 			</div>
 		</AuxiliaryDialog>

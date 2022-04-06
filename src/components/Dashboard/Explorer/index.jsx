@@ -1,13 +1,14 @@
-import React, { useContext, useMemo, useState } from "react";
-import { func } from "prop-types";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { arrayOf, func } from "prop-types";
 import { Button, NonIdealState, Spinner } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
-import { useQuery_Items } from "../../../api/queries";
-import { arrayOf } from "prop-types";
-import { searchEngine } from "../../../utils";
 import { ListItem, ListWrapper, Pagination, Toolbar } from "../../DataList";
-import { useEffect } from "react/cjs/react.production.min";
+
+import { useQuery_Items } from "../../../api/queries";
+import { searchEngine } from "../../../utils";
+
+import * as customPropTypes from "../../../propTypes";
 
 const itemsPerPage = 30;
 
@@ -127,9 +128,9 @@ function applyQueries(terms, itemList){
 
 function ExplorerContents({ itemList, onClose }){
 	const [filter/*, setFilter*/] = useState("items");
-	const [currentPage, setCurrentPage] = useState(1);
 	const [queries/*, setQueries*/] = useState([[{ property: "abstract", relationship: "exists", value: ""}]]);
-
+	const [currentPage, setCurrentPage] = useState(1);
+	
 	const filteredData = useMemo(() => {
 		switch(filter){
 		case "items":
@@ -166,7 +167,7 @@ function ExplorerContents({ itemList, onClose }){
 	</div>;
 }
 ExplorerContents.propTypes = {
-	itemList: arrayOf(),
+	itemList: arrayOf(customPropTypes.zoteroItemType),
 	onClose: func
 };
 
