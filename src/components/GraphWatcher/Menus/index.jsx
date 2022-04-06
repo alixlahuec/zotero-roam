@@ -64,9 +64,9 @@ function DNPMenuFactory({ menus }){
 	const { pageMenu: { trigger } } = useContext(UserSettings);
 	const [roamCitekeys,] = useRoamCitekeys();
 
-	const itemQueries = useQuery_Items(dataRequests, { 
-		select: (datastore) => datastore.data, 
-		notifyOnChangeProps: ["data"] 
+	const itemQueries = useQuery_Items(dataRequests, {
+		notifyOnChangeProps: ["data"], 
+		select: (datastore) => datastore.data
 	});
 
 	const data = itemQueries.map(q => q.data || []).flat(1);
@@ -117,9 +117,9 @@ function TagMenuFactory({ menus }){
 	const { pageMenu: { trigger } } = useContext(UserSettings);
 	const [roamCitekeys,] = useRoamCitekeys();
 	
-	const itemQueries = useQuery_Items(dataRequests, { 
-		select: (datastore) => datastore.data, 
-		notifyOnChangeProps: ["data"] 
+	const itemQueries = useQuery_Items(dataRequests, {
+		notifyOnChangeProps: ["data"],
+		select: (datastore) => datastore.data 
 	});
 
 	const data = itemQueries.map(q => q.data || []).flat(1);

@@ -114,6 +114,25 @@ const cleanNoteItemType = shape({
 });
 
 /**
+ * @see makeLogFromItems
+ */
+const cleanRecentItemType = shape({
+	abstract: string,
+	children: shape({
+		pdfs: arrayOf(zoteroItemType),
+		notes: arrayOf(zoteroItemType)
+	}),
+	edited: instanceOf(Date),
+	inGraph: oneOfType([string, oneOf([false])]),
+	itemType: string,
+	key: string,
+	location: string,
+	meta: string,
+	raw: zoteroItemType,
+	title: string
+});
+
+/**
  * @see cleanRelatedItem
  */
 const cleanRelatedItemType = shape({
@@ -242,6 +261,7 @@ export {
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,
 	cleanNoteItemType,
+	cleanRecentItemType,
 	cleanRelatedItemType,
 	cleanSemanticReturnType,
 	cleanSemanticReturnObjectType,

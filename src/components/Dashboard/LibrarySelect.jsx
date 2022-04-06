@@ -27,7 +27,11 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 			onItemSelect={onSelect} 
 			placement="bottom-right"
 			popoverProps={popoverProps}>
-			<Button className={["zr-dashboard--library-select", "zr-auxiliary", "zr-text-small"].join(" ")} minimal={true} text={path} />
+			<Button 
+				className={["zr-dashboard--library-select", "zr-auxiliary", "zr-text-small"].join(" ")} 
+				icon="caret-down"
+				minimal={true} 
+				text={path} />
 		</Select>
 	);
 });

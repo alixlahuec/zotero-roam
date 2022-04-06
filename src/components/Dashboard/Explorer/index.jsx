@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { arrayOf, func } from "prop-types";
+import { arrayOf, func, shape } from "prop-types";
 import { Button, NonIdealState, Spinner } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import { ListItem, ListWrapper, Pagination, Toolbar } from "../../DataList";
 
 import { useQuery_Items } from "../../../api/queries";
-import { searchEngine } from "../../../utils";
+import { categorizeLibraryItems, searchEngine } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
 
@@ -133,9 +133,10 @@ function ExplorerContents({ itemList, onClose }){
 	
 	const filteredData = useMemo(() => {
 		switch(filter){
+		// TODO: Add support for PDF items and notes
 		case "items":
 		default:
-			return itemList.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType));
+			return itemList.items;
 		}
 	}, [itemList, filter]);
 
@@ -145,10 +146,10 @@ function ExplorerContents({ itemList, onClose }){
 
 	useEffect(() => {
 		setCurrentPage(1);
-	}, [itemList, filteredData, queriedData]);
+	}, [filteredData, queriedData]);
 
 	return <div>
-		<Button icon="cross" onClick={onClose} />
+		<Button icon="cross" minimal={true} onClick={onClose} />
 		<Toolbar>
 			<Pagination 
 				currentPage={currentPage} 
@@ -167,7 +168,11 @@ function ExplorerContents({ itemList, onClose }){
 	</div>;
 }
 ExplorerContents.propTypes = {
-	itemList: arrayOf(customPropTypes.zoteroItemType),
+	itemList: shape({
+		today: arrayOf(customPropTypes.cleanRecentItemType),
+		yesterday: arrayOf(customPropTypes.cleanRecentItemType),
+		recent: arrayOf(customPropTypes.cleanRecentItemType)
+	}),
 	onClose: func
 };
 
@@ -180,11 +185,12 @@ function Explorer({ onClose }){
 
 	const isLoading = itemQueries.some(q => q.isLoading);
 	const data = itemQueries.map(q => q.data || []).flat(1);
+	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 
 	return <div>
 		{isLoading
 			? <Spinner />
-			: <ExplorerContents itemList={data} onClose={onClose} /> }
+			: <ExplorerContents itemList={itemList} onClose={onClose} /> }
 	</div>;
 }
 Explorer.propTypes = {

@@ -166,10 +166,10 @@ function getCitekeyPages(){
 
 /** Retrieves the list of citekey pages (i.e, starting with `@`) in the Roam graph, with their last-edit time
  * @returns {{edited: Date, title: String, uid: String}[]} The Array of citekey pages
- * @returns 
+ * @returns {Map<String, {edited: Date, uid: String}>} A Map whose `keys` are the pages' titles, and whose `entries` contain the pages' UIDs and last-edit times
  */
 function getCitekeyPagesWithEditTime(){
-	return window.roamAlphaAPI.q(`[
+	return new Map(window.roamAlphaAPI.q(`[
 		:find [(pull ?e [:node/title :edit/time :block/uid {:block/_parents [:edit/time]}])...] 
 		:where
 			[?e :node/title ?t]
@@ -179,12 +179,8 @@ function getCitekeyPagesWithEditTime(){
 		.map(p => {
 			let { title, uid } = p;
 			let latest_edit = p["_parents"] ? Math.max(...p["_parents"].map(c => c.time)) : p.time;
-			return {
-				title,
-				uid, 
-				edited: new Date(Math.max(latest_edit, p.time))
-			};
-		});
+			return [title, { edited: new Date(Math.max(latest_edit, p.time)), uid }];
+		}));
 }
 
 /** Retrieves the full list of Roam pages whose title begins with any of the keys provided

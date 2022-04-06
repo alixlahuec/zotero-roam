@@ -14,8 +14,13 @@ ul.zr-datalist--listwrapper {
     padding-left: 0px;
 }
 
-.zr-datalist--toolbar > .bp3-form-group {
+.zr-datalist--toolbar > .bp3-form-group,
+.zr-datalist--toolbar > .bp3-switch {
     margin-bottom: 0px;
+}
+
+.zr-datalist--toolbar > .bp3-slider {
+    width: auto;
 }
 
 .zr-datalist--pagination {

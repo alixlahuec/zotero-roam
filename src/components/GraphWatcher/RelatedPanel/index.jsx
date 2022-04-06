@@ -14,9 +14,7 @@ const labelId = "zr-related-panel-label";
 const Abstract = React.memo(function Abstract({ abstract, allAbstractsShown }) {
 	const [isVisible, setVisible] = useState(allAbstractsShown);
 
-	const toggleAbstract = useCallback(() => {
-		setVisible(prevState => !prevState);
-	}, []);
+	const toggleAbstract = useCallback(() => setVisible(prevState => !prevState), []);
 
 	useEffect(() => {
 		setVisible(allAbstractsShown);

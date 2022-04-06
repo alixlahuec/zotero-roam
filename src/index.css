@@ -93,6 +93,10 @@ button.bp3-button.zr-auxiliary{color: var(--zr-auxiliary);}
   border: 2px var(--zr-border-co) solid;
 }
 
+[class*="zr"] .bp3-slider-label {
+  color: var(--zr-text-co);
+}
+
 /* Popovers & Menus */
 
 .zr-popover {
@@ -131,7 +135,7 @@ button.bp3-button.zr-auxiliary{color: var(--zr-auxiliary);}
 .zr-tabs.bp3-tabs > .bp3-tab-list > .bp3-tab[aria-selected="true"],
 .zr-tabs-minimal.bp3-tabs > .bp3-tab-list > .bp3-tab[aria-selected="true"] {
   box-shadow: none;
-  color: var(--zr-accent-1);
+  color: hsla(var(--zr-accent-1-co), 80%);
   font-weight: 500;
   opacity: 1;
 }
