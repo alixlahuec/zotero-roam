@@ -111,6 +111,24 @@ function setDefaultHooks(){
 			console.log(e);
 		}
 	});
+	document.addEventListener("zotero-roam:notes-added", (e) => {
+		let { error, page: { title }, raw: { notes }, success } = e.detail;
+		if(error){
+			console.error(error);
+			zrToaster.show({
+				intent: "danger",
+				message: `Notes import failed for ${title} : \n ${error}`
+			});
+		} else if(success){
+			zrToaster.show({
+				intent: "success",
+				message: "Notes added to " + title + ` (${notes.length})`
+			});
+		} else {
+			// ? For testing
+			console.log(e);
+		}
+	});
 	document.addEventListener("zotero-roam:write", (e) => {
 		// ! For debugging:
 		console.log(e.detail);

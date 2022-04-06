@@ -30,7 +30,7 @@ function Annotation({ annot }){
 			{text && <span style={highlightStyle}>{text}</span>}
 			{type == "image" && <code className={Classes.CODE}>Images are currently not supported</code>}
 		</div>
-		{comment && <div className="zr-annotation--comment"><Icon icon="nest" intent="warning" size={14} />{comment}</div>}
+		{comment && <div className="zr-annotation--comment"><Icon icon="nest" intent="primary" size={14} />{comment}</div>}
 		<div zr-role="card-footer">
 			<span className="zr-secondary">{makeDateFromAgo(dateModified)}</span>
 		</div>

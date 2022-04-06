@@ -13,8 +13,13 @@
     border-right: 1px var(--zr-border-co) solid;
 }
 
-.zr-dashboard--library-select {
+.zr-dashboard--main > .bp3-tabs > .bp3-tab-panel {
+    padding-left: 15px;
+    width: 100%;
+}
+
+.zr-dashboard--library-select.bp3-button.bp3-minimal {
     background: var(--zr-box-bg);
+    border: 1px var(--zr-border-co) solid;
     color: var(--zr-text-co);
-    font-weight: bold;
 }

@@ -344,6 +344,10 @@ function executeFunctionByName(functionName, context /*, args */) {
 	return context[func].apply(context, args);
 }
 
+/** Default formatter for annotations
+ * @param {ZoteroItem[]} annotations - The (raw) array of annotations to be formatted 
+ * @returns An array of block objects, ready for import into Roam.
+ */
 function formatItemAnnotations(annotations){
 	let annots = simplifyZoteroAnnotations(annotations);
 
@@ -353,7 +357,7 @@ function formatItemAnnotations(annotations){
 			let tagsString = tags.length > 0 ? " \n " + tags.map(t => "#[[" + t + "]]").join(" ") : "";
 	
 			return {
-				string: "[[>]] " + text + ` ([p. ${pageLabel}](${link_page})` + tagsString,
+				string: "[[>]] " + text + ` ([p. ${pageLabel}](${link_page}))` + tagsString,
 				children: comment ? [comment] : []
 			};
 
@@ -406,6 +410,11 @@ function formatItemReference(item, format, {accent_class = "zr-accent-1"} = {}){
 	}
 }
 
+/** Formats an array of Zotero annotations into Roam blocks, with optional configuration
+ * @param {ZoteroItem[]} annotations - The Zotero annotations to format
+ * @param {{func: String, use:("raw"|"formatted")}} config - Additional settings 
+ * @returns The formatted annotations
+ */
 function formatZoteroAnnotations(annotations, { func = null, use = "raw" } = {}){
 	if(func){
 		// If the user has provided a function, execute it with the desired input
@@ -415,7 +424,7 @@ function formatZoteroAnnotations(annotations, { func = null, use = "raw" } = {})
 	}
 }
 
-/** Formats an array of Zotero notes into String blocks, with optional configuration
+/** Formats an array of Zotero notes into Roam blocks, with optional configuration
  * @param {ZoteroItem[]} notes - The Zotero notes to format
  * @param {{func: String, split_char: String, use:("raw"|"text")}} config - Additional settings
  * @returns The formatted notes
@@ -491,11 +500,22 @@ function getWebLink(item, {format = "markdown", text = "Web library"} = {}){
 	}
 }
 
-// From mauroc8 on SO: https://stackoverflow.com/questions/51958759/how-can-i-test-the-equality-of-two-nodelists
+/** Checks if the contents of a NodeList have changed
+ * From mauroc8 on SO: https://stackoverflow.com/questions/51958759/how-can-i-test-the-equality-of-two-nodelists
+ * @param {NodeList} prev - The previous contents of the NodeList
+ * @param {NodeList} current - The current contents of the NodeList
+ * @returns {Boolean} `true` if the NodeList has changed ; `false` otherwise
+ */
 function hasNodeListChanged(prev, current){
 	return (prev.length + current.length) != 0 && (prev.length !== current.length || prev.some((el, i) => el !== current[i]));
 }
 
+/** Identifies the children of a Zotero item within a given set of PDF and note entries
+ * @param {String} itemKey - The Zotero key of the parent item
+ * @param {String} location - The library location of the parent item
+ * @param {{pdfs: ZoteroItem[], notes: ZoteroItem[]}} data - The items among which children are to be identified 
+ * @returns 
+ */
 function identifyChildren(itemKey, location, {pdfs = [], notes = []} = {}){
 	let pdfItems = pdfs.filter(p => p.data.parentItem == itemKey && (p.library.type + "s/" + p.library.id == location));
 	let pdfKeys = pdfItems.map(p => p.key);
@@ -523,6 +543,12 @@ function makeDictionary(arr){
 	}, {});
 }
 
+/** Converts a date into a String format, in relation to the current date.
+ * For dates that belong to today : `Today at HH:MM` ; for dates that belong to yesterday : `Yesterday at HH:MM`.
+ * For any previous dates : `MMMM DD, YYYY` (DNP format).
+ * @param {Date} date - The date to convert
+ * @returns
+ */
 function makeDateFromAgo(date){
 	let thisdate = date.constructor === Date ? date : new Date(date);
 	// Vars
@@ -620,9 +646,6 @@ function parseDOI(doi){
 function parseNoteBlock(block){
 	let cleanBlock = block;
 	let formattingSpecs = {
-		"</p>": "",
-		"</div>": "",
-		"</span>": "",
 		"<blockquote>": "> ",
 		"</blockquote>": "",
 		"<strong>": "**",

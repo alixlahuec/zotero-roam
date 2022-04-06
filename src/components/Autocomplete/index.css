@@ -1,5 +1,5 @@
 .zr-tribute {
-    background-color: var(--zr-box-bg);
+    background-color: var(--zr-dialog-bg);
     border: 1px var(--zr-border-co) solid;
     border-radius: 3px;
     color: var(--zr-text-co);
@@ -28,5 +28,5 @@
 }
 
 .zr-tribute--selected {
-    background: var(--zr-box-bg);
+    background: hsla(var(--zr-accent-1-co), 8%);
 }

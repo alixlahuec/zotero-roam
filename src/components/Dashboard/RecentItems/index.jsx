@@ -28,19 +28,21 @@ function makeLogFromItems(items, recently = 7){
 		let { edited, title = "@" + item.key, uid = null } = rPage;
 		let zotero_last_edit = new Date(item.data.dateModified);
 
+		let last_combined_edit = new Date(Math.max(...[edited, zotero_last_edit].filter(Boolean)));
+
 		// Merge their data, then push it to the log
 		let entry = {
-			edited: new Date(Math.max([edited, zotero_last_edit].filter(Boolean))),
+			edited: last_combined_edit,
 			raw: item,
 			title,
 			uid
 		};
 
-		if(edited > today) {
+		if(last_combined_edit > today) {
 			log.today.push(entry);
-		} else if(edited > yesterday){
+		} else if(last_combined_edit > yesterday){
 			log.yesterday.push(entry);
-		} else if(edited > recent){
+		} else if(last_combined_edit > recent){
 			log.recent.push(entry);
 		} else {
 			log.old.push(entry);
@@ -66,9 +68,17 @@ function LogView({ itemList, onClose }){
 		<Button icon="cross" onClick={onClose} />
 		<ListWrapper>
 			<h5>Today</h5>
-			{itemList.today.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)}
+			{itemList.today.length > 0
+				? itemList.today.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)
+				: <span className="zr-secondary">No items</span>}
 			<h5>Yesterday</h5>
-			{itemList.yesterday.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)}
+			{itemList.yesterday.length > 0
+				? itemList.yesterday.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)
+				: <span className="zr-secondary">No items</span>}
+			<h5>Today</h5>
+			{itemList.recent.length > 0
+				? itemList.today.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)
+				: <span className="zr-secondary">No items</span>}
 		</ListWrapper>
 	</>;
 }

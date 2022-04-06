@@ -3,6 +3,7 @@ import { bool, func, oneOf } from "prop-types";
 import { Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
+import RecentItems from "./RecentItems";
 import TagManager from "./TagManager";
 
 import "./index.css";
@@ -20,6 +21,7 @@ const TabList = React.memo(function TabList(props){
 	return(
 		<Tabs animate={false} className="zr-tabs" id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
 			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager onClose={onClose} />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} />
+			<Tab className="zr-recentitems" id="recent-items" panel={<RecentItems onClose={onClose} />} title={<><Icon htmlTitle="Recent Items" icon="history" /><span>Recent Items</span></>} />
 		</Tabs>
 	);
 });

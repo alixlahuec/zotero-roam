@@ -1,9 +1,3 @@
 .zr-context-menu {
-    background: var(--zr-dialog-bg);
-    color: var(--zr-text-co);
     max-width: 300px;
-}
-
-.zr-context-menu .bp3-menu-item:hover {
-    background: var(--zr-box-bg);
 }

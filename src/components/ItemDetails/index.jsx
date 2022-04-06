@@ -7,7 +7,7 @@ import ShortcutSequence from "../ShortcutSequence";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
 import { importItemMetadata, importItemNotes, openPageByUID } from "../../roam";
-import { copyToClipboard, makeDNP } from "../../utils";
+import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 
 import { UserSettings } from "../App";
@@ -98,14 +98,15 @@ CopyButtons.propTypes = {
 	item: object
 };
 
-function MetadataRow({ label, children }){
-	return <div zr-role="metadata-row">
+function Metadata({ direction = "row", label, children }){
+	return <div zr-role={"metadata-" + direction}>
 		<span className="zr-auxiliary">{label}</span>
 		<div>{children}</div>
 	</div>;
 }
-MetadataRow.propTypes = {
+Metadata.propTypes = {
 	children: node,
+	direction: oneOf(["col", "row"]),
 	label: string
 };
 
@@ -140,8 +141,12 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	}, [children, inGraph, item.raw, metadataSettings, notesSettings, typemap, updateRoamCitekeys]);
 
 	const importNotes = useCallback(async() => {
-		return await importItemNotes({ item, notes: children.notes }, inGraph, notesSettings);
-	}, [children.notes, inGraph, item, notesSettings]);
+		const outcome = await importItemNotes({ item, notes: children.notes }, inGraph, notesSettings);
+		if(outcome.success){
+			updateRoamCitekeys();
+		}
+		return outcome;
+	}, [children.notes, inGraph, item, notesSettings, updateRoamCitekeys]);
 	
 	const navigateToPage = useCallback(() => {
 		if(inGraph != false){
@@ -241,29 +246,31 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 					</span>
 					: null}
 			</div>
-			<p zr-role="item-abstract" className={["zr-text-small", Classes.RUNNING_TEXT].join(" ")}>
-				{abstract}
-			</p>
+			<Metadata direction="col" label="Abstract">
+				<p zr-role="item-abstract" className={["zr-text-small", Classes.RUNNING_TEXT].join(" ")}>
+					{abstract}
+				</p>
+			</Metadata>
 			<div zr-role="item-metadata--footer">
-				<MetadataRow label="Added">
+				<Metadata label="Added">
 					<span className="zr-secondary">
-						{makeDNP(raw.data.dateAdded, { brackets: false })}
+						{makeDateFromAgo(raw.data.dateAdded)}
 					</span>
 					{createdByUser
 						? <span>by <b>{createdByUser}</b></span>
 						: null}
-				</MetadataRow>
+				</Metadata>
 				{authorsFull.length > 0
-					? <MetadataRow label="Contributors">
+					? <Metadata label="Contributors">
 						{authorsFull.map((aut, i) => <Tag key={i} className="zr-text-small" intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
-					</MetadataRow>
+					</Metadata>
 					: null}
 				{tags.length > 0
-					? <MetadataRow label="Tags">
+					? <Metadata label="Tags">
 						<div>
 							{tags.map((tag, i) => <Tag key={i} className="zr-text-small" minimal={true}>#{tag}</Tag>)}
 						</div>
-					</MetadataRow>
+					</Metadata>
 					: null}
 			</div>
 		</div>

@@ -8,5 +8,5 @@
 }
 
 .zr-guide-popover--target .bp3-icon {
-    color: var(--zr-accent-1);
+    color: hsla(var(--zr-accent-1-co), 20%);
 }

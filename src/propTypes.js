@@ -14,6 +14,7 @@ const zoteroItemType = shape({
 	has_citekey: bool,
 	key: string,
 	library: object,
+	links: object,
 	meta: object,
 	version: number
 });
