@@ -73,15 +73,15 @@ function LogView({ itemList, onClose, recency, setRecency }){
 		<ListWrapper>
 			<h5>Today</h5>
 			{itemList.today.length > 0
-				? itemList.today.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)
+				? itemList.today.map(it => <ListItem key={it.raw.library.id + it.raw.key}>{it.raw.key}</ListItem>)
 				: <span className="zr-secondary">No items</span>}
 			<h5>Yesterday</h5>
 			{itemList.yesterday.length > 0
-				? itemList.yesterday.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)
+				? itemList.yesterday.map(it => <ListItem key={it.raw.library.id + it.raw.key}>{it.raw.key}</ListItem>)
 				: <span className="zr-secondary">No items</span>}
 			<h5>Earlier</h5>
 			{itemList.recent.length > 0
-				? itemList.recent.map(it => <ListItem key={it.library.id + it.key}>{it.key}</ListItem>)
+				? itemList.recent.map(it => <ListItem key={it.raw.library.id + it.raw.key}>{it.raw.key}</ListItem>)
 				: <span className="zr-secondary">No items</span>}
 		</ListWrapper>
 	</>;
