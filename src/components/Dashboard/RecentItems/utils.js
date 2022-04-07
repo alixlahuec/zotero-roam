@@ -49,6 +49,7 @@ function makeLogFromItems(itemList, asRecentAs = 7){
 				key: itemKey,
 				location,
 				meta: [creator, pub_year].filter(Boolean).join(" "),
+				publication: item.data.publicationTitle || item.data.bookTitle || item.data.university || "",
 				raw: item,
 				title: item.data.title || "",
 			};

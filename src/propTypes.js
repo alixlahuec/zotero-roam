@@ -128,6 +128,7 @@ const cleanRecentItemType = shape({
 	key: string,
 	location: string,
 	meta: string,
+	publication: string,
 	raw: zoteroItemType,
 	title: string
 });

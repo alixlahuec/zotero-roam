@@ -10,9 +10,10 @@ import { makeLogFromItems } from "./utils";
 import { categorizeLibraryItems } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
+import "./index.css";
 
 function labelRenderer(num, { isHandleTooltip}) {
-	return isHandleTooltip ? `Last ${num} days` : num;
+	return isHandleTooltip ? `Last ${num} days` : false;
 }
 
 function LogViewSublist({ allAbstractsShown, items, label, onClose }){
@@ -39,18 +40,18 @@ function LogView({ itemList, onClose }){
 
 	const itemsLog = useMemo(() => makeLogFromItems(itemList, asRecentAs), [asRecentAs, itemList]);
 
-	return <>
-		<Button icon="cross" minimal={true} onClick={onClose} />
+	return <div className="zr-recentitems--datalist" >
 		<Toolbar>
-			<Slider labelRenderer={labelRenderer} labelStepSize={27} min={3} max={30} onRelease={setRecency} showTrackFill={false} stepSize={1} value={asRecentAs} />
+			<Slider labelRenderer={labelRenderer} min={3} max={30} onRelease={setRecency} stepSize={1} value={asRecentAs} />
 			<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
+			<Button icon="cross" minimal={true} onClick={onClose} />
 		</Toolbar>
 		<ListWrapper>
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Earlier" onClose={onClose} />
 		</ListWrapper>
-	</>;
+	</div>;
 }
 LogView.propTypes = {
 	itemList: shape({

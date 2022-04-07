@@ -19,7 +19,13 @@ ul.zr-datalist--listwrapper {
     margin-bottom: 0px;
 }
 
+.zr-datalist--toolbar > label.bp3-switch {
+    color: var(--zr-text-co);
+    font-weight: normal;
+}
+
 .zr-datalist--toolbar > .bp3-slider {
+    margin-top: 20px;
     width: auto;
 }
 

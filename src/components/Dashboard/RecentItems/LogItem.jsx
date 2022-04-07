@@ -42,11 +42,15 @@ Abstract.propTypes = {
 };
 
 function LogItem({ allAbstractsShown, item, onClose }){
-	const { abstract, children, inGraph, itemType, raw, title } = item;
+	const { abstract, children, inGraph, itemType, meta, publication, raw, title } = item;
 
-	return <ListItem className="zr-log-item" data-in-graph={(inGraph != false).toString()}>
-		<div>
-			<span data-item-type={itemType} zr-role="item-title">{title}</span>
+	return <ListItem className="zr-log-entry" data-in-graph={(inGraph != false).toString()}>
+		<div zr-role="item-header">
+			<div zr-role="item-details">
+				<span data-item-type={itemType} zr-role="item-title">{title}</span>
+				<span className="zr-accent-1">{meta}</span>
+				<span className="zr-secondary">{publication}</span>
+			</div>
 			<CitekeyPopover closeDialog={onClose} inGraph={inGraph} item={raw} notes={children.notes} pdfs={children.pdfs} />
 		</div>
 		<Abstract abstract={abstract} allAbstractsShown={allAbstractsShown} />

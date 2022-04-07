@@ -37,6 +37,7 @@
 
 .zr-related-item--title {
     display: block;
+    font-size: var(--zr-text-small);
     font-weight: 500;
     white-space: normal;
 }
