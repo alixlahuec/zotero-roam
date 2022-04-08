@@ -8,6 +8,11 @@ import { ListItem, ListWrapper, Pagination, Toolbar } from "../../DataList";
 
 const defaultQueryTerm = { property: "citekey", relationship: "exists", value: ""};
 const itemsPerPage = 20;
+const popoverProps = {
+	minimal: true,
+	popoverClassName: "zr-popover"
+};
+
 
 const queries = {
 	abstract: {
@@ -191,16 +196,21 @@ function QueryEntry({ term, updateSelf, useOR = false }){
 		<Select 
 			filterable={false} 
 			itemRenderer={itemRenderer}
+			items={Object.keys(queries)}
 			onItemSelect={handlePropertyChange}
-			options={Object.keys(queries)}
+			placement="bottom"
+			popoverProps={popoverProps}
 		>
 			<Button minimal={true} rightIcon="caret-down" text={property} />
 		</Select>
 		<Select 
 			filterable={false} 
-			itemRenderer={itemRenderer} 
-			onItemSelect={handleRelationshipChange} 
-			options={Object.keys(queries[property])}>
+			itemRenderer={itemRenderer}
+			items={Object.keys(queries[property])}
+			onItemSelect={handleRelationshipChange}
+			placement="bottom"
+			popoverProps={popoverProps}
+		>
 			<Button minimal={true} rightIcon="caret-down" text={relationship} />
 		</Select>
 		<InputGroup onChange={handleValueChange} value={value} />
