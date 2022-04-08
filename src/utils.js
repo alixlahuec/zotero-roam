@@ -727,13 +727,13 @@ function searchEngine(query, target, { any_case = true, match = "partial", searc
  * @param {{any_case: Boolean, match: ("exact"|"partial"|"word"), search_compounds: Boolean, word_order: ("strict"|"loose")}} config - Additional configuration
  * @returns {Boolean} `true` if the query is matched in the target string ; `false` otherwise.
  */
-function searchEngine_string(string, text, {any_case = true, match = "partial", search_compounds = true , word_order = "strict"} = {}){
-	let query = string;
+function searchEngine_string(str, text, {any_case = true, match = "partial", search_compounds = true , word_order = "strict"} = {}){
+	let query = str;
 	let target = text;
 
 	// If search is case-insensitive, transform query & target to lowercase
 	if(any_case == true){
-		query = string.toLowerCase();
+		query = str.toLowerCase();
 		target = text.toLowerCase();
 	}
 
