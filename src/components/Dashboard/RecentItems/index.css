@@ -1,3 +1,7 @@
+.zr-recentitems--datalist {
+    font-size: var(--zr-text-small);
+}
+
 .zr-recentitems--datalist .zr-datalist--item {
     border: 1px var(--zr-border-co) solid;
     border-radius: 5px;

@@ -13,7 +13,7 @@ import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
 function labelRenderer(num, { isHandleTooltip}) {
-	return isHandleTooltip ? `Last ${num} days` : false;
+	return isHandleTooltip ? `Last ${num} days` : "";
 }
 
 function LogViewSublist({ allAbstractsShown, items, label, onClose }){
@@ -41,16 +41,16 @@ function LogView({ itemList, onClose }){
 	const itemsLog = useMemo(() => makeLogFromItems(itemList, asRecentAs), [asRecentAs, itemList]);
 
 	return <div className="zr-recentitems--datalist" >
-		<Toolbar>
-			<Slider labelRenderer={labelRenderer} min={3} max={30} onRelease={setRecency} stepSize={1} value={asRecentAs} />
-			<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
-			<Button icon="cross" minimal={true} onClick={onClose} />
-		</Toolbar>
+		<Button icon="cross" minimal={true} onClick={onClose} />
 		<ListWrapper>
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Earlier" onClose={onClose} />
 		</ListWrapper>
+		<Toolbar>
+			<Slider labelRenderer={labelRenderer} min={3} max={30} onRelease={setRecency} stepSize={1} value={asRecentAs} />
+			<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
+		</Toolbar>
 	</div>;
 }
 LogView.propTypes = {

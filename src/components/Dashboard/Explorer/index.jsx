@@ -1,20 +1,17 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape } from "prop-types";
-import { Button, NonIdealState, Spinner, Tab, Tabs } from "@blueprintjs/core";
+import { Button, Spinner, Tab, Tabs } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
-import { ListItem, ListWrapper, Pagination, Toolbar } from "../../DataList";
+import { ListItem, ListWrapper } from "../../DataList";
+import QueryBuilder from "./QueryBuilder";
 
 import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
 
-const itemsPerPage = 30;
-
 function TabContents({ itemList, show }){
-	const [currentPage, setCurrentPage] = useState(1);
-	
 	const filteredData = useMemo(() => {
 		switch(show){
 		case "pdfs":
@@ -27,32 +24,9 @@ function TabContents({ itemList, show }){
 		}
 	}, [itemList, show]);
 
-	// * Placeholder for development
-	const queriedData = useMemo(() => filteredData.slice(0, 20), [filteredData]);
-
-	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
-
-	useEffect(() => {
-		setCurrentPage(1);
-	}, [filteredData, queriedData]);
-
-	return <div>
-		<Toolbar>
-			<Pagination 
-				currentPage={currentPage} 
-				itemsPerPage={itemsPerPage} 
-				nbItems={filteredData.length} 
-				setCurrentPage={setCurrentPage} 
-			/>
-		</Toolbar>
-		<ListWrapper>
-			{filteredData.length > 0
-				? filteredData
-					.slice(...pageLimits)
-					.map((el, i) => <ListItem key={[el.key, i].join("-")}>{el.key}</ListItem>)
-				: <NonIdealState className="zr-auxiliary" description="No items to display" />}
-		</ListWrapper>
-	</div>;
+	return show == "items" 
+		? <QueryBuilder items={filteredData} />
+		: <ListWrapper>{filteredData.slice(0,20).map((it, i) => <ListItem key={it.key + "-" + i}>{it.key}</ListItem>)}</ListWrapper>;
 }
 TabContents.propTypes = {
 	itemList: shape({
