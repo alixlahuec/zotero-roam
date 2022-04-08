@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { array, arrayOf, func, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { array, arrayOf, bool, func, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
 import { Button, InputGroup, MenuItem, NonIdealState, Switch } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
@@ -125,35 +125,35 @@ const queries = {
 
 
 function runQueryTerm(term, useOR = false, item){
-    if(term.constructor === Array){
-        return runQuerySet(term, useOR, item);
-    } else if(term.constructor === Object){
-        let { property, relationship, value = "" } = term;
-        if(!property || !relationship){ 
-            return true; 
-        } else {
-            let { checkInput, testItem } = queries[property][relationship];
-            if(checkInput(value)){
-                return testItem(item, value);
-            } else {
-                return true;
-            }
-        }
-    } else {
-        throw new Error("Unexpected query input of type " + term.constructor, ", expected Array or Object");
-    }
+	if(term.constructor === Array){
+		return runQuerySet(term, useOR, item);
+	} else if(term.constructor === Object){
+		let { property, relationship, value = "" } = term;
+		if(!property || !relationship){ 
+			return true; 
+		} else {
+			let { checkInput, testItem } = queries[property][relationship];
+			if(checkInput(value)){
+				return testItem(item, value);
+			} else {
+				return true;
+			}
+		}
+	} else {
+		throw new Error("Unexpected query input of type " + term.constructor, ", expected Array or Object");
+	}
 }
 
 function runQuerySet(terms = [], useOR = true, item){
-    if(terms.length == 0){
-        return true;
-    } else {
-        if(useOR){
-            return terms.some(tm => runQueryTerm(tm, !useOR, item));
-        } else {
-            return terms.every(tm => runQueryTerm(tm, !useOR, item));
-        }
-    }
+	if(terms.length == 0){
+		return true;
+	} else {
+		if(useOR){
+			return terms.some(tm => runQueryTerm(tm, !useOR, item));
+		} else {
+			return terms.every(tm => runQueryTerm(tm, !useOR, item));
+		}
+	}
 }
 
 function itemRenderer(item, itemProps) {
@@ -163,32 +163,32 @@ function itemRenderer(item, itemProps) {
 }
 
 function QueryEntry({ term, updateSelf, useOR = false }){
-    const { property, relationship, value } = term;
+	const { property, relationship, value } = term;
 
-    const handlePropChange = useCallback((update) => updateSelf({ ...term, ...update}), [term, updateSelf]);
+	const handlePropChange = useCallback((update) => updateSelf({ ...term, ...update}), [term, updateSelf]);
 
-    const handlePropertyChange = useCallback((newProp) => {
-        let updates = { property: newProp };
-        // Update relationship also, if necessary
-        if(!Object.keys(queries[newProp]).includes(relationship)){ updates.relationship = Object.keys(queries[newProp])[0]; }
-        // Update value also, if necessary
-        if(updates.relationship && !queries[newProp][updates.relationship].checkInput(value)) { updates.value = ""; }
+	const handlePropertyChange = useCallback((newProp) => {
+		let updates = { property: newProp };
+		// Update relationship also, if necessary
+		if(!Object.keys(queries[newProp]).includes(relationship)){ updates.relationship = Object.keys(queries[newProp])[0]; }
+		// Update value also, if necessary
+		if(updates.relationship && !queries[newProp][updates.relationship].checkInput(value)) { updates.value = ""; }
 
-        handlePropChange(updates);
-    }, [handlePropChange, relationship, value]);
-    const handleRelationshipChange = useCallback((newRel) => {
-        let updates = { relationship: newRel };
-        // Update value also, if necessary
-        if(!queries[property][newRel].checkInput(value)) { updates.value = ""; }
+		handlePropChange(updates);
+	}, [handlePropChange, relationship, value]);
+	const handleRelationshipChange = useCallback((newRel) => {
+		let updates = { relationship: newRel };
+		// Update value also, if necessary
+		if(!queries[property][newRel].checkInput(value)) { updates.value = ""; }
 
-        handlePropChange(updates);
-    }, [handlePropChange, property, value]);
-    const handleValueChange = useCallback((newVal) => handlePropChange({ value: newVal }), [handlePropChange]);
+		handlePropChange(updates);
+	}, [handlePropChange, property, value]);
+	const handleValueChange = useCallback((newVal) => handlePropChange({ value: newVal }), [handlePropChange]);
 
 	const addSiblingTerm = useCallback(() => updateSelf([term, defaultQueryTerm]), [term, updateSelf]);
 
-    return <div className="zr-query-entry">
-        <Select 
+	return <div className="zr-query-entry">
+		<Select 
 			filterable={false} 
 			itemRenderer={itemRenderer}
 			onItemSelect={handlePropertyChange}
@@ -196,16 +196,16 @@ function QueryEntry({ term, updateSelf, useOR = false }){
 		>
 			<Button minimal={true} rightIcon="caret-down" text={property} />
 		</Select>
-        <Select 
-            filterable={false} 
-            itemRenderer={itemRenderer} 
-            onItemSelect={handleRelationshipChange} 
-            options={Object.keys(queries[property])}>
+		<Select 
+			filterable={false} 
+			itemRenderer={itemRenderer} 
+			onItemSelect={handleRelationshipChange} 
+			options={Object.keys(queries[property])}>
 			<Button minimal={true} rightIcon="caret-down" text={relationship} />
 		</Select>
-        <InputGroup onChange={handleValueChange} value={value} />
-        <Button minimal={true} onClick={addSiblingTerm} text={"Add term (" + (useOR ? "or" : "and") + ")"} />
-    </div>;
+		<InputGroup onChange={handleValueChange} value={value} />
+		<Button minimal={true} onClick={addSiblingTerm} text={"Add term (" + (useOR ? "or" : "and") + ")"} />
+	</div>;
 }
 QueryEntry.propTypes = {
 	term: shape({
@@ -218,85 +218,85 @@ QueryEntry.propTypes = {
 };
 
 function QueryBox({ handlers, terms = [], useOR = true }){
-    const {
-        removeSelf,
-        addTerm,
-        removeTerm,
-        updateTerm } = handlers;
+	const {
+		removeSelf,
+		addTerm,
+		removeTerm,
+		updateTerm } = handlers;
 
-    const addChildTerm = useCallback((index) => {
-        updateTerm(index, [...terms[index], defaultQueryTerm]);
-    }, [terms, updateTerm]);
+	const addChildTerm = useCallback((index) => {
+		updateTerm(index, [...terms[index], defaultQueryTerm]);
+	}, [terms, updateTerm]);
 
-    const removeChildTerm = useCallback((index, subindex) => {
-        let term = terms[index];
-        updateTerm(index, [...term.slice(0, subindex), ...term.slice(subindex + 1, term.length)]);
-    }, [terms, updateTerm]);
+	const removeChildTerm = useCallback((index, subindex) => {
+		let term = terms[index];
+		updateTerm(index, [...term.slice(0, subindex), ...term.slice(subindex + 1, term.length)]);
+	}, [terms, updateTerm]);
 
-    const updateChildTerm = useCallback((index, subindex, value) => {
-        let term = terms[index];
-        updateTerm(index, [...term.slice(0, subindex), value, ...term.slice(subindex + 1, term.length)]);
-    }, [terms, updateTerm]);
+	const updateChildTerm = useCallback((index, subindex, value) => {
+		let term = terms[index];
+		updateTerm(index, [...term.slice(0, subindex), value, ...term.slice(subindex + 1, term.length)]);
+	}, [terms, updateTerm]);
 
-    const makeHandlersForChild = useCallback((index) => {
-        return {
-            removeSelf: terms.length == 1 ? false : removeTerm(index),
-            addTerm: addChildTerm(index),
-            removeTerm: removeChildTerm(index),
-            updateTerm: (subindex, value) => updateChildTerm(index, subindex, value)
-        };
-    }, [removeTerm, addChildTerm, removeChildTerm, updateChildTerm, terms]);
+	const makeHandlersForChild = useCallback((index) => {
+		return {
+			removeSelf: terms.length == 1 ? false : removeTerm(index),
+			addTerm: addChildTerm(index),
+			removeTerm: removeChildTerm(index),
+			updateTerm: (subindex, value) => updateChildTerm(index, subindex, value)
+		};
+	}, [removeTerm, addChildTerm, removeChildTerm, updateChildTerm, terms]);
 
-    return <div className="zr-query-box">
-        {removeSelf
-            ? <Button icon="cross" minimal={true} onClick={removeSelf} />
-            : null}
-        {terms.map((tm, index) => {
-            if(tm.constructor === Array){
-                let elemHandlers = makeHandlersForChild(index)
-                return <QueryBox key={index} handlers={elemHandlers} terms={tm} useOR={!useOR} />;
-            } else {
-                return <QueryEntry key={index} term={tm} useOR={!useOR} />;
-            }
-        })}
-        <Button minimal={true} onClick={addTerm} text={"Add term (" + (useOR ? "or" : "and") + ")"} />
-    </div>;
+	return <div className="zr-query-box">
+		{removeSelf
+			? <Button icon="cross" minimal={true} onClick={removeSelf} />
+			: null}
+		{terms.map((tm, index) => {
+			if(tm.constructor === Array){
+				let elemHandlers = makeHandlersForChild(index);
+				return <QueryBox key={index} handlers={elemHandlers} terms={tm} useOR={!useOR} />;
+			} else {
+				return <QueryEntry key={index} term={tm} useOR={!useOR} />;
+			}
+		})}
+		<Button minimal={true} onClick={addTerm} text={"Add term (" + (useOR ? "or" : "and") + ")"} />
+	</div>;
 }
 QueryBox.propTypes = {
 	handlers: objectOf(func),
 	terms: arrayOf(oneOfType([string, array])),
 	useOR: bool
-}
+};
 
 function QueryBuilder({ items }){
 	const [currentPage, setCurrentPage] = useState(1);
-    const [useOR, setUseOR] = useState(true);
-    const [queryTerms, setQueryTerms] = useState([defaultQueryTerm]);
+	const [useOR, setUseOR] = useState(true);
+	const [queryTerms, setQueryTerms] = useState([defaultQueryTerm]);
 
-    const switchOperator = useCallback(() => setUseOR(prev => !prev), []);
+	const switchOperator = useCallback(() => setUseOR(prev => !prev), []);
 
-    const addQueryTerm = useCallback(() => {
-        setQueryTerms(prev => [...prev, defaultQueryTerm]);
-    }, []);
+	const addQueryTerm = useCallback(() => {
+		setQueryTerms(prev => [...prev, defaultQueryTerm]);
+	}, []);
 
-    const removeQueryTerm = useCallback((index) => {
-        setQueryTerms(prev => [...prev.slice(0,index), ...prev.slice(index + 1, prev.length)]);
-    }, []);
+	const removeQueryTerm = useCallback((index) => {
+		setQueryTerms(prev => [...prev.slice(0,index), ...prev.slice(index + 1, prev.length)]);
+	}, []);
 
-    const handleQueryTermChange = useCallback((index, value) => {
-        setQueryTerms(prev => [...prev.slice(0, index), value, ...prev.slice(index + 1, prev.length)]);
-    }, []);
+	const handleQueryTermChange = useCallback((index, value) => {
+		setQueryTerms(prev => [...prev.slice(0, index), value, ...prev.slice(index + 1, prev.length)]);
+	}, []);
 
-    const handlers = useMemo(() => {
-        return {
-            removeSelf: false,
-            addTerm: addQueryTerm,
-            removeTerm: removeQueryTerm,
-            updateTerm: handleQueryTermChange
-        };
-    }, []);
+	const handlers = useMemo(() => {
+		return {
+			removeSelf: false,
+			addTerm: addQueryTerm,
+			removeTerm: removeQueryTerm,
+			updateTerm: handleQueryTermChange
+		};
+	}, [addQueryTerm, removeQueryTerm, handleQueryTermChange]);
 
-    const queriedItems = useMemo(() => items.filter(it => runQuerySet(queryTerms, useOR, it)), [queryTerms, useOR]);
+	const queriedItems = useMemo(() => items.filter(it => runQuerySet(queryTerms, useOR, it)), [items, queryTerms, useOR]);
 
 	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
 
@@ -304,7 +304,7 @@ function QueryBuilder({ items }){
 		setCurrentPage(1);
 	}, [items, queriedItems]);
 
-    return <div className="zr-query-builder">
+	return <div className="zr-query-builder">
 		<Toolbar>
 			<Switch checked={useOR} label="Start with OR" onChange={switchOperator} />
 			<QueryBox 
@@ -327,7 +327,7 @@ function QueryBuilder({ items }){
 				setCurrentPage={setCurrentPage} 
 			/>
 		</Toolbar>
-    </div>;
+	</div>;
 }
 QueryBuilder.propTypes = {
 	items: array
