@@ -211,7 +211,7 @@ QueryEntry.propTypes = {
 	term: shape({
 		property: oneOf(Object.keys(queries)),
 		relationship: string,
-		value: any
+		value: string
 	}),
 	updateSelf: func,
 	useOR: bool
