@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { array, arrayOf, bool, func, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
+import { array, arrayOf, bool, func, object, oneOf, oneOfType, shape, string } from "prop-types";
 import { Button, InputGroup, MenuItem, NonIdealState, Switch } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
@@ -256,15 +256,20 @@ function QueryBox({ handlers, terms = [], useOR = true }){
 				let elemHandlers = makeHandlersForChild(index);
 				return <QueryBox key={index} handlers={elemHandlers} terms={tm} useOR={!useOR} />;
 			} else {
-				return <QueryEntry key={index} term={tm} useOR={!useOR} />;
+				return <QueryEntry key={index} term={tm} updateSelf={(value) => updateTerm(index, value)} useOR={!useOR} />;
 			}
 		})}
 		<Button minimal={true} onClick={addTerm} text={"Add term (" + (useOR ? "or" : "and") + ")"} />
 	</div>;
 }
 QueryBox.propTypes = {
-	handlers: objectOf(func),
-	terms: arrayOf(oneOfType([string, array])),
+	handlers: shape({
+		removeSelf: oneOfType([func, bool]),
+		addTerm: func,
+		removeTerm: func,
+		updateTerm: func
+	}),
+	terms: arrayOf(oneOfType([object, array])),
 	useOR: bool
 };
 
