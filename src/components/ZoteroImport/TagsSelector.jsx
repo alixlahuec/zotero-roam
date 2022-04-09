@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { arrayOf, func, string } from "prop-types";
 import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect } from "@blueprintjs/select";
@@ -7,6 +7,18 @@ import { getAllPages } from "../../roam";
 import { searchEngine } from "../../utils";
 
 const results_limit = 30;
+const popoverProps = {
+	canEscapeKeyClose: false,
+	fill: true,
+	minimal: true,
+	popoverClassName: "zr-popover"
+};
+const tagInputProps = {
+	leftIcon: "tag",
+	tagProps: {
+		minimal: true
+	}
+};
 
 const createNewItemFromQuery = (tag) => tag;
 const tagRenderer = (tag) => tag;
@@ -44,24 +56,6 @@ const TagsSelector = React.memo(function TagsSelector(props) {
 	const removeTag = useCallback((tag, _index) => {
 		onRemove(tag);
 	}, [onRemove]);
-
-	const popoverProps = useMemo(() => {
-		return {
-			canEscapeKeyClose: false,
-			fill: true,
-			minimal: true,
-			popoverClassName: "zr-popover"
-		};
-	}, []);
-
-	const tagInputProps = useMemo(() => {
-		return {
-			leftIcon: "tag",
-			tagProps: {
-				minimal: true
-			}
-		};
-	}, []);
 
 	return (
 		<MultiSelect

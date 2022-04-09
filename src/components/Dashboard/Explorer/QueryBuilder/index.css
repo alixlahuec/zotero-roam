@@ -1,0 +1,14 @@
+.zr-query-box,
+.zr-query-entry {
+    border: 1px var(--zr-border-co) solid;
+}
+
+.zr-query-box {
+    background: var(--zr-box-bg);
+    padding: 5px;
+}
+
+.zr-query-entry {
+    background: var(--zr-dialog-bg);
+    display: flex;
+}

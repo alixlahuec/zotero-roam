@@ -10,7 +10,6 @@ import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
-import "./index.css";
 
 function TabContents({ itemList, show }){
 	const filteredData = useMemo(() => {
