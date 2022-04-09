@@ -4,45 +4,41 @@ import { Button, Tag } from "@blueprintjs/core";
 
 import QueryEntry from "./QueryEntry";
 import { defaultQueryTerm } from "./queries";
+import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
 
 function QueryBox({ handlers, terms = [], useOR = true }){
 	const { removeSelf, addTerm, removeTerm, updateTerm } = handlers;
 
 	const addChildTerm = useCallback((index) => {
-		let term = terms[index];
-		if(term.constructor === Array){
-			updateTerm(index, [...term, defaultQueryTerm]);
-		} else {
-			updateTerm(index, [term, defaultQueryTerm]);
-		}
+		updateTerm(index, returnSiblingArray(terms[index], defaultQueryTerm));
 	}, [terms, updateTerm]);
 
 	const removeChildTerm = useCallback((index, subindex) => {
 		let term = terms[index];
-		updateTerm(index, [...term.slice(0, subindex), ...term.slice(subindex + 1, term.length)]);
+		updateTerm(index, removeArrayElemAt(term, subindex));
 	}, [terms, updateTerm]);
 
 	const updateChildTerm = useCallback((index, subindex, value) => {
 		let term = terms[index];
-		updateTerm(index, [...term.slice(0, subindex), value, ...term.slice(subindex + 1, term.length)]);
+		updateTerm(index, updateArrayElemAt(term, subindex, value));
 	}, [terms, updateTerm]);
 
 	const makeHandlersForChild = useCallback((index) => {
 		return {
 			removeSelf: terms.length == 1 ? false : () => removeTerm(index),
 			addTerm: () => addChildTerm(index),
-			removeTerm: () => removeChildTerm(index),
+			removeTerm: (subindex) => removeChildTerm(index, subindex),
 			updateTerm: (subindex, value) => updateChildTerm(index, subindex, value)
 		};
-	}, [removeTerm, addChildTerm, removeChildTerm, updateChildTerm, terms]);
+	}, [removeTerm, addChildTerm, removeChildTerm, updateChildTerm, terms.length]);
 
 	const makeHandlersForEntry = useCallback((index) => {
 		return {
+			removeSelf: terms.length == 1 ? false : () => removeTerm(index),
 			addSiblingTerm: () => addChildTerm(index),
-			removeSelf: index == 0 ? false : () => removeTerm(index),
 			updateSelf: (value) => updateTerm(index, value)
 		};
-	}, [addChildTerm, removeTerm, updateTerm]);
+	}, [addChildTerm, removeTerm, updateTerm, terms.length]);
 
 	return <div className="zr-query-box">
 		{removeSelf ? <Button icon="cross" minimal={true} onClick={removeSelf} />
@@ -54,7 +50,7 @@ function QueryBox({ handlers, terms = [], useOR = true }){
 			} else {
 				let elemHandlers = makeHandlersForEntry(index);
 				return <>
-					{index > 0 && <Tag minimal={true}>{useOR ? "AND" : "OR"}</Tag>}
+					{index > 0 && <Tag minimal={true}>{useOR ? "OR" : "AND"}</Tag>}
 					<QueryEntry key={index} handlers={elemHandlers} term={tm} useOR={!useOR} />
 				</>;
 			}

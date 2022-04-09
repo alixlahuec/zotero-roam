@@ -5,6 +5,7 @@ import { NonIdealState, Switch } from "@blueprintjs/core";
 import { ListItem, ListWrapper, Pagination, Toolbar } from "../../../DataList";
 import QueryBox from "./QueryBox";
 import { defaultQueryTerm, runQuerySet } from "./queries";
+import { addElemToArray, updateArrayElemAt, removeArrayElemAt } from "./utils";
 
 import "./index.css";
 
@@ -18,15 +19,15 @@ function QueryBuilder({ items }){
 	const switchOperator = useCallback(() => setUseOR(prev => !prev), []);
 
 	const addQueryTerm = useCallback(() => {
-		setQueryTerms(prev => [...prev, defaultQueryTerm]);
+		setQueryTerms(prev => addElemToArray(prev, defaultQueryTerm));
 	}, []);
 
 	const removeQueryTerm = useCallback((index) => {
-		setQueryTerms(prev => [...prev.slice(0,index), ...prev.slice(index + 1, prev.length)]);
+		setQueryTerms(prev => removeArrayElemAt(prev, index));
 	}, []);
 
 	const handleQueryTermChange = useCallback((index, value) => {
-		setQueryTerms(prev => [...prev.slice(0, index), value, ...prev.slice(index + 1, prev.length)]);
+		setQueryTerms(prev => updateArrayElemAt(prev, index, value));
 	}, []);
 
 	const handlers = useMemo(() => {
@@ -48,7 +49,7 @@ function QueryBuilder({ items }){
 
 	return <div className="zr-query-builder">
 		<Toolbar>
-			<Switch checked={useOR} label="Start with OR" onChange={switchOperator} />
+			<Switch checked={useOR} innerLabel="AND" innerLabelChecked="OR" onChange={switchOperator} />
 			<QueryBox 
 				handlers={handlers}
 				terms={queryTerms}

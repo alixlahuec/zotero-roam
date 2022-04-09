@@ -11,4 +11,14 @@
 .zr-query-entry {
     background: var(--zr-dialog-bg);
     display: flex;
+    flex-wrap: wrap;
+}
+
+.zr-query-entry > .bp3-popover-wrapper {
+    flex: 0 0 auto;
+}
+
+.zr-query-entry--add-sibling.bp3-button {
+    flex: 0 0 100%;
+    justify-content: left;
 }

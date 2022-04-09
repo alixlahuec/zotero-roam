@@ -67,7 +67,7 @@ function QueryEntry({ handlers, term, useOR = false }){
 		</Select>
 		<InputGroup onChange={handleValueChange} value={value} />
 		{removeEntryButton}
-		<Button minimal={true} onClick={addSiblingTerm} rightIcon="key-enter" text={(useOR ? "OR" : "AND")} />
+		<Button className="zr-query-entry--add-sibling" icon="small-plus" minimal={true} onClick={addSiblingTerm} text={(useOR ? "OR" : "AND")} />
 	</div>;
 }
 QueryEntry.propTypes = {
