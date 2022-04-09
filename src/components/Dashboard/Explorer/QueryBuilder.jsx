@@ -168,7 +168,7 @@ function itemRenderer(item, itemProps) {
 }
 
 function QueryEntry({ term, updateSelf, useOR = false }){
-	const { property, relationship, value } = term;
+	const { property, relationship, value = "" } = term;
 
 	const handlePropChange = useCallback((update) => updateSelf({ ...term, ...update}), [term, updateSelf]);
 
@@ -188,7 +188,7 @@ function QueryEntry({ term, updateSelf, useOR = false }){
 
 		handlePropChange(updates);
 	}, [handlePropChange, property, value]);
-	const handleValueChange = useCallback((newVal) => handlePropChange({ value: newVal }), [handlePropChange]);
+	const handleValueChange = useCallback((event) => handlePropChange({ value: event.target.value }), [handlePropChange]);
 
 	const addSiblingTerm = useCallback(() => updateSelf([term, defaultQueryTerm]), [term, updateSelf]);
 
