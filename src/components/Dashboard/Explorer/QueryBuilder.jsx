@@ -167,7 +167,8 @@ function itemRenderer(item, itemProps) {
 	return <MenuItem active={active} key={item} onClick={handleClick} text={item} />;
 }
 
-function QueryEntry({ term, updateSelf, useOR = false }){
+function QueryEntry({ handlers, term, useOR = false }){
+	const { addSiblingTerm, removeSelf, updateSelf } = handlers;
 	const { property, relationship, value = "" } = term;
 
 	const handlePropChange = useCallback((update) => updateSelf({ ...term, ...update}), [term, updateSelf]);
@@ -190,7 +191,13 @@ function QueryEntry({ term, updateSelf, useOR = false }){
 	}, [handlePropChange, property, value]);
 	const handleValueChange = useCallback((event) => handlePropChange({ value: event.target.value }), [handlePropChange]);
 
-	const addSiblingTerm = useCallback(() => updateSelf([term, defaultQueryTerm]), [term, updateSelf]);
+	const removeEntryButton = useMemo(() => {
+		if(removeSelf){
+			return <Button icon="small-cross" minimal={true} onClick={removeSelf} />;
+		} else {
+			return null;
+		}
+	}, [removeSelf]);
 
 	return <div className="zr-query-entry">
 		<Select 
@@ -213,17 +220,21 @@ function QueryEntry({ term, updateSelf, useOR = false }){
 		>
 			<Button minimal={true} rightIcon="caret-down" text={relationship} />
 		</Select>
-		<InputGroup onChange={handleValueChange} value={value} />
+		<InputGroup onChange={handleValueChange} rightElement={removeEntryButton} value={value} />
 		<Button minimal={true} onClick={addSiblingTerm} text={"Add term (" + (useOR ? "or" : "and") + ")"} />
 	</div>;
 }
 QueryEntry.propTypes = {
+	handlers: shape({
+		addSiblingTerm: func,
+		removeSelf: oneOfType([func, bool]),
+		updateSelf: func
+	}),
 	term: shape({
 		property: oneOf(Object.keys(queries)),
 		relationship: string,
 		value: string
 	}),
-	updateSelf: func,
 	useOR: bool
 };
 
@@ -235,7 +246,12 @@ function QueryBox({ handlers, terms = [], useOR = true }){
 		updateTerm } = handlers;
 
 	const addChildTerm = useCallback((index) => {
-		updateTerm(index, [...terms[index], defaultQueryTerm]);
+		let term = terms[index];
+		if(term.constructor === Array){
+			updateTerm(index, [...term, defaultQueryTerm]);
+		} else {
+			updateTerm(index, [term, defaultQueryTerm]);
+		}
 	}, [terms, updateTerm]);
 
 	const removeChildTerm = useCallback((index, subindex) => {
@@ -250,12 +266,20 @@ function QueryBox({ handlers, terms = [], useOR = true }){
 
 	const makeHandlersForChild = useCallback((index) => {
 		return {
-			removeSelf: terms.length == 1 ? false : removeTerm(index),
-			addTerm: addChildTerm(index),
-			removeTerm: removeChildTerm(index),
+			removeSelf: terms.length == 1 ? false : () => removeTerm(index),
+			addTerm: () => addChildTerm(index),
+			removeTerm: () => removeChildTerm(index),
 			updateTerm: (subindex, value) => updateChildTerm(index, subindex, value)
 		};
 	}, [removeTerm, addChildTerm, removeChildTerm, updateChildTerm, terms]);
+
+	const makeHandlersForEntry = useCallback((index) => {
+		return {
+			addSiblingTerm: () => addChildTerm(index),
+			removeSelf: index == 0 ? false : () => removeTerm(index),
+			updateSelf: (value) => updateTerm(index, value)
+		};
+	}, [addChildTerm, removeTerm, updateTerm]);
 
 	return <div className="zr-query-box">
 		{removeSelf
@@ -266,7 +290,8 @@ function QueryBox({ handlers, terms = [], useOR = true }){
 				let elemHandlers = makeHandlersForChild(index);
 				return <QueryBox key={index} handlers={elemHandlers} terms={tm} useOR={!useOR} />;
 			} else {
-				return <QueryEntry key={index} term={tm} updateSelf={(value) => updateTerm(index, value)} useOR={!useOR} />;
+				let elemHandlers = makeHandlersForEntry(index);
+				return <QueryEntry key={index} handlers={elemHandlers} term={tm} useOR={!useOR} />;
 			}
 		})}
 		<Button minimal={true} onClick={addTerm} text={"Add term (" + (useOR ? "or" : "and") + ")"} />
