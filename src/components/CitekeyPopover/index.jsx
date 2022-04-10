@@ -33,7 +33,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 
 	const buttonProps = useMemo(() => {
 		return inGraph
-			? {className: "zr-text-small", intent: "success", onClick: () => openPageByUID(inGraph)}
+			? {className: "zr-text-small", onClick: () => openPageByUID(inGraph)}
 			: {className: ["zr-text-small", "zr-auxiliary"].join(" ")};
 	}, [inGraph]);
 
@@ -132,7 +132,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 
 	return (
 		<Popover2 {...popoverMenuProps} content={actionsMenu}>
-			<Button text={"@" + item.key} rightIcon="chevron-right" minimal={true} small={true} {...buttonProps} />
+			<Button data-in-graph={(inGraph != false).toString()} minimal={true} rightIcon="chevron-right" small={true} text={"@" + item.key} {...buttonProps} />
 		</Popover2>
 	);
 });

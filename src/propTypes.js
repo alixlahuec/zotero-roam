@@ -84,6 +84,7 @@ const cleanLibraryItemType = shape({
 	itemType: string,
 	key: string,
 	location: string,
+	meta: string,
 	publication: string,
 	tags: array,
 	title: string,

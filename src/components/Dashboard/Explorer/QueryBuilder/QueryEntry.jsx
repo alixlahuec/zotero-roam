@@ -42,7 +42,7 @@ function QueryEntry({ handlers, term, useOR = false }){
 
 	const removeEntryButton = useMemo(() => {
 		return removeSelf
-			? <Button icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />
+			? <Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />
 			: null;
 	}, [removeSelf]);
 

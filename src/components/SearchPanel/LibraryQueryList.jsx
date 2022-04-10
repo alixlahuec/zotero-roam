@@ -94,7 +94,7 @@ function testItemsEquality(a,b){
 
 const SearchResult = React.memo(function SearchResult(props) {
 	const { item, handleClick, modifiers } = props;
-	const { authors, inGraph, itemType, key, publication, title, year} = item;
+	const { inGraph, itemType, key, meta, publication, title } = item;
 
 	return <MenuItem
 		onClick={handleClick}
@@ -110,7 +110,7 @@ const SearchResult = React.memo(function SearchResult(props) {
 			<>
 				<span className="zr-library-item--title">{title}</span>
 				<span className="zr-details">
-					<span className="zr-accent-1">{authors + " (" + year + ")"}</span>
+					<span className="zr-accent-1">{meta}</span>
 					<span className="zr-secondary">{publication}</span>
 				</span>
 			</>

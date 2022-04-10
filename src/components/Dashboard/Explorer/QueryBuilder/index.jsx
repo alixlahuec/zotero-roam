@@ -10,18 +10,19 @@ import { addElemToArray, updateArrayElemAt, removeArrayElemAt } from "./utils";
 
 import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
+import QueryBox2 from "./QueryBox2";
 
 const itemsPerPage = 20;
 
 function QueryBuilder({ items, onClose }){
 	const [currentPage, setCurrentPage] = useState(1);
 	const [useOR, setUseOR] = useState(true);
-	const [queryTerms, setQueryTerms] = useState([defaultQueryTerm]);
+	const [queryTerms, setQueryTerms] = useState([[defaultQueryTerm]]);
 
 	const switchOperator = useCallback(() => setUseOR(prev => !prev), []);
 
 	const addQueryTerm = useCallback(() => {
-		setQueryTerms(prev => addElemToArray(prev, defaultQueryTerm));
+		setQueryTerms(prev => addElemToArray(prev, [defaultQueryTerm]));
 	}, []);
 
 	const removeQueryTerm = useCallback((index) => {
@@ -51,6 +52,7 @@ function QueryBuilder({ items, onClose }){
 		</Toolbar>
 		<Toolbar>
 			<QueryBox handlers={handlers} terms={queryTerms} useOR={useOR} />
+			<QueryBox2 handlers={handlers} terms={queryTerms} useOR={useOR} />
 		</Toolbar>
 		<ListWrapper>
 			{queriedItems.length > 0

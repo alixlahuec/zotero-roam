@@ -17,11 +17,15 @@
 }
 
 .zr-query-entry > .bp3-popover-wrapper {
-    flex: 1 1 20%;
+    flex: 1 1 15%;
 }
 
 .zr-query-entry > .bp3-input-group {
     flex: 1 1 60%;
+}
+
+.zr-query-entry > .zr-query-entry--remove-self.bp3-button {
+    flex: 1 1 10%;
 }
 
 .zr-query-box--add-sibling.bp3-button,
@@ -48,8 +52,9 @@
 .zr-datalist--item.zr-query--result {
     border: 1px var(--zr-border-co) solid;
     border-radius: 5px;
-    padding: 5px;
+    font-size: var(--zr-text-small);
     margin: 10px;
+    padding: 5px;
 }
 
 .zr-datalist--item.zr-query--result [zr-role="item-header"] {

@@ -55,7 +55,7 @@ function QueryBox({ handlers, terms = [], useOR = true }){
 				</>;
 			}
 		})}
-		<Button className={["zr-query-box--add-sibling", "zr-text-small"].join(" ")} icon="small-plus" minimal={true} onClick={addTerm} text={(useOR ? "OR" : "AND")} />
+		<Button className={["zr-query-box--add-sibling", "zr-text-small"].join(" ")} icon="small-plus" minimal={true} onClick={addTerm} small={true} text={(useOR ? "OR" : "AND")} />
 	</div>;
 }
 QueryBox.propTypes = {

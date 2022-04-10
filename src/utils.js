@@ -114,9 +114,13 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 	});
 	let tags = Array.from(new Set(item.data.tags.map(t => t.tag)));
 
+	let authors = item.meta.creatorSummary || "";
+	let maybeYear = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear().toString() : "";
+	let pub_year = maybeYear ? `(${maybeYear})` : "";
+
 	let clean_item = {
 		abstract: item.data.abstractNote || "",
-		authors: item.meta.creatorSummary || "",
+		authors,
 		authorsFull: creators.map(cre => cre.full),
 		authorsLastNames: creators.map(cre => cre.last),
 		authorsRoles: creators.map(cre => cre.role),
@@ -130,11 +134,12 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 		itemType: item.data.itemType,
 		key: item.key,
 		location: item.library.type + "s/" + item.library.id,
+		meta: [authors, pub_year].filter(Boolean).join(" "),
 		publication: item.data.publicationTitle || item.data.bookTitle || item.data.university || "",
 		tags: tags,
 		title: item.data.title,
 		weblink,
-		year: item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear().toString() : "",
+		year: maybeYear,
 		zotero: {
 			local: getLocalLink(item, {format: "target"}),
 			web: getWebLink(item, {format: "target"})
@@ -167,6 +172,19 @@ function cleanNewlines(text){
 	}
 
 	return cleanText;
+}
+
+function cleanOuterParentheses(text){
+	let cleanText = text;
+	if(cleanText.startsWith("(")){
+		cleanText = cleanText.slice(1);
+		cleanText = cleanNewlines(cleanText);
+	} else if(cleanText.endsWith(")")){
+		cleanText = cleanText.slice(0, -1);
+		cleanText = cleanNewlines(cleanText);
+	}
+
+	return cleanText;	
 }
 
 /** Formats the metadata of a Semantic Scholar entry
@@ -1107,6 +1125,7 @@ export {
 	categorizeLibraryItems,
 	cleanLibrary,
 	cleanLibraryItem,
+	cleanOuterParentheses,
 	cleanSemantic,
 	compareItemsByYear,
 	compareAnnotationIndices,

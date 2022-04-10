@@ -16,14 +16,14 @@ function labelRenderer(num, { isHandleTooltip}) {
 	return isHandleTooltip ? `Last ${num} days` : "";
 }
 
-function LogViewSublist({ allAbstractsShown, items, label, onClose }){
+const LogViewSublist = React.memo(function LogViewSublist({ allAbstractsShown, items, label, onClose }){
 	return <>
 		<h5 className="zr-auxiliary">{label}</h5>
 		{items.length > 0
 			? items.map(it => <LogItem key={[it.location, it.key].join("/")} allAbstractsShown={allAbstractsShown} item={it} onClose={onClose} />)
 			: <span className="zr-secondary">No items</span>}
 	</>;
-}
+});
 LogViewSublist.propTypes = {
 	allAbstractsShown: bool,
 	items: arrayOf(customPropTypes.cleanRecentItemType),

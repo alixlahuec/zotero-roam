@@ -1,3 +1,8 @@
+.zr-library-item-popover {
+    flex: 0 0 auto;
+    overflow-wrap: anywhere;
+}
+
 .zr-library-item-popover button {
     background: var(--zr-box-bg);
     color: var(--zr-text-co);
@@ -5,8 +10,16 @@
     padding-left: 5px;
 }
 
-[data-in-graph="true"] .zr-library-item-popover button.bp3-button,
-[data-in-graph="true"] .zr-library-item-popover button.bp3-button:hover {
+[data-in-graph="true"].zr-library-item-popover button.bp3-button,
+[data-in-graph="true"].zr-library-item-popover button.bp3-button:hover {
     background: var(--zr-positive-bg);
     color: var(--zr-positive-co);
+}
+
+/* SMALLER DISPLAYS */
+
+@media (max-width: 700px){
+    .zr-library-item-popover {
+        flex: 1 1 auto;
+    }
 }

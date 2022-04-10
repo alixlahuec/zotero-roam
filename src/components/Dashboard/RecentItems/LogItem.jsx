@@ -41,7 +41,7 @@ Abstract.propTypes = {
 	allAbstractsShown: bool
 };
 
-function LogItem({ allAbstractsShown, item, onClose }){
+const LogItem = React.memo(function LogItem({ allAbstractsShown, item, onClose }){
 	const { abstract, children, inGraph, itemType, meta, publication, raw, title } = item;
 
 	return <ListItem className="zr-log-entry" data-in-graph={(inGraph != false).toString()}>
@@ -55,7 +55,7 @@ function LogItem({ allAbstractsShown, item, onClose }){
 		</div>
 		<Abstract abstract={abstract} allAbstractsShown={allAbstractsShown} />
 	</ListItem>;
-}
+});
 LogItem.propTypes = {
 	allAbstractsShown: bool,
 	item: customPropTypes.cleanRecentItemType,
