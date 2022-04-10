@@ -16,7 +16,7 @@ const itemsPerPage = 20;
 function QueryBuilder({ items, onClose }){
 	const [currentPage, setCurrentPage] = useState(1);
 	const [useOR, setUseOR] = useState(true);
-	const [queryTerms, setQueryTerms] = useState([[defaultQueryTerm]]);
+	const [queryTerms, setQueryTerms] = useState([]);
 
 	const switchOperator = useCallback(() => setUseOR(prev => !prev), []);
 
