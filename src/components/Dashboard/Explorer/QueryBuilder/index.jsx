@@ -4,13 +4,12 @@ import { NonIdealState, Switch } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
 import ItemElement from "./ItemElement";
-import QueryBox from "./QueryBox";
 import { defaultQueryTerm, runQuerySet } from "./queries";
 import { addElemToArray, updateArrayElemAt, removeArrayElemAt } from "./utils";
 
 import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
-import QueryBox2 from "./QueryBox2";
+import QueryFilterList from "./QueryFilterList";
 
 const itemsPerPage = 20;
 
@@ -32,7 +31,6 @@ function QueryBuilder({ items, onClose }){
 	const handleQueryTermChange = useCallback((index, value) => setQueryTerms(prev => updateArrayElemAt(prev, index, value)), []);
 
 	const handlers = useMemo(() => ({
-		removeSelf: false,
 		addTerm: addQueryTerm,
 		removeTerm: removeQueryTerm,
 		updateTerm: handleQueryTermChange
@@ -51,8 +49,7 @@ function QueryBuilder({ items, onClose }){
 			<Switch checked={useOR} innerLabel="AND" innerLabelChecked="OR" onChange={switchOperator} />
 		</Toolbar>
 		<Toolbar>
-			<QueryBox handlers={handlers} terms={queryTerms} useOR={useOR} />
-			<QueryBox2 handlers={handlers} terms={queryTerms} useOR={useOR} />
+			<QueryFilterList handlers={handlers} terms={queryTerms} useOR={useOR} />
 		</Toolbar>
 		<ListWrapper>
 			{queriedItems.length > 0
