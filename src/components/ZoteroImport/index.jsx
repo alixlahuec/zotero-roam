@@ -5,7 +5,7 @@ import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
 import NoWriteableLibraries from "../Errors/NoWriteableLibraries";
-import TagsSelector from "./TagsSelector";
+import TagsSelector from "../Inputs/TagsSelector";
 
 import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
@@ -146,9 +146,9 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 			<div className="import-options">
 				<div className="options-library-list">
 					<LibrarySelector 
-						libraries={libraries} 
-						onSelect={handleLibSelection} 
-						selectedLib={selectedLib} />
+						libraries={libraries}
+						selectedLib={selectedLib}
+						onSelect={handleLibSelection} />
 				</div>
 				<CollectionsSelector 
 					collections={selectedLibCollections}

@@ -1,17 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { array } from "prop-types";
+import { func } from "prop-types";
 import { NonIdealState, Switch } from "@blueprintjs/core";
 
-import { ListItem, ListWrapper, Pagination, Toolbar } from "../../../DataList";
+import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
+import ItemElement from "./ItemElement";
 import QueryBox from "./QueryBox";
 import { defaultQueryTerm, runQuerySet } from "./queries";
 import { addElemToArray, updateArrayElemAt, removeArrayElemAt } from "./utils";
 
+import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
 
 const itemsPerPage = 20;
 
-function QueryBuilder({ items }){
+function QueryBuilder({ items, onClose }){
 	const [currentPage, setCurrentPage] = useState(1);
 	const [useOR, setUseOR] = useState(true);
 	const [queryTerms, setQueryTerms] = useState([defaultQueryTerm]);
@@ -26,20 +28,16 @@ function QueryBuilder({ items }){
 		setQueryTerms(prev => removeArrayElemAt(prev, index));
 	}, []);
 
-	const handleQueryTermChange = useCallback((index, value) => {
-		setQueryTerms(prev => updateArrayElemAt(prev, index, value));
-	}, []);
+	const handleQueryTermChange = useCallback((index, value) => setQueryTerms(prev => updateArrayElemAt(prev, index, value)), []);
 
-	const handlers = useMemo(() => {
-		return {
-			removeSelf: false,
-			addTerm: addQueryTerm,
-			removeTerm: removeQueryTerm,
-			updateTerm: handleQueryTermChange
-		};
-	}, [addQueryTerm, removeQueryTerm, handleQueryTermChange]);
+	const handlers = useMemo(() => ({
+		removeSelf: false,
+		addTerm: addQueryTerm,
+		removeTerm: removeQueryTerm,
+		updateTerm: handleQueryTermChange
+	}), [addQueryTerm, removeQueryTerm, handleQueryTermChange]);
 
-	const queriedItems = useMemo(() => items.filter(it => runQuerySet(queryTerms, useOR, it)), [items, queryTerms, useOR]);
+	const queriedItems = useMemo(() => items.filter(it => runQuerySet(queryTerms, useOR, it.raw)), [items, queryTerms, useOR]);
 
 	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
 
@@ -50,16 +48,15 @@ function QueryBuilder({ items }){
 	return <div className="zr-query-builder">
 		<Toolbar>
 			<Switch checked={useOR} innerLabel="AND" innerLabelChecked="OR" onChange={switchOperator} />
-			<QueryBox 
-				handlers={handlers}
-				terms={queryTerms}
-				useOR={useOR} />
+		</Toolbar>
+		<Toolbar>
+			<QueryBox handlers={handlers} terms={queryTerms} useOR={useOR} />
 		</Toolbar>
 		<ListWrapper>
 			{queriedItems.length > 0
 				? queriedItems
 					.slice(...pageLimits)
-					.map((el, i) => <ListItem key={[el.key, i].join("-")}>{el.key}</ListItem>)
+					.map(el => <ItemElement key={[el.location, el.key].join("-")} item={el} onClose={onClose} />)
 				: <NonIdealState className="zr-auxiliary" description="No items to display" />}
 		</ListWrapper>
 		<Toolbar>
@@ -73,7 +70,8 @@ function QueryBuilder({ items }){
 	</div>;
 }
 QueryBuilder.propTypes = {
-	items: array
+	items: customPropTypes.cleanLibraryReturnArrayType,
+	onClose: func
 };
 
 export default QueryBuilder;

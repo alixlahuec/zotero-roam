@@ -8,7 +8,7 @@ import { RoamCitekeysProvider } from "../RoamCitekeysContext";
 import SearchPanel from "../SearchPanel";
 
 import { _getBibliography, _getCollections, _getChildren, _getItems, _getTags } from "../../api/public";
-import { addPaletteCommand } from "../../roam";
+import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace } from "../../roam";
 
 import * as customPropTypes from "../../propTypes";
 import Dashboard from "../Dashboard";
@@ -32,9 +32,10 @@ class App extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			status: this.props.userSettings.autoload ? "on" : "off",
 			isDashboardOpen: false,
-			isSearchPanelOpen: false
+			isSearchPanelOpen: false,
+			lastCursorLocation: null,
+			status: this.props.userSettings.autoload ? "on" : "off"
 		};
 		this.toggleExtension = this.toggleExtension.bind(this);
 		this.closeSearchPanel = this.closeSearchPanel.bind(this);
@@ -98,8 +99,8 @@ class App extends Component {
 									isOpen={isSearchPanelOpen}
 									onClose={this.closeSearchPanel}
 									status={status} />
+								<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
 							</RoamCitekeysProvider>
-							<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
 						</UserSettings.Provider>
 					</ExtensionContext.Provider>
 				</QueryClientProvider>
@@ -121,11 +122,17 @@ class App extends Component {
 	}
 
 	closeSearchPanel() {
-		this.setState((_prev) => ({ isSearchPanelOpen: false }));
+		this.setState((_prev) => {
+			maybeReturnCursorToPlace(_prev.lastCursorLocation);
+			return { 
+				isSearchPanelOpen: false,
+				lastCursorLocation: null
+			};
+		});
 	}
 
 	openSearchPanel() {
-		this.setState((_prev) => ({ isSearchPanelOpen: true }));
+		this.setState((_prev) => ({ lastCursorLocation: getCurrentCursorLocation(), isSearchPanelOpen: true }));
 	}
 
 	toggleSearchPanel() {

@@ -183,6 +183,32 @@ function getCitekeyPagesWithEditTime(){
 		}));
 }
 
+function getCurrentCursorLocation(){
+	const { "block-uid": blockUID, "window-id": windowID } = window.roamAlphaAPI.ui.getFocusedBlock();
+	if(!blockUID || !windowID){ return null; }
+
+	const blockElementID = ["block-input", windowID, blockUID].join("-");
+	const blockElement = document.getElementById(blockElementID) || {};
+	const { selectionStart = null, selectionEnd = null } = blockElement;
+
+	let output = {
+		id: blockElementID,
+		location: {
+			"block-uid": blockUID,
+			"window-id": windowID
+		}
+	};
+
+	if(selectionStart && selectionEnd){
+		output.selection = {
+			start: selectionStart,
+			end: selectionEnd
+		};
+	}
+
+	return output;
+}
+
 /** Retrieves the full list of Roam pages whose title begins with any of the keys provided
  * @param {String[]} keys - The Array of keys for which to retrieve Roam pages 
  * @returns {{title: String, uid: String}[]} The Array of pages whose title begins with any of the specified initials
@@ -300,6 +326,16 @@ async function importItemNotes({item, notes = []} = {}, uid, config){
 	}
 }
 
+function maybeReturnCursorToPlace(place = {}){
+	if(place && place.location){
+		let { id, ...rest} = place;
+		let blockStillExists = document.getElementById(id) || false;
+		if(blockStillExists){
+			window.roamAlphaAPI.ui.setBlockFocusAndSelection(rest);
+		}
+	}
+}
+
 /** Opens a Roam block or page in the right sidebar, based on its UID.
  * @param {String} uid - The UID of the Roam entity (block or page)
  * @param {String} type - The type of window that should be added to the sidebar. See the Roam Alpha API documentation for the complete list of available options.
@@ -324,9 +360,11 @@ export {
 	getAllPages,
 	getCitekeyPages,
 	getCitekeyPagesWithEditTime,
+	getCurrentCursorLocation,
 	getInitialedPages,
 	importItemMetadata,
 	importItemNotes,
+	maybeReturnCursorToPlace,
 	openInSidebarByUID,
 	openPageByUID
 };

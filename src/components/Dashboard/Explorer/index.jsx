@@ -5,13 +5,15 @@ import { Button, Spinner, Tab, Tabs } from "@blueprintjs/core";
 import { ExtensionContext } from "../../App";
 import { ListItem, ListWrapper } from "../../DataList";
 import QueryBuilder from "./QueryBuilder";
+import { useRoamCitekeys } from "../../RoamCitekeysContext";
 
 import { useQuery_Items } from "../../../api/queries";
-import { categorizeLibraryItems } from "../../../utils";
+import { categorizeLibraryItems, cleanLibraryItem, identifyChildren } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
 
-function TabContents({ itemList, show }){
+function TabContents({ itemList, onClose, show }){
+	const [roamCitekeys,] = useRoamCitekeys();
 	const filteredData = useMemo(() => {
 		switch(show){
 		case "pdfs":
@@ -20,20 +22,28 @@ function TabContents({ itemList, show }){
 			return itemList.notes;
 		case "items":
 		default:
-			return itemList.items;
+			return itemList.items
+				.map(item => {
+					let itemKey = item.data.key;
+					let location = item.library.type + "s/" + item.library.id;
+					let { pdfs, notes } = identifyChildren(itemKey, location, { pdfs: itemList.pdfs, notes: itemList.notes });
+
+					return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
+				});
 		}
-	}, [itemList, show]);
+	}, [itemList, roamCitekeys, show]);
 
 	return show == "items" 
-		? <QueryBuilder items={filteredData} />
+		? <QueryBuilder items={filteredData} onClose={onClose} />
 		: <ListWrapper>{filteredData.slice(0,20).map((it, i) => <ListItem key={it.key + "-" + i}>{it.key}</ListItem>)}</ListWrapper>;
 }
 TabContents.propTypes = {
 	itemList: shape({
-		today: arrayOf(customPropTypes.cleanRecentItemType),
-		yesterday: arrayOf(customPropTypes.cleanRecentItemType),
-		recent: arrayOf(customPropTypes.cleanRecentItemType)
+		items: arrayOf(customPropTypes.zoteroItemType),
+		pdfs: arrayOf(customPropTypes.zoteroItemType),
+		notes: arrayOf(customPropTypes.zoteroItemType)
 	}),
+	onClose: func,
 	show: oneOf(["items", "pdfs", "notes"])
 };
 
@@ -50,13 +60,13 @@ function ExplorerTabs({ itemList, onClose }){
 			renderActiveTabPanelOnly={false}
 			selectedTabId={activeTab} >
 			<Tab id="items" title="Items" 
-				panel={<TabContents itemList={itemList} show="items" />} 
+				panel={<TabContents itemList={itemList} onClose={onClose} show="items" />} 
 			/>
 			<Tab id="pdfs" title="PDFs" 
-				panel={<TabContents itemList={itemList} show="pdfs" />} 
+				panel={<TabContents itemList={itemList} onClose={onClose} show="pdfs" />} 
 			/>
 			<Tab id="notes" title="Notes"
-				panel={<TabContents itemList={itemList} show="notes" />}
+				panel={<TabContents itemList={itemList} onClose={onClose} show="notes" />}
 			/>
 			<Tabs.Expander />
 			<Button icon="cross" minimal={true} onClick={onClose} />
@@ -65,9 +75,9 @@ function ExplorerTabs({ itemList, onClose }){
 }
 ExplorerTabs.propTypes = {
 	itemList: shape({
-		today: arrayOf(customPropTypes.cleanRecentItemType),
-		yesterday: arrayOf(customPropTypes.cleanRecentItemType),
-		recent: arrayOf(customPropTypes.cleanRecentItemType)
+		items: arrayOf(customPropTypes.zoteroItemType),
+		pdfs: arrayOf(customPropTypes.zoteroItemType),
+		notes: arrayOf(customPropTypes.zoteroItemType)
 	}),
 	onClose: func
 };

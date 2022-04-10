@@ -4,21 +4,20 @@ import { Button, ButtonGroup, Card, Classes, Collapse, Divider, Tag } from "@blu
 
 import ButtonLink from "../../ButtonLink";
 import CitekeyPopover from "../../CitekeyPopover";
+import ErrorCallout from "../../Errors/ErrorCallout";
+import { useRoamCitekeys } from "../../RoamCitekeysContext";
 import SciteBadge from "../../SciteBadge";
 import SemanticPanel from "../SemanticPanel";
 
 import { showClasses } from "../classes";
 import { useQuery_Semantic } from "../../../api/queries";
 import { findRoamPage, importItemMetadata, importItemNotes } from "../../../roam";
-import { cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
+import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ItemDetails from "../../ItemDetails";
 import { UserSettings } from "../../App";
 
 import * as customPropTypes from "../../../propTypes";
-import { cleanLibraryItem } from "../../SearchPanel/utils";
-import { useRoamCitekeys } from "../../RoamCitekeysContext";
-import ErrorCallout from "../../Errors/ErrorCallout";
 
 function BacklinksItem({ entry }) {
 	const { _type, inLibrary, inGraph } = entry;

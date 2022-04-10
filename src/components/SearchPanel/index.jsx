@@ -7,7 +7,7 @@ import LibraryQueryList from "./LibraryQueryList";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
 import { useQuery_Items } from "../../api/queries";
-import { cleanLibrary } from "./utils";
+import { cleanLibrary } from "../../utils";
 
 import { dialogClass, dialogLabel } from "./classes";
 import "./index.css";
@@ -40,12 +40,10 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 	const toggleQuickCopy = useCallback(() => { setQuickCopy(prev => !prev); }, []);
 
-	const quickCopyProps = useMemo(() => {
-		return {
-			isActive: quickCopyActive,
-			toggle: toggleQuickCopy
-		};
-	}, [quickCopyActive, toggleQuickCopy]);
+	const quickCopyProps = useMemo(() => ({
+		isActive: quickCopyActive,
+		toggle: toggleQuickCopy
+	}), [quickCopyActive, toggleQuickCopy]);
 
 	return (
 		<DialogOverlay

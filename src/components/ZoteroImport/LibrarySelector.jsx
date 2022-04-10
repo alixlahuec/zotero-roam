@@ -4,9 +4,7 @@ import { RadioGroup } from "@blueprintjs/core";
 
 import * as customPropTypes from "../../propTypes";
 
-const LibrarySelector = React.memo(function LibrarySelector(props) {
-	const { libraries, onSelect, selectedLib } = props;
-
+const LibrarySelector = React.memo(function LibrarySelector({ libraries, selectedLib, onSelect }) {
 	const options = useMemo(() => {
 		return libraries.map(lib => { return { value: lib.path }; });
 	}, [libraries]);

@@ -41,7 +41,7 @@ function QueryBox({ handlers, terms = [], useOR = true }){
 	}, [addChildTerm, removeTerm, updateTerm, terms.length]);
 
 	return <div className="zr-query-box">
-		{removeSelf ? <Button icon="cross" minimal={true} onClick={removeSelf} />
+		{removeSelf ? <Button className="zr-query-box--remove-self" icon="cross" minimal={true} onClick={removeSelf} />
 			: null}
 		{terms.map((tm, index) => {
 			if(tm.constructor === Array){
@@ -55,7 +55,7 @@ function QueryBox({ handlers, terms = [], useOR = true }){
 				</>;
 			}
 		})}
-		<Button icon="small-plus" minimal={true} onClick={addTerm} text={(useOR ? "OR" : "AND")} />
+		<Button className={["zr-query-box--add-sibling", "zr-text-small"].join(" ")} icon="small-plus" minimal={true} onClick={addTerm} text={(useOR ? "OR" : "AND")} />
 	</div>;
 }
 QueryBox.propTypes = {
