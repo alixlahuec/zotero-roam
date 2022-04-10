@@ -174,19 +174,6 @@ function cleanNewlines(text){
 	return cleanText;
 }
 
-function cleanOuterParentheses(text){
-	let cleanText = text;
-	if(cleanText.startsWith("(")){
-		cleanText = cleanText.slice(1);
-		cleanText = cleanNewlines(cleanText);
-	} else if(cleanText.endsWith(")")){
-		cleanText = cleanText.slice(0, -1);
-		cleanText = cleanNewlines(cleanText);
-	}
-
-	return cleanText;	
-}
-
 /** Formats the metadata of a Semantic Scholar entry
  * @param {Object} item - The Semantic Scholar entry to format 
  * @returns {{
@@ -1125,7 +1112,6 @@ export {
 	categorizeLibraryItems,
 	cleanLibrary,
 	cleanLibraryItem,
-	cleanOuterParentheses,
 	cleanSemantic,
 	compareItemsByYear,
 	compareAnnotationIndices,

@@ -1,9 +1,10 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { bool, func, oneOf, oneOfType, shape, string } from "prop-types";
 import { Button, MenuItem, InputGroup } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
-import { queries } from "./queries";
+import { defaultQueryTerm, queries } from "./queries";
+import { returnSiblingArray } from "./utils";
 
 const popoverProps = {
 	minimal: true,
@@ -17,8 +18,12 @@ function itemRenderer(item, itemProps) {
 }
 
 function QueryEntry({ handlers, term, useOR = false }){
-	const { addSiblingTerm, removeSelf, updateSelf } = handlers;
+	const { removeSelf, updateSelf } = handlers;
 	const { property, relationship, value = "" } = term;
+
+	const addSiblingTerm = useCallback(() => {
+		updateSelf(returnSiblingArray(term, defaultQueryTerm));
+	}, [term, updateSelf]);
 
 	const handlePropChange = useCallback((update) => updateSelf({ ...term, ...update}), [term, updateSelf]);
 
@@ -40,12 +45,6 @@ function QueryEntry({ handlers, term, useOR = false }){
 	}, [handlePropChange, property, value]);
 	const handleValueChange = useCallback((event) => handlePropChange({ value: event.target.value }), [handlePropChange]);
 
-	const removeEntryButton = useMemo(() => {
-		return removeSelf
-			? <Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />
-			: null;
-	}, [removeSelf]);
-
 	return <div className="zr-query-entry">
 		<Select 
 			filterable={false} 
@@ -66,7 +65,7 @@ function QueryEntry({ handlers, term, useOR = false }){
 			<Button minimal={true} rightIcon="caret-down" text={relationship} />
 		</Select>
 		<InputGroup onChange={handleValueChange} value={value} />
-		{removeEntryButton}
+		{removeSelf && <Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />}
 		<Button className={["zr-query-entry--add-sibling", "zr-text-small"].join(" ")} 
 			icon="small-plus" 
 			minimal={true} 
@@ -77,7 +76,6 @@ function QueryEntry({ handlers, term, useOR = false }){
 }
 QueryEntry.propTypes = {
 	handlers: shape({
-		addSiblingTerm: func,
 		removeSelf: oneOfType([func, bool]),
 		updateSelf: func
 	}),

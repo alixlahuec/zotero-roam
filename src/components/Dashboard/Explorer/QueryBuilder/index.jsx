@@ -21,7 +21,7 @@ function QueryBuilder({ items, onClose }){
 	const switchOperator = useCallback(() => setUseOR(prev => !prev), []);
 
 	const addQueryTerm = useCallback(() => {
-		setQueryTerms(prev => addElemToArray(prev, [defaultQueryTerm]));
+		setQueryTerms(prev => addElemToArray(prev, [[defaultQueryTerm]]));
 	}, []);
 
 	const removeQueryTerm = useCallback((index) => {
