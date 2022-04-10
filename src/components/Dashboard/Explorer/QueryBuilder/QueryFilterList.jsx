@@ -3,7 +3,7 @@ import { array, bool, func, object, oneOfType, shape } from "prop-types";
 import { Button, Classes, Dialog, Tag } from "@blueprintjs/core";
 
 import { defaultQueryTerm } from "./queries";
-import { addElemToArray, removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
+import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
 import { cleanOuterParentheses } from "../../../../utils";
 
 function joinTerm(term){
@@ -29,10 +29,10 @@ function TermTag({ handlers, isLast, term, useOR }){
 	const openDialog = useCallback(() => setIsDialogOpen(true), []);
 	const closeDialog = useCallback(() => setIsDialogOpen(false), []);
 
-	const addNestedTerm = useCallback(() => updateSelf(addElemToArray(term, [defaultQueryTerm])), [term, updateSelf]);
+	const addNestedTerm = useCallback(() => updateSelf(returnSiblingArray(term, [defaultQueryTerm])), [term, updateSelf]);
 
 	return <>
-		<Tag zr-role="filter-tag" interactive={true} minimal={true} onClick={openDialog} onRemove={removeSelf} >
+		<Tag zr-role="filter-tag" interactive={true} large={true} minimal={true} onClick={openDialog} onRemove={removeSelf} >
 			{cleanOuterParentheses(makeTermString(term, !useOR))}
 		</Tag>
 		{!isLast && <span zr-role="filter-operator">{useOR ? "or" : "and"}</span>}
@@ -102,8 +102,8 @@ function Filter({ filter, handlers, useOR }){
 
 	return <div className="zr-query-filter--elements">
 		<FilterElements handlers={handlersForChild} filter={filter} useOR={useOR} />
-		<Button intent="primary" minimal={true} onClick={addTerm} rightIcon="small-plus" text="Add term" />
-		{filter.length > 1 && <Button icon="small-cross" minimal={true} onClick={removeSelf} />}
+		<Button className="zr-text-small" intent="primary" minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={useOR ? "OR" : "AND"} />
+		{filter.length > 1 && <Button className="zr-filter--remove-self" icon="small-cross" minimal={true} onClick={removeSelf} />}
 	</div>;
 }
 Filter.propTypes = {
@@ -134,12 +134,11 @@ function QueryFilterList({ handlers, terms, useOR }){
 		{terms.map((term, index) => {
 			let elemHandlers = makeHandlersForChild(index);
 			return <div className="zr-query-filter" key={index}>
-				{index > 0 && <Tag>{useOR ? "or" : "and"}</Tag>}
+				{index > 0 && <span zr-role="filter-list-operator">{useOR ? "or" : "and"}</span>}
 				<Filter handlers={elemHandlers} filter={term} useOR={!useOR} />
-				{terms.length > 1 && <Button className="zr-filter--remove-self" icon="cross" minimal={true} onClick={() => removeTerm(index)} />}
 			</div>;
 		})}
-		<Button active={true} icon="small-plus" intent="primary" minimal={true} onClick={addTerm} text="New filter" />
+		<Button active={true} className="zr-text-small" icon="small-plus" onClick={addTerm} small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
 	</div>;
 }
 QueryFilterList.propTypes = {

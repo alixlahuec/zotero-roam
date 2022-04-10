@@ -1,3 +1,9 @@
+
+
+.zr-query-filter {
+    display: flex;
+}
+
 .zr-query-box,
 .zr-query-entry {
     border: 1px var(--zr-border-co) solid;
@@ -47,6 +53,10 @@
 
 .zr-query-box > .zr-query-box--remove-self.bp3-button:hover ~ .zr-query-entry {
     background: hsla(var(--zr-accent-1-co), 10%);
+}
+
+.zr-query-builder .zr-datalist--listwrapper {
+    max-height: 50vh;
 }
 
 .zr-datalist--item.zr-query--result {
