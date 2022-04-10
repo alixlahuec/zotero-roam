@@ -32,10 +32,10 @@ function TermTag({ handlers, isLast, term, useOR }){
 	const addNestedTerm = useCallback(() => updateSelf(returnSiblingArray(term, [defaultQueryTerm])), [term, updateSelf]);
 
 	return <>
-		<Tag zr-role="filter-tag" interactive={true} large={true} minimal={true} onClick={openDialog} onRemove={removeSelf} >
+		<Tag zr-role="filter-tag" interactive={true} minimal={true} onClick={openDialog} onRemove={removeSelf} >
 			{cleanOuterParentheses(makeTermString(term, !useOR))}
 		</Tag>
-		{!isLast && <span zr-role="filter-operator">{useOR ? "or" : "and"}</span>}
+		{!isLast && <span className="zr-auxiliary" zr-role="filter-operator">{useOR ? "or" : "and"}</span>}
 		<Dialog canEscapeKeyClose={false} isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
 			<div className={Classes.DIALOG_FOOTER}>
 				<div className={Classes.DIALOG_BODY}>
@@ -138,7 +138,7 @@ function QueryFilterList({ handlers, terms, useOR }){
 				<Filter handlers={elemHandlers} filter={term} useOR={!useOR} />
 			</div>;
 		})}
-		<Button active={true} className="zr-text-small" icon="small-plus" onClick={addTerm} small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
+		<Button className="zr-text-small" icon="small-plus" minimal={true} onClick={addTerm} small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
 	</div>;
 }
 QueryFilterList.propTypes = {

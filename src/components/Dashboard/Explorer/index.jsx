@@ -11,6 +11,7 @@ import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems, cleanLibraryItem, identifyChildren } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
+import "./index.css";
 
 function TabContents({ itemList, onClose, show }){
 	const [roamCitekeys,] = useRoamCitekeys();

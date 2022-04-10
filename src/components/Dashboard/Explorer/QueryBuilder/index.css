@@ -1,7 +1,15 @@
-
-
 .zr-query-filter {
     display: flex;
+}
+
+.zr-query-filter--elements {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.zr-query-filter--elements [zr-role="filter-operator"] {
+    margin: 0px 5px;
 }
 
 .zr-query-box,
@@ -53,27 +61,4 @@
 
 .zr-query-box > .zr-query-box--remove-self.bp3-button:hover ~ .zr-query-entry {
     background: hsla(var(--zr-accent-1-co), 10%);
-}
-
-.zr-query-builder .zr-datalist--listwrapper {
-    max-height: 50vh;
-}
-
-.zr-datalist--item.zr-query--result {
-    border: 1px var(--zr-border-co) solid;
-    border-radius: 5px;
-    font-size: var(--zr-text-small);
-    margin: 10px;
-    padding: 5px;
-}
-
-.zr-datalist--item.zr-query--result [zr-role="item-header"] {
-    display: flex;
-    justify-content: space-between;
-}
-
-.zr-datalist--item.zr-query--result [zr-role="item-title"] {
-    display: block;
-    font-weight: 500;
-    white-space: normal;
 }
