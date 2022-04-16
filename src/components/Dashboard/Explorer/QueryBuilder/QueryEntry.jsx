@@ -17,7 +17,7 @@ function itemRenderer(item, itemProps) {
 	return <MenuItem key={item} onClick={handleClick} text={item} />;
 }
 
-function QueryEntry({ handlers, isOnlyChild, term, useOR = false }){
+function QueryEntry({ handlers, isLastChild, isOnlyChild, term, useOR = false }){
 	const { removeSelf, updateSelf } = handlers;
 	const { property, relationship, value = "" } = term;
 
@@ -45,44 +45,48 @@ function QueryEntry({ handlers, isOnlyChild, term, useOR = false }){
 	}, [handlePropChange, property, value]);
 	const handleValueChange = useCallback((event) => handlePropChange({ value: event.target.value }), [handlePropChange]);
 
-	return <div className="zr-query-entry">
-		<Select 
-			filterable={false} 
-			itemRenderer={itemRenderer}
-			items={Object.keys(queries)}
-			onItemSelect={handlePropertyChange}
-			placement="bottom"
-			popoverProps={popoverProps}>
-			<Button minimal={true} rightIcon="caret-down" text={property} />
-		</Select>
-		<Select 
-			filterable={false} 
-			itemRenderer={itemRenderer}
-			items={Object.keys(queries[property])}
-			onItemSelect={handleRelationshipChange}
-			placement="bottom"
-			popoverProps={popoverProps}>
-			<Button minimal={true} rightIcon="caret-down" text={relationship} />
-		</Select>
-		<InputGroup onChange={handleValueChange} value={value} />
-		{isOnlyChild
-			? null
-			: <>
-				<Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />
-				<Button className={["zr-query-entry--add-sibling", "zr-text-small"].join(" ")} 
-					icon="small-plus" 
-					minimal={true} 
-					onClick={addSiblingTerm} 
-					small={true} 
-					text={(useOR ? "OR" : "AND")} />
-			</>}
-	</div>;
+	return <>
+		<div className="zr-query-entry">
+			<Select 
+				filterable={false} 
+				itemRenderer={itemRenderer}
+				items={Object.keys(queries)}
+				onItemSelect={handlePropertyChange}
+				placement="bottom"
+				popoverProps={popoverProps}>
+				<Button minimal={true} rightIcon="caret-down" text={property} />
+			</Select>
+			<Select 
+				filterable={false} 
+				itemRenderer={itemRenderer}
+				items={Object.keys(queries[property])}
+				onItemSelect={handleRelationshipChange}
+				placement="bottom"
+				popoverProps={popoverProps}>
+				<Button minimal={true} rightIcon="caret-down" text={relationship} />
+			</Select>
+			<InputGroup onChange={handleValueChange} value={value} />
+			{isOnlyChild
+				? null
+				: <>
+					<Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />
+					<Button className={["zr-query-entry--add-sibling", "zr-text-small"].join(" ")} 
+						icon="small-plus" 
+						minimal={true} 
+						onClick={addSiblingTerm} 
+						small={true} 
+						text={(useOR ? "OR" : "AND")} />
+				</>}
+		</div>
+		{!isLastChild && <span zr-role="query-entry-operator">{useOR ? "OR" : "AND"}</span>}
+	</>;
 }
 QueryEntry.propTypes = {
 	handlers: shape({
 		removeSelf: func,
 		updateSelf: func
 	}),
+	isLastChild: bool,
 	isOnlyChild: bool,
 	term: shape({
 		property: oneOf(Object.keys(queries)),

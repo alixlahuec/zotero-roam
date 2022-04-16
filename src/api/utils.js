@@ -144,10 +144,10 @@ async function fetchBibEntries(itemKeys, library) {
 	}
 
 	let bibResults = await Promise.all(apiCalls);
-	let bibEntries = await Promise.all(bibResults.map(data => data.json()));
-	let flatBibliography = bibEntries.flat(1).map(entry => entry["biblatex"]).join("");
-	
-	return flatBibliography;
+	return bibResults
+		.map(res => res.data)
+		.flat(1)
+		.map(entry => entry["biblatex"]).join("");
 
 }
 

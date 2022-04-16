@@ -46,6 +46,7 @@ function AutoMerge({ library, suggestion }){
 
 	return <Button
 		className={["zr-tag-suggestion--auto-merge", "zr-text-small"].join(" ")}
+		icon="many-to-one"
 		loading={status == "loading"}
 		onClick={triggerMerge}
 		text="Auto-merge"
@@ -71,7 +72,7 @@ function ManualMerge({ library, suggestion }){
 		interactionKind="click"
 		popoverClassName="zr-popover"
 	>
-		<Button className={["zr-tag-suggestion--merge-as", "zr-text-small"].join(" ")} rightIcon="caret-down" text="Merge as" />
+		<Button className={["zr-tag-suggestion--merge-as", "zr-text-small"].join(" ")} rightIcon="caret-down" text="Merge as.." />
 	</Popover2>;
 }
 ManualMerge.propTypes = {

@@ -12,7 +12,7 @@
     border-bottom-left-radius: 6px;
     color: var(--zr-text-co);
     flex: 1 0 66%;
-    padding: 10px 4%;
+    padding: 10px 6%;
 }
 
 #zr-item-details [zr-role="item-metadata--header"] {

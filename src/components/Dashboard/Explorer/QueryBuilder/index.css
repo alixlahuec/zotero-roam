@@ -26,6 +26,7 @@
 
 .zr-query-filter [zr-role="filter-list-operator"],
 .zr-query-filter--elements [zr-role="filter-operator"] {
+    font-size: var(--zr-text-small);
     margin: 0px 10px;
 }
 
@@ -66,16 +67,12 @@
 }
 
 .zr-query-entry > .bp3-input-group {
-    flex: 1 1 60%;
+    flex: 1 1 40%;
 }
 
 .zr-query-entry > .bp3-input-group input.bp3-input {
     background: var(--zr-dialog-bg);
     color: var(--zr-auxiliary);
-}
-
-.zr-query-entry > .zr-query-entry--remove-self.bp3-button {
-    flex: 1 1 10%;
 }
 
 .zr-query-box--add-sibling.bp3-button,
