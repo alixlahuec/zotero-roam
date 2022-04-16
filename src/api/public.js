@@ -27,7 +27,7 @@ async function _getBibEntries(citekeys, libraries, queryClient){
 	
 	let bibOutput = await Promise.all(bibEntries);
 	
-	return bibOutput.flat(1);
+	return bibOutput.join("\n");
 
 }
 

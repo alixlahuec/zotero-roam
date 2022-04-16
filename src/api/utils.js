@@ -147,7 +147,8 @@ async function fetchBibEntries(itemKeys, library) {
 	return bibResults
 		.map(res => res.data)
 		.flat(1)
-		.map(entry => entry["biblatex"]).join("");
+		.map(entry => entry["biblatex"])
+		.join("\n");
 
 }
 
