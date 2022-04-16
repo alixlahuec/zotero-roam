@@ -252,7 +252,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 
 	const doiHeader = useMemo(() => {
 		return doi 
-			? <span className="zr-citekey-doi" data-doi={doi}><a href={"https://doi.org/" + doi} target="_blank" className={Classes.TEXT_MUTED} rel="noreferrer">{doi}</a></span> 
+			? <span className="zr-citekey-doi" data-doi={doi}><a href={"https://doi.org/" + doi} target="_blank" rel="noreferrer">{doi}</a></span> 
 			: null;
 	}, [doi]);
 

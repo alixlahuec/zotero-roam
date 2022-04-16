@@ -3,7 +3,8 @@
 :root {
   --zr-accent-1-co: 216, 80%, 51%;
   --zr-accent-1: hsla(var(--zr-accent-1-co), 100%);
-  --zr-accent-2: #d9822b;
+  --zr-accent-2-co: 30, 70%, 51%;
+  --zr-accent-2: hsla(var(--zr-accent-2-co), 100%);
   --zr-auxiliary: #5c7080;
   --zr-border-co: #ececec;
   --zr-box-bg: #f8f8f9;
@@ -20,7 +21,7 @@
 [zr-dark-theme="true"] {
   --zr-accent-1-co: 202, 100%, 62%;
   --zr-accent-1: hsla(var(--zr-accent-1-co), 100%);
-  --zr-accent-2: #d9822b;
+  --zr-accent-2: hsla(var(--zr-accent-2-co), 100%);
   --zr-auxiliary: #95a8b7;
   --zr-border-co: #2f3133;
   --zr-box-bg: #191919;
@@ -80,6 +81,22 @@ button.bp3-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 /* Blueprint Elements */
 
+[class*="zr"] a:not(.bp3-menu-item),
+[class*="zr"] a:not(.bp3-menu-item) .bp3-icon,
+[class*="zr"] a.bp3-button.bp3-minimal.bp3-intent-primary,
+[class*="zr"] a.bp3-button.bp3-minimal.bp3-intent-primary:hover {
+  color: hsla(var(--zr-accent-1-co), 70%);
+}
+
+[class*="zr"] a:not(.bp3-menu-item):hover {
+  color: hsla(var(--zr-accent-1-co), 85%);
+  text-decoration: none;
+}
+
+[class*="zr"] .bp3-tag.bp3-minimal:not([class*="bp3-intent-"]) {
+  color: var(--zr-auxiliary);
+}
+
 [class^="zr"] .bp3-non-ideal-state {
   padding: 25px 0px;
 }
@@ -94,6 +111,14 @@ button.bp3-button.zr-auxiliary{color: var(--zr-auxiliary);}
   border: 2px var(--zr-border-co) solid;
 }
 
+[class*="zr"] .bp3-progress-bar.bp3-intent-primary .bp3-progress-meter {
+  background-color: var(--zr-accent-1);
+}
+
+[class*="zr"] .bp3-progress-bar.bp3-intent-warning .bp3-progress-meter {
+  background-color: var(--zr-accent-2);
+}
+
 [class*="zr"] .bp3-slider-label {
   color: var(--zr-text-co);
 }
@@ -103,6 +128,16 @@ button.bp3-button.zr-auxiliary{color: var(--zr-auxiliary);}
   border: 1px var(--zr-border-co) solid;
   box-shadow: none;
   width: max-content;
+}
+
+[class*="zr"] .bp3-tag.bp3-minimal.bp3-intent-primary {
+  background: hsla(var(--zr-accent-1-co), 15%);
+  color: var(--zr-accent-1);
+}
+
+[class*="zr"] .bp3-tag.bp3-minimal.bp3-intent-warning {
+  background: hsla(var(--zr-accent-2-co), 15%);
+  color: var(--zr-accent-2);
 }
 
 /* Popovers & Menus */

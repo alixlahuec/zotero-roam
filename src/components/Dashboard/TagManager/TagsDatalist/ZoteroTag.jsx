@@ -7,8 +7,8 @@ function ZoteroTag({ tagElement }){
 
 	return (
 		<Tag 
-			active={true} 
-			className="zr-tag--zotero" 
+			active={true}
+			intent="warning"
 			minimal={true} 
 			multiline={false}
 			data-tag-source="zotero" data-tag={tag} data-tag-type={type} >

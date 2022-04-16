@@ -69,6 +69,12 @@ li.zr-webimport-item {
     outline: var(--zr-accent-1) dotted 1px;
 }
 
+.bp3-checkbox.bp3-control.zr-webimport-item--title .bp3-control-indicator,
+.bp3-checkbox.bp3-control.zr-webimport-item--title .bp3-control-indicator::before {
+    height: 0.9em;
+    width: 0.9em;
+}
+
 .bp3-checkbox.bp3-control.zr-webimport-item--title input:checked ~ .bp3-control-indicator {
     background-color: var(--zr-accent-1);
     outline-style: auto;

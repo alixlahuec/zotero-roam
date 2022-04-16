@@ -121,7 +121,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 							{!noQueriesLoaded && <CitoidGuide />}
 						</div>
 						<div className={["header-right", "zr-auxiliary"].join(" ")}>
-							<Button icon="cross" minimal={true} onClick={handleClose} />
+							<Button icon="cross" large={true} minimal={true} onClick={handleClose} />
 						</div>
 					</div>
 					<div className="rendered-div">

@@ -23,7 +23,7 @@ function Annotation({ annot }){
 			<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 			<ButtonGroup minimal={true}>
 				<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >PDF</ButtonLink>
-				<ButtonLink className="zr-text-small" href={link_page} intent="primary" >Page {pageLabel}</ButtonLink>
+				<ButtonLink className="zr-text-small" href={link_page} >Page {pageLabel}</ButtonLink>
 			</ButtonGroup>
 		</div>
 		<div className="zr-annotation--highlight">

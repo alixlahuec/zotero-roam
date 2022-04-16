@@ -17,7 +17,6 @@
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] h4.bp3-heading {
     color: var(--zr-secondary-co);
-    font-weight: var(--zr-secondary-fw);
     font-size: var(--zr-text-small);
 }
 
@@ -53,7 +52,6 @@
     display:flex;
     flex-wrap:wrap;
     margin: 0px;
-    margin-bottom: 15px;
     width: 100%;
 }
 
@@ -66,15 +64,17 @@
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .header-right {
+    align-self: baseline;
     flex: 0 1 34%;
     text-align: right;
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] h5.panel-tt {
     color: var(--zr-text-co);
-    font-weight:600;
     display:inline-block;
-    padding-right:15px;
+    font-weight:600;
+    line-height: 2;
+    padding: 0px 15px;
 }
 
 .zr-related-item {

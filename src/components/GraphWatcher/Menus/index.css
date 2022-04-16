@@ -11,7 +11,7 @@
 
 /* CitekeyMenu */
 
-.zr-citekey-doi {margin:10px;display:block;font-weight:600;letter-spacing:0.3mm;}
+.zr-citekey-doi {margin:10px;display:block;letter-spacing:0.3mm;}
 .zr-citekey-menu{
     justify-content:space-between;
     border-width:0px;
@@ -25,6 +25,7 @@
 .zr-citekey-menu--actions [zr-role="pdf-link"] {font-weight:600;}
 
 .zr-citekey-menu .bp3-button-group .bp3-button,
+.zr-citekey-menu .bp3-button-group .bp3-button .bp3-icon,
 .zr-citekey-menu .bp3-button-group .bp3-button:hover {
     color: var(--zr-text-co);
 }
@@ -39,6 +40,14 @@
 
 button[class*='zr-page-menu-show--'] {
     flex: 1 0 33%;
+}
+
+.zr-citekey-menu .bp3-button-group button.zr-page-menu-show--references {
+    color: hsla(var(--zr-accent-1-co), 90%);
+}
+
+.zr-citekey-menu .bp3-button-group button.zr-page-menu-show--citations {
+    color: hsla(var(--zr-accent-2-co), 90%);
 }
 
 /* Backlinks */

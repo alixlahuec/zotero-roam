@@ -23,9 +23,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 			return (
 				<>
 					{item.url
-						? <a href={item.url} target="_blank" rel="noreferrer"
-							zr-role="item-url"
-							className={[ Classes.TEXT_MUTED, "zr-text-small"].join(" ")} >
+						? <a zr-role="item-url" href={item.url} target="_blank" rel="noreferrer" className="zr-text-small" >
 							{item.doi || "Semantic Scholar"}
 						</a>
 						: null}

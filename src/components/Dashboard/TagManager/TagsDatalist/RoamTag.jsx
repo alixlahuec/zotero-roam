@@ -5,8 +5,8 @@ import { Tag } from "@blueprintjs/core";
 function RoamTag({ text, uid = null }){
 	return (
 		<Tag 
-			active={true} 
-			className="zr-tag--roam" 
+			active={true}
+			intent="primary" 
 			minimal={true} 
 			multiline={true}
 			data-tag-source="roam" data-tag={text} data-uid={uid} >

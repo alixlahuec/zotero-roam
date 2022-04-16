@@ -33,6 +33,10 @@
     background-color: var(--zr-dialog-bg);
 }
 
+.zr-query-term-dialog .bp3-dialog-footer-actions .bp3-button {
+    color: var(--zr-auxiliary);
+}
+
 /* To correct : */
 
 .zr-query-box,
@@ -54,11 +58,20 @@
 }
 
 .zr-query-entry > .bp3-popover-wrapper {
-    flex: 1 1 15%;
+    flex: 1 0 auto;
+}
+
+.zr-query-entry > .bp3-popover-wrapper button {
+    color: var(--zr-text-co);
 }
 
 .zr-query-entry > .bp3-input-group {
     flex: 1 1 60%;
+}
+
+.zr-query-entry > .bp3-input-group input.bp3-input {
+    background: var(--zr-dialog-bg);
+    color: var(--zr-auxiliary);
 }
 
 .zr-query-entry > .zr-query-entry--remove-self.bp3-button {
@@ -69,6 +82,8 @@
 .zr-query-box--add-sibling.bp3-button:hover {
     background: var(--zr-box-bg);
     border: 1px var(--zr-border-co) solid;
+    color: var(--zr-text-co);
+    margin-top: 10px;
 }
 
 .zr-query-entry--add-sibling.bp3-button,

@@ -45,7 +45,7 @@ function TermTag({ handlers, isLast, term, useOR }){
 		<Tag zr-role="filter-tag" interactive={true} minimal={true} onClick={openDialog} onRemove={removeSelf} >
 			{makeTermString(term, !useOR, { parentheses: false })}
 		</Tag>
-		{!isLast && <span className="zr-auxiliary" zr-role="filter-operator">{useOR ? "or" : "and"}</span>}
+		{!isLast && <span className="zr-auxiliary" zr-role="filter-operator">{useOR ? "OR" : "AND"}</span>}
 		<Dialog canEscapeKeyClose={false} className="zr-query-term-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
 			<div className={Classes.DIALOG_BODY}>
 				<QueryBox handlers={handlersForDialog} isOnlyChild={true} terms={term} useOR={!useOR} />
@@ -146,7 +146,7 @@ function QueryFilterList({ handlers, terms, useOR }){
 		{terms.map((term, index) => {
 			let elemHandlers = makeHandlersForChild(index);
 			return <div className="zr-query-filter" key={index}>
-				{index > 0 && <span zr-role="filter-list-operator">{useOR ? "or" : "and"}</span>}
+				{index > 0 && <span zr-role="filter-list-operator">{useOR ? "OR" : "AND"}</span>}
 				<Filter handlers={elemHandlers} filter={term} useOR={!useOR} />
 			</div>;
 		})}

@@ -155,7 +155,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 	const headerRight = useMemo(() => {
 		return (
 			<div className={["header-right", "zr-auxiliary"].join(" ")}>
-				<Button icon="small-cross" minimal={true} onClick={onClose} />
+				<Button icon="cross" minimal={true} onClick={onClose} />
 			</div>
 		);
 	}, [onClose]);

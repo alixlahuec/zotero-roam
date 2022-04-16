@@ -11,9 +11,9 @@ const popoverProps = {
 };
 
 function itemRenderer(item, itemProps) {
-	const { handleClick, modifiers: { active } } = itemProps;
+	const { handleClick/*, modifiers: { active }*/ } = itemProps;
 
-	return <MenuItem active={active} key={item} onClick={handleClick} text={item} />;
+	return <MenuItem key={item} onClick={handleClick} text={item} />;
 }
 
 const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
@@ -29,7 +29,7 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 			popoverProps={popoverProps}>
 			<Button 
 				className={["zr-dashboard--library-select", "zr-auxiliary", "zr-text-small"].join(" ")} 
-				icon="caret-down"
+				icon="folder-open"
 				minimal={true} 
 				text={path} />
 		</Select>

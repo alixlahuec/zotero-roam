@@ -12,9 +12,9 @@ const popoverProps = {
 };
 
 function itemRenderer(item, itemProps) {
-	const { handleClick, modifiers: { active } } = itemProps;
+	const { handleClick/*, modifiers: { active }*/ } = itemProps;
 
-	return <MenuItem active={active} key={item} onClick={handleClick} text={item} />;
+	return <MenuItem key={item} onClick={handleClick} text={item} />;
 }
 
 function QueryEntry({ handlers, isOnlyChild, term, useOR = false }){
