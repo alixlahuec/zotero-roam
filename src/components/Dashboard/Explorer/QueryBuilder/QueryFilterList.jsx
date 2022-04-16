@@ -136,7 +136,7 @@ function QueryFilterList({ handlers, terms, useOR }){
 		let child = terms[index];
 		return {
 			removeSelf: () => removeTerm(index),
-			addTerm: () => updateTerm(index, returnSiblingArray(child, defaultQueryTerm)),
+			addTerm: () => updateTerm(index, returnSiblingArray(child, [defaultQueryTerm])),
 			removeTerm: (subindex) => updateTerm(index, removeArrayElemAt(child, subindex)),
 			updateTerm: (subindex, value) => updateTerm(index, updateArrayElemAt(child, subindex, value))
 		};
