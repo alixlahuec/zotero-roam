@@ -7,7 +7,7 @@ import GraphWatcher from "../GraphWatcher";
 import { RoamCitekeysProvider } from "../RoamCitekeysContext";
 import SearchPanel from "../SearchPanel";
 
-import { _getBibliography, _getCollections, _getChildren, _getItems, _getTags } from "../../api/public";
+import { _getBibEntries, _getBibliography, _getCollections, _getChildren, _getItems, _getTags } from "../../api/public";
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace } from "../../roam";
 
 import * as customPropTypes from "../../propTypes";
@@ -162,6 +162,7 @@ App.propTypes = {
 };
 
 // Utilities to be exposed via global zoteroRoam variable, for consumption by users :
+const getBibEntries = (citekeys, libraries) => _getBibEntries(citekeys, libraries, queryClient);
 const getBibliography = (item, library, config = {}) => _getBibliography(item, library, config);
 const getChildren = (item) => _getChildren(item, queryClient);
 const getCollections = (library) => _getCollections(library, queryClient);
@@ -171,6 +172,7 @@ const getTags = (library) => _getTags(library, queryClient);
 export {
 	App,
 	ExtensionContext,
+	getBibEntries,
 	getBibliography,
 	getCollections,
 	getChildren,

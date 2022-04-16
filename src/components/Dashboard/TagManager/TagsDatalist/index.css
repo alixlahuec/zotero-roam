@@ -1,3 +1,7 @@
+.zr-tagmanager--datalist .zr-datalist--listwrapper {
+    max-height: 50vh;
+}
+
 .zr-tagmanager--datalist .zr-datalist--item {
     border: 1px var(--zr-border-co) solid;
     border-radius: 5px;
@@ -9,7 +13,7 @@
 }
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-header"] {
-    align-items: center;
+    align-items: stretch;
     display: flex;
     justify-content: space-between;
 }
@@ -24,10 +28,16 @@
 }
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-count"] {
+    align-self: center;
     flex: 0 0 auto;
 }
 
+.zr-tagmanager--datalist .zr-datalist--item.zr-tag-suggestion [zr-role="item-count"]:hover {
+    cursor: help;
+}
+
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-info"] {
+    align-self: center;
     flex: 2 1 40%;
 }
 

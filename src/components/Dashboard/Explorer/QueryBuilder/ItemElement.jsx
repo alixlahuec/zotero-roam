@@ -12,7 +12,7 @@ function ItemElement({ item, onClose }){
 	return <ListItem className="zr-query--result" >
 		<div zr-role="item-header">
 			<div zr-role="item-details">
-				<span data-item-type={itemType} zr-role="item-title">{title}</span>
+				<span className="zr-auxiliary" data-item-type={itemType} zr-role="item-title">{title}</span>
 				<span className="zr-accent-1">{meta}</span>
 				<span className="zr-secondary">{publication}</span>
 			</div>

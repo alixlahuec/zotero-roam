@@ -47,7 +47,7 @@ const LogItem = React.memo(function LogItem({ allAbstractsShown, item, onClose }
 	return <ListItem className="zr-log-entry" data-in-graph={(inGraph != false).toString()}>
 		<div zr-role="item-header">
 			<div zr-role="item-details">
-				<span data-item-type={itemType} zr-role="item-title">{title}</span>
+				<span className="zr-auxiliary" data-item-type={itemType} zr-role="item-title">{title}</span>
 				<span className="zr-accent-1">{meta}</span>
 				<span className="zr-secondary">{publication}</span>
 			</div>

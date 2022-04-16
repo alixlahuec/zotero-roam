@@ -18,7 +18,8 @@
 }
 
 [zr-dark-theme="true"] {
-  --zr-accent-1: #3fb8ff;
+  --zr-accent-1-co: 202, 100%, 62%;
+  --zr-accent-1: hsla(var(--zr-accent-1-co), 100%);
   --zr-accent-2: #d9822b;
   --zr-auxiliary: #95a8b7;
   --zr-border-co: #2f3133;
@@ -125,6 +126,7 @@ button.bp3-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 .zr-popover .bp3-menu-item:hover {
   background: var(--zr-dialog-bg);
+  color: var(--zr-text-co);
 }
 
 /* Tabs */

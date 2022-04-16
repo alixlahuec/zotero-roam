@@ -4,7 +4,7 @@ import { HotkeysProvider } from "@blueprintjs/core";
 
 import zrToaster from "./components/ExtensionToaster";
 
-import { App, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
+import { App, getBibEntries, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
 import { setDefaultHooks } from "./events";
 import { formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemMetadata, _getItemRelated, _getItemType } from "./public";
 import { registerSmartblockCommands } from "./smartblocks";
@@ -44,6 +44,7 @@ window.zoteroRoam = {};
 
 	// Use object merging to handle undefined settings
 	window.zoteroRoam.config = {
+		version: extension.version,
 		userSettings: {
 			autocomplete,
 			autoload,
@@ -105,6 +106,11 @@ window.zoteroRoam = {};
 	try {
 		const requests = analyzeUserRequests(dataRequests);
 		window.zoteroRoam.config.requests = requests;
+
+		window.zoteroRoam.getBibEntries = async(citekeys) => {
+			let { libraries } = requests;
+			return await getBibEntries(citekeys, libraries);
+		};
 
 		window.zoteroRoam.getBibliography = async(item, config = {}) => {
 			let { libraries } = requests;

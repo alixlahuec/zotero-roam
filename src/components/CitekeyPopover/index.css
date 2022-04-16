@@ -3,7 +3,8 @@
     overflow-wrap: anywhere;
 }
 
-.zr-library-item-popover button {
+.zr-library-item-popover button.bp3-button,
+.zr-library-item-popover button.bp3-button:hover {
     background: var(--zr-box-bg);
     color: var(--zr-text-co);
     font-weight: 500;

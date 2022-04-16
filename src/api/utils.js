@@ -123,6 +123,34 @@ async function fetchAdditionalData(req, totalResults) {
 	}
 }
 
+async function fetchBibEntries(itemKeys, library) {
+	const { apikey, path } = library;
+
+	// * Only 100 entries can be retrieved at once
+	let apiCalls = [];
+	let nbCalls = Math.ceil(itemKeys.length / 100);
+
+	for(let i=1; i <= nbCalls; i++){
+		let keyList = itemKeys.slice(100*(i-1), 100*i);
+		apiCalls.push(zoteroClient.get(`${path}/items`, {
+			headers: {
+				"Zotero-API-Key": apikey
+			},
+			params: {
+				include: "biblatex",
+				itemKey: keyList.join(",")
+			}
+		}));
+	}
+
+	let bibResults = await Promise.all(apiCalls);
+	let bibEntries = await Promise.all(bibResults.map(data => data.json()));
+	let flatBibliography = bibEntries.flat(1).map(entry => entry["biblatex"]).join("");
+	
+	return flatBibliography;
+
+}
+
 /** Retrieves an item's formatted bibliographic entry as returned by the Zotero API
  * @param {String} itemKey - The item's Zotero key
  * @param {ZoteroLibrary} library - The item's Zotero library
@@ -492,6 +520,7 @@ function writeItems(dataList, library){
 export {
 	cleanBibliographyHTML,
 	deleteTags,
+	fetchBibEntries,
 	fetchBibliography,
 	fetchCitoid,
 	fetchCollections,

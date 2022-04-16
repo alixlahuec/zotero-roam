@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { bool, func, oneOf, oneOfType, shape, string } from "prop-types";
+import { bool, func, oneOf, shape, string } from "prop-types";
 import { Button, MenuItem, InputGroup } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
@@ -17,7 +17,7 @@ function itemRenderer(item, itemProps) {
 	return <MenuItem active={active} key={item} onClick={handleClick} text={item} />;
 }
 
-function QueryEntry({ handlers, term, useOR = false }){
+function QueryEntry({ handlers, isOnlyChild, term, useOR = false }){
 	const { removeSelf, updateSelf } = handlers;
 	const { property, relationship, value = "" } = term;
 
@@ -65,20 +65,25 @@ function QueryEntry({ handlers, term, useOR = false }){
 			<Button minimal={true} rightIcon="caret-down" text={relationship} />
 		</Select>
 		<InputGroup onChange={handleValueChange} value={value} />
-		{removeSelf && <Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />}
-		<Button className={["zr-query-entry--add-sibling", "zr-text-small"].join(" ")} 
-			icon="small-plus" 
-			minimal={true} 
-			onClick={addSiblingTerm} 
-			small={true} 
-			text={(useOR ? "OR" : "AND")} />
+		{isOnlyChild
+			? null
+			: <>
+				<Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />
+				<Button className={["zr-query-entry--add-sibling", "zr-text-small"].join(" ")} 
+					icon="small-plus" 
+					minimal={true} 
+					onClick={addSiblingTerm} 
+					small={true} 
+					text={(useOR ? "OR" : "AND")} />
+			</>}
 	</div>;
 }
 QueryEntry.propTypes = {
 	handlers: shape({
-		removeSelf: oneOfType([func, bool]),
+		removeSelf: func,
 		updateSelf: func
 	}),
+	isOnlyChild: bool,
 	term: shape({
 		property: oneOf(Object.keys(queries)),
 		relationship: string,

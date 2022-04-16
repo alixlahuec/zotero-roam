@@ -46,12 +46,12 @@ function TermTag({ handlers, isLast, term, useOR }){
 			{makeTermString(term, !useOR, { parentheses: false })}
 		</Tag>
 		{!isLast && <span className="zr-auxiliary" zr-role="filter-operator">{useOR ? "or" : "and"}</span>}
-		<Dialog canEscapeKeyClose={false} isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
+		<Dialog canEscapeKeyClose={false} className="zr-query-term-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
+			<div className={Classes.DIALOG_BODY}>
+				<QueryBox handlers={handlersForDialog} isOnlyChild={true} terms={term} useOR={!useOR} />
+				{JSON.stringify(term)}
+			</div>
 			<div className={Classes.DIALOG_FOOTER}>
-				<div className={Classes.DIALOG_BODY}>
-					<QueryBox handlers={handlersForDialog} terms={term} useOR={useOR} />
-					{JSON.stringify(term)}
-				</div>
 				<div className={Classes.DIALOG_FOOTER_ACTIONS}>
 					<Button minimal={true} onClick={removeSelfCleanly} text="Remove term" />
 					<Button intent="primary" minimal={true} onClick={closeDialog} text="OK" />

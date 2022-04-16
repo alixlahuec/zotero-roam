@@ -1,4 +1,35 @@
-import { cleanBibliographyHTML, fetchBibliography } from "./utils";
+import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./utils";
+
+async function _getBibEntries(citekeys, libraries, queryClient){
+	let libraryItems = _getItems("items", {}, queryClient);
+	let groupedList = citekeys.reduce((obj, citekey) => {
+		let libItem = libraryItems.find(it => it.key == citekey);
+		if(libItem){
+			let location = libItem.library.type + "s/" + libItem.library.id;
+			if(Object.keys(obj).includes(location)){
+				obj[location].push(libItem.data.key);
+			} else {
+				obj[location] = [libItem.data.key];
+			}
+		}
+		return obj;
+	}, {});
+
+	let bibEntries = [];
+
+	Object.keys(groupedList)
+		.forEach(libPath => {
+			let library = libraries.find(lib => lib.path == libPath);
+			if(library){
+				bibEntries.push(fetchBibEntries(groupedList[libPath], library));
+			}
+		});
+	
+	let bibOutput = await Promise.all(bibEntries);
+	
+	return bibOutput.flat(1);
+
+}
 
 /** Returns an item's formatted bibliography as returned by the Zotero API
  * @param {ZoteroItem} item - The targeted Zotero item
@@ -68,6 +99,7 @@ function _getTags(library, queryClient) {
 }
 
 export {
+	_getBibEntries,
 	_getBibliography,
 	_getCollections,
 	_getChildren,
