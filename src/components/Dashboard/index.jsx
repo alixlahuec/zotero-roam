@@ -5,6 +5,7 @@ import { Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 import AuxiliaryDialog from "../AuxiliaryDialog";
 import Explorer from "./Explorer";
 import RecentItems from "./RecentItems";
+import Settings from "./Settings";
 import TagManager from "./TagManager";
 
 import "./index.css";
@@ -25,6 +26,7 @@ const TabList = React.memo(function TabList(props){
 			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager onClose={onClose} />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} />
 			<Tabs.Expander />
 			<Tab className="zr-explorer" id="explorer" panel={<Explorer onClose={onClose} />} title={<><Icon htmlTitle="Explorer" icon="code-block" /><span>Explorer</span></>} />
+			<Tab className="zr-settings" id="settings" panel={<Settings onClose={onClose} />} title={<><Icon htmlTitle="Settings" icon="cog" /><span>Settings</span></>} />
 		</Tabs>
 	);
 });

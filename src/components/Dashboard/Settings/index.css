@@ -1,0 +1,16 @@
+[zr-role="settings-row"] {
+    align-items: baseline;
+    display: flex;
+    font-size: 0.9em;
+    justify-content: space-between;
+    margin: 10px 0px;
+}
+
+[zr-role="settings-row"] > span {
+    flex: 1 0 25%;
+    min-width: auto;
+}
+
+[zr-role="settings-row"] > div {
+    flex: 0 1 80%;
+}

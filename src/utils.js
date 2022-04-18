@@ -7,20 +7,20 @@ import "./typedefs";
  */
 function analyzeUserRequests(reqs){
 	if(reqs.length == 0){
-		throw new Error("At least one data request must be specified for the extension to function. See the documentation here : https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/api");
+		throw new Error("At least one data request must be specified for the extension to function. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 	} else {
 		let fallbackAPIKey = reqs.find(req => req.apikey).apikey;
 		if(!fallbackAPIKey){
-			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/api");
+			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 		} else {
 			const dataRequests = reqs.map((req, i) => {
 				let { dataURI, apikey = fallbackAPIKey, params = "", name = `${i}`} = req;
 				if(!dataURI){
-					throw new Error("Each data request must be assigned a data URI. See the documentation here : https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/api");
+					throw new Error("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 				} else {
 					let library = dataURI.match(/(users|groups)\/(\d+?)(?=\/items)/g)?.[0];
 					if(!library){
-						throw new Error(`An incorrect data URI was provided for a request : ${dataURI}. See the documentation here : https://app.gitbook.com/@alix-lahuec/s/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
+						throw new Error(`An incorrect data URI was provided for a request : ${dataURI}. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
 					} else {
 						return { dataURI, apikey, params, name, library };
 					}
