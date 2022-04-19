@@ -1,8 +1,11 @@
 .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge,
 .bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge.bp3-active,
-.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge:hover,
-.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge .bp3-icon {
+.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge:hover {
     background-color: hsla(var(--zr-accent-1-co), 70%);
+    color: white;
+}
+
+.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge .bp3-icon {
     color: white;
 }
 

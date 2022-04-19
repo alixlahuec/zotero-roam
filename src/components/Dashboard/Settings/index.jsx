@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
 import { func } from "prop-types";
-import { Button, Switch } from "@blueprintjs/core";
+import { Button, H4, Switch } from "@blueprintjs/core";
 
 import Requests from "./Requests";
+import SciteSettings from "./SciteSettings";
+import Typemap from "./Typemap";
 import { UserSettings } from "../../App";
 
 import "./index.css";
@@ -16,26 +18,23 @@ function Settings({ onClose }){
 		// notes, 
 		// pageMenu, 
 		render_inline, 
-		// sciteBadge, 
-		// shortcuts, 
-		// typemap, 
+		// shortcuts,
 		// webimport 
 	} = useContext(UserSettings);
     
 	return <div className="zr-settings-list">
 		<Button icon="cross" minimal={true} onClick={onClose} />
 		<Requests />
+		<SciteSettings />
+		<Typemap />
+		<H4>Other</H4>
 		<div zr-role="settings-row">
 			<span className="zr-auxiliary">Autoload</span>
-			<div>
-				<Switch checked={autoload == true} readOnly={true} />
-			</div>
+			<Switch checked={autoload == true} disabled={true} />
 		</div>
 		<div zr-role="settings-row">
 			<span className="zr-auxiliary">Render inline citations</span>
-			<div>
-				<Switch checked={render_inline == true} readOnly={true} />
-			</div>
+			<Switch checked={render_inline == true} disabled={true} />
 		</div>
 	</div>;
 }

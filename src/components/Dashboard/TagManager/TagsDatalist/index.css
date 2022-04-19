@@ -56,6 +56,11 @@
     margin: 5px;
 }
 
+.zr-tag-entry .zr-tag--zotero,
+.zr-tag-entry .zr-tag--roam {
+    margin: 3px;
+}
+
 .zr-tag-entry .zr-tag--zotero.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]) {
     color: var(--zr-accent-2);;
     background-color: #fff5e7;

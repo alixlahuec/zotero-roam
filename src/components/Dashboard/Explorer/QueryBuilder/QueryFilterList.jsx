@@ -93,7 +93,7 @@ FilterElements.propTypes = {
 	useOR: bool
 };
 
-function Filter({ filter, handlers, useOR }){
+function Filter({ filter, handlers, isOnlyChild, useOR }){
 	const { removeSelf, addTerm, removeTerm, updateTerm } = handlers;
 
 	const handlersForChild = useMemo(() => {
@@ -114,17 +114,18 @@ function Filter({ filter, handlers, useOR }){
 			<FilterElements handlers={handlersForChild} filter={filter} useOR={useOR} />
 			<Button className="zr-text-small" intent="primary" minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={useOR ? "OR" : "AND"} />
 		</div>
-		{filter.length > 1 && <Button className="zr-filter--remove-self" icon="small-cross" minimal={true} onClick={removeSelf} />}
+		{!isOnlyChild && <Button className="zr-filter--remove-self" icon="small-cross" minimal={true} onClick={removeSelf} />}
 	</>;
 }
 Filter.propTypes = {
+	filter: array,
 	handlers: shape({
 		removeSelf: func,
 		addTerm: func,
 		removeTerm: func,
 		updateTerm: func
 	}),
-	filter: array,
+	isOnlyChild: bool,
 	useOR: bool
 };
 
@@ -146,10 +147,10 @@ function QueryFilterList({ handlers, terms, useOR }){
 			let elemHandlers = makeHandlersForChild(index);
 			return <div className="zr-query-filter" key={index}>
 				{index > 0 && <span zr-role="filter-list-operator">{useOR ? "OR" : "AND"}</span>}
-				<Filter handlers={elemHandlers} filter={term} useOR={!useOR} />
+				<Filter handlers={elemHandlers} isOnlyChild={terms.length == 1} filter={term} useOR={!useOR} />
 			</div>;
 		})}
-		<Button className="zr-text-small" icon={terms.length == 0 ? "small-plus" : null} minimal={true} onClick={addTerm} small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
+		<Button className="zr-text-small" icon="small-plus" minimal={true} onClick={addTerm} small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
 	</div>;
 }
 QueryFilterList.propTypes = {

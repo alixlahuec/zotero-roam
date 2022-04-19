@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import { Callout, Card, Icon } from "@blueprintjs/core";
+import { Callout, H4, Tag } from "@blueprintjs/core";
 import { object } from "prop-types";
 import { ExtensionContext } from "../../App";
 
@@ -12,16 +12,16 @@ function DataRequest({ request }){
 		if(!library){
 			return <Callout intent="warning">{"Library could not be identified. Check that it starts with 'users/' or 'groups/'"}</Callout>;
 		} else {
-			const iconProps = library.startsWith("users/")
-				? { icon: "user", title: "User library" }
+			const tagProps = library.startsWith("users/")
+				? { icon: "user", htmlTitle: "User library" }
 				: library.startsWith("groups/")
-					? { icon: "people", title: "Group library" }
-					: null;
-			return <span>{library}{iconProps != null && <Icon {...iconProps} />}</span>;
+					? { icon: "people", htmlTitle: "Group library" }
+					: {};
+			return <Tag minimal={true} {...tagProps}>{library}</Tag>;
 		}
 	}, [library]);
 
-	return <Card>
+	return <div className="zr-settings--card">
 		<div zr-role="settings-row">
 			<span className="zr-auxiliary">Library</span>
 			<div>
@@ -50,7 +50,7 @@ function DataRequest({ request }){
 				<span>{params || "None"}</span>
 			</div>
 		</div>
-	</Card>;
+	</div>;
 }
 DataRequest.propTypes = {
 	request: object
@@ -59,7 +59,8 @@ DataRequest.propTypes = {
 function Requests(){
 	const { dataRequests } = useContext(ExtensionContext);
 
-	return <div>
+	return <div zr-role="settings-requests">
+		<H4>Data Requests</H4>
 		{dataRequests.map((req, i) => <DataRequest key={i} request={req} />)}
 	</div>;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { number, oneOf, string} from "prop-types";
+import { bool, number, oneOf, string} from "prop-types";
 import "./index.css";
 
 /** Create a Scite badge element, for manual rendering through window.__SCITE.insertBadges()
@@ -15,9 +15,9 @@ const SciteBadge = React.memo(function SciteBadge(props) {
 	const {
 		doi,
 		layout = "horizontal",
-		showLabels = "false",
-		showZero = "true",
-		small = "false",
+		showLabels = false,
+		showZero = true,
+		small = false,
 		tooltipPlacement = "auto",
 		tooltipSlide = 0
 	} = props;
@@ -30,9 +30,9 @@ const SciteBadge = React.memo(function SciteBadge(props) {
 		<div className="scite-badge" 
 			data-doi={doi} 
 			data-layout={layout} 
-			data-show-labels={showLabels} 
-			data-show-zero={showZero} 
-			data-small={small} 
+			data-show-labels={showLabels.toString()} 
+			data-show-zero={showZero.toString()}
+			data-small={small.toString()}
 			data-tooltip-placement={tooltipPlacement} 
 			data-tooltip-slide={tooltipSlide}>
 		</div>
@@ -41,9 +41,9 @@ const SciteBadge = React.memo(function SciteBadge(props) {
 SciteBadge.propTypes = {
 	doi: string,
 	layout: oneOf(["horizontal", "vertical"]),
-	showLabels: oneOf(["false", "true"]),
-	showZero: oneOf(["false", "true"]),
-	small: oneOf(["false", "true"]),
+	showLabels: bool,
+	showZero: bool,
+	small: bool,
 	tooltipPlacement: oneOf(["auto", "top", "right", "bottom", "left"]),
 	tooltipSlide: number
 };

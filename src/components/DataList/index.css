@@ -29,8 +29,8 @@ ul.zr-datalist--listwrapper {
 }
 
 .zr-datalist--toolbar > .bp3-slider {
+    flex: 0 1 33%;
     margin-top: 20px;
-    width: auto;
 }
 
 .zr-datalist--pagination {

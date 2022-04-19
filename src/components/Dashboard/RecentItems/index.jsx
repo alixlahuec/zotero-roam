@@ -41,10 +41,10 @@ function LogView({ itemList, onClose }){
 	const itemsLog = useMemo(() => makeLogFromItems(itemList, asRecentAs), [asRecentAs, itemList]);
 
 	return <div className="zr-recentitems--datalist" >
+		<Button icon="cross" minimal={true} onClick={onClose} />
 		<Toolbar>
 			<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setRecency} stepSize={1} value={asRecentAs} />
 			<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
-			<Button icon="cross" minimal={true} onClick={onClose} />
 		</Toolbar>
 		<ListWrapper>
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />

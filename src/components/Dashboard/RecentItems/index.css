@@ -1,5 +1,11 @@
 .zr-recentitems--datalist {
+    display: flex;
+    flex-direction: column;
     font-size: var(--zr-text-small);
+}
+
+.zr-recentitems--datalist > button {
+    justify-self: self-end;
 }
 
 .zr-recentitems--datalist .zr-datalist--item {

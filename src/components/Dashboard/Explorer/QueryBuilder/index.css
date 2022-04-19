@@ -2,6 +2,10 @@
     flex: 0 1 100%;
 }
 
+.zr-query-filters > button {
+    margin-left: 10px;
+}
+
 .zr-query-filter {
     align-items: center;
     display: flex;

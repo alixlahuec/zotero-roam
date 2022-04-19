@@ -72,7 +72,7 @@ function ManualMerge({ library, suggestion }){
 		interactionKind="click"
 		popoverClassName="zr-popover"
 	>
-		<Button className={["zr-tag-suggestion--merge-as", "zr-text-small"].join(" ")} rightIcon="caret-down" text="Merge as.." />
+		<Button className={["zr-tag-suggestion--merge-as", "zr-text-small"].join(" ")} rightIcon="caret-down" text="Merge as ..." />
 	</Popover2>;
 }
 ManualMerge.propTypes = {

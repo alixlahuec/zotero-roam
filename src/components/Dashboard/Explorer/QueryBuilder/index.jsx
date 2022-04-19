@@ -47,8 +47,8 @@ function QueryBuilder({ items, onClose }){
 	return <div className="zr-query-builder">
 		<Toolbar>
 			<QueryFilterList handlers={handlers} terms={queryTerms} useOR={useOR} />
-			{queryTerms.length > 0 && <Switch checked={useOR} innerLabel="AND" innerLabelChecked="OR" onChange={switchOperator} />}
 		</Toolbar>
+		{queryTerms.length > 0 && <Switch checked={useOR} innerLabel="AND" innerLabelChecked="OR" onChange={switchOperator} />}
 		<ListWrapper>
 			{queriedItems.length > 0
 				? queriedItems

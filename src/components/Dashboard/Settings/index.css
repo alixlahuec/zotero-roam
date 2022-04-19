@@ -1,9 +1,31 @@
+.zr-settings-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.zr-settings-list > button {
+    align-self: self-end;
+}
+
+.zr-settings-list [zr-role="settings-requests"] {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.zr-settings-list .zr-settings--card {
+    border: 1px var(--zr-border-co) solid;
+    border-radius: 3px;
+    color: var(--zr-text-co);
+    flex: 0 0 45%;
+    padding: 5px 10px;
+}
+
 [zr-role="settings-row"] {
     align-items: baseline;
     display: flex;
     font-size: 0.9em;
     justify-content: space-between;
-    margin: 10px 0px;
+    margin: 5px 0px;
 }
 
 [zr-role="settings-row"] > span {

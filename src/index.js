@@ -73,9 +73,9 @@ window.zoteroRoam = {};
 			render_inline,
 			sciteBadge: {
 				layout: "horizontal",
-				showLabels: "false",
-				showZero: "true",
-				small: "false",
+				showLabels: false,
+				showZero: true,
+				small: false,
 				tooltipPlacement: "auto",
 				tooltipSlide: 0,
 				...sciteBadge
