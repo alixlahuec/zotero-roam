@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { bool, number, oneOf, string} from "prop-types";
 import "./index.css";
 
@@ -21,8 +21,10 @@ const SciteBadge = React.memo(function SciteBadge(props) {
 		tooltipPlacement = "auto",
 		tooltipSlide = 0
 	} = props;
+	const divRef = useRef();
 
 	useEffect(() => {
+		divRef?.current?.removeAttribute("data-fetched");
 		window.__SCITE?.insertBadges();
 	});
 
@@ -34,7 +36,8 @@ const SciteBadge = React.memo(function SciteBadge(props) {
 			data-show-zero={showZero.toString()}
 			data-small={small.toString()}
 			data-tooltip-placement={tooltipPlacement} 
-			data-tooltip-slide={tooltipSlide}>
+			data-tooltip-slide={tooltipSlide}
+			ref={divRef} >
 		</div>
 	);
 });

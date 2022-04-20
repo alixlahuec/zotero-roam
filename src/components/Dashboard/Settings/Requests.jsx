@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import { Callout, H4, Tag } from "@blueprintjs/core";
+import { Callout, H3, Tag } from "@blueprintjs/core";
 import { object } from "prop-types";
 import { ExtensionContext } from "../../App";
 
@@ -59,10 +59,12 @@ DataRequest.propTypes = {
 function Requests(){
 	const { dataRequests } = useContext(ExtensionContext);
 
-	return <div zr-role="settings-requests">
-		<H4>Data Requests</H4>
-		{dataRequests.map((req, i) => <DataRequest key={i} request={req} />)}
-	</div>;
+	return <>
+		<H3>Data Requests</H3>
+		<div zr-role="settings-requests">
+			{dataRequests.map((req, i) => <DataRequest key={i} request={req} />)}
+		</div>
+	</>;
 }
 
 export default Requests;

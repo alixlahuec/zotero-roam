@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from "react";
-import { Classes, H4, NumericInput, Radio, RadioGroup, Switch } from "@blueprintjs/core";
+import { Classes, H3, NumericInput, Radio, RadioGroup, Switch } from "@blueprintjs/core";
 
 import { UserSettings } from "../../App";
 import SciteBadge from "../../SciteBadge";
@@ -22,9 +22,9 @@ function SciteSettings(){
 	const handleTooltipSlideChange = useCallback((value) => setTooltipSlide(value), []);
 
 	return <>
-		<H4>Scite Settings</H4>
-		<span className="zr-secondary">Try different settings by using the controls below. Note : none of these changes will be reflected in your graph.</span>
-		<div>
+		<H3>Scite Settings</H3>
+		<span className={["zr-secondary", "zr-text-small"].join(" ")}>Try different settings by using the controls below. Note : none of these changes will be reflected in your graph.</span>
+		<div zr-role="settings-scite">
 			<div>
 				<div zr-role="settings-row">
 					<span className="zr-auxiliary">Test DOI</span>
@@ -35,7 +35,7 @@ function SciteSettings(){
 				<div zr-role="settings-row">
 					<span className="zr-auxiliary">Layout</span>
 					<div>
-						<RadioGroup label="Layout" onChange={toggleLayout} selectedValue={layout}>
+						<RadioGroup inline={true} onChange={toggleLayout} selectedValue={layout}>
 							<Radio label="Horizontal" value="horizontal" />
 							<Radio label="Vertical" value="vertical" />
 						</RadioGroup>
@@ -59,9 +59,9 @@ function SciteSettings(){
 						<Switch checked={small} onChange={toggleSmall} />
 					</div>
 				</div>
-				<div zr-role="settings-row">
+				<div zr-role="settings-col">
 					<span className="zr-auxiliary">Tooltip Placement</span>
-					<RadioGroup label="Label Placement" onChange={handleTooltipPlacementChange} selectedValue={tooltipPlacement}>
+					<RadioGroup inline={true} onChange={handleTooltipPlacementChange} selectedValue={tooltipPlacement}>
 						<Radio label="Auto" value="auto" />
 						<Radio label="Top" value="top" />
 						<Radio label="Right" value="right" />

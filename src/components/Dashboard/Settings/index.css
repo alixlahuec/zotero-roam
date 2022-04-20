@@ -1,6 +1,16 @@
+.bp3-tab-panel.zr-settings {
+    max-height: 80vh;
+    overflow-y: scroll;
+}
+
 .zr-settings-list {
     display: flex;
     flex-direction: column;
+}
+
+.zr-settings-list .bp3-heading {
+    font-size: 1.15rem;
+    margin: 5px 0px;
 }
 
 .zr-settings-list > button {
@@ -20,6 +30,28 @@
     padding: 5px 10px;
 }
 
+.zr-settings-list [zr-role="settings-scite"] {
+    display: flex;
+    justify-content: space-between;
+}
+
+.zr-settings-list [zr-role="settings-scite"] input.bp3-input {
+    background: var(--zr-box-bg);
+    color: var(--zr-text-co);
+}
+
+.zr-settings-list [zr-role="settings-scite"] .bp3-control.bp3-radio {
+    color: var(--zr-text-co);
+}
+
+.zr-settings-list [zr-role="settings-typemap"] [zr-role="settings-row"] > div {
+    text-align: right;
+}
+
+.zr-settings-list [zr-role="settings-typemap"] input.bp3-input {
+    background: var(--zr-box-bg);
+}
+
 [zr-role="settings-row"] {
     align-items: baseline;
     display: flex;
@@ -29,10 +61,10 @@
 }
 
 [zr-role="settings-row"] > span {
-    flex: 1 0 25%;
+    flex: 1 0 35%;
     min-width: auto;
 }
 
 [zr-role="settings-row"] > div {
-    flex: 0 1 80%;
+    flex: 0 1 70%;
 }

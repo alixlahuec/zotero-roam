@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { func } from "prop-types";
-import { Button, H4, Switch } from "@blueprintjs/core";
+import { Button, H3, Switch } from "@blueprintjs/core";
 
 import Requests from "./Requests";
 import SciteSettings from "./SciteSettings";
@@ -27,7 +27,7 @@ function Settings({ onClose }){
 		<Requests />
 		<SciteSettings />
 		<Typemap />
-		<H4>Other</H4>
+		<H3>Other</H3>
 		<div zr-role="settings-row">
 			<span className="zr-auxiliary">Autoload</span>
 			<Switch checked={autoload == true} disabled={true} />
