@@ -22,7 +22,7 @@ function SciteSettings(){
 	const handleTooltipSlideChange = useCallback((value) => setTooltipSlide(value), []);
 
 	return <>
-		<H3>Scite Settings</H3>
+		<H3>Scite Badge</H3>
 		<span className={["zr-secondary", "zr-text-small"].join(" ")}>Try different settings by using the controls below. Note : none of these changes will be reflected in your graph.</span>
 		<div zr-role="settings-scite">
 			<div>
@@ -61,7 +61,7 @@ function SciteSettings(){
 				</div>
 				<div zr-role="settings-col">
 					<span className="zr-auxiliary">Tooltip Placement</span>
-					<RadioGroup inline={true} onChange={handleTooltipPlacementChange} selectedValue={tooltipPlacement}>
+					<RadioGroup onChange={handleTooltipPlacementChange} selectedValue={tooltipPlacement}>
 						<Radio label="Auto" value="auto" />
 						<Radio label="Top" value="top" />
 						<Radio label="Right" value="right" />

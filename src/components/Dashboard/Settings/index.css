@@ -52,12 +52,20 @@
     background: var(--zr-box-bg);
 }
 
+[zr-role="settings-col"],
 [zr-role="settings-row"] {
-    align-items: baseline;
     display: flex;
     font-size: 0.9em;
-    justify-content: space-between;
     margin: 5px 0px;
+}
+
+[zr-role="settings-col"] {
+    flex-wrap: wrap;
+}
+
+[zr-role="settings-row"] {
+    align-items: baseline;
+    justify-content: space-between;
 }
 
 [zr-role="settings-row"] > span {

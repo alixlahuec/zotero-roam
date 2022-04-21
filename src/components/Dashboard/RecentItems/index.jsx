@@ -31,11 +31,10 @@ LogViewSublist.propTypes = {
 	onClose: func
 };
 
-function LogView({ itemList, onClose }){
+const LogView = React.memo(function LogView({ itemList, onClose }){
 	const [asRecentAs, setAsRecentAs] = useState(7);
 	const [allAbstractsShown, setAllAbstractsShown] = useState(false);
 
-	const setRecency = useCallback((val) => setAsRecentAs(val), []);
 	const handleToggleAbstracts = useCallback(() => setAllAbstractsShown(prevState => !prevState), []);
 
 	const itemsLog = useMemo(() => makeLogFromItems(itemList, asRecentAs), [asRecentAs, itemList]);
@@ -43,7 +42,7 @@ function LogView({ itemList, onClose }){
 	return <div className="zr-recentitems--datalist" >
 		<Button icon="cross" minimal={true} onClick={onClose} />
 		<Toolbar>
-			<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setRecency} stepSize={1} value={asRecentAs} />
+			<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
 			<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
 		</Toolbar>
 		<ListWrapper>
@@ -52,7 +51,7 @@ function LogView({ itemList, onClose }){
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Earlier" onClose={onClose} />
 		</ListWrapper>
 	</div>;
-}
+});
 LogView.propTypes = {
 	itemList: shape({
 		today: arrayOf(customPropTypes.cleanRecentItemType),

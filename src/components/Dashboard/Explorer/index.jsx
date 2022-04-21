@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape } from "prop-types";
 import { Button, Spinner, Tab, Tabs } from "@blueprintjs/core";
 
@@ -13,17 +13,10 @@ import { categorizeLibraryItems, cleanLibraryItem, identifyChildren } from "../.
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
-function TabContents({ itemList, onClose, show }){
-	const [roamCitekeys,] = useRoamCitekeys();
-	const filteredData = useMemo(() => {
-		switch(show){
-		case "pdfs":
-			return itemList.pdfs;
-		case "notes":
-			return itemList.notes;
-		case "items":
-		default:
-			return itemList.items
+function cleanLibraryData(itemList, roamCitekeys){
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			const data = itemList.items
 				.map(item => {
 					let itemKey = item.data.key;
 					let location = item.library.type + "s/" + item.library.id;
@@ -31,12 +24,39 @@ function TabContents({ itemList, onClose, show }){
 
 					return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
 				});
+			resolve(data);
+		}, 0);
+	});
+}
+
+function TabContents({ itemList, onClose, show }){
+	const [roamCitekeys,] = useRoamCitekeys();
+	const [filteredData, setFilteredData] = useState(null);
+
+	useEffect(() => {
+		if(itemList){
+			switch(show){
+			case "pdfs":
+				setFilteredData(itemList.pdfs);
+				break;
+			case "notes":
+				setFilteredData(itemList.notes);
+				break;
+			case "items":
+			default:
+				cleanLibraryData(itemList, roamCitekeys)
+					.then(data => {
+						setFilteredData(data);
+					});
+			}
 		}
 	}, [itemList, roamCitekeys, show]);
 
-	return show == "items" 
-		? <QueryBuilder items={filteredData} onClose={onClose} />
-		: <ListWrapper>{filteredData.slice(0,20).map((it, i) => <ListItem key={it.key + "-" + i}>{it.key}</ListItem>)}</ListWrapper>;
+	return filteredData == null
+		? <Spinner size={15} />
+		: show == "items" 
+			? <QueryBuilder items={filteredData} onClose={onClose} />
+			: <ListWrapper>{filteredData.slice(0,20).map((it, i) => <ListItem key={it.key + "-" + i}>{it.key}</ListItem>)}</ListWrapper>;
 }
 TabContents.propTypes = {
 	itemList: shape({
