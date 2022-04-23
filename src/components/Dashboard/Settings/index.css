@@ -1,16 +1,17 @@
-.bp3-tab-panel.zr-settings {
-    max-height: 80vh;
-    overflow-y: scroll;
-}
-
 .zr-settings-list {
     display: flex;
     flex-direction: column;
 }
 
 .zr-settings-list .bp3-heading {
+    color: var(--zr-text-co);
     font-size: 1.15rem;
-    margin: 5px 0px;
+    margin: 10px 0px;
+}
+
+.zr-settings-list .bp3-heading ~ .bp3-heading {
+    border-top: 1px var(--zr-border-co) solid;
+    padding-top: 10px;
 }
 
 .zr-settings-list > button {
@@ -35,13 +36,30 @@
     justify-content: space-between;
 }
 
+[zr-role="settings-scite"] > div:first-child {
+    background: var(--zr-box-bg);
+    padding: 10px;
+}
+
 .zr-settings-list [zr-role="settings-scite"] input.bp3-input {
     background: var(--zr-box-bg);
     color: var(--zr-text-co);
 }
 
+.zr-settings-list [zr-role="settings-scite"] .bp3-numeric-input {
+    justify-content: right;
+}
+
+.zr-settings-list [zr-role="settings-scite"] .bp3-numeric-input input.bp3-input {
+    max-width: 40px;
+}
+
 .zr-settings-list [zr-role="settings-scite"] .bp3-control.bp3-radio {
     color: var(--zr-text-co);
+}
+
+.zr-settings-list [zr-role="settings-scite"] [zr-role="scite-example"] {
+    padding: 15px;
 }
 
 .zr-settings-list [zr-role="settings-typemap"] [zr-role="settings-row"] > div {
@@ -52,20 +70,12 @@
     background: var(--zr-box-bg);
 }
 
-[zr-role="settings-col"],
-[zr-role="settings-row"] {
-    display: flex;
-    font-size: 0.9em;
-    margin: 5px 0px;
-}
-
-[zr-role="settings-col"] {
-    flex-wrap: wrap;
-}
-
 [zr-role="settings-row"] {
     align-items: baseline;
+    display: flex;
+    font-size: 0.9em;
     justify-content: space-between;
+    margin: 5px 0px;
 }
 
 [zr-role="settings-row"] > span {
@@ -74,5 +84,5 @@
 }
 
 [zr-role="settings-row"] > div {
-    flex: 0 1 70%;
+    flex: 1 1 auto;
 }

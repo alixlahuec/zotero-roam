@@ -41,15 +41,15 @@ const LogView = React.memo(function LogView({ itemList, onClose }){
 
 	return <div className="zr-recentitems--datalist" >
 		<Button icon="cross" minimal={true} onClick={onClose} />
-		<Toolbar>
-			<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
-			<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
-		</Toolbar>
 		<ListWrapper>
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />
 			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Earlier" onClose={onClose} />
 		</ListWrapper>
+		<Toolbar>
+			<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
+			<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
+		</Toolbar>
 	</div>;
 });
 LogView.propTypes = {

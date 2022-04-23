@@ -150,7 +150,7 @@ function QueryFilterList({ handlers, terms, useOR }){
 				<Filter handlers={elemHandlers} isOnlyChild={terms.length == 1} filter={term} useOR={!useOR} />
 			</div>;
 		})}
-		<Button className="zr-text-small" icon="small-plus" minimal={true} onClick={addTerm} small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
+		<Button className="zr-text-small" minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
 	</div>;
 }
 QueryFilterList.propTypes = {

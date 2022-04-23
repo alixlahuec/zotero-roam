@@ -19,7 +19,7 @@ function SciteSettings(){
 	const toggleZero = useCallback(() => setShowZero(prev => !prev), []);
 	const toggleSmall = useCallback(() => setSmall(prev => !prev), []);
 	const handleTooltipPlacementChange = useCallback((event) => setTooltipPlacement(event.currentTarget.value), []);
-	const handleTooltipSlideChange = useCallback((value) => setTooltipSlide(value), []);
+	const handleTooltipSlideChange = useCallback((_valnum, valstring) => setTooltipSlide(Number(valstring)), []);
 
 	return <>
 		<H3>Scite Badge</H3>
@@ -43,23 +43,17 @@ function SciteSettings(){
 				</div>
 				<div zr-role="settings-row">
 					<span className="zr-auxiliary">Show Labels</span>
-					<div>
-						<Switch checked={showLabels} onChange={toggleLabels} />
-					</div>
+					<Switch checked={showLabels} onChange={toggleLabels} />
 				</div>
 				<div zr-role="settings-row">
 					<span className="zr-auxiliary">Show Zero</span>
-					<div>
-						<Switch checked={showZero} onChange={toggleZero} />
-					</div>
+					<Switch checked={showZero} onChange={toggleZero} />
 				</div>
 				<div zr-role="settings-row">
 					<span className="zr-auxiliary">Small display</span>
-					<div>
-						<Switch checked={small} onChange={toggleSmall} />
-					</div>
+					<Switch checked={small} onChange={toggleSmall} />
 				</div>
-				<div zr-role="settings-col">
+				<div zr-role="settings-row">
 					<span className="zr-auxiliary">Tooltip Placement</span>
 					<RadioGroup onChange={handleTooltipPlacementChange} selectedValue={tooltipPlacement}>
 						<Radio label="Auto" value="auto" />
@@ -76,14 +70,16 @@ function SciteSettings(){
 					</div>
 				</div>
 			</div>
-			<SciteBadge 
-				doi={doi} 
-				layout={layout} 
-				showLabels={showLabels} 
-				showZero={showZero} 
-				small={small}
-				tooltipPlacement={tooltipPlacement}
-				tooltipSlide={tooltipSlide} />
+			<div zr-role="scite-example">
+				<SciteBadge 
+					doi={doi} 
+					layout={layout} 
+					showLabels={showLabels} 
+					showZero={showZero} 
+					small={small}
+					tooltipPlacement={tooltipPlacement}
+					tooltipSlide={tooltipSlide} />
+			</div>
 		</div>
 	</>;
 }

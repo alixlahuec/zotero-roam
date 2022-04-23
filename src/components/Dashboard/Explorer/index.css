@@ -3,10 +3,6 @@
     margin-top: 10px;
 }
 
-.zr-query-builder .zr-datalist--listwrapper {
-    max-height: 50vh;
-}
-
 .zr-datalist--item.zr-query--result {
     background: var(--zr-box-bg);
     border: 1px var(--zr-border-co) solid;

@@ -240,9 +240,9 @@ const userSettingsType = shape({
 	render_inline: bool,
 	sciteBadge: shape({
 		layout: oneOf(["horizontal", "vertical"]),
-		showLabels: oneOf(["true", "false"]),
-		showZero: oneOf(["true", "false"]),
-		small: oneOf(["true", "false"]),
+		showLabels: bool,
+		showZero: bool,
+		small: bool,
 		tooltipPlacement: oneOf(["auto", "top", "left", "right", "bottom"]),
 		tooltipSlide: number
 	}),
