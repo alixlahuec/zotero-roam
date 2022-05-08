@@ -47,24 +47,8 @@
     min-width: auto;
 }
 
-.zr-tag--roam,
-.zr-tag--zotero {
-    margin: 5px;
-}
-
-.zr-tag-entry .zr-tag--zotero,
-.zr-tag-entry .zr-tag--roam {
-    margin: 3px;
-}
-
-.zr-tag-entry .zr-tag--zotero.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]) {
-    color: var(--zr-accent-2);;
-    background-color: #fff5e7;
-}
-
-.zr-tag-entry .zr-tag--roam.bp3-tag.bp3-minimal:not([class*="bp3-intent-"]) {
-    color: var(--zr-accent-1);
-    background-color: hsla(var(--zr-accent-1-co), 10%);
+.zr-tag-entry .bp3-tag[data-tag-source] {
+    margin: 3px 5px;
 }
 
 /* DARK THEME */

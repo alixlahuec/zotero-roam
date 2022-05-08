@@ -34,9 +34,9 @@ function QueryBox({ handlers, isLastChild, isOnlyChild, terms = [], useOR = true
 			{terms.map((tm, index) => {
 				let elemHandlers = makeHandlersForChild(index);
 				if(tm.constructor === Array){
-					return <QueryBox key={index} handlers={elemHandlers} isLastChild={index == terms.length} isOnlyChild={terms.length == 1} terms={tm} useOR={!useOR} />;
+					return <QueryBox key={index} handlers={elemHandlers} isLastChild={index == terms.length - 1} isOnlyChild={terms.length == 1} terms={tm} useOR={!useOR} />;
 				} else {
-					return <QueryEntry key={index} handlers={elemHandlers} isLastChild={index == terms.length} isOnlyChild={terms.length == 1} term={tm} useOR={!useOR} />;
+					return <QueryEntry key={index} handlers={elemHandlers} isLastChild={index == terms.length - 1} isOnlyChild={terms.length == 1} term={tm} useOR={!useOR} />;
 				}
 			})}
 		</div>

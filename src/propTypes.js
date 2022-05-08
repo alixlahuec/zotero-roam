@@ -219,6 +219,7 @@ const extensionType = shape({
 });
 
 const userSettingsType = shape({
+	annotations: object,
 	autocomplete: shape({
 		trigger: string,
 		display: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),

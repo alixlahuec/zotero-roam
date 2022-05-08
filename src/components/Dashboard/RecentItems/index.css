@@ -5,7 +5,7 @@
 }
 
 .zr-recentitems--datalist > button {
-    justify-self: self-end;
+    align-self: self-end;
 }
 
 .zr-recentitems--datalist .zr-datalist--item {

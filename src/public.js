@@ -1,6 +1,22 @@
 import { findRoamPage } from "./roam";
 import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getPDFLink, getWebLink, makeDNP } from "./utils";
 
+/** Formats Zotero notes/annotations items
+ * @param {ZoteroItem[]} notes - The Array of Zotero notes/annotations
+ * @param {{func: String, split_char: String, use: ("raw"|"text")}} notesSettings - The settings to use for the formatting
+ * @returns The formatted Array
+ */
+function formatNotes(notes, notesSettings){
+	if(!notes){
+		return [];
+	} else {
+		let annots = notes.filter(n => n.data.itemType == "annotation");
+		let noteItems = notes.filter(n => n.data.itemType == "note");
+
+		return [...formatZoteroAnnotations(annots), ...formatZoteroNotes(noteItems, notesSettings)];
+	}
+}
+
 /** Converts Zotero PDF items into a specific format
  * @param {ZoteroItem[]} pdfs - The Array of Zotero PDFs
  * @param {("links"|"identity")} as - The desired format
@@ -88,15 +104,12 @@ function _getItemMetadata(item, pdfs, notes, typemap, notesSettings) {
 	if (item.data.tags.length > 0) { metadata.push(`Tags:: ${getItemTags(item, { return_as: "string", brackets: true })}`); } // Tags, if any
 
 	if(pdfs.length > 0){
-		metadata.push(`PDF links : ${formatPDFs(pdfs, "links")}`);
+		metadata.push(`PDF links : ${formatPDFs(pdfs, "links").join(", ")}`);
 	}
 	if(notes.length > 0){
-		let annots = notes.filter(n => n.data.itemType == "annotation");
-		let noteItems = notes.filter(n => n.data.itemType == "note");
-
 		metadata.push({
 			string: "[[Notes]]",
-			children: [...formatZoteroAnnotations(annots), ...formatZoteroNotes(noteItems, notesSettings)]
+			children: formatNotes(notes, notesSettings)
 		});
 	}
 
@@ -167,6 +180,7 @@ function _getItemType(item, typemap, { brackets = true } = {}){
 }
 
 export {
+	formatNotes,
 	formatPDFs,
 	getItemCreators,
 	getItemTags,

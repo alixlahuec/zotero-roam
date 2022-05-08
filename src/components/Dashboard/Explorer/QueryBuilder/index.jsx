@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { func } from "prop-types";
-import { NonIdealState, Switch } from "@blueprintjs/core";
+import { NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
 import ItemElement from "./ItemElement";
@@ -15,10 +15,8 @@ const itemsPerPage = 20;
 
 function QueryBuilder({ items, onClose }){
 	const [currentPage, setCurrentPage] = useState(1);
-	const [useOR, setUseOR] = useState(true);
+	const [useOR, /*setUseOR*/] = useState(true);
 	const [queryTerms, setQueryTerms] = useState([]);
-
-	const switchOperator = useCallback(() => setUseOR(prev => !prev), []);
 
 	const addQueryTerm = useCallback(() => {
 		setQueryTerms(prev => addElemToArray(prev, [[defaultQueryTerm]]));
@@ -48,7 +46,6 @@ function QueryBuilder({ items, onClose }){
 		<Toolbar>
 			<QueryFilterList handlers={handlers} terms={queryTerms} useOR={useOR} />
 		</Toolbar>
-		{queryTerms.length > 0 && <Switch checked={useOR} innerLabel="AND" innerLabelChecked="OR" onChange={switchOperator} />}
 		<ListWrapper>
 			{queriedItems.length > 0
 				? queriedItems

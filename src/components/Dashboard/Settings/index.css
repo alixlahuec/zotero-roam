@@ -41,13 +41,14 @@
     padding: 10px;
 }
 
+[zr-role="settings-scite"] [zr-role="settings-row"] > div {
+    flex: 0 1 50%;
+}
+
 .zr-settings-list [zr-role="settings-scite"] input.bp3-input {
     background: var(--zr-box-bg);
     color: var(--zr-text-co);
-}
-
-.zr-settings-list [zr-role="settings-scite"] .bp3-numeric-input {
-    justify-content: right;
+    max-width: 100%;
 }
 
 .zr-settings-list [zr-role="settings-scite"] .bp3-numeric-input input.bp3-input {

@@ -32,11 +32,11 @@
 .zr-query-filter--elements [zr-role="filter-operator"] {
     color: var(--zr-text-co);
     font-size: var(--zr-text-small);
-    margin: 0px 10px;
+    margin: 0px 7px;
 }
 
-.zr-query-filters > button {
-    margin: 10px 10px;
+.zr-query-filters > button.bp3-button {
+    margin: 5px 0px;
 }
 
 .zr-query-term-dialog {

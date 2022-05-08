@@ -6,7 +6,7 @@ import zrToaster from "./components/ExtensionToaster";
 
 import { App, getBibEntries, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
 import { setDefaultHooks } from "./events";
-import { formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemMetadata, _getItemRelated, _getItemType } from "./public";
+import { formatNotes, formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemMetadata, _getItemRelated, _getItemType } from "./public";
 import { registerSmartblockCommands } from "./smartblocks";
 import { analyzeUserRequests, setupDarkTheme, setupDependencies, setupPortals } from "./utils";
 import { default_typemap } from "./variables";
@@ -27,6 +27,7 @@ window.zoteroRoam = {};
 	setupPortals(extensionSlot, extension.portalId);
 
 	let {
+		annotations = {},
 		autocomplete = {},
 		autoload = false,
 		copy = {},
@@ -46,6 +47,7 @@ window.zoteroRoam = {};
 	window.zoteroRoam.config = {
 		version: extension.version,
 		userSettings: {
+			annotations, // TODO: Detail annotationsSettings
 			autocomplete,
 			autoload,
 			copy: {
@@ -99,6 +101,7 @@ window.zoteroRoam = {};
 		}
 	};
 
+	window.zoteroRoam.formatNotes = formatNotes;
 	window.zoteroRoam.formatPDFs = formatPDFs;
 	window.zoteroRoam.getChildren = getChildren;
 	window.zoteroRoam.getItems = getItems;

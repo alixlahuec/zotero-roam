@@ -548,6 +548,7 @@ function getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
 /** Creates a link to a specific PDF attachment in Zotero.
  * If the PDF is a `linked_file`, `imported_file` or `imported_url`, the link opens through the local Zotero app ; otherwise, it's the PDF's URL.
  * @param {ZoteroItem} pdfItem - The targeted Zotero PDF item
+ * @param {("markdown"|"href")} as - The format in which to return the link
  * @returns The link to the PDF
  */
 function getPDFLink(pdfItem, as = "href"){
