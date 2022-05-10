@@ -1,9 +1,9 @@
 import { searchEngine } from "../../../../utils";
 
-const defaultQueryTerm = { property: "citekey", relationship: "exists", value: ""};
+const defaultQueryTerm = { property: "Citekey", relationship: "exists", value: null};
 
 const queries = {
-	abstract: {
+	"Abstract": {
 		"contains": {
 			checkInput: (value) => value && true,
 			defaultInput: "",
@@ -22,7 +22,7 @@ const queries = {
 			}
 		},
 		"does not exist": {
-			checkInput: () => true,
+			checkInput: () => false,
 			defaultInput: null,
 			testItem: (item) => !item.data.abstractNote
 		},
@@ -32,7 +32,31 @@ const queries = {
 			testItem: (item) => item.data.abstractNote && true
 		}
 	},
-	added: {
+	"Citekey": {
+		"exists": {
+			checkInput: () => true,
+			defaultInput: null,
+			testItem: (item) => item.has_citekey && true
+		},
+		"does not exist": {
+			checkInput: () => true,
+			defaultInput: null,
+			testItem: (item) => !item.has_citekey
+		}
+	},
+	"DOI": {
+		"exists": {
+			checkInput: () => true,
+			defaultInput: null,
+			testItem: (item) => item.data.DOI && true
+		},
+		"does not exist": {
+			checkInput: () => true,
+			defaultInput: null,
+			testItem: (item) => !item.data.DOI
+		}
+	},
+	"Item added": {
 		"before": {
 			checkInput: (value) => value && value.constructor === Date,
 			defaultInput: new Date(),
@@ -52,71 +76,7 @@ const queries = {
 			}
 		}
 	},
-	citekey: {
-		"exists": {
-			checkInput: () => true,
-			defaultInput: null,
-			testItem: (item) => item.has_citekey && true
-		},
-		"does not exist": {
-			checkInput: () => true,
-			defaultInput: null,
-			testItem: (item) => !item.has_citekey
-		}
-	},
-	doi: {
-		"exists": {
-			checkInput: () => true,
-			defaultInput: null,
-			testItem: (item) => item.data.DOI && true
-		},
-		"does not exist": {
-			checkInput: () => true,
-			defaultInput: null,
-			testItem: (item) => !item.data.DOI
-		}
-	},
-	// published: {},
-	tags: {
-		"includes": {
-			checkInput: (value) => value && true,
-			defaultInput: [],
-			testItem: (item, value = []) => {
-				if(item.data.tags.length == 0){ return false; }
-				let terms = value.constructor === Array ? value : [value];
-				return terms.every(tag => searchEngine(tag, item.data.tags.map(t => t.tag)));
-			}
-		},
-		"includes any of": {
-			checkInput: (value) => value.constructor === Array && value.length > 0,
-			defaultInput: [],
-			testItem: (item, value = []) => {
-				if(item.data.tags.length == 0){ return false; }
-				return value.some(tag => searchEngine(tag, item.data.tags.map(t => t.tag))); // TODO: Does the search config need to be adjusted for exact matching ?
-			}},
-		"does not include": {
-			checkInput: (value) => value.constructor === Array && value.length > 0,
-			defaultInput: [],
-			testItem: (item, value) => {
-				if(item.data.tags.length == 0){ return true; }
-				let terms = value.constructor === Array ? value : [value];
-				return terms.every(tag => !searchEngine(tag, item.data.tags.map(t => t.tag)));
-			}
-		}
-	},
-	title: {
-		"contains": {
-			checkInput: (value) => value && true,
-			defaultInput: "",
-			testItem: (item, value = "") => searchEngine(value, item.data.title)
-		},
-		"does not contain": {
-			checkInput: (value) => value && true,
-			defaultInput: "",
-			testItem: (item, value) => !searchEngine(value, item.data.title)
-		}
-	},
-	type: {
+	"Item type": {
 		"is": {
 			checkInput: (value) => value && true,
 			defaultInput: "journalArticle",
@@ -131,6 +91,46 @@ const queries = {
 			checkInput: (value) => value.constructor === Array && value.length > 0,
 			defaultInput: [],
 			testItem: (item, value) => !value.includes(item.data.itemType)
+		}
+	},
+	// published: {},
+	"Tags": {
+		"include": {
+			checkInput: (value) => value && true,
+			defaultInput: [],
+			testItem: (item, value = []) => {
+				if(item.data.tags.length == 0){ return false; }
+				let terms = value.constructor === Array ? value : [value];
+				return terms.every(tag => searchEngine(tag, item.data.tags.map(t => t.tag)));
+			}
+		},
+		"include any of": {
+			checkInput: (value) => value.constructor === Array && value.length > 0,
+			defaultInput: [],
+			testItem: (item, value = []) => {
+				if(item.data.tags.length == 0){ return false; }
+				return value.some(tag => searchEngine(tag, item.data.tags.map(t => t.tag))); // TODO: Does the search config need to be adjusted for exact matching ?
+			}},
+		"do not include": {
+			checkInput: (value) => value.constructor === Array && value.length > 0,
+			defaultInput: [],
+			testItem: (item, value) => {
+				if(item.data.tags.length == 0){ return true; }
+				let terms = value.constructor === Array ? value : [value];
+				return terms.every(tag => !searchEngine(tag, item.data.tags.map(t => t.tag)));
+			}
+		}
+	},
+	"Title": {
+		"contains": {
+			checkInput: (value) => value && true,
+			defaultInput: "",
+			testItem: (item, value = "") => searchEngine(value, item.data.title)
+		},
+		"does not contain": {
+			checkInput: (value) => value && true,
+			defaultInput: "",
+			testItem: (item, value) => !searchEngine(value, item.data.title)
 		}
 	}
 };

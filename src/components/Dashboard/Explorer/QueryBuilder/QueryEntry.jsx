@@ -32,14 +32,14 @@ function QueryEntry({ handlers, isLastChild, isOnlyChild, term, useOR = false })
 		// Update relationship also, if necessary
 		if(!Object.keys(queries[newProp]).includes(relationship)){ updates.relationship = Object.keys(queries[newProp])[0]; }
 		// Update value also, if necessary
-		if(updates.relationship && !queries[newProp][updates.relationship].checkInput(value)) { updates.value = ""; }
+		if(updates.relationship && !queries[newProp][updates.relationship].checkInput(value)) { updates.value = queries[newProp][updates.relationship].defaultInput; }
 
 		handlePropChange(updates);
 	}, [handlePropChange, relationship, value]);
 	const handleRelationshipChange = useCallback((newRel) => {
 		let updates = { relationship: newRel };
 		// Update value also, if necessary
-		if(!queries[property][newRel].checkInput(value)) { updates.value = ""; }
+		if(!queries[property][newRel].checkInput(value)) { updates.value = queries[property][newRel].defaultInput; }
 
 		handlePropChange(updates);
 	}, [handlePropChange, property, value]);
@@ -65,7 +65,7 @@ function QueryEntry({ handlers, isLastChild, isOnlyChild, term, useOR = false })
 				popoverProps={popoverProps}>
 				<Button minimal={true} rightIcon="caret-down" text={relationship} />
 			</Select>
-			<InputGroup onChange={handleValueChange} value={value} />
+			{value !== null && <InputGroup onChange={handleValueChange} value={value} />}
 			{isOnlyChild
 				? null
 				: <>
@@ -78,7 +78,7 @@ function QueryEntry({ handlers, isLastChild, isOnlyChild, term, useOR = false })
 						text={(useOR ? "OR" : "AND")} />
 				</>}
 		</div>
-		{!isLastChild && <span zr-role="query-entry-operator">{useOR ? "OR" : "AND"}</span>}
+		{!isLastChild && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}
 	</>;
 }
 QueryEntry.propTypes = {

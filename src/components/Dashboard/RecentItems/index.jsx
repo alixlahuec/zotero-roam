@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
 import { Button, Slider, Spinner, Switch } from "@blueprintjs/core";
 
@@ -34,23 +34,33 @@ LogViewSublist.propTypes = {
 const LogView = React.memo(function LogView({ itemList, onClose }){
 	const [asRecentAs, setAsRecentAs] = useState(7);
 	const [allAbstractsShown, setAllAbstractsShown] = useState(false);
+	const [itemsLog, setItemsLog] = useState(null);
 
 	const handleToggleAbstracts = useCallback(() => setAllAbstractsShown(prevState => !prevState), []);
 
-	const itemsLog = useMemo(() => makeLogFromItems(itemList, asRecentAs), [asRecentAs, itemList]);
+	useEffect(() => {
+		if(itemList){
+			makeLogFromItems(itemList, asRecentAs)
+				.then(data => setItemsLog(data));
+		}
+	}, [asRecentAs, itemList]);
 
-	return <div className="zr-recentitems--datalist" >
-		<Button icon="cross" minimal={true} onClick={onClose} />
-		<ListWrapper>
-			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
-			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />
-			<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Earlier" onClose={onClose} />
-		</ListWrapper>
-		<Toolbar>
-			<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
-			<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
-		</Toolbar>
-	</div>;
+	return (
+		itemsLog == null
+			? <Spinner size={15} />
+			: <div className="zr-recentitems--datalist" >
+				<Button icon="cross" minimal={true} onClick={onClose} />
+				<ListWrapper>
+					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
+					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />
+					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Earlier" onClose={onClose} />
+				</ListWrapper>
+				<Toolbar>
+					<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
+					<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
+				</Toolbar>
+			</div>
+	);
 });
 LogView.propTypes = {
 	itemList: shape({
