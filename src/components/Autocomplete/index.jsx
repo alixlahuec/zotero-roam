@@ -8,9 +8,11 @@ import { ExtensionContext, UserSettings } from "../App";
 import "./index.css";
 
 const tributeClass = "zr-tribute";
+const tributeSelectedClass = "zr-tribute--selected";
+const tributeItemDetailsClass = "zr-tribute--item-details";
 
 const tributeConfig = {
-	selectClass: "zr-tribute--selected",
+	selectClass: tributeSelectedClass,
 	containerClass: tributeClass,
 	lookup: "display",
 	menuShowMinLength: 1,
@@ -19,7 +21,7 @@ const tributeConfig = {
 		let { itemType, display } = item.original;
 		return `
         <span data-item-type="${itemType}"></span>
-        <span class="zr-tribute--item-details">${display}</span>
+        <span class="${tributeItemDetailsClass}">${display}</span>
         `;
 	},
 	noMatchTemplate: function () {

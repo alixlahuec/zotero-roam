@@ -8,14 +8,13 @@ import Typemap from "./Typemap";
 import { UserSettings } from "../../App";
 
 import "./index.css";
+import Formatting from "./Formatting";
+import AutocompleteSettings from "./AutocompleteSettings";
 
 function Settings({ onClose }){
-	const { 
-		// autocomplete, 
+	const {
 		autoload, 
-		// copy, 
-		// metadata, 
-		// notes, 
+		// copy,
 		// pageMenu, 
 		render_inline, 
 		// shortcuts,
@@ -25,6 +24,8 @@ function Settings({ onClose }){
 	return <div className="zr-settings-list">
 		<Button icon="cross" minimal={true} onClick={onClose} />
 		<Requests />
+		<Formatting />
+		<AutocompleteSettings />
 		<SciteSettings />
 		<Typemap />
 		<H3>Other</H3>
