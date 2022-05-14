@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { Classes, H3 } from "@blueprintjs/core";
 
-import { ExtensionContext } from "../../App";
+import { UserSettings } from "../../App";
 
 function AutocompleteSettings(){
-	const { autocomplete: { trigger, display = "citekey", format = "citation" } } = useContext(ExtensionContext);
+	const { autocomplete: { trigger, display = "citekey", format = "citation" } } = useContext(UserSettings);
 
 	return (
 		<>

@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { Classes, H3 } from "@blueprintjs/core";
 
-import { ExtensionContext } from "../../App";
+import { UserSettings } from "../../App";
 
 function Formatting(){
-	const { metadata, notes } = useContext(ExtensionContext);
+	const { metadata, notes } = useContext(UserSettings);
 
 	return (
 		<>
