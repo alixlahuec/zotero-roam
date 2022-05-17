@@ -35,16 +35,15 @@ function QueryBox({ handlers, isLastChild, isOnlyChild, terms = [], useOR = true
 					handlers: makeHandlersForChild(index),
 					isLastChild: index == terms.length - 1,
 					isOnlyChild: terms.length == 1,
-					terms: tm,
 					useOR: !useOR
 				};
 
-				return <>
+				return <React.Fragment key={index}>
 					{index > 0 && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}
 					{tm.constructor === Array
-						? <QueryBox key={index} {...termProps} />
-						: <QueryEntry key={index} {...termProps} />}
-				</>;
+						? <QueryBox terms={tm} {...termProps} />
+						: <QueryEntry term={tm} {...termProps} />}
+				</React.Fragment>;
 
 			})}
 			{isLastChild
