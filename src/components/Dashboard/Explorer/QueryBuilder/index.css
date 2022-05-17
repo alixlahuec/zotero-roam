@@ -50,29 +50,41 @@
 
 /* To correct : */
 
-.zr-query-box,
-.zr-query-entry {
-    border: 1px var(--zr-border-co) solid;
-}
 
 .zr-query-box {
-    background: var(--zr-box-bg);
-    padding: 5px;
+    align-items: baseline;
+    display: flex;
     width: 100%;
 }
 
+.zr-query-box > div {
+    flex: 1 1 100%;
+}
+
+.bp3-dialog-body > .zr-query-box > div > .zr-query-box, 
+.bp3-dialog-body > .zr-query-box > div > .zr-query-entry {
+    background: hsla(var(--zr-accent-1-co), 10%);
+    border-radius: 10px;
+    padding: 10px;
+}
+
 .zr-query-entry {
-    background: var(--zr-dialog-bg);
     display: flex;
     flex-wrap: wrap;
-    justify-content: right;
+    justify-content: space-between;
 }
 
-.zr-query-entry > .bp3-popover-wrapper {
-    flex: 1 0 auto;
+.zr-query-entry > div {
+    background: var(--zr-dialog-bg);
+    border-radius: 10px;
 }
 
-.zr-query-entry > .bp3-popover-wrapper button {
+.zr-query-entry > div > .bp3-popover-wrapper {
+    border-radius: 10px;
+}
+
+.zr-query-entry > div > .bp3-popover-wrapper button {
+    border-radius: 10px;
     color: var(--zr-text-co);
 }
 
@@ -94,11 +106,7 @@
 }
 
 .zr-query-entry--add-sibling.bp3-button,
-.zr-query-entry--add-sibling.bp3-button:hover {
-    background: hsla(var(--zr-accent-1-co), 15%);
-    color: hsla(var(--zr-accent-1-co), 75%);
-}
-
+.zr-query-entry--add-sibling.bp3-button:hover,
 .zr-query-entry--add-sibling.bp3-button .bp3-icon,
 .zr-query-entry--add-sibling.bp3-button:hover .bp3-icon {
     color: hsla(var(--zr-accent-1-co), 75%);

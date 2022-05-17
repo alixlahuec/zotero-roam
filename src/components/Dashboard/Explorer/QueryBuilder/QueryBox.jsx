@@ -6,7 +6,7 @@ import QueryEntry from "./QueryEntry";
 import { defaultQueryTerm } from "./queries";
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
 
-function QueryBox({ handlers, isLastChild, isOnlyChild, terms = [], useOR = true }){
+function QueryBox({ handlers, isFirstChild, isLastChild, isOnlyChild, terms = [], useOR = true }){
 	const { removeSelf, updateSelf } = handlers;
 
 	const addTerm = useCallback(() => {
@@ -29,19 +29,19 @@ function QueryBox({ handlers, isLastChild, isOnlyChild, terms = [], useOR = true
 	}, [removeTerm, updateTerm]);
 
 	return <div className="zr-query-box">
+		{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "OR" : "AND"}</span>}
 		<div>
 			{terms.map((tm, index) => {
 				let termProps = {
 					handlers: makeHandlersForChild(index),
-					isLastChild: index == terms.length - 1,
+					isFirstChild: index == 0,
 					isOnlyChild: terms.length == 1,
 					useOR: !useOR
 				};
 
 				return <React.Fragment key={index}>
-					{index > 0 && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}
 					{tm.constructor === Array
-						? <QueryBox terms={tm} {...termProps} />
+						? <QueryBox isLastChild={index == terms.length - 1} terms={tm} {...termProps} />
 						: <QueryEntry term={tm} {...termProps} />}
 				</React.Fragment>;
 
@@ -58,6 +58,7 @@ QueryBox.propTypes = {
 		removeSelf: func,
 		updateSelf: func
 	}),
+	isFirstChild: bool,
 	isLastChild: bool,
 	isOnlyChild: bool,
 	terms: array,

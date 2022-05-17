@@ -17,7 +17,7 @@ function itemRenderer(item, itemProps) {
 	return <MenuItem key={item} onClick={handleClick} text={item} />;
 }
 
-function QueryEntry({ handlers, isLastChild, isOnlyChild, term, useOR = false }){
+function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }){
 	const { removeSelf, updateSelf } = handlers;
 	const { property, relationship, value = "" } = term;
 
@@ -45,8 +45,9 @@ function QueryEntry({ handlers, isLastChild, isOnlyChild, term, useOR = false })
 	}, [handlePropChange, property, value]);
 	const handleValueChange = useCallback((event) => handlePropChange({ value: event.target.value }), [handlePropChange]);
 
-	return <>
-		<div className="zr-query-entry">
+	return <div className="zr-query-entry">
+		{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "OR" : "AND"}</span>}
+		<div>
 			<Select 
 				filterable={false} 
 				itemRenderer={itemRenderer}
@@ -66,27 +67,26 @@ function QueryEntry({ handlers, isLastChild, isOnlyChild, term, useOR = false })
 				<Button minimal={true} rightIcon="caret-down" text={relationship} />
 			</Select>
 			{value !== null && <InputGroup onChange={handleValueChange} value={value} />}
-			{isOnlyChild
-				? null
-				: <>
-					<Button className={["zr-query-entry--add-sibling", "zr-text-small"].join(" ")} 
-						icon="small-plus" 
-						minimal={true} 
-						onClick={addSiblingTerm} 
-						small={true} 
-						text={(useOR ? "OR" : "AND")} />
-					<Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />
-				</>}
 		</div>
-		{!isLastChild && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}
-	</>;
+		{isOnlyChild
+			? null
+			: <div>
+				<Button className={["zr-query-entry--add-sibling", "zr-text-small"].join(" ")} 
+					icon="small-plus" 
+					minimal={true} 
+					onClick={addSiblingTerm} 
+					small={true} 
+					text={(useOR ? "OR" : "AND")} />
+				<Button className="zr-query-entry--remove-self" icon={isOnlyChild ? "cross" : "small-cross"} intent={isOnlyChild ? null : "danger"} minimal={true} onClick={removeSelf} />
+			</div>}
+	</div>;
 }
 QueryEntry.propTypes = {
 	handlers: shape({
 		removeSelf: func,
 		updateSelf: func
 	}),
-	isLastChild: bool,
+	isFirstChild: bool,
 	isOnlyChild: bool,
 	term: shape({
 		property: oneOf(Object.keys(queries)),
