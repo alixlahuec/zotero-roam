@@ -69,13 +69,13 @@ function QueryEntry({ handlers, isLastChild, isOnlyChild, term, useOR = false })
 			{isOnlyChild
 				? null
 				: <>
-					<Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />
 					<Button className={["zr-query-entry--add-sibling", "zr-text-small"].join(" ")} 
 						icon="small-plus" 
 						minimal={true} 
 						onClick={addSiblingTerm} 
 						small={true} 
 						text={(useOR ? "OR" : "AND")} />
+					<Button className="zr-query-entry--remove-self" icon="small-cross" intent="danger" minimal={true} onClick={removeSelf} />
 				</>}
 		</div>
 		{!isLastChild && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}

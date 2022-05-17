@@ -27,31 +27,31 @@ const queries = {
 			testItem: (item) => !item.data.abstractNote
 		},
 		"exists": {
-			checkInput: () => true,
+			checkInput: () => false,
 			defaultInput: null,
 			testItem: (item) => item.data.abstractNote && true
 		}
 	},
 	"Citekey": {
 		"exists": {
-			checkInput: () => true,
+			checkInput: () => false,
 			defaultInput: null,
 			testItem: (item) => item.has_citekey && true
 		},
 		"does not exist": {
-			checkInput: () => true,
+			checkInput: () => false,
 			defaultInput: null,
 			testItem: (item) => !item.has_citekey
 		}
 	},
 	"DOI": {
 		"exists": {
-			checkInput: () => true,
+			checkInput: () => false,
 			defaultInput: null,
 			testItem: (item) => item.data.DOI && true
 		},
 		"does not exist": {
-			checkInput: () => true,
+			checkInput: () => false,
 			defaultInput: null,
 			testItem: (item) => !item.data.DOI
 		}
