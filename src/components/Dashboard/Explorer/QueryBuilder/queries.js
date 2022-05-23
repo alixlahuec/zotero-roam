@@ -77,7 +77,7 @@ const queries = {
 	},
 	"Item added": {
 		"before": {
-			checkInput: (value) => value && value.constructor === Date,
+			checkInput: (value) => value && value?.constructor === Date,
 			defaultInput: new Date(),
 			inputType: "date",
 			testItem: (item, value) => item.data.dateAdded < value
@@ -89,7 +89,7 @@ const queries = {
 			testItem: (item, value) => item.data.dateAdded > value
 		},
 		"between": {
-			checkInput: (value) => value.constructor === Array && value.length == 2 && value.every(d => d.constructor === Date || d == null),
+			checkInput: (value) => value?.constructor === Array && value.length == 2 && value.every(d => d == null || d?.constructor === Date),
 			defaultInput: [null, null],
 			inputType: "date-range",
 			testItem: (item, value) => {
@@ -100,13 +100,13 @@ const queries = {
 	},
 	"Item type": {
 		"is any of": {
-			checkInput: (value) => value.constructor === Array && value.length > 0,
+			checkInput: (value) => value?.constructor === Array && value.length > 0,
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value) => value.includes(item.data.itemType)
 		},
 		"is not": {
-			checkInput: (value) => value.constructor === Array && value.length > 0,
+			checkInput: (value) => value?.constructor === Array && value.length > 0,
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value) => !value.includes(item.data.itemType)
@@ -125,7 +125,7 @@ const queries = {
 			}
 		},
 		"include any of": {
-			checkInput: (value) => value.constructor === Array && value.length > 0,
+			checkInput: (value) => value?.constructor === Array && value.length > 0,
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value = []) => {
@@ -134,7 +134,7 @@ const queries = {
 				// TODO: Does the search config need to be adjusted for exact matching ?
 			}},
 		"do not include": {
-			checkInput: (value) => value.constructor === Array && value.length > 0,
+			checkInput: (value) => value?.constructor === Array && value.length > 0,
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value) => {

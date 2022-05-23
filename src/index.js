@@ -12,6 +12,7 @@ import { analyzeUserRequests, setupDarkTheme, setupDependencies, setupPortals } 
 import { default_typemap } from "./variables";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
+import "@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "./index.css";
 
 window.zoteroRoam = {};

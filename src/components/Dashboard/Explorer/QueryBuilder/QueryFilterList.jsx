@@ -5,10 +5,22 @@ import { Button, Classes, Dialog, Tag } from "@blueprintjs/core";
 import QueryBox from "./QueryBox";
 import { defaultQueryTerm } from "./queries";
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
+import { makeDNP } from "../../../../utils";
+
+function makeValueString(value){
+	if(value == null){
+		return "...";
+	} else if(value.constructor == Date){
+		return makeDNP(value, { brackets: false });
+	} else {
+		return `${value}`;
+	}
+}
 
 function joinTerm(term){
 	const {property, relationship, value} = term;
-	return [property, relationship, value].filter(Boolean).join(" ");
+	const valueString = value.constructor == Array ? (value.map(val => makeValueString(val)).join(" - ")) : makeValueString(value);
+	return [property, relationship, valueString].filter(Boolean).join(" ");
 }
 
 function makeTermString(term, useOR, { parentheses = true } = {}){
