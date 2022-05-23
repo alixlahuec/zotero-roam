@@ -1,4 +1,4 @@
-.bp3-dialog[class*="zr-dialog-overlay--"] {
+.bp4-dialog[class*="zr-dialog-overlay--"] {
     --zr-dialog-gutter: 2.5%;
     --zr-dialog-margin: 16vw;
     align-self: baseline;
@@ -9,7 +9,7 @@
     width: calc(100% - 2*(var(--zr-dialog-margin) + var(--zr-dialog-gutter)));
 }
 
-.bp3-dialog[class*="zr-dialog-overlay--"] > .bp3-dialog-body {
+.bp4-dialog[class*="zr-dialog-overlay--"] > .bp4-dialog-body {
     flex-wrap: nowrap;
     display: flex;
     margin: 0px;
@@ -18,14 +18,14 @@
 /* SMALLER DISPLAYS */
 
 @media (max-width:1000px){
-    .bp3-dialog[class*="zr-dialog-overlay--"] {
+    .bp4-dialog[class*="zr-dialog-overlay--"] {
         --zr-dialog-gutter: 2.5%;
         --zr-dialog-margin: 10vw;
     }
 }
 
 @media (max-width: 700px){
-    .bp3-dialog[class*="zr-dialog-overlay--"] {
+    .bp4-dialog[class*="zr-dialog-overlay--"] {
         --zr-dialog-gutter: 2.5%;
         --zr-dialog-margin: 5vw;
     }

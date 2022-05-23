@@ -80,13 +80,29 @@ const queries = {
 			checkInput: (value) => value && value?.constructor === Date,
 			defaultInput: new Date(),
 			inputType: "date",
-			testItem: (item, value) => item.data.dateAdded < value
+			testItem: (item, value) => {
+				if(value == null){
+					return true;
+				} else {
+					let dateCheck = value;
+					dateCheck.setHours(0,0,0);
+					return new Date(item.data.dateAdded) < dateCheck;
+				}
+			}
 		},
 		"after": {
 			checkInput: (value) => value && value.constructor === Date,
 			defaultInput: new Date(),
 			inputType: "date",
-			testItem: (item, value) => item.data.dateAdded > value
+			testItem: (item, value) => {
+				if(value == null){
+					return true;
+				} else {
+					let dateCheck = value;
+					dateCheck.setHours(0,0,0);
+					return new Date(item.data.dateAdded) > dateCheck;
+				}
+			}
 		},
 		"between": {
 			checkInput: (value) => value?.constructor === Array && value.length == 2 && value.every(d => d == null || d?.constructor === Date),

@@ -3,13 +3,13 @@
     flex-direction: column;
 }
 
-.zr-settings-list .bp3-heading {
+.zr-settings-list .bp4-heading {
     color: var(--zr-text-co);
     font-size: 1.15rem;
     margin: 10px 0px;
 }
 
-.zr-settings-list .bp3-heading ~ .bp3-heading {
+.zr-settings-list .bp4-heading ~ .bp4-heading {
     border-top: 1px var(--zr-border-co) solid;
     padding-top: 10px;
 }
@@ -22,7 +22,7 @@
     padding-right: 12px;
 }
 
-.zr-settings-list [zr-role*="settings-"] input.bp3-input {
+.zr-settings-list [zr-role*="settings-"] input.bp4-input {
     background: var(--zr-box-bg);
     color: var(--zr-text-co);
 }
@@ -54,15 +54,15 @@
     flex: 0 1 50%;
 }
 
-.zr-settings-list [zr-role="settings-scite"] input.bp3-input {
+.zr-settings-list [zr-role="settings-scite"] input.bp4-input {
     max-width: 100%;
 }
 
-.zr-settings-list [zr-role="settings-scite"] .bp3-numeric-input input.bp3-input {
+.zr-settings-list [zr-role="settings-scite"] .bp4-numeric-input input.bp4-input {
     max-width: 40px;
 }
 
-.zr-settings-list [zr-role="settings-scite"] .bp3-control.bp3-radio {
+.zr-settings-list [zr-role="settings-scite"] .bp4-control.bp4-radio {
     color: var(--zr-text-co);
 }
 

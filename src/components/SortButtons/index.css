@@ -26,12 +26,12 @@
     width: auto;
 }
 
-.zr-sort-option span.bp3-icon {
+.zr-sort-option span.bp4-icon {
     padding-right:5px;
 }
 
 .zr-sort-option label,
-.zr-sort-option span.bp3-icon {
+.zr-sort-option span.bp4-icon {
     opacity: 0.7;
 }
 

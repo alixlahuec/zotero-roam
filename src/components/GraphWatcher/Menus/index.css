@@ -21,12 +21,12 @@
     box-shadow:none;}
 .zr-citekey-menu--header{display:flex;}
 .zr-citekey-menu--actions{flex-wrap:wrap;flex: 1 1 auto;}
-.zr-citekey-menu--actions.bp3-button-group .bp3-button {flex: 0 1 auto;}
+.zr-citekey-menu--actions.bp4-button-group .bp4-button {flex: 0 1 auto;}
 .zr-citekey-menu--actions [zr-role="pdf-link"] {font-weight:600;}
 
-.zr-citekey-menu .bp3-button-group .bp3-button,
-.zr-citekey-menu .bp3-button-group .bp3-button .bp3-icon,
-.zr-citekey-menu .bp3-button-group .bp3-button:hover {
+.zr-citekey-menu .bp4-button-group .bp4-button,
+.zr-citekey-menu .bp4-button-group .bp4-button .bp4-icon,
+.zr-citekey-menu .bp4-button-group .bp4-button:hover {
     color: var(--zr-text-co);
 }
 
@@ -42,11 +42,11 @@ button[class*='zr-page-menu-show--'] {
     flex: 1 0 33%;
 }
 
-.zr-citekey-menu .bp3-button-group button.zr-page-menu-show--references {
+.zr-citekey-menu .bp4-button-group button.zr-page-menu-show--references {
     color: hsla(var(--zr-accent-1-co), 90%);
 }
 
-.zr-citekey-menu .bp3-button-group button.zr-page-menu-show--citations {
+.zr-citekey-menu .bp4-button-group button.zr-page-menu-show--citations {
     color: hsla(var(--zr-accent-2-co), 90%);
 }
 
@@ -79,11 +79,11 @@ button[class*='zr-page-menu-show--'] {
     color: var(--zr-accent-2);
 }
 
-.zr-backlinks-divider--tag + .bp3-divider {
+.zr-backlinks-divider--tag + .bp4-divider {
     border-color: var(--zr-border-co);
 }
 
-.zr-backlinks-divider--tag.bp3-tag.bp3-minimal,
+.zr-backlinks-divider--tag.bp4-tag.bp4-minimal,
 .zr-backlink-item--info [zr-role="item-title"] {
     color: var(--zr-text-co);
 }
@@ -94,7 +94,7 @@ button[class*='zr-page-menu-show--'] {
 }
 
 /* ViewItem */
-.zr-auxiliary-dialog--view-item-information.bp3-dialog {
+.zr-auxiliary-dialog--view-item-information.bp4-dialog {
     --zr-dialog-gutter: 2.5%;
     --zr-dialog-margin: 18vw;
 }
@@ -104,7 +104,7 @@ button[class*='zr-page-menu-show--'] {
 @media (max-width: 700px){
     .zotero-roam-page-menu-header{flex-direction:column-reverse;}
     .zr-backlink-item--state{flex: 1 2 auto;}
-    .zr-citekey-menu .bp3-button {font-size: 0.85em;}
+    .zr-citekey-menu .bp4-button {font-size: 0.85em;}
 }
 
 /* DARK THEME */

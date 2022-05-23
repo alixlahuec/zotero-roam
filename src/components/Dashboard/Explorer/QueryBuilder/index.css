@@ -23,7 +23,7 @@
     padding: 5px 10px;
 }
 
-.zr-query-filter--elements [zr-role="filter-tag"].bp3-tag.bp3-minimal {
+.zr-query-filter--elements [zr-role="filter-tag"].bp4-tag.bp4-minimal {
     background: var(--zr-box-bg);
     color: var(--zr-text-co);
 }
@@ -36,7 +36,7 @@
     margin: 0px 7px;
 }
 
-.zr-query-filters > button.bp3-button {
+.zr-query-filters > button.bp4-button {
     margin: 5px 0px;
 }
 
@@ -44,7 +44,7 @@
     background-color: var(--zr-dialog-bg);
 }
 
-.zr-query-term-dialog .bp3-dialog-footer-actions .bp3-button {
+.zr-query-term-dialog .bp4-dialog-footer-actions .bp4-button {
     color: var(--zr-auxiliary);
 }
 
@@ -61,8 +61,8 @@
     flex: 1 1 100%;
 }
 
-.bp3-dialog-body > .zr-query-box > div > .zr-query-box, 
-.bp3-dialog-body > .zr-query-box > div > .zr-query-entry {
+.bp4-dialog-body > .zr-query-box > div > .zr-query-box, 
+.bp4-dialog-body > .zr-query-box > div > .zr-query-entry {
     background: hsla(var(--zr-accent-1-co), 10%);
     border-radius: 10px;
     padding: 10px;
@@ -80,39 +80,39 @@
     border-radius: 10px;
 }
 
-.zr-query-entry > div > .bp3-popover-wrapper {
+.zr-query-entry > div > .bp4-popover-wrapper {
     border-radius: 10px;
 }
 
-.zr-query-entry > div > .bp3-popover-wrapper button {
+.zr-query-entry > div > .bp4-popover-wrapper button {
     border-radius: 10px;
     color: var(--zr-text-co);
 }
 
-.zr-query-entry > .bp3-input-group {
+.zr-query-entry > .bp4-input-group {
     flex: 1 1 40%;
 }
 
-.zr-query-entry > .bp3-input-group input.bp3-input {
+.zr-query-entry > .bp4-input-group input.bp4-input {
     background: var(--zr-dialog-bg);
     color: var(--zr-auxiliary);
 }
 
-.zr-query-box--add-sibling.bp3-button,
-.zr-query-box--add-sibling.bp3-button:hover {
+.zr-query-box--add-sibling.bp4-button,
+.zr-query-box--add-sibling.bp4-button:hover {
     background: var(--zr-box-bg);
     border: 1px var(--zr-border-co) solid;
     color: var(--zr-text-co);
     margin-top: 10px;
 }
 
-.zr-query-entry--add-sibling.bp3-button,
-.zr-query-entry--add-sibling.bp3-button:hover,
-.zr-query-entry--add-sibling.bp3-button .bp3-icon,
-.zr-query-entry--add-sibling.bp3-button:hover .bp3-icon {
+.zr-query-entry--add-sibling.bp4-button,
+.zr-query-entry--add-sibling.bp4-button:hover,
+.zr-query-entry--add-sibling.bp4-button .bp4-icon,
+.zr-query-entry--add-sibling.bp4-button:hover .bp4-icon {
     color: hsla(var(--zr-accent-1-co), 75%);
 }
 
-.zr-query-box > .zr-query-box--remove-self.bp3-button:hover ~ .zr-query-entry {
+.zr-query-box > .zr-query-box--remove-self.bp4-button:hover ~ .zr-query-entry {
     background: hsla(var(--zr-accent-1-co), 10%);
 }

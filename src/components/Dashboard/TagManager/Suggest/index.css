@@ -1,21 +1,21 @@
-.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge,
-.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge.bp3-active,
-.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge:hover {
+.bp4-button-group .bp4-button.zr-tag-suggestion--auto-merge,
+.bp4-button-group .bp4-button.zr-tag-suggestion--auto-merge.bp4-active,
+.bp4-button-group .bp4-button.zr-tag-suggestion--auto-merge:hover {
     background-color: hsla(var(--zr-accent-1-co), 70%);
     color: white;
 }
 
-.bp3-button-group .bp3-button.zr-tag-suggestion--auto-merge .bp3-icon {
+.bp4-button-group .bp4-button.zr-tag-suggestion--auto-merge .bp4-icon {
     color: white;
 }
 
-.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as,
-.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as.bp3-active,
-.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as:hover {
+.bp4-button-group .bp4-button.zr-tag-suggestion--merge-as,
+.bp4-button-group .bp4-button.zr-tag-suggestion--merge-as.bp4-active,
+.bp4-button-group .bp4-button.zr-tag-suggestion--merge-as:hover {
     background-color: hsla(var(--zr-accent-1-co), 10%);
     color: hsla(var(--zr-accent-1-co), 70%);
 }
 
-.bp3-button-group .bp3-button.zr-tag-suggestion--merge-as .bp3-icon {
+.bp4-button-group .bp4-button.zr-tag-suggestion--merge-as .bp4-icon {
     color: hsla(var(--zr-accent-1-co), 70%);
 }

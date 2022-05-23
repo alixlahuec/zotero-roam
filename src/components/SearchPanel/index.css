@@ -20,27 +20,27 @@ label.zr-quick-copy {
 
 /* QueryList */
 
-.zr-dialog-overlay--search-library .zr-querylist .bp3-input-group.bp3-input {
+.zr-dialog-overlay--search-library .zr-querylist .bp4-input-group.bp4-input {
     padding: unset;
 }
 
-.zr-dialog-overlay--search-library .zr-querylist .bp3-input-group .bp3-input-left-container > * {
+.zr-dialog-overlay--search-library .zr-querylist .bp4-input-group .bp4-input-left-container > * {
     margin-right: 10px;
 }
 
-.zr-dialog-overlay--search-library .zr-querylist .bp3-input-group .bp3-input-action {
+.zr-dialog-overlay--search-library .zr-querylist .bp4-input-group .bp4-input-action {
     display: flex;
     align-items: center;
 }
 
-#zotero-roam-library-rendered .bp3-menu {
+#zotero-roam-library-rendered .bp4-menu {
     max-height: 70vh;
     overflow-y: scroll;
     background: unset;
     padding: 0px;
 }
 
-#zotero-roam-library-rendered .bp3-menu::-webkit-scrollbar {
+#zotero-roam-library-rendered .bp4-menu::-webkit-scrollbar {
   width: 0px;
 }
 

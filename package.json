@@ -36,11 +36,11 @@
         "webpack-merge": "^5.8.0"
     },
     "dependencies": {
-        "@blueprintjs/core": "^3.52.0",
+        "@blueprintjs/core": "^4.3.2",
         "@blueprintjs/datetime": "^4.2.2",
-        "@blueprintjs/icons": "^3.31.0",
-        "@blueprintjs/popover2": "^0.12.9",
-        "@blueprintjs/select": "^3.18.11",
+        "@blueprintjs/icons": "^4.2.6",
+        "@blueprintjs/popover2": "^1.2.2",
+        "@blueprintjs/select": "^4.2.2",
         "axios": "^0.24.0",
         "axios-retry": "^3.2.4",
         "prop-types": "^15.8.1",
