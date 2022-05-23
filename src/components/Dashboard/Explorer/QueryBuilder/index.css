@@ -78,10 +78,18 @@
 .zr-query-entry > div {
     background: var(--zr-dialog-bg);
     border-radius: 10px;
+    display: flex;
+    width: 100%;
 }
 
 .zr-query-entry > div > .bp4-popover-wrapper {
     border-radius: 10px;
+}
+.zr-query-entry > div > span.bp4-popover-wrapper {
+    flex: 1 1 20%;
+}
+.zr-query-entry > div > div.bp4-popover-wrapper {
+    flex: 1 1 60%;
 }
 
 .zr-query-entry > div > .bp4-popover-wrapper button {
@@ -89,12 +97,13 @@
     color: var(--zr-text-co);
 }
 
-.zr-query-entry > .bp4-input-group {
+.zr-query-entry .bp4-input-group {
     flex: 1 1 40%;
 }
 
 .zr-query-entry > .bp4-input-group input.bp4-input {
     background: var(--zr-dialog-bg);
+    box-shadow: none;
     color: var(--zr-auxiliary);
 }
 

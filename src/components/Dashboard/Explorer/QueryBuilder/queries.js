@@ -16,7 +16,7 @@ const types = ["date", "date-range", "multiselect", "select", "text", null];
 const queries = {
 	"Abstract": {
 		"contains": {
-			checkInput: (value) => value && true,
+			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
 			inputType: "text",
 			testItem: (item, value = "") => {
@@ -25,7 +25,7 @@ const queries = {
 			}
 		},
 		"does not contain": {
-			checkInput: () => true,
+			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
 			inputType: "text",
 			testItem: (item, value = "") => {
@@ -181,13 +181,13 @@ const queries = {
 	},
 	"Title": {
 		"contains": {
-			checkInput: (value) => value && true,
+			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
 			inputType: "text",
 			testItem: (item, value = "") => searchEngine(value, item.data.title)
 		},
 		"does not contain": {
-			checkInput: (value) => value && true,
+			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
 			inputType: "text",
 			testItem: (item, value) => !searchEngine(value, item.data.title)

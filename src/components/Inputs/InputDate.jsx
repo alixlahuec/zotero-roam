@@ -1,5 +1,6 @@
 import React from "react";
 import { arrayOf, func, instanceOf } from "prop-types";
+import { Icon } from "@blueprintjs/core";
 import { DateInput, DateRangeInput } from "@blueprintjs/datetime";
 
 import { makeDNP } from "../../utils";
@@ -21,11 +22,11 @@ function InputDateSingle({ value, setValue }){
 	return <DateInput
 		{...dateProps}
 		closeOnSelection={true}
-		fill={true}
 		highlightCurrentDay={true}
 		onChange={setValue}
 		placeholder="Date"
 		popoverProps={popoverProps}
+		rightElement={<Icon icon="timeline-events" />}
 		shortcuts={false}
 		value={value}
 	/>;
