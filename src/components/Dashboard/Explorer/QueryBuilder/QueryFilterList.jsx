@@ -19,7 +19,11 @@ function makeValueString(value){
 
 function joinTerm(term){
 	const {property, relationship, value} = term;
-	const valueString = value.constructor == Array ? (value.map(val => makeValueString(val)).join(" - ")) : makeValueString(value);
+	const valueString = value == null
+		? ""
+		: value?.constructor == Array 
+			? (value.map(val => makeValueString(val)).join(" - ")) 
+			: makeValueString(value);
 	return [property, relationship, valueString].filter(Boolean).join(" ");
 }
 
