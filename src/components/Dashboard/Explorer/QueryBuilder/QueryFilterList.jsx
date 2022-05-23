@@ -48,7 +48,7 @@ function TermTag({ handlers, isLast, term, useOR }){
 		{!isLast && <span className="zr-auxiliary" zr-role="filter-operator">{useOR ? "OR" : "AND"}</span>}
 		<Dialog canEscapeKeyClose={false} className="zr-query-term-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
 			<div className={Classes.DIALOG_BODY}>
-				<QueryBox handlers={handlersForDialog} isLastChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
+				<QueryBox handlers={handlersForDialog} isFirstChild={true} isLastChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
 			</div>
 			<div className={Classes.DIALOG_FOOTER}>
 				<div className={Classes.DIALOG_FOOTER_ACTIONS}>

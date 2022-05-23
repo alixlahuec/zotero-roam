@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
-import { bool, func, oneOf, shape, string } from "prop-types";
-import { Button, MenuItem, InputGroup } from "@blueprintjs/core";
+import { any, bool, func, oneOf, shape, string } from "prop-types";
+import { Button, MenuItem } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
-import { defaultQueryTerm, queries } from "./queries";
+import { defaultQueryTerm, queries, InputComponent } from "./queries";
 import { returnSiblingArray } from "./utils";
 
 const popoverProps = {
@@ -43,10 +43,10 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 
 		handlePropChange(updates);
 	}, [handlePropChange, property, value]);
-	const handleValueChange = useCallback((event) => handlePropChange({ value: event.target.value }), [handlePropChange]);
+	const handleValueChange = useCallback((value) => handlePropChange({ value }), [handlePropChange]);
 
 	return <div className="zr-query-entry">
-		{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "OR" : "AND"}</span>}
+		{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}
 		<div>
 			<Select 
 				filterable={false} 
@@ -66,7 +66,7 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 				popoverProps={popoverProps}>
 				<Button minimal={true} rightIcon="caret-down" text={relationship} />
 			</Select>
-			{value !== null && <InputGroup onChange={handleValueChange} value={value} />}
+			<InputComponent property={property} relationship={relationship} value={value} setValue={handleValueChange} />
 		</div>
 		{isOnlyChild
 			? null
@@ -91,7 +91,7 @@ QueryEntry.propTypes = {
 	term: shape({
 		property: oneOf(Object.keys(queries)),
 		relationship: string,
-		value: string
+		value: any
 	}),
 	useOR: bool
 };

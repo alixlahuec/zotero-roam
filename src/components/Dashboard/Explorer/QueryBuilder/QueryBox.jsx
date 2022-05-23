@@ -6,7 +6,7 @@ import QueryEntry from "./QueryEntry";
 import { defaultQueryTerm } from "./queries";
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
 
-function QueryBox({ handlers, isFirstChild, isLastChild, isOnlyChild, terms = [], useOR = true }){
+function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = true }){
 	const { removeSelf, updateSelf } = handlers;
 
 	const addTerm = useCallback(() => {
@@ -28,30 +28,30 @@ function QueryBox({ handlers, isFirstChild, isLastChild, isOnlyChild, terms = []
 		};
 	}, [removeTerm, updateTerm]);
 
-	return <div className="zr-query-box">
-		{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "OR" : "AND"}</span>}
-		<div>
-			{terms.map((tm, index) => {
-				let termProps = {
-					handlers: makeHandlersForChild(index),
-					isFirstChild: index == 0,
-					isOnlyChild: terms.length == 1,
-					useOR: !useOR
-				};
+	return <>
+		<div className="zr-query-box">
+			{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "OR" : "AND"}</span>}
+			<div>
+				{terms.map((tm, index) => {
+					let termProps = {
+						handlers: makeHandlersForChild(index),
+						isFirstChild: index == 0,
+						isOnlyChild: terms.length == 1,
+						useOR: !useOR
+					};
 
-				return <React.Fragment key={index}>
-					{tm.constructor === Array
-						? <QueryBox isLastChild={index == terms.length - 1} terms={tm} {...termProps} />
-						: <QueryEntry term={tm} {...termProps} />}
-				</React.Fragment>;
+					return <React.Fragment key={index}>
+						{tm.constructor === Array
+							? <QueryBox terms={tm} {...termProps} />
+							: <QueryEntry term={tm} {...termProps} />}
+					</React.Fragment>;
 
-			})}
-			{isLastChild
-				? <Button className={["zr-query-box--add-sibling", "zr-text-small"].join(" ")} minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={(useOR ? "OR" : "AND")} />
-				: null}
+				})}
+			</div>
+			{!isOnlyChild && <Button className="zr-query-box--remove-self" icon="cross" minimal={true} onClick={removeSelf} />}
 		</div>
-		{!isOnlyChild && <Button className="zr-query-box--remove-self" icon="cross" minimal={true} onClick={removeSelf} />}
-	</div>;
+		<Button className={["zr-query-box--add-sibling", "zr-text-small"].join(" ")} minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={(useOR ? "OR" : "AND")} />
+	</>;
 }
 QueryBox.propTypes = {
 	handlers: shape({
@@ -59,7 +59,6 @@ QueryBox.propTypes = {
 		updateSelf: func
 	}),
 	isFirstChild: bool,
-	isLastChild: bool,
 	isOnlyChild: bool,
 	terms: array,
 	useOR: bool
