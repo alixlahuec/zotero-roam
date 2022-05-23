@@ -146,7 +146,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 /* Popovers & Menus */
 
-.zr-popover {
+.zr-popover:not(.zr-date-picker) {
   max-width: 300px;
 }
 

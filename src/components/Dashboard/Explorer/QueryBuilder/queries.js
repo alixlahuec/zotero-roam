@@ -110,7 +110,26 @@ const queries = {
 			inputType: "date-range",
 			testItem: (item, value) => {
 				let [from, to] = value;
-				return ((from == null || item.data.dateAdded > from) && (to == null || item.data.dateAdded < to));
+				let afterFrom
+					, beforeTo;
+				
+				if(from == null){
+					afterFrom = true;
+				} else {
+					let fromCheck = from;
+					fromCheck.setHours(0,0,0);
+					afterFrom = new Date(item.data.dateAdded) > fromCheck;
+				}
+
+				if(to == null){
+					beforeTo = true;
+				} else {
+					let toCheck = to;
+					toCheck.setHours(0,0,0);
+					beforeTo = new Date(item.data.dateAdded) < toCheck;
+				}
+				
+				return (afterFrom && beforeTo);
 			}
 		}
 	},
