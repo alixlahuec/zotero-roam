@@ -8,8 +8,8 @@ const popoverProps = {
 	canEscapeKeyClose: false,
 	fill: true,
 	minimal: true,
-	popoverClassName: "zr-popover zr-date-picker",
-	position: "bottom-center"
+	placement: "bottom",
+	popoverClassName: "zr-popover zr-date-picker"
 };
 
 const dateProps = {

@@ -98,8 +98,8 @@ function Suggest({ entry, library }){
 			<Popover2
 				content={<ActionsMenu library={library} mergeAs={suggestion.type == "auto"} suggestion={suggestion} />}
 				interactionKind="click"
+				placement="bottom-start"
 				popoverClassName="zr-popover"
-				position="bottom-right"
 			>
 				<Button icon="more" />
 			</Popover2>
