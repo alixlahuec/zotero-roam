@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
-import { func } from "prop-types";
-import { Button, H3, Switch } from "@blueprintjs/core";
+import { H3, Switch } from "@blueprintjs/core";
 
 import Requests from "./Requests";
 import SciteSettings from "./SciteSettings";
@@ -11,7 +10,7 @@ import "./index.css";
 import Formatting from "./Formatting";
 import AutocompleteSettings from "./AutocompleteSettings";
 
-function Settings({ onClose }){
+function Settings(){
 	const {
 		autoload, 
 		// copy,
@@ -22,7 +21,6 @@ function Settings({ onClose }){
 	} = useContext(UserSettings);
     
 	return <div className="zr-settings-list">
-		<Button icon="cross" minimal={true} onClick={onClose} />
 		<Requests />
 		<Formatting />
 		<AutocompleteSettings />
@@ -39,8 +37,5 @@ function Settings({ onClose }){
 		</div>
 	</div>;
 }
-Settings.propTypes = {
-	onClose: func
-};
 
 export default Settings;

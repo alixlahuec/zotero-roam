@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
-import { Button, Slider, Spinner, Switch } from "@blueprintjs/core";
+import { Slider, Spinner, Switch } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import { ListWrapper, Toolbar } from "../../DataList";
@@ -49,7 +49,6 @@ const LogView = React.memo(function LogView({ itemList, onClose }){
 		itemsLog == null
 			? <Spinner size={15} />
 			: <div className="zr-recentitems--datalist" >
-				<Button icon="cross" minimal={true} onClick={onClose} />
 				<ListWrapper>
 					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
 					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />

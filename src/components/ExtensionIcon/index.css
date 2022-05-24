@@ -14,7 +14,7 @@
 
 .zr-icon-tooltip.bp4-tooltip2 .bp4-popover2-content {
   background: var(--zr-dialog-bg);
-  color: var(--zr-text-co);
+  color: var(--zr-auxiliary);
 }
 
 .zr-icon-tooltip-footer {

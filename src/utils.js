@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom";
 import "./typedefs";
+import zrToaster from "./components/ExtensionToaster";
 
 /** Generates a data requests configuration object
  * @param {Array} reqs - Data requests provided by the user
@@ -148,10 +149,12 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 	};
 
 	clean_item._multiField = [
+		clean_item.abstract,
 		clean_item.authorsFull.join(" "), 
 		clean_item.year, 
 		clean_item.title, 
-		clean_item.tags.map(tag => `#${tag}`).join(", ")
+		clean_item.tags.map(tag => `#${tag}`).join(", "),
+		clean_item.key
 	].join(" ");
 
 	return clean_item;
@@ -391,17 +394,28 @@ function copyToClipboard(text){
 	if(navigator.clipboard){
 		navigator.clipboard.writeText(text)
 			.then((_response) => {
+				zrToaster.show({
+					intent: "success",
+					message: `Successfully copied to clipboard: ${text}`
+				});
 				return {
 					success: true
 				};
 			})
 			.catch((error) => {
 				console.error(error);
+				zrToaster.show({
+					intent: "danger",
+					message: `Clipboard copy failed for: ${text}`
+				});
 				return {
 					success: false
 				};
 			});
 	} else {
+		zrToaster.show({
+			message: `Clipboard API is not available. The following could not be copied: ${text}`
+		});
 		return {
 			success: null
 		};
@@ -453,12 +467,13 @@ function formatItemAnnotations(annotations){
 		} else if(ann.type == "image"){
 			// let { pageIndex, rects } = ann.position;
 			// TODO: Can rect selections be extracted into an image ?
+			return null;
 		}
-	});
+	}).filter(Boolean);
 }
 
 /** Default formatter for notes
- * @param {{ZoteroItem}[]]} notes - The (raw) array of notes to be formatted
+ * @param {{ZoteroItem}[]} notes - The (raw) array of notes to be formatted
  * @param {String} split_char - The string on which to split notes into blocks
  * @returns A flat array of strings, separated according to `split_char`, and ready for import into Roam.
  */

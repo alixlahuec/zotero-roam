@@ -81,6 +81,10 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 /* Blueprint Elements */
 
+[class*="zr"] .bp4-button:not([class*=bp4-intent-]) {
+  background: var(--zr-dialog-bg);
+}
+
 [class*="zr"] a:not(.bp4-menu-item),
 [class*="zr"] a:not(.bp4-menu-item) .bp4-icon,
 [class*="zr"] .bp4-button.bp4-minimal.bp4-intent-primary,
@@ -111,6 +115,12 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
   border: 2px var(--zr-border-co) solid;
 }
 
+[class*="zr"] .bp4-code-block {
+  background: var(--zr-dialog-bg);
+  border: 1px var(--zr-border-co) solid;
+  color: var(--zr-auxiliary);
+}
+
 [class*="zr"] .bp4-progress-bar.bp4-intent-primary .bp4-progress-meter {
   background-color: var(--zr-accent-1);
 }
@@ -132,6 +142,11 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 [class*="zr"] .bp4-control.bp4-switch input:checked ~ .bp4-control-indicator {
   background-color: hsla(var(--zr-accent-1-co), 90%);
+}
+
+[class*="zr"] .bp4-control.bp4-switch .bp4-control-indicator::before {
+  background: var(--zr-dialog-bg);
+  box-shadow: none;
 }
 
 [class*="zr"] .bp4-tag.bp4-minimal.bp4-intent-primary {

@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, func, objectOf, shape, string } from "prop-types";
-import { Button, Spinner, Tab, Tabs} from "@blueprintjs/core";
+import { Spinner, Tab, Tabs} from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import NoWriteableLibraries from "../../Errors/NoWriteableLibraries";
@@ -12,7 +12,7 @@ import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 import LibrarySelect from "../LibrarySelect";
 
-function TagLists({ items, libProps, onClose }){
+function TagLists({ items, libProps }){
 	const [activeTab, setActiveTab] = useState("suggestions");
 	const selectTab = useCallback((newtab, _prevtab, _event) => setActiveTab(newtab), []);
   
@@ -32,7 +32,6 @@ function TagLists({ items, libProps, onClose }){
 			/>
 			<Tabs.Expander />
 			<LibrarySelect libProps={libProps} />
-			<Button icon="cross" minimal={true} onClick={onClose} />
 		</Tabs>
 	);
 }
@@ -46,7 +45,7 @@ TagLists.propTypes = {
 	onClose: func
 };
 
-const TabContents = React.memo(function TabContents({ libraries, onClose }){
+const TabContents = React.memo(function TabContents({ libraries }){
 	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);
 
 	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
@@ -67,15 +66,14 @@ const TabContents = React.memo(function TabContents({ libraries, onClose }){
 	return <div>
 		{isLoading
 			? <Spinner />
-			: <TagLists items={data} libProps={libProps} onClose={onClose} /> }
+			: <TagLists items={data} libProps={libProps} /> }
 	</div>;
 });
 TabContents.propTypes = {
-	libraries: arrayOf(customPropTypes.zoteroLibraryType),
-	onClose: func
+	libraries: arrayOf(customPropTypes.zoteroLibraryType)
 };
 
-const TagManager = React.memo(function TagManager({ onClose }){
+const TagManager = React.memo(function TagManager(){
 	const { libraries } = useContext(ExtensionContext);
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
 
@@ -84,11 +82,8 @@ const TagManager = React.memo(function TagManager({ onClose }){
 			? <Spinner />
 			: writeableLibraries.length == 0
 				? <NoWriteableLibraries />
-				: <TabContents libraries={writeableLibraries} onClose={onClose} />
+				: <TabContents libraries={writeableLibraries} />
 	);
 });
-TagManager.propTypes = {
-	onClose: func
-};
 
 export default TagManager;

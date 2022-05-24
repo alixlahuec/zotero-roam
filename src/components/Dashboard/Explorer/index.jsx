@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape } from "prop-types";
-import { Button, Spinner, Tab, Tabs } from "@blueprintjs/core";
+import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import { ListItem, ListWrapper } from "../../DataList";
@@ -89,8 +89,6 @@ function ExplorerTabs({ itemList, onClose }){
 			<Tab id="notes" title="Notes"
 				panel={<TabContents itemList={itemList} onClose={onClose} show="notes" />}
 			/>
-			<Tabs.Expander />
-			<Button icon="cross" minimal={true} onClick={onClose} />
 		</Tabs>
 	);
 }

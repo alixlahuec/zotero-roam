@@ -18,43 +18,65 @@ const copyPopoverProps = {
 	popoverClassName: "zr-popover"
 };
 
+/** Creates a formatted reference to an item
+ * @param {String} citekey - The item's citekey
+ * @param {("citation"|"citekey"|"page-reference"|"tag")} format 
+ * @param {ZoteroItem} item - The Zotero item
+ * @returns The formatted reference
+ */
+const makeItemReference = (citekey, format, item) => {
+	let pageRef = "[[@" + citekey + "]]";
+	switch(format){
+	case "page-reference":
+		return pageRef;
+	case "tag":
+		return "#" + pageRef;
+	case "citation":
+		return "[" + item.authors + " (" + item.year + ")](" + pageRef + ")";
+	case "citekey":
+	default:
+		return "@" + citekey;
+	}
+};
+
 function CopyOption(props){
 	let { citekey, format, item } = props;
+	const { shortcuts: shortcutsSettings } = useContext(UserSettings);
 
-	const textOutput = useMemo(() => {
-		let pageRef = "[[@" + citekey + "]]";
-  
-		switch(format){
-		case "page-reference":
-			return pageRef;
-		case "tag":
-			return "#" + pageRef;
-		case "citation":
-			return "[" + item.authors + " (" + item.year + ")](" + pageRef + ")";
-		case "citekey":
-		default:
-			return "@" + citekey;
-		}
-	}, [citekey, format, item]);
-
+	const textOutput = useMemo(() => makeItemReference(citekey, format, item), [citekey, format, item]);
 	const formatCitekey = useCallback(() => copyToClipboard(textOutput), [textOutput]);
 
 	const label = useMemo(() => {
+		const {
+			copyCitation: citationCombo,
+			copyCitekey: citekeyCombo,
+			copyPageRef: pageRefCombo,
+			copyTag: tagCombo
+		} = shortcutsSettings;
+
 		switch(format){
 		case "page-reference":
-			return "REF";
+			return pageRefCombo != false
+				? <ShortcutSequence text={pageRefCombo} />
+				: <Tag minimal={true}>REF</Tag>;
 		case "tag":
-			return "TAG";
+			return tagCombo != false
+				? <ShortcutSequence text={tagCombo} /> 
+				: <Tag minimal={true}>TAG</Tag>;
 		case "citation":
-			return "CIT";
+			return citationCombo != false
+				? <ShortcutSequence text={citationCombo} />
+				: <Tag minimal={true}>CIT</Tag>;
 		case "citekey":
-			return "KEY";
+			return citekeyCombo != false
+				? <ShortcutSequence text={citekeyCombo} />
+				: <Tag minimal={true}>KEY</Tag>;
 		default:
 			return null;
 		}
-	}, [format]);
+	}, [format, shortcutsSettings]);
   
-	return <MenuItem htmlTitle={textOutput} labelElement={label && <Tag minimal={true}>{label}</Tag>} onClick={formatCitekey} text={textOutput} />;
+	return <MenuItem htmlTitle={textOutput} labelElement={label} onClick={formatCitekey} text={textOutput} />;
 }
 CopyOption.propTypes = {
 	citekey: string,
@@ -64,13 +86,13 @@ CopyOption.propTypes = {
 
 function CopyButtons(props){
 	const { citekey, item } = props;
-	const { copy: { defaultFormat: defaultCopyFormat} } = useContext(UserSettings);
+	const { copy: { defaultFormat: defaultCopyFormat}, shortcuts: shortcutsSettings } = useContext(UserSettings);
 
 	const defaultCopyText = useMemo(() => {
 		return formatItemReferenceForCopy(item, defaultCopyFormat);
 	}, [defaultCopyFormat, item]);
 
-	const copyDefault = useCallback(() => {
+	const copyAsDefault = useCallback(() => {
 		copyToClipboard(defaultCopyText);
 	}, [defaultCopyText]);
 
@@ -79,15 +101,67 @@ function CopyButtons(props){
 			.filter(op => op != defaultCopyFormat)
 			.map(op => <CopyOption key={op} citekey={citekey} format={op} item={item} />);
 		return <>
-			<MenuItem htmlTitle={defaultCopyText} labelElement={<Tag intent="success" minimal={true}>Default</Tag>} onClick={copyDefault} text={defaultCopyText} />
+			<MenuItem htmlTitle={defaultCopyText} labelElement={<Tag intent="success" minimal={true}>Default</Tag>} onClick={copyAsDefault} text={defaultCopyText} />
 			{standardOptions}
 		</>;
-	}, [citekey, copyDefault, defaultCopyFormat, defaultCopyText, item]);
+	}, [citekey, copyAsDefault, defaultCopyFormat, defaultCopyText, item]);
+
+	const label = useMemo(() => {
+		return shortcutsSettings.copyDefault != false
+			? <ShortcutSequence text={shortcutsSettings.copyDefault} />
+			: null;
+	}, [shortcutsSettings]);
+
+	const hotkeys = useMemo(() => {
+		const defaultProps = {
+			allowInInput: false,
+			global: true,
+			preventDefault: true,
+			stopPropagation: true
+		};
+
+		let configs = {
+			"copyDefault": {
+				label: "Copy the item in view (default format)",
+				onKeyDown: () => copyAsDefault()
+			},
+			"copyCitation": {
+				label: "Copy the item in view (as citation)",
+				onKeyDown: () => copyToClipboard(makeItemReference(citekey, "citation", item))
+			},
+			"copyCitekey": {
+				label: "Copy the item in view (as citekey)",
+				onKeyDown: () => copyToClipboard(makeItemReference(citekey, "citekey", item))
+			},
+			"copyPageRef": {
+				label: "Copy the item in view (as page reference)",
+				onKeyDown: () => copyToClipboard(makeItemReference(citekey, "page-reference", item))
+			},
+			"copyTag": {
+				label: "Copy the item in view (as page reference)",
+				onKeyDown: () => copyToClipboard(makeItemReference(citekey, "tag", item))
+			}
+		};
+
+		return Object.keys(shortcutsSettings)
+			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] != false)
+			.map(k => {
+				return {
+					...defaultProps,
+					...configs[k],
+					combo: shortcutsSettings[k]
+				};
+			});
+
+	}, [citekey, copyAsDefault, item, shortcutsSettings]);
+
+	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
 	return <MenuItem 	
 		icon="clipboard"
+		labelElement={label}
 		multiline={true} 
-		onClick={copyDefault} 
+		onClick={copyAsDefault} 
 		popoverProps={copyPopoverProps}
 		text="Copy reference" >
 		{optionsMenu}
@@ -197,7 +271,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	}, [children.notes, closeNotes, isNotesDrawerOpen, shortcutsSettings, showNotes]);
 
 	const hotkeys = useMemo(() => {
-		const { goToItemPage: pageCombo, toggleNotes: notesCombo } = shortcutsSettings;
+		const { goToItemPage: pageCombo, importMetadata: metadataCombo, toggleNotes: notesCombo } = shortcutsSettings;
 		const defaultProps = {
 			allowInInput: false,
 			global: true,
@@ -216,6 +290,16 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				onKeyDown: () => navigateToPage()
 			});
 		}
+
+		if(metadataCombo){
+			shortcutsList.push({
+				...defaultProps,
+				combo: metadataCombo,
+				label: "Import the item's metadata to Roam",
+				onKeyDown: () => importMetadata()
+			});
+		}
+
 		if(notesCombo){
 			shortcutsList.push({
 				...defaultProps,
@@ -228,7 +312,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 		return shortcutsList;
 
-	}, [children.notes, inGraph, navigateToPage, shortcutsSettings, toggleNotes]);
+	}, [children.notes, importMetadata, inGraph, navigateToPage, shortcutsSettings, toggleNotes]);
 
 	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
@@ -279,7 +363,10 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				{navigator.clipboard && <CopyButtons citekey={key} item={item} />}
 				<MenuDivider className="zr-divider-minimal" title="Actions" />
 				{goToPageButton}
-				<MenuItem icon="add" onClick={importMetadata} text="Import metadata" />
+				<MenuItem icon="add" 
+					labelElement={shortcutsSettings.importMetadata != false && <ShortcutSequence text={shortcutsSettings.importMetadata} />} 
+					onClick={importMetadata} 
+					text="Import metadata" />
 				{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Import notes" />}
 				<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
 				<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />

@@ -23,10 +23,10 @@ const TabList = React.memo(function TabList(props){
 	return(
 		<Tabs animate={false} className="zr-tabs" id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
 			<Tab className="zr-recentitems" id="recent-items" panel={<RecentItems onClose={onClose} />} title={<><Icon htmlTitle="Recent Items" icon="history" /><span>Recent Items</span></>} />
-			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager onClose={onClose} />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} />
+			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} />
 			<Tabs.Expander />
 			<Tab className="zr-explorer" id="explorer" panel={<Explorer onClose={onClose} />} title={<><Icon htmlTitle="Explorer" icon="code-block" /><span>Explorer</span></>} />
-			<Tab className="zr-settings" id="settings" panel={<Settings onClose={onClose} />} title={<><Icon htmlTitle="Settings" icon="cog" /><span>Settings</span></>} />
+			<Tab className="zr-settings" id="settings" panel={<Settings />} title={<><Icon htmlTitle="Settings" icon="cog" /><span>Settings</span></>} />
 		</Tabs>
 	);
 });

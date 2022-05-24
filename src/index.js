@@ -84,7 +84,14 @@ window.zoteroRoam = {};
 				...sciteBadge
 			},
 			shortcuts: {
+				"copyDefault": false,
+				"copyCitation": false,
+				"copyCitekey": false,
+				"copyPageRef": false,
+				"copyTag": false,
+				"focusSearchBar": false,
 				"goToItemPage": false,
+				"importMetadata": false,
 				"toggleDashboard": false,
 				"toggleNotes": "alt+N",
 				"toggleSearchPanel": "alt+E",

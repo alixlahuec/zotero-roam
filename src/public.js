@@ -13,7 +13,10 @@ function formatNotes(notes, notesSettings){
 		let annots = notes.filter(n => n.data.itemType == "annotation");
 		let noteItems = notes.filter(n => n.data.itemType == "note");
 
-		return [...formatZoteroAnnotations(annots), ...formatZoteroNotes(noteItems, notesSettings)];
+		return [
+			...formatZoteroAnnotations(annots/*, { func: null, use: "raw" } */), 
+			...formatZoteroNotes(noteItems, notesSettings)
+		];
 	}
 }
 
