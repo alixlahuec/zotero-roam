@@ -637,7 +637,7 @@ function identifyChildren(itemKey, location, {pdfs = [], notes = []} = {}){
 
 /** Creates a dictionary from a String Array
  * @param {String[]} arr - The array from which to make the dictionary
- * @returns {Object<String,String[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array who begin with that letter or character (in any case).
+ * @returns {Object<String,String[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
  */
 function makeDictionary(arr){
 	return arr.reduce((dict, elem) => {
@@ -855,16 +855,18 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
 		if(isHyphenated && search_compounds == true){
 			// Replace hyphen by inclusive match (hyphen, space, nothing)
 			searchString = query.replace("-", "(?: |-)?");
+		} else {
+			searchString = escapeRegExp(searchString);
 		}
 		// Then carry on with the search op
 		if(match == "partial"){
-			let searchReg = new RegExp(escapeRegExp(searchString), "g");
+			let searchReg = new RegExp(searchString, "g");
 			return searchReg.test(target);
 		} else if(match == "exact"){
-			let searchReg = new RegExp("^" + escapeRegExp(searchString) + "$", "g");
+			let searchReg = new RegExp("^" + searchString + "$", "g");
 			return searchReg.test(target);
 		} else if(match == "word") {
-			let searchReg = new RegExp("(?:\\W|^)" + escapeRegExp(searchString) + "(?:\\W|$)", "g");
+			let searchReg = new RegExp("(?:\\W|^)" + searchString + "(?:\\W|$)", "g");
 			return searchReg.test(target);
 		}
 	} else {
