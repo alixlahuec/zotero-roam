@@ -396,7 +396,8 @@ function copyToClipboard(text){
 			.then((_response) => {
 				zrToaster.show({
 					intent: "success",
-					message: `Successfully copied to clipboard: ${text}`
+					message: `Successfully copied to clipboard: ${text}`,
+					timeout: 800
 				});
 				return {
 					success: true
@@ -406,7 +407,8 @@ function copyToClipboard(text){
 				console.error(error);
 				zrToaster.show({
 					intent: "danger",
-					message: `Clipboard copy failed for: ${text}`
+					message: `Clipboard copy failed for: ${text}`,
+					timeout: 1000
 				});
 				return {
 					success: false
@@ -414,7 +416,8 @@ function copyToClipboard(text){
 			});
 	} else {
 		zrToaster.show({
-			message: `Clipboard API is not available. The following could not be copied: ${text}`
+			message: `Clipboard API is not available. The following could not be copied: ${text}`,
+			timeout: 1000
 		});
 		return {
 			success: null
