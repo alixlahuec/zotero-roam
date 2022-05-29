@@ -12,8 +12,8 @@ const annot = {
 		annotationSortIndex: "00024|001317|00350",
 		annotationText: "Digital health literacy may have an impact on the use of digital health services such as virtual visits.",
 		annotationType: "highlight",
-		dateAdded: "2022-03-18T13:23:45Z",
-		dateModified: "2022-04-02T02:00:35Z",
+		dateAdded: "2022-03-18T13:00:00Z",
+		dateModified: "2022-04-02T02:00:00Z",
 		itemType: "annotation",
 		key: "A12BCDEF",
 		parentItem: "P34QRSTU",
@@ -38,6 +38,8 @@ const annot = {
 	version: 1234
 };
 const simplifiedAnnot = simplifyZoteroAnnotations([annot])[0];
+
+const offset = new Date().getTimezoneOffset();
 
 test("Sorts annotation indices", () => {
 	const indices = [
@@ -64,8 +66,8 @@ test("Simplifies annotations", () => {
 			comment: annot.data.annotationComment,
 			date_added: annot.data.dateAdded,
 			date_modified: annot.data.dateModified,
-			day_added: "March 18th, 2022",
-			day_modified: "April 1st, 2022",
+			day_added: offset > 780 ? "March 17th, 2022" : offset < -660 ? "March 19th, 2022" : "March 18th, 2022",
+			day_modified: offset > 120 ? "April 1st, 2022" : offset < -1320 ? "April 3rd, 2022" : "April 2nd, 2022",
 			key: annot.key,
 			library: "users/98765",
 			link_pdf: "zotero://open-pdf/library/items/P34QRSTU",
