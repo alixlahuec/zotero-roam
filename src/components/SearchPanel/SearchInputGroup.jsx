@@ -4,7 +4,6 @@ import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprin
 
 import { UserSettings } from "../App";
 import { dialogLabel } from "./classes";
-import ShortcutSequence from "../ShortcutSequence";
 
 const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 	const { handleClose, 
@@ -24,12 +23,11 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 	const searchbarRightElement = useMemo(() => {
 		return (
 			<>
-				{shortcutsSettings.focusSearchBar != false && <ShortcutSequence text={shortcutsSettings.focusSearchBar} />}
 				<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={isQCActive} onChange={toggleQC} />
 				<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />
 			</>
 		);
-	}, [handleClose, isQCActive, shortcutsSettings, toggleQC]);
+	}, [handleClose, isQCActive, toggleQC]);
 
 	const hotkeys = useMemo(() => {
 		let defaultProps = {
