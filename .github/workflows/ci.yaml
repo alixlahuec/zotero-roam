@@ -1,0 +1,26 @@
+name: CI
+on: [push]
+jobs:
+  commit-checks:
+    name: Lint, test, and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+
+      - name: Install packages
+        run: npm ci
+      
+      - name: ESLint
+        run: npm run ci:lint
+
+      - name: Jest
+        run: npm run ci:test
+      
+      - name: Webpack build (dev)
+        run: npm run build:dev
+
+      - name: Webpack build (prod)
+        run: npm run build:prod

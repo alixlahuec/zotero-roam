@@ -17,10 +17,12 @@
     "browser": "dist/zoteroRoam.min.js",
     "unpkg": "dist/zoteroRoam.min.js",
     "scripts": {
-        "dev": "webpack --config webpack.dev.config.js",
-        "build": "webpack",
+        "build:dev": "webpack --config webpack.dev.config.js",
+        "build:prod": "webpack",
         "lint": "eslint",
-        "test": "jest"
+        "ci:lint": "eslint",
+        "test": "jest",
+        "ci:test": "jest --ci"
     },
     "devDependencies": {
         "@babel/core": "^7.16.7",
