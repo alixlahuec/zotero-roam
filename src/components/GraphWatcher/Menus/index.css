@@ -42,11 +42,11 @@ button[class*='zr-page-menu-show--'] {
     flex: 1 0 33%;
 }
 
-.zr-citekey-menu .bp4-button-group button.zr-page-menu-show--references {
+.zr-citekey-menu .bp4-button-group button.bp4-intent-primary.zr-page-menu-show--references {
     color: hsla(var(--zr-accent-1-co), 90%);
 }
 
-.zr-citekey-menu .bp4-button-group button.zr-page-menu-show--citations {
+.zr-citekey-menu .bp4-button-group button.bp4-intent-warning.zr-page-menu-show--citations {
     color: hsla(var(--zr-accent-2-co), 90%);
 }
 
