@@ -10,7 +10,7 @@ function analyzeUserRequests(reqs){
 	if(reqs.length == 0){
 		throw new Error("At least one data request must be specified for the extension to function. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 	} else {
-		let fallbackAPIKey = reqs.find(req => req.apikey).apikey;
+		let fallbackAPIKey = reqs.find(req => req.apikey)?.apikey;
 		if(!fallbackAPIKey){
 			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 		} else {
@@ -778,10 +778,10 @@ function makeTimestamp(date){
 	return `${d.getHours()}:${("0" + d.getMinutes()).slice(-2)}`;
 }
 
-/** Determines if two arrays have any strings in common
- * @param {String[]} arr1 - The first array to use 
- * @param {String[]} arr2 - The second array to use
- * @returns `true` if at least one string is present in both arrays - otherwise `false`
+/** Determines if two arrays have any elements in common
+ * @param {Array} arr1 - The first array to use 
+ * @param {Array} arr2 - The second array to use
+ * @returns `true` if at least one elements is present in both arrays - otherwise `false`
  */
 function matchArrays(arr1, arr2){
 	return arr1.some(el => arr2.includes(el));

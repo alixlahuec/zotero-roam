@@ -1,4 +1,7 @@
-import { formatItemAnnotations, simplifyZoteroAnnotations } from "../../src/utils";
+import {
+	compareAnnotationIndices, 
+	formatItemAnnotations, 
+	simplifyZoteroAnnotations } from "../../src/utils";
 
 const annot = {
 	data: {
@@ -35,6 +38,24 @@ const annot = {
 	version: 1234
 };
 const simplifiedAnnot = simplifyZoteroAnnotations([annot])[0];
+
+test("Sorts annotation indices", () => {
+	const indices = [
+		[3,14,9],
+		[5,10,7],
+		[2,22,30],
+		[3,14,7],
+		[5,10,9]
+	];
+	expect(indices.sort(compareAnnotationIndices))
+		.toEqual([
+			[2,22,30],
+			[3,14,7],
+			[3,14,9],
+			[5,10,7],
+			[5,10,9]
+		]);
+});
 
 test("Simplifies annotations", () => {
 	expect(simplifiedAnnot)

@@ -1,4 +1,14 @@
-import { getLocalLink, getPDFLink, getWebLink, makeDictionary, makeDNP, makeTimestamp, parseDOI, pluralize, readDNP } from "../../src/utils";
+import { 
+	getLocalLink, 
+	getPDFLink, 
+	getWebLink, 
+	makeDateFromAgo,
+	makeDictionary, 
+	makeDNP, 
+	makeTimestamp, 
+	parseDOI, 
+	pluralize, 
+	readDNP } from "../../src/utils";
 
 const date = new Date([2022, 1, 1]);
 const offset = date.getTimezoneOffset();
@@ -52,6 +62,21 @@ test("Timestamp with single digits for minutes", () => {
 	expect(makeTimestamp(new Date(this_date.setHours(8, 9)))).toBe("8:09");
 });
 
+test("Date from ago", () => {
+	const today = new Date();
+	today.setHours(1, 9);
+	const yesterday = new Date();
+	yesterday.setDate(yesterday.getDate() - 1);
+	yesterday.setHours(3, 12);
+	const this_year = new Date([today.getFullYear(),1,1]);
+	const earlier = new Date([2021, 8, 3]);
+
+	expect(makeDateFromAgo(today)).toBe("Today at 1:09");
+	expect(makeDateFromAgo(yesterday)).toBe("Yesterday at 3:12");
+	expect(makeDateFromAgo(this_year)).toBe("Jan 1st");
+	expect(makeDateFromAgo(earlier)).toBe("Aug 3rd 2021");
+});
+
 // DOIs
 
 test("Default DOI", () => {
@@ -96,6 +121,11 @@ test("Zotero local link from group library", () => {
 	expect(getLocalLink(item, {format: "target"})).toBe("zotero://select/groups/12345/items/A12BCDEF");
 });
 
+test("Zotero web link as target", () => {
+	const item = {data: {key: "A12BCDEF"}, library: {type: "user", id: 12345}};
+	expect(getWebLink(item, {format: "target"})).toBe("https://www.zotero.org/users/12345/items/A12BCDEF");
+});
+
 test("Default PDF link", () => {
 	const pdfItem = {
 		data: {filename: "Scott et al (2003).pdf", key: "A12BCDEF", linkMode: "linked_file", title: "Organizational Culture"},
@@ -115,18 +145,10 @@ test("PDF link as Markdown", () => {
 // Other
 
 test("Pluralizes tokens", () => {
-	expect([
-		pluralize(1, "item", ""),
-		pluralize(3, "item", ""),
-		pluralize(1, "item", " added"),
-		pluralize(3, "item", " added")
-	])
-		.toEqual([
-			"1 item",
-			"3 items",
-			"1 item added",
-			"3 items added"
-		]);
+	expect(pluralize(1, "item", "")).toBe("1 item");
+	expect(pluralize(3, "item", "")).toBe("3 items");
+	expect(pluralize(1, "item", " added")).toBe("1 item added");
+	expect(pluralize(3, "item", " added")).toBe("3 items added");
 });
 
 test("Creates dictionary from string Array", () => {

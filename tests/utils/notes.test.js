@@ -9,7 +9,7 @@ const note = {
 		note: "<div style=\"background-color: Yellow\">Annotations</div><p>\"After all, argues Balthasar, \"in a world without beauty... the good also loses its attractiveness, self-evidence why it must be carried out.\" Why not prefer evil over good? \"Why not investigate Satan's depth?\"  Why desire the beatific vision? Accordingly, Balthasar seeks to rectify the given imbalance by embarking on an \"archeology of alienated beauty\"  in dialogue with thinkers such as Irenaeus, Augustine, Pseudo-Dionysius, Dante, Hopkins, Solovyev, and others.\" (<a href=\"zotero://open-pdf/library/items/A12BCDEF?page=1\">Smith 2003:1</a>)</p>",
 		parentItem: "P34QRSTU",
 		relations: {},
-		tags: [],
+		tags: [{tag: "toRead"}],
 		version: 1234
 	},
 	has_citekey: false,
@@ -47,7 +47,7 @@ test("Simplifies notes", () => {
 				note: note.data.note,
 				parentItem: "P34QRSTU",
 				raw: note,
-				tags: []
+				tags: ["toRead"]
 			}
 		]);
 });
