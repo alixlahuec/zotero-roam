@@ -69,6 +69,30 @@ function categorizeLibraryItems(datastore){
 	}, { items: [], pdfs: [], notes: [] });
 }
 
+function cleanAuthorLastName(name){
+	let components = name.replaceAll(".", " ").split(" ").filter(Boolean);
+	if(components.length == 1){
+		return components[0];
+	} else {
+		return components.slice(1).filter(c => c.length > 1).join(" ");
+	}
+}
+
+function cleanAuthorsNames(names){
+	switch(names.length){
+	case 0:
+		return "";
+	case 1:
+		return names[0];
+	case 2:
+		return names[0] + " & " + names[1];
+	case 3:
+		return names[0] + ", " + names[1] + " & " + names[2];
+	default:
+		return names[0] + " et al.";
+	}
+}
+
 /** Converts library data into a simplified list of top-level items, with their metadata, children, and links
  * @param {Object[]} arr - The library's contents, including top-level items, attachments and notes/annotations
  * @param {Map} roamCitekeys - The map of citekey pages present in Roam 
@@ -116,7 +140,11 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 	let tags = Array.from(new Set(item.data.tags.map(t => t.tag)));
 
 	let authors = item.meta.creatorSummary || "";
-	let maybeYear = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear().toString() : "";
+	let maybeYear = !item.meta.parsedDate
+		? ""
+		: isNaN(new Date(item.meta.parsedDate))
+			? ""
+			: (new Date(item.meta.parsedDate)).getUTCFullYear().toString();
 	let pub_year = maybeYear ? `(${maybeYear})` : "";
 
 	let clean_item = {
@@ -155,7 +183,7 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 		clean_item.title, 
 		clean_item.tags.map(tag => `#${tag}`).join(", "),
 		clean_item.key
-	].join(" ");
+	].filter(Boolean).join(" ");
 
 	return clean_item;
 }
@@ -209,31 +237,10 @@ function cleanSemanticItem(item){
 	};
 
 	// Parse authors data
-	clean_item.authorsLastNames = item.authors.map(a => {
-		let components = a.name.replaceAll(".", " ").split(" ").filter(Boolean);
-		if(components.length == 1){
-			return components[0];
-		} else {
-			return components.slice(1).filter(c => c.length > 1).join(" ");
-		}
-	});
+	clean_item.authorsLastNames = item.authors.map(a => cleanAuthorLastName(a.name));
 	clean_item.authorsString = clean_item.authorsLastNames.join(" ");
-	switch(clean_item.authorsLastNames.length){
-	case 0:
-		break;
-	case 1:
-		clean_item.authors = clean_item.authorsLastNames[0];
-		break;
-	case 2:
-		clean_item.authors = clean_item.authorsLastNames[0] + " & " + clean_item.authorsLastNames[1];
-		break;
-	case 3:
-		clean_item.authors = clean_item.authorsLastNames[0] + ", " + clean_item.authorsLastNames[1] + " & " + clean_item.authorsLastNames[2];
-		break;
-	default:
-		clean_item.authors = clean_item.authorsLastNames[0] + " et al.";
-	}
-
+	clean_item.authors = cleanAuthorsNames(clean_item.authorsLastNames);
+	
 	// Parse external links
 	if(item.paperId){
 		clean_item.links["semantic-scholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
@@ -251,7 +258,7 @@ function cleanSemanticItem(item){
 		clean_item.authorsString,
 		clean_item.year,
 		clean_item.title
-	].join(" ");
+	].filter(Boolean).join(" ");
 
 	return clean_item;
 }
@@ -552,7 +559,11 @@ function formatItemNotes(notes, split_char){
  */
 function formatItemReference(item, format, {accent_class = "zr-accent-1"} = {}){
 	const citekey = "@" + item.key;
-	const pub_year = item.meta.parsedDate ? new Date(item.meta.parsedDate).getUTCFullYear() : "";
+	const pub_year = !item.meta.parsedDate 
+		? ""
+		: isNaN(new Date(item.meta.parsedDate))
+			? ""
+			: (new Date(item.meta.parsedDate)).getUTCFullYear();
 	const pub_summary = [item.meta.creatorSummary || "", pub_year ? `(${pub_year})` : ""].filter(Boolean).join(" ");
 
 	switch(format){
@@ -1131,37 +1142,35 @@ function simplifyZoteroNotes(notes){
 function sortCollectionChildren(parent, children, depth = 0){
 	let parColl = parent;
 	parColl.depth = depth;
-	if(children.length > 0){
-		let chldn = children.filter(ch => ch.data.parentCollection == parColl.key);
-		// If the collection has children, recurse
-		if(chldn){
-			let collArray = [parColl];
-			// Go through each child collection 1-by-1
-			// If a child has children itself, the recursion should ensure everything gets added where it should
-			for(let j = 0; j < chldn.length; j++){
-				collArray.push(...sortCollectionChildren(chldn[j], children, depth + 1));
-			}
-			return collArray;
-		} else {
-			return [parColl];
+	
+	let chldn = children.filter(ch => ch.data.parentCollection == parColl.key);
+	// If the collection has children, recurse
+	if(chldn.length > 0){
+		let collArray = [parColl];
+		// Go through each child collection 1-by-1
+		// If a child has children itself, the recursion should ensure everything gets added where it should
+		for(let j = 0; j < chldn.length; j++){
+			collArray.push(...sortCollectionChildren(chldn[j], children, depth + 1));
 		}
+		return collArray;
 	} else {
 		return [parColl];
 	}
+
 }
 
 function sortCollections(arr){
 	if(arr.length > 0){
 		// Sort collections A-Z
-		arr = [...arr].sort((a,b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
+		let array = [...arr].sort((a,b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
 		let orderedArray = [];
-		let topColls = arr.filter(cl => !cl.data.parentCollection);
+		let topColls = array.filter(cl => !cl.data.parentCollection);
 		topColls.forEach((cl, i) => { topColls[i].depth = 0; });
-		let childColls = arr.filter(cl => cl.data.parentCollection);
+		let childColls = array.filter(cl => cl.data.parentCollection);
 		for(let k = 0; k < topColls.length; k++){
 			let chldn = childColls.filter(ch => ch.data.parentCollection == topColls[k].key);
 			// If the collection has children, pass it to sortCollectionChildren to recursively process the nested collections
-			if(chldn){
+			if(chldn.length > 0){
 				orderedArray.push(...sortCollectionChildren(topColls[k], childColls));
 			} else {
 				orderedArray.push(topColls[k]);
@@ -1194,6 +1203,8 @@ function splitNotes(notes, split_char){
 export {
 	analyzeUserRequests,
 	categorizeLibraryItems,
+	cleanAuthorLastName,
+	cleanAuthorsNames,
 	cleanLibrary,
 	cleanLibraryItem,
 	cleanSemantic,

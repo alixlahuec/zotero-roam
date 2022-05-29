@@ -245,12 +245,12 @@ test("Sorts Zotero collections", () => {
 	];
 
 	expect(sortCollections(colls))
-		.toEqual([
-			colls[0],
-			colls[2],
-			colls[3],
-			colls[1],
-			colls[4]
+		.toMatchObject([
+			{key: "N7W92H48", depth: 0},
+			{key: "M7MNCCXU", depth: 1},
+			{key: "QM6T3KHX", depth: 0},
+			{key: "TVPC4XK4", depth: 1},
+			{key: "2GUIGKC9", depth: 0}
 		]);
 });
 

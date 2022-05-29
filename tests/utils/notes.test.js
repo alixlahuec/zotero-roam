@@ -1,4 +1,4 @@
-import { formatItemNotes, simplifyZoteroNotes } from "../../src/utils";
+import { formatItemNotes, formatZoteroNotes, simplifyZoteroNotes } from "../../src/utils";
 
 const note = {
 	data: {
@@ -32,7 +32,8 @@ const note = {
 const notes = [
 	{data: {note: "<h1>Note Title</h1><div class=\"div-class\"><span>Lorem ipsum</span></div>"}},
 	{data: {note: "Click <a href=\"https://example.com\">here</a> to open a link"}},
-	{data: {note: "See <a class=\"link-class\" href=\"https://example.com\">there</a> for a link with attributes"}}
+	{data: {note: "See <a class=\"link-class\" href=\"https://example.com\">there</a> for a link with attributes"}},
+	{data: {note: "\n\nSome text\n"}}
 ];
 
 test("Simplifies notes", () => {
@@ -53,7 +54,7 @@ test("Simplifies notes", () => {
 });
 
 test("Clean rich tags", () => {
-	expect(formatItemNotes([notes[0]], "</p>"))
+	expect(formatZoteroNotes([notes[0]]))
 		.toEqual(["**Note Title**Lorem ipsum"]);
 });
 
@@ -62,5 +63,12 @@ test("Clean links", () => {
 		.toEqual([
 			"Click [here](https://example.com) to open a link",
 			"See [there](https://example.com) for a link with attributes"
+		]);
+});
+
+test("Clean newlines", () => {
+	expect(formatItemNotes([notes[3]], "</p>"))
+		.toEqual([
+			"Some text"
 		]);
 });

@@ -1,4 +1,5 @@
 import { 
+	formatItemReference,
 	getLocalLink, 
 	getPDFLink, 
 	getWebLink, 
@@ -143,6 +144,18 @@ test("PDF link as Markdown", () => {
 });
 
 // Other
+
+test("Formats Zotero item reference", () => {
+	const item = {data:{title: "The Quantitative Measurement of Organizational Culture in Health Care: A Review of the Available Instruments"}, key: "scottOrganizationalCulture2003", meta: {creatorSummary: "Scott et al", parsedDate: "2003"}};
+	
+	expect(formatItemReference(item, "inline")).toBe("Scott et al (2003)");
+	expect(formatItemReference(item, "citation")).toBe("[Scott et al (2003)]([[@scottOrganizationalCulture2003]])");
+	expect(formatItemReference(item, "citekey")).toBe("@scottOrganizationalCulture2003");
+	expect(formatItemReference(item, "pageref")).toBe("[[@scottOrganizationalCulture2003]]");
+	expect(formatItemReference(item, "popover")).toBe("{{=: Scott et al (2003) | {{embed: [[@scottOrganizationalCulture2003]]}} }}");
+	expect(formatItemReference(item, "tag")).toBe("#[[@scottOrganizationalCulture2003]]");
+	expect(formatItemReference(item, "zettlr")).toBe("<span class=\"zr-accent-1\">Scott et al (2003)</span> The Quantitative Measurement of Organizational Culture in Health Care: A Review of the Available Instruments");
+});
 
 test("Pluralizes tokens", () => {
 	expect(pluralize(1, "item", "")).toBe("1 item");

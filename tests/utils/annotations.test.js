@@ -1,6 +1,7 @@
 import {
-	compareAnnotationIndices, 
-	formatItemAnnotations, 
+	compareAnnotationIndices,
+	formatItemAnnotations,
+	formatZoteroAnnotations,
 	simplifyZoteroAnnotations } from "../../src/utils";
 
 const annot = {
@@ -46,16 +47,18 @@ test("Sorts annotation indices", () => {
 		[3,14,9],
 		[5,10,7],
 		[2,22,30],
+		[2,24,10],
 		[3,14,7],
-		[5,10,9]
+		[5,9,9]
 	];
 	expect(indices.sort(compareAnnotationIndices))
 		.toEqual([
 			[2,22,30],
+			[2,24,10],
 			[3,14,7],
 			[3,14,9],
-			[5,10,7],
-			[5,10,9]
+			[5,9,9],
+			[5,10,7]
 		]);
 });
 
@@ -94,7 +97,7 @@ test("Simplifies annotations", () => {
 });
 
 test("Formats simplified annotations - default", () => {
-	expect(formatItemAnnotations([annot]))
+	expect(formatZoteroAnnotations([annot]))
 		.toEqual([
 			{
 				string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,

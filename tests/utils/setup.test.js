@@ -35,13 +35,15 @@ test("Throw if any of the requests has an incorrect data URI", () => {
 test("Returns proper configuration for user requests", () => {
 	const reqs = [
 		{dataURI: "users/12345/items", name: "My personal library"},
+		{dataURI: "users/12345/items/top"},
 		{dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", params: "limit=100"}
 	];
 	expect(analyzeUserRequests(reqs))
 		.toEqual({
 			dataRequests: [
 				{dataURI: "users/12345/items", apikey: "XXXXXXXXXX", params: "", name: "My personal library", library: "users/12345"},
-				{dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", params: "limit=100", name: "1", library: "groups/98765"}
+				{dataURI: "users/12345/items/top", apikey: "XXXXXXXXXX", params: "", name: "1", library: "users/12345"},
+				{dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", params: "limit=100", name: "2", library: "groups/98765"},
 			],
 			apiKeys: ["XXXXXXXXXX"],
 			libraries: [
