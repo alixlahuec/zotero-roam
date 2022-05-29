@@ -20,7 +20,7 @@
         "build:dev": "webpack --config webpack.dev.config.js",
         "build:prod": "webpack",
         "lint": "eslint",
-        "ci:lint": "eslint",
+        "ci:lint": "eslint --fix",
         "test": "jest",
         "ci:test": "jest --ci"
     },
