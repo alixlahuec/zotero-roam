@@ -450,29 +450,86 @@ function executeFunctionByName(functionName, context /*, args */) {
 	return context[func].apply(context, args);
 }
 
+function formatAnnotationWithParams(annotation, { highlight_prefix = "[[>]]", highlight_suffix = "([p. {{page_label}}]({{link_page}})) {{tags_string}}", comment_prefix = "", comment_suffix = "" } = {}){
+	if(annotation.type == "highlight"){
+		let { comment, page_label, link_page, tags_string, text } = annotation;
+
+		let elems = {
+			highlightPre: highlight_prefix,
+			highlightSuff: highlight_suffix,
+			commentPre: comment_prefix,
+			commentSuff: comment_suffix
+		};
+
+		let specs = {
+			page_label,
+			link_page,
+			tags_string
+		};
+
+		for(let prop in specs){
+			for(let el in elems){
+				elems[el] = elems[el].replaceAll(`{{${prop}}}`, `${specs[prop]}`);
+			}
+		}
+
+		let highlightBlock = [elems.highlightPre, text, elems.highlightSuff].filter(Boolean).join(" ");
+		let commentBlock = comment ? [elems.commentPre, comment, elems.commentSuff].filter(Boolean).join(" ") : false;
+
+		return {
+			string: highlightBlock,
+			children: comment ? [commentBlock] : []
+		};
+
+	} else if(annotation.type == "image"){
+		// let { pageIndex, rects } = ann.position;
+		// TODO: Can rect selections be extracted into an image ?
+		return null;
+	}
+}
+
 /** Default formatter for annotations
  * @param {ZoteroItem[]} annotations - The (raw) array of annotations to be formatted 
+ * @param {{group_by: ("day_added"|false), highlight_prefix: string, highlight_suffix: string, comment_prefix: string, comment_suffix: string}} config - Additional configuration
  * @returns An array of block objects, ready for import into Roam.
  */
-function formatItemAnnotations(annotations){
+function formatItemAnnotations(annotations, { group_by = false, highlight_prefix, highlight_suffix, comment_prefix, comment_suffix } = {}){
 	let annots = simplifyZoteroAnnotations(annotations);
 
-	return annots.map(ann => {
-		if(ann.type == "highlight"){
-			let { comment, pageLabel, link_page, tags, text } = ann;
-			let tagsString = tags.length > 0 ? " \n " + tags.map(t => "#[[" + t + "]]").join(" ") : "";
-	
-			return {
-				string: "[[>]] " + text + ` ([p. ${pageLabel}](${link_page}))` + tagsString,
-				children: comment ? [comment] : []
-			};
-
-		} else if(ann.type == "image"){
-			// let { pageIndex, rects } = ann.position;
-			// TODO: Can rect selections be extracted into an image ?
-			return null;
-		}
-	}).filter(Boolean);
+	if(group_by == "day_added"){
+		let day_dict = annots
+			.sort((a,b) => a.date_added < b.date_added ? -1 : 1)
+			.reduce((dict, elem) => {
+				let ymd = new Date(elem.date_added).toLocaleDateString("en-CA");
+				if(dict[ymd]){
+					dict[ymd].push(elem);
+				} else {
+					dict[ymd] = [elem];
+				}
+				return dict;
+			}, {});
+		return Object.keys(day_dict)
+			.sort((a,b) => new Date(a.split("-")) < new Date(b.split("-")) ? -1 : 1)
+			.map(date => {
+				let sortedAnnots = day_dict[date].sort((a,b) => compareAnnotationIndices(a.sortIndex, b.sortIndex));
+				return {
+					string: makeDNP(new Date(date.split("-")), { brackets: true }),
+					children: sortedAnnots.map(ann => formatAnnotationWithParams(ann, { 
+						highlight_prefix, 
+						highlight_suffix, 
+						comment_prefix, 
+						comment_suffix }))
+				};
+			});
+	} else {
+		return annots
+			.map(ann => formatAnnotationWithParams(ann, { 
+				highlight_prefix, 
+				highlight_suffix, 
+				comment_prefix, 
+				comment_suffix }))
+			.filter(Boolean);
+	}
 }
 
 /** Default formatter for notes
@@ -977,21 +1034,22 @@ function setupPortals(slotID, portalID){
  * @returns {{
  * color: String,
  * comment: String,
- * dateAdded: String,
- * dateModified: String,
+ * date_added: String,
+ * date_modified: String,
+ * day_added: String,
+ * day_modified: String,
  * key: String,
  * library: String,
  * link_pdf: String,
  * link_page: String,
- * pageLabel: String,
- * parentItem: String,
+ * page_label: String,
+ * parent_item: String,
  * position: Object,
  * raw: Object,
  * sortIndex: Number[],
  * tags: String[],
  * text: String|null,
- * type: ("highlight"|"image"),
- * version: Number
+ * type: ("highlight"|"image")
  * }[]}
  */
 function simplifyZoteroAnnotations(annotations){
@@ -999,38 +1057,43 @@ function simplifyZoteroAnnotations(annotations){
 		let { 
 			annotationColor: color, 
 			annotationComment: comment, 
-			annotationPageLabel: pageLabel,
+			annotationPageLabel: page_label,
 			annotationPosition,
 			annotationSortIndex,
 			annotationText: text,
 			annotationType: type,
-			dateAdded,
-			dateModified,
-			parentItem,
+			dateAdded: date_added,
+			dateModified: date_modified,
+			parentItem: parent_item,
 			tags
 		} = annot.data;
 
+		let day_added = makeDNP(date_added, { brackets: false });
+		let day_modified = makeDNP(date_modified, { brackets: false });
 		let library = annot.library.type + "s/" + annot.library.id;
 		let libLoc = library.startsWith("groups/") ? library : "library";
 		let position = JSON.parse(annotationPosition);
-		let link_pdf = `zotero://open-pdf/${libLoc}/items/${parentItem}`;
+		let link_pdf = `zotero://open-pdf/${libLoc}/items/${parent_item}`;
 		let link_page = link_pdf + `?page=${position.pageIndex + 1}`;
 
 		return {
 			color,
 			comment,
-			dateAdded,
-			dateModified,
+			date_added,
+			date_modified,
+			day_added,
+			day_modified,
 			key: annot.key,
 			library,
 			link_pdf,
 			link_page,
-			pageLabel,
-			parentItem,
+			page_label,
+			parent_item,
 			position,
 			raw: annot,
 			sortIndex: annotationSortIndex.split("|").map(ind => Number(ind)),
 			tags: tags.map(t => t.tag),
+			tags_string: tags.map(t => `#[[${t.tag}]]`).join(", "),
 			text,
 			type
 		};
