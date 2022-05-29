@@ -81,7 +81,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 /* Blueprint Elements */
 
-[class*="zr"] .bp4-button:not([class*=bp4-intent-]) {
+[class*="zr"] .bp4-numeric-input .bp4-button:not([class*=bp4-intent-]) {
   background: var(--zr-dialog-bg);
 }
 
@@ -129,6 +129,10 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
   background-color: var(--zr-accent-2);
 }
 
+[class*="zr"] .bp4-html-select select {
+  color: var(--zr-auxiliary);
+}
+
 [class*="zr"] .bp4-slider-label {
   color: var(--zr-text-co);
 }
@@ -168,6 +172,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 .zr-popover.bp4-popover2 .bp4-popover2-content,
 .zr-popover.bp4-popover .bp4-popover-content,
 .zr-popover .bp4-menu,
+.zr-popover .bp4-datepicker,
 [class*="zr"] .bp4-menu,
 [zr-role] .bp4-menu {
   background: var(--zr-box-bg);
