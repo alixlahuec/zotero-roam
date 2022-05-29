@@ -780,7 +780,7 @@ function parseNoteBlock(block){
 		cleanBlock = cleanBlock.replaceAll(tagRegex, tag.startsWith("h") ? "**" : "");
 	});
 
-	let linkRegex = /<a href="(.+?)">(.+?)<\/a>/g;
+	let linkRegex = /<a.+?href="(.+?)">(.+?)<\/a>/g;
 	cleanBlock = cleanBlock.replaceAll(linkRegex, "[$2]($1)");
 
 	cleanBlock = cleanNewlines(cleanBlock);
