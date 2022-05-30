@@ -150,6 +150,7 @@ async function use_smartblock_metadata(config, context){
 }
 
 export {
+	eval_term,
 	registerSmartblockCommands,
 	use_smartblock_metadata
 };

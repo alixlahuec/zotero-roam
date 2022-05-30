@@ -118,6 +118,11 @@ function matchTagData(tagList){
 	});
 }
 
+/** Sorts Zotero tags
+ * @param {{roam: [], zotero: []}[]} tagList - The list of Zotero tags to sort
+ * @param {("alphabetical"|"roam"|"usage")} by - The type of sorting to use
+ * @returns 
+ */
 function sortTags(tagList, by = "alphabetical"){
 	let arr = [...tagList];
 	switch(by){

@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 /** 
  * @typedef {{
  * apikey: String,
