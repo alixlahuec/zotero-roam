@@ -22,7 +22,7 @@ const popoverMenuProps = {
 
 const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 	const { closeDialog, inGraph, item, notes = [], pdfs = [] } = props;
-	const { metadata: metadataSettings, notes: notesSettings, typemap } = useContext(UserSettings);
+	const { annotations: annotationsSettings, metadata: metadataSettings, notes: notesSettings, typemap } = useContext(UserSettings);
 	const [, updateRoamCitekeys] = useRoamCitekeys();
 
 	const handleClose = useCallback(() => {
@@ -55,12 +55,12 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 	}, [item]);
 
 	const importMetadata = useCallback(async() => {
-		let outcome = await importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings, typemap, notesSettings);
+		let outcome = await importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings, typemap, notesSettings, annotationsSettings);
 		if(outcome.success && outcome.page.new){
 			updateRoamCitekeys();
 		}
 		return outcome;
-	}, [inGraph, item, metadataSettings, pdfs, notes, notesSettings, typemap, updateRoamCitekeys]);
+	}, [annotationsSettings, inGraph, item, metadataSettings, pdfs, notes, notesSettings, typemap, updateRoamCitekeys]);
 
 	const importMetadataAndOpen = useCallback(async() => {
 		let { success, args: { uid }} = await importMetadata();

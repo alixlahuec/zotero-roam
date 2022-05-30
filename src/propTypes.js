@@ -219,7 +219,15 @@ const extensionType = shape({
 });
 
 const userSettingsType = shape({
-	annotations: object,
+	annotations: shape({
+		comment_prefix: string,
+		comment_suffix: string,
+		func: string,
+		group_by: oneOf(["day_added", false]),
+		highlight_prefix: string,
+		highlight_suffix: string,
+		use: oneOf(["formatted", "raw"])
+	}),
 	autocomplete: shape({
 		trigger: string,
 		display: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),

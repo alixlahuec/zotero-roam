@@ -236,7 +236,13 @@ ViewItem.propTypes = {
 
 const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	const { item, itemList } = props;
-	const { metadata: metadataSettings, notes: notesSettings, pageMenu: { defaults }, sciteBadge: sciteBadgeSettings, typemap } = useContext(UserSettings);
+	const { 
+		annotations: annotationsSettings, 
+		metadata: metadataSettings, 
+		notes: notesSettings, 
+		pageMenu: { defaults }, 
+		sciteBadge: sciteBadgeSettings, 
+		typemap } = useContext(UserSettings);
 	const [roamCitekeys,] = useRoamCitekeys();
 
 	const doi = parseDOI(item.data.DOI);
@@ -258,12 +264,12 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 
 	const importMetadata = useCallback(async() => {
 		let { pdfs, notes } = children;
-		return await importItemMetadata({ item, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings);
-	}, [children, item, metadataSettings, notesSettings, pageUID, typemap]);
+		return await importItemMetadata({ item, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings, annotationsSettings);
+	}, [annotationsSettings, children, item, metadataSettings, notesSettings, pageUID, typemap]);
     
 	const importNotes = useCallback(async() => {
-		return await importItemNotes({item, notes: children.notes }, pageUID, notesSettings);
-	}, [children.notes, item, notesSettings, pageUID]);
+		return await importItemNotes({item, notes: children.notes }, pageUID, notesSettings, annotationsSettings);
+	}, [annotationsSettings, children.notes, item, notesSettings, pageUID]);
 
 	const pdfLinks = useMemo(() => {
 		if(children.pdfs.length == 0 || !defaults.includes("pdfLinks")) {

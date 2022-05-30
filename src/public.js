@@ -6,7 +6,7 @@ import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getPDFLink, g
  * @param {{func: String, split_char: String, use: ("raw"|"text")}} notesSettings - The settings to use for the formatting
  * @returns The formatted Array
  */
-function formatNotes(notes, notesSettings){
+function formatNotes(notes, notesSettings, annotationsSettings){
 	if(!notes){
 		return [];
 	} else {
@@ -14,7 +14,7 @@ function formatNotes(notes, notesSettings){
 		let noteItems = notes.filter(n => n.data.itemType == "note");
 
 		return [
-			...formatZoteroAnnotations(annots/*, { func: null, use: "raw" } */), 
+			...formatZoteroAnnotations(annots, annotationsSettings), 
 			...formatZoteroNotes(noteItems, notesSettings)
 		];
 	}
@@ -93,7 +93,7 @@ function getItemCreators(item, { return_as = "string", brackets = true, use_type
 }
 
 
-function _getItemMetadata(item, pdfs, notes, typemap, notesSettings) {
+function _getItemMetadata(item, pdfs, notes, typemap, notesSettings, annotationsSettings) {
 	let metadata = [];
 
 	if (item.data.title) { metadata.push(`Title:: ${item.data.title}`); } // Title, if available
@@ -112,7 +112,7 @@ function _getItemMetadata(item, pdfs, notes, typemap, notesSettings) {
 	if(notes.length > 0){
 		metadata.push({
 			string: "[[Notes]]",
-			children: formatNotes(notes, notesSettings)
+			children: formatNotes(notes, notesSettings, annotationsSettings)
 		});
 	}
 

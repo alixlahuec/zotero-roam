@@ -587,15 +587,15 @@ function formatItemReference(item, format, {accent_class = "zr-accent-1"} = {}){
 
 /** Formats an array of Zotero annotations into Roam blocks, with optional configuration
  * @param {ZoteroItem[]} annotations - The Zotero annotations to format
- * @param {{func: String, use:("raw"|"formatted")}} config - Additional settings 
+ * @param {{func: String, use:("raw"|"formatted"), ...}} config - Additional settings 
  * @returns The formatted annotations
  */
-function formatZoteroAnnotations(annotations, { func = null, use = "raw" } = {}){
+function formatZoteroAnnotations(annotations, { func = null, use = "raw", ...settings } = {}){
 	if(func){
 		// If the user has provided a function, execute it with the desired input
 		return executeFunctionByName(func, window, use == "raw" ? annotations : simplifyZoteroAnnotations(annotations));
 	} else {
-		return formatItemAnnotations(annotations);
+		return formatItemAnnotations(annotations, { ...settings });
 	}
 }
 
@@ -1213,7 +1213,6 @@ export {
 	copyToClipboard,
 	escapeRegExp,
 	executeFunctionByName,
-	formatItemAnnotations,
 	formatItemNotes,
 	formatItemReference,
 	formatZoteroAnnotations,

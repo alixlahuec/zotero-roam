@@ -1,6 +1,5 @@
 import {
 	compareAnnotationIndices,
-	formatItemAnnotations,
 	formatZoteroAnnotations,
 	simplifyZoteroAnnotations } from "../../src/utils";
 
@@ -107,7 +106,7 @@ test("Formats simplified annotations - default", () => {
 });
 
 test("Formats simplified annotations - group by day added", () => {
-	expect(formatItemAnnotations([annot], { group_by: "day_added" }))
+	expect(formatZoteroAnnotations([annot], { group_by: "day_added" }))
 		.toEqual([
 			{
 				string: "[[March 18th, 2022]]",
@@ -122,7 +121,7 @@ test("Formats simplified annotations - group by day added", () => {
 });
 
 test("Formats simplified annotations - no highlight prefix", () => {
-	expect(formatItemAnnotations([annot], { highlight_prefix: "" }))
+	expect(formatZoteroAnnotations([annot], { highlight_prefix: "" }))
 		.toEqual([
 			{
 				string: `${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
@@ -132,7 +131,7 @@ test("Formats simplified annotations - no highlight prefix", () => {
 });
 
 test("Formats simplified annotations - no highlight suffix", () => {
-	expect(formatItemAnnotations([annot], { highlight_suffix: "" }))
+	expect(formatZoteroAnnotations([annot], { highlight_suffix: "" }))
 		.toEqual([
 			{
 				string: `[[>]] ${simplifiedAnnot.text}`,

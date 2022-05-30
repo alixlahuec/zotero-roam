@@ -202,25 +202,30 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		year,
 		zotero} = item;
 	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
-	const { metadata: metadataSettings, notes: notesSettings, shortcuts: shortcutsSettings, typemap } = useContext(UserSettings);
+	const { 
+		annotations: annotationsSettings, 
+		metadata: metadataSettings, 
+		notes: notesSettings, 
+		shortcuts: shortcutsSettings, 
+		typemap } = useContext(UserSettings);
 	const [, updateRoamCitekeys] = useRoamCitekeys();
 
 	const importMetadata = useCallback(async() => {
 		const { pdfs = [], notes = [] } = children;
-		const outcome = await importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings, typemap, notesSettings);
+		const outcome = await importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings, typemap, notesSettings, annotationsSettings);
 		if(outcome.success){
 			updateRoamCitekeys();
 		}
 		return outcome;
-	}, [children, inGraph, item.raw, metadataSettings, notesSettings, typemap, updateRoamCitekeys]);
+	}, [annotationsSettings, children, inGraph, item.raw, metadataSettings, notesSettings, typemap, updateRoamCitekeys]);
 
 	const importNotes = useCallback(async() => {
-		const outcome = await importItemNotes({ item, notes: children.notes }, inGraph, notesSettings);
+		const outcome = await importItemNotes({ item, notes: children.notes }, inGraph, notesSettings, annotationsSettings);
 		if(outcome.success){
 			updateRoamCitekeys();
 		}
 		return outcome;
-	}, [children.notes, inGraph, item, notesSettings, updateRoamCitekeys]);
+	}, [annotationsSettings, children.notes, inGraph, item, notesSettings, updateRoamCitekeys]);
 	
 	const navigateToPage = useCallback(() => {
 		if(inGraph != false){

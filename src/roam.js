@@ -231,7 +231,7 @@ function getInitialedPages(keys){
  * @param {Object} config - The user's `metadata` settings 
  * @returns IF successful, a detailed outcome of the import ; otherwise, the first error encountered.
  */
-async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, config, typemap, notesSettings){
+async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, config, typemap, notesSettings, annotationsSettings){
 	let title = "@" + item.key;
 	let pageUID = uid || window.roamAlphaAPI.util.generateUID();
 	let page = { new: null, title, uid: pageUID };
@@ -259,7 +259,7 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 		}
 	} else {
 		try {
-			let metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : _getItemMetadata(item, pdfs, notes, typemap, notesSettings);
+			let metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : _getItemMetadata(item, pdfs, notes, typemap, notesSettings, annotationsSettings);
 			let { args, error, success } = await addBlocksArray(pageUID, metadata);
 
 			let outcome = {
@@ -287,10 +287,11 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
  * @fires zotero-roam:notes-added
  * @param {{item: ZoteroItem, notes: ZoteroItem[]}} itemData - The item's Zotero data and its notes, if any 
  * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value
- * @param {Object} config - The user's `notes` settings
+ * @param {Object} notesSettings - The user's `notes` settings
+ * @param {Object} annotationsSettings - The user's `annotations` settings
  * @returns If successful, a detailed outcome of the immport ; otherwise, the first error encountered.
  */
-async function importItemNotes({item, notes = []} = {}, uid, config){
+async function importItemNotes({item, notes = []} = {}, uid, notesSettings, annotationsSettings){
 	let title = "@" + item.key;
 	let pageUID = uid || window.roamAlphaAPI.util.generateUID();
 	let page = { new: null, title, uid: pageUID };
@@ -303,8 +304,8 @@ async function importItemNotes({item, notes = []} = {}, uid, config){
 	}
 
 	try {
-		let formattedAnnots = formatZoteroAnnotations(notes.filter(n => n.data.itemType == "annotation"));
-		let formattedNotes = formatZoteroNotes(notes.filter(n => n.data.itemType == "note"), config);
+		let formattedAnnots = formatZoteroAnnotations(notes.filter(n => n.data.itemType == "annotation"), annotationsSettings);
+		let formattedNotes = formatZoteroNotes(notes.filter(n => n.data.itemType == "note"), notesSettings);
 		let { args, error, success } = await addBlocksArray(pageUID, [...formattedAnnots, ...formattedNotes]);
 
 		let outcome = {

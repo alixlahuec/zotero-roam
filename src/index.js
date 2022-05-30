@@ -48,7 +48,15 @@ window.zoteroRoam = {};
 	window.zoteroRoam.config = {
 		version: extension.version,
 		userSettings: {
-			annotations, // TODO: Detail annotationsSettings
+			annotations: {
+				comment_prefix: "",
+				comment_suffix: "",
+				group_by: false,
+				highlight_prefix: "[[>]]",
+				highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
+				use: "formatted",
+				...annotations
+			},
 			autocomplete,
 			autoload,
 			copy: {
@@ -142,7 +150,7 @@ window.zoteroRoam = {};
 		window.zoteroRoam.getItemCreators = getItemCreators;
 		window.zoteroRoam.getItemTags = getItemTags;
 
-		window.zoteroRoam.getItemMetadata = (item, pdfs, notes) => _getItemMetadata(item, pdfs, notes, window.zoteroRoam.config.userSettings.typemap, window.zoteroRoam.config.userSettings.notes);
+		window.zoteroRoam.getItemMetadata = (item, pdfs, notes) => _getItemMetadata(item, pdfs, notes, window.zoteroRoam.config.userSettings.typemap, window.zoteroRoam.config.userSettings.notes, window.zoteroRoam.config.userSettings.annotations);
 
 		window.zoteroRoam.getItemRelated = (item, { return_as = "citekeys", brackets = true } = {}) => {
 			const { type: libType, id: libID } = item.library;
