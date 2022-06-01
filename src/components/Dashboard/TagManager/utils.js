@@ -56,7 +56,7 @@ function makeSuggestionFor(entry){
 			};
 		} else {
 			return {
-				recommend: null,
+				recommend: entry.zotero.find(t => t.meta.type == 0)?.tag || null,
 				type: "manual",
 				use
 			};

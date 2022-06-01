@@ -74,7 +74,7 @@ test("Makes correct suggestions for tags", () => {
 		});
 	expect(makeSuggestionFor(tagList[2]))
 		.toEqual({
-			recommend: null,
+			recommend: "culture",
 			type: "manual",
 			use: {
 				roam: [],
