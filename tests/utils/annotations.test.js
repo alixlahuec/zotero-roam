@@ -95,47 +95,49 @@ test("Simplifies annotations", () => {
 		});
 });
 
-test("Formats simplified annotations - default", () => {
-	expect(formatZoteroAnnotations([annot]))
-		.toEqual([
-			{
-				string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
-				children: [simplifiedAnnot.comment]
-			}
-		]);
-});
-
-test("Formats simplified annotations - group by day added", () => {
-	expect(formatZoteroAnnotations([annot], { group_by: "day_added" }))
-		.toEqual([
-			{
-				string: "[[March 18th, 2022]]",
-				children: [
-					{
-						string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
-						children: [simplifiedAnnot.comment]
-					}
-				]
-			}
-		]);
-});
-
-test("Formats simplified annotations - no highlight prefix", () => {
-	expect(formatZoteroAnnotations([annot], { highlight_prefix: "" }))
-		.toEqual([
-			{
-				string: `${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
-				children: [simplifiedAnnot.comment]
-			}
-		]);
-});
-
-test("Formats simplified annotations - no highlight suffix", () => {
-	expect(formatZoteroAnnotations([annot], { highlight_suffix: "" }))
-		.toEqual([
-			{
-				string: `[[>]] ${simplifiedAnnot.text}`,
-				children: [simplifiedAnnot.comment]
-			}
-		]);
+describe("Annotations formatting", () => {
+	it("formats with defaults", () => {
+		expect(formatZoteroAnnotations([annot]))
+			.toEqual([
+				{
+					string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
+					children: [simplifiedAnnot.comment]
+				}
+			]);
+	});
+	
+	it("groups by day added", () => {
+		expect(formatZoteroAnnotations([annot], { group_by: "day_added" }))
+			.toEqual([
+				{
+					string: "[[March 18th, 2022]]",
+					children: [
+						{
+							string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
+							children: [simplifiedAnnot.comment]
+						}
+					]
+				}
+			]);
+	});
+	
+	it("formats with no highlight prefix", () => {
+		expect(formatZoteroAnnotations([annot], { highlight_prefix: "" }))
+			.toEqual([
+				{
+					string: `${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
+					children: [simplifiedAnnot.comment]
+				}
+			]);
+	});
+	
+	it("formats with no highlight suffix", () => {
+		expect(formatZoteroAnnotations([annot], { highlight_suffix: "" }))
+			.toEqual([
+				{
+					string: `[[>]] ${simplifiedAnnot.text}`,
+					children: [simplifiedAnnot.comment]
+				}
+			]);
+	});
 });

@@ -32,18 +32,44 @@ test("Categorizes Zotero items", () => {
 		});
 });
 
-test("Extracts authors' last names", () => {
-	expect(cleanAuthorLastName("Serena Chen")).toBe("Chen");
-	expect(cleanAuthorLastName("Bo-yeong Kim")).toBe("Kim");
-	expect(cleanAuthorLastName("Tomas de Koon")).toBe("de Koon");
-	expect(cleanAuthorLastName("Kelsey S. Dickson")).toBe("Dickson");
+describe("Extracting authors' last names", () => {
+	it("extracts from simple names", () => {
+		expect(cleanAuthorLastName("Serena Chen")).toBe("Chen");
+	});
+
+	it("extracts from names with hyphen", () => {
+		expect(cleanAuthorLastName("Bo-yeong Kim")).toBe("Kim");
+	});
+
+	it("extracts from names with particle", () => {
+		expect(cleanAuthorLastName("Tomas de Koon")).toBe("de Koon");
+	});
+
+	it("extracts from names with middle name", () => {
+		expect(cleanAuthorLastName("Kelsey S. Dickson")).toBe("Dickson");
+	});
 });
 
-test("Formats authors names", () => {
-	expect(cleanAuthorsNames([])).toBe("");
-	expect(cleanAuthorsNames(["Dickson"])).toBe("Dickson");
-	expect(cleanAuthorsNames(["Dickson", "Sklar"])).toBe("Dickson & Sklar");
-	expect(cleanAuthorsNames(["Dickson", "Sklar", "Chen"])).toBe("Dickson, Sklar & Chen");
+describe("Formatting authorship data", () => {
+	it("returns an empty string when given an empty input", () => {
+		expect(cleanAuthorsNames([])).toBe("");
+	});
+
+	it("formats correctly with 1 author", () => {
+		expect(cleanAuthorsNames(["Dickson"])).toBe("Dickson");
+	});
+
+	it("formats correctly with 2 authors", () => {
+		expect(cleanAuthorsNames(["Dickson", "Sklar"])).toBe("Dickson & Sklar");
+	});
+
+	it("formats correctly with 3 authors", () => {
+		expect(cleanAuthorsNames(["Dickson", "Sklar", "Chen"])).toBe("Dickson, Sklar & Chen");
+	});
+
+	it("formats correctly with 4+ authors", () => {
+		expect(cleanAuthorsNames(["Dickson", "Chen", "de Koon", "Sklar"])).toBe("Dickson et al.");
+	});
 });
 
 test("Simplifies Zotero item metadata", () => {

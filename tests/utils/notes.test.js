@@ -29,13 +29,6 @@ const note = {
 	version: 1234
 };
 
-const notes = [
-	{data: {note: "<h1>Note Title</h1><div class=\"div-class\"><span>Lorem ipsum</span></div>"}},
-	{data: {note: "Click <a href=\"https://example.com\">here</a> to open a link"}},
-	{data: {note: "See <a class=\"link-class\" href=\"https://example.com\">there</a> for a link with attributes"}},
-	{data: {note: "\n\nSome text\n"}}
-];
-
 test("Simplifies notes", () => {
 	expect(simplifyZoteroNotes([note]))
 		.toEqual([
@@ -53,22 +46,31 @@ test("Simplifies notes", () => {
 		]);
 });
 
-test("Clean rich tags", () => {
-	expect(formatZoteroNotes([notes[0]]))
-		.toEqual(["**Note Title**Lorem ipsum"]);
-});
+describe("Parsing HTML notes", () => {
+	const notes = [
+		{data: {note: "<h1>Note Title</h1><div class=\"div-class\"><span>Lorem ipsum</span></div>"}},
+		{data: {note: "Click <a href=\"https://example.com\">here</a> to open a link"}},
+		{data: {note: "See <a class=\"link-class\" href=\"https://example.com\">there</a> for a link with attributes"}},
+		{data: {note: "\n\nSome text\n"}}
+	];	
 
-test("Clean links", () => {
-	expect(formatItemNotes([notes[1], notes[2]], "</p>"))
-		.toEqual([
-			"Click [here](https://example.com) to open a link",
-			"See [there](https://example.com) for a link with attributes"
-		]);
-});
-
-test("Clean newlines", () => {
-	expect(formatItemNotes([notes[3]], "</p>"))
-		.toEqual([
-			"Some text"
-		]);
+	it("cleans markup from rich tags", () => {
+		expect(formatZoteroNotes([notes[0]]))
+			.toEqual(["**Note Title**Lorem ipsum"]);
+	});
+	
+	it("formats links into Markdown", () => {
+		expect(formatItemNotes([notes[1], notes[2]], "</p>"))
+			.toEqual([
+				"Click [here](https://example.com) to open a link",
+				"See [there](https://example.com) for a link with attributes"
+			]);
+	});
+	
+	it("removes newlines", () => {
+		expect(formatItemNotes([notes[3]], "</p>"))
+			.toEqual([
+				"Some text"
+			]);
+	});
 });
