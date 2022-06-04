@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
-import { Slider, Spinner, Switch } from "@blueprintjs/core";
+import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import { ListWrapper, Toolbar } from "../../DataList";
@@ -17,12 +17,12 @@ function labelRenderer(num, { isHandleTooltip }) {
 }
 
 const LogViewSublist = React.memo(function LogViewSublist({ allAbstractsShown, items, label, onClose }){
-	return <>
-		<h5 className="zr-auxiliary">{label}</h5>
-		{items.length > 0
-			? items.map(it => <LogItem key={[it.location, it.key].join("/")} allAbstractsShown={allAbstractsShown} item={it} onClose={onClose} />)
-			: <span className="zr-secondary">No items</span>}
-	</>;
+	return items.length == 0
+		? null
+		: <>
+			<h5 className="zr-auxiliary">{label}</h5>
+			{items.map(it => <LogItem key={[it.location, it.key].join("/")} allAbstractsShown={allAbstractsShown} item={it} onClose={onClose} />)}
+		</>;
 });
 LogViewSublist.propTypes = {
 	allAbstractsShown: bool,
@@ -50,9 +50,12 @@ const LogView = React.memo(function LogView({ itemList, onClose }){
 			? <Spinner size={15} />
 			: <div className="zr-recentitems--datalist" >
 				<ListWrapper>
+					{itemsLog.today.length == 0 && itemsLog.yesterday.length == 0 && itemsLog.recent.length == 0
+						? <NonIdealState className="zr-auxiliary" description="No items to display" />
+						: null}
 					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
 					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />
-					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Earlier" onClose={onClose} />
+					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Recently" onClose={onClose} />
 				</ListWrapper>
 				<Toolbar>
 					<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
