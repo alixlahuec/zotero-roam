@@ -1,26 +1,34 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
+import { Button } from "@blueprintjs/core";
 
+import ButtonLink from "../../ButtonLink";
+import { DataDrawer } from "../../DataDrawer";
 import { ListItem } from "../../DataList";
 
-import * as customPropTypes from "../../../propTypes";
 import { getPDFLink, pluralize } from "../../../utils";
-import ButtonLink from "../../ButtonLink";
 
+import * as customPropTypes from "../../../propTypes";
 function PDFElement({ item }){
-	const name = item.data.filename || item.data.title;
-	const link = getPDFLink(item, "href");
+	const [isDrawerOpen, setDrawerOpen] = useState(false);
 
-	return <ListItem className="zr-query--result" >
-		<div zr-role="item-header">
-			<div zr-role="item-details">
-				<span className="zr-auxiliary" zr-role="item-title">{name}</span>
-				{item.meta.numChildren > 0
-					? <span className="zr-secondary">{pluralize(item.meta.numChildren, "linked note")}</span>
-					: null}
+	const openDrawer = useCallback(() => setDrawerOpen(true), []);
+	const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+
+	return <>
+		<ListItem className="zr-query--result" >
+			<div zr-role="item-header">
+				<div zr-role="item-details">
+					<span className="zr-auxiliary" zr-role="item-title">{item.data.filename || item.data.title}</span>
+					<Button onClick={openDrawer} text="Raw data" />
+					{item.meta.numChildren > 0
+						? <Button icon="duplicate" text={pluralize(item.meta.numChildren, "linked note")} />
+						: null}
+				</div>
+				<ButtonLink className="zr-text-small" href={getPDFLink(item, "href")} icon="paperclip">Open PDF</ButtonLink>
 			</div>
-			<ButtonLink className="zr-text-small" href={link} icon="paperclip">Open PDF</ButtonLink>
-		</div>
-	</ListItem>;
+		</ListItem>
+		<DataDrawer item={item} isOpen={isDrawerOpen} onClose={closeDrawer} />
+	</>;
 }
 PDFElement.propTypes = {
 	item: customPropTypes.zoteroItemType
