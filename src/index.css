@@ -119,6 +119,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
   background: var(--zr-dialog-bg);
   border: 1px var(--zr-border-co) solid;
   color: var(--zr-auxiliary);
+  white-space: pre-wrap;
 }
 
 [class*="zr"] .bp4-progress-bar.bp4-intent-primary .bp4-progress-meter {

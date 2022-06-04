@@ -3,7 +3,7 @@ import { Classes, Drawer } from "@blueprintjs/core";
 import { bool, func, object } from "prop-types";
 
 function RawItem({ item }){
-	return <pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "\t")}</pre>;
+	return <pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "  ")}</pre>;
 }
 RawItem.propTypes = {
 	item: object
