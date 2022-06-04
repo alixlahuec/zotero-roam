@@ -19,7 +19,7 @@ function PDFElement({ item }){
 			<div zr-role="item-header">
 				<div zr-role="item-details">
 					<span className="zr-auxiliary" zr-role="item-title">{item.data.filename || item.data.title}</span>
-					<Button className="zr-text-small" minimal={true} onClick={openDrawer} text="Raw data" />
+					<Button className="zr-text-small" icon="eye-open" minimal={true} onClick={openDrawer} />
 					{item.meta.numChildren > 0
 						? <Button className="zr-text-small" icon="duplicate" minimal={true} text={pluralize(item.meta.numChildren, "linked note")} />
 						: null}
