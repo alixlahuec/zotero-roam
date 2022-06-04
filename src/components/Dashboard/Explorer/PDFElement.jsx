@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Button } from "@blueprintjs/core";
 
 import ButtonLink from "../../ButtonLink";
-import { DataDrawer } from "../../DataDrawer";
+import DataDrawer from "../../DataDrawer";
 import { ListItem } from "../../DataList";
 
 import { getPDFLink, pluralize } from "../../../utils";
