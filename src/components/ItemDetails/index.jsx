@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useMemo, useState } from "react";
 import { func, node, object, oneOf, string } from "prop-types";
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
+import DataDrawer from "../DataDrawer";
 import NotesDrawer from "../NotesDrawer";
 import ShortcutSequence from "../ShortcutSequence";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
@@ -202,6 +203,8 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		year,
 		zotero} = item;
 	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
+	const [isDataDrawerOpen, setDataDrawerOpen] = useState(false);
+	
 	const { 
 		annotations: annotationsSettings, 
 		metadata: metadataSettings, 
@@ -237,6 +240,9 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	const showNotes = useCallback(() => setNotesDrawerOpen(true), []);
 	const closeNotes = useCallback(() => setNotesDrawerOpen(false), []);
 	const toggleNotes = useCallback(() => setNotesDrawerOpen(prev => !prev), []);
+
+	const showData = useCallback(() => setDataDrawerOpen(true), []);
+	const closeData = useCallback(() => setDataDrawerOpen(false), []);
 
 	const goToPageButton = useMemo(() => {
 		let label = shortcutsSettings.goToItemPage != false
@@ -274,6 +280,13 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			</>;
 		}
 	}, [children.notes, closeNotes, isNotesDrawerOpen, shortcutsSettings, showNotes]);
+
+	const rawData = useMemo(() => {
+		return <>
+			<MenuItem icon="eye-open" onClick={showData} text="View raw metadata" />
+			<DataDrawer item={item} isOpen={isDataDrawerOpen} onClose={closeData} />
+		</>;
+	}, [closeData, item, isDataDrawerOpen, showData]);
 
 	const hotkeys = useMemo(() => {
 		const { goToItemPage: pageCombo, importMetadata: metadataCombo, toggleNotes: notesCombo } = shortcutsSettings;
@@ -375,6 +388,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 				{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Import notes" />}
 				<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
 				<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />
+				{rawData}
 				<MenuDivider className="zr-divider-minimal" title="Linked Content" />
 				{pdfs}
 				{notes}
