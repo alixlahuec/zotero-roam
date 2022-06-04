@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { arrayOf, bool, func, object } from "prop-types";
-import { Button, Classes, Drawer, Tabs, Tab, Tag, ButtonGroup, Icon } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Drawer, Icon, Tabs, Tab, Tag } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
 import ButtonLink from "../ButtonLink";

@@ -20,6 +20,7 @@
     max-height: 90vh;
     overflow-y: scroll;
     padding-left: 15px;
+    padding-right: 15px;
     width: 100%;
 }
 
