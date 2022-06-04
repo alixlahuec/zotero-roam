@@ -4,8 +4,8 @@ import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import { ListItem, ListWrapper } from "../../DataList";
-import PDFElement from "./PDFElement";
 import QueryBuilder from "./QueryBuilder";
+import QueryPDFs from "./QueryPDFs";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
 
 import { useQuery_Items } from "../../../api/queries";
@@ -58,7 +58,7 @@ function TabContents({ itemList, onClose, show }){
 		: show == "items" 
 			? <QueryBuilder items={filteredData} onClose={onClose} />
 			: show == "pdfs"
-				? <ListWrapper>{filteredData.slice(0,20).map((it, i) => <PDFElement key={it.key + "-" + i} item={it} />)}</ListWrapper>
+				? <QueryPDFs items={filteredData} />
 				: <ListWrapper>{filteredData.slice(0,20).map((it, i) => <ListItem key={it.key + "-" + i}>{it.key}</ListItem>)}</ListWrapper>;
 }
 TabContents.propTypes = {
