@@ -20,8 +20,8 @@ const queries = {
 			defaultInput: "",
 			inputType: "text",
 			testItem: (item, value = "") => {
-				if(!item.data.abstractNote){ return false; }
-				return searchEngine(value, item.data.abstractNote);
+				if(!item.abstract){ return false; }
+				return searchEngine(value, item.abstract);
 			}
 		},
 		"does not contain": {
@@ -29,22 +29,22 @@ const queries = {
 			defaultInput: "",
 			inputType: "text",
 			testItem: (item, value = "") => {
-				if(!item.data.abstractNote){ return false; }
+				if(!item.abstract){ return false; }
 				if(!value){ return true; }
-				return !searchEngine(value, item.data.abstractNote);
+				return !searchEngine(value, item.abstract);
 			}
 		},
 		"does not exist": {
 			checkInput: () => false,
 			defaultInput: null,
 			inputType: null,
-			testItem: (item) => !item.data.abstractNote
+			testItem: (item) => !item.abstract
 		},
 		"exists": {
 			checkInput: () => false,
 			defaultInput: null,
 			inputType: null,
-			testItem: (item) => item.data.abstractNote && true
+			testItem: (item) => item.abstract && true
 		}
 	},
 	"Citekey": {
@@ -52,13 +52,13 @@ const queries = {
 			checkInput: () => false,
 			defaultInput: null,
 			inputType: null,
-			testItem: (item) => item.has_citekey && true
+			testItem: (item) => item.raw.has_citekey && true
 		},
 		"does not exist": {
 			checkInput: () => false,
 			defaultInput: null,
 			inputType: null,
-			testItem: (item) => !item.has_citekey
+			testItem: (item) => !item.raw.has_citekey
 		}
 	},
 	"DOI": {
@@ -66,13 +66,13 @@ const queries = {
 			checkInput: () => false,
 			defaultInput: null,
 			inputType: null,
-			testItem: (item) => item.data.DOI && true
+			testItem: (item) => item.raw.data.DOI && true
 		},
 		"does not exist": {
 			checkInput: () => false,
 			defaultInput: null,
 			inputType: null,
-			testItem: (item) => !item.data.DOI
+			testItem: (item) => !item.raw.data.DOI
 		}
 	},
 	"Item added": {
@@ -86,7 +86,7 @@ const queries = {
 				} else {
 					let dateCheck = value;
 					dateCheck.setHours(0,0,0);
-					return new Date(item.data.dateAdded) < dateCheck;
+					return new Date(item.raw.data.dateAdded) < dateCheck;
 				}
 			}
 		},
@@ -100,7 +100,7 @@ const queries = {
 				} else {
 					let dateCheck = value;
 					dateCheck.setHours(0,0,0);
-					return new Date(item.data.dateAdded) > dateCheck;
+					return new Date(item.raw.data.dateAdded) > dateCheck;
 				}
 			}
 		},
@@ -118,7 +118,7 @@ const queries = {
 				} else {
 					let fromCheck = from;
 					fromCheck.setHours(0,0,0);
-					afterFrom = new Date(item.data.dateAdded) > fromCheck;
+					afterFrom = new Date(item.raw.data.dateAdded) > fromCheck;
 				}
 
 				if(to == null){
@@ -126,7 +126,7 @@ const queries = {
 				} else {
 					let toCheck = to;
 					toCheck.setHours(0,0,0);
-					beforeTo = new Date(item.data.dateAdded) < toCheck;
+					beforeTo = new Date(item.raw.data.dateAdded) < toCheck;
 				}
 				
 				return (afterFrom && beforeTo);
@@ -138,13 +138,55 @@ const queries = {
 			checkInput: (value) => value?.constructor === Array && value.length > 0,
 			defaultInput: [],
 			inputType: "multiselect",
-			testItem: (item, value) => value.includes(item.data.itemType)
+			testItem: (item, value) => value.includes(item.itemType)
 		},
 		"is not": {
 			checkInput: (value) => value?.constructor === Array && value.length > 0,
 			defaultInput: [],
 			inputType: "multiselect",
-			testItem: (item, value) => !value.includes(item.data.itemType)
+			testItem: (item, value) => !value.includes(item.itemType)
+		}
+	},
+	"Notes": {
+		"exist": {
+			checkInput: () => false,
+			defaultInput: null,
+			inputType: null,
+			testItem: (item) => item.children.notes.length > 0
+		},
+		"do not exist": {
+			checkInput: () => false,
+			defaultInput: null,
+			inputType: null,
+			testItem: (item) => item.children.notes.length == 0
+		}
+	},
+	"PDF": {
+		"exists": {
+			checkInput: () => false,
+			defaultInput: null,
+			inputType: null,
+			testItem: (item) => item.children.pdfs.length > 0
+		},
+		"does not exist": {
+			checkInput: () => false,
+			defaultInput: null,
+			inputType: null,
+			testItem: (item) => item.children.pdfs.length == 0
+		}
+	},
+	"Roam page": {
+		"exists": {
+			checkInput: () => false,
+			defaultInput: null,
+			inputType: null,
+			testItem: (item) => item.inGraph && true
+		},
+		"does not exist": {
+			checkInput: () => false,
+			defaultInput: null,
+			inputType: null,
+			testItem: (item) => item.inGraph == false
 		}
 	},
 	// published: {},
@@ -154,9 +196,9 @@ const queries = {
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value = []) => {
-				if(item.data.tags.length == 0){ return false; }
+				if(item.tags.length == 0){ return false; }
 				let terms = value.constructor === Array ? value : [value];
-				return terms.every(tag => searchEngine(tag, item.data.tags.map(t => t.tag)));
+				return terms.every(tag => searchEngine(tag, item.tags, { match: "exact" }));
 			}
 		},
 		"include any of": {
@@ -164,18 +206,17 @@ const queries = {
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value = []) => {
-				if(item.data.tags.length == 0){ return false; }
-				return value.some(tag => searchEngine(tag, item.data.tags.map(t => t.tag))); 
-				// TODO: Does the search config need to be adjusted for exact matching ?
+				if(item.tags.length == 0){ return false; }
+				return value.some(tag => searchEngine(tag, item.tags, { match: "exact" }));
 			}},
 		"do not include": {
 			checkInput: (value) => value?.constructor === Array && value.length > 0,
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value) => {
-				if(item.data.tags.length == 0){ return true; }
+				if(item.tags.length == 0){ return true; }
 				let terms = value.constructor === Array ? value : [value];
-				return terms.every(tag => !searchEngine(tag, item.data.tags.map(t => t.tag)));
+				return terms.every(tag => !searchEngine(tag, item.tags, { match: "exact" }));
 			}
 		}
 	},
@@ -184,13 +225,13 @@ const queries = {
 			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
 			inputType: "text",
-			testItem: (item, value = "") => searchEngine(value, item.data.title)
+			testItem: (item, value = "") => searchEngine(value, item.title)
 		},
 		"does not contain": {
 			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
 			inputType: "text",
-			testItem: (item, value) => !searchEngine(value, item.data.title)
+			testItem: (item, value) => !searchEngine(value, item.title)
 		}
 	}
 };
@@ -217,6 +258,12 @@ function runQueryTerm(term, useOR = false, item){
 	}
 }
 
+/** Runs a query against an item
+ * @param {Array} terms - The terms of the query
+ * @param {Boolean} useOR - If the top-level operator is "or"
+ * @param {Object} item - The target item (of type `cleanLibraryItemType`)
+ * @returns {Boolean} The result of the query for this item
+ */
 function runQuerySet(terms = [], useOR = true, item){
 	if(terms.length == 0){
 		return true;

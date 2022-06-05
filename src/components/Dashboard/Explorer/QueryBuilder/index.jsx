@@ -28,7 +28,7 @@ function QueryBuilder({ items, onClose }){
 		updateTerm: handleQueryTermChange
 	}), [addQueryTerm, removeQueryTerm, handleQueryTermChange]);
 
-	const queriedItems = useMemo(() => items.filter(it => runQuerySet(queryTerms, useOR, it.raw)), [items, queryTerms, useOR]);
+	const queriedItems = useMemo(() => items.filter(it => runQuerySet(queryTerms, useOR, it)), [items, queryTerms, useOR]);
 
 	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
 
