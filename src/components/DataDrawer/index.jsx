@@ -1,5 +1,5 @@
 import React from "react";
-import { Classes, Drawer } from "@blueprintjs/core";
+import { Button, Classes, Drawer, Tab, Tabs } from "@blueprintjs/core";
 import { bool, func, object } from "prop-types";
 
 import "./index.css";
@@ -21,7 +21,11 @@ function DataDrawer({ item, isOpen, onClose }){
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
-			<RawItem item={item} />
+			<Tabs animate={false} className="zr-tabs-minimal" id="zr-drawer--data" >
+				<Tab id="item" panel={<RawItem item={item} />} title="Item" />
+				<Tabs.Expander />
+				<Button icon="cross" minimal={true} onClick={onClose} />
+			</Tabs>
 		</Drawer>
 	);
 }
