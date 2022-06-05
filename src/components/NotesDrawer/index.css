@@ -1,4 +1,5 @@
 .zr-drawer--notes {
+    background-color: var(--zr-dialog-bg);
     color: var(--zr-text-co);
 }
 
@@ -60,10 +61,6 @@
 }
 
 /* DARK THEME */
-
-[zr-dark-theme="true"] .zr-drawer--notes {
-    background-color: var(--zr-dark-selected-bc,#191919);
-}
 
 [zr-dark-theme="true"] .zr-drawer--notes-card {
     background-color: none;
