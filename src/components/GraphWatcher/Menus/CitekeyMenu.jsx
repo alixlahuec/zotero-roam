@@ -220,8 +220,7 @@ function ViewItem(props) {
 			<AuxiliaryDialog
 				className="view-item-information"
 				isOpen={isPanelOpen}
-				onClose={closePanel}
-				title={"@" + item.key}>
+				onClose={closePanel}>
 				<ItemDetails
 					closeDialog={closePanel}
 					item={item}

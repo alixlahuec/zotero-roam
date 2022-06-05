@@ -281,12 +281,13 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		}
 	}, [children.notes, closeNotes, isNotesDrawerOpen, shortcutsSettings, showNotes]);
 
+	// * The data drawer here could show additional metadata (formatted ; PDFs ; notes)
 	const rawData = useMemo(() => {
 		return <>
 			<MenuItem icon="eye-open" onClick={showData} text="View raw metadata" />
-			<DataDrawer item={item} isOpen={isDataDrawerOpen} onClose={closeData} />
+			<DataDrawer item={item.raw} isOpen={isDataDrawerOpen} onClose={closeData} />
 		</>;
-	}, [closeData, item, isDataDrawerOpen, showData]);
+	}, [closeData, item.raw, isDataDrawerOpen, showData]);
 
 	const hotkeys = useMemo(() => {
 		const { goToItemPage: pageCombo, importMetadata: metadataCombo, toggleNotes: notesCombo } = shortcutsSettings;
