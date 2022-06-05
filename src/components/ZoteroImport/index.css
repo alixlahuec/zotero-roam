@@ -3,6 +3,14 @@
     margin-top:5px;
 }
 
+.zr-semantic-panel--side .bp4-button-group button.bp4-intent-primary.zr-import--trigger {
+    color: hsla(var(--zr-accent-1-co), 90%);
+}
+
+.zr-semantic-panel--side .bp4-button-group button.bp4-intent-warning.zr-import--cancel {
+    color: hsla(var(--zr-accent-2-co), 90%);
+}
+
 .import-options {
     color: var(--zr-text-co);
     display: flex;
@@ -43,5 +51,6 @@
     border: 1px var(--zr-border-co) solid;
     box-shadow: none;
     color: var(--zr-text-co);
+    font-size: var(--zr-text-small);
     margin: 20px 0px;
 }

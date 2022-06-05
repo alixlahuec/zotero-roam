@@ -64,7 +64,7 @@ const ImportButton = React.memo(function ImportButton(props) {
 	}, [isActive, isDataReady, status]);
 
 	return (
-		<Button onClick={triggerImport} {...buttonProps} />
+		<Button className={["zr-text-small", "zr-import--trigger"].join(" ")} onClick={triggerImport} {...buttonProps} />
 	);
 });
 ImportButton.propTypes = {
@@ -135,7 +135,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 		<>
 			<div className="import-header">
 				<ButtonGroup fill={true} minimal={true}>
-					<Button icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
+					<Button className={["zr-text-small", "zr-import--cancel"].join(" ")} icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
 					<ImportButton 
 						identifiers={identifiers} 
 						importProps={importProps} 

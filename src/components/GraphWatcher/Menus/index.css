@@ -96,7 +96,7 @@ button[class*='zr-page-menu-show--'] {
 /* ViewItem */
 .zr-auxiliary-dialog--view-item-information.bp4-dialog {
     --zr-dialog-gutter: 2.5%;
-    --zr-dialog-margin: 18vw;
+    --zr-dialog-margin: 15vw;
 }
 
 /* SMALLER DISPLAYS */

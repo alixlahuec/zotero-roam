@@ -12,7 +12,7 @@
     border-bottom-left-radius: 6px;
     color: var(--zr-text-co);
     flex: 1 0 66%;
-    padding: 10px 6%;
+    padding: 10px 4%;
 }
 
 #zr-item-details [zr-role="item-metadata--header"] {
@@ -48,6 +48,7 @@
     border-bottom-right-radius: 6px;
     color: var(--zr-text-co);
     flex: 0 1 34%;
+    padding-top: 10px;
 }
 
 #zr-item-details [zr-role="item-actions"] .bp4-menu {

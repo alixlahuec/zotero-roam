@@ -1,6 +1,6 @@
 .zr-auxiliary-dialog--citations.bp4-dialog {
     --zr-dialog-gutter: 1.5%;
-    --zr-dialog-margin: 22vw;
+    --zr-dialog-margin: 20vw;
     transition: 0.5s;
 }
 
@@ -74,6 +74,7 @@
 
 .zr-semantic-panel--side {
     background: var(--zr-box-bg);
+    border-radius: 0px 6px 6px 0px;
     flex: 0 0 0%;
     overflow: auto;
     transition: 0.5s;

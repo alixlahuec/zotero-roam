@@ -21,6 +21,7 @@ label.zr-quick-copy {
 /* QueryList */
 
 .zr-dialog-overlay--search-library .zr-querylist .bp4-input-group.bp4-input {
+    box-shadow: none;
     padding: unset;
 }
 

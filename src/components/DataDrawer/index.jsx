@@ -2,6 +2,8 @@ import React from "react";
 import { Classes, Drawer } from "@blueprintjs/core";
 import { bool, func, object } from "prop-types";
 
+import "./index.css";
+
 function RawItem({ item }){
 	return <pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "  ")}</pre>;
 }
