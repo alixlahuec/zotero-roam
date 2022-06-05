@@ -11,7 +11,7 @@ import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 function Annotation({ annot }){
-	let { color, comment, dateModified, link_page, link_pdf, pageLabel, tags, text, type } = annot;
+	let { color, comment, date_modified, link_page, link_pdf, page_label, tags, text, type } = annot;
 
 	// https://shannonpayne.com.au/how-to-create-a-low-highlight-text-effect-using-css/
 	let highlightStyle = useMemo(() => ({
@@ -23,7 +23,7 @@ function Annotation({ annot }){
 			<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 			<ButtonGroup minimal={true}>
 				<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >PDF</ButtonLink>
-				<ButtonLink className="zr-text-small" href={link_page} >Page {pageLabel}</ButtonLink>
+				<ButtonLink className="zr-text-small" href={link_page} >Page {page_label}</ButtonLink>
 			</ButtonGroup>
 		</div>
 		<div className="zr-annotation--highlight">
@@ -32,7 +32,7 @@ function Annotation({ annot }){
 		</div>
 		{comment && <div className="zr-annotation--comment"><Icon icon="nest" intent="primary" size={14} />{comment}</div>}
 		<div zr-role="card-footer">
-			<span className="zr-secondary">{makeDateFromAgo(dateModified)}</span>
+			<span className="zr-secondary">{makeDateFromAgo(date_modified)}</span>
 		</div>
 	</div>;
 }
