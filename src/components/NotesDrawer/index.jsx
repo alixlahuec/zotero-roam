@@ -41,7 +41,7 @@ Annotation.propTypes = {
 };
 
 function Note({ note }){
-	let { dateModified, link_note, raw, tags } = note;
+	let { date_modified, link_note, raw, tags } = note;
 	const { notes: notesSettings } = useContext(UserSettings);
 
 	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings), [notesSettings, raw]);
@@ -58,7 +58,7 @@ function Note({ note }){
 				{nt}
 			</div>
 			<div zr-role="card-footer">
-				<span className="zr-secondary">{makeDateFromAgo(dateModified)}</span>
+				<span className="zr-secondary">{makeDateFromAgo(date_modified)}</span>
 			</div>
 		</div>;
 	});

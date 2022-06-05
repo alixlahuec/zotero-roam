@@ -31,7 +31,7 @@ const TabList = React.memo(function TabList(props){
 	);
 });
 TabList.propTypes = {
-	defaultTab: oneOf(["tag-manager", "recent-items", "explorer"]),
+	defaultTab: oneOf(["tag-manager", "recent-items", "explorer", "settings"]),
 	onClose: func
 };
 

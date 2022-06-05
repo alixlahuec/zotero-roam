@@ -33,13 +33,13 @@ test("Simplifies notes", () => {
 	expect(simplifyZoteroNotes([note]))
 		.toEqual([
 			{
-				dateAdded: note.data.dateAdded,
-				dateModified: note.data.dateModified,
+				date_added: note.data.dateAdded,
+				date_modified: note.data.dateModified,
 				key: "A12BCDEF",
-				library: "users/98765",
+				location: "users/98765",
 				link_note: "zotero://select/library/items/A12BCDEF",
 				note: note.data.note,
-				parentItem: "P34QRSTU",
+				parent_item: "P34QRSTU",
 				raw: note,
 				tags: ["toRead"]
 			}

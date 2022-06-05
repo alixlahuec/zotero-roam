@@ -47,7 +47,7 @@ function analyzeUserRequests(reqs){
 	}
 }
 
-/** Categorize library items according to their type (items, PDFs attachments, notes)
+/** Categorizes library items according to their type (items, PDFs attachments, notes)
  * @param {Object[]} datastore - The items to categorize 
  * @returns {{items: ZoteroItem[], pdfs: ZoteroItem[], notes: Object[]}} The categorized object
  */
@@ -69,6 +69,10 @@ function categorizeLibraryItems(datastore){
 	}, { items: [], pdfs: [], notes: [] });
 }
 
+/** Extracts an author's last name
+ * @param {string} name - The author's full name
+ * @returns The author's last name
+ */
 function cleanAuthorLastName(name){
 	let components = name.replaceAll(".", " ").split(" ").filter(Boolean);
 	if(components.length == 1){
@@ -78,6 +82,10 @@ function cleanAuthorLastName(name){
 	}
 }
 
+/** Formats authoring metadata
+ * @param {string[]} names - The last names of the author(s)
+ * @returns The formatted authoring string
+ */
 function cleanAuthorsNames(names){
 	switch(names.length){
 	case 0:
@@ -112,8 +120,7 @@ function cleanLibrary(arr, roamCitekeys){
 		});
 }
 
-/**
- * 
+/** Formats a Zotero item's metadata into a clean format, with Roam & children data
  * @param {ZoteroItem|Object} item - The Zotero item
  * @param {Object[]} pdfs - The Zotero item's attached PDFs
  * @param {Object[]} notes - The Zotero item's notes and annotations
@@ -188,8 +195,7 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 	return clean_item;
 }
 
-/**
- * 
+/** Formats a Zotero PDF's metadata into a clean format, with parent & annotations data
  * @param {ZoteroItem|Object} pdf - The Zotero PDF entry
  * @param {ZoteroItem|Object} parent - The Zotero PDF's parent item
  * @param {Object[]} annotations - The Zotero PDF's linked annotations
@@ -361,6 +367,11 @@ function cleanSemantic(datastore, semantic, roamCitekeys){
 	};
 }
 
+/** Orders the indices of two Zotero annotations
+ * @param {Number[]} a - The first index to compare
+ * @param {Number[]} b - The second index to compare
+ * @returns {(0|1)} The comparison outcome
+ */
 function compareAnnotationIndices(a, b){
 	let [pageA = 0, lineA = 0, colA = 0] = a;
 	let [pageB = 0, lineB = 0, colB = 0] = b;
@@ -476,6 +487,11 @@ function executeFunctionByName(functionName, context /*, args */) {
 	return context[func].apply(context, args);
 }
 
+/** Formats a single Zotero annotation with params
+ * @param {ZoteroItem} annotation - The (raw) annotation to be formatted
+ * @param {{highlight_prefix: string, highlight_suffix: string, comment_prefix: string, comment_suffix: string}} config - Additional configuration 
+ * @returns A block object, ready for import into Roam
+ */
 function formatAnnotationWithParams(annotation, { highlight_prefix = "[[>]]", highlight_suffix = "([p. {{page_label}}]({{link_page}})) {{tags_string}}", comment_prefix = "", comment_suffix = "" } = {}){
 	if(annotation.type == "highlight"){
 		let { comment, page_label, link_page, tags_string, text } = annotation;
@@ -709,7 +725,7 @@ function hasNodeListChanged(prev, current){
  * @param {String} itemKey - The Zotero key of the parent item
  * @param {String} location - The library location of the parent item
  * @param {{pdfs: ZoteroItem[], notes: ZoteroItem[]}} data - The items among which children are to be identified 
- * @returns 
+ * @returns The item's children
  */
 function identifyChildren(itemKey, location, {pdfs = [], notes = []} = {}){
 	let pdfItems = pdfs.filter(p => p.data.parentItem == itemKey && (p.library.type + "s/" + p.library.id == location));
@@ -722,6 +738,13 @@ function identifyChildren(itemKey, location, {pdfs = [], notes = []} = {}){
 	};
 }
 
+/** Identifies the connections of a Zotero PDF within a given set of item and notes entries
+ * @param {String} itemKey - The Zotero key of the PDF item
+ * @param {String} parentKey - The Zotero key of the PDF's parent
+ * @param {String} location - The library location of the PDF item
+ * @param {{items: ZoteroItem[], notes: ZoteroItem[]}} data - The items among which connections are to be identified 
+ * @returns The item's connections
+ */
 function identifyPDFConnections(itemKey, parentKey, location, {items = [], notes = []} = {}){
 	let parentItem = items.find(it => it.data.key == parentKey && (it.library.type + "s/" + it.library.id == location));
 	let annotationItems = notes.filter(n => n.data.itemType == "annotation" && n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location);
@@ -1015,6 +1038,9 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
 
 }
 
+/** Sets up the extension's theme (light vs dark)
+ * @param {Boolean} use_dark - If the extension's theme should be `dark`
+ */
 function setupDarkTheme(use_dark = false){
 	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
 }
@@ -1090,7 +1116,7 @@ function setupPortals(slotID, portalID){
  * tags: String[],
  * text: String|null,
  * type: ("highlight"|"image")
- * }[]}
+ * }[]} The simplified array of annotations
  */
 function simplifyZoteroAnnotations(annotations){
 	return annotations.map(annot => {
@@ -1140,34 +1166,54 @@ function simplifyZoteroAnnotations(annotations){
 	});
 }
 
+/** Simplifies data structure for Zotero notes
+ * @param {Object[]} notes - The list of notes to simplify
+ * @returns {{
+ * dateAdded: String,
+ * dateModified: String,
+ * key: String,
+ * location: String,
+ * link_note: String,
+ * note: String,
+ * parent_item: String,
+ * raw: Object,
+ * tags: String[]
+ * }[]} The simplified array of notes
+ */
 function simplifyZoteroNotes(notes){
 	return notes.map(nt => {
 		let {
-			dateAdded,
-			dateModified,
-			parentItem,
+			dateAdded: date_added,
+			dateModified: date_modified,
+			parentItem: parent_item,
 			note,
 			tags
 		} = nt.data;
 
-		let library = nt.library.type + "s/" + nt.library.id;
-		let libLoc = library.startsWith("groups/") ? library : "library";
+		let location = nt.library.type + "s/" + nt.library.id;
+		let libLoc = location.startsWith("groups/") ? location : "library";
 		let link_note = `zotero://select/${libLoc}/items/${nt.key}`;
 
 		return {
-			dateAdded,
-			dateModified,
+			date_added,
+			date_modified,
 			key: nt.key,
-			library,
+			location,
 			link_note,
 			note,
-			parentItem,
+			parent_item,
 			raw: nt,
 			tags: tags.map(t => t.tag)
 		};
 	});
 }
 
+/** Sorts the children of a Zotero collection, with nested children
+ * @param {ZoteroCollection} parent - The parent collection
+ * @param {ZoteroCollection[]} children - Child collections among which to identify the parent's children
+ * @param {Number} depth - The current level of nesting
+ * @returns The sorted array
+ */
 function sortCollectionChildren(parent, children, depth = 0){
 	let parColl = parent;
 	parColl.depth = depth;
@@ -1188,6 +1234,10 @@ function sortCollectionChildren(parent, children, depth = 0){
 
 }
 
+/** Sorts an array of Zotero collections in A-Z order, with child collections
+ * @param {ZoteroCollection[]} arr - The array of Zotero collections to sort
+ * @returns The sorted array
+ */
 function sortCollections(arr){
 	if(arr.length > 0){
 		// Sort collections A-Z
