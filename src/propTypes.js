@@ -100,6 +100,18 @@ const cleanLibraryItemType = shape({
 const cleanLibraryReturnArrayType = arrayOf(cleanLibraryItemType);
 
 /**
+ * @see cleanLibraryPDF
+ */
+const cleanLibraryPDFType = shape({
+	annotations: arrayOf(object),
+	key: string,
+	link: string,
+	parent: zoteroItemType,
+	title: string,
+	raw: zoteroItemType
+});
+
+/**
  * @see simplifyZoteroNotes
  */
 const cleanNoteItemType = shape({
@@ -271,6 +283,7 @@ export {
 	cleanAnnotationItemType,
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,
+	cleanLibraryPDFType,
 	cleanNoteItemType,
 	cleanRecentItemType,
 	cleanRelatedItemType,

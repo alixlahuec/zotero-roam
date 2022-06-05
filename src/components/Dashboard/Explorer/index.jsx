@@ -9,7 +9,7 @@ import QueryPDFs from "./QueryPDFs";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
 
 import { useQuery_Items } from "../../../api/queries";
-import { categorizeLibraryItems, cleanLibraryItem, identifyChildren } from "../../../utils";
+import { categorizeLibraryItems, cleanLibraryItem, cleanLibraryPDF, identifyChildren, identifyPDFConnections } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
@@ -30,6 +30,23 @@ function cleanLibraryData(itemList, roamCitekeys){
 	});
 }
 
+function cleanLibraryData_PDF(itemList){
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			const data = itemList.pdfs
+				.map(pdf => {
+					let itemKey = pdf.data.key;
+					let parentKey = pdf.data.parentItem;
+					let location = pdf.library.type + "s/" + pdf.library.id;
+					let { parent, annotations } = identifyPDFConnections(itemKey, parentKey, location, { items: itemList.items, notes: itemList.notes });
+					
+					return cleanLibraryPDF(pdf, parent, annotations);
+				});
+			resolve(data);
+		}, 0);
+	});
+}
+
 function TabContents({ itemList, onClose, show }){
 	const [roamCitekeys,] = useRoamCitekeys();
 	const [filteredData, setFilteredData] = useState(null);
@@ -38,7 +55,10 @@ function TabContents({ itemList, onClose, show }){
 		if(itemList){
 			switch(show){
 			case "pdfs":
-				setFilteredData(itemList.pdfs);
+				cleanLibraryData_PDF(itemList)
+					.then(data => {
+						setFilteredData(data);
+					});
 				break;
 			case "notes":
 				setFilteredData(itemList.notes);

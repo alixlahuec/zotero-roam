@@ -188,6 +188,25 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 	return clean_item;
 }
 
+/**
+ * 
+ * @param {ZoteroItem|Object} pdf - The Zotero PDF entry
+ * @param {ZoteroItem|Object} parent - The Zotero PDF's parent item
+ * @param {Object[]} annotations - The Zotero PDF's linked annotations
+ * @returns {Object} The simplified PDF entry
+ * @see cleanLibraryPDFType
+ */
+function cleanLibraryPDF(pdf, parent = {}, annotations = []){
+	return {
+		annotations,
+		key: pdf.data.key,
+		link: getPDFLink(pdf, "href"),
+		parent,
+		title: pdf.data.filename || pdf.data.title,
+		raw: pdf
+	};
+}
+
 /** Removes newlines at the beginning and end of a string
  * @param {String} text - The string to be trimmed
  * @returns The clean string
@@ -703,6 +722,16 @@ function identifyChildren(itemKey, location, {pdfs = [], notes = []} = {}){
 	};
 }
 
+function identifyPDFConnections(itemKey, parentKey, location, {items = [], notes = []} = {}){
+	let parentItem = items.find(it => it.data.key == parentKey && (it.library.type + "s/" + it.library.id == location));
+	let annotationItems = notes.filter(n => n.data.itemType == "annotation" && n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location);
+	
+	return {
+		parent: parentItem,
+		annotations: annotationItems
+	};
+}
+
 /** Creates a dictionary from a String Array
  * @param {String[]} arr - The array from which to make the dictionary
  * @returns {Object<String,String[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
@@ -1207,6 +1236,7 @@ export {
 	cleanAuthorsNames,
 	cleanLibrary,
 	cleanLibraryItem,
+	cleanLibraryPDF,
 	cleanSemantic,
 	compareItemsByYear,
 	compareAnnotationIndices,
@@ -1222,6 +1252,7 @@ export {
 	getWebLink,
 	hasNodeListChanged,
 	identifyChildren,
+	identifyPDFConnections,
 	makeDateFromAgo,
 	makeDictionary,
 	makeDNP,

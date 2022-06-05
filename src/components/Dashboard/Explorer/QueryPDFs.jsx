@@ -37,7 +37,7 @@ function QueryPDFs({ items }){
 	</div>;
 }
 QueryPDFs.propTypes = {
-	items: arrayOf(customPropTypes.zoteroItemType)
+	items: arrayOf(customPropTypes.cleanLibraryPDFType)
 };
 
 export default QueryPDFs;
