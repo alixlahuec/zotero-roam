@@ -86,10 +86,10 @@ const cleanLibraryItemType = shape({
 	location: string,
 	meta: string,
 	publication: string,
-	tags: array,
+	tags: arrayOf(string),
 	title: string,
 	weblink: oneOfType([shape({ href: string, title: string }), oneOf([false])]),
-	year: oneOfType([instanceOf(Date), string]),
+	year: string,
 	zotero: shape({
 		local: string,
 		web: string
