@@ -1,4 +1,4 @@
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import "./typedefs";
 import zrToaster from "./components/ExtensionToaster";
 
@@ -1072,7 +1072,8 @@ function setupPortals(slotID, portalID){
 	let exists = document.getElementById(slotID);
 	if(exists){
 		try{
-			ReactDOM.unmountComponentAtNode(exists);
+			const root = createRoot(exists);
+			root.unmount();
 			exists.remove();
 		} catch(e){
 			console.error(e);
