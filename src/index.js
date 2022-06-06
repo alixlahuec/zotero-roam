@@ -1,5 +1,5 @@
 import React from "react";
-import { createRoot } from "react-dom/client";
+import { render } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
 import zrToaster from "./components/ExtensionToaster";
@@ -175,14 +175,14 @@ window.zoteroRoam = {};
 		setDefaultHooks();
 		registerSmartblockCommands(getItems);
 
-		const root = createRoot(document.getElementById(extensionSlot));
-		root.render(
+		render(
 			<HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
 				<App
 					extension={{...extension, ...requests}}
 					userSettings={window.zoteroRoam.config.userSettings}
 				/>
-			</HotkeysProvider>
+			</HotkeysProvider>, 
+			document.getElementById(extensionSlot)
 		);
 	} catch (e) {
 		console.error(e);
