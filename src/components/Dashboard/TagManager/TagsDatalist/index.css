@@ -38,7 +38,7 @@
 }
 
 .zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] {
-    justify-content: end;
+    justify-content: flex-end;
     display: flex;
     flex: 1 1 33%;
 }

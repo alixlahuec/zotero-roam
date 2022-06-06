@@ -3,7 +3,7 @@
     color: var(--zr-text-co);
 }
 
-.zr-drawer--notes > .bp4-tabs > .bp4-tab-list {
+.zr-drawer--data > .bp4-tabs > .bp4-tab-list {
     margin-left: 20px;
 }
 
