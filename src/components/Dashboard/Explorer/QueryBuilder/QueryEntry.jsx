@@ -3,7 +3,8 @@ import { any, bool, func, oneOf, shape, string } from "prop-types";
 import { Button, MenuItem } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
-import { defaultQueryTerm, queries, InputComponent } from "./queries";
+import InputComponent from "./InputComponent";
+import { defaultQueryTerm, queries } from "./queries";
 import { returnSiblingArray } from "./utils";
 
 const popoverProps = {

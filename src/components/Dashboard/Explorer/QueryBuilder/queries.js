@@ -1,13 +1,4 @@
-import React, { useCallback, useContext, useMemo } from "react";
-import { any, array, func, oneOf } from "prop-types";
-
-import { UserSettings } from "../../../App";
 import { searchEngine } from "../../../../utils";
-import InputMultiSelect from "../../../Inputs/InputMultiSelect";
-import InputText from "../../../Inputs/InputText";
-import TagsSelector from "../../../Inputs/TagsSelector";
-import { string } from "prop-types";
-import { InputDateRange, InputDateSingle } from "../../../Inputs/InputDate";
 
 const defaultQueryTerm = { property: "Citekey", relationship: "exists", value: null};
 
@@ -135,13 +126,13 @@ const queries = {
 	},
 	"Item type": {
 		"is any of": {
-			checkInput: (value) => value?.constructor === Array && value.length > 0,
+			checkInput: (value) => value?.constructor === Array && value.length > 0 && value.every(el => el?.constructor === String),
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value) => value.includes(item.itemType)
 		},
 		"is not": {
-			checkInput: (value) => value?.constructor === Array && value.length > 0,
+			checkInput: (value) => value?.constructor === Array && value.length > 0 && value.every(el => el?.constructor === String),
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value) => !value.includes(item.itemType)
@@ -192,31 +183,29 @@ const queries = {
 	// published: {},
 	"Tags": {
 		"include": {
-			checkInput: (value) => value && true,
+			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value = []) => {
-				if(item.tags.length == 0){ return false; }
-				let terms = value.constructor === Array ? value : [value];
-				return terms.every(tag => searchEngine(tag, item.tags, { match: "exact" }));
+				if(item.tags.length == 0 || value.length == 0){ return false; }
+				return value.every(tag => searchEngine(tag, item.tags, { match: "exact" }));
 			}
 		},
 		"include any of": {
-			checkInput: (value) => value?.constructor === Array && value.length > 0,
+			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value = []) => {
-				if(item.tags.length == 0){ return false; }
+				if(item.tags.length == 0 || value.length == 0){ return false; }
 				return value.some(tag => searchEngine(tag, item.tags, { match: "exact" }));
 			}},
 		"do not include": {
-			checkInput: (value) => value?.constructor === Array && value.length > 0,
+			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
 			inputType: "multiselect",
 			testItem: (item, value) => {
-				if(item.tags.length == 0){ return true; }
-				let terms = value.constructor === Array ? value : [value];
-				return terms.every(tag => !searchEngine(tag, item.tags, { match: "exact" }));
+				if(item.tags.length == 0 || value.length == 0){ return true; }
+				return value.every(tag => !searchEngine(tag, item.tags, { match: "exact" }));
 			}
 		}
 	},
@@ -242,16 +231,12 @@ function runQueryTerm(term, useOR = false, item){
 	if(term.constructor === Array){
 		return runQuerySet(term, useOR, item);
 	} else if(term.constructor === Object){
-		let { property, relationship, value = "" } = term;
+		let { property, relationship, value } = term;
 		if(!property || !relationship){ 
 			return true; 
 		} else {
-			let { checkInput, testItem } = queries[property][relationship];
-			if(checkInput(value)){
-				return testItem(item, value);
-			} else {
-				return true;
-			}
+			let { testItem } = queries[property][relationship];
+			return testItem(item, value);
 		}
 	} else {
 		throw new Error("Unexpected query input of type " + term.constructor, ", expected Array or Object");
@@ -276,64 +261,9 @@ function runQuerySet(terms = [], useOR = true, item){
 	}
 }
 
-/* Inputs */
-
-function ItemType({ inputType, value, setValue }){
-	const { typemap } = useContext(UserSettings);
-
-	const typeOptions = useMemo(() => {
-		return Object.keys(typemap)
-			.map(k => ({ value: k, label: typemap[k]}));
-	}, [typemap]);
-
-	if(inputType == "multiselect"){
-		return <InputMultiSelect options={typeOptions} value={value} setValue={setValue} />;
-	}
-}
-ItemType.propTypes = {
-	inputType: oneOf(types),
-	setValue: func,
-	value: array
-};
-
-function ItemTags({ value, setValue }){
-	const onSelect = useCallback((tag) => setValue([...value, tag]), [setValue, value]);
-	const onRemove = useCallback((tag) => setValue(value.filter(val => val != tag)), [setValue, value]);
-
-	return <TagsSelector onRemove={onRemove} onSelect={onSelect} selectedTags={value} />;
-}
-ItemTags.propTypes = {
-	value: array,
-	setValue: func
-};
-
-function InputComponent({ property, relationship, value, setValue }){
-	const { inputType } = queries[property][relationship];
-
-	if(inputType == null){
-		return null;
-	} else if(property == "Item type"){
-		return <ItemType inputType={inputType} value={value} setValue={setValue} />;
-	} else if(property == "Tags"){
-		return <ItemTags value={value} setValue={setValue} />;
-	} else if(inputType == "date"){
-		return <InputDateSingle value={value} setValue={setValue} />;
-	} else if(inputType == "date-range"){
-		return <InputDateRange value={value} setValue={setValue} />;
-	} else if(inputType == "text"){
-		return <InputText value={value} setValue={setValue} />;
-	}
-}
-InputComponent.propTypes = {
-	property: oneOf(Object.keys(queries)),
-	relationship: string,
-	value: any,
-	setValue: func
-};
-
 export {
 	defaultQueryTerm,
 	queries,
 	runQuerySet,
-	InputComponent
+	types
 };
