@@ -44,9 +44,12 @@ describe("Input checks", () => {
 		["Title", "does not contain", ["", "query"]]
 	];
 
-	test.each(cases)("$s $s accepts: $p", (prop, rel, accepted) => {
-		expect(inputs.filter(input => queries[prop][rel].checkInput(input))).toEqual(accepted);
-	});
+	test.each(cases)(
+		"%# %s %s accepts ...", 
+		(prop, rel, accepted) => {
+			expect(inputs.filter(input => queries[prop][rel].checkInput(input))).toEqual(accepted);
+		}
+	);
 
 });
 
@@ -104,98 +107,48 @@ describe("Search queries", () => {
 			{ abstract: "Knowledge management" }
 		];
 
-		it("should identify an empty string as invalid", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Abstract", relationship: "exists", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
+		const cases = [
+			["exists", null, [false, true, true]],
+			["does not exist", null, [true, false, false]],
+			["contains", "ipsum", [false, true, false]],
+			["does not contain", "knowledge", [false, true, false]],
+			["does not contain", "", [false, true, true]]
+		];
+
+		test.each(cases)(
+			"%# Abstract %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "Abstract", relationship: rel, value: val }],
 					true,
-					true
-				]
-			);
-			expect(items.map(item => runQuerySet(
-				[{ property: "Abstract", relationship: "does not exist", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					true,
-					false,
-					false
-				]
-			);
-		});
-		it("should find abstracts that contain the input", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Abstract", relationship: "contains", value: "ipsum" }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					true,
-					false
-				]
-			);
-		});
-		it("should find abstracts that don't contain the input", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Abstract", relationship: "does not contain", value: "knowledge" }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					true,
-					false
-				]
-			);
-			expect(items.map(item => runQuerySet(
-				[{ property: "Abstract", relationship: "does not contain", value: "" }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					true,
-					true
-				]
-			);
-		});
+					item
+				))).toEqual(output);
+			}
+		);
+
 	});
 
 	describe("Querying citekey", () => {
-		it("should detect which items have a citekey", () => {
-			const items = [
-				{ raw: { has_citekey: true }},
-				{ raw: { has_citekey: false }}
-			];
+		const items = [
+			{ raw: { has_citekey: true }},
+			{ raw: { has_citekey: false }}
+		];
 
-			expect(items.map(item => runQuerySet(
-				[{ property: "Citekey", relationship: "exists", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
+		const cases = [
+			["exists", null, [true, false]],
+			["does not exist", null, [false, true]]
+		];
+
+		test.each(cases)(
+			"%# Citekey %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "Citekey", relationship: rel, value: val }],
 					true,
-					false
-				]
-			);
-
-			expect(items.map(item => runQuerySet(
-				[{ property: "Citekey", relationship: "does not exist", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					true
-				]
-			);
-		});
+					item
+				))).toEqual(output);
+			}
+		);
 	});
 
 	describe("Querying DOI", () => {
@@ -203,28 +156,22 @@ describe("Search queries", () => {
 			{ raw: { data: { DOI: "" }}},
 			{ raw: { data: { DOI: "10.234/biomed.567" }}}
 		];
-		it("should detect which items have a DOI", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "DOI", relationship: "exists", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					true
-				]
-			);
-			expect(items.map(item => runQuerySet(
-				[{ property: "DOI", relationship: "does not exist", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
+
+		const cases = [
+			["exists", null, [false, true]],
+			["does not exist", null, [true, false]]
+		];
+		
+		test.each(cases)(
+			"%# DOI %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "DOI", relationship: rel, value: val }],
 					true,
-					false
-				]
-			);
-		});
+					item
+				))).toEqual(output);
+			}
+		);
 	});
 
 	describe("Querying added-on date", () => {
@@ -233,92 +180,27 @@ describe("Search queries", () => {
 			{ raw: { data: { dateAdded: "2022-04-21T15:30:00Z" }}},
 			{ raw: { data: { dateAdded: "2021-11-30T04:45:00Z" }}}
 		];
-		
-		it("should find items added before a date", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Item added", relationship: "before", value: new Date([2022, 4, 1]) }],
-				true,
-				item
-			))).toEqual(
-				[
-					true,
-					false,
-					true
-				]
-			);
-			expect(items.map(item => runQuerySet(
-				[{ property: "Item added", relationship: "before", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					true,
-					true,
-					true
-				]
-			);
-		});
 
-		it("should find items added after a date", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Item added", relationship: "after", value: new Date([2022, 1, 1]) }],
-				true,
-				item
-			))).toEqual(
-				[
-					true,
-					true,
-					false
-				]
-			);
-			expect(items.map(item => runQuerySet(
-				[{ property: "Item added", relationship: "after", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					true,
-					true,
-					true
-				]
-			);
-		});
+		const cases = [
+			["before", new Date([2022, 4, 1]), [true, false, true]],
+			["before", null, [true, true, true]],
+			["after", new Date([2022, 1, 1]), [true, true, false]],
+			["after", null, [true, true, true]],
+			["between", [new Date([2022, 1, 1]), new Date([2022, 4, 1])], [true, false, false]],
+			["between", [null, new Date([2022, 4, 1])], [true, false, true]],
+			["between", [new Date([2022, 1, 1]), null], [true, true, false]]
+		];
 
-		it("should find items added during a date range", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Item added", relationship: "between", value: [new Date([2022, 1, 1]), new Date([2022, 4, 1])] }],
-				true,
-				item
-			))).toEqual(
-				[
+		test.each(cases)(
+			"%# Item added %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "Item added", relationship: rel, value: val }],
 					true,
-					false,
-					false
-				]
-			);
-			expect(items.map(item => runQuerySet(
-				[{ property: "Item added", relationship: "between", value: [null, new Date([2022, 4, 1])] }],
-				true,
-				item
-			))).toEqual(
-				[
-					true,
-					false,
-					true
-				]
-			);
-			expect(items.map(item => runQuerySet(
-				[{ property: "Item added", relationship: "between", value: [new Date([2022, 1, 1]), null] }],
-				true,
-				item
-			))).toEqual(
-				[
-					true,
-					true,
-					false
-				]
-			);
-		});
+					item
+				))).toEqual(output);
+			}
+		);
 	});
 
 	describe("Querying item type", () => {
@@ -328,33 +210,21 @@ describe("Search queries", () => {
 			{ itemType: "conferencePaper" }
 		];
 
-		it("should find item types contained in an array", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Item type", relationship: "is any of", value: ["book", "bookChapter", "podcast"] }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					true,
-					false
-				]
-			);
-		});
+		const cases = [
+			["is any of", ["book", "bookChapter", "podcast"], [false, true, false]],
+			["is not", ["journalArticle"], [false, true, true]]
+		];
 
-		it("should find item types that do not match the input", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Item type", relationship: "is not", value: ["journalArticle"]}],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
+		test.each(cases)(
+			"%# Item type %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "Item type", relationship: rel, value: val }],
 					true,
-					true
-				]
-			);
-		});
+					item
+				))).toEqual(output);
+			}
+		);
 	});
 
 	describe("Querying notes", () => {
@@ -363,31 +233,21 @@ describe("Search queries", () => {
 			{ children: { notes: [{}] }}
 		];
 
-		it("should find items with linked notes", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Notes", relationship: "exist", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					true
-				]
-			);
-		});
+		const cases = [
+			["exist", null, [false, true]],
+			["do not exist", null, [true, false]]
+		];
 
-		it("should find items without linked notes", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Notes", relationship: "do not exist", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
+		test.each(cases)(
+			"%# Notes %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "Notes", relationship: rel, value: val }],
 					true,
-					false
-				]
-			);
-		});
+					item
+				))).toEqual(output);
+			}
+		);
 	});
 
 	describe("Querying PDFs", () => {
@@ -396,31 +256,21 @@ describe("Search queries", () => {
 			{ children: { pdfs: [{}] }}
 		];
 
-		it("should find items with linked PDF", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "PDF", relationship: "exists", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					true
-				]
-			);
-		});
+		const cases = [
+			["exists", null, [false, true]],
+			["does not exist", null, [true, false]]
+		];
 
-		it("should find items without linked PDF", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "PDF", relationship: "does not exist", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
+		test.each(cases)(
+			"%# PDF %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "PDF", relationship: rel, value: val }],
 					true,
-					false
-				]
-			);
-		});
+					item
+				))).toEqual(output);
+			}
+		);
 	});
 
 	describe("Querying Roam page", () => {
@@ -429,31 +279,21 @@ describe("Search queries", () => {
 			{ inGraph: false }
 		];
 
-		it("should find items that have a Roam page", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Roam page", relationship: "exists", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					true,
-					false
-				]
-			);
-		});
+		const cases = [
+			["exists", null, [true, false]],
+			["does not exist", null, [false, true]]
+		];
 
-		it("should find items that don't have a Roam page", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Roam page", relationship: "does not exist", value: null }],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					true
-				]
-			);
-		});
+		test.each(cases)(
+			"%# Roam page %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "Roam page", relationship: rel, value: val }],
+					true,
+					item
+				))).toEqual(output);
+			}
+		);
 	});
 
 	describe("Querying tags", () => {
@@ -464,50 +304,22 @@ describe("Search queries", () => {
 			{ tags: ["healthcare", "policy"] }
 		];
 
-		it("should find items with all the input tags", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Tags", relationship: "include", value: ["healthcare", "policy"]}],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					false,
-					false,
-					true
-				]
-			);
-		});
+		const cases = [
+			["include", ["healthcare", "policy"], [false, false, false, true]],
+			["include any of", ["healthcare", "policy"], [false, false, true, true]],
+			["do not include", ["policy", "systems design"], [true, false, true, false]]
+		];
 
-		it("should find items with any of the input tags", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Tags", relationship: "include any of", value: ["healthcare", "policy"]}],
-				true,
-				item
-			))).toEqual(
-				[
-					false,
-					false,
+		test.each(cases)(
+			"%# Tags %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "Tags", relationship: rel, value: val }],
 					true,
-					true
-				]
-			);
-		});
-
-		it("should find items without any of the input tags", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Tags", relationship: "do not include", value: ["policy", "systems design"]}],
-				true,
-				item
-			))).toEqual(
-				[
-					true,
-					false,
-					true,
-					false
-				]
-			);
-		});
+					item
+				))).toEqual(output);
+			}
+		);
 	});
 
 	describe("Querying title", () => {
@@ -517,33 +329,21 @@ describe("Search queries", () => {
 			{ title: "Knowledge management" }
 		];
 
-		it("should find titles that contain the input", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Title", relationship: "contains", value: "systems" }], 
-				true, 
-				item)))
-				.toEqual(
-					[
-						true,
-						true,
-						false
-					]
-				);
-		});
+		const cases = [
+			["contains", "systems", [true, true, false]],
+			["does not contain", "systems", [false, false, true]]
+		];
 
-		it("should find titles that don't contain the input", () => {
-			expect(items.map(item => runQuerySet(
-				[{ property: "Title", relationship: "does not contain", value: "systems" }],
-				true,
-				item)))
-				.toEqual(
-					[
-						false,
-						false,
-						true
-					]
-				);
-		});
+		test.each(cases)(
+			"%# Title %s (%p) ...",
+			(rel, val, output) => {
+				expect(items.map(item => runQuerySet(
+					[{ property: "Title", relationship: rel, value: val }],
+					true,
+					item
+				))).toEqual(output);
+			}
+		);
 	});
 
 });
