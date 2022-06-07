@@ -144,7 +144,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 [class*="zr"] .bp4-slider-handle {
-  background: hsla(var(--zr-accent-1-co), 10%);
+  background: hsla(var(--zr-accent-1-co), 65%);
   border-radius: 10px;
   box-shadow: none;
 }
