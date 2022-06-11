@@ -39,39 +39,24 @@
     padding: 5px 10px;
 }
 
-.zr-settings-list [zr-role="settings-scite"] {
-    display: flex;
-    justify-content: space-between;
+[zr-role="settings-scite"] [zr-role="scite-example"] {
+    margin: 0 auto;
+    padding: 15px;
+    width: fit-content;
 }
 
-[zr-role="settings-scite"] > div:first-child {
+[zr-role="settings-scite"] > div:last-child {
     background: var(--zr-box-bg);
+    margin: 0 auto;
+    max-width: 400px;
     padding: 10px;
 }
 
-[zr-role="settings-scite"] [zr-role="settings-row"] > div {
-    flex: 0 1 50%;
-}
-
-.zr-settings-list [zr-role="settings-scite"] input.bp4-input {
+[zr-role="settings-scite"] input.bp4-input {
     max-width: 100%;
 }
 
-.zr-settings-list [zr-role="settings-scite"] .bp4-numeric-input input.bp4-input {
-    max-width: 40px;
-}
-
-.zr-settings-list [zr-role="settings-scite"] .bp4-control.bp4-radio {
-    color: var(--zr-text-co);
-}
-
-.zr-settings-list [zr-role="settings-scite"] [zr-role="scite-example"] {
-    padding: 15px;
-}
-
-.zr-settings-list [zr-role="settings-typemap"] [zr-role="settings-row"] > div,
-.zr-settings-list [zr-role="settings-autocomplete"] [zr-role="settings-row"] > div,
-.zr-settings-list [zr-role="settings-shortcuts"] [zr-role="settings-row"] > div {
+.zr-settings-list [zr-role="settings-row"] > [zr-role="input-text"] {
     text-align: right;
 }
 

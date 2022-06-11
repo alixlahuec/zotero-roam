@@ -46,7 +46,5 @@
 
 [zr-dark-theme="true"] .zr-sort-option input:checked ~ span,
 [zr-dark-theme="true"] .zr-sort-option input:checked ~ label {
-    color: var(--zr-dark-accent-1,#3fb8ff);
+    color: var(--zr-accent-1);
 }
-
-/* TODO: Fix sort options appearance in light vs dark (currently, dark theme uses accent-1 but light theme uses inherit) */

@@ -9,7 +9,7 @@ function TextField({ disabled = true, label, value, noValue = null, onChange = n
 
 	return <div zr-role="settings-row">
 		<span className="zr-auxiliary">{label}</span>
-		<div>
+		<div zr-role="input-text">
 			{value
 				? <input 
 					autoComplete="off" 

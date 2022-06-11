@@ -82,8 +82,13 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 /* Blueprint Elements */
 
+[class*="zr"] .bp4-numeric-input input.bp4-input {
+  max-width: 40px;
+}
+
 [class*="zr"] .bp4-numeric-input .bp4-button:not([class*=bp4-intent-]) {
   background: var(--zr-dialog-bg);
+  box-shadow: none;
 }
 
 [class*="zr"] a:not(.bp4-menu-item),
@@ -164,6 +169,24 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 [class*="zr"] .bp4-control.bp4-switch .bp4-control-indicator::before {
   background: var(--zr-dialog-bg);
   box-shadow: none;
+}
+
+[class*="zr"] .bp4-control.bp4-radio {
+  color: var(--zr-text-co);
+  font-weight: 400;
+}
+
+[class*="zr"] .bp4-control.bp4-radio input ~ .bp4-control-indicator {
+  box-shadow: none;
+}
+
+[class*="zr"] .bp4-control input:not(:checked) ~ .bp4-control-indicator {
+  background-color: hsla(var(--zr-accent-1-co), 75%);
+}
+
+[class*="zr"] .bp4-control input:not(:checked) ~ .bp4-control-indicator {
+  background-color: hsla(var(--zr-accent-1-co), 10%);
+  background-image: none;
 }
 
 [class*="zr"] .bp4-tag.bp4-minimal.bp4-intent-primary {

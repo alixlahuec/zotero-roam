@@ -30,7 +30,7 @@ function PageMenuSettings(){
 				<H4>Trigger</H4>
 				<pre className={Classes.CODE_BLOCK}>{trigger.toString()}</pre>
 			</>}
-		<H3>Elements</H3>
+		<H4>Elements</H4>
 		{Object.keys(pairings).map(elem => <Toggle key={elem} isChecked={defaults.includes(elem)} label={pairings[elem]} />)}
 	</>;
 }

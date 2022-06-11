@@ -27,6 +27,16 @@ function SciteSettings(){
 		<H3>Scite Badge</H3>
 		<span className={["zr-secondary", "zr-text-small"].join(" ")}>Try different settings by using the controls below. Note : none of these changes will be reflected in your graph.</span>
 		<div zr-role="settings-scite">
+			<div zr-role="scite-example">
+				<SciteBadge 
+					doi={doi} 
+					layout={layout} 
+					showLabels={showLabels} 
+					showZero={showZero} 
+					small={small}
+					tooltipPlacement={tooltipPlacement}
+					tooltipSlide={tooltipSlide} />
+			</div>
 			<div>
 				<TextField disabled={false} label="Test DOI" value={doi} onChange={setDOI} />
 				<div zr-role="settings-row">
@@ -43,12 +53,12 @@ function SciteSettings(){
 				<Toggle disabled={false} isChecked={small} label="Small display" onChange={toggleSmall} />
 				<div zr-role="settings-row">
 					<span className="zr-auxiliary">Tooltip Placement</span>
-					<RadioGroup onChange={handleTooltipPlacementChange} selectedValue={tooltipPlacement}>
-						<Radio label="Auto" value="auto" />
+					<RadioGroup inline={true} onChange={handleTooltipPlacementChange} selectedValue={tooltipPlacement}>
 						<Radio label="Top" value="top" />
 						<Radio label="Right" value="right" />
-						<Radio label="Bottom" value="bottom" />
 						<Radio label="Left" value="left" />
+						<Radio label="Bottom" value="bottom" />
+						<Radio label="Auto" value="auto" />
 					</RadioGroup>
 				</div>
 				<div zr-role="settings-row">
@@ -57,16 +67,6 @@ function SciteSettings(){
 						<NumericInput min={0} minorStepSize={1} onValueChange={handleTooltipSlideChange} value={tooltipSlide} />
 					</div>
 				</div>
-			</div>
-			<div zr-role="scite-example">
-				<SciteBadge 
-					doi={doi} 
-					layout={layout} 
-					showLabels={showLabels} 
-					showZero={showZero} 
-					small={small}
-					tooltipPlacement={tooltipPlacement}
-					tooltipSlide={tooltipSlide} />
 			</div>
 		</div>
 	</>;
