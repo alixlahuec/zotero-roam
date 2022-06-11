@@ -1,6 +1,6 @@
-import React, { useContext, useMemo } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, bool, func, object } from "prop-types";
-import { Button, ButtonGroup, Classes, Drawer, Icon, Tabs, Tab, Tag } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Drawer, Icon, Tabs, Tab, Tag, Collapse } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
 import ButtonLink from "../ButtonLink";
@@ -10,8 +10,23 @@ import * as customPropTypes from "../../propTypes";
 
 import "./index.css";
 
+function CollapseRaw({ item }){
+	const [isCollapseOpen, setCollapseOpen] = useState(false);
+	const toggleCollapse = useCallback(() => setCollapseOpen(prevState => !prevState), []);
+
+	return <>
+		<Button icon="eye-open" minimal={true} onClick={toggleCollapse} />
+		<Collapse isOpen={isCollapseOpen} keepChildrenMounted={true} >
+			<pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "  ")}</pre>
+		</Collapse>
+	</>;
+}
+CollapseRaw.propTypes = {
+	item: object
+};
+
 function Annotation({ annot }){
-	let { color, comment, date_modified, link_page, link_pdf, page_label, tags, text, type } = annot;
+	let { color, comment, date_modified, link_page, link_pdf, page_label, raw, tags, text, type } = annot;
 
 	// https://shannonpayne.com.au/how-to-create-a-low-highlight-text-effect-using-css/
 	let highlightStyle = useMemo(() => ({
@@ -22,6 +37,7 @@ function Annotation({ annot }){
 		<div zr-role="card-header">
 			<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 			<ButtonGroup minimal={true}>
+				<CollapseRaw item={raw} />
 				<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >PDF</ButtonLink>
 				<ButtonLink className="zr-text-small" href={link_page} >Page {page_label}</ButtonLink>
 			</ButtonGroup>
@@ -51,6 +67,7 @@ function Note({ note }){
 			<div zr-role="card-header">
 				<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 				<ButtonGroup minimal={true}>
+					<CollapseRaw item={raw} />
 					<ButtonLink className="zr-text-small" href={link_note} icon="comment">View in Zotero</ButtonLink>
 				</ButtonGroup>
 			</div>
