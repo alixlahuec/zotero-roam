@@ -5,6 +5,7 @@ import AutocompleteSettings from "./AutocompleteSettings";
 import Formatting from "./Formatting";
 import Requests from "./Requests";
 import SciteSettings from "./SciteSettings";
+import Shortcuts from "./ShortcutsSettings";
 import Toggle from "./Toggle";
 import Typemap from "./Typemap";
 import { UserSettings } from "../../App";
@@ -17,7 +18,6 @@ function Settings(){
 		// copy,
 		// pageMenu, 
 		render_inline, 
-		// shortcuts,
 		// webimport 
 	} = useContext(UserSettings);
     
@@ -26,6 +26,7 @@ function Settings(){
 		<Formatting />
 		<AutocompleteSettings />
 		<SciteSettings />
+		<Shortcuts />
 		<Typemap />
 		<H3>Other</H3>
 		<Toggle isChecked={autoload == true} label="Autoload" />
