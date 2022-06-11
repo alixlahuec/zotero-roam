@@ -3,6 +3,7 @@ import { H3 } from "@blueprintjs/core";
 
 import AutocompleteSettings from "./AutocompleteSettings";
 import Formatting from "./Formatting";
+import PageMenuSettings from "./PageMenuSettings";
 import Requests from "./Requests";
 import SciteSettings from "./SciteSettings";
 import Shortcuts from "./ShortcutsSettings";
@@ -16,7 +17,6 @@ function Settings(){
 	const {
 		autoload, 
 		// copy,
-		// pageMenu, 
 		render_inline, 
 		// webimport 
 	} = useContext(UserSettings);
@@ -25,6 +25,7 @@ function Settings(){
 		<Requests />
 		<Formatting />
 		<AutocompleteSettings />
+		<PageMenuSettings />
 		<SciteSettings />
 		<Shortcuts />
 		<Typemap />
