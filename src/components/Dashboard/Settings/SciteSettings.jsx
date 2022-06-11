@@ -1,8 +1,10 @@
 import React, { useCallback, useContext, useState } from "react";
-import { Classes, H3, NumericInput, Radio, RadioGroup, Switch } from "@blueprintjs/core";
+import { H3, NumericInput, Radio, RadioGroup } from "@blueprintjs/core";
 
 import { UserSettings } from "../../App";
 import SciteBadge from "../../SciteBadge";
+import TextField from "./TextField";
+import Toggle from "./Toggle";
 
 function SciteSettings(){
 	const { sciteBadge } = useContext(UserSettings);
@@ -26,12 +28,7 @@ function SciteSettings(){
 		<span className={["zr-secondary", "zr-text-small"].join(" ")}>Try different settings by using the controls below. Note : none of these changes will be reflected in your graph.</span>
 		<div zr-role="settings-scite">
 			<div>
-				<div zr-role="settings-row">
-					<span className="zr-auxiliary">Test DOI</span>
-					<div>
-						<input autoComplete="off" className={Classes.INPUT} onChange={setDOI} spellCheck="false" type="text" value={doi} />
-					</div>
-				</div>
+				<TextField disabled={false} label="Test DOI" value={doi} onChange={setDOI} />
 				<div zr-role="settings-row">
 					<span className="zr-auxiliary">Layout</span>
 					<div>
@@ -41,18 +38,9 @@ function SciteSettings(){
 						</RadioGroup>
 					</div>
 				</div>
-				<div zr-role="settings-row">
-					<span className="zr-auxiliary">Show Labels</span>
-					<Switch checked={showLabels} onChange={toggleLabels} />
-				</div>
-				<div zr-role="settings-row">
-					<span className="zr-auxiliary">Show Zero</span>
-					<Switch checked={showZero} onChange={toggleZero} />
-				</div>
-				<div zr-role="settings-row">
-					<span className="zr-auxiliary">Small display</span>
-					<Switch checked={small} onChange={toggleSmall} />
-				</div>
+				<Toggle disabled={false} isChecked={showLabels} label="Show Labels" onChange={toggleLabels} />
+				<Toggle disabled={false} isChecked={showZero} label="Show Zero" onChange={toggleZero} />
+				<Toggle disabled={false} isChecked={small} label="Small display" onChange={toggleSmall} />
 				<div zr-role="settings-row">
 					<span className="zr-auxiliary">Tooltip Placement</span>
 					<RadioGroup onChange={handleTooltipPlacementChange} selectedValue={tooltipPlacement}>

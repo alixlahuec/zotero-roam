@@ -1,8 +1,9 @@
 import React, { useContext } from "react";
-import { H3, Switch } from "@blueprintjs/core";
+import { H3 } from "@blueprintjs/core";
 
 import Requests from "./Requests";
 import SciteSettings from "./SciteSettings";
+import Toggle from "./Toggle";
 import Typemap from "./Typemap";
 import { UserSettings } from "../../App";
 
@@ -27,14 +28,8 @@ function Settings(){
 		<SciteSettings />
 		<Typemap />
 		<H3>Other</H3>
-		<div zr-role="settings-row">
-			<span className="zr-auxiliary">Autoload</span>
-			<Switch checked={autoload == true} disabled={true} />
-		</div>
-		<div zr-role="settings-row">
-			<span className="zr-auxiliary">Render inline citations</span>
-			<Switch checked={render_inline == true} disabled={true} />
-		</div>
+		<Toggle isChecked={autoload == true} label="Autoload" />
+		<Toggle isChecked={render_inline == true} label="Render inline citations" />
 	</div>;
 }
 

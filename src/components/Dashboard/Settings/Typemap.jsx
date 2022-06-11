@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
-import { Classes, H3 } from "@blueprintjs/core";
+import { H3 } from "@blueprintjs/core";
 
+import TextField from "./TextField";
 import { UserSettings } from "../../App";
 
 function Typemap(){
@@ -9,14 +10,7 @@ function Typemap(){
 	return <>
 		<H3>Typemap</H3>
 		<div zr-role="settings-typemap">
-			{Object.keys(typemap).map(itemType => {
-				return <div zr-role="settings-row" key={itemType}>
-					<span className="zr-auxiliary">{itemType}</span>
-					<div>
-						<input className={Classes.INPUT} disabled={true} value={typemap[itemType]} />
-					</div>
-				</div>;
-			})}
+			{Object.keys(typemap).map(itemType => <TextField key={itemType} label={itemType} value={typemap[itemType]} />)}
 		</div>
 	</>;
 }
