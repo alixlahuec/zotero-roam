@@ -10,7 +10,7 @@ function Shortcuts(){
 	return <>
 		<H3>Shortcuts</H3>
 		<div zr-role="settings-shortcuts">
-			{Object.keys(shortcuts).map(action => <TextField key={action} label={action} value={shortcuts[action] || ""} />)}
+			{Object.keys(shortcuts).map(action => <TextField key={action} label={action} value={shortcuts[action] || " "} />)}
 		</div>
 	</>;
 }

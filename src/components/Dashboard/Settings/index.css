@@ -70,7 +70,8 @@
 }
 
 .zr-settings-list [zr-role="settings-typemap"] [zr-role="settings-row"] > div,
-.zr-settings-list [zr-role="settings-autocomplete"] [zr-role="settings-row"] > div {
+.zr-settings-list [zr-role="settings-autocomplete"] [zr-role="settings-row"] > div,
+.zr-settings-list [zr-role="settings-shortcuts"] [zr-role="settings-row"] > div {
     text-align: right;
 }
 
