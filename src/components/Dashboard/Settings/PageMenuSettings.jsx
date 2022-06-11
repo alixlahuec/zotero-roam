@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { Classes, H3, H4 } from "@blueprintjs/core";
 
-import TextField from "./TextField";
 import Toggle from "./Toggle";
 import { UserSettings } from "../../App";
 
@@ -25,8 +24,8 @@ function PageMenuSettings(){
 
 	return <>
 		<H3>Page menu</H3>
-		{trigger.constructor === String
-			? <TextField label="Trigger" value={trigger} />
+		{trigger.constructor === Boolean
+			? <Toggle label="Show page menus" value={trigger} />
 			: <>
 				<H4>Trigger</H4>
 				<pre className={Classes.CODE_BLOCK}>{JSON.stringify(trigger, null, "\t")}</pre>
