@@ -28,7 +28,7 @@ function PageMenuSettings(){
 			? <Toggle label="Show page menus" value={trigger} />
 			: <>
 				<H4>Trigger</H4>
-				<pre className={Classes.CODE_BLOCK}>{JSON.stringify(trigger, null, "\t")}</pre>
+				<pre className={Classes.CODE_BLOCK}>{trigger.toString()}</pre>
 			</>}
 		{Object.keys(pairings).map(elem => <Toggle key={elem} isChecked={defaults.includes(elem)} label={pairings[elem]} />)}
 	</>;
