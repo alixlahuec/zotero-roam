@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import { H3 } from "@blueprintjs/core";
 
+import AutocompleteSettings from "./AutocompleteSettings";
+import Formatting from "./Formatting";
 import Requests from "./Requests";
 import SciteSettings from "./SciteSettings";
 import Toggle from "./Toggle";
@@ -8,8 +10,6 @@ import Typemap from "./Typemap";
 import { UserSettings } from "../../App";
 
 import "./index.css";
-import Formatting from "./Formatting";
-import AutocompleteSettings from "./AutocompleteSettings";
 
 function Settings(){
 	const {
