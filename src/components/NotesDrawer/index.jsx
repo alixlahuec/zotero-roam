@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, bool, func, object } from "prop-types";
-import { Button, ButtonGroup, Classes, Drawer, Icon, Tabs, Tab, Tag, Collapse } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tabs, Tab, Tag } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
 import ButtonLink from "../ButtonLink";
@@ -10,18 +10,21 @@ import * as customPropTypes from "../../propTypes";
 
 import "./index.css";
 
-function CollapseRaw({ item }){
-	const [isCollapseOpen, setCollapseOpen] = useState(false);
-	const toggleCollapse = useCallback(() => setCollapseOpen(prevState => !prevState), []);
+function ShowRaw({ item }){
+	const [isDialogOpen, setDialogOpen] = useState(false);
+	const openDialog = useCallback(() => setDialogOpen(true), []);
+	const closeDialog = useCallback(() => setDialogOpen(false), []);
 
 	return <>
-		<Button icon="eye-open" minimal={true} onClick={toggleCollapse} />
-		<Collapse isOpen={isCollapseOpen} keepChildrenMounted={true} >
-			<pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "  ")}</pre>
-		</Collapse>
+		<Button icon="eye-open" minimal={true} onClick={openDialog} />
+		<Dialog canEscapeKeyClose={false} className="zr-raw-item-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
+			<div className={Classes.DIALOG_BODY}>
+				<pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "  ")}</pre>
+			</div>
+		</Dialog>
 	</>;
 }
-CollapseRaw.propTypes = {
+ShowRaw.propTypes = {
 	item: object
 };
 
@@ -37,7 +40,7 @@ function Annotation({ annot }){
 		<div zr-role="card-header">
 			<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 			<ButtonGroup minimal={true}>
-				<CollapseRaw item={raw} />
+				<ShowRaw item={raw} />
 				<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >PDF</ButtonLink>
 				<ButtonLink className="zr-text-small" href={link_page} >Page {page_label}</ButtonLink>
 			</ButtonGroup>
@@ -67,7 +70,7 @@ function Note({ note }){
 			<div zr-role="card-header">
 				<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 				<ButtonGroup minimal={true}>
-					<CollapseRaw item={raw} />
+					<ShowRaw item={raw} />
 					<ButtonLink className="zr-text-small" href={link_note} icon="comment">View in Zotero</ButtonLink>
 				</ButtonGroup>
 			</div>
