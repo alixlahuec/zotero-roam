@@ -24,7 +24,7 @@ function Settings(){
     
 	return <div className="zr-settings-list">
 		<SentryBoundary>
-			<Button minimal={true} onClick={window.executeUnknownFunction} text="Collapse all" />
+			<Button minimal={true} onClick={() => window.executeUnknownFunction()} text="Collapse all" />
 		</SentryBoundary>
 		<Requests />
 		<Formatting />
