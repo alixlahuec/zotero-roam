@@ -78,7 +78,7 @@ const TagManager = React.memo(function TagManager(){
 	const { libraries } = useContext(ExtensionContext);
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
 
-	return <SentryBoundary>
+	return <SentryBoundary feature="tag-manager">
 		{isLoading
 			? <Spinner />
 			: writeableLibraries.length == 0

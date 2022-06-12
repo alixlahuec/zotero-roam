@@ -22,7 +22,7 @@ function Settings(){
 		// webimport 
 	} = useContext(UserSettings);
     
-	return <SentryBoundary>
+	return <SentryBoundary feature="extension-settings">
 		<div className="zr-settings-list">
 			<Requests />
 			<Formatting />

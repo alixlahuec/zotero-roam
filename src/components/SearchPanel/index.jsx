@@ -53,7 +53,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose} >
-			<SentryBoundary>
+			<SentryBoundary feature="dialog-search">
 				<LibraryQueryList 
 					handleClose={onClose}
 					isOpen={isOpen}

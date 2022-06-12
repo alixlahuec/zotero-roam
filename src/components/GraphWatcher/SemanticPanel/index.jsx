@@ -132,7 +132,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 			onClose={handleClose}
 		>
 			<div className={ Classes.DIALOG_BODY }>
-				<SentryBoundary>
+				<SentryBoundary feature="dialog-semantic">
 					<div className="zr-semantic-panel--main">
 						<SemanticTabList 
 							defaultTab={show.type}

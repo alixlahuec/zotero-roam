@@ -136,7 +136,7 @@ function Explorer({ onClose }){
 	const data = itemQueries.map(q => q.data || []).flat(1);
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 
-	return <SentryBoundary>
+	return <SentryBoundary feature="data-explorer">
 		<div>
 			{isLoading
 				? <Spinner />

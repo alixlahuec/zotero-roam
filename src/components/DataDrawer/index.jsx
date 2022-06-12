@@ -22,7 +22,7 @@ function DataDrawer({ item, isOpen, onClose }){
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
-			<SentryBoundary>
+			<SentryBoundary feature="drawer-data" extra={item}>
 				<Tabs animate={false} className="zr-tabs-minimal" id="zr-drawer--data" >
 					<Tab id="item" panel={<RawItem item={item} />} title="Item" />
 					<Tabs.Expander />

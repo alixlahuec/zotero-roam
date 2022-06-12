@@ -337,7 +337,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
 	return <div id="zr-item-details">
-		<SentryBoundary>
+		<SentryBoundary feature="dialog-item" extra={item}>
 			<div zr-role="item-metadata">
 				<div zr-role="item-metadata--header">
 					<h5>{title}</h5>

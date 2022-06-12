@@ -85,7 +85,7 @@ const RecentItems = React.memo(function RecentItems({ onClose }){
 	const data = itemQueries.map(q => q.data || []).flat(1);
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 	
-	return <SentryBoundary>
+	return <SentryBoundary feature="recent-items">
 		<div>
 			{isLoading
 				? <Spinner />

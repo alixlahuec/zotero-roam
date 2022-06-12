@@ -121,7 +121,7 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
-			<SentryBoundary>
+			<SentryBoundary feature="drawer-notes" extra={notes}>
 				<Tabs animate={false} className="zr-tabs-minimal" id="zr-drawer--notes" >
 					{annots.length > 0 && <Tab id="annotations" panel={<PanelAnnotations annots={annots} />} title="Annotations" />}
 					{noteItems.length > 0 && <Tab id="notes" panel={<PanelNotes notes={noteItems} />} title="Notes" />}

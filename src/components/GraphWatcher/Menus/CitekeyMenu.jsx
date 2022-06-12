@@ -350,7 +350,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	}, [children, item, roamCitekeys]);
 
 	return (
-		<SentryBoundary>
+		<SentryBoundary feature="menu-citekey" extra={item}>
 			{doiHeader}
 			<Card elevation={0} className="zr-citekey-menu">
 				<div className="zr-citekey-menu--header">

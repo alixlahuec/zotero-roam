@@ -133,7 +133,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 	}, [selectedColls, selectedLib, selectedTags]);
 
 	return (
-		<SentryBoundary>
+		<SentryBoundary feature="zotero-import" extra={props}>
 			<div className="import-header">
 				<ButtonGroup fill={true} minimal={true}>
 					<Button className={["zr-text-small", "zr-import--cancel"].join(" ")} icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>

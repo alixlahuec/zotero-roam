@@ -111,7 +111,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 			isOpen={isOpen}
 			onClose={handleClose} >
 			<div className={ Classes.DIALOG_BODY }>
-				<SentryBoundary>
+				<SentryBoundary feature="dialog-webimport" extra={urls}>
 					<div className="zr-webimport-panel--main">
 						<div className="header-content">
 							<div className="header-left">

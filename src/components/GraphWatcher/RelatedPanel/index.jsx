@@ -173,7 +173,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 			onClose={onClose}
 		>
 			<div className={ Classes.DIALOG_BODY }>
-				<SentryBoundary>
+				<SentryBoundary feature="dialog-related" extra={show}>
 					<div className="header-content">
 						<div className="header-left">
 							{panelLabel}
