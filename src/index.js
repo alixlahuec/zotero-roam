@@ -20,6 +20,7 @@ import "./index.css";
 Sentry.init({
 	autoSessionTracking: false,
 	beforeSend: (event) => {
+		// https://romain-clement.net/articles/sentry-url-fragments/
 		if (event.request?.url) {
 			event.request.url = event.request.url.split("#")[0];
 		}
