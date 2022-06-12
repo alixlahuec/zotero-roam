@@ -136,7 +136,7 @@ window.zoteroRoam = {};
 	if(window.zoteroRoam.config.userSettings.shareErrors == false){
 		Sentry.getCurrentHub().getClient().getOptions().enabled = false;
 	} else {
-		Sentry.setContext("config", ...window.zoteroRoam.config);
+		Sentry.setContext("config", { ...window.zoteroRoam.config });
 	}
 
 	window.zoteroRoam.formatNotes = formatNotes;
