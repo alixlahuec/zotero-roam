@@ -19,6 +19,12 @@ import "./index.css";
 
 Sentry.init({
 	autoSessionTracking: false,
+	beforeSend: (event) => {
+		if (event.request?.url) {
+			event.request.url = event.request.url.split("#")[0];
+		}
+		return event;
+	},
 	dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
 	integrations: [new BrowserTracing()],
   
