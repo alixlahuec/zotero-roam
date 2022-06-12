@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
-import { H3 } from "@blueprintjs/core";
+import { Button, H3 } from "@blueprintjs/core";
 
 import AutocompleteSettings from "./AutocompleteSettings";
 import Formatting from "./Formatting";
 import PageMenuSettings from "./PageMenuSettings";
 import Requests from "./Requests";
 import SciteSettings from "./SciteSettings";
+import SentryBoundary from "../../Errors/SentryBoundary";
 import Shortcuts from "./ShortcutsSettings";
 import Toggle from "./Toggle";
 import Typemap from "./Typemap";
@@ -22,6 +23,9 @@ function Settings(){
 	} = useContext(UserSettings);
     
 	return <div className="zr-settings-list">
+		<SentryBoundary>
+			<Button minimal={true} onClick={window.executeUnknownFunction} text="Collapse all" />
+		</SentryBoundary>
 		<Requests />
 		<Formatting />
 		<AutocompleteSettings />

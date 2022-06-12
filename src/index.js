@@ -1,5 +1,7 @@
 import React from "react";
 import { render } from "react-dom";
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
 import { HotkeysProvider } from "@blueprintjs/core";
 
 import zrToaster from "./components/ExtensionToaster";
@@ -14,6 +16,17 @@ import { default_typemap } from "./variables";
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "./index.css";
+
+Sentry.init({
+	autoSessionTracking: false,
+	dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
+	integrations: [new BrowserTracing()],
+  
+	// Set tracesSampleRate to 1.0 to capture 100%
+	// of transactions for performance monitoring.
+	// We recommend adjusting this value in production
+	tracesSampleRate: 1.0
+});
 
 window.zoteroRoam = {};
 
@@ -39,6 +52,7 @@ window.zoteroRoam = {};
 		pageMenu = {},
 		render_inline = false,
 		sciteBadge = {},
+		shareErrors = true,
 		shortcuts = {},
 		typemap = {},
 		webimport = {}
@@ -91,6 +105,7 @@ window.zoteroRoam = {};
 				tooltipSlide: 0,
 				...sciteBadge
 			},
+			shareErrors,
 			shortcuts: {
 				"copyDefault": false,
 				"copyCitation": false,
@@ -116,6 +131,13 @@ window.zoteroRoam = {};
 			}
 		}
 	};
+
+	// https://github.com/getsentry/sentry-javascript/issues/2039
+	if(window.zoteroRoam.config.userSettings.shareErrors == false){
+		Sentry.getCurrentHub().getClient().getOptions().enabled = false;
+	} else {
+		Sentry.setContext("config", ...window.zoteroRoam.config);
+	}
 
 	window.zoteroRoam.formatNotes = formatNotes;
 	window.zoteroRoam.formatPDFs = formatPDFs;
