@@ -267,6 +267,7 @@ const userSettingsType = shape({
 		tooltipPlacement: oneOf(["auto", "top", "left", "right", "bottom"]),
 		tooltipSlide: number
 	}),
+	shareErrors: bool,
 	shortcuts: object,
 	typemap: object,
 	webimport: shape({
