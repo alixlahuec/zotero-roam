@@ -142,7 +142,8 @@ window.zoteroRoam = {};
 	if(window.zoteroRoam.config.userSettings.shareErrors == false){
 		Sentry.getCurrentHub().getClient().getOptions().enabled = false;
 	} else {
-		Sentry.setContext("config", { 
+		Sentry.setContext("config", {
+			rawRequests: dataRequests,
 			version: window.zoteroRoam.config.version, 
 			...window.zoteroRoam.config.userSettings 
 		});
