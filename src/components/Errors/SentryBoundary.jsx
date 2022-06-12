@@ -4,11 +4,11 @@ import { node } from "prop-types";
 
 import ErrorCallout from "./ErrorCallout";
 
-function SentryBoundary({ children }){
+function SentryBoundary(props){
 	return <Sentry.Boundary fallback={({ error, resetError }) => (
 		<ErrorCallout buttonText="Reload" error={error} resetErrorBoundary={resetError} />
 	)}>
-		{children}
+		{props.children}
 	</Sentry.Boundary>;
 }
 SentryBoundary.propTypes = {
