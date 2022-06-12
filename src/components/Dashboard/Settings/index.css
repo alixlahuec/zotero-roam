@@ -48,7 +48,7 @@
 [zr-role="settings-scite"] > div:last-child {
     background: var(--zr-box-bg);
     margin: 0 auto;
-    max-width: 400px;
+    max-width: 350px;
     padding: 10px;
 }
 
