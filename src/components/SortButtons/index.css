@@ -14,6 +14,7 @@
 .zr-sort-option input, 
 .zr-sort-option input:focus {
     appearance: none;
+    outline: none;
 }
 
 .zr-sort-option label {
