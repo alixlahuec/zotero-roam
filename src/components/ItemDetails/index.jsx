@@ -11,6 +11,7 @@ import { importItemMetadata, importItemNotes, openPageByUID } from "../../roam";
 import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 
+import SentryBoundary from "../Errors/SentryBoundary";
 import { UserSettings } from "../App";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
@@ -336,65 +337,67 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
 
 	return <div id="zr-item-details">
-		<div zr-role="item-metadata">
-			<div zr-role="item-metadata--header">
-				<h5>{title}</h5>
-				<span className="zr-accent-1">{authors + " (" + year + ")"}</span>
-				{publication
-					? <span className="zr-secondary">{publication}</span>
-					: null}
-				{weblink
-					? <span zr-role="item-weblink" className="zr-secondary" >
-						<a href={weblink.href} rel="noreferrer" target="_blank" >{weblink.title}</a>
-					</span>
-					: null}
-			</div>
-			<Metadata direction="col" label="Abstract">
-				<p zr-role="item-abstract" className={["zr-text-small", Classes.RUNNING_TEXT].join(" ")}>
-					{abstract}
-				</p>
-			</Metadata>
-			<div zr-role="item-metadata--footer">
-				<Metadata label="Added">
-					<span className="zr-secondary">
-						{makeDateFromAgo(raw.data.dateAdded)}
-					</span>
-					{createdByUser
-						? <span>by <b>{createdByUser}</b></span>
+		<SentryBoundary>
+			<div zr-role="item-metadata">
+				<div zr-role="item-metadata--header">
+					<h5>{title}</h5>
+					<span className="zr-accent-1">{authors + " (" + year + ")"}</span>
+					{publication
+						? <span className="zr-secondary">{publication}</span>
 						: null}
+					{weblink
+						? <span zr-role="item-weblink" className="zr-secondary" >
+							<a href={weblink.href} rel="noreferrer" target="_blank" >{weblink.title}</a>
+						</span>
+						: null}
+				</div>
+				<Metadata direction="col" label="Abstract">
+					<p zr-role="item-abstract" className={["zr-text-small", Classes.RUNNING_TEXT].join(" ")}>
+						{abstract}
+					</p>
 				</Metadata>
-				{authorsFull.length > 0
-					? <Metadata label="Contributors">
-						{authorsFull.map((aut, i) => <Tag key={i} className="zr-text-small" intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
+				<div zr-role="item-metadata--footer">
+					<Metadata label="Added">
+						<span className="zr-secondary">
+							{makeDateFromAgo(raw.data.dateAdded)}
+						</span>
+						{createdByUser
+							? <span>by <b>{createdByUser}</b></span>
+							: null}
 					</Metadata>
-					: null}
-				{tags.length > 0
-					? <Metadata label="Tags">
-						<div>
-							{tags.map((tag, i) => <Tag key={i} className="zr-text-small" minimal={true}>#{tag}</Tag>)}
-						</div>
-					</Metadata>
-					: null}
+					{authorsFull.length > 0
+						? <Metadata label="Contributors">
+							{authorsFull.map((aut, i) => <Tag key={i} className="zr-text-small" intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
+						</Metadata>
+						: null}
+					{tags.length > 0
+						? <Metadata label="Tags">
+							<div>
+								{tags.map((tag, i) => <Tag key={i} className="zr-text-small" minimal={true}>#{tag}</Tag>)}
+							</div>
+						</Metadata>
+						: null}
+				</div>
 			</div>
-		</div>
-		<div zr-role="item-actions">
-			<Menu className="zr-text-small" data-in-graph={inGraph.toString()} >
-				{navigator.clipboard && <CopyButtons citekey={key} item={item} />}
-				<MenuDivider className="zr-divider-minimal" title="Actions" />
-				{goToPageButton}
-				<MenuItem icon="add" 
-					labelElement={shortcutsSettings.importMetadata != false && <ShortcutSequence text={shortcutsSettings.importMetadata} />} 
-					onClick={importMetadata} 
-					text="Import metadata" />
-				{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Import notes" />}
-				<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
-				<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />
-				{rawData}
-				<MenuDivider className="zr-divider-minimal" title="Linked Content" />
-				{pdfs}
-				{notes}
-			</Menu>
-		</div>
+			<div zr-role="item-actions">
+				<Menu className="zr-text-small" data-in-graph={inGraph.toString()} >
+					{navigator.clipboard && <CopyButtons citekey={key} item={item} />}
+					<MenuDivider className="zr-divider-minimal" title="Actions" />
+					{goToPageButton}
+					<MenuItem icon="add" 
+						labelElement={shortcutsSettings.importMetadata != false && <ShortcutSequence text={shortcutsSettings.importMetadata} />} 
+						onClick={importMetadata} 
+						text="Import metadata" />
+					{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Import notes" />}
+					<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
+					<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />
+					{rawData}
+					<MenuDivider className="zr-divider-minimal" title="Linked Content" />
+					{pdfs}
+					{notes}
+				</Menu>
+			</div>
+		</SentryBoundary>
 	</div>;
 });
 ItemDetails.propTypes = {

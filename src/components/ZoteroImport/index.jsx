@@ -12,6 +12,7 @@ import { useImportCitoids } from "../../api/write";
 import { sortCollections } from "../../utils";
 
 import { ExtensionContext } from "../App";
+import SentryBoundary from "../Errors/SentryBoundary";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
@@ -132,7 +133,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 	}, [selectedColls, selectedLib, selectedTags]);
 
 	return (
-		<>
+		<SentryBoundary>
 			<div className="import-header">
 				<ButtonGroup fill={true} minimal={true}>
 					<Button className={["zr-text-small", "zr-import--cancel"].join(" ")} icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
@@ -159,7 +160,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 					onSelect={handleTagSelection}
 					selectedTags={selectedTags} />
 			</div>
-		</>
+		</SentryBoundary>
 	);
 
 });

@@ -9,6 +9,7 @@ import TagsDatalist from "./TagsDatalist";
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 import * as customPropTypes from "../../../propTypes";
 
+import SentryBoundary from "../../Errors/SentryBoundary";
 import "./index.css";
 import LibrarySelect from "../LibrarySelect";
 
@@ -77,13 +78,13 @@ const TagManager = React.memo(function TagManager(){
 	const { libraries } = useContext(ExtensionContext);
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
 
-	return (
-		isLoading
+	return <SentryBoundary>
+		{isLoading
 			? <Spinner />
 			: writeableLibraries.length == 0
 				? <NoWriteableLibraries />
-				: <TabContents libraries={writeableLibraries} />
-	);
+				: <TabContents libraries={writeableLibraries} />}
+	</SentryBoundary>;
 });
 
 export default TagManager;

@@ -6,6 +6,7 @@ import AuxiliaryDialog from "../../AuxiliaryDialog";
 import { CitoidGuide } from "../../Guide";
 import ZoteroImport from "../../ZoteroImport";
 
+import SentryBoundary from "../../Errors/SentryBoundary";
 import { UserSettings } from "../../App";
 import { useQuery_Citoid } from "../../../api/queries";
 import { pluralize } from "../../../utils";
@@ -110,29 +111,31 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 			isOpen={isOpen}
 			onClose={handleClose} >
 			<div className={ Classes.DIALOG_BODY }>
-				<div className="zr-webimport-panel--main">
-					<div className="header-content">
-						<div className="header-left">
-							<h5 id="zr-webimport-dialog--title" className="panel-tt">
-								{noQueriesLoaded
-									? "Parsing links..."
-									: pluralize(citoids.length, "link", " found")}
-							</h5>
-							{!noQueriesLoaded && <CitoidGuide />}
+				<SentryBoundary>
+					<div className="zr-webimport-panel--main">
+						<div className="header-content">
+							<div className="header-left">
+								<h5 id="zr-webimport-dialog--title" className="panel-tt">
+									{noQueriesLoaded
+										? "Parsing links..."
+										: pluralize(citoids.length, "link", " found")}
+								</h5>
+								{!noQueriesLoaded && <CitoidGuide />}
+							</div>
+							<div className={["header-right", "zr-auxiliary"].join(" ")}>
+								<Button icon="cross" large={true} minimal={true} onClick={handleClose} />
+							</div>
 						</div>
-						<div className={["header-right", "zr-auxiliary"].join(" ")}>
-							<Button icon="cross" large={true} minimal={true} onClick={handleClose} />
+						<div className="rendered-div">
+							<ul className={ Classes.LIST_UNSTYLED }>
+								{citoids.map(cit => <WebImportItem key={cit.url} item={cit} isSelected={selected.includes(cit.url)} onSelect={handleItemSelection} />)}
+							</ul>
 						</div>
 					</div>
-					<div className="rendered-div">
-						<ul className={ Classes.LIST_UNSTYLED }>
-							{citoids.map(cit => <WebImportItem key={cit.url} item={cit} isSelected={selected.includes(cit.url)} onSelect={handleItemSelection} />)}
-						</ul>
+					<div className="zr-webimport-panel--side">
+						<ZoteroImport identifiers={selected} isActive={has_selected_items} resetImport={resetImport} />
 					</div>
-				</div>
-				<div className="zr-webimport-panel--side">
-					<ZoteroImport identifiers={selected} isActive={has_selected_items} resetImport={resetImport} />
-				</div>
+				</SentryBoundary>
 			</div>
 		</AuxiliaryDialog>
 	);

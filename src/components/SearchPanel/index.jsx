@@ -9,6 +9,7 @@ import { useRoamCitekeys } from "../RoamCitekeysContext";
 import { useQuery_Items } from "../../api/queries";
 import { cleanLibrary } from "../../utils";
 
+import SentryBoundary from "../Errors/SentryBoundary";
 import { dialogClass, dialogLabel } from "./classes";
 import "./index.css";
 
@@ -52,11 +53,13 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose} >
-			<LibraryQueryList 
-				handleClose={onClose}
-				isOpen={isOpen}
-				items={items}
-				quickCopyProps={quickCopyProps} />
+			<SentryBoundary>
+				<LibraryQueryList 
+					handleClose={onClose}
+					isOpen={isOpen}
+					items={items}
+					quickCopyProps={quickCopyProps} />
+			</SentryBoundary>
 		</DialogOverlay>
 	);
 

@@ -15,8 +15,9 @@ import { findRoamPage, importItemMetadata, importItemNotes } from "../../../roam
 import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ItemDetails from "../../ItemDetails";
-import { UserSettings } from "../../App";
 
+import SentryBoundary from "../../Errors/SentryBoundary";
+import { UserSettings } from "../../App";
 import * as customPropTypes from "../../../propTypes";
 
 function BacklinksItem({ entry }) {
@@ -349,7 +350,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	}, [children, item, roamCitekeys]);
 
 	return (
-		<>
+		<SentryBoundary>
 			{doiHeader}
 			<Card elevation={0} className="zr-citekey-menu">
 				<div className="zr-citekey-menu--header">
@@ -369,7 +370,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 				</div>
 				{relatedBar}
 			</Card>
-		</>
+		</SentryBoundary>
 	);
 });
 CitekeyMenu.propTypes = {

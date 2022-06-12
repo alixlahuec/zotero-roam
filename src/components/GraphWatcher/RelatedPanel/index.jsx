@@ -6,6 +6,7 @@ import AuxiliaryDialog from "../../AuxiliaryDialog";
 import CitekeyPopover from "../../CitekeyPopover";
 import { pluralize, sortElems } from "../../../utils";
 
+import SentryBoundary from "../../Errors/SentryBoundary";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -172,27 +173,29 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 			onClose={onClose}
 		>
 			<div className={ Classes.DIALOG_BODY }>
-				<div className="header-content">
-					<div className="header-left">
-						{panelLabel}
-						<Button className="zr-text-small" 
-							icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} 
-							minimal={true} 
-							onClick={toggleAbstracts}
-							zr-role="toggle-abstracts" >
-							{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts
-						</Button>
+				<SentryBoundary>
+					<div className="header-content">
+						<div className="header-left">
+							{panelLabel}
+							<Button className="zr-text-small" 
+								icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} 
+								minimal={true} 
+								onClick={toggleAbstracts}
+								zr-role="toggle-abstracts" >
+								{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts
+							</Button>
+						</div>
+						{headerRight}
 					</div>
-					{headerRight}
-				</div>
-				<div className="rendered-div">
-					<RelatedList 
-						allAbstractsShown={isShowingAllAbstracts}
-						closeDialog={onClose}
-						items={items}
-						type={show.type}
-					/>
-				</div>
+					<div className="rendered-div">
+						<RelatedList 
+							allAbstractsShown={isShowingAllAbstracts}
+							closeDialog={onClose}
+							items={items}
+							type={show.type}
+						/>
+					</div>	
+				</SentryBoundary>
 			</div>
 		</AuxiliaryDialog>
 	);

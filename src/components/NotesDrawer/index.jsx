@@ -6,8 +6,8 @@ import { UserSettings } from "../App";
 import ButtonLink from "../ButtonLink";
 import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
 
+import SentryBoundary from "../Errors/SentryBoundary";
 import * as customPropTypes from "../../propTypes";
-
 import "./index.css";
 
 function ShowRaw({ item }){
@@ -121,12 +121,14 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
-			<Tabs animate={false} className="zr-tabs-minimal" id="zr-drawer--notes" >
-				{annots.length > 0 && <Tab id="annotations" panel={<PanelAnnotations annots={annots} />} title="Annotations" />}
-				{noteItems.length > 0 && <Tab id="notes" panel={<PanelNotes notes={noteItems} />} title="Notes" />}
-				<Tabs.Expander />
-				<Button icon="cross" minimal={true} onClick={onClose} />
-			</Tabs>
+			<SentryBoundary>
+				<Tabs animate={false} className="zr-tabs-minimal" id="zr-drawer--notes" >
+					{annots.length > 0 && <Tab id="annotations" panel={<PanelAnnotations annots={annots} />} title="Annotations" />}
+					{noteItems.length > 0 && <Tab id="notes" panel={<PanelNotes notes={noteItems} />} title="Notes" />}
+					<Tabs.Expander />
+					<Button icon="cross" minimal={true} onClick={onClose} />
+				</Tabs>
+			</SentryBoundary>
 		</Drawer>
 	);
 });

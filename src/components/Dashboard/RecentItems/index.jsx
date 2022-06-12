@@ -9,6 +9,7 @@ import { useQuery_Items } from "../../../api/queries";
 import { makeLogFromItems } from "./utils";
 import { categorizeLibraryItems } from "../../../utils";
 
+import SentryBoundary from "../../Errors/SentryBoundary";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -84,11 +85,13 @@ const RecentItems = React.memo(function RecentItems({ onClose }){
 	const data = itemQueries.map(q => q.data || []).flat(1);
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 	
-	return <div>
-		{isLoading
-			? <Spinner />
-			: <LogView itemList={itemList} onClose={onClose} /> }
-	</div>;
+	return <SentryBoundary>
+		<div>
+			{isLoading
+				? <Spinner />
+				: <LogView itemList={itemList} onClose={onClose} /> }
+		</div>
+	</SentryBoundary>;
 });
 RecentItems.propTypes = {
 	onClose: func

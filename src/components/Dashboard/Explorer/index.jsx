@@ -11,6 +11,7 @@ import { useRoamCitekeys } from "../../RoamCitekeysContext";
 import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems, cleanLibraryItem, cleanLibraryPDF, identifyChildren, identifyPDFConnections } from "../../../utils";
 
+import SentryBoundary from "../../Errors/SentryBoundary";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -135,11 +136,13 @@ function Explorer({ onClose }){
 	const data = itemQueries.map(q => q.data || []).flat(1);
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 
-	return <div>
-		{isLoading
-			? <Spinner />
-			: <ExplorerTabs itemList={itemList} onClose={onClose} /> }
-	</div>;
+	return <SentryBoundary>
+		<div>
+			{isLoading
+				? <Spinner />
+				: <ExplorerTabs itemList={itemList} onClose={onClose} /> }
+		</div>
+	</SentryBoundary>;
 }
 Explorer.propTypes = {
 	onClose: func

@@ -7,6 +7,7 @@ import SemanticPagination from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
 import { pluralize, sortElems } from "../../../utils";
+import SentryBoundary from "../../Errors/SentryBoundary";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -131,16 +132,18 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 			onClose={handleClose}
 		>
 			<div className={ Classes.DIALOG_BODY }>
-				<div className="zr-semantic-panel--main">
-					<SemanticTabList 
-						defaultTab={show.type}
-						items={items}
-						onClose={handleClose}
-						selectProps={selectProps}
-						title={show.title}
-					/>
-				</div>
-				<SidePanel selectProps={selectProps} />
+				<SentryBoundary>
+					<div className="zr-semantic-panel--main">
+						<SemanticTabList 
+							defaultTab={show.type}
+							items={items}
+							onClose={handleClose}
+							selectProps={selectProps}
+							title={show.title}
+						/>
+					</div>
+					<SidePanel selectProps={selectProps} />
+				</SentryBoundary>
 			</div>
 		</AuxiliaryDialog>
 	);
