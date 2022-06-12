@@ -7,7 +7,8 @@ module.exports = merge(baseConfig, {
 		minimize: false
 	},
     output: {
-        filename: "zoteroRoam.dev.js"
+        filename: "zoteroRoam.dev.js",
+		sourceMapFilename: "zoteroRoam.dev.js.map"
     },
 	resolve: {
 		alias: {

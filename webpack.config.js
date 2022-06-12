@@ -2,10 +2,12 @@ const path = require("path");
 
 module.exports = {
 	context: __dirname,
+	devtool: "source-map",
 	entry: path.resolve(__dirname, "src", "index.js"),
 	output: {
 		path: path.resolve(__dirname, "dist"),
-		filename: "zoteroRoam.min.js"
+		filename: "zoteroRoam.min.js",
+		sourceMapFilename: "zoteroRoam.min.js.map"
 	},
 	resolve: {
 		extensions: [".js", ".jsx", ".css"]
