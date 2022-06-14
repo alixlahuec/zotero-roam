@@ -9,6 +9,8 @@
   --zr-border-co: #ececec;
   --zr-box-bg: #f8f8f8;
   --zr-dialog-bg: white;
+  --zr-negative-bg: #fff1f2;
+  --zr-negative-co: #c90808;
   --zr-positive-bg: #0f996026;
   --zr-positive-co: #0d8050;
   --zr-secondary-co: #7b7b7b;
@@ -26,6 +28,8 @@
   --zr-border-co: #2f3133;
   --zr-box-bg: #191919;
   --zr-dialog-bg: #1f1f1f;
+  --zr-negative-bg: #332828;
+  --zr-negative-co: #f36f6f;
   --zr-positive-bg: #5863582e;
   --zr-positive-co: #86f686;
   --zr-secondary-co: #506071;
@@ -82,6 +86,17 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 /* Blueprint Elements */
 
+[class*="zr"] .bp4-callout {
+  background: var(--zr-box-bg);
+  border: 1px var(--zr-border-co) solid;
+  color: var(--zr-text-co);
+}
+
+[class*="zr"] .bp4-callout.bp4-intent-danger {
+  background: var(--zr-negative-bg);
+  color: var(--zr-negative-co);
+}
+
 [class*="zr"] .bp4-numeric-input input.bp4-input {
   max-width: 40px;
 }
@@ -95,7 +110,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 [class*="zr"] a:not(.bp4-menu-item) .bp4-icon,
 [class*="zr"] .bp4-button.bp4-minimal.bp4-intent-primary,
 [class*="zr"] .bp4-button.bp4-minimal.bp4-intent-primary:hover {
-  color: hsla(var(--zr-accent-1-co), 70%);
+  color: hsla(var(--zr-accent-1-co), 80%);
 }
 
 [class*="zr"] a:not(.bp4-menu-item):hover {
