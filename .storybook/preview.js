@@ -4,10 +4,12 @@ import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "../node_modules/@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "../src/index.css";
 
+import { withUserSettings } from "./withUserSettings";
+
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
 const withTheme = (Story, context) => {
   const isDark = context.globals.theme == "dark";
-  return <div zr-dark-theme={isDark.toString()} 
+  return <div className="zr-" zr-dark-theme={isDark.toString()} 
     style={{ backgroundColor: "var(--zr-dialog-bg)", margin: "50px", padding: "20px", height: "1000px" }}>
     <Story {...context} />
   </div>;
@@ -40,4 +42,4 @@ export const parameters = {
   },
 }
 
-export const decorators = [withTheme];
+export const decorators = [withTheme, withUserSettings];
