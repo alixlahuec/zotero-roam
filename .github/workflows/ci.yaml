@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-node@v2
 
       - name: Install packages
-        run: npm ci
+        run: npm ci --legacy-peer-deps # To fix failing CI due to webpack-filter-warnings-plugin (https://github.com/storybookjs/storybook/issues/13990)
       
       - name: ESLint
         run: npm run ci:lint
