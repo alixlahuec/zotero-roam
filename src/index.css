@@ -214,6 +214,34 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
   color: var(--zr-accent-2);
 }
 
+.zr-date-input {
+  max-width: 230px;
+}
+
+.zr-date-range-input {
+  max-width: 460px;
+}
+
+.zr-date-input input,
+.zr-date-range-input input {
+  max-width: 230px;
+}
+
+.zr-date-input .bp4-input-group.bp4-intent-danger input,
+.zr-date-input .bp4-input-group.bp4-intent-danger .bp4-input-action .bp4-icon,
+.zr-date-range-input .bp4-input-group.bp4-intent-danger input {
+  color: var(--zr-negative-co);
+}
+
+.zr-date-input .bp4-input-group .bp4-input-action > span.bp4-icon {
+  color: var(--zr-auxiliary);
+  margin: 7px;
+}
+
+.zr-date-picker .bp4-datepicker .DayPicker-Day.DayPicker-Day--selected {
+  background: hsla(var(--zr-accent-1-co), 90%);
+}
+
 /* Popovers & Menus */
 
 .zr-popover:not(.zr-date-picker) {

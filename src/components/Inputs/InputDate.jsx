@@ -21,6 +21,7 @@ const dateProps = {
 function InputDateSingle({ value, setValue }){
 	return <DateInput
 		{...dateProps}
+		className="zr-date-input"
 		closeOnSelection={true}
 		highlightCurrentDay={true}
 		onChange={setValue}
@@ -39,6 +40,7 @@ InputDateSingle.propTypes = {
 function InputDateRange({ value, setValue }){
 	return <DateRangeInput
 		{...dateProps}
+		className="zr-date-range-input"
 		closeOnSelection={true}
 		highlightCurrentDay={true}
 		onChange={setValue}
