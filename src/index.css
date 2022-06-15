@@ -72,7 +72,10 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
   background: hsla(var(--zr-accent-1-co), 8%);
 }
 
-.zr-secondary {color: var(--zr-secondary-co);font-weight:var(--zr-secondary-fw);}
+.zr-secondary {
+  color: var(--zr-secondary-co);
+  font-weight:var(--zr-secondary-fw);
+}
 
 .zr-text-small, 
 .zr-text-small select, 
@@ -86,6 +89,12 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 /* Blueprint Inputs */
+
+[class*="zr"] .bp4-input:focus, 
+[class*="zr"] .bp4-input.bp4-active,
+[class*="zr"] .bp4-input-group[class*="bp4-intent-"] .bp4-input:focus {
+  box-shadow: none;
+}
 
 .zr-text-input,
 .zr-text-input input,
@@ -144,6 +153,11 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 .zr-date-picker .bp4-datepicker .DayPicker-Day.DayPicker-Day--selected {
   background: hsla(var(--zr-accent-1-co), 90%);
+}
+
+.zr-date-picker .bp4-daterangepicker .DayPicker-Day--selected-range {
+  background: hsla(var(--zr-accent-1-co), 10%);
+  color: hsla(var(--zr-accent-1-co), 80%);
 }
 
 /* Blueprint Elements */
