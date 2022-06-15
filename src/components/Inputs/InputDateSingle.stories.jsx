@@ -6,8 +6,9 @@ export default {
 };
 
 const Template = (args) => {
-	const [value, setValue] = useState(args.value || undefined);
-	return <InputDateSingle value={value} setValue={setValue} {...args}/>;
+	const { value: valueFromArgs, setValue: setFromArgs, ...argList } = args;
+	const [value, setValue] = useState(valueFromArgs || undefined);
+	return <InputDateSingle value={value} setValue={setValue} {...argList}/>;
 };
 
 export const WithDate = Template.bind({});

@@ -13,8 +13,9 @@ export default {
 };
 
 const Template = (args) => {
-	const [selected, setSelected] = useState(args.value || []);
-	return <InputMultiSelect value={selected} setValue={setSelected} {...args} />;
+	const { value: valueFromArgs, setValue: setFromArgs, ...argList } = args;
+	const [selected, setSelected] = useState(valueFromArgs || []);
+	return <InputMultiSelect value={selected} setValue={setSelected} {...argList} />;
 };
 
 export const Default = Template.bind({});
