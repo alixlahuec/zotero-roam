@@ -9,6 +9,7 @@
   --zr-border-co: #ececec;
   --zr-box-bg: #f8f8f8;
   --zr-dialog-bg: white;
+  --zr-input-size: 240px;
   --zr-negative-bg: #fff1f2;
   --zr-negative-co: #c90808;
   --zr-positive-bg: #0f996026;
@@ -84,6 +85,63 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
   margin-left: 0px;
 }
 
+/* Blueprint Inputs */
+
+.zr-date-input,
+.zr-date-input input,
+.zr-date-range-input input,
+[class*="zr"] .bp4-multi-select,
+[class*="zr"] .bp4-multi-select input {
+  max-width: var(--zr-input-size);
+}
+
+.zr-date-range-input {
+  max-width: calc(2 * var(--zr-input-size));
+}
+
+[class*="zr"] .bp4-numeric-input input.bp4-input {
+  max-width: calc(0.20 * var(--zr-input-size));
+}
+
+[class*="zr"] .bp4-numeric-input .bp4-button:not([class*=bp4-intent-]) {
+  background: var(--zr-dialog-bg);
+  box-shadow: none;
+}
+
+[class*="zr"] .bp4-multi-select input {
+  color: var(--zr-text-co);
+}
+
+.zr-date-input input,
+.zr-date-range-input input,
+[class*="zr"] .bp4-multi-select.bp4-input {
+  background: var(--zr-dialog-bg);
+  box-shadow: none;
+  color: var(--zr-text-co);
+  outline: 1px var(--zr-border-co) solid;
+}
+
+.zr-date-input .bp4-input-group.bp4-intent-danger input,
+.zr-date-input .bp4-input-group.bp4-intent-danger .bp4-input-action .bp4-icon,
+.zr-date-range-input .bp4-input-group.bp4-intent-danger input {
+  color: var(--zr-negative-co);
+}
+
+.zr-date-input .bp4-input-group.bp4-intent-danger input,
+.zr-date-range-input .bp4-input-group.bp4-intent-danger input {
+  box-shadow: none;
+  outline: 1px var(--zr-negative-co) solid;
+}
+
+.zr-date-input .bp4-input-group .bp4-input-action > span.bp4-icon {
+  color: var(--zr-auxiliary);
+  margin: 7px;
+}
+
+.zr-date-picker .bp4-datepicker .DayPicker-Day.DayPicker-Day--selected {
+  background: hsla(var(--zr-accent-1-co), 90%);
+}
+
 /* Blueprint Elements */
 
 [class*="zr"] .bp4-callout {
@@ -102,15 +160,6 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 [class*="zr"] .bp4-callout.bp4-intent-danger .bp4-heading,
 [class*="zr"] .bp4-button.bp4-outlined.bp4-intent-danger {
   color: var(--zr-negative-co);
-}
-
-[class*="zr"] .bp4-numeric-input input.bp4-input {
-  max-width: 40px;
-}
-
-[class*="zr"] .bp4-numeric-input .bp4-button:not([class*=bp4-intent-]) {
-  background: var(--zr-dialog-bg);
-  box-shadow: none;
 }
 
 [class*="zr"] a:not(.bp4-menu-item),
@@ -219,44 +268,6 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 [class*="zr"] .bp4-tag.bp4-minimal.bp4-intent-warning {
   background: hsla(var(--zr-accent-2-co), 15%);
   color: var(--zr-accent-2);
-}
-
-.zr-date-input {
-  max-width: 230px;
-}
-
-.zr-date-range-input {
-  max-width: 460px;
-}
-
-.zr-date-input input,
-.zr-date-range-input input {
-  background: var(--zr-dialog-bg);
-  box-shadow: none;
-  color: var(--zr-text-co);
-  max-width: 230px;
-  outline: 1px var(--zr-border-co) solid;
-}
-
-.zr-date-input .bp4-input-group.bp4-intent-danger input,
-.zr-date-input .bp4-input-group.bp4-intent-danger .bp4-input-action .bp4-icon,
-.zr-date-range-input .bp4-input-group.bp4-intent-danger input {
-  color: var(--zr-negative-co);
-}
-
-.zr-date-input .bp4-input-group.bp4-intent-danger input,
-.zr-date-range-input .bp4-input-group.bp4-intent-danger input {
-  box-shadow: none;
-  outline: 1px var(--zr-negative-co) solid;
-}
-
-.zr-date-input .bp4-input-group .bp4-input-action > span.bp4-icon {
-  color: var(--zr-auxiliary);
-  margin: 7px;
-}
-
-.zr-date-picker .bp4-datepicker .DayPicker-Day.DayPicker-Day--selected {
-  background: hsla(var(--zr-accent-1-co), 90%);
 }
 
 /* Popovers & Menus */
