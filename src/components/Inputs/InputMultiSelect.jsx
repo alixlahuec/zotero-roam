@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { arrayOf, func, shape, string } from "prop-types";
 import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect2 } from "@blueprintjs/select";
@@ -10,6 +10,15 @@ const popoverProps = {
 	fill: true,
 	minimal: true,
 	popoverClassName: "zr-popover"
+};
+
+const tagInputProps = {
+	inputProps: {
+		autoComplete: "off",
+		placeholder: "Add...",
+		spellCheck: "false"
+	},
+	placeholder: "Enter a value"
 };
 
 function itemPredicate(query, item) {
@@ -31,6 +40,7 @@ function itemRenderer(item, itemProps) {
 function tagRenderer(item){ return item.label; }
 
 function InputMultiSelect({ options = [], value = [], setValue }){
+	const selectedItems = useMemo(() => options.filter(op => value.includes(op.value)), [options, value]);
 	const onItemSelect = useCallback((item, _event) => setValue([...value, item.value]), [setValue, value]);
 	const onRemove = useCallback((item, _index) => setValue(value.filter(val => val != item.value)), [setValue, value]);
 
@@ -41,14 +51,16 @@ function InputMultiSelect({ options = [], value = [], setValue }){
 		items={options}
 		onItemSelect={onItemSelect}
 		onRemove={onRemove}
+		openOnKeyDown={false}
 		popoverProps={popoverProps}
-		selectedItems={value}
+		selectedItems={selectedItems}
+		tagInputProps={tagInputProps}
 		tagRenderer={tagRenderer}
 	/>;
 }
 InputMultiSelect.propTypes = {
 	options: arrayOf(shape({ label: string, value: string })),
-	value: string,
+	value: arrayOf(string),
 	setValue: func
 };
 
