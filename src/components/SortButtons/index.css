@@ -21,19 +21,22 @@
     color: var(--zr-text-co);
     cursor: pointer;
     display: inline-block;
-    font-weight:500;
+    font-weight: 400;
     margin-bottom: 0px;
+    opacity: 0.85;
+    padding-bottom: 3px;
     text-align: center;
     width: auto;
 }
 
-.zr-sort-option span.bp4-icon {
-    padding-right:5px;
+.zr-sort-option input:checked ~ label {
+    border-bottom: 1px hsla(var(--zr-accent-1-co), 50%) solid;
 }
 
-.zr-sort-option label,
 .zr-sort-option span.bp4-icon {
+    margin: 0px 2px;
     opacity: 0.7;
+    padding-right:5px;
 }
 
 .zr-sort-option input:checked ~ span, 

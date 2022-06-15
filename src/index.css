@@ -94,6 +94,13 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 [class*="zr"] .bp4-callout.bp4-intent-danger {
   background: var(--zr-negative-bg);
+}
+
+[class*="zr"] .bp4-callout.bp4-intent-danger,
+[class*="zr"] .bp4-callout.bp4-intent-danger[class*=bp4-icon-]::before, 
+[class*="zr"] .bp4-callout.bp4-intent-danger > .bp4-icon:first-child, 
+[class*="zr"] .bp4-callout.bp4-intent-danger .bp4-heading,
+[class*="zr"] .bp4-button.bp4-outlined.bp4-intent-danger {
   color: var(--zr-negative-co);
 }
 
@@ -224,13 +231,23 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 .zr-date-input input,
 .zr-date-range-input input {
+  background: var(--zr-dialog-bg);
+  box-shadow: none;
+  color: var(--zr-text-co);
   max-width: 230px;
+  outline: 1px var(--zr-border-co) solid;
 }
 
 .zr-date-input .bp4-input-group.bp4-intent-danger input,
 .zr-date-input .bp4-input-group.bp4-intent-danger .bp4-input-action .bp4-icon,
 .zr-date-range-input .bp4-input-group.bp4-intent-danger input {
   color: var(--zr-negative-co);
+}
+
+.zr-date-input .bp4-input-group.bp4-intent-danger input,
+.zr-date-range-input .bp4-input-group.bp4-intent-danger input {
+  box-shadow: none;
+  outline: 1px var(--zr-negative-co) solid;
 }
 
 .zr-date-input .bp4-input-group .bp4-input-action > span.bp4-icon {
