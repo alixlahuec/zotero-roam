@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { any, bool, func, oneOf, shape, string } from "prop-types";
 import { Button, MenuItem } from "@blueprintjs/core";
-import { Select } from "@blueprintjs/select";
+import { Select2 } from "@blueprintjs/select";
 
 import InputComponent from "./InputComponent";
 import { defaultQueryTerm, queries } from "./queries";
@@ -49,7 +49,7 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 	return <div className="zr-query-entry">
 		{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}
 		<div>
-			<Select 
+			<Select2 
 				filterable={false} 
 				itemRenderer={itemRenderer}
 				items={Object.keys(queries)}
@@ -57,8 +57,8 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 				placement="bottom"
 				popoverProps={popoverProps}>
 				<Button minimal={true} rightIcon="caret-down" text={property} />
-			</Select>
-			<Select 
+			</Select2>
+			<Select2 
 				filterable={false} 
 				itemRenderer={itemRenderer}
 				items={Object.keys(queries[property])}
@@ -66,7 +66,7 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 				placement="bottom"
 				popoverProps={popoverProps}>
 				<Button minimal={true} rightIcon="caret-down" text={relationship} />
-			</Select>
+			</Select2>
 			<InputComponent property={property} relationship={relationship} value={value} setValue={handleValueChange} />
 		</div>
 		{isOnlyChild

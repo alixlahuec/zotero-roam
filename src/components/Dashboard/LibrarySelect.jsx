@@ -1,7 +1,7 @@
 import React from "react";
 import { arrayOf, func, shape, string } from "prop-types";
 import { Button, MenuItem } from "@blueprintjs/core";
-import { Select } from "@blueprintjs/select";
+import { Select2 } from "@blueprintjs/select";
 
 import * as customPropTypes from "../../propTypes";
 
@@ -20,7 +20,7 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 	const { currentLibrary: { path }, onSelect, options } = libProps;
 
 	return (
-		<Select 
+		<Select2 
 			filterable={false}
 			itemRenderer={itemRenderer}
 			items={options} 
@@ -32,7 +32,7 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 				icon="folder-open"
 				minimal={true} 
 				text={path} />
-		</Select>
+		</Select2>
 	);
 });
 LibrarySelect.propTypes = {
