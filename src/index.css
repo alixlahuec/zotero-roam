@@ -269,11 +269,11 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
   box-shadow: none;
 }
 
-[class*="zr"] .bp4-control input:not(:checked) ~ .bp4-control-indicator {
+[class*="zr"] .bp4-control.bp4-radio input:checked ~ .bp4-control-indicator {
   background-color: hsla(var(--zr-accent-1-co), 75%);
 }
 
-[class*="zr"] .bp4-control input:not(:checked) ~ .bp4-control-indicator {
+[class*="zr"] .bp4-control.bp4-radio input:not(:checked) ~ .bp4-control-indicator {
   background-color: hsla(var(--zr-accent-1-co), 10%);
   background-image: none;
 }
