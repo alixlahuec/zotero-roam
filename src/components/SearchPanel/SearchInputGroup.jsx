@@ -24,7 +24,7 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 		return (
 			<>
 				<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={isQCActive} onChange={toggleQC} />
-				<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} />
+				<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} title="Close searchbar" />
 			</>
 		);
 	}, [handleClose, isQCActive, toggleQC]);
@@ -64,7 +64,7 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 
 	return (
 		<InputGroup
-			className={[Classes.INPUT, Classes.FILL].join(" ")}
+			className={[Classes.INPUT, Classes.FILL, "zr-library-search-input-group"].join(" ")}
 			id="zotero-roam-search-autocomplete"
 			placeholder="Search in abstract, title, authors (last names), year, tags, or citekey"
 			spellCheck="false"
