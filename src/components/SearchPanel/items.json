@@ -1,0 +1,351 @@
+{
+    "items": [
+        {
+            "key": "scottQuantitativeMeasurementOrganizational2003",
+            "version": 4166,
+            "library": {
+                "type": "user",
+                "id": 123456,
+                "name": "username",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/username",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/123456/items/HJ8V8ZU7",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/username/items/HJ8V8ZU7",
+                    "type": "text/html"
+                }
+            },
+            "meta": {
+                "creatorSummary": "Scott et al.",
+                "parsedDate": "2003",
+                "numChildren": 0
+            },
+            "data": {
+                "key": "HJ8V8ZU7",
+                "version": 4166,
+                "itemType": "journalArticle",
+                "title": "The Quantitative Measurement of Organizational Culture in Health Care: A Review of the Available Instruments",
+                "creators": [
+                    {
+                        "creatorType": "author",
+                        "firstName": "Tim",
+                        "lastName": "Scott"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Russell",
+                        "lastName": "Mannion"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Huw",
+                        "lastName": "Davies"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Martin",
+                        "lastName": "Marshall"
+                    }
+                ],
+                "abstractNote": "Objective. To review the quantitative instruments available to health service researchers who want to measure culture and cultural change. Data Sources. A literature search was conducted using Medline, Cinahl, Helmis, Psychlit, Dhdata, and the database of the King's Fund in London for articles published up to June 2001, using the phrase “organizational culture.” In addition, all citations and the gray literature were reviewed and advice was sought from experts in the field to identify instruments not found on the electronic databases. The search focused on instruments used to quantify culture with a track record, or potential for use, in health care settings. Data Extraction. For each instrument we examined the cultural dimensions addressed, the number of items for each questionnaire, the measurement scale adopted, examples of studies that had used the tool, the scientific properties of the instrument, and its strengths and limitations. Principal Findings. Thirteen instruments were found that satisfied our inclusion criteria, of which nine have a track record in studies involving health care organizations. The instruments varied considerably in terms of their grounding in theory, format, length, scope, and scientific properties. Conclusions. A range of instruments with differing characteristics are available to researchers interested in organizational culture, all of which have limitations in terms of their scope, ease of use, or scientific properties. The choice of instrument should be determined by how organizational culture is conceptualized by the research team, the purpose of the investigation, intended use of the results, and availability of resources.",
+                "publicationTitle": "Health Services Research",
+                "volume": "38",
+                "issue": "3",
+                "pages": "923-945",
+                "date": "2003",
+                "series": "",
+                "seriesTitle": "",
+                "seriesText": "",
+                "journalAbbreviation": "",
+                "language": "en",
+                "DOI": "10.1111/1475-6773.00154",
+                "ISSN": "1475-6773",
+                "shortTitle": "The Quantitative Measurement of Organizational Culture in Health Care",
+                "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/1475-6773.00154",
+                "accessDate": "2019-09-14T01:46:26Z",
+                "archive": "",
+                "archiveLocation": "",
+                "libraryCatalog": "Wiley Online Library",
+                "callNumber": "",
+                "rights": "",
+                "extra": "Citation Key: scottQuantitativeMeasurementOrganizational2003",
+                "tags": [
+                    {
+                        "tag": "IMPORTANT"
+                    },
+                    {
+                        "tag": "Organizational culture",
+                        "type": 1
+                    },
+                    {
+                        "tag": "measurement instruments",
+                        "type": 1
+                    },
+                    {
+                        "tag": "read"
+                    },
+                    {
+                        "tag": "systems"
+                    }
+                ],
+                "collections": [
+                    "TM4TQ59A"
+                ],
+                "relations": {},
+                "dateAdded": "2019-09-14T01:46:26Z",
+                "dateModified": "2021-07-29T01:32:34Z"
+            },
+            "has_citekey": true
+        },
+        {
+            "key": "AABH2FWD",
+            "version": 4464,
+            "library": {
+            "type": "user",
+            "id": 123456,
+            "name": "username",
+            "links": {
+                "alternate": {
+                "href": "https://www.zotero.org/username",
+                "type": "text/html"
+                }
+            }
+            },
+            "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/123456/items/AABH2FWD",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/username/items/AABH2FWD",
+                "type": "text/html"
+            }
+            },
+            "meta": {
+            "creatorSummary": "McQuarrie",
+            "parsedDate": "2004-09",
+            "numChildren": 0
+            },
+            "data": {
+            "key": "AABH2FWD",
+            "version": 4464,
+            "itemType": "conferencePaper",
+            "title": "Helping users develop mental models of products and interfaces",
+            "creators": [
+                {
+                "creatorType": "author",
+                "firstName": "N.",
+                "lastName": "McQuarrie"
+                }
+            ],
+            "abstractNote": "Payne's discussion of mental representations of representational artifacts has consequences in the context of Monk's discussion of common ground. The author calls for a focus on users' mental models when designing interfaces for electronically mediated communication and argue that simply designing for common ground without considering a user's understanding of such common ground is limiting. The author also argues that new and interesting communication devices could emerge if we consider that for all mental representations of data, even data in the minds of speakers in real-time conversations, there exists a theoretical device space that would model and therefore assist with the manipulation of such data. Common ground informs not generally considered possible might emerge if we find ways to put such device spaces into practice.",
+            "date": "2004-09",
+            "proceedingsTitle": "International Professional Communication Conference, 2004. IPCC 2004. Proceedings.",
+            "conferenceName": "International Professional Communication Conference, 2004. IPCC 2004. Proceedings.",
+            "place": "",
+            "publisher": "",
+            "volume": "",
+            "pages": "128-130",
+            "series": "",
+            "language": "",
+            "DOI": "10.1109/IPCC.2004.1375286",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "IEEE Xplore",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                "tag": "Cognitive science",
+                "type": 1
+                },
+                {
+                "tag": "Computer interfaces",
+                "type": 1
+                },
+                {
+                "tag": "Context modeling",
+                "type": 1
+                },
+                {
+                "tag": "Feedback",
+                "type": 1
+                },
+                {
+                "tag": "Humans",
+                "type": 1
+                },
+                {
+                "tag": "Videoconference",
+                "type": 1
+                }
+            ],
+            "collections": [
+                "UZRVA86H"
+            ],
+            "relations": {},
+            "dateAdded": "2022-02-23T01:37:04Z",
+            "dateModified": "2022-02-23T01:37:04Z"
+            },
+            "has_citekey": false
+        },
+        {
+            "key": "V279XC98",
+            "version": 4468,
+            "library": {
+            "type": "user",
+            "id": 123456,
+            "name": "username",
+            "links": {
+                "alternate": {
+                "href": "https://www.zotero.org/username",
+                "type": "text/html"
+                }
+            }
+            },
+            "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/5959244/items/V279XC98",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/alixlhc/items/V279XC98",
+                "type": "text/html"
+            }
+            },
+            "meta": {
+            "creatorSummary": "Petrova",
+            "parsedDate": "2020-06-26",
+            "numChildren": 0
+            },
+            "data": {
+            "key": "V279XC98",
+            "version": 4468,
+            "itemType": "webpage",
+            "title": "Can we trust our health in the hands of chatbots? : An exploratory study investigating the effect of anthropomorphic design of e-Health chatbots on patients UX.",
+            "creators": [
+                {
+                "creatorType": "author",
+                "firstName": "Viktoriya",
+                "lastName": "Petrova"
+                }
+            ],
+            "abstractNote": "The future of healthcare requires patients to become more autonomous and take actions into their own hands. Chatbots have been around for some time now, and since 2014 developers have been trying to integrate them as part of hospital e-Health systems. Medical chatbots have the potential to benefit both patients and doctors, by reducing workload and improving the chances of giving accurate diagnosis. Most empirical researches investigate the effect of chatbot design characteristics on the user experience (UX) in e-commerce, and not in a medical context. The present study uses a 2x2 research design to investigate how anthropomorphic visual and language cues affect patients’ trust, perceived intelligence, satisfaction and willingness to use. To explore the extent to which these characteristics influence users’ perceptions, each of the participants were presented with one of four videos that was designed to have either human avatar, or logo, and human language, or robot language. The study was conducted online and collected in total 120 responses. Due to the nature of the study there were no strict limitations regarding the target group, the age varied between 18 – 25 years old, and mostly included Bulgarian, Dutch and German participants. Based on the literature analysis conducted prior to the main study, it was expected that the chatbot, which integrated anthropomorphic characteristics would result in better overall UX. The results justify this assumption when it comes to implementing language cues. Furthermore it is confirmed that there is a positive effect of human avatar on the patiest trust. Nonetheless, this study can serve a number of practical and theoretical implications in the field of medical chatbot design. It provides arguments and demonstrates how anthropomorphic design improves UX, and enables technological acceptance and adoption.",
+            "websiteTitle": "",
+            "websiteType": "info:eu-repo/semantics/bachelorThesis",
+            "date": "2020-06-26",
+            "shortTitle": "Can we trust our health in the hands of chatbots?",
+            "url": "http://essay.utwente.nl/81683/",
+            "accessDate": "2022-02-23T01:39:36Z",
+            "language": "en",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "UZRVA86H"
+            ],
+            "relations": {},
+            "dateAdded": "2022-02-23T01:39:37Z",
+            "dateModified": "2022-02-23T01:39:37Z"
+            },
+            "has_citekey": false
+        },
+        {
+            "key": "JEGWNWK2",
+            "version": 4459,
+            "library": {
+            "type": "user",
+            "id": 123456,
+            "name": "username",
+            "links": {
+                "alternate": {
+                "href": "https://www.zotero.org/username",
+                "type": "text/html"
+                }
+            }
+            },
+            "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/123456/items/JEGWNWK2",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/username/items/JEGWNWK2",
+                "type": "text/html"
+            }
+            },
+            "meta": {
+            "creatorSummary": "Moroz et al.",
+            "parsedDate": "2020",
+            "numChildren": 0
+            },
+            "data": {
+            "key": "JEGWNWK2",
+            "version": 4459,
+            "itemType": "journalArticle",
+            "title": "Mental health services in Canada: Barriers and cost-effective solutions to increase access",
+            "creators": [
+                {
+                "creatorType": "author",
+                "firstName": "Nicholas",
+                "lastName": "Moroz"
+                },
+                {
+                "creatorType": "author",
+                "firstName": "Isabella",
+                "lastName": "Moroz"
+                },
+                {
+                "creatorType": "author",
+                "firstName": "Monika Slovinec",
+                "lastName": "D’Angelo"
+                }
+            ],
+            "abstractNote": "In this article, an overview of the barriers to accessing mental health services in Canada is provided and the recent federal funding commitments toward increasing the availability of evidence-based and cost-effective solutions to improve access to mental health services are highlighted. Barriers pertain mainly to costs, not knowing where to get help, excessive wait times, and insufficient funding. Through the Common Statement of Principles on Shared Health Priorities agreement, action is being taken by all jurisdictions in Canada to increase community-based mental health promotion programs and early interventions, especially those targeting children and youth. A growing body of evidence is demonstrating how specific community and primary care-based interventions are both effective and cost-effective. These integrated community solutions, shown to be effective for increasing access to appropriate services for patients while saving costs to the healthcare system, would benefit from the recent funding investments put in place by the federal government.",
+            "publicationTitle": "Healthcare Management Forum",
+            "volume": "33",
+            "issue": "6",
+            "pages": "282-287",
+            "date": "11/2020",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "Healthc Manage Forum",
+            "language": "en",
+            "DOI": "10.1177/0840470420933911",
+            "ISSN": "0840-4704, 2352-3883",
+            "shortTitle": "Mental health services in Canada",
+            "url": "http://journals.sagepub.com/doi/10.1177/0840470420933911",
+            "accessDate": "2022-02-23T01:17:06Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "DOI.org (Crossref)",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "UZRVA86H"
+            ],
+            "relations": {},
+            "dateAdded": "2022-02-23T01:17:07Z",
+            "dateModified": "2022-02-23T01:17:07Z"
+            },
+            "has_citekey": false
+        }
+    ]
+}

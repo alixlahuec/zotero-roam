@@ -54,29 +54,29 @@ label.zr-quick-copy {
     padding: 3px 10px;
 }
 
-.zr-dialog-overlay--search-library .zotero-roam-search_result {
+#zotero-roam-library-rendered .zotero-roam-search_result {
     padding: 3px 10px;
     font-size: 0.9em;
 }
 
-.zr-dialog-overlay--search-library .zr-library-item--contents {
+#zotero-roam-library-rendered .zr-library-item--contents {
     color: var(--zr-text-co);
     white-space: normal;
 }
 
-.zotero-roam-search_result .zr-library-item--key {
+#zotero-roam-library-rendered .zotero-roam-search_result .zr-library-item--key {
     flex: 0 0 auto;
     padding: 0px 6px;
     font-size: var(--zr-text-small);
     text-align: right;
 }
 
-.zotero-roam-search_result .zr-library-item--title {
+#zotero-roam-library-rendered .zotero-roam-search_result .zr-library-item--title {
     display: block;
     font-weight: 500;
 }
 
-.zr-dialog-overlay--search-library .zotero-roam-search_result[data-in-graph="true"] .zr-library-item--key {
+#zotero-roam-library-rendered .zotero-roam-search_result[data-in-graph="true"] .zr-library-item--key {
     background-color: var(--zr-positive-bg);
     border-radius: 3px;
     color: var(--zr-positive-co);

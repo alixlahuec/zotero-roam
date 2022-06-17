@@ -99,12 +99,13 @@ const SearchResult = React.memo(function SearchResult(props) {
 	return <MenuItem
 		onClick={handleClick}
 		className="zotero-roam-search_result"
-		role="option"
-		aria-selected={modifiers.active}
+		role="menuitem"
 		data-item-type={itemType}
 		data-in-graph={(inGraph != false).toString()}
+		htmlTitle={title}
 		labelElement={"@" + key}
 		labelClassName={resultKeyClass}
+		selected={modifiers.active}
 		tagName="div"
 		text={
 			<>

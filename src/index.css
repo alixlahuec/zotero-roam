@@ -1,7 +1,7 @@
 /* TODO: Once all values are confirmed, convert to RGBA then set gradients for states */
 
 :root {
-  --zr-accent-1-co: 216, 80%, 51%;
+  --zr-accent-1-co: 220, 80%, 51%;
   --zr-accent-1: hsla(var(--zr-accent-1-co), 100%);
   --zr-accent-2-co: 30, 70%, 51%;
   --zr-accent-2: hsla(var(--zr-accent-2-co), 100%);
@@ -12,9 +12,9 @@
   --zr-input-size: 240px;
   --zr-negative-bg: #fff1f2;
   --zr-negative-co: #c90808;
-  --zr-positive-bg: #0f996026;
-  --zr-positive-co: #0d8050;
-  --zr-secondary-co: #7b7b7b;
+  --zr-positive-bg: #45d29826;
+  --zr-positive-co: #1d6e4c;
+  --zr-secondary-co: #696969;
   --zr-secondary-fw: 300;
   --zr-shortcut-co: inherit;
   --zr-text-co: inherit;
@@ -33,7 +33,7 @@
   --zr-negative-co: #f36f6f;
   --zr-positive-bg: #5863582e;
   --zr-positive-co: #86f686;
-  --zr-secondary-co: #506071;
+  --zr-secondary-co: #8ba4bd;
   --zr-secondary-fw: 400;
   --zr-shortcut-co: #9b9b9b;
   --zr-text-co: #76a0cb;
@@ -68,8 +68,12 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 [class*="zr"] li[aria-selected="true"],
 [class*="zr"] li [aria-selected="true"],
 [class*="zr"] li[aria-selected="false"]:hover,
-[class*="zr"] li [aria-selected="false"]:hover {
+[class*="zr"] li [aria-selected="false"]:hover,
+[class*="zr"] .bp4-menu-item.bp4-selected, 
+[class*="zr"] .bp4-menu-item.bp4-selected:hover, 
+[class*="zr"] .bp4-menu-item.bp4-selected:active {
   background: hsla(var(--zr-accent-1-co), 8%);
+  color: inherit;
 }
 
 .zr-secondary {
@@ -161,6 +165,10 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 /* Blueprint Elements */
+
+[class*="zr"] .bp4-menu-item .bp4-menu-item-label {
+  color: var(--zr-secondary-co);
+}
 
 [class*="zr"] .bp4-callout {
   background: var(--zr-box-bg);
