@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { bool, func, instanceOf, number, object, shape, string } from "prop-types";
+import { bool, func, instanceOf, number, object, shape } from "prop-types";
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
 import { useQuery_Items } from "../../../api/queries";
@@ -68,7 +68,7 @@ const useGetItems = (reqs) => {
 	return new Map(data);
 };
 
-const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
+export const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, onClose, target } = props;
 	const { annotations: annotationsSettings, metadata: metadataSettings, notes: notesSettings, typemap } = useContext(UserSettings);
 	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
@@ -194,7 +194,6 @@ CitekeyContextMenu.propTypes = {
 	isOpen: bool,
 	itemsMap: instanceOf(Map),
 	onClose: func,
-	portalId: string,
 	target: object
 };
 

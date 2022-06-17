@@ -1,3 +1,7 @@
 .zr-context-menu {
     max-width: 300px;
 }
+
+.zr-context-menu .bp4-menu-item.bp4-intent-primary {
+    color: hsla(var(--zr-accent-1-co), 95%);
+}

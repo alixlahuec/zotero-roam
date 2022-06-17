@@ -1,0 +1,124 @@
+{
+    "citation": "Scott et al. (2003)",
+    "data": {
+        "children": {
+            "pdfs": [],
+            "notes": []
+        },
+        "location": "users/123456",
+        "raw": {
+            "key": "scottQuantitativeMeasurementOrganizational2003",
+            "version": 4166,
+            "library": {
+                "type": "user",
+                "id": 123456,
+                "name": "username",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/username",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/123456/items/HJ8V8ZU7",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/username/items/HJ8V8ZU7",
+                    "type": "text/html"
+                }
+            },
+            "meta": {
+                "creatorSummary": "Scott et al.",
+                "parsedDate": "2003",
+                "numChildren": 0
+            },
+            "data": {
+                "key": "HJ8V8ZU7",
+                "version": 4166,
+                "itemType": "journalArticle",
+                "title": "The Quantitative Measurement of Organizational Culture in Health Care: A Review of the Available Instruments",
+                "creators": [
+                    {
+                        "creatorType": "author",
+                        "firstName": "Tim",
+                        "lastName": "Scott"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Russell",
+                        "lastName": "Mannion"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Huw",
+                        "lastName": "Davies"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Martin",
+                        "lastName": "Marshall"
+                    }
+                ],
+                "abstractNote": "Objective. To review the quantitative instruments available to health service researchers who want to measure culture and cultural change. Data Sources. A literature search was conducted using Medline, Cinahl, Helmis, Psychlit, Dhdata, and the database of the King's Fund in London for articles published up to June 2001, using the phrase “organizational culture.” In addition, all citations and the gray literature were reviewed and advice was sought from experts in the field to identify instruments not found on the electronic databases. The search focused on instruments used to quantify culture with a track record, or potential for use, in health care settings. Data Extraction. For each instrument we examined the cultural dimensions addressed, the number of items for each questionnaire, the measurement scale adopted, examples of studies that had used the tool, the scientific properties of the instrument, and its strengths and limitations. Principal Findings. Thirteen instruments were found that satisfied our inclusion criteria, of which nine have a track record in studies involving health care organizations. The instruments varied considerably in terms of their grounding in theory, format, length, scope, and scientific properties. Conclusions. A range of instruments with differing characteristics are available to researchers interested in organizational culture, all of which have limitations in terms of their scope, ease of use, or scientific properties. The choice of instrument should be determined by how organizational culture is conceptualized by the research team, the purpose of the investigation, intended use of the results, and availability of resources.",
+                "publicationTitle": "Health Services Research",
+                "volume": "38",
+                "issue": "3",
+                "pages": "923-945",
+                "date": "2003",
+                "series": "",
+                "seriesTitle": "",
+                "seriesText": "",
+                "journalAbbreviation": "",
+                "language": "en",
+                "DOI": "10.1111/1475-6773.00154",
+                "ISSN": "1475-6773",
+                "shortTitle": "The Quantitative Measurement of Organizational Culture in Health Care",
+                "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/1475-6773.00154",
+                "accessDate": "2019-09-14T01:46:26Z",
+                "archive": "",
+                "archiveLocation": "",
+                "libraryCatalog": "Wiley Online Library",
+                "callNumber": "",
+                "rights": "",
+                "extra": "Citation Key: scottQuantitativeMeasurementOrganizational2003",
+                "tags": [
+                    {
+                        "tag": "IMPORTANT"
+                    },
+                    {
+                        "tag": "Organizational culture",
+                        "type": 1
+                    },
+                    {
+                        "tag": "measurement instruments",
+                        "type": 1
+                    },
+                    {
+                        "tag": "read"
+                    },
+                    {
+                        "tag": "systems"
+                    }
+                ],
+                "collections": [
+                    "TM4TQ59A"
+                ],
+                "relations": {},
+                "dateAdded": "2019-09-14T01:46:26Z",
+                "dateModified": "2021-07-29T01:32:34Z"
+            },
+            "has_citekey": true
+        },
+        "weblink": {
+            "href": "https://onlinelibrary.wiley.com/doi/abs/10.1111/1475-6773.00154",
+            "title": "https://onlinelibrary.wiley.com/doi/abs/10.1111/1475-6773.00154"
+        },
+        "zotero": {
+            "local": "",
+            "web": ""
+        }
+    }
+}
