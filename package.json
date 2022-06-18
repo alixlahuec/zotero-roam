@@ -16,6 +16,9 @@
     "main": ".src/index.js",
     "browser": "dist/zoteroRoam.min.js",
     "unpkg": "dist/zoteroRoam.min.js",
+    "msw": {
+        "workerDirectory": "public"
+     },
     "scripts": {
         "build:dev": "webpack --config webpack.dev.config.js",
         "build:prod": "webpack",
@@ -23,7 +26,7 @@
         "ci:lint": "eslint --fix",
         "test": "jest",
         "ci:test": "jest --ci",
-        "storybook": "start-storybook -p 6006",
+        "storybook": "start-storybook -p 6006 -s ./public",
         "build-storybook": "build-storybook"
     },
     "devDependencies": {
@@ -52,6 +55,7 @@
         "jest": "^28.1.0",
         "jest-environment-jsdom": "^28.1.0",
         "jest-transform-css": "^4.0.1",
+        "msw": "^0.42.1",
         "style-loader": "^3.3.1",
         "webpack": "^5.73.0",
         "webpack-cli": "^4.9.2",
