@@ -5,6 +5,7 @@ import "../node_modules/@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "../src/index.css";
 
 import { withExtensionContext } from "./withExtensionContext";
+import { withQueryClient } from "./withQueryClient";
 import { withUserSettings } from "./withUserSettings";
 
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
@@ -43,4 +44,4 @@ export const parameters = {
   },
 }
 
-export const decorators = [withTheme, withExtensionContext, withUserSettings];
+export const decorators = [withTheme, withExtensionContext, withUserSettings, withQueryClient];
