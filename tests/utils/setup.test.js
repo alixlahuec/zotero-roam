@@ -68,7 +68,7 @@ describe("Parsing mock data requests", () => {
 		];
 		expect(analyzeUserRequests(reqs))
 			.toEqual({
-				apikeys: [masterKey],
+				apiKeys: [masterKey],
 				dataRequests: [
 					{ 
 						apikey: masterKey, 
