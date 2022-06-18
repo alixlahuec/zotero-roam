@@ -217,7 +217,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 			modified.push(...additional);
 		}
 
-		let deleted = [];
+		let deleted = {};
 		// DO NOT request deleted items since X if since = 0 (aka, initial data request)
 		// It's a waste of a call
 		if(since > 0 && modified.length > 0){
@@ -374,6 +374,10 @@ async function fetchTags(library) {
 	}
 }
 
+/** Converts Zotero tags data into a categorized list
+ * @param {ZoteroTag[]} tags - The tags data from Zotero to categorize
+ * @returns The list of categorized tags
+ */
 function makeTagList(tags){
 	let tagMap = makeTagMap(tags);
 	let zdict = makeDictionary(Array.from(tagMap.keys()));
