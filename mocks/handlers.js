@@ -1,6 +1,8 @@
 import { rest } from "msw";
+import { handleAPIKey } from "./zotero/keys";
 
 export const handlers = [
+	handleAPIKey,
 	// Fallback
 	rest.get("*", (req, res, ctx) => {
 		return res(
