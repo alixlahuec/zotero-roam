@@ -1,4 +1,9 @@
 import { analyzeUserRequests } from "../../src/utils";
+import { data as keys} from "../../mocks/zotero/keys";
+import { data as libraries } from "../../mocks/zotero/libraries";
+
+const { keyWithFullAccess: { key: masterKey } } = keys;
+const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath } } = libraries;
 
 describe("Parsing user data requests", () => {
 	it("throws if no user requests are provided", () => {
@@ -50,6 +55,37 @@ describe("Parsing user data requests", () => {
 				libraries: [
 					{path: "users/12345", apikey: "XXXXXXXXXX"},
 					{path: "groups/98765", apikey: "XXXXXXXXXX"}
+				]
+			});
+	});
+});
+
+describe("Parsing mock data requests", () => {
+	it("should be a valid configuration", () => {
+		const reqs = [
+			{ dataURI: userPath + "/items", apikey: masterKey, name: "My user library" },
+			{ dataURI: groupPath + "/items", apikey: masterKey, name: "My group library" }
+		];
+		expect(analyzeUserRequests(reqs))
+			.toEqual({
+				apikeys: [masterKey],
+				dataRequests: [
+					{ 
+						apikey: masterKey, 
+						dataURI: userPath + "/items", 
+						library: userPath, 
+						name: "My user library", 
+						params: "" },
+					{ 
+						apikey: masterKey, 
+						dataURI: groupPath + "/items", 
+						library: groupPath, 
+						name: "My group library", 
+						params: "" }
+				],
+				libraries: [
+					{ apikey: masterKey, path: userPath },
+					{ apikey: masterKey, path: groupPath}
 				]
 			});
 	});

@@ -4,6 +4,7 @@ import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "../node_modules/@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "../src/index.css";
 
+import { withExtensionContext } from "./withExtensionContext";
 import { withUserSettings } from "./withUserSettings";
 
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
@@ -42,4 +43,4 @@ export const parameters = {
   },
 }
 
-export const decorators = [withTheme, withUserSettings];
+export const decorators = [withTheme, withExtensionContext, withUserSettings];
