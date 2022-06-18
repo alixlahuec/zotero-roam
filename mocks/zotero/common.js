@@ -1,0 +1,1 @@
+export const zotero = (URI) => "https://api.zotero.org/" + URI;
