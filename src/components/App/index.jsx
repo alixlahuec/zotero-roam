@@ -163,7 +163,7 @@ App.propTypes = {
 
 // Utilities to be exposed via global zoteroRoam variable, for consumption by users :
 const getBibEntries = (citekeys, libraries) => _getBibEntries(citekeys, libraries, queryClient);
-const getBibliography = (item, library, config = {}) => _getBibliography(item, library, config);
+const getBibliography = async(item, library, config = {}) => await _getBibliography(item, library, config);
 const getChildren = (item) => _getChildren(item, queryClient);
 const getCollections = (library) => _getCollections(library, queryClient);
 const getItems = (select = "all", filters = {}) => _getItems(select, filters, queryClient);

@@ -65,7 +65,6 @@ describe("Fetching mocked Citoid data", () => {
 						return error.response;
 					}
 				});
-			console.log(res);
 			expect(res.status).toBe(status);
 			expect(res.data).toEqual([output]);
 		}

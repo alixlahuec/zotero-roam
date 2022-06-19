@@ -39,6 +39,7 @@ function categorizeZoteroTags(z_data, tagMap){
  */
 function cleanBibliographyHTML(bib){
 	// Grab only the string (strip outer divs)
+	// TODO: Support other styles than CSL
 	let bibString = bib.match("csl-entry\">(.+)</div>")[1];
 	// Use a textarea element to decode HTML
 	let formatter = document.createElement("textarea");
@@ -164,19 +165,20 @@ async function fetchBibliography(itemKey, library, config = {}) {
 	const { include = "bib", linkwrap = 0, locale = "en-US", style = "chicago-note-bibliography" } = config;
 	
 	try {
-		let response = await zoteroClient.get(`${path}/items/${itemKey}`, {
-			headers: {
-				"Zotero-API-Key": apikey
-			},
-			params: {
-				include,
-				linkwrap,
-				locale,
-				style
+		let { data } = await zoteroClient.get(
+			`${path}/items/${itemKey}`, 
+			{
+				headers: { "Zotero-API-Key": apikey },
+				params: {
+					include,
+					linkwrap,
+					locale,
+					style
+				}
 			}
-		});
+		);
 
-		return response.data[include];
+		return data[include];
 	} catch(error){
 		return Promise.reject(error);
 	}
@@ -209,7 +211,12 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 	const { apikey, path } = library;
 
 	try {
-		let { data: modified, headers } = await zoteroClient.get(`${path}/collections?since=${since}`, { headers: { "Zotero-API-Key": apikey } });
+		let { data: modified, headers } = await zoteroClient.get(
+			`${path}/collections`,
+			{ 
+				headers: { "Zotero-API-Key": apikey },
+				params: { since }
+			});
 		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
 		totalResults = Number(totalResults);
 		if(totalResults > 100){
@@ -217,7 +224,8 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 			modified.push(...additional);
 		}
 
-		let deleted = {};
+		let deleted = { collections: [] };
+
 		// DO NOT request deleted items since X if since = 0 (aka, initial data request)
 		// It's a waste of a call
 		if(since > 0 && modified.length > 0){
