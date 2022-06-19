@@ -30,6 +30,7 @@ jobs:
         with:
           commit_message: "auto-commit: lint, test, build"
           file_pattern: .
+        continue-on-error: true # See https://github.com/stefanzweifel/git-auto-commit-action/issues/204
       - name: Sentry Release
         uses: getsentry/action-release@v1.1.6
         env:
