@@ -31,7 +31,7 @@ const CollectionsSelector = React.memo(function CollectionsSelector(props) {
 
 	return (
 		collections.length == 0
-			? <Spinner />
+			? <Spinner size={12} title="Checking for collections in library" />
 			: <div className="options-collections-list">
 				{collections.map(coll => <CollectionOption key={coll.key} collection={coll} isChecked={selectedCollections.includes(coll.key)} onSelect={onSelect} />)}
 			</div>

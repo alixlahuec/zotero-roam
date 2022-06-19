@@ -9,6 +9,7 @@ import { searchEngine } from "../../utils";
 const results_limit = 30;
 const popoverProps = {
 	canEscapeKeyClose: false,
+	className: "zr-input-tags",
 	fill: true,
 	minimal: true,
 	popoverClassName: "zr-popover"

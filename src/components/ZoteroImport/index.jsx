@@ -88,7 +88,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 	const handleCollSelection = useCallback((key) => {
 		setSelectedColls(currentSelection => {
 			if(currentSelection.includes(key)){
-				return currentSelection.filter(coll => coll.key != key);
+				return currentSelection.filter(coll => coll != key);
 			} else {
 				return [...currentSelection, key];
 			}
@@ -188,7 +188,7 @@ const ZoteroImport = React.memo(function ZoteroImport(props) {
 
 	return (
 		isLoading
-			? <Spinner />
+			? <Spinner title="Checking for writeable libraries" />
 			: writeableLibraries.length == 0
 				? <NoWriteableLibraries /> 
 				: <ImportPanel 

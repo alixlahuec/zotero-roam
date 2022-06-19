@@ -46,6 +46,10 @@
     margin-left:20px;
 }
 
+.zr-webimport-panel--side .zr-input-tags.bp4-popover2-target {
+    width: 100%;
+}
+
 .import-options .bp4-input.bp4-multi-select {
     background: var(--zr-dialog-bg);
     border: 1px var(--zr-border-co) solid;
