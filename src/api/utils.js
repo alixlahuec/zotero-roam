@@ -533,6 +533,7 @@ function writeItems(dataList, library){
 export {
 	cleanBibliographyHTML,
 	deleteTags,
+	extractCitekeys,
 	fetchBibEntries,
 	fetchBibliography,
 	fetchCitoid,

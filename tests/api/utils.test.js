@@ -3,7 +3,21 @@ import { data as citoids } from "../../mocks/citoid";
 import { findCollections } from "../../mocks/zotero/collections";
 import { data as apiKeys } from "../../mocks/zotero/keys";
 import { data as libraries } from "../../mocks/zotero/libraries";
-import { fetchCitoid, fetchCollections, fetchPermissions } from "../../src/api/utils";
+import { extractCitekeys, fetchCitoid, fetchCollections, fetchPermissions } from "../../src/api/utils";
+
+test("Extracting citekeys for Zotero items", () => {
+	const cases = [
+		{ key: "ABCD1234", data: { extra: "Citation Key: someCitekey1994" }},
+		{ key: "PQRST789", data: { extra: "" }}
+	];
+
+	const expectations = [
+		{ key: "someCitekey1994", data: { extra: "Citation Key: someCitekey1994" }, has_citekey: true },
+		{ key: "PQRST789", data: { extra: "" }, has_citekey: false}
+	];
+
+	expect(extractCitekeys(cases)).toEqual(expectations);
+});
 
 describe("Fetching mocked API Key permissions", () => {
 	const cases = Object.entries(apiKeys);
