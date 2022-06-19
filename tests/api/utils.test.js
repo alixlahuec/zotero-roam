@@ -4,9 +4,11 @@ import { findCollections } from "../../mocks/zotero/collections";
 import { data as apiKeys } from "../../mocks/zotero/keys";
 import { data as bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
 import { data as libraries } from "../../mocks/zotero/libraries";
-import { cleanBibliographyHTML, extractCitekeys, fetchBibliography, fetchCitoid, fetchCollections, fetchPermissions } from "../../src/api/utils";
+import { data as tags, findTags } from "../../mocks/zotero/tags";
+import { cleanBibliographyHTML, extractCitekeys, fetchBibliography, fetchCitoid, fetchCollections, fetchPermissions, fetchTags, makeTagList } from "../../src/api/utils";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;
+const { userLibrary, groupLibrary } = libraries;
 const getLibraryPath = (library) => {
 	return library.type + "s/" + library.id;
 };
@@ -41,6 +43,41 @@ test("Extracting citekeys for Zotero items", () => {
 	];
 
 	expect(extractCitekeys(cases)).toEqual(expectations);
+});
+
+describe("Creating formatted tag lists", () => {
+	const cases = Object.entries(libraries);
+
+	function setExpectations(path, list){
+		const output = {};
+		Object.entries(list).map(([initial, tokens]) => {
+			output[initial] = tokens.map(token => ({
+				token,
+				roam: [],
+				zotero: findTags(path, token)
+			}));
+		});
+		return output;
+	}
+
+	const expectations = {
+		[userLibrary.path]: setExpectations(userLibrary.path, {
+			"i": ["immigrant youth"],
+			"p": ["patient journeys"]
+		}),
+		[groupLibrary.path]: setExpectations(groupLibrary.path, {
+			"h": ["housing"],
+			"u": ["urban design"]
+		})
+	};
+
+	test.each(cases)(
+		"%# Creating tag list for %s",
+		(_libName, libraryDetails) => {
+			const { path } = libraryDetails;
+			expect(makeTagList(tags[path])).toEqual(expectations[path]);
+		}
+	);
 });
 
 describe("Fetching mocked API Key permissions", () => {
@@ -106,6 +143,22 @@ describe("Fetching mocked collections", () => {
 			);
 			expect(sinceLatest).toEqual({
 				data: findCollections(type, id, 0),
+				lastUpdated: version
+			});
+		}
+	);
+});
+
+describe("Fetching mocked tags", () => {
+	const cases = Object.entries(libraries);
+
+	test.each(cases)(
+		"%# Fetching tags for %s",
+		async(_libName, libraryDetails) => {
+			const { path, version } = libraryDetails;
+			const tagData = await fetchTags({ apikey: masterKey, path });
+			expect(tagData).toEqual({
+				data: makeTagList(tags[path]),
 				lastUpdated: version
 			});
 		}

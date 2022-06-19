@@ -542,6 +542,7 @@ export {
 	fetchPermissions,
 	fetchSemantic,
 	fetchTags,
+	makeTagList,
 	writeCitoids,
 	writeItems
 };
