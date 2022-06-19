@@ -10,6 +10,7 @@
   --zr-box-bg: #f8f8f8;
   --zr-dialog-bg: white;
   --zr-input-size: 240px;
+  --zr-minimal-bg: #cad1df26;
   --zr-negative-bg: #fff1f2;
   --zr-negative-co: #c90808;
   --zr-positive-bg: #45d29826;
@@ -192,7 +193,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 [class*="zr"] a:not(.bp4-menu-item) .bp4-icon,
 [class*="zr"] .bp4-button.bp4-minimal.bp4-intent-primary,
 [class*="zr"] .bp4-button.bp4-minimal.bp4-intent-primary:hover {
-  color: hsla(var(--zr-accent-1-co), 80%);
+  color: hsla(var(--zr-accent-1-co), 95%);
 }
 
 [class*="zr"] a:not(.bp4-menu-item):hover {
@@ -201,6 +202,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 [class*="zr"] .bp4-tag.bp4-minimal:not([class*="bp4-intent-"]) {
+  background: var(--zr-minimal-bg);
   color: var(--zr-auxiliary);
 }
 
