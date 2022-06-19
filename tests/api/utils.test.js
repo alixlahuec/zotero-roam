@@ -23,7 +23,7 @@ describe("Fetching mocked collections", () => {
 			const since = 0;
 			const { id, path, type, version } = libraryDetails;
 			const collections = await fetchCollections({ apikey: apiKeys.keyWithFullAccess.key, path }, since, { match: [] });
-			expect(collections.data).toEqual({
+			expect(collections).toEqual({
 				data: findCollections(type, id, since),
 				lastUpdated: version
 			});
