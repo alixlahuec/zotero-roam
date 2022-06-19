@@ -1,3 +1,6 @@
+import { initialize, mswDecorator } from 'msw-storybook-addon';
+import { handlers } from '../mocks/handlers';
+
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
 import "../node_modules/@blueprintjs/select/lib/css/blueprint-select.css";
 import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css";
@@ -7,6 +10,13 @@ import "../src/index.css";
 import { withExtensionContext } from "./withExtensionContext";
 import { withQueryClient } from "./withQueryClient";
 import { withUserSettings } from "./withUserSettings";
+
+// Initialize MSW
+initialize({
+    onUnhandledRequest: ({ method, url }) => {
+        console.error(`Unhandled ${method} request to ${url}.`)
+    },
+});
 
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
 const withTheme = (Story, context) => {
@@ -42,6 +52,12 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  msw: {
+      handlers: [
+          rest.get("http://localhost:6006/*", (req, _res, _ctx) => req.passthrough()),
+          ...handlers
+      ]
+  }
 }
 
-export const decorators = [withTheme, withExtensionContext, withUserSettings, withQueryClient];
+export const decorators = [mswDecorator, withTheme, withExtensionContext, withUserSettings, withQueryClient];
