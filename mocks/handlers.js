@@ -21,6 +21,6 @@ export const roamAssetsHandler = rest.get(
 export const apiHandlers = [
 	handleBibliography,
 	handleCitoid,
-	...handleCollections,
+	handleCollections,
 	handleAPIKey
 ];

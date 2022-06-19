@@ -62,21 +62,19 @@ export const findCollections = (type, id, since) => {
 	return data.filter(cl => cl.library.type == type && cl.library.id == id && cl.version > Number(since));
 };
 
-export const handleCollections = [
-	rest.get(
-		zotero(":libraryType/:libraryID/collections"),
-		(req, res, ctx) => {
-			const { libraryType, libraryID } = req.params;
-			const since = req.url.searchParams.get("since") || 0;
+export const handleCollections = rest.get(
+	zotero(":libraryType/:libraryID/collections"),
+	(req, res, ctx) => {
+		const { libraryType, libraryID } = req.params;
+		const since = req.url.searchParams.get("since") || 0;
 
-			const { id, type, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
-			const collections = findCollections(type, id, since);
+		const { id, type, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
+		const collections = findCollections(type, id, since);
 
-			return res(
-				ctx.set("last-modified-version", `${version}`),
-				ctx.set("total-results", Math.min(collections.length, 100)), // We're not mocking with additional requests
-				ctx.json(collections)
-			);
-		}
-	)
-];
+		return res(
+			ctx.set("last-modified-version", `${version}`),
+			ctx.set("total-results", Math.min(collections.length, 100)), // We're not mocking with additional requests
+			ctx.json(collections)
+		);
+	}
+);
