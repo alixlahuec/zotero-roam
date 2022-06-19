@@ -71,14 +71,41 @@ describe("Fetching mocked bibliography", () => {
 
 describe("Fetching mocked collections", () => {
 	const cases = Object.entries(libraries);
+
 	test.each(cases)(
-		"%# Fetching all collections for %s",
+		"%# There should be no items older than latest in %s",
+		(_libName, libraryDetails) => {
+			const { type, id, version } = libraryDetails;
+			expect(findCollections(type, id, version)).toEqual([]);
+		}
+	);
+
+	test.each(cases)(
+		"%# Fetching collections for %s",
 		async(_libName, libraryDetails) => {
-			const since = 0;
 			const { id, path, type, version } = libraryDetails;
-			const collections = await fetchCollections({ apikey: apiKeys.keyWithFullAccess.key, path }, since, { match: [] });
-			expect(collections).toEqual({
-				data: findCollections(type, id, since),
+			const libraryObj = {
+				apikey: masterKey,
+				path
+			};
+
+			const allCollections = await fetchCollections(
+				libraryObj, 
+				0, 
+				{ match: [] }
+			);
+			expect(allCollections).toEqual({
+				data: findCollections(type, id, 0),
+				lastUpdated: version
+			});
+
+			const sinceLatest = await fetchCollections(
+				libraryObj, 
+				version, 
+				{ match: allCollections.data }
+			);
+			expect(sinceLatest).toEqual({
+				data: findCollections(type, id, 0),
 				lastUpdated: version
 			});
 		}

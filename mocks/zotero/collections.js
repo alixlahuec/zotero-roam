@@ -58,8 +58,8 @@ export const data = [
 	}
 ];
 
-export const findCollections = (type, id) => {
-	return data.filter(cl => cl.library.type == type && cl.library.id == id);
+export const findCollections = (type, id, since) => {
+	return data.filter(cl => cl.library.type == type && cl.library.id == id && cl.version > Number(since));
 };
 
 export const handleCollections = [
@@ -67,9 +67,10 @@ export const handleCollections = [
 		zotero(":libraryType/:libraryID/collections"),
 		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;
+			const since = req.url.searchParams.get("since") || 0;
 
 			const { id, type, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
-			const collections = findCollections(type, id);
+			const collections = findCollections(type, id, since);
 
 			return res(
 				ctx.set("last-modified-version", `${version}`),
