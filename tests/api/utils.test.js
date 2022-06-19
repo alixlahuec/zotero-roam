@@ -33,17 +33,44 @@ describe("Fetching mocked collections", () => {
 });
 
 describe("Fetching mocked Citoid data", () => {
-	const cases = Object.entries(citoids);
-	test.each(cases)(
-		"%# Fetching Citoid data for %s",
+	const { success_cases, error_cases } = Object.entries(citoids).reduce((obj, entry) => {
+		const { status = 200 } = entry[1];
+		if(status == 200){
+			obj.success_cases.push(entry);
+		} else {
+			obj.error_cases.push(entry);
+		}
+		return obj;
+	}, { success_cases: [], error_cases: [] });
+
+	test.each(success_cases)(
+		"%# Successfully mocking Citoid data for %s",
 		async(identifier, itemData) => {
+			const { status, ...output } = itemData;
 			const citoid = await fetchCitoid(identifier);
 			expect(citoid).toEqual({
-				item: itemData,
+				item: output,
 				query: identifier
 			});
 		}
 	);
+
+	test.each(error_cases)(
+		"%# Successfully mocking Citoid error for %s",
+		async(identifier, itemData) => {
+			const { status, ...output } = itemData;
+			const res = await fetchCitoid(identifier)
+				.catch((error) => {
+					if(error.response){
+						return error.response;
+					}
+				});
+			console.log(res);
+			expect(res.status).toBe(status);
+			expect(res.data).toEqual([output]);
+		}
+	);
+    
 });
 
 describe("Mock fallback", () => {

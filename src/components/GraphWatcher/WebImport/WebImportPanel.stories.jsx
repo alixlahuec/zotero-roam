@@ -1,5 +1,6 @@
 import React from "react";
 import WebImportPanel from "./WebImportPanel";
+import { badIdentifier, goodIdentifier } from "../../../../mocks/citoid";
 
 window.roamAlphaAPI = {
 	q: () => ([
@@ -24,5 +25,15 @@ const Template = (args) => <WebImportPanel {...args} />;
 
 export const WithValidLink = Template.bind({});
 WithValidLink.args = {
-	urls: ["https://www.jmir.org/2021/9/e27283"]
+	urls: [goodIdentifier]
+};
+
+export const WithInvalidLink = Template.bind({});
+WithInvalidLink.args = {
+	urls: [badIdentifier]
+};
+
+export const WithMixedLinks = Template.bind({});
+WithMixedLinks.args = {
+	urls: [badIdentifier, goodIdentifier]
 };
