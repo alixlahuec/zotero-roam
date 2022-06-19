@@ -13,12 +13,8 @@ export const fallbackHandler = rest.get(
 );
 
 export const roamAssetsHandler = rest.get(
-	"https://roamresearch.com/assets/css/*", 
-	(req, res, ctx) => {
-		return res(
-			ctx.status(301, "Ignoring a request for Roam CSS resources at " + req.url)
-		);
-	}
+	"https://roamresearch.com/assets/*", 
+	(req, _res, _ctx) => req.passthrough()
 );
 
 export const apiHandlers = [

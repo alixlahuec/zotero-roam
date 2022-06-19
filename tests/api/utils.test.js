@@ -57,14 +57,4 @@ describe("Mock fallback", () => {
 		expect(res.status).toBe(404);
 		expect(res.statusText).toBe("You need to add a handler for https://example.com/");
 	});
-
-	it("returns a 301 code when the request is for Roam CSS assets", async() => {
-		const res = await axios.get("https://roamresearch.com/assets/css/fonts/Inter/Inter-Light-BETA.woff2")
-			.catch((error) => {
-				if(error.response){
-					return error.response;
-				}
-			});
-		expect(res.status).toBe(301);
-	});
 });

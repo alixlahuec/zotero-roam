@@ -58,6 +58,7 @@ export const parameters = {
           ...apiHandlers,
           roamAssetsHandler,
           rest.get("http://localhost:6006/runtime*", (req, _res, _ctx) => req.passthrough()),
+          rest.get("http://localhost:6006/main*", (req, _res, _ctx) => req.passthrough()),
           rest.get("http://localhost:6006/*", (req, res, ctx) => {
               return res(ctx.status(312, "Check if this request should be allowed : " + req.url))
           }),
