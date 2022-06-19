@@ -2,6 +2,7 @@ import { rest } from "msw";
 import { handleBibliography } from "./zotero/bib";
 import { handleCitoid } from "./citoid";
 import { handleCollections } from "./zotero/collections";
+import { handleSemantic } from "./semantic-scholar";
 import { handleTags } from "./zotero/tags";
 import { handleAPIKey } from "./zotero/keys";
 
@@ -23,6 +24,7 @@ export const apiHandlers = [
 	handleBibliography,
 	handleCitoid,
 	handleCollections,
+	handleSemantic,
 	handleTags,
 	handleAPIKey
 ];

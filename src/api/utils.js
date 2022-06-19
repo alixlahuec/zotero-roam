@@ -543,6 +543,7 @@ export {
 	fetchSemantic,
 	fetchTags,
 	makeTagList,
+	parseSemanticDOIs,
 	writeCitoids,
 	writeItems
 };
