@@ -2,8 +2,32 @@ import axios from "axios";
 import { data as citoids } from "../../mocks/citoid";
 import { findCollections } from "../../mocks/zotero/collections";
 import { data as apiKeys } from "../../mocks/zotero/keys";
+import { data as bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
 import { data as libraries } from "../../mocks/zotero/libraries";
-import { extractCitekeys, fetchCitoid, fetchCollections, fetchPermissions } from "../../src/api/utils";
+import { cleanBibliographyHTML, extractCitekeys, fetchBibliography, fetchCitoid, fetchCollections, fetchPermissions } from "../../src/api/utils";
+
+const { keyWithFullAccess: { key: masterKey }} = apiKeys;
+const getLibraryPath = (library) => {
+	return library.type + "s/" + library.id;
+};
+
+describe("Cleaning XHTML markup for bibliography entries", () => {
+	// Necessary since jsdom does not support innerText
+	// It shouldn't give discrepant results here
+	// https://github.com/jsdom/jsdom/issues/1245#issuecomment-763535573
+	beforeAll(() => {
+		Object.defineProperty(HTMLElement.prototype, "innerText", {
+			get() {
+				return this.textContent;
+			}
+		});
+	});
+
+	it("should correctly format XHTML into Roam markup", () => {
+		expect(cleanBibliographyHTML(bibs.itemFromUserLibrary.bib))
+			.toBe("Agarwal, Payal, Rick Wang, Christopher Meaney, Sakina Walji, Ali Damji, Navsheer Gill Toor, Gina Yip, et al. “Sociodemographic Differences in Patient Experience with Virtual Care during COVID-19.” medRxiv, July 22, 2021. https://www.medrxiv.org/content/10.1101/2021.07.19.21260373v1.");
+	});
+});
 
 test("Extracting citekeys for Zotero items", () => {
 	const cases = [
@@ -26,6 +50,21 @@ describe("Fetching mocked API Key permissions", () => {
 		async(_keyName, expectation) => {
 			const permissions = await fetchPermissions(expectation.key);
 			expect(permissions).toEqual(expectation);
+		}
+	);
+});
+
+describe("Fetching mocked bibliography", () => {
+	const cases = Object.entries(bibs);
+	test.each(cases)(
+		"%# Fetching bibliography as bib for %s",
+		async(_bibName, entry) => {
+			const path = getLibraryPath(entry.library);
+
+			const bibliography = await fetchBibliography(entry.key, { apikey: masterKey, path }, { include: "bib" });
+			const { bib } = findBibliographyEntry({ key: entry.key, path });
+
+			expect(bibliography).toEqual(bib);
 		}
 	);
 });

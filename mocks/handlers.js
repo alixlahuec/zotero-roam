@@ -1,4 +1,5 @@
 import { rest } from "msw";
+import { handleBibliography } from "./zotero/bib";
 import { handleCitoid } from "./citoid";
 import { handleCollections } from "./zotero/collections";
 import { handleAPIKey } from "./zotero/keys";
@@ -18,6 +19,7 @@ export const roamAssetsHandler = rest.get(
 );
 
 export const apiHandlers = [
+	handleBibliography,
 	handleCitoid,
 	...handleCollections,
 	handleAPIKey
