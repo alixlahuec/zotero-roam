@@ -66,7 +66,7 @@ li.zr-webimport-item {
     background-image: none;
     border-radius: 8px;
     box-shadow: none;
-    outline: var(--zr-accent-1) dotted 1px;
+    outline: hsla(var(--zr-accent-1-co), 75%) dotted 1px;
 }
 
 .bp4-checkbox.bp4-control.zr-webimport-item--title .bp4-control-indicator,
@@ -76,7 +76,7 @@ li.zr-webimport-item {
 }
 
 .bp4-checkbox.bp4-control.zr-webimport-item--title input:checked ~ .bp4-control-indicator {
-    background-color: var(--zr-accent-1);
+    background-color: hsla(var(--zr-accent-1-co), 75%);
     outline-style: auto;
 }
 
@@ -105,9 +105,9 @@ li.zr-webimport-item {
 
 /* DARK THEME */
 
-[zr-dark-theme="true"] .bp4-checkbox.bp4-control.zr-webimport-item--title .bp4-control-indicator {
+/* [zr-dark-theme="true"] .bp4-checkbox.bp4-control.zr-webimport-item--title .bp4-control-indicator {
     background-color: var(--zr-dark-dialog-bg, #242424);
     outline-style: solid;
-}
+} */
 
 /* TODO: Test for simplest styling for checkbox appearance, light/dark */

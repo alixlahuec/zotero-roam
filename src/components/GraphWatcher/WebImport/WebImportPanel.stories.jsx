@@ -1,6 +1,14 @@
 import React from "react";
 import WebImportPanel from "./WebImportPanel";
 
+window.roamAlphaAPI = {
+	q: () => ([
+		"history",
+		"read",
+		"TODO"
+	])
+};
+
 export default {
 	component: WebImportPanel,
 	args: {

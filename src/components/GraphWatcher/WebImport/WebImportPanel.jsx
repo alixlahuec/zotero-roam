@@ -132,7 +132,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 							</ul>
 						</div>
 					</div>
-					<div className="zr-webimport-panel--side" tabIndex={0}>
+					<div className="zr-webimport-panel--side">
 						<ZoteroImport identifiers={selected} isActive={has_selected_items} resetImport={resetImport} />
 					</div>
 				</SentryBoundary>
