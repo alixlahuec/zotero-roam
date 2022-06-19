@@ -1,8 +1,9 @@
 import axios from "axios";
+import { data as citoids } from "../../mocks/citoid";
 import { findCollections } from "../../mocks/zotero/collections";
 import { data as apiKeys } from "../../mocks/zotero/keys";
 import { data as libraries } from "../../mocks/zotero/libraries";
-import { fetchCollections, fetchPermissions } from "../../src/api/utils";
+import { fetchCitoid, fetchCollections, fetchPermissions } from "../../src/api/utils";
 
 describe("Fetching mocked API Key permissions", () => {
 	const cases = Object.entries(apiKeys);
@@ -26,6 +27,20 @@ describe("Fetching mocked collections", () => {
 			expect(collections).toEqual({
 				data: findCollections(type, id, since),
 				lastUpdated: version
+			});
+		}
+	);
+});
+
+describe("Fetching mocked Citoid data", () => {
+	const cases = Object.entries(citoids);
+	test.each(cases)(
+		"%# Fetching Citoid data for %s",
+		async(identifier, itemData) => {
+			const citoid = await fetchCitoid(identifier);
+			expect(citoid).toEqual({
+				item: itemData,
+				query: identifier
 			});
 		}
 	);

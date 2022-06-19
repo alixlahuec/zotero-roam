@@ -1,8 +1,10 @@
 import { rest } from "msw";
+import { handleCitoid } from "./citoid";
 import { handleCollections } from "./zotero/collections";
 import { handleAPIKey } from "./zotero/keys";
 
 export const handlers = [
+	handleCitoid,
 	...handleCollections,
 	handleAPIKey,
 	// Catch requests for Roam CSS assets
