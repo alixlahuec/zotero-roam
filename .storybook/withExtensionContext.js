@@ -4,14 +4,16 @@ import { data as libraries } from "../mocks/zotero/libraries";
 import { ExtensionContext } from "../src/components/App";
 import { analyzeUserRequests } from "../src/utils";
 
-const { keyWithFullAccess: { masterKey } } = keys;
+const { keyWithFullAccess: { key: masterKey } } = keys;
 const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath} } = libraries;
 
+const defaultReqs = [
+    { dataURI: userPath + "/items", apikey: masterKey, name: "My user library" },
+    { dataURI: groupPath + "/items", apikey: masterKey, name: "My group library" }
+];
+
 const defaultContext = {
-    ...analyzeUserRequests([
-        { dataURI: userPath + "/items", apikey: masterKey, name: "My user library" },
-        { dataURI: groupPath + "/items", apikey: masterKey, name: "My group library" }
-    ]),
+    ...analyzeUserRequests(defaultReqs),
     portalId: "root",
     version: "0.7.0"
 }
