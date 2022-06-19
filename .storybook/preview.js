@@ -1,5 +1,6 @@
 import { initialize, mswDecorator } from 'msw-storybook-addon';
 import { handlers } from '../mocks/handlers';
+import { rest } from "msw";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
 import "../node_modules/@blueprintjs/select/lib/css/blueprint-select.css";
