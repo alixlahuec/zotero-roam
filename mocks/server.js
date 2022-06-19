@@ -1,4 +1,10 @@
 import { setupServer } from "msw/node";
-import { handlers } from "./handlers";
+import { apiHandlers, fallbackHandler, roamAssetsHandler } from "./handlers";
 
-export const server = setupServer(...handlers);
+export const server = setupServer({
+	...apiHandlers,
+	dev: [
+		roamAssetsHandler,
+		fallbackHandler
+	]
+});

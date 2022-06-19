@@ -1,5 +1,6 @@
 import { initialize, mswDecorator } from 'msw-storybook-addon';
-import { handlers } from '../mocks/handlers';
+import { apiHandlers, fallbackHandler, roamAssetsHandler } from '../mocks/handlers';
+import { rest } from "msw";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
 import "../node_modules/@blueprintjs/select/lib/css/blueprint-select.css";
@@ -53,10 +54,19 @@ export const parameters = {
     },
   },
   msw: {
-      handlers: [
-          rest.get("http://localhost:6006/*", (req, _res, _ctx) => req.passthrough()),
-          ...handlers
-      ]
+      handlers: {
+          ...apiHandlers,
+          dev: [
+              roamAssetsHandler,
+              rest.get("http://localhost:6006/runtime*", (req, _res, _ctx) => req.passthrough()),
+              rest.get("http://localhost:6006/*", (req, res, ctx) => {
+                return res(
+                    ctx.status(312, "Check if this request should be allowed : " + req.url)
+                )
+              }),
+              fallbackHandler
+          ]
+      }
   }
 }
 
