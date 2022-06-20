@@ -3,10 +3,11 @@ import { data as citoids } from "../../mocks/citoid";
 import { findCollections } from "../../mocks/zotero/collections";
 import { data as apiKeys } from "../../mocks/zotero/keys";
 import { data as bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
+import { data as deletions } from "../../mocks/zotero/deleted";
 import { data as libraries } from "../../mocks/zotero/libraries";
 import { data as semantics } from "../../mocks/semantic-scholar";
 import { data as tags, findTags } from "../../mocks/zotero/tags";
-import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibliography, fetchCitoid, fetchCollections, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
+import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;
 const { userLibrary, groupLibrary } = libraries;
@@ -170,6 +171,31 @@ describe("Fetching mocked collections", () => {
 				allCollections.length + 100
 			);
 			expect(mockAdditional).toEqual(allCollections);
+		}
+	);
+});
+
+describe("Fetching mocked deleted entities", () => {
+	const cases = Object.entries(libraries);
+
+	test.each(cases)(
+		"%# Fetching entities deleted from %s",
+		async(_libName, libraryDetails) => {
+			const { path } = libraryDetails;
+			const deleted = await fetchDeleted({ apikey: masterKey, path }, 0);
+			expect(deleted).toEqual(deletions[path]);
+		}
+	);
+
+	test.each(cases)(
+		"%# Checking that no entities are versioned over latest in %s",
+		async(_libName, libraryDetails) => {
+			const { path, version } = libraryDetails;
+			const deleted = await fetchDeleted({ apikey: masterKey, path }, version);
+			expect(deleted).toEqual({
+				collections: [],
+				items: []
+			});
 		}
 	);
 });

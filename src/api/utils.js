@@ -556,6 +556,7 @@ export {
 	fetchBibliography,
 	fetchCitoid,
 	fetchCollections,
+	fetchDeleted,
 	fetchItems,
 	fetchPermissions,
 	fetchSemantic,
