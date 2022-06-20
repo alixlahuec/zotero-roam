@@ -89,7 +89,8 @@ async function deleteTags(tags, library, version){
  * @returns {Object[]} The processed dataset : each item gains a `has_citekey` property, and its `key` property is assigned its citekey 
  */
 function extractCitekeys(arr){
-	return arr.map(item => {
+	let itemList = [...arr];
+	return itemList.map(item => {
 		item.has_citekey = false;
 		if(typeof(item.data.extra) !== "undefined"){
 			if(item.data.extra.includes("Citation Key: ")){
@@ -310,7 +311,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			modified.push(...additional);
 		}
 
-		let deleted = [];
+		let deleted = { items: [] };
 		// DO NOT request deleted items since X if since = 0 (aka, initial data request)
 		// It's a waste of a call
 		if(since > 0){
@@ -453,23 +454,27 @@ function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
 	let oldData = arr || [];
 	let { modified = [], deleted = [] } = update;
 
+	// To avoid mutating the original arrays
+	let modifiedData = [...modified];
+	let deletedData = [...deleted];
+
 	// Remove deleted items
-	if(deleted.length > 0){
-		oldData = oldData.filter(item => !deleted.includes(item.data.key));
+	if(deletedData.length > 0){
+		oldData = oldData.filter(item => !deletedData.includes(item.data.key));
 	}
 	// If the data has citekeys, transform before pushing
 	if(with_citekey){
-		modified = extractCitekeys(modified);
+		modifiedData = extractCitekeys(modifiedData);
 	}
 
 	// Update datastore
-	if(modified.length == 0){
+	if(modifiedData.length == 0){
 		return oldData;
 	} else if(oldData.length == 0){
-		return modified;
+		return modifiedData;
 	} else {
 		let [...datastore] = arr;
-		modified.forEach(item => {
+		modifiedData.forEach(item => {
 			let duplicateIndex = datastore.findIndex(i => i.data.key == item.data.key);
 			if(duplicateIndex == -1){
 				datastore.push(item);

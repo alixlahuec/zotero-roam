@@ -1,13 +1,15 @@
 import axios from "axios";
+import { QueryClient } from "react-query";
 import { data as citoids } from "../../mocks/citoid";
 import { findCollections } from "../../mocks/zotero/collections";
 import { data as apiKeys } from "../../mocks/zotero/keys";
 import { data as bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
 import { data as deletions } from "../../mocks/zotero/deleted";
+import { data as items, findItems } from "../../mocks/zotero/items";
 import { data as libraries } from "../../mocks/zotero/libraries";
 import { data as semantics } from "../../mocks/semantic-scholar";
 import { data as tags, findTags } from "../../mocks/zotero/tags";
-import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
+import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;
 const { userLibrary, groupLibrary } = libraries;
@@ -45,6 +47,8 @@ test("Extracting citekeys for Zotero items", () => {
 	];
 
 	expect(extractCitekeys(cases)).toEqual(expectations);
+	expect(extractCitekeys(items)).toEqual(items);
+
 });
 
 describe("Creating formatted tag lists", () => {
@@ -195,6 +199,40 @@ describe("Fetching mocked deleted entities", () => {
 			expect(deleted).toEqual({
 				collections: [],
 				items: []
+			});
+		}
+	);
+});
+
+describe("Fetching mocked items", () => {
+	const cases = Object.entries(libraries);
+	const queryClient = new QueryClient();
+
+	test.each(cases)(
+		"%# Fetching items for %s",
+		async(_libName, libraryDetails) => {
+			const { type, id, path, version } = libraryDetails;
+			
+			const itemData = findItems({ type, id, since: 0 });
+
+			const sinceEver = await fetchItems(
+				{ apikey: masterKey, dataURI: `${path}/items`, library: path, params: "", since: 0 },
+				{ match: [] },
+				queryClient
+			);
+			expect(sinceEver).toEqual({
+				data: itemData,
+				lastUpdated: version
+			});
+
+			const sinceLatest = await fetchItems(
+				{ apikey: masterKey, dataURI: `${path}/items`, library: path, params: "", since: version},
+				{ match: itemData },
+				queryClient
+			);
+			expect(sinceLatest).toEqual({
+				data: itemData,
+				lastUpdated: version
 			});
 		}
 	);
