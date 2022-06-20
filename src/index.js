@@ -25,7 +25,7 @@ Sentry.init({
 			event.request.url = event.request.url.split("#")[0];
 		}
 
-		if(!event.stack.includes("zoteroRoam.dev.js") && !event.stack.includes("zoteroRoam.min.js")){
+		if(!["zoteroRoam", "zotero-roam"].some(el => event.stack.some(log => log.match(el)))){
 			return null;
 		}
 
