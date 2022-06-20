@@ -551,6 +551,7 @@ export {
 	cleanBibliographyHTML,
 	deleteTags,
 	extractCitekeys,
+	fetchAdditionalData,
 	fetchBibEntries,
 	fetchBibliography,
 	fetchCitoid,

@@ -6,7 +6,7 @@ import { data as bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
 import { data as libraries } from "../../mocks/zotero/libraries";
 import { data as semantics } from "../../mocks/semantic-scholar";
 import { data as tags, findTags } from "../../mocks/zotero/tags";
-import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchBibliography, fetchCitoid, fetchCollections, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
+import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibliography, fetchCitoid, fetchCollections, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;
 const { userLibrary, groupLibrary } = libraries;
@@ -142,25 +142,34 @@ describe("Fetching mocked collections", () => {
 				path
 			};
 
-			const allCollections = await fetchCollections(
+			const allCollections = findCollections(type, id, 0);
+
+			const sinceEver = await fetchCollections(
 				libraryObj, 
 				0, 
 				{ match: [] }
 			);
-			expect(allCollections).toEqual({
-				data: findCollections(type, id, 0),
+			expect(sinceEver).toEqual({
+				data: allCollections,
 				lastUpdated: version
 			});
 
 			const sinceLatest = await fetchCollections(
 				libraryObj, 
 				version, 
-				{ match: allCollections.data }
+				{ match: sinceEver.data }
 			);
 			expect(sinceLatest).toEqual({
-				data: findCollections(type, id, 0),
+				data: allCollections,
 				lastUpdated: version
 			});
+
+			// To cover fetchAdditionalData
+			const mockAdditional = await fetchAdditionalData(
+				{ apikey: masterKey, dataURI: `${path}/collections`, since: 0 },
+				allCollections.length + 100
+			);
+			expect(mockAdditional).toEqual(allCollections);
 		}
 	);
 });
