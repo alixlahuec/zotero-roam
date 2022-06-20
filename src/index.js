@@ -21,9 +21,14 @@ Sentry.init({
 	autoSessionTracking: false,
 	beforeSend: (event) => {
 		// https://romain-clement.net/articles/sentry-url-fragments/
-		if (event.request?.url) {
+		if(event.request?.url) {
 			event.request.url = event.request.url.split("#")[0];
 		}
+
+		if(!event.stack.includes("zoteroRoam.dev.js") && !event.stack.includes("zoteroRoam.min.js")){
+			return null;
+		}
+
 		return event;
 	},
 	dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
