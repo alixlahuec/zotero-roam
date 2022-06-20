@@ -5,7 +5,11 @@ const defaultQueryClient = new QueryClient({
     defaultOptions: {
         queries: {
             cacheTime: Infinity,
+            refetchOnWindowFocus: false,
+            refetchOnMount: false,
+            refetchIntervalInBackground: true,
             retry: false,
+            retryOnMount: false,
             staleTime: Infinity
         }
     }
