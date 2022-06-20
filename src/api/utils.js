@@ -70,12 +70,18 @@ async function deleteTags(tags, library, version){
 	}
 
 	let tagList = tags.slice(0,50).map(t => encodeURIComponent(t)).join(" || ");
-	return zoteroClient.delete(`${path}/tags?tag=${tagList}`, { 
-		headers: { 
-			"Zotero-API-Key": apikey,
-			"If-Unmodified-Since-Version": version
-		} 
-	});
+	return zoteroClient.delete(
+		`${path}/tags`, 
+		{ 
+			headers: { 
+				"Zotero-API-Key": apikey,
+				"If-Unmodified-Since-Version": version
+			},
+			params: {
+				tag: tagList
+			} 
+		}
+	);
 }
 
 /** Extracts pinned citekeys from a dataset
@@ -261,7 +267,13 @@ async function fetchDeleted(library, since) {
 	const { apikey, path } = library;
 
 	try {
-		let { data } = await zoteroClient.get(`${path}/deleted?since=${since}`, { headers: { "Zotero-API-Key": apikey } });
+		let { data } = await zoteroClient.get(
+			`${path}/deleted`, 
+			{ 
+				headers: { "Zotero-API-Key": apikey },
+				params: { since } 
+			}
+		);
 		return data;
 	} catch(error){
 		return Promise.reject(error);
