@@ -25,6 +25,6 @@ export const apiHandlers = [
 	handleCitoid,
 	handleCollections,
 	handleSemantic,
-	handleTags,
+	...handleTags,
 	handleAPIKey
 ];

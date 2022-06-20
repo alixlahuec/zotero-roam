@@ -34,26 +34,54 @@ export const findTags = (path, token) => {
 export const data = {
 	[userLibrary.path]: [
 		{...addMetadata({ tag: "immigrant youth", library: userLibrary, numItems: 2 })},
+		{...addMetadata({ tag: "immigration", library: userLibrary, type: 1 })},
+		{...addMetadata({ tag: "immigration", library: userLibrary, type: 0 })},
+		{...addMetadata({ tag: "IMMIGRATION", library: userLibrary, type: 1 })},
 		{...addMetadata({ tag: "patient journeys", library: userLibrary })}
 	],
 	[groupLibrary.path]: [
 		{...addMetadata({ tag: "Urban design", library: groupLibrary, numItems: 11 })},
-		{...addMetadata({ tag: "HOUSING", library: groupLibrary, type: 0, numItems: 7 })}
+		{...addMetadata({ tag: "HOUSING", library: groupLibrary, type: 0, numItems: 7 })},
+		{...addMetadata({ tag: "housing", library: groupLibrary, type: 0 })},
+		{...addMetadata({ tag: "housing", library: groupLibrary, type: 1, numItems: 4 })}
 	]
 };
 
-export const handleTags = rest.get(
-	zotero(":libraryType/:libraryID/tags"),
-	(req, res, ctx) => {
-		const { libraryType, libraryID } = req.params;
-		
-		const { path, version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`);
-		const tags = data[path];
+export const handleTags = [
+	rest.get(
+		zotero(":libraryType/:libraryID/tags"),
+		(req, res, ctx) => {
+			const { libraryType, libraryID } = req.params;
+            
+			const { path, version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`);
+			const tags = data[path];
 
-		return res(
-			ctx.set("last-modified-version", version),
-			ctx.set("total-results", Math.min(tags.length, 100)), // We're not mocking with additional requests
-			ctx.json(tags)
-		);
-	}
-);
+			return res(
+				ctx.set("last-modified-version", version),
+				ctx.set("total-results", Math.min(tags.length, 100)), // We're not mocking with additional requests
+				ctx.json(tags)
+			);
+		}
+	),
+	rest.delete(
+		zotero(":libraryType/:libraryID/tags"),
+		(req, res, ctx) => {
+			const { libraryType, libraryID } = req.params;
+			// const tag = req.url.searchParams("tag");
+			const ifUnmodifiedSince = req.headers.get("If-Unmodified-Since-Version");
+
+			const { version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`);
+
+			if(ifUnmodifiedSince < version){
+				// TODO: Simulate this to check response parameters
+				return res(
+					ctx.status(412, "Precondition failed")
+				);
+			} else {
+				return res(
+					ctx.status(204, "No content")
+				);
+			}
+		}
+	)
+];

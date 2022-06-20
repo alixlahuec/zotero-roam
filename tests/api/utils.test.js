@@ -6,7 +6,7 @@ import { data as bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
 import { data as libraries } from "../../mocks/zotero/libraries";
 import { data as semantics } from "../../mocks/semantic-scholar";
 import { data as tags, findTags } from "../../mocks/zotero/tags";
-import { cleanBibliographyHTML, extractCitekeys, fetchBibliography, fetchCitoid, fetchCollections, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
+import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchBibliography, fetchCitoid, fetchCollections, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;
 const { userLibrary, groupLibrary } = libraries;
@@ -55,7 +55,7 @@ describe("Creating formatted tag lists", () => {
 			output[initial] = tokens.map(token => ({
 				token,
 				roam: [],
-				zotero: findTags(path, token)
+				zotero: findTags(path, token).reverse().sort((a,b) => a.tag < b.tag ? 1 : -1)
 			}));
 		});
 		return output;
@@ -63,7 +63,7 @@ describe("Creating formatted tag lists", () => {
 
 	const expectations = {
 		[userLibrary.path]: setExpectations(userLibrary.path, {
-			"i": ["immigrant youth"],
+			"i": ["immigrant youth", "immigration"],
 			"p": ["patient journeys"]
 		}),
 		[groupLibrary.path]: setExpectations(groupLibrary.path, {
@@ -177,6 +177,28 @@ describe("Fetching mocked tags", () => {
 				data: makeTagList(tags[path]),
 				lastUpdated: version
 			});
+		}
+	);
+});
+
+describe("Deleting mocked tags", () => {
+	const cases = Object.entries(libraries);
+
+	test.each(cases)(
+		"%# Deleting tags in %s",
+		async(_libName, libraryDetails) => {
+			const { path, version } = libraryDetails;
+            
+			const deleteExpired = await deleteTags(["systems"], { apikey: masterKey, path }, version - 10)
+				.catch((error) => {
+					if(error.response){
+						return error.response;
+					}
+				});
+			expect(deleteExpired.status).toBe(412);
+
+			const deleteLatest = await deleteTags(["systems"], { apikey: masterKey, path }, version);
+			expect(deleteLatest.status).toBe(204);
 		}
 	);
 });
