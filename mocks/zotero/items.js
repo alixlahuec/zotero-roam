@@ -147,7 +147,7 @@ export const findItems = ({ type, id, since }) => {
 export const handleItems = [
 	rest.get(
 		zotero(":libraryType/:libraryID/items"),
-		(req, rest, ctx) => {
+		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;
 			const since = req.url.searchParams.get("since");
 
@@ -155,7 +155,7 @@ export const handleItems = [
 
 			const items = findItems({ type, id, since });
 
-			return rest(
+			return res(
 				ctx.set("last-modified-version", version),
 				ctx.set("total-results", Math.min(items.length, 100)), // We're not mocking for additional requests
 				ctx.json(items)
