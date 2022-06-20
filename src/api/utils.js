@@ -119,7 +119,12 @@ async function fetchAdditionalData(req, totalResults) {
 		}
 		reqParams.set("start", 100*i);
 		reqParams.set("limit", 100);
-		apiCalls.push(zoteroClient.get(`${dataURI}?${reqParams.toString()}`, { headers: { "Zotero-API-Key": apikey } }));
+		apiCalls.push(zoteroClient.get(
+			`${dataURI}?${reqParams.toString()}`, 
+			{ 
+				headers: { "Zotero-API-Key": apikey }
+			})
+		);
 	}
 
 	try {
