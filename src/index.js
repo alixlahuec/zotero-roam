@@ -25,7 +25,7 @@ Sentry.init({
 			event.request.url = event.request.url.split("#")[0];
 		}
 
-		if(!["zoteroRoam", "zotero-roam"].some(el => event.stack.some(log => log.match(el)))){
+		if(!event.exception.values.some(val => val.stacktrace.frames.some(frame => frame.module.includes("zotero-roam/./src")))){
 			return null;
 		}
 
