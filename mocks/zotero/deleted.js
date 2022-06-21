@@ -37,12 +37,15 @@ export const handleDeleted = rest.get(
 		const since = req.url.searchParams.get("since");
 		const path = `${libraryType}/${libraryID}`;
 
-		const { collections, items } = findDeleted({ path, since });
+		const { collections = [], items = [] } = findDeleted({ path, since });
 
 		return res(
 			ctx.json({
 				collections,
-				items
+				items,
+				searches: [],
+				settings: [],
+				tags: []
 			})
 		);
 	}
