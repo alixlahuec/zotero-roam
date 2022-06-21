@@ -92,6 +92,8 @@ function MergeAsOptions({ library, options }) {
 	const tagList = useMemo(() => [...roam, ...zotero], [roam, zotero]);
 	const { mutate, status } = useModifyTags();
 
+	const disableOptions = useMemo(() => ["error", "success", "loading"].includes(status), [status]);
+
 	const triggerMerge = useCallback((value) => {
 		mutate({
 			into: value,
@@ -106,13 +108,19 @@ function MergeAsOptions({ library, options }) {
 		<>
 			{roam.map(el => (
 				<MenuItem key={el} 
-					disabled={["error", "success", "loading"].includes(status)}
+					disabled={disableOptions}
 					labelElement={<Tag intent="success" minimal={true}>In Roam</Tag>}
 					multiline={true}
 					onClick={() => triggerMerge(el)}
 					text={el} 
 				/>))}
-			{zotero.map(el => <MenuItem key={el} multiline={true} text={el} />)}
+			{zotero.map(el => (
+				<MenuItem key={el}
+					disabled={disableOptions}
+					multiline={true}
+					onClick={() => triggerMerge(el)}
+					text={el} 
+				/>))}
 			<MenuDivider />
 			<MergeAsCustom disabled={["error", "success", "loading"].includes(status)} library={library} tags={tagList} />
 		</>
