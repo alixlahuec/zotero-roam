@@ -5,11 +5,11 @@ import { findCollections } from "../../mocks/zotero/collections";
 import { data as apiKeys } from "../../mocks/zotero/keys";
 import { data as bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
 import { data as deletions } from "../../mocks/zotero/deleted";
-import { data as items, findItems } from "../../mocks/zotero/items";
+import { data as items, findItems, makeItem } from "../../mocks/zotero/items";
 import { data as libraries } from "../../mocks/zotero/libraries";
 import { data as semantics } from "../../mocks/semantic-scholar";
 import { data as tags, findTags } from "../../mocks/zotero/tags";
-import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
+import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;
 const { userLibrary, groupLibrary } = libraries;
@@ -246,6 +246,40 @@ describe("Fetching mocked items", () => {
 	);
 });
 
+describe("Updating mocked items", () => {
+	const cases = Object.entries(libraries);
+
+	test.each(cases)(
+		"%# Updating an item from %s",
+		async(_libName, libraryDetails) => {
+			const { type, id, path } = libraryDetails;
+			const sample_item = findItems({ type, id, since: 0})[0];
+
+			const res = await writeItems(
+				[{ key: sample_item.data.key, version: sample_item.version, tags: [{ tag: "TEST_TAG", type: 0 }] }],
+				{ apikey: masterKey, path });
+
+			const data = res.map(rq => rq.value.data);
+            
+			expect(data).toEqual([{
+				failed: {},
+				unchanged: {},
+				success: {
+					0: sample_item.data.key
+				},
+				successful: {
+					0: {
+						...sample_item,
+						data: {
+							tags: [{ tag: "TEST_TAG", type: 0 }]
+						}
+					}
+				}
+			}]);
+		}
+	);
+});
+
 describe("Fetching mocked tags", () => {
 	const cases = Object.entries(libraries);
 
@@ -322,6 +356,47 @@ describe("Fetching mocked Citoid data", () => {
 		}
 	);
     
+});
+
+describe("Writing mocked Citoid data", () => {
+	const cases = Object.entries(libraries);
+
+	test.each(cases)(
+		"%# Adding a Citoid to %s",
+		async(_libName, libraryDetails) => {
+			const { path, version } = libraryDetails;
+
+			const res = await writeCitoids(
+				[{ title: "TEST_TITLE" }],
+				{ 
+					library: { apikey: masterKey, path },
+					collections: [],
+					tags: []
+				}
+			);
+
+			const data = res.map(rq => rq.value.data);
+
+			expect(data).toEqual([{
+				failed: {},
+				unchanged: {},
+				success: {
+					0: "__NO_UNIQUE_KEY__"
+				},
+				successful: {
+					0: {
+						...makeItem({
+							library: libraryDetails,
+							version,
+							data: {
+								title: "TEST_TITLE"
+							}
+						})
+					}
+				}
+			}]);
+		}
+	);
 });
 
 describe("Fetching mocked Semantic data", () => {

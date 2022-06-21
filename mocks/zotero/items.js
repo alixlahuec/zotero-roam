@@ -162,5 +162,61 @@ export const handleItems = [
 				ctx.json(items)
 			);
 		}
+	),
+	rest.post(
+		zotero(":libraryType/:libraryID/items"),
+		(req, res, ctx) => {
+			
+			const { libraryType, libraryID } = req.params;
+			const itemsData = JSON.parse(req.body);
+			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
+			console.log(library);
+
+			const output = itemsData.reduce((obj, item) => {
+				const { key, version, ...rest } = item;
+    
+				if(!key){
+					// We're not actually adding the item to the data, so no need to ensure keys are unique
+					obj.success.push("__NO_UNIQUE_KEY__");
+					obj.successful.push({
+						...makeItem({
+							library,
+							version: library.version,
+							...rest
+						})
+					});
+				} else {
+					const libraryCopy = data.find(it => it.library.type == library.type && it.library.id == library.id);
+					if(version < libraryCopy.version){
+						obj.failed.push(libraryCopy.data.key);
+						obj.unchanged.push(libraryCopy);
+					} else {
+						obj.success.push(libraryCopy.data.key);
+						obj.successful.push({
+							...libraryCopy,
+							data: {
+								...rest
+							}
+						});
+					}
+				}
+    
+				return obj;
+    
+			}, {
+				failed: [],
+				success: [],
+				successful: [],
+				unchanged: []
+			});
+    
+			for(let cat in output){
+				output[cat] = Object.fromEntries(output[cat].map((el, i) => [i, el]));
+			}
+
+			return res(
+				ctx.json(output)
+			);
+		}
 	)
 ];
