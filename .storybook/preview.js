@@ -64,7 +64,19 @@ export const parameters = {
           }),
           fallbackHandler
       ]
-  }
+  },
+  a11y: {
+      config: {
+          rules: [
+              {
+                  // Contrast check always returns incomplete for QuickCopy toggle
+                  // This is due to background being provided by the sibling `input` element
+                  id: "color-contrast",
+                  selector: "*:not(label.zr-quick-copy)"
+                }
+            ]
+        }
+    }
 }
 
 export const decorators = [mswDecorator, withTheme, withExtensionContext, withUserSettings, withQueryClient];
