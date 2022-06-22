@@ -289,7 +289,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 [class*="zr"] .bp4-tag.bp4-minimal.bp4-intent-primary {
-  background: hsla(var(--zr-accent-1-co), 15%);
+  background: hsla(var(--zr-accent-1-co), 10%);
   color: var(--zr-accent-1);
 }
 
@@ -370,7 +370,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 .zr-divider-minimal > .bp4-heading {
   font-size: 0.75rem;
   letter-spacing: 0.3mm;
-  opacity: 0.4;
+  opacity: 0.65;
   text-transform: uppercase;
 }
 
