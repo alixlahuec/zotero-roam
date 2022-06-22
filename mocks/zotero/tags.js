@@ -1,6 +1,6 @@
 import { zotero } from "./common";
 import { rest } from "msw";
-import { data as libraries } from "./libraries";
+import { libraries } from "./libraries";
 import { searchEngine } from "../../src/utils";
 
 const { userLibrary, groupLibrary } = libraries;
@@ -31,7 +31,7 @@ export const findTags = (path, token) => {
 	return tagList.filter(t => searchEngine(t.tag, token, { any_case: true, match: "exact", search_compounds: true}));
 };
 
-export const data = {
+const data = {
 	[userLibrary.path]: [
 		{...addMetadata({ tag: "immigrant youth", library: userLibrary, numItems: 2 })},
 		{...addMetadata({ tag: "immigration", library: userLibrary, type: 1 })},
@@ -85,3 +85,7 @@ export const handleTags = [
 		}
 	)
 ];
+
+export {
+	data as tags
+};

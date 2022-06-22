@@ -1,8 +1,8 @@
 import { analyzeUserRequests } from "../../src/utils";
-import { data as keys} from "../../mocks/zotero/keys";
-import { data as libraries } from "../../mocks/zotero/libraries";
+import { apiKeys} from "../../mocks/zotero/keys";
+import { libraries } from "../../mocks/zotero/libraries";
 
-const { keyWithFullAccess: { key: masterKey } } = keys;
+const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath } } = libraries;
 
 describe("Parsing user data requests", () => {

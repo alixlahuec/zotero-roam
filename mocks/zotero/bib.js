@@ -1,6 +1,6 @@
 import { zotero } from "./common";
 import { rest } from "msw";
-import { data as libraries } from "./libraries";
+import { libraries } from "./libraries";
 
 const { userLibrary } = libraries;
 
@@ -42,7 +42,7 @@ export const findBibliographyEntry = ({ key, path }) => {
 	return Object.values(data).find(item => item.library.type + "s" == libraryType && item.library.id == libraryID && item.key == key);
 };
 
-export const data = {
+const data = {
 	"itemFromUserLibrary": {
 		...addMetadata({
 			key: "PYTM394",
@@ -77,3 +77,7 @@ export const handleBibliography = rest.get(
 		);
 	}
 );
+
+export {
+	data as bibs
+};

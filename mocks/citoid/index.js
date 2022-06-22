@@ -25,7 +25,7 @@ const addCreator = ([firstName, lastName, role = "author"]) => ({
 export const goodIdentifier = "https://www.jmir.org/2021/9/e27283";
 export const badIdentifier = "https://projects.iq.harvard.edu/files/harvarduxgroup/files/ux-research-guide-sample-questions-for-user-interviews.pdf";
 
-export const data = {
+const data = {
 	[goodIdentifier]: {
 		...addCitoidMetadata({
 			abstractNote: "Chloe for COVID-19",
@@ -61,3 +61,7 @@ export const handleCitoid = rest.get(
 		);
 	}
 );
+
+export {
+	data as citoids
+};

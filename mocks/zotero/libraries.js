@@ -14,7 +14,7 @@ const configLibrary = (type, id, name) => {
 	};
 };
 
-export const data = {
+const data = {
 	"userLibrary": {
 		...configLibrary("user", 123456, "username"),
 		username: "username",
@@ -24,4 +24,8 @@ export const data = {
 		...configLibrary("group", 456789, "group-library"),
 		version: 1598
 	}
+};
+
+export {
+	data as libraries
 };

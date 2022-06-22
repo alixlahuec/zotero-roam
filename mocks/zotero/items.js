@@ -1,6 +1,6 @@
 import { zotero } from "./common";
 import { rest } from "msw";
-import { data as libraries } from "./libraries";
+import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 
@@ -42,7 +42,7 @@ export const makeItem = ({ citekey = false, itemType = null, key = "__NO_UNIQUE_
 	};
 };
 
-export const data = [
+const data = [
 	{
 		...makeItem({
 			citekey: "blochImplementingSocialInterventions2021",
@@ -220,3 +220,7 @@ export const handleItems = [
 		}
 	)
 ];
+
+export {
+	data as items
+};

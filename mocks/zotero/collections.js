@@ -1,6 +1,6 @@
 import { zotero } from "./common";
 import { rest } from "msw";
-import { data as libraries } from "./libraries";
+import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 
@@ -39,7 +39,7 @@ const addCollectionInfo = ({ key, library, name, version, hasParent = false, has
 	};
 };
 
-export const data = [
+const data = [
 	{
 		...addCollectionInfo({
 			key: "ABCDEF",
@@ -78,3 +78,7 @@ export const handleCollections = rest.get(
 		);
 	}
 );
+
+export {
+	data as collections
+};

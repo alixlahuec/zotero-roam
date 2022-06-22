@@ -1,12 +1,12 @@
 import { zotero } from "./common";
 import { rest } from "msw";
 
-import { data as libraries } from "./libraries";
+import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 const addUserInfo = () => ({ userID: userLibrary.id, username: userLibrary.username, displayName: "" });
 
-export const data = {
+const data = {
 	keyWithFullAccess: {
 		...addUserInfo(),
 		key: "ABCD1234EFG",
@@ -54,3 +54,7 @@ export const handleAPIKey = rest.get(
 		);
 	}
 );
+
+export {
+	data as apiKeys
+};

@@ -1,10 +1,10 @@
 import React from "react";
-import { data as keys } from "../mocks/zotero/keys";
-import { data as libraries } from "../mocks/zotero/libraries";
+import { apiKeys } from "../mocks/zotero/keys";
+import { libraries } from "../mocks/zotero/libraries";
 import { ExtensionContext } from "../src/components/App";
 import { analyzeUserRequests } from "../src/utils";
 
-const { keyWithFullAccess: { key: masterKey } } = keys;
+const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath} } = libraries;
 
 const defaultReqs = [

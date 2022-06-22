@@ -1,6 +1,6 @@
 import React from "react";
 import SearchPanel from ".";
-import { data as items } from "../../../mocks/zotero/items";
+import { items } from "../../../mocks/zotero/items";
 
 export default {
 	component: SearchPanel,
