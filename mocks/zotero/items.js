@@ -1,46 +1,29 @@
-import { zotero } from "./common";
+import { zotero, makeEntityLinks, makeLibraryMetadata } from "./common";
 import { rest } from "msw";
 import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 
-export const makeItem = ({ citekey = false, itemType = null, key = "__NO_UNIQUE_KEY__", library, title ="", version = 0, data = {} }) => {
-	const { type, id, links, name: libName, path } = library;
-	return {
-		data: {
-			creators: [],
-			collections: [],
-			itemType,
-			key,
-			extra: citekey ? `Citation Key: ${citekey}` : "",
-			relations: {},
-			tags: [],
-			title,
-			version,
-			...data
-		},
-		has_citekey: citekey ? true : false,
-		key: citekey || key,
-		library: {
-			type,
-			id,
-			links,
-			name: libName
-		},
-		links: {
-			alternate: {
-				href: `https://www.zotero.org/${type == "user" ? path : libName}/items/${key}`,
-				type: "text/html"
-			},
-			self: {
-				href: `https://api.zotero.org/${path}/items${key}`,
-				type: "application/json"
-			}
-		},
-		meta: {},
-		version
-	};
-};
+export const makeItem = ({ citekey = false, itemType = null, key = "__NO_UNIQUE_KEY__", library, title ="", version = 0, data = {} }) => ({
+	data: {
+		creators: [],
+		collections: [],
+		itemType,
+		key,
+		extra: citekey ? `Citation Key: ${citekey}` : "",
+		relations: {},
+		tags: [],
+		title,
+		version,
+		...data
+	},
+	has_citekey: citekey ? true : false,
+	key: citekey || key,
+	library: makeLibraryMetadata(library),
+	links: makeEntityLinks({ key, library }),
+	meta: {},
+	version
+});
 
 const data = [
 	{

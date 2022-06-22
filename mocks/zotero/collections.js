@@ -1,61 +1,40 @@
-import { zotero } from "./common";
+import { zotero, makeEntityLinks, makeLibraryMetadata } from "./common";
 import { rest } from "msw";
 import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 
-const addCollectionInfo = ({ key, library, name, version, hasParent = false, hasChildren = 0 } = {}) => {
-	const { id, links, name: libName, path, type } = library;
-	return {
-		data: {
-			key,
-			name,
-			parentCollection: hasParent,
-			relations: {},
-			version
-		},
+const makeCollection = ({ key, library, name, version, hasParent = false, hasChildren = 0 } = {}) => ({
+	data: {
 		key,
-		library: {
-			id,
-			links,
-			name: libName,
-			type
-		},
-		links: {
-			self: {
-				href: `https://api.zotero.org/${path}/collections/${key}`,
-				type: "application/json"
-			},
-			alternate: {
-				href: `https://www.zotero.org/${type == "user" ? libName : path}/collections/${key}`,
-				type: "text/html"
-			}
-		},
-		meta: {
-			numCollections: hasChildren,
-			numItems: 1
-		},
+		name,
+		parentCollection: hasParent,
+		relations: {},
 		version
-	};
-};
+	},
+	key,
+	library: makeLibraryMetadata(library),
+	links: makeEntityLinks({ key, library }),
+	meta: {
+		numCollections: hasChildren,
+		numItems: 1
+	},
+	version
+});
 
 const data = [
-	{
-		...addCollectionInfo({
-			key: "ABCDEF",
-			library: userLibrary,
-			name: "Important items",
-			version: 31
-		})
-	},
-	{
-		...addCollectionInfo({
-			key: "PQRST",
-			library: groupLibrary,
-			name: "Reading List",
-			version: 14
-		})
-	}
+	makeCollection({
+		key: "ABCDEF",
+		library: userLibrary,
+		name: "Important items",
+		version: 31
+	}),
+	makeCollection({
+		key: "PQRST",
+		library: groupLibrary,
+		name: "Reading List",
+		version: 14
+	})
 ];
 
 export const findCollections = (type, id, since) => {

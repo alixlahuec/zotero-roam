@@ -1,41 +1,18 @@
-import { zotero } from "./common";
+import { zotero, makeEntityLinks, makeLibraryMetadata } from "./common";
 import { rest } from "msw";
 import { libraries } from "./libraries";
 
 const { userLibrary } = libraries;
 
-const addMetadata = ({ key, library, version }) => {
-	const { id, name: libName, path, type } = library;
-
-	return {
-		key,
-		version,
-		library: {
-			type,
-			id,
-			name: libName,
-			links: {
-				alternate: {
-					href: "https://www.zotero.org/" + (type == "user" ? libName : path),
-					type: "text/html"
-				}
-			}
-		},
-		links: {
-			self: {
-				href: `https://api.zotero.org/${path}/items/${key}`,
-				type: "application/json"
-			},
-			alternate: {
-				href: `https://www.zotero.org/${type == "user" ? libName : path}/items/${key}`,
-				type: "text/html"
-			}
-		},
-		meta: {
-			numChildren: 0
-		}
-	};
-};
+const addMetadata = ({ key, library, version }) => ({
+	key,
+	version,
+	library: makeLibraryMetadata(library),
+	links: makeEntityLinks({ key, library }),
+	meta: {
+		numChildren: 0
+	}
+});
 
 export const findBibliographyEntry = ({ key, path }) => {
 	const [libraryType, libraryID] = path.split("/");
