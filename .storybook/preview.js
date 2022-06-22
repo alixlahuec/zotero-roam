@@ -10,6 +10,7 @@ import "../src/index.css";
 
 import { withExtensionContext } from "./withExtensionContext";
 import { withQueryClient } from "./withQueryClient";
+import { withRoamCitekeys } from './withRoamCitekeys';
 import { withUserSettings } from "./withUserSettings";
 
 // Initialize MSW
@@ -79,4 +80,4 @@ export const parameters = {
     }
 }
 
-export const decorators = [mswDecorator, withTheme, withExtensionContext, withUserSettings, withQueryClient];
+export const decorators = [mswDecorator, withTheme, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys];

@@ -32,4 +32,8 @@ const useRoamCitekeys = () => {
 	return context;
 };
 
-export { RoamCitekeysProvider, useRoamCitekeys };
+export { 
+	RoamCitekeys, // For Storybook only
+	RoamCitekeysProvider,
+	useRoamCitekeys
+};
