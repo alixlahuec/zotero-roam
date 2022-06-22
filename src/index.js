@@ -13,6 +13,8 @@ import { registerSmartblockCommands } from "./smartblocks";
 import { analyzeUserRequests, setupDarkTheme, setupDependencies, setupPortals } from "./utils";
 import { default_typemap } from "./variables";
 
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "./index.css";
