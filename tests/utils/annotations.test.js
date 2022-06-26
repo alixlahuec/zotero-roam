@@ -45,6 +45,7 @@ test("Sorts annotation indices", () => {
 	const indices = [
 		[3,14,9],
 		[5,10,7],
+		[2,22,7],
 		[2,22,30],
 		[2,24,10],
 		[3,14,7],
@@ -52,6 +53,7 @@ test("Sorts annotation indices", () => {
 	];
 	expect(indices.sort(compareAnnotationIndices))
 		.toEqual([
+			[2,22,7],
 			[2,22,30],
 			[2,24,10],
 			[3,14,7],

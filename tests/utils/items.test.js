@@ -38,6 +38,9 @@ test("Categorizes Zotero items", () => {
 });
 
 describe("Extracting authors' last names", () => {
+	it("extracts from single names", () => {
+		expect(cleanAuthorLastName("WHO")).toBe("WHO");
+	});
 	it("extracts from simple names", () => {
 		expect(cleanAuthorLastName("Serena Chen")).toBe("Chen");
 	});
