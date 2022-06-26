@@ -135,6 +135,14 @@ export const handleItems = [
 			const { libraryType, libraryID } = req.params;
 			const since = req.url.searchParams.get("since");
 
+			// Conditional mock for error response
+			const enforcedError = req.url.searchParams.get("enforced-error");
+			if(enforcedError){
+				return res(
+					ctx.status(Number(enforcedError))
+				);
+			}
+
 			const { type, id, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
 
 			const items = findItems({ type, id, since });
