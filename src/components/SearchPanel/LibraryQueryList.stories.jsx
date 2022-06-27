@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo, useState } from "react";
 import LibraryQueryList from "./LibraryQueryList";
-import { items } from "./items.json";
 import { cleanLibrary } from "../../utils";
 
+import { items } from "../../../mocks/zotero/items";
+
 // Provide one Roam citekey to have in-graph state in story
-const cleanItems = cleanLibrary(items, new Map([["@scottQuantitativeMeasurementOrganizational2003", "fp3_5grl"]]));
+const cleanItems = cleanLibrary(items, new Map([["@blochImplementingSocialInterventions2021", "fp3_5grl"]]));
 
 export default {
 	component: LibraryQueryList,
