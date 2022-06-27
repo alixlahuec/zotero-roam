@@ -9,7 +9,7 @@ import SortButtons from "../../../SortButtons";
 import Stats from "../Stats";
 
 import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
-
+import usePagination from "../../../../hooks/usePagination";
 import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
 
@@ -17,12 +17,10 @@ const itemsPerPage = 30;
 
 const TagsDatalist = React.memo(function TagsDatalist(props){
 	const { filter, items, libProps } = props;
-	const [currentPage, setCurrentPage] = useState(1);
+	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [sortBy, setSortBy] = useState("usage");
 	const [matchedTags, setMatchedTags] = useState(null);
 	const [stats, setStats] = useState(null);
-
-	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
 
 	useEffect(() => {
 		if(items) {
@@ -33,7 +31,7 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 				});
 			setCurrentPage(1);
 		}
-	}, [items]);
+	}, [items, setCurrentPage]);
 
 	const filteredItems = useMemo(() => {
 		if(!matchedTags){
@@ -50,7 +48,7 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 	const handleSort = useCallback((value) => {
 		setSortBy(() => value);
 		setCurrentPage(1);
-	}, []);
+	}, [setCurrentPage]);
     
 	const sortOptions = useMemo(() => [
 		{ icon: "sort-desc", label: "Most Used", value: "usage" },

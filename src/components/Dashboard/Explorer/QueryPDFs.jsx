@@ -1,21 +1,21 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { NonIdealState } from "@blueprintjs/core";
 import { arrayOf } from "prop-types";
 
 import { ListWrapper, Pagination, Toolbar } from "../../DataList";
 import PDFElement from "./PDFElement";
 
+import usePagination from "../../../hooks/usePagination";
 import * as customPropTypes from "../../../propTypes";
 
 const itemsPerPage = 20;
 
 function QueryPDFs({ items }){
-	const [currentPage, setCurrentPage] = useState(1);
-	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
+	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 
 	useEffect(() => {
 		setCurrentPage(1);
-	}, [items]);
+	}, [items, setCurrentPage]);
 
 	return <div className="zr-query-builder">
 		<ListWrapper>

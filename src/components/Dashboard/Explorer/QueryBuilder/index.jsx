@@ -8,13 +8,14 @@ import { defaultQueryTerm, runQuerySet } from "./queries";
 import QueryFilterList from "./QueryFilterList";
 import { addElemToArray, updateArrayElemAt, removeArrayElemAt } from "./utils";
 
+import usePagination from "../../../../hooks/usePagination";
 import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
 
 const itemsPerPage = 20;
 
 function QueryBuilder({ items, onClose }){
-	const [currentPage, setCurrentPage] = useState(1);
+	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [useOR, /*setUseOR*/] = useState(true);
 	const [queryTerms, setQueryTerms] = useState([]);
 
@@ -30,11 +31,9 @@ function QueryBuilder({ items, onClose }){
 
 	const queriedItems = useMemo(() => items.filter(it => runQuerySet(queryTerms, useOR, it)), [items, queryTerms, useOR]);
 
-	const pageLimits = useMemo(() => [itemsPerPage*(currentPage - 1), itemsPerPage*currentPage], [currentPage]);
-
 	useEffect(() => {
 		setCurrentPage(1);
-	}, [items, queriedItems]);
+	}, [items, queriedItems, setCurrentPage]);
 
 	return <div className="zr-query-builder">
 		<Toolbar>
