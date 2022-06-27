@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { arrayOf, func } from "prop-types";
 import { RadioGroup } from "@blueprintjs/core";
 
@@ -9,16 +9,12 @@ const LibrarySelector = React.memo(function LibrarySelector({ libraries, selecte
 		return libraries.map(lib => { return { value: lib.path }; });
 	}, [libraries]);
 
-	const handleSelection = useCallback((event) => {
-		onSelect(libraries.find(lib => lib.path == event.currentTarget.value));
-	}, [libraries, onSelect]);
-
 	return (
 		<RadioGroup 
 			className="zr-text-small"
 			inline={false}
 			name="import-library"
-			onChange={handleSelection}
+			onChange={onSelect}
 			options={options}
 			selectedValue={selectedLib.path}/>
 	);

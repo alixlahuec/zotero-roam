@@ -14,6 +14,9 @@ import { sortCollections } from "../../utils";
 import { ExtensionContext } from "../App";
 import SentryBoundary from "../Errors/SentryBoundary";
 import * as customPropTypes from "../../propTypes";
+
+import useSelect from "../../hooks/useSelect";
+
 import "./index.css";
 
 const ImportButton = React.memo(function ImportButton(props) {
@@ -81,7 +84,6 @@ ImportButton.propTypes = {
 
 const ImportPanel = React.memo(function ImportPanel(props) {
 	const { collections, identifiers, isActive, libraries, resetImport } = props;
-	const [selectedLib, setSelectedLib] = useState(libraries[0]);
 	const [selectedColls, setSelectedColls] = useState([]);
 	const [selectedTags, setSelectedTags] = useState([]);
 
@@ -95,10 +97,10 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 		});
 	}, []);
 
-	const handleLibSelection = useCallback((lib) => {
-		setSelectedLib(lib);
-		setSelectedColls([]);
-	}, []);
+	const [selectedLib, handleLibSelection] = useSelect({
+		start: libraries[0],
+		transform: (path) => libraries.find(lib => lib.path == path)
+	});
 
 	const handleTagRemoval = useCallback((tag) => {
 		setSelectedTags(currentTags => {
@@ -115,6 +117,10 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 			}
 		});
 	}, []);
+	const onLibChange = useCallback((event) => {
+		handleLibSelection(event);
+		setSelectedColls();
+	}, [handleLibSelection, setSelectedColls]);
 
 	const selectedLibCollections = useMemo(() => {
 		let libCollections = collections.filter(cl => {
@@ -149,7 +155,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 					<LibrarySelector 
 						libraries={libraries}
 						selectedLib={selectedLib}
-						onSelect={handleLibSelection} />
+						onSelect={onLibChange} />
 				</div>
 				<CollectionsSelector 
 					collections={selectedLibCollections}

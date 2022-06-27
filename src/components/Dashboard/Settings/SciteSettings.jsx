@@ -8,18 +8,20 @@ import Toggle from "./Toggle";
 
 import useBool from "../../../hooks/useBool";
 import useNumeric from "../../../hooks/useNumeric";
+import useSelect from "../../../hooks/useSelect";
 
 function SciteSettings(){
 	const { sciteBadge } = useContext(UserSettings);
 	const [doi, setDOI] = useState("10.1126/science.1179052");
 	const [layout, setLayout] = useState(sciteBadge.layout);
-	const [tooltipPlacement, setTooltipPlacement] = useState(sciteBadge.tooltipPlacement);
 
 	const toggleLayout = useCallback(() => setLayout(prev => prev == "horizontal" ? "vertical" : "horizontal"), []);
-	const handleTooltipPlacementChange = useCallback((event) => setTooltipPlacement(event.currentTarget.value), []);
 	const [showLabels,,toggleLabels] = useBool(sciteBadge.showLabels);
 	const [showZero,,toggleZero] = useBool(sciteBadge.showZero);
 	const [small,,toggleSmall] = useBool(sciteBadge.small);
+	const [tooltipPlacement, handleTooltipPlacementChange] = useSelect({
+		start: sciteBadge.tooltipPlacement
+	});
 	const [tooltipSlide, handleTooltipSlideChange] = useNumeric(sciteBadge.tooltipSlide);
 
 	return <>
