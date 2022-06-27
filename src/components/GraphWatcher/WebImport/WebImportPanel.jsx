@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
 import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
@@ -10,6 +10,7 @@ import SentryBoundary from "../../Errors/SentryBoundary";
 import { UserSettings } from "../../App";
 import { useQuery_Citoid } from "../../../api/queries";
 import { pluralize } from "../../../utils";
+import useMulti from "../../../hooks/useMulti";
 
 function useGetCitoids(urls, opts = {}) {
 	return useQuery_Citoid(urls, {
@@ -77,7 +78,9 @@ WebImportItem.propTypes = {
 
 const WebImportPanel = React.memo(function WebImportPanel(props){
 	const { isOpen, onClose, urls } = props;
-	const [selected, setSelected] = useState([]);
+	const [selected, setSelected, onItemSelect] = useMulti({
+		start: []
+	});
 	const has_selected_items = selected.length > 0;
 
 	const citoidQueries = useGetCitoids(urls, { enabled: isOpen });
@@ -85,23 +88,9 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data);
 
 	const handleClose = useCallback(() => {
-		resetImport();
+		setSelected();
 		onClose();
-	}, [onClose, resetImport]);
-
-	const handleItemSelection = useCallback((url) => {
-		setSelected(currentSelection => {
-			if(currentSelection.includes(url)){
-				return currentSelection.filter(u => u != url);
-			} else {
-				return [...currentSelection, url];
-			}
-		});
-	}, []);
-
-	const resetImport = useCallback(() => {
-		setSelected([]);
-	}, []);
+	}, [onClose, setSelected]);
 
 	return (
 		<AuxiliaryDialog
@@ -128,12 +117,12 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 						</div>
 						<div className="rendered-div">
 							<ul className={ Classes.LIST_UNSTYLED }>
-								{citoids.map(cit => <WebImportItem key={cit.url} item={cit} isSelected={selected.includes(cit.url)} onSelect={handleItemSelection} />)}
+								{citoids.map(cit => <WebImportItem key={cit.url} item={cit} isSelected={selected.includes(cit.url)} onSelect={onItemSelect} />)}
 							</ul>
 						</div>
 					</div>
 					<div className="zr-webimport-panel--side">
-						<ZoteroImport identifiers={selected} isActive={has_selected_items} resetImport={resetImport} />
+						<ZoteroImport identifiers={selected} isActive={has_selected_items} resetImport={setSelected} />
 					</div>
 				</SentryBoundary>
 			</div>

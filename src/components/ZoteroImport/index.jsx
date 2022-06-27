@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import { arrayOf, bool, func, shape, string} from "prop-types";
 import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 
@@ -15,6 +15,7 @@ import { ExtensionContext } from "../App";
 import SentryBoundary from "../Errors/SentryBoundary";
 import * as customPropTypes from "../../propTypes";
 
+import useMulti from "../../hooks/useMulti";
 import useSelect from "../../hooks/useSelect";
 
 import "./index.css";
@@ -84,39 +85,17 @@ ImportButton.propTypes = {
 
 const ImportPanel = React.memo(function ImportPanel(props) {
 	const { collections, identifiers, isActive, libraries, resetImport } = props;
-	const [selectedColls, setSelectedColls] = useState([]);
-	const [selectedTags, setSelectedTags] = useState([]);
-
-	const handleCollSelection = useCallback((key) => {
-		setSelectedColls(currentSelection => {
-			if(currentSelection.includes(key)){
-				return currentSelection.filter(coll => coll != key);
-			} else {
-				return [...currentSelection, key];
-			}
-		});
-	}, []);
-
 	const [selectedLib, handleLibSelection] = useSelect({
 		start: libraries[0],
 		transform: (path) => libraries.find(lib => lib.path == path)
 	});
+	const [selectedColls, setSelectedColls, onCollSelect] = useMulti({
+		start: []
+	});
+	const [selectedTags,,, onTagSelect, onTagRemove] = useMulti({
+		start: []
+	});
 
-	const handleTagRemoval = useCallback((tag) => {
-		setSelectedTags(currentTags => {
-			return currentTags.filter(t => t != tag);
-		});
-	}, []);
-
-	const handleTagSelection = useCallback((tag) => {
-		setSelectedTags(currentTags => {
-			if(!currentTags.includes(tag)){
-				return [...currentTags, tag];
-			} else {
-				return currentTags;
-			}
-		});
-	}, []);
 	const onLibChange = useCallback((event) => {
 		handleLibSelection(event);
 		setSelectedColls();
@@ -159,11 +138,11 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 				</div>
 				<CollectionsSelector 
 					collections={selectedLibCollections}
-					onSelect={handleCollSelection}
+					onSelect={onCollSelect}
 					selectedCollections={selectedColls} />
 				<TagsSelector 
-					onRemove={handleTagRemoval}
-					onSelect={handleTagSelection}
+					onRemove={onTagRemove}
+					onSelect={onTagSelect}
 					selectedTags={selectedTags} />
 			</div>
 		</SentryBoundary>

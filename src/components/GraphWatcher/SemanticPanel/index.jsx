@@ -8,6 +8,7 @@ import SidePanel from "./SidePanel";
 
 import { pluralize, sortElems } from "../../../utils";
 import SentryBoundary from "../../Errors/SentryBoundary";
+import useMulti from "../../../hooks/useMulti";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -86,42 +87,26 @@ SemanticTabList.propTypes = {
 
 const SemanticPanel = React.memo(function SemanticPanel(props){
 	const { isOpen, items, onClose, show } = props;
-	const [itemsForImport, setItemsForImport] = useState([]);
+	const [itemsForImport, setItemsForImport,, addToImport, removeFromImport] = useMulti({
+		start: [],
+		identify: (item, value) => item.doi == value.doi && item.url == value.url
+	});
 
 	const has_selected_items = itemsForImport.length > 0;
-
-	const addToImport = useCallback((item) => {
-		setItemsForImport(prevItems => {
-			let match = prevItems.find(i => i.doi == item.doi && i.url == item.url);
-			if(match){
-				return prevItems;
-			} else {
-				return [...prevItems, item];
-			}
-		});
-	}, []);
-
-	const removeFromImport = useCallback((item) => {
-		setItemsForImport(prevItems => prevItems.filter(i => i.doi != item.doi && i.url != item.url));
-	}, []);
-
-	const resetImport = useCallback(() => {
-		setItemsForImport([]);
-	}, []);
 
 	const selectProps = useMemo(() => {
 		return {
 			handleRemove: removeFromImport,
 			handleSelect: addToImport,
 			items: itemsForImport,
-			resetImport
+			resetImport: setItemsForImport
 		};
-	}, [addToImport, itemsForImport, removeFromImport, resetImport]);
+	}, [addToImport, itemsForImport, removeFromImport, setItemsForImport]);
 
 	const handleClose = useCallback(() => {
-		resetImport();
+		setItemsForImport();
 		onClose();
-	}, [onClose, resetImport]);
+	}, [onClose, setItemsForImport]);
 
 	return (
 		<AuxiliaryDialog
