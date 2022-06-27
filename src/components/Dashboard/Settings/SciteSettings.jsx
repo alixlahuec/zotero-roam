@@ -6,6 +6,8 @@ import SciteBadge from "../../SciteBadge";
 import TextField from "./TextField";
 import Toggle from "./Toggle";
 
+import useNumeric from "../../../hooks/useNumeric";
+
 function SciteSettings(){
 	const { sciteBadge } = useContext(UserSettings);
 	const [doi, setDOI] = useState("10.1126/science.1179052");
@@ -14,14 +16,13 @@ function SciteSettings(){
 	const [showZero, setShowZero] = useState(sciteBadge.showZero);
 	const [small, setSmall] = useState(sciteBadge.small);
 	const [tooltipPlacement, setTooltipPlacement] = useState(sciteBadge.tooltipPlacement);
-	const [tooltipSlide, setTooltipSlide] = useState(sciteBadge.tooltipSlide);
 
 	const toggleLayout = useCallback(() => setLayout(prev => prev == "horizontal" ? "vertical" : "horizontal"), []);
 	const toggleLabels = useCallback(() => setShowLabels(prev => !prev), []);
 	const toggleZero = useCallback(() => setShowZero(prev => !prev), []);
 	const toggleSmall = useCallback(() => setSmall(prev => !prev), []);
 	const handleTooltipPlacementChange = useCallback((event) => setTooltipPlacement(event.currentTarget.value), []);
-	const handleTooltipSlideChange = useCallback((_valnum, valstring) => setTooltipSlide(Number(valstring)), []);
+	const [tooltipSlide, handleTooltipSlideChange] = useNumeric(sciteBadge.tooltipSlide);
 
 	return <>
 		<H3>Scite Badge</H3>
