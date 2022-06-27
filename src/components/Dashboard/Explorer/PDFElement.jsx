@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { Button } from "@blueprintjs/core";
 
 import ButtonLink from "../../ButtonLink";
@@ -7,17 +7,12 @@ import { ListItem } from "../../DataList";
 import NotesDrawer from "../../NotesDrawer";
 
 import { pluralize } from "../../../utils";
+import useBool from "../../../hooks/useBool";
 
 import * as customPropTypes from "../../../propTypes";
 function PDFElement({ item }){
-	const [isDataDrawerOpen, setDataDrawerOpen] = useState(false);
-	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
-
-	const openDataDrawer = useCallback(() => setDataDrawerOpen(true), []);
-	const closeDataDrawer = useCallback(() => setDataDrawerOpen(false), []);
-
-	const openNotesDrawer = useCallback(() => setNotesDrawerOpen(true), []);
-	const closeNotesDrawer = useCallback(() => setNotesDrawerOpen(false), []);
+	const [isDataDrawerOpen,,, openDataDrawer, closeDataDrawer] = useBool(false);
+	const [isNotesDrawerOpen,,, openNotesDrawer, closeNotesDrawer] = useBool(false);
 
 	return <>
 		<ListItem className="zr-query--result" >

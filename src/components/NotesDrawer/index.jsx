@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo } from "react";
 import { arrayOf, bool, func, object } from "prop-types";
 import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tabs, Tab, Tag } from "@blueprintjs/core";
 
@@ -7,13 +7,12 @@ import ButtonLink from "../ButtonLink";
 import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
 
 import SentryBoundary from "../Errors/SentryBoundary";
+import useBool from "../../hooks/useBool";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 function ShowRaw({ item }){
-	const [isDialogOpen, setDialogOpen] = useState(false);
-	const openDialog = useCallback(() => setDialogOpen(true), []);
-	const closeDialog = useCallback(() => setDialogOpen(false), []);
+	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
 
 	return <>
 		<Button icon="eye-open" minimal={true} onClick={openDialog} />

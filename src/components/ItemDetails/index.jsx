@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import { func, node, object, oneOf, string } from "prop-types";
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
@@ -13,6 +13,7 @@ import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 
 import SentryBoundary from "../Errors/SentryBoundary";
 import { UserSettings } from "../App";
+import useBool from "../../hooks/useBool";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
@@ -203,8 +204,8 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		weblink, 
 		year,
 		zotero} = item;
-	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
-	const [isDataDrawerOpen, setDataDrawerOpen] = useState(false);
+	const [isNotesDrawerOpen,, toggleNotes, showNotes, closeNotes] = useBool(false);
+	const [isDataDrawerOpen,,, showData, closeData] = useBool(false);
 	
 	const { 
 		annotations: annotationsSettings, 
@@ -237,13 +238,6 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			closeDialog();
 		}
 	}, [closeDialog, inGraph]);
-
-	const showNotes = useCallback(() => setNotesDrawerOpen(true), []);
-	const closeNotes = useCallback(() => setNotesDrawerOpen(false), []);
-	const toggleNotes = useCallback(() => setNotesDrawerOpen(prev => !prev), []);
-
-	const showData = useCallback(() => setDataDrawerOpen(true), []);
-	const closeData = useCallback(() => setDataDrawerOpen(false), []);
 
 	const goToPageButton = useMemo(() => {
 		let label = shortcutsSettings.goToItemPage != false

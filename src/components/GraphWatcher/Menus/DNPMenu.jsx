@@ -1,23 +1,16 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { arrayOf, string } from "prop-types";
 import { Button } from "@blueprintjs/core";
 
 import RelatedPanel from "../RelatedPanel";
 import { pluralize } from "../../../utils";
+import useBool from "../../../hooks/useBool";
 import * as customPropTypes from "../../../propTypes";
 
 function DNPMenu({ added, date, title }){
-	const [isDialogOpen, setDialogOpen] = useState(false);
+	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
 
 	const hasAddedItems = added.length > 0;
-
-	const openDialog = useCallback(() => {
-		setDialogOpen(true);
-	}, []);
-    
-	const closeDialog = useCallback(() => {
-		setDialogOpen(false);
-	}, []);
 
 	const buttonLabel = useMemo(() => {
 		return pluralize(added.length, "item", " added");

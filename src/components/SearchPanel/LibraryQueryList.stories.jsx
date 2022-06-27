@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React from "react";
 import LibraryQueryList from "./LibraryQueryList";
+import useBool from "../../hooks/useBool";
 import { cleanLibrary } from "../../utils";
 
 import { items } from "../../../mocks/zotero/items";
@@ -27,8 +28,8 @@ export default {
 };
 
 const Template = (args) => {
-	const [qcActive, setQCActive] = useState(false);
-	const toggleQC = useCallback(() => setQCActive(prevState => !prevState), []);
+	const [qcActive,, toggleQC] = useBool(false);
+
 	return <LibraryQueryList {...args} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} items={cleanItems} />;
 };
 

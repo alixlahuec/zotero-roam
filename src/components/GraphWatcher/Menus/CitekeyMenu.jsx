@@ -18,6 +18,7 @@ import ItemDetails from "../../ItemDetails";
 
 import SentryBoundary from "../../Errors/SentryBoundary";
 import { UserSettings } from "../../App";
+import useBool from "../../../hooks/useBool";
 import * as customPropTypes from "../../../propTypes";
 
 function BacklinksItem({ entry }) {
@@ -107,21 +108,9 @@ function RelatedItemsBar(props) {
 	const [roamCitekeys,] = useRoamCitekeys();
 	const { isLoading, isError, data = {}, error } = useQuery_Semantic(doi);
 	
-	const [isBacklinksListOpen, setBacklinksListOpen] = useState(false);
-	const [isDialogOpen, setDialogOpen] = useState(false);
+	const [isBacklinksListOpen,,toggleBacklinks] = useBool(false);
+	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
 	const [isShowing, setShowing] = useState({title, type: "is_reference"});
-
-	const toggleBacklinks = useCallback(() => {
-		setBacklinksListOpen(!isBacklinksListOpen);
-	}, [isBacklinksListOpen]);
-
-	const openDialog = useCallback(() => {
-		setDialogOpen(true);
-	}, []);
-
-	const closeDialog = useCallback(() => {
-		setDialogOpen(false);
-	}, []);
 
 	const showReferences = useCallback(() => {
 		setShowing({
@@ -203,17 +192,8 @@ RelatedItemsBar.propTypes = {
 	title: string
 };
 
-function ViewItem(props) {
-	const { item } = props;
-	const [isPanelOpen, setPanelOpen] = useState(false);
-
-	const closePanel = useCallback(() => {
-		setPanelOpen(false);
-	}, []);
-
-	const openPanel = useCallback(() => {
-		setPanelOpen(true);
-	}, []);
+function ViewItem({ item }) {
+	const [isPanelOpen,,, openPanel, closePanel] = useBool(false);
 
 	return (
 		<>

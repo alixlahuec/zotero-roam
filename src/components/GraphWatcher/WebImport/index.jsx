@@ -6,20 +6,15 @@ import { Button } from "@blueprintjs/core";
 import { hasNodeListChanged } from "../../../utils";
 
 import WebImportPanel from "./WebImportPanel";
+import useBool from "../../../hooks/useBool";
 import "./index.css";
 
 const WebImportButton = React.memo(function WebImportButton({ urls }){
-	const [isDialogOpen, setDialogOpen] = useState(false);
-
-	const closePanel = useCallback(() => setDialogOpen(false), []);
-
-	const showImport = useCallback(() => {
-		setDialogOpen(true);
-	}, []);
+	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
 
 	return <>
-		<Button className="zr-webimport-button" icon="geosearch" minimal={true} onClick={showImport} />
-		<WebImportPanel isOpen={isDialogOpen} onClose={closePanel} urls={urls} />
+		<Button className="zr-webimport-button" icon="geosearch" minimal={true} onClick={openDialog} />
+		<WebImportPanel isOpen={isDialogOpen} onClose={closeDialog} urls={urls} />
 	</>;
 });
 WebImportButton.propTypes = {

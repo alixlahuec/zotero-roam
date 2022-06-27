@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
 import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
@@ -10,6 +10,7 @@ import { makeLogFromItems } from "./utils";
 import { categorizeLibraryItems } from "../../../utils";
 
 import SentryBoundary from "../../Errors/SentryBoundary";
+import useBool from "../../../hooks/useBool";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -34,10 +35,8 @@ LogViewSublist.propTypes = {
 
 const LogView = React.memo(function LogView({ itemList, onClose }){
 	const [asRecentAs, setAsRecentAs] = useState(7);
-	const [allAbstractsShown, setAllAbstractsShown] = useState(false);
+	const [allAbstractsShown,, toggleAbstracts] = useBool(false);
 	const [itemsLog, setItemsLog] = useState(null);
-
-	const handleToggleAbstracts = useCallback(() => setAllAbstractsShown(prevState => !prevState), []);
 
 	useEffect(() => {
 		if(itemList){
@@ -60,7 +59,7 @@ const LogView = React.memo(function LogView({ itemList, onClose }){
 				</ListWrapper>
 				<Toolbar>
 					<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
-					<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={handleToggleAbstracts} />
+					<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={toggleAbstracts} />
 				</Toolbar>
 			</div>
 	);

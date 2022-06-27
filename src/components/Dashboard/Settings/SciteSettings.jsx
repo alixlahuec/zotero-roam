@@ -6,22 +6,20 @@ import SciteBadge from "../../SciteBadge";
 import TextField from "./TextField";
 import Toggle from "./Toggle";
 
+import useBool from "../../../hooks/useBool";
 import useNumeric from "../../../hooks/useNumeric";
 
 function SciteSettings(){
 	const { sciteBadge } = useContext(UserSettings);
 	const [doi, setDOI] = useState("10.1126/science.1179052");
 	const [layout, setLayout] = useState(sciteBadge.layout);
-	const [showLabels, setShowLabels] = useState(sciteBadge.showLabels);
-	const [showZero, setShowZero] = useState(sciteBadge.showZero);
-	const [small, setSmall] = useState(sciteBadge.small);
 	const [tooltipPlacement, setTooltipPlacement] = useState(sciteBadge.tooltipPlacement);
 
 	const toggleLayout = useCallback(() => setLayout(prev => prev == "horizontal" ? "vertical" : "horizontal"), []);
-	const toggleLabels = useCallback(() => setShowLabels(prev => !prev), []);
-	const toggleZero = useCallback(() => setShowZero(prev => !prev), []);
-	const toggleSmall = useCallback(() => setSmall(prev => !prev), []);
 	const handleTooltipPlacementChange = useCallback((event) => setTooltipPlacement(event.currentTarget.value), []);
+	const [showLabels,,toggleLabels] = useBool(sciteBadge.showLabels);
+	const [showZero,,toggleZero] = useBool(sciteBadge.showZero);
+	const [small,,toggleSmall] = useBool(sciteBadge.small);
 	const [tooltipSlide, handleTooltipSlideChange] = useNumeric(sciteBadge.tooltipSlide);
 
 	return <>

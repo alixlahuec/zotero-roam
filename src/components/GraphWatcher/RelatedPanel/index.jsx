@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { arrayOf, bool, func, oneOf, oneOfType, shape, string } from "prop-types";
 import { Button, Classes } from "@blueprintjs/core";
 
@@ -7,19 +7,19 @@ import CitekeyPopover from "../../CitekeyPopover";
 import { pluralize, sortElems } from "../../../utils";
 
 import SentryBoundary from "../../Errors/SentryBoundary";
+import useBool from "../../../hooks/useBool";
+
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
 const labelId = "zr-related-panel-label";
 
 const Abstract = React.memo(function Abstract({ abstract, allAbstractsShown }) {
-	const [isVisible, setVisible] = useState(allAbstractsShown);
-
-	const toggleAbstract = useCallback(() => setVisible(prevState => !prevState), []);
+	const [isVisible, setVisible, toggleAbstract] = useBool(allAbstractsShown);
 
 	useEffect(() => {
 		setVisible(allAbstractsShown);
-	}, [allAbstractsShown]);
+	}, [allAbstractsShown, setVisible]);
 
 	if(!abstract){
 		return null;
@@ -126,7 +126,7 @@ RelatedList.propTypes = {
 
 const RelatedPanel = React.memo(function RelatedPanel(props) {
 	const { isOpen, items, onClose, show } = props;
-	const [isShowingAllAbstracts, setShowingAllAbstracts] = useState(false);
+	const [isShowingAllAbstracts,, toggleAbstracts] = useBool(false);
 
 	const relationship = useMemo(() => {
 		const { title, type } = show;
@@ -160,10 +160,6 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 			</div>
 		);
 	}, [onClose]);
-
-	const toggleAbstracts = useCallback(() => {
-		setShowingAllAbstracts(!isShowingAllAbstracts);
-	}, [isShowingAllAbstracts]);
 
 	return (
 		<AuxiliaryDialog

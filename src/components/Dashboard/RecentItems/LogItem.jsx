@@ -1,20 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { bool, func, string } from "prop-types";
 import { Button } from "@blueprintjs/core";
 
 import CitekeyPopover from "../../CitekeyPopover";
 import { ListItem } from "../../DataList";
+import useBool from "../../../hooks/useBool";
 
 import * as customPropTypes from "../../../propTypes";
 
 function Abstract({ abstract, allAbstractsShown }){
-	const [isVisible, setVisible] = useState(allAbstractsShown);
-
-	const toggleAbstract = useCallback(() => setVisible(prevState => !prevState), []);
-
+	const [isVisible, setVisible, toggleAbstract] = useBool(allAbstractsShown);
+	
 	useEffect(() => {
 		setVisible(allAbstractsShown);
-	}, [allAbstractsShown]);
+	}, [allAbstractsShown, setVisible]);
 
 	if(!abstract){
 		return null;

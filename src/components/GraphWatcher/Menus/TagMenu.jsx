@@ -4,11 +4,12 @@ import { Button } from "@blueprintjs/core";
 
 import RelatedPanel from "../RelatedPanel";
 import { pluralize } from "../../../utils";
+import useBool from "../../../hooks/useBool";
 import * as customPropTypes from "../../../propTypes";
 
 function TagMenu(props){
 	const { inAbstract = [], tag, tagged = [] } = props;
-	const [isDialogOpen, setDialogOpen] = useState(false);
+	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
 	const [isShowing, setShowing] = useState(null);
 
 	const hasTaggedItems = tagged.length > 0;
@@ -22,24 +23,20 @@ function TagMenu(props){
 	}, [hasTaggedItems, tag]);
 
 	const showAbstracts = useCallback(() => {
-		setDialogOpen(true);
+		openDialog();
 		setShowing({
 			title: tag,
 			type: "with_abstract"
 		});
-	}, [tag]);
+	}, [tag, openDialog]);
 
 	const showTagged = useCallback(() => {
-		setDialogOpen(true);
+		openDialog();
 		setShowing({
 			title: tag,
 			type: "with_tag"
 		});
-	}, [tag]);
-
-	const closeDialog = useCallback(() => {
-		setDialogOpen(false);
-	}, []);
+	}, [tag, openDialog]);
 
 	const abstractsLabel = useMemo(() => {
 		return pluralize(inAbstract.length, "abstract");

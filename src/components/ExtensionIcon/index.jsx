@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import { array, func, objectOf, oneOf } from "prop-types";
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
@@ -7,6 +7,7 @@ import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Ta
 import { makeTimestamp } from "../../utils";
 
 import { ExtensionContext, UserSettings } from "../App";
+import useBool from "../../hooks/useBool";
 import "./index.css";
 
 const betaTag = <Tag intent="primary" minimal={true}>Beta</Tag>;
@@ -15,17 +16,17 @@ const isCurrentlyDark = () => document.getElementsByTagName("body")[0].getAttrib
 
 function DarkThemeToggle (){
 	const { darkTheme } = useContext(UserSettings);
-	const [useDark, setUseDark] = useState(darkTheme);
+	const [useDark,setUseDark,toggleDark] = useBool(darkTheme);
 	
 	const toggleDarkTheme = useCallback(() => {
 		let is_currently_dark = isCurrentlyDark();
 		document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (!is_currently_dark).toString());
-		setUseDark(!is_currently_dark);
-	}, []);
+		toggleDark();
+	}, [toggleDark]);
 
 	useEffect(() => {
 		setUseDark(isCurrentlyDark());
-	}, []);
+	}, [setUseDark]);
 
 	return <Switch 
 		alignIndicator="right" 

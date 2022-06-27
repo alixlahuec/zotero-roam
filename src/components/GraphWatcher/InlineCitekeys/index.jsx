@@ -10,6 +10,7 @@ import { importItemMetadata } from "../../../roam";
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
 
 import { ExtensionContext, UserSettings } from "../../App";
+import useBool from "../../../hooks/useBool";
 import "./index.css";
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation
@@ -72,7 +73,7 @@ const useGetItems = (reqs) => {
 export const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, onClose, target } = props;
 	const { annotations: annotationsSettings, metadata: metadataSettings, notes: notesSettings, typemap } = useContext(UserSettings);
-	const [isNotesDrawerOpen, setNotesDrawerOpen] = useState(false);
+	const [isNotesDrawerOpen,,, showNotesDrawer, closeDrawer] = useBool(false);
 
 	const citekey = target?.parentElement.dataset.linkTitle;
 	const pageUID = target?.parentElement.dataset.linkUid;
@@ -102,12 +103,10 @@ export const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) 
 		onClose();
 	}, [annotationsSettings, itemData.raw, itemData.children, metadataSettings, notesSettings, onClose, pageUID, typemap]);
 
-	const showNotesDrawer = useCallback(() => setNotesDrawerOpen(true), []);
-
 	const closeNotesDrawer = useCallback(() => {
-		setNotesDrawerOpen(false);
+		closeDrawer();
 		onClose();
-	}, [onClose]);
+	}, [onClose, closeDrawer]);
 
 	const pdfChildren = useMemo(() => {
 		if(!(itemData?.children?.pdfs?.length > 0)){

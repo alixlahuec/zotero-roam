@@ -3,6 +3,7 @@ import { arrayOf, bool, func, shape, string } from "prop-types";
 import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag, UL } from "@blueprintjs/core";
 
 import { useModifyTags } from "../../../api/write";
+import useBool from "../../../hooks/useBool";
 
 import * as customPropTypes from "../../../propTypes";
 
@@ -29,12 +30,9 @@ CustomInput.propTypes = {
 };
 
 function MergeAsCustom({ disabled, library, tags }){
-	const [isDialogOpen, setDialogOpen] = useState(false);
 	const [value, setValue] = useState("");
+	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
 	const { mutate, status } = useModifyTags();
-
-	const openDialog = useCallback(() => setDialogOpen(true), []);
-	const closeDialog = useCallback(() => setDialogOpen(false), []);
 
 	const handleChange = useCallback((event) => {
 		setValue(event.target.value);

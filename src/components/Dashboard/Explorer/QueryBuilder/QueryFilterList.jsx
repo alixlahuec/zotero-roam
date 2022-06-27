@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { array, bool, func, shape } from "prop-types";
 import { Button, Classes, Dialog, Tag } from "@blueprintjs/core";
 
@@ -6,6 +6,7 @@ import QueryBox from "./QueryBox";
 import { defaultQueryTerm } from "./queries";
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
 import { makeDNP } from "../../../../utils";
+import useBool from "../../../../hooks/useBool";
 
 function makeValueString(value){
 	if(value == null){
@@ -40,10 +41,7 @@ function makeTermString(term, useOR, { parentheses = true } = {}){
 
 function TermTag({ handlers, isLast, term, useOR }){
 	const { removeSelf, updateSelf } = handlers;
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-	const openDialog = useCallback(() => setIsDialogOpen(true), []);
-	const closeDialog = useCallback(() => setIsDialogOpen(false), []);
+	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
 
 	const removeSelfCleanly = useCallback(() => {
 		closeDialog();

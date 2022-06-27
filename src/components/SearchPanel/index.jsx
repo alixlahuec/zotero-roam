@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useContext } from "react";
 import { bool, func, oneOf} from "prop-types";
 
 import { ExtensionContext, UserSettings } from "../App";
@@ -10,6 +10,7 @@ import { useQuery_Items } from "../../api/queries";
 import { cleanLibrary } from "../../utils";
 
 import SentryBoundary from "../Errors/SentryBoundary";
+import useBool from "../../hooks/useBool";
 import { dialogClass, dialogLabel } from "./classes";
 import "./index.css";
 
@@ -35,11 +36,9 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	const [roamCitekeys,] = useRoamCitekeys();
 	const { copy: { useQuickCopy} } = useContext(UserSettings);
 
-	let [quickCopyActive, setQuickCopy] = useState(useQuickCopy); // Is QuickCopy active by default ?
+	const [quickCopyActive,, toggleQuickCopy] = useBool(useQuickCopy); // Is QuickCopy active by default ?
 
 	const items = useGetItems(dataRequests, roamCitekeys, { enabled: status == "on" });
-
-	const toggleQuickCopy = useCallback(() => { setQuickCopy(prev => !prev); }, []);
 
 	return (
 		<DialogOverlay

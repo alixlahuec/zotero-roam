@@ -1,6 +1,7 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { HotkeysProvider } from "@blueprintjs/core";
 import SearchInputGroup from "./SearchInputGroup";
+import useBool from "../../hooks/useBool";
 
 export default {
 	component: SearchInputGroup,
@@ -19,8 +20,8 @@ export default {
 
 const Template = (args) => {
 	const searchbar = useRef();
-	const [qcActive, setQCActive] = useState(false);
-	const toggleQC = useCallback(() => setQCActive(prevState => !prevState), []);
+	const [qcActive,, toggleQC] = useBool(false);
+
 	return <HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
 		<SearchInputGroup {...args} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} searchbar={searchbar} />
 	</HotkeysProvider>;
