@@ -3,13 +3,14 @@ import { createPortal } from "react-dom";
 import { bool, func, instanceOf, number, object, shape } from "prop-types";
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
+import NotesDrawer from "../../NotesDrawer";
+
 import { useQuery_Items } from "../../../api/queries";
 import { importItemMetadata } from "../../../roam";
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
 
 import { ExtensionContext, UserSettings } from "../../App";
 import "./index.css";
-import NotesDrawer from "../../NotesDrawer";
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation
  * @param {Object[]} reqs - The data requests to use to retrieve items
@@ -200,7 +201,7 @@ CitekeyContextMenu.propTypes = {
 const InlineCitekeys = React.memo(function InlineCitekeys() {
 	const { dataRequests, portalId } = useContext(ExtensionContext);
 	const { render_inline } = useContext(UserSettings);
-	
+
 	const [isContextMenuOpen, setContextMenuOpen] = useState(false);
 	const [contextMenuCoordinates, setContextMenuCoordinates] = useState({left: 0, top:0});
 	const [contextMenuTarget, setContextMenuTarget] = useState(null);

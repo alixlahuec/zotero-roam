@@ -21,14 +21,8 @@ const Template = (args) => {
 	const searchbar = useRef();
 	const [qcActive, setQCActive] = useState(false);
 	const toggleQC = useCallback(() => setQCActive(prevState => !prevState), []);
-	const quickCopyProps = useMemo(() => {
-		return {
-			isActive: qcActive,
-			toggle: toggleQC
-		};
-	}, [qcActive, toggleQC]);
 	return <HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
-		<SearchInputGroup {...args} quickCopyProps={quickCopyProps} searchbar={searchbar} />
+		<SearchInputGroup {...args} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} searchbar={searchbar} />
 	</HotkeysProvider>;
 };
 
