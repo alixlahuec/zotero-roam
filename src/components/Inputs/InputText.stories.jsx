@@ -6,8 +6,8 @@ export default {
 };
 
 const Template = (args) => {
-	const { value: valueFromArgs, setValue: setFromArgs, ...argList } = args;
-	const [value, setValue] = useState(valueFromArgs || "");
+	const { defaultValue = "", ...argList } = args;
+	const [value, setValue] = useState(defaultValue);
 	return <InputText value={value} setValue={setValue} {...argList} />;
 };
 

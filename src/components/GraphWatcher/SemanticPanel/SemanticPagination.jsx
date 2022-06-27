@@ -2,13 +2,13 @@ import React, { useCallback, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape} from "prop-types";
 import { InputGroup, NonIdealState } from "@blueprintjs/core";
 
+import { ListWrapper, Pagination, Toolbar } from "../../DataList";
 import { SemanticGuide } from "../../Guide";
 import SemanticItem from "./SemanticItem";
-import { ListWrapper, Pagination, Toolbar } from "../../DataList";
+import SortButtons from "../../SortButtons";
 
 import { searchEngine } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
-import SortButtons from "../../SortButtons";
 
 const itemsPerPage = 30;
 

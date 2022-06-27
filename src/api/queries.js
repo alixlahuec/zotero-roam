@@ -163,8 +163,8 @@ const useWriteableLibraries = (libraries) => {
 			} else {
 				let { access } = keyData;
 				let [libType, libId] = lib.path.split("/");
-				let permissions = libType == "users" ? (access.user || {}) : (access.groups[libId] || access.groups.all);
-				return permissions?.write || false;
+				let permissionsList = libType == "users" ? (access.user || {}) : (access.groups[libId] || access.groups.all);
+				return permissionsList?.write || false;
 			}
 		});
 	

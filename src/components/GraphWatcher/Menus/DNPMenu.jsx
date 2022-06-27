@@ -6,19 +6,10 @@ import RelatedPanel from "../RelatedPanel";
 import { pluralize } from "../../../utils";
 import * as customPropTypes from "../../../propTypes";
 
-function DNPMenu(props){
-	const { added, date, title } = props;
+function DNPMenu({ added, date, title }){
 	const [isDialogOpen, setDialogOpen] = useState(false);
 
 	const hasAddedItems = added.length > 0;
-
-	const isShowing = useMemo(() => {
-		return {
-			date,
-			title,
-			type: "added_on"
-		};
-	}, [date, title]);
 
 	const openDialog = useCallback(() => {
 		setDialogOpen(true);
@@ -41,7 +32,7 @@ function DNPMenu(props){
 						isOpen={isDialogOpen}
 						items={added}
 						onClose={closeDialog}
-						show={isShowing}
+						show={{ date, title, type: "added_on" }}
 					/>
 				</>
 				: null}

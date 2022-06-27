@@ -28,13 +28,7 @@ export default {
 const Template = (args) => {
 	const [qcActive, setQCActive] = useState(false);
 	const toggleQC = useCallback(() => setQCActive(prevState => !prevState), []);
-	const quickCopyProps = useMemo(() => {
-		return {
-			isActive: qcActive,
-			toggle: toggleQC
-		};
-	}, [qcActive, toggleQC]);
-	return <LibraryQueryList {...args} quickCopyProps={quickCopyProps} items={cleanItems} />;
+	return <LibraryQueryList {...args} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} items={cleanItems} />;
 };
 
 export const WithItems = Template.bind({});

@@ -41,11 +41,6 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 
 	const toggleQuickCopy = useCallback(() => { setQuickCopy(prev => !prev); }, []);
 
-	const quickCopyProps = useMemo(() => ({
-		isActive: quickCopyActive,
-		toggle: toggleQuickCopy
-	}), [quickCopyActive, toggleQuickCopy]);
-
 	return (
 		<DialogOverlay
 			ariaLabelledBy={dialogLabel}
@@ -58,7 +53,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					handleClose={onClose}
 					isOpen={isOpen}
 					items={items}
-					quickCopyProps={quickCopyProps} />
+					quickCopyProps={{ isActive: quickCopyActive, toggle: toggleQuickCopy}} />
 			</SentryBoundary>
 		</DialogOverlay>
 	);

@@ -5,11 +5,11 @@ import { NonIdealState } from "@blueprintjs/core";
 import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
 import ItemElement from "./ItemElement";
 import { defaultQueryTerm, runQuerySet } from "./queries";
+import QueryFilterList from "./QueryFilterList";
 import { addElemToArray, updateArrayElemAt, removeArrayElemAt } from "./utils";
 
 import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
-import QueryFilterList from "./QueryFilterList";
 
 const itemsPerPage = 20;
 
