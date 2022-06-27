@@ -9,6 +9,7 @@ import SortButtons from "../../SortButtons";
 
 import { searchEngine } from "../../../utils";
 import usePagination from "../../../hooks/usePagination";
+import useText from "../../../hooks/useText";
 import * as customPropTypes from "../../../propTypes";
 
 const itemsPerPage = 30;
@@ -83,13 +84,8 @@ Item.propTypes = {
 const SemanticPagination = React.memo(function SemanticPagination(props){
 	const { items, selectProps, type } = props;
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
-	const [query, setQuery] = useState("");
+	const [query, onQueryChange] = useText("");
 	const [sortBy, setSortBy] = useState("year");
-
-	const handleSearch = useCallback((event) => {
-		let search = event.target?.value;
-		setQuery(search || null);
-	}, []);
 
 	const filteredItems = useMemo(() => !query ? items : search(query, items), [items, query]);
 
@@ -114,7 +110,7 @@ const SemanticPagination = React.memo(function SemanticPagination(props){
 					autoComplete="off"
 					id={"semantic-search--" + type}
 					leftIcon="search"
-					onChange={handleSearch}
+					onChange={onQueryChange}
 					placeholder="Search items"
 					spellCheck="false"
 					title="Search by title, authors (last names), or year"

@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
 import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag, UL } from "@blueprintjs/core";
 
 import { useModifyTags } from "../../../api/write";
 import useBool from "../../../hooks/useBool";
+import useText from "../../../hooks/useText";
 
 import * as customPropTypes from "../../../propTypes";
 
@@ -30,13 +31,9 @@ CustomInput.propTypes = {
 };
 
 function MergeAsCustom({ disabled, library, tags }){
-	const [value, setValue] = useState("");
 	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
+	const [value, onValueChange] = useText("");
 	const { mutate, status } = useModifyTags();
-
-	const handleChange = useCallback((event) => {
-		setValue(event.target.value);
-	}, []);
 
 	const triggerMerge = useCallback(() => {
 		mutate({
@@ -68,7 +65,7 @@ function MergeAsCustom({ disabled, library, tags }){
 					<UL>
 						{tags.map(el => <li key={el}>{el}</li>)}
 					</UL>
-					<CustomInput handleChange={handleChange} status={status} value={value} />
+					<CustomInput handleChange={onValueChange} status={status} value={value} />
 				</div>
 				<div className={Classes.DIALOG_FOOTER}>
 					<div className={Classes.DIALOG_FOOTER_ACTIONS}>
