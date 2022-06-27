@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { H3, NumericInput, Radio, RadioGroup } from "@blueprintjs/core";
 
 import { UserSettings } from "../../App";
@@ -9,13 +9,15 @@ import Toggle from "./Toggle";
 import useBool from "../../../hooks/useBool";
 import useNumeric from "../../../hooks/useNumeric";
 import useSelect from "../../../hooks/useSelect";
+import useToggle from "../../../hooks/useToggle";
 
 function SciteSettings(){
 	const { sciteBadge } = useContext(UserSettings);
 	const [doi, setDOI] = useState("10.1126/science.1179052");
-	const [layout, setLayout] = useState(sciteBadge.layout);
-
-	const toggleLayout = useCallback(() => setLayout(prev => prev == "horizontal" ? "vertical" : "horizontal"), []);
+	const [layout, toggleLayout] = useToggle({ 
+		start: sciteBadge.layout, 
+		options: ["horizontal", "vertical"]
+	});
 	const [showLabels,,toggleLabels] = useBool(sciteBadge.showLabels);
 	const [showZero,,toggleZero] = useBool(sciteBadge.showZero);
 	const [small,,toggleSmall] = useBool(sciteBadge.small);
