@@ -3,6 +3,42 @@ import {
 	formatZoteroAnnotations,
 	simplifyZoteroAnnotations } from "../../src/utils";
 
+// TODO: use mock data for annotations
+const imageAnnot = {
+	data: {
+		annotationColor: "#5fb236",
+		annotationComment: "Good figure to dissect",
+		annotationPageLabel: "17",
+		annotationPosition: "{\"pageIndex\":16,\"rects\":[[203.6,431.053,546.865,441.6],[203.6,419.056,536.829,429.603],[203.6,407.059,566.448,417.606],[203.6,395.062,564.521,405.609],[203.6,383.065,265.699,393.612]]}",
+		annotationSortIndex: "00016|001930|00290",
+		annotationText: "",
+		annotationType: "image",
+		dateAdded: "2022-04-01T19:00:00Z",
+		dateModified: "2022-04-01T20:00:00Z",
+		itemType: "annotation",
+		key: "X76XTRT",
+		parentItem: "Z90BMEE",
+		relations: {},
+		tags: [{tag: "TODO"}],
+		version: 1222
+	},
+	has_citekey: false,
+	key: "X76XTRT",
+	library: {
+		id: 98765,
+		links: {alternate: {href: "https://www.zotero.org/some_user_name", type: "text/html"}},
+		name: "some_user_name",
+		type: "user"
+	},
+	links: {
+		alternate: {href: "https://www.zotero.org/some_user_name/items/A12BCDEF", type: "text/html"},
+		self: {href: "https://api.zotero.org/users/98765/items/A12BCDEF", type: "application/json"},
+		up: {href: "https://api.zotero.org/users/98765/items/P34QRSTU", type: "application/json"}
+	},
+	meta: {},
+	version: 1222
+};
+
 const annot = {
 	data: {
 		annotationColor: "#5fb236",
@@ -105,6 +141,10 @@ describe("Annotations formatting", () => {
 					string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
 					children: [simplifiedAnnot.comment]
 				}
+			]);
+		expect(formatZoteroAnnotations([imageAnnot]))
+			.toEqual([
+				// Images return null, and are filtered out
 			]);
 	});
 	

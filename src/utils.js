@@ -556,13 +556,19 @@ function formatItemAnnotations(annotations, { group_by = false, highlight_prefix
 				let sortedAnnots = day_dict[date].sort((a,b) => compareAnnotationIndices(a.sortIndex, b.sortIndex));
 				return {
 					string: makeDNP(new Date(date.split("-")), { brackets: true }),
-					children: sortedAnnots.map(ann => formatAnnotationWithParams(ann, { 
-						highlight_prefix, 
-						highlight_suffix, 
-						comment_prefix, 
-						comment_suffix }))
+					children: sortedAnnots
+						.map(ann => formatAnnotationWithParams(ann,
+							{ 
+								highlight_prefix, 
+								highlight_suffix, 
+								comment_prefix, 
+								comment_suffix 
+							}
+						))
+						.filter(Boolean)
 				};
-			});
+			})
+			.filter(date => date.children.length > 0);
 	} else {
 		return annots
 			.map(ann => formatAnnotationWithParams(ann, { 
