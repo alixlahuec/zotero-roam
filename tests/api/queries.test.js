@@ -51,7 +51,7 @@ describe("Hook for citoid queries", () => {
 		[
 			"1 invalid identifier",
 			[badIdentifier],
-			{ retry: false },
+			{},
 			["error"]
 		],
 		[
@@ -67,7 +67,11 @@ describe("Hook for citoid queries", () => {
 		async(_id, urls, options, expectation) => {
 			const { result, waitFor } = renderHook(() => useQuery_Citoid(urls, options), { wrapper });
 
-			await waitFor(() => result.current.every(res => !res.isLoading));
+			await waitFor(
+				() => result.current.every(res => !res.isLoading),
+				{
+					timeout: 3000
+				});
 
 			expect(result.current.map(res => res.status))
 				.toEqual(expectation);

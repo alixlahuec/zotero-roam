@@ -277,6 +277,23 @@ describe("Updating mocked items", () => {
 					}
 				}
 			}]);
+
+			const resWithFailure = await writeItems(
+				[{ key: sample_item.data.key, version: sample_item.version - 1, tags: [{ tag: "TEST_TAG", type: 0 }] }],
+				{ apikey: masterKey, path });
+
+			const dataWithFailure = resWithFailure.map(rq => rq.value.data);
+
+			expect(dataWithFailure).toEqual([{
+				failed: {
+					0: sample_item.data.key
+				},
+				unchanged: {
+					0: sample_item
+				},
+				success: {},
+				successful: {}
+			}]);
 		}
 	);
 });
