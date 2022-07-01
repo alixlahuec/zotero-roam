@@ -19,6 +19,12 @@ jobs:
       - name: Jest
         run: npm run ci:test
       
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./coverage/
+          verbose: true
+      
       - name: Webpack build (dev)
         run: npm run build:dev
 

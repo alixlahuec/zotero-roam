@@ -25,7 +25,7 @@
         "lint": "eslint",
         "ci:lint": "eslint --fix",
         "test": "jest",
-        "ci:test": "jest --ci",
+        "ci:test": "jest --ci --collectCoverage",
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook"
     },
