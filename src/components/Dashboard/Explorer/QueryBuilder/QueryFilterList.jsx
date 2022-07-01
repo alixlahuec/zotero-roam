@@ -41,7 +41,7 @@ function makeTermString(term, useOR, { parentheses = true } = {}){
 
 function TermTag({ handlers, isLast, term, useOR }){
 	const { removeSelf, updateSelf } = handlers;
-	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
+	const [isDialogOpen, { on: openDialog, off: closeDialog}] = useBool(false);
 
 	const removeSelfCleanly = useCallback(() => {
 		closeDialog();

@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
  * @param {{start: any, options: any[]}} config 
  * @returns {[any, function]}
  */
-const useToggle = ({ start, options = [start] }) => {
+const useToggle = ({ start, options = [start, null] }) => {
 	const [state, setState] = useState(start);
 
 	const toggle = useCallback(() => {

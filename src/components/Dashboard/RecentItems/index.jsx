@@ -35,7 +35,7 @@ LogViewSublist.propTypes = {
 
 const LogView = React.memo(function LogView({ itemList, onClose }){
 	const [asRecentAs, setAsRecentAs] = useState(7);
-	const [allAbstractsShown,, toggleAbstracts] = useBool(false);
+	const [allAbstractsShown, { toggle: toggleAbstracts }] = useBool(false);
 	const [itemsLog, setItemsLog] = useState(null);
 
 	useEffect(() => {

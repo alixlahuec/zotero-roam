@@ -9,7 +9,7 @@ import useBool from "../../../hooks/useBool";
 import * as customPropTypes from "../../../propTypes";
 
 function Abstract({ abstract, allAbstractsShown }){
-	const [isVisible, setVisible, toggleAbstract] = useBool(allAbstractsShown);
+	const [isVisible, { set: setVisible, toggle: toggleAbstract }] = useBool(allAbstractsShown);
 	
 	useEffect(() => {
 		setVisible(allAbstractsShown);

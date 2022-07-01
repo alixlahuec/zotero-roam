@@ -89,10 +89,10 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 		start: libraries[0],
 		transform: (path) => libraries.find(lib => lib.path == path)
 	});
-	const [selectedColls, setSelectedColls, onCollSelect] = useMulti({
+	const [selectedColls, { set: setSelectedColls, toggle: onCollSelect }] = useMulti({
 		start: []
 	});
-	const [selectedTags,,, onTagSelect, onTagRemove] = useMulti({
+	const [selectedTags, {add: onTagSelect, remove: onTagRemove }] = useMulti({
 		start: []
 	});
 

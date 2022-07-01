@@ -10,7 +10,7 @@ import useBool from "../../../hooks/useBool";
 import "./index.css";
 
 const WebImportButton = React.memo(function WebImportButton({ urls }){
-	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
+	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 
 	return <>
 		<Button className="zr-webimport-button" icon="geosearch" minimal={true} onClick={openDialog} />

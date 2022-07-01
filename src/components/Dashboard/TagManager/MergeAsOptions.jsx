@@ -31,7 +31,7 @@ CustomInput.propTypes = {
 };
 
 function MergeAsCustom({ disabled, library, tags }){
-	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
+	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 	const [value, onValueChange] = useText("");
 	const { mutate, status } = useModifyTags();
 

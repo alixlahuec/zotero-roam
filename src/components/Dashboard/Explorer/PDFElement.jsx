@@ -11,8 +11,8 @@ import useBool from "../../../hooks/useBool";
 
 import * as customPropTypes from "../../../propTypes";
 function PDFElement({ item }){
-	const [isDataDrawerOpen,,, openDataDrawer, closeDataDrawer] = useBool(false);
-	const [isNotesDrawerOpen,,, openNotesDrawer, closeNotesDrawer] = useBool(false);
+	const [isDataDrawerOpen, { on: openDataDrawer, off: closeDataDrawer }] = useBool(false);
+	const [isNotesDrawerOpen, { on: openNotesDrawer, off: closeNotesDrawer}] = useBool(false);
 
 	return <>
 		<ListItem className="zr-query--result" >

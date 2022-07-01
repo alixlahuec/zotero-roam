@@ -19,7 +19,7 @@ const useBool = (initialState = false) => {
 
 	const off = useCallback(() => setState(false), []);
 
-	return [state, set, toggle, on, off];
+	return [state, { set, toggle, on, off }];
 };
 
 export default useBool;

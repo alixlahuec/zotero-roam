@@ -20,7 +20,7 @@ export default {
 
 const Template = (args) => {
 	const searchbar = useRef();
-	const [qcActive,, toggleQC] = useBool(false);
+	const [qcActive, { toggle: toggleQC }] = useBool(false);
 
 	return <HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
 		<SearchInputGroup {...args} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} searchbar={searchbar} />

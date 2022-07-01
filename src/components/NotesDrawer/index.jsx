@@ -12,7 +12,7 @@ import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 function ShowRaw({ item }){
-	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
+	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 
 	return <>
 		<Button icon="eye-open" minimal={true} onClick={openDialog} />

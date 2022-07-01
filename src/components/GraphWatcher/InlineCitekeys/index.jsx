@@ -73,7 +73,7 @@ const useGetItems = (reqs) => {
 export const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, onClose, target } = props;
 	const { annotations: annotationsSettings, metadata: metadataSettings, notes: notesSettings, typemap } = useContext(UserSettings);
-	const [isNotesDrawerOpen,,, showNotesDrawer, closeDrawer] = useBool(false);
+	const [isNotesDrawerOpen, { on: showNotesDrawer, off: closeDrawer }] = useBool(false);
 
 	const citekey = target?.parentElement.dataset.linkTitle;
 	const pageUID = target?.parentElement.dataset.linkUid;

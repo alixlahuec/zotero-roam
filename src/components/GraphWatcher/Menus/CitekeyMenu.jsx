@@ -108,8 +108,8 @@ function RelatedItemsBar(props) {
 	const [roamCitekeys,] = useRoamCitekeys();
 	const { isLoading, isError, data = {}, error } = useQuery_Semantic(doi);
 	
-	const [isBacklinksListOpen,,toggleBacklinks] = useBool(false);
-	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
+	const [isBacklinksListOpen, { toggle: toggleBacklinks }] = useBool(false);
+	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 	const [isShowing, setShowing] = useState({title, type: "is_reference"});
 
 	const showReferences = useCallback(() => {
@@ -193,7 +193,7 @@ RelatedItemsBar.propTypes = {
 };
 
 function ViewItem({ item }) {
-	const [isPanelOpen,,, openPanel, closePanel] = useBool(false);
+	const [isPanelOpen, { on: openPanel, off: closePanel }] = useBool(false);
 
 	return (
 		<>

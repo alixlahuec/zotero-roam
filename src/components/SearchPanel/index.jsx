@@ -36,7 +36,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 	const [roamCitekeys,] = useRoamCitekeys();
 	const { copy: { useQuickCopy} } = useContext(UserSettings);
 
-	const [quickCopyActive,, toggleQuickCopy] = useBool(useQuickCopy); // Is QuickCopy active by default ?
+	const [quickCopyActive, { toggle: toggleQuickCopy }] = useBool(useQuickCopy); // Is QuickCopy active by default ?
 
 	const items = useGetItems(dataRequests, roamCitekeys, { enabled: status == "on" });
 

@@ -204,8 +204,8 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		weblink, 
 		year,
 		zotero} = item;
-	const [isNotesDrawerOpen,, toggleNotes, showNotes, closeNotes] = useBool(false);
-	const [isDataDrawerOpen,,, showData, closeData] = useBool(false);
+	const [isNotesDrawerOpen, { toggle: toggleNotes, on: showNotes, off: closeNotes }] = useBool(false);
+	const [isDataDrawerOpen, { on: showData, off: closeData }] = useBool(false);
 	
 	const { 
 		annotations: annotationsSettings, 

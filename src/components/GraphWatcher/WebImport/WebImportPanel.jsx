@@ -78,7 +78,7 @@ WebImportItem.propTypes = {
 
 const WebImportPanel = React.memo(function WebImportPanel(props){
 	const { isOpen, onClose, urls } = props;
-	const [selected, setSelected, onItemSelect] = useMulti({
+	const [selected, { set: setSelected, toggle: onItemSelect }] = useMulti({
 		start: []
 	});
 	const has_selected_items = selected.length > 0;

@@ -28,7 +28,7 @@ export default {
 };
 
 const Template = (args) => {
-	const [qcActive,, toggleQC] = useBool(false);
+	const [qcActive, { toggle: toggleQC }] = useBool(false);
 
 	return <LibraryQueryList {...args} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} items={cleanItems} />;
 };

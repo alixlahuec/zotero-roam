@@ -87,7 +87,7 @@ SemanticTabList.propTypes = {
 
 const SemanticPanel = React.memo(function SemanticPanel(props){
 	const { isOpen, items, onClose, show } = props;
-	const [itemsForImport, setItemsForImport,, addToImport, removeFromImport] = useMulti({
+	const [itemsForImport, { set: setItemsForImport, add: addToImport, remove: removeFromImport }] = useMulti({
 		start: [],
 		identify: (item, value) => item.doi == value.doi && item.url == value.url
 	});

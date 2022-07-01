@@ -8,7 +8,7 @@ import useBool from "../../../hooks/useBool";
 import * as customPropTypes from "../../../propTypes";
 
 function DNPMenu({ added, date, title }){
-	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
+	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 
 	const hasAddedItems = added.length > 0;
 

@@ -18,9 +18,9 @@ function SciteSettings(){
 		start: sciteBadge.layout, 
 		options: ["horizontal", "vertical"]
 	});
-	const [showLabels,,toggleLabels] = useBool(sciteBadge.showLabels);
-	const [showZero,,toggleZero] = useBool(sciteBadge.showZero);
-	const [small,,toggleSmall] = useBool(sciteBadge.small);
+	const [showLabels, { toggle: toggleLabels }] = useBool(sciteBadge.showLabels);
+	const [showZero, { toggle: toggleZero }] = useBool(sciteBadge.showZero);
+	const [small, { toggle: toggleSmall }] = useBool(sciteBadge.small);
 	const [tooltipPlacement, handleTooltipPlacementChange] = useSelect({
 		start: sciteBadge.tooltipPlacement
 	});

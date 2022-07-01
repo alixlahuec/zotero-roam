@@ -9,7 +9,7 @@ import * as customPropTypes from "../../../propTypes";
 
 function TagMenu(props){
 	const { inAbstract = [], tag, tagged = [] } = props;
-	const [isDialogOpen,,, openDialog, closeDialog] = useBool(false);
+	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 	const [isShowing, setShowing] = useState(null);
 
 	const hasTaggedItems = tagged.length > 0;

@@ -16,7 +16,7 @@ const isCurrentlyDark = () => document.getElementsByTagName("body")[0].getAttrib
 
 function DarkThemeToggle (){
 	const { darkTheme } = useContext(UserSettings);
-	const [useDark,setUseDark,toggleDark] = useBool(darkTheme);
+	const [useDark, { set: setUseDark, toggle: toggleDark }] = useBool(darkTheme);
 	
 	const toggleDarkTheme = useCallback(() => {
 		let is_currently_dark = isCurrentlyDark();

@@ -15,7 +15,7 @@ import "./index.css";
 const labelId = "zr-related-panel-label";
 
 const Abstract = React.memo(function Abstract({ abstract, allAbstractsShown }) {
-	const [isVisible, setVisible, toggleAbstract] = useBool(allAbstractsShown);
+	const [isVisible, { set: setVisible, toggle: toggleAbstract }] = useBool(allAbstractsShown);
 
 	useEffect(() => {
 		setVisible(allAbstractsShown);
@@ -126,7 +126,7 @@ RelatedList.propTypes = {
 
 const RelatedPanel = React.memo(function RelatedPanel(props) {
 	const { isOpen, items, onClose, show } = props;
-	const [isShowingAllAbstracts,, toggleAbstracts] = useBool(false);
+	const [isShowingAllAbstracts, { toggle: toggleAbstracts }] = useBool(false);
 
 	const relationship = useMemo(() => {
 		const { title, type } = show;
