@@ -27,7 +27,9 @@
         "test": "jest",
         "ci:test": "jest --ci --collectCoverage",
         "storybook": "start-storybook -p 6006",
-        "build-storybook": "build-storybook"
+        "build-storybook": "build-storybook",
+        "test-storybook": "test-storybook",
+        "ci:test-storybook": "test-storybook --coverage"
     },
     "devDependencies": {
         "@babel/core": "^7.18.2",
@@ -44,6 +46,7 @@
         "@storybook/cli": "^6.5.9",
         "@storybook/manager-webpack5": "^6.5.9",
         "@storybook/react": "^6.5.9",
+        "@storybook/test-runner": "^0.3.0",
         "@storybook/testing-library": "^0.0.13",
         "@testing-library/react": "^12.1.5",
         "@testing-library/react-hooks": "^8.0.1",
@@ -55,8 +58,8 @@
         "eslint-plugin-react": "^7.30.0",
         "eslint-plugin-react-hooks": "^4.5.0",
         "eslint-plugin-storybook": "^0.5.12",
-        "jest": "^28.1.0",
-        "jest-environment-jsdom": "^28.1.0",
+        "jest": "^27.5.1",
+        "jest-environment-jsdom": "^27.5.1",
         "jest-transform-css": "^4.0.1",
         "msw": "^0.42.1",
         "msw-storybook-addon": "^1.6.3",
