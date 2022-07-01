@@ -38,7 +38,7 @@ export const handleBibliography = rest.get(
 	zotero(":libraryType/:libraryID/items/:itemKey"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID, itemKey } = req.params;
-		const include = req.url.searchParams.get("include") || "bib";
+		const include = req.url.searchParams.get("include");
         
 		const { key, version, library, links, meta, [include]: output } = findBibliographyEntry({ key: itemKey, path: `${libraryType}/${libraryID}`});
 

@@ -1,5 +1,6 @@
 import { rest } from "msw";
 
+/* istanbul ignore next */
 const addSampleMetadata = () => ({
 	key: "XRT92",
 	version: 0

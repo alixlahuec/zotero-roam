@@ -1,11 +1,12 @@
 import axios from "axios";
 import { QueryClient } from "react-query";
 import { citoids } from "../../mocks/citoid";
+import { makeItemMetadata } from "../../mocks/zotero/common";
 import { findCollections } from "../../mocks/zotero/collections";
 import { apiKeys } from "../../mocks/zotero/keys";
 import { bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
 import { deletions } from "../../mocks/zotero/deleted";
-import { items, findItems, makeItem } from "../../mocks/zotero/items";
+import { items, findItems } from "../../mocks/zotero/items";
 import { libraries } from "../../mocks/zotero/libraries";
 import { semantics } from "../../mocks/semantic-scholar";
 import { tags, findTags } from "../../mocks/zotero/tags";
@@ -385,7 +386,7 @@ describe("Writing mocked Citoid data", () => {
 				},
 				successful: {
 					0: {
-						...makeItem({
+						...makeItemMetadata({
 							library: libraryDetails,
 							version,
 							data: {

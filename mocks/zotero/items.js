@@ -1,39 +1,17 @@
-import { zotero, makeEntityLinks, makeLibraryMetadata } from "./common";
+import { zotero, makeItemMetadata } from "./common";
 import { rest } from "msw";
 import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 
-export const makeItem = ({ citekey = false, itemType = null, key = "__NO_UNIQUE_KEY__", library, title ="", version = 0, data = {} }) => ({
-	data: {
-		creators: [],
-		collections: [],
-		itemType,
-		key,
-		extra: citekey ? `Citation Key: ${citekey}` : "",
-		relations: {},
-		tags: [],
-		title,
-		version,
-		...data
-	},
-	has_citekey: citekey ? true : false,
-	key: citekey || key,
-	library: makeLibraryMetadata(library),
-	links: makeEntityLinks({ key, library }),
-	meta: {},
-	version
-});
-
 const data = [
 	{
-		...makeItem({
+		...makeItemMetadata({
 			citekey: "blochImplementingSocialInterventions2021",
 			itemType: "journalArticle",
 			key: "PPD648N6",
 			library: userLibrary,
 			title: "Implementing social interventions in primary care",
-			version: 96,
 			data: {
 				abstractNote: "KEY POINTS\n- Primary care–based social interventions offer an important means to mitigate threats to individual and community health posed by adverse social conditions.\n- Effective interventions include those that target individual-level determinants, connections with community resources, community-focused partnerships and structures within health teams that affect equity.\n- Accumulating evidence points to the positive impacts of social interventions on broad markers of health; however, most research in this area has focused on implementation and process measures, rather than outcomes.\n- Some interventions require large, interdisciplinary health care resources to implement, but many are accessible to small group practices or individual providers.",
 				collections: [],
@@ -64,7 +42,7 @@ const data = [
 		}
 	},
 	{
-		...makeItem({
+		...makeItemMetadata({
 			citekey: "pintoExploringDifferentMethods2021",
 			itemType: "journalArticle",
 			key: "D53X926C",
@@ -169,7 +147,7 @@ export const handleItems = [
 					// We're not actually adding the item to the data, so no need to ensure keys are unique
 					obj.success.push("__NO_UNIQUE_KEY__");
 					obj.successful.push({
-						...makeItem({
+						...makeItemMetadata({
 							library,
 							version: library.version,
 							...rest

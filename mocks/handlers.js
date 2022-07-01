@@ -17,6 +17,7 @@ export const fallbackHandler = rest.get(
 	}
 );
 
+/* istanbul ignore next */
 export const roamAssetsHandler = rest.get(
 	"https://roamresearch.com/assets/*", 
 	(req, _res, _ctx) => req.passthrough()

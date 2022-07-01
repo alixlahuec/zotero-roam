@@ -1,13 +1,19 @@
-import { zotero } from "./common";
+import { zotero, makeCollection } from "./common";
 import { rest } from "msw";
-import { collections } from "./collections";
 import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 
 const data = {
 	[userLibrary.path]: {
-		collections: [{...collections[0], key: "CRTG512"}],
+		collections: [
+			makeCollection({
+				key: "CRTG512",
+				library: userLibrary,
+				name: "A deleted collection",
+				version: 144
+			})
+		],
 		items: []
 	},
 	[groupLibrary.path]: {
@@ -37,7 +43,7 @@ export const handleDeleted = rest.get(
 		const since = req.url.searchParams.get("since");
 		const path = `${libraryType}/${libraryID}`;
 
-		const { collections = [], items = [] } = findDeleted({ path, since });
+		const { collections, items } = findDeleted({ path, since });
 
 		return res(
 			ctx.json({

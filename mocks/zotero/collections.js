@@ -1,26 +1,8 @@
-import { zotero, makeEntityLinks, makeLibraryMetadata } from "./common";
+import { zotero, makeCollection } from "./common";
 import { rest } from "msw";
 import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
-
-const makeCollection = ({ key, library, name, version, hasParent = false, hasChildren = 0 } = {}) => ({
-	data: {
-		key,
-		name,
-		parentCollection: hasParent,
-		relations: {},
-		version
-	},
-	key,
-	library: makeLibraryMetadata(library),
-	links: makeEntityLinks({ key, library }),
-	meta: {
-		numCollections: hasChildren,
-		numItems: 1
-	},
-	version
-});
 
 const data = [
 	makeCollection({
