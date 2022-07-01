@@ -33,9 +33,9 @@ const useMulti = ({ start = [], identify = defaultIdentify, retrieve = defaultRe
 	const toggle = useCallback((val) => {
 		setState(prevState => {
 			if(prevState.find(item => identify(item, val))){
-				removeFrom(prevState, val, identify);
+				return removeFrom(prevState, val, identify);
 			} else {
-				addTo(prevState, val, identify, retrieve);
+				return addTo(prevState, val, identify, retrieve);
 			}
 		});
 	}, [identify, retrieve]);
