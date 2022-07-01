@@ -27,7 +27,7 @@
         "test": "jest",
         "ci:test": "jest --ci --collectCoverage",
         "storybook": "start-storybook -p 6006",
-        "build-storybook": "build-storybook",
+        "build-storybook": "build-storybook --quiet",
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage"
     },
