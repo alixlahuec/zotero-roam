@@ -1,9 +1,7 @@
-import React, { useRef } from "react";
-import { CitekeyContextMenu } from ".";
-import sampleItem from "./item.json"; // TODO: add children to item for story
-
-const citekey = "@" + sampleItem.data.raw.key;
-const itemsMap = new Map([[citekey, sampleItem]]);
+import React, { useContext, useRef } from "react";
+import { ExtensionContext } from "../../App";
+import { items } from "../../../../mocks/zotero/items";
+import { CitekeyContextMenu, useGetItems } from ".";
 
 export default {
 	component: CitekeyContextMenu,
@@ -13,7 +11,6 @@ export default {
 			top: 80
 		},
 		isOpen: true,
-		itemsMap,
 		onClose: () => {},
 		userSettings: {
 			annotations: {},
@@ -39,13 +36,16 @@ export default {
 };
 
 const Template = (args) => {
+	const { dataRequests } = useContext(ExtensionContext);
 	const targetElement = useRef();
+	const itemsMap = useGetItems(dataRequests);
+	const citekey = "@" + items[0].key;
 	
 	return <>
 		<span data-link-title={citekey} data-link-uid="abcdef">
 			<span ref={targetElement}>{citekey}</span>
 		</span>
-		<CitekeyContextMenu {...args} target={targetElement.current} />
+		<CitekeyContextMenu {...args} itemsMap={itemsMap} target={targetElement.current} />
 	</>;
 };
 

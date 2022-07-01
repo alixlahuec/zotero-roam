@@ -70,7 +70,7 @@ const useGetItems = (reqs) => {
 	return new Map(data);
 };
 
-export const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
+const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, onClose, target } = props;
 	const { annotations: annotationsSettings, metadata: metadataSettings, notes: notesSettings, typemap } = useContext(UserSettings);
 	const [isNotesDrawerOpen, { on: showNotesDrawer, off: closeDrawer }] = useBool(false);
@@ -291,3 +291,4 @@ const InlineCitekeys = React.memo(function InlineCitekeys() {
 });
 
 export default InlineCitekeys;
+export { useGetItems, CitekeyContextMenu };
