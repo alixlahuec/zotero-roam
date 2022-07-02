@@ -6,11 +6,11 @@ import { findCollections } from "../../mocks/zotero/collections";
 import { apiKeys } from "../../mocks/zotero/keys";
 import { bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
 import { deletions } from "../../mocks/zotero/deleted";
-import { items, findItems } from "../../mocks/zotero/items";
+import { items, findItems, findBibEntry } from "../../mocks/zotero/items";
 import { libraries } from "../../mocks/zotero/libraries";
 import { semantics } from "../../mocks/semantic-scholar";
 import { tags, findTags } from "../../mocks/zotero/tags";
-import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
+import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;
 const { userLibrary, groupLibrary } = libraries;
@@ -124,6 +124,24 @@ describe("Fetching mocked bibliography", () => {
 			const { bib } = findBibliographyEntry({ key: entry.key, path });
 
 			expect(bibliography).toEqual(bib);
+		}
+	);
+});
+
+describe("Fetching mocked bibliography entries", () => {
+	const cases = Object.entries(libraries);
+
+	test.each(cases)(
+		"%# Fetching a bibliography entry from %s",
+		async(_libName, libraryDetails) => {
+			const { type, id, path } = libraryDetails;
+			const sample_item = findItems({ type, id, since: 0 })[0];
+
+			const res = await fetchBibEntries([sample_item.data.key], { apikey: masterKey, path });
+
+			const sample_bib = findBibEntry({ type, id, key: sample_item.data.key });
+
+			expect(res).toBe(sample_bib.biblatex);
 		}
 	);
 });
