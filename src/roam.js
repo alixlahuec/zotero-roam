@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { emitCustomEvent } from "./events";
 import { _getItemMetadata } from "./public";
 import { use_smartblock_metadata } from "./smartblocks";
