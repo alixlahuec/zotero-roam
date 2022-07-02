@@ -110,3 +110,6 @@ templates/
 
 # Storybook build
 storybook-static/
+
+# VSCode workspace
+*.code-workspace

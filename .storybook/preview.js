@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { initialize, mswDecorator } from 'msw-storybook-addon';
 import { fallbackHandler, roamAssetsHandler, apiHandlers } from '../mocks/handlers';
 import { rest } from "msw";

@@ -8,3 +8,22 @@ coverage:
   precision: 2
   round: up
   range: 70...100
+  status:
+    project:
+      dev:
+        paths:
+          - .storybook/
+          - mocks/
+        target: 100%
+        threshold: 5%
+      components:
+        paths:
+          - src/components/
+        target: 60%
+        threshold: 10%
+      utils:
+        paths:
+          - src/hooks/
+          - src/utils.js
+        target: 75%
+        threshold: 10%

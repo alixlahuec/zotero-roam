@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import React from "react";
 import { render } from "react-dom";
 import * as Sentry from "@sentry/react";

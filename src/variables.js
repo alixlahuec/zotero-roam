@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export const default_typemap = {
 	artwork: "Illustration",
 	audioRecording: "Recording",
