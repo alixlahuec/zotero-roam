@@ -1,0 +1,10 @@
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: no
+coverage:
+  precision: 2
+  round: up
+  range: 70...100
