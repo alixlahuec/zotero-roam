@@ -107,3 +107,6 @@ draft_*
 
 # User templates
 templates/
+
+# Storybook build
+storybook-static/
