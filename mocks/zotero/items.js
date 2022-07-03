@@ -14,7 +14,7 @@ const data = [
 			title: "Implementing social interventions in primary care",
 			data: {
 				abstractNote: "KEY POINTS\n- Primary care–based social interventions offer an important means to mitigate threats to individual and community health posed by adverse social conditions.\n- Effective interventions include those that target individual-level determinants, connections with community resources, community-focused partnerships and structures within health teams that affect equity.\n- Accumulating evidence points to the positive impacts of social interventions on broad markers of health; however, most research in this area has focused on implementation and process measures, rather than outcomes.\n- Some interventions require large, interdisciplinary health care resources to implement, but many are accessible to small group practices or individual providers.",
-				collections: [],
+				collections: ["ABCDEF"],
 				creators: [
 					{
 						creatorType: "author", 

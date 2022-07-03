@@ -1299,6 +1299,7 @@ export {
 	copyToClipboard,
 	escapeRegExp,
 	executeFunctionByName,
+	formatItemAnnotations,
 	formatItemNotes,
 	formatItemReference,
 	formatZoteroAnnotations,
