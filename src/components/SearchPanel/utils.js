@@ -10,15 +10,15 @@ function formatItemReferenceForCopy(simplifiedItem, format){
 	switch(true){
 	case (format instanceof Function):
 		return format(citekey, simplifiedItem.raw);
-	case "page-reference":
+	case (format == "page-reference"):
 		return pageRef;
-	case "raw":
+	case (format == "raw"):
 		return citekey;
-	case "tag":
+	case (format == "tag"):
 		return "#" + pageRef;
-	case "citation":
+	case (format == "citation"):
 		return "[" + simplifiedItem.authors + " (" + simplifiedItem.year + ")](" + pageRef + ")";
-	case "citekey":
+	case (format == "citekey"):
 	default:
 		return "@" + citekey;
 	}
