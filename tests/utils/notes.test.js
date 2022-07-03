@@ -1,46 +1,21 @@
 import { formatItemNotes, formatZoteroNotes, simplifyZoteroNotes } from "../../src/utils";
+import { libraries } from "../../mocks/zotero/libraries";
+import { sampleNote } from "../../mocks/zotero/notes";
 
-const note = {
-	data: {
-		dateAdded: "2021-06-16T21:36:12Z",
-		dateModified: "2021-06-16T21:36:12Z",
-		key: "A12BCDEF", 
-		itemType: "note", 
-		note: "<div style=\"background-color: Yellow\">Annotations</div><p>\"After all, argues Balthasar, \"in a world without beauty... the good also loses its attractiveness, self-evidence why it must be carried out.\" Why not prefer evil over good? \"Why not investigate Satan's depth?\"  Why desire the beatific vision? Accordingly, Balthasar seeks to rectify the given imbalance by embarking on an \"archeology of alienated beauty\"  in dialogue with thinkers such as Irenaeus, Augustine, Pseudo-Dionysius, Dante, Hopkins, Solovyev, and others.\" (<a href=\"zotero://open-pdf/library/items/A12BCDEF?page=1\">Smith 2003:1</a>)</p>",
-		parentItem: "P34QRSTU",
-		relations: {},
-		tags: [{tag: "toRead"}],
-		version: 1234
-	},
-	has_citekey: false,
-	key: "A12BCDEF",
-	library: {
-		id: 98765,
-		links: {alternate: {href: "https://www.zotero.org/some_user_name", type: "text/html"}},
-		name: "some_user_name",
-		type: "user"
-	},
-	links: {
-		alternate: {href: "https://www.zotero.org/some_user_name/items/A12BCDEF", type: "text/html"},
-		self: {href: "https://api.zotero.org/users/98765/items/A12BCDEF", type: "application/json"},
-		up: {href: "https://api.zotero.org/users/98765/items/P34QRSTU", type: "application/json"}
-	},
-	meta: {numChildren: 0},
-	version: 1234
-};
+const { userLibrary } = libraries;
 
 test("Simplifies notes", () => {
-	expect(simplifyZoteroNotes([note]))
+	expect(simplifyZoteroNotes([sampleNote]))
 		.toEqual([
 			{
-				date_added: note.data.dateAdded,
-				date_modified: note.data.dateModified,
-				key: "A12BCDEF",
-				location: "users/98765",
-				link_note: "zotero://select/library/items/A12BCDEF",
-				note: note.data.note,
-				parent_item: "P34QRSTU",
-				raw: note,
+				date_added: sampleNote.data.dateAdded,
+				date_modified: sampleNote.data.dateModified,
+				key: sampleNote.key,
+				location: userLibrary.path,
+				link_note: "zotero://select/library/items/" + sampleNote.key,
+				note: sampleNote.data.note,
+				parent_item: sampleNote.data.parentItem,
+				raw: sampleNote,
 				tags: ["toRead"]
 			}
 		]);
