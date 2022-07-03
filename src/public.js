@@ -3,7 +3,8 @@ import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getPDFLink, g
 
 /** Formats Zotero notes/annotations items
  * @param {ZoteroItem[]} notes - The Array of Zotero notes/annotations
- * @param {{func: String, split_char: String, use: ("raw"|"text")}} notesSettings - The settings to use for the formatting
+ * @param {{func: String, split_char: String, use: ("raw"|"text")}} notesSettings - The settings to use for the formatting of the notes
+ * @param {{comment_prefix: String, comment_suffix: String, func: String, group_by: ("day_added"|false), highlight_prefix: String, highlight_suffix: String, use: ("formatted"|"raw")}}
  * @returns The formatted Array
  */
 function formatNotes(notes, notesSettings, annotationsSettings){

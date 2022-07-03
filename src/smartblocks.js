@@ -1,4 +1,4 @@
-
+/* istanbul ignore next */
 /** Generates the list of custom SmartBlocks commands to register
  * @param {function} getItems - The exposed utility that returns available Zotero items. See {@link App} component.
  * @returns {Object} The list of commands to register
@@ -79,6 +79,7 @@ function eval_term(term, props){
 	}
 }
 
+/* istanbul ignore next */
 /** Register the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
@@ -96,6 +97,7 @@ function registerSmartblockCommands(getItems){
 
 // Extension-triggered SmartBlocks
 
+/* istanbul ignore next */
 /** Triggers a given SmartBlock to import an item's metadata
  * @param {Object} config - The identification for the SmartBlock to be used.
  * @param {{
