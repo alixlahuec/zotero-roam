@@ -90,6 +90,7 @@ function emitCustomEvent(type, detail = {}, target = document){
 	}
 }
 
+/* istanbul ignore next */
 /** Sets up default actions to trigger based on the extension's custom events
  */
 function setDefaultHooks(){

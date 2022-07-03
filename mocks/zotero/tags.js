@@ -5,7 +5,7 @@ import { searchEngine } from "../../src/utils";
 
 const { userLibrary, groupLibrary } = libraries;
 
-const addMetadata = ({ tag, library, type = 1, numItems = 1 }) => {
+const makeTag = ({ tag, library, type = 1, numItems = 1 }) => {
 	const { path } = library;
 	return {
 		tag,
@@ -33,17 +33,17 @@ export const findTags = (path, token) => {
 
 const data = {
 	[userLibrary.path]: [
-		{...addMetadata({ tag: "immigrant youth", library: userLibrary, numItems: 2 })},
-		{...addMetadata({ tag: "immigration", library: userLibrary, type: 1 })},
-		{...addMetadata({ tag: "immigration", library: userLibrary, type: 0 })},
-		{...addMetadata({ tag: "IMMIGRATION", library: userLibrary, type: 1 })},
-		{...addMetadata({ tag: "patient journeys", library: userLibrary })}
+		makeTag({ tag: "immigrant youth", library: userLibrary, numItems: 2 }),
+		makeTag({ tag: "immigration", library: userLibrary, type: 1 }),
+		makeTag({ tag: "immigration", library: userLibrary, type: 0 }),
+		makeTag({ tag: "IMMIGRATION", library: userLibrary, type: 1 }),
+		makeTag({ tag: "patient journeys", library: userLibrary })
 	],
 	[groupLibrary.path]: [
-		{...addMetadata({ tag: "Urban design", library: groupLibrary, numItems: 11 })},
-		{...addMetadata({ tag: "HOUSING", library: groupLibrary, type: 0, numItems: 7 })},
-		{...addMetadata({ tag: "housing", library: groupLibrary, type: 0 })},
-		{...addMetadata({ tag: "housing", library: groupLibrary, type: 1, numItems: 4 })}
+		makeTag({ tag: "Urban design", library: groupLibrary, numItems: 11 }),
+		makeTag({ tag: "HOUSING", library: groupLibrary, type: 0, numItems: 7 }),
+		makeTag({ tag: "housing", library: groupLibrary, type: 0 }),
+		makeTag({ tag: "housing", library: groupLibrary, type: 1, numItems: 4 })
 	]
 };
 
