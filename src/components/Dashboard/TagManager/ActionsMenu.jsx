@@ -20,12 +20,12 @@ function ActionsMenu({ deleteTags = true, library, mergeAs = true, suggestion })
 	return (
 		<Menu className="zr-text-small">
 			{mergeAs && suggestion.type 
-				? <MenuItem disabled={status == "loading"} icon="group-objects" text="Merge as">
+				? <MenuItem disabled={["loading", "success"].includes(status)} icon="group-objects" text="Merge as">
 					<MergeAsOptions library={library} options={suggestion.use} />
 				</MenuItem>
 				: null}
 			{deleteTags
-				? <MenuItem disabled={status == "loading"} icon="trash" intent="danger" text="Delete tag(s)" onClick={triggerDelete} />
+				? <MenuItem disabled={["loading", "success"].includes(status)} icon="trash" intent="danger" text={status == "success" ? "Deleted" : "Delete tag(s)"} onClick={triggerDelete} />
 				: null}
 		</Menu>
 	);

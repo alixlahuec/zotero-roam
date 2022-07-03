@@ -167,6 +167,11 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 
 /* Blueprint Elements */
 
+[class*="zr"] .bp4-menu-item.bp4-disabled > [class*="bp4-text"], 
+[class*="zr"] .bp4-menu-item.bp4-disabled .bp4-icon {
+    color: var(--zr-auxiliary);
+}
+
 [class*="zr"] .bp4-menu-item .bp4-menu-item-label {
   color: var(--zr-secondary-co);
 }
