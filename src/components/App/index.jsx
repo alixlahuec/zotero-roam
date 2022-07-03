@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import React, { Component } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HotkeysTarget2 } from "@blueprintjs/core";
