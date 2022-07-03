@@ -1,4 +1,5 @@
 import { executeFunctionByName } from "../../src/utils";
+import { emitCustomEvent } from "../../src/events";
 
 describe("Executing a function by name", () => {
 	it("executes a function attached to the window", () => {
@@ -12,4 +13,10 @@ describe("Executing a function by name", () => {
 		executeFunctionByName("customFunc", window, "my arg");
 		expect(window.customFunc).toHaveBeenCalledWith("my arg");
 	});
+});
+
+test("Event emitter warns about unrecognized event names", () => {
+	console.warn = jest.fn();
+	emitCustomEvent("unrecognized-event-name");
+	expect(console.warn).toHaveBeenCalled();
 });
