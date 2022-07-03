@@ -9,37 +9,13 @@ import SearchInputGroup from "./SearchInputGroup";
 import { formatItemReferenceForCopy } from "./utils";
 import { copyToClipboard, pluralize, searchEngine } from "../../utils";
 
+import useDebounceCallback from "../../hooks/useDebounceCallback";
 import { resultClass, resultKeyClass } from "./classes";
 import * as customPropTypes from "../../propTypes";
 
 const query_debounce = 300;
 const query_threshold = 0;
 const results_limit = 50;
-
-// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
-function useDebounceCallback(callback, timeout) {
-	let timeoutRef = useRef(undefined);
-
-	const cancel = function() {
-		if (timeoutRef.current) {
-			clearTimeout(timeoutRef.current);
-			timeoutRef.current = null;
-		}
-	};
-
-	const debounceCallback = useCallback(
-		value => {
-			cancel();
-			timeoutRef.current = setTimeout(() => {
-				timeoutRef.current = null;
-				callback(value);
-			}, timeout);
-		},
-		[callback, timeout]
-	);
-
-	return [debounceCallback, cancel];
-}
 
 function itemListPredicate(query, items) {
 	if(query.length < query_threshold){
