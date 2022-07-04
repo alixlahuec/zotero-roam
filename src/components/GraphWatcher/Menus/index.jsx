@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import React, { useContext, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { arrayOf, object } from "prop-types";

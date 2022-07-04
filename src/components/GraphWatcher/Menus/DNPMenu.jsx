@@ -7,6 +7,7 @@ import { pluralize } from "../../../utils";
 import useBool from "../../../hooks/useBool";
 import * as customPropTypes from "../../../propTypes";
 
+/* istanbul ignore next */
 function DNPMenu({ added, date, title }){
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 

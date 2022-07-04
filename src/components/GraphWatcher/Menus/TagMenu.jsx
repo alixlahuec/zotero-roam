@@ -7,6 +7,7 @@ import { pluralize } from "../../../utils";
 import useBool from "../../../hooks/useBool";
 import * as customPropTypes from "../../../propTypes";
 
+/* istanbul ignore next */
 function TagMenu(props){
 	const { inAbstract = [], tag, tagged = [] } = props;
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);

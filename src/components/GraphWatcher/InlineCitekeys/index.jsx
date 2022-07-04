@@ -197,6 +197,7 @@ CitekeyContextMenu.propTypes = {
 	target: object
 };
 
+/* istanbul ignore next */
 const InlineCitekeys = React.memo(function InlineCitekeys() {
 	const { dataRequests, portalId } = useContext(ExtensionContext);
 	const { render_inline } = useContext(UserSettings);

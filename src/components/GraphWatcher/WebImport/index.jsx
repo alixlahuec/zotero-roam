@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { arrayOf, object, string } from "prop-types";
