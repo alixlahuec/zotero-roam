@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import ActionsMenu from "./ActionsMenu";
-import { apiKeys } from "../../../../mocks/zotero/keys";
-import { libraries } from "../../../../mocks/zotero/libraries";
+import { apiKeys } from "Mocks/zotero/keys";
+import { libraries } from "Mocks/zotero/libraries";
 
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";

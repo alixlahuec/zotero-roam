@@ -1,6 +1,6 @@
 import React from "react";
 import WebImportPanel from "./WebImportPanel";
-import { badIdentifier, goodIdentifier } from "../../../../mocks/citoid";
+import { badIdentifier, goodIdentifier } from "Mocks/citoid";
 
 export default {
 	component: WebImportPanel,

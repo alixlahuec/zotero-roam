@@ -1,7 +1,7 @@
-import { sampleAnnot } from "../mocks/zotero/annotations";
-import { findCollections } from "../mocks/zotero/collections";
-import { items } from "../mocks/zotero/items";
-import { sampleNote } from "../mocks/zotero/notes";
+import { sampleAnnot } from "Mocks/zotero/annotations";
+import { findCollections } from "Mocks/zotero/collections";
+import { items } from "Mocks/zotero/items";
+import { sampleNote } from "Mocks/zotero/notes";
 import { formatNotes, getItemCreators, getItemTags, _getItemCollections, _getItemType } from "../src/public";
 import { formatItemAnnotations, formatItemNotes } from "../src/utils";
 import { default_typemap } from "../src/variables";

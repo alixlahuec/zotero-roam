@@ -2,15 +2,15 @@ import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { renderHook } from "@testing-library/react-hooks";
 
-import { goodIdentifier, badIdentifier } from "../../mocks/citoid";
-import { findCollections } from "../../mocks/zotero/collections";
-import { findItems } from "../../mocks/zotero/items";
-import { apiKeys } from "../../mocks/zotero/keys";
-import { libraries } from "../../mocks/zotero/libraries";
-import { tags } from "../../mocks/zotero/tags";
+import { goodIdentifier, badIdentifier } from "Mocks/citoid";
+import { findCollections } from "Mocks/zotero/collections";
+import { findItems } from "Mocks/zotero/items";
+import { apiKeys } from "Mocks/zotero/keys";
+import { libraries } from "Mocks/zotero/libraries";
+import { tags } from "Mocks/zotero/tags";
 import { useQuery_Citoid, useQuery_Collections, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries"; 
 import { makeTagList, parseSemanticDOIs } from "../../src/api/utils";
-import { semantics } from "../../mocks/semantic-scholar";
+import { semantics } from "Mocks/semantic-scholar";
 
 const { 
 	keyWithFullAccess: { key: masterKey },

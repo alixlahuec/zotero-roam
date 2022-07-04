@@ -1,6 +1,6 @@
 import React from "react";
-import { apiKeys } from "../mocks/zotero/keys";
-import { libraries } from "../mocks/zotero/libraries";
+import { apiKeys } from "Mocks/zotero/keys";
+import { libraries } from "Mocks/zotero/libraries";
 import { ExtensionContext } from "../src/components/App";
 import { analyzeUserRequests } from "../src/utils";
 

@@ -4,7 +4,7 @@ import React from "react";
 import ItemDetails from ".";
 
 import zrToaster from "../ExtensionToaster";
-import { items } from "../../../mocks/zotero/items";
+import { items } from "Mocks/zotero/items";
 import { cleanLibraryItem } from "../../utils";
 
 export default {

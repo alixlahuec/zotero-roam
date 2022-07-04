@@ -1,5 +1,5 @@
-import { sampleAnnot, sampleImageAnnot } from "../../mocks/zotero/annotations";
-import { libraries } from "../../mocks/zotero/libraries";
+import { sampleAnnot, sampleImageAnnot } from "Mocks/zotero/annotations";
+import { libraries } from "Mocks/zotero/libraries";
 import {
 	compareAnnotationIndices,
 	formatZoteroAnnotations,

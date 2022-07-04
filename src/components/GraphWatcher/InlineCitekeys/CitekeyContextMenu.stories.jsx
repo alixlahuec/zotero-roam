@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from "react";
 import { ExtensionContext } from "../../App";
-import { items } from "../../../../mocks/zotero/items";
+import { items } from "Mocks/zotero/items";
 import { CitekeyContextMenu, useGetItems } from ".";
 
 export default {

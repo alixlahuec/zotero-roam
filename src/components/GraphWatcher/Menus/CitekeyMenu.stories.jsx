@@ -5,8 +5,8 @@ import { expect } from "@storybook/jest";
 import { userEvent, within } from "@storybook/testing-library";
 import { waitFor } from "@storybook/testing-library";
 
-import { items } from "../../../../mocks/zotero/items";
-import { sampleNote } from "../../../../mocks/zotero/notes";
+import { items } from "Mocks/zotero/items";
+import { sampleNote } from "Mocks/zotero/notes";
 
 export default {
 	component: CitekeyMenu,

@@ -1,15 +1,15 @@
 import axios from "axios";
 import { QueryClient } from "react-query";
-import { citoids } from "../../mocks/citoid";
-import { makeItemMetadata } from "../../mocks/zotero/common";
-import { findCollections } from "../../mocks/zotero/collections";
-import { apiKeys } from "../../mocks/zotero/keys";
-import { bibs, findBibliographyEntry } from "../../mocks/zotero/bib";
-import { deletions } from "../../mocks/zotero/deleted";
-import { items, findItems, findBibEntry } from "../../mocks/zotero/items";
-import { libraries } from "../../mocks/zotero/libraries";
-import { semantics } from "../../mocks/semantic-scholar";
-import { tags, findTags } from "../../mocks/zotero/tags";
+import { citoids } from "Mocks/citoid";
+import { makeItemMetadata } from "Mocks/zotero/common";
+import { findCollections } from "Mocks/zotero/collections";
+import { apiKeys } from "Mocks/zotero/keys";
+import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
+import { deletions } from "Mocks/zotero/deleted";
+import { items, findItems, findBibEntry } from "Mocks/zotero/items";
+import { libraries } from "Mocks/zotero/libraries";
+import { semantics } from "Mocks/semantic-scholar";
+import { tags, findTags } from "Mocks/zotero/tags";
 import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;

@@ -1,6 +1,6 @@
 import { formatItemNotes, formatZoteroNotes, simplifyZoteroNotes } from "../../src/utils";
-import { libraries } from "../../mocks/zotero/libraries";
-import { sampleNote } from "../../mocks/zotero/notes";
+import { libraries } from "Mocks/zotero/libraries";
+import { sampleNote } from "Mocks/zotero/notes";
 
 const { userLibrary } = libraries;
 

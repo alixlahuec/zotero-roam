@@ -1,7 +1,7 @@
 import { QueryClient } from "react-query";
 import { fetchItems } from "../../src/api/utils";
-import { apiKeys } from "../../mocks/zotero/keys";
-import { libraries } from "../../mocks/zotero/libraries";
+import { apiKeys } from "Mocks/zotero/keys";
+import { libraries } from "Mocks/zotero/libraries";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;
 

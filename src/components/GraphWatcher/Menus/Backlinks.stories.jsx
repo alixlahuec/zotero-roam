@@ -1,9 +1,9 @@
 import React from "react";
 import { Backlinks } from "./CitekeyMenu";
-import { semanticIdentifier, citoids } from "../../../../mocks/citoid";
-import { semantics } from "../../../../mocks/semantic-scholar";
+import { semanticIdentifier, citoids } from "Mocks/citoid";
+import { semantics } from "Mocks/semantic-scholar";
 import { cleanSemanticItem } from "../../../utils";
-import { items } from "../../../../mocks/zotero/items";
+import { items } from "Mocks/zotero/items";
 
 const semanticCitoid = citoids[semanticIdentifier];
 const semanticEntry = Object.values(semantics)[0].references.find(ref => ref.title == semanticCitoid.title);

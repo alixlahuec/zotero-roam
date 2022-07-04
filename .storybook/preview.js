@@ -1,6 +1,6 @@
 /* istanbul ignore file */
-import { initialize, mswDecorator } from 'msw-storybook-addon';
-import { fallbackHandler, roamAssetsHandler, apiHandlers } from '../mocks/handlers';
+import { initialize, mswDecorator } from "msw-storybook-addon";
+import { fallbackHandler, roamAssetsHandler, apiHandlers } from "Mocks/handlers";
 import { rest } from "msw";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";

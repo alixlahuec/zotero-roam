@@ -5,9 +5,9 @@ import {
 	cleanLibrary, 
 	cleanSemantic, 
 	identifyChildren } from "../../src/utils";
-import { semantics } from "../../mocks/semantic-scholar";
-import { items } from "../../mocks/zotero/items";
-import { libraries } from "../../mocks/zotero/libraries";
+import { semantics } from "Mocks/semantic-scholar";
+import { items } from "Mocks/zotero/items";
+import { libraries } from "Mocks/zotero/libraries";
 
 const { userLibrary } = libraries;
 
