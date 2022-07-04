@@ -195,10 +195,13 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 [class*="zr"] a:not(.bp4-menu-item),
-[class*="zr"] a:not(.bp4-menu-item) .bp4-icon,
 [class*="zr"] .bp4-button.bp4-minimal.bp4-intent-primary,
 [class*="zr"] .bp4-button.bp4-minimal.bp4-intent-primary:hover {
   color: hsla(var(--zr-accent-1-co), 95%);
+}
+
+[class*="zr"] a:not(.bp4-menu-item) .bp4-icon {
+    color: hsla(var(--zr-accent-1-co), 75%);
 }
 
 [class*="zr"] a:not(.bp4-menu-item):hover {

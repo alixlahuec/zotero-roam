@@ -19,11 +19,9 @@ function useGetItems(reqs, roamCitekeys, opts = {}){
 		...opts,
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => {
-			if(datastore.data){
-				return cleanLibrary(datastore.data, roamCitekeys);
-			} else {
-				return [];
-			}
+			return datastore.data
+				? cleanLibrary(datastore.data, roamCitekeys)
+				: [];
 		}
 	});
 

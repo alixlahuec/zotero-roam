@@ -23,7 +23,7 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 	const searchbarRightElement = useMemo(() => {
 		return (
 			<>
-				<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={isQCActive} onChange={toggleQC} />
+				<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={isQCActive} onChange={toggleQC} role="switch" aria-checked={isQCActive} />
 				<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} title="Close searchbar" />
 			</>
 		);

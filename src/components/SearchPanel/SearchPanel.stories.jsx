@@ -1,5 +1,10 @@
 import React from "react";
 import SearchPanel from ".";
+
+import { expect, jest } from "@storybook/jest";
+import { userEvent, waitFor, within } from "@storybook/testing-library";
+
+import zrToaster from "../ExtensionToaster";
 import { items } from "../../../mocks/zotero/items";
 
 export default {
@@ -10,7 +15,7 @@ export default {
 		status: "on",
 		userSettings: {
 			copy: {
-				always: false,
+				always: true,
 				defaultFormat: "citekey",
 				overrideKey: "shiftKey",
 				useQuickCopy: false
@@ -29,4 +34,31 @@ WithRoamCitekey.args = {
 	roamCitekeys: [
 		["@" + items[0].key, "_some_uid_"]
 	]
+};
+
+export const WithLookup = Template.bind({});
+WithLookup.play = async ({ canvasElement }) => {
+	const canvas = within(canvasElement);
+	const showToasterFn = jest.spyOn(zrToaster, "show");
+
+	await userEvent.type(canvas.getByPlaceholderText("Search in abstract, title, authors (last names), year, tags, or citekey"), items[0].key);
+
+	await waitFor(() => expect(
+		canvas.getAllByRole(
+			"menuitem"
+		).length
+	)
+		.toBe(1));
+
+	const resultItem = canvas.getByRole("menuitem");
+
+	await userEvent.click(resultItem);
+
+	await waitFor(() => expect(
+		canvas.getByText(items[0].data.title)
+	)
+		.toBeInTheDocument());
+    
+	await waitFor(() => expect(showToasterFn)
+		.toHaveBeenCalled());
 };
