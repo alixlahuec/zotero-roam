@@ -10,6 +10,7 @@ import "../node_modules/@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "../src/index.css";
 
 import { withExtensionContext } from "./withExtensionContext";
+import { withHotkeysProvider } from './withHotkeysProvider';
 import { withQueryClient } from "./withQueryClient";
 import { withRoamCitekeys } from './withRoamCitekeys';
 import { withUserSettings } from "./withUserSettings";
@@ -82,4 +83,4 @@ export const parameters = {
     }
 }
 
-export const decorators = [mswDecorator, withTheme, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys];
+export const decorators = [mswDecorator, withTheme, withHotkeysProvider, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys];
