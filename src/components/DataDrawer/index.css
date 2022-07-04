@@ -1,18 +1,3 @@
-.zr-drawer--data {
-    background-color: var(--zr-dialog-bg);
-    color: var(--zr-text-co);
-}
-
-.zr-drawer--data > .bp4-tabs > .bp4-tab-list {
-    margin-left: 20px;
-}
-
-.zr-drawer--data .bp4-tab-panel {
-    margin-top: 0px;
-    max-height: 95vh;
-    overflow-y: scroll;
-}
-
 .zr-drawer--data .bp4-code-block {
     margin: 15px;
 }

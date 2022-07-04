@@ -11,8 +11,12 @@
 
 /* CitekeyMenu */
 
-.zr-citekey-doi {margin:10px;display:block;letter-spacing:0.3mm;}
-.zr-citekey-menu{
+.zr-citekey-doi {
+    display:block;
+    letter-spacing:0.3mm;
+    margin: 10px;
+}
+.zr-citekey-menu.bp4-card {
     justify-content:space-between;
     border-width:0px;
     padding:5px;
@@ -28,6 +32,11 @@
 .zr-citekey-menu .bp4-button-group .bp4-button .bp4-icon,
 .zr-citekey-menu .bp4-button-group .bp4-button:hover {
     color: var(--zr-text-co);
+}
+
+.zr-citekey-menu .bp4-button-group .bp4-button.bp4-disabled {
+    color: var(--zr-text-co);
+    opacity: 0.8;
 }
 
 /* RelatedBar */

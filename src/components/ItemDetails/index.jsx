@@ -61,19 +61,19 @@ function CopyOption(props){
 		case "page-reference":
 			return pageRefCombo != false
 				? <ShortcutSequence text={pageRefCombo} />
-				: <Tag minimal={true}>REF</Tag>;
+				: null;
 		case "tag":
 			return tagCombo != false
 				? <ShortcutSequence text={tagCombo} /> 
-				: <Tag minimal={true}>TAG</Tag>;
+				: null;
 		case "citation":
 			return citationCombo != false
 				? <ShortcutSequence text={citationCombo} />
-				: <Tag minimal={true}>CIT</Tag>;
+				: null;
 		case "citekey":
 			return citekeyCombo != false
 				? <ShortcutSequence text={citekeyCombo} />
-				: <Tag minimal={true}>KEY</Tag>;
+				: null;
 		default:
 			return null;
 		}
