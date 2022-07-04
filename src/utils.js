@@ -1294,6 +1294,7 @@ export {
 	cleanLibraryItem,
 	cleanLibraryPDF,
 	cleanSemantic,
+	cleanSemanticItem,
 	compareItemsByYear,
 	compareAnnotationIndices,
 	copyToClipboard,

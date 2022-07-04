@@ -1,6 +1,7 @@
 import { zotero, makeItemMetadata } from "./common";
 import { rest } from "msw";
 import { libraries } from "./libraries";
+import { semanticIdentifier, citoids } from "../citoid";
 
 const { userLibrary, groupLibrary } = libraries;
 
@@ -98,6 +99,30 @@ const data = [
 			creatorSummary: "Pinto et al.",
 			numChildren: 1,
 			parsedDate: "2021-12"
+		}
+	},
+	{
+		...makeItemMetadata({
+			citekey: "solbergTheoryPracticePrimary2016",
+			itemType: citoids[semanticIdentifier].itemType,
+			key: "_SEMANTIC_ITEM_",
+			library: userLibrary,
+			title: citoids[semanticIdentifier].title,
+			version: 333,
+			data: {
+				abstractNote: citoids[semanticIdentifier].abstractNote,
+				creators: citoids[semanticIdentifier].creators,
+				date: citoids[semanticIdentifier].date,
+				DOI: citoids[semanticIdentifier].DOI,
+				publicationTitle: citoids[semanticIdentifier].publicationTitle,
+				tags: citoids[semanticIdentifier].tags,
+				url: citoids[semanticIdentifier].url
+			}
+		}),
+		meta: {
+			creatorSummary: "Solberg",
+			numChildren: 0,
+			parsedDate: citoids[semanticIdentifier].date
 		}
 	}
 ];

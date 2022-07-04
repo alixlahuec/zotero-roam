@@ -364,3 +364,4 @@ CitekeyMenu.propTypes = {
 };
 
 export default CitekeyMenu;
+export { Backlinks };
