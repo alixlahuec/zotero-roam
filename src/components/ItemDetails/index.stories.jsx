@@ -40,13 +40,26 @@ const Template = (args) => <ItemDetails {...args} />;
 
 export const Default = Template.bind({});
 
-export const WithInteractions = Template.bind({});
-WithInteractions.play = async({ canvasElement }) => {
-	const canvas = within(canvasElement);
+export const ShowCopyOptions = Template.bind({});
+ShowCopyOptions.play = async({ args, canvasElement }) => {
 	const showToasterFn = jest.spyOn(zrToaster, "show");
+	const canvas = within(canvasElement);
 	const copyMenu = canvas.getByText("Copy reference");
 
 	await userEvent.hover(copyMenu);
+
+	await waitFor(() => expect(canvas.getByText(`#[[@${args.item.key}]]`))
+		.toBeDefined());
+    
+	await userEvent.click(canvas.getByText(`#[[@${args.item.key}]]`));
+
+	await waitFor(() => expect(showToasterFn)
+		.toHaveBeenCalled());
+};
+
+export const WithCopyHotkeys = Template.bind({});
+WithCopyHotkeys.play = async() => {
+	const showToasterFn = jest.spyOn(zrToaster, "show");
 
 	await userEvent.keyboard("{Alt>}D{/Alt}");
 
