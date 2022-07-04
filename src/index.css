@@ -200,6 +200,23 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
   color: hsla(var(--zr-accent-1-co), 95%);
 }
 
+[class*="zr"] .bp4-button-group.bp4-minimal button[class*="bp4-intent-"]:not(.bp4-disabled):not(.bp4-outlined),
+[class*="zr"] .bp4-button-group.bp4-minimal button[class*="bp4-intent-"]:not(.bp4-disabled):not(.bp4-outlined):hover {
+    color: hsla(var(--zr-base-tone), 90%);
+}
+
+[class*="zr"] .bp4-button-group.bp4-minimal button[class*="bp4-intent-"]:not(.bp4-disabled):not(.bp4-outlined):hover {
+    background-color: hsla(var(--zr-base-tone), 10%);
+}
+
+[class*="zr"] .bp4-button-group.bp4-minimal button.bp4-intent-primary {
+    --zr-base-tone: var(--zr-accent-1-co);
+}
+
+[class*="zr"] .bp4-button-group.bp4-minimal button.bp4-intent-warning {
+    --zr-base-tone: var(--zr-accent-2-co);
+}
+
 [class*="zr"] a:not(.bp4-menu-item) .bp4-icon {
     color: hsla(var(--zr-accent-1-co), 75%);
 }

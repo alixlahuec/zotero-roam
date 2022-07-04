@@ -42,14 +42,6 @@ button[class*='zr-page-menu-show--'] {
     flex: 1 0 33%;
 }
 
-.zr-citekey-menu .bp4-button-group button.bp4-intent-primary.zr-page-menu-show--references {
-    color: hsla(var(--zr-accent-1-co), 90%);
-}
-
-.zr-citekey-menu .bp4-button-group button.bp4-intent-warning.zr-page-menu-show--citations {
-    color: hsla(var(--zr-accent-2-co), 90%);
-}
-
 /* Backlinks */
 .zr-citekey-menu--backlinks {width:100%;display:flex;flex-direction:column;margin: 10px 0px;}
 
