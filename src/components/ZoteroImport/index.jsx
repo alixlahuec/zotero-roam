@@ -48,22 +48,25 @@ const ImportButton = React.memo(function ImportButton(props) {
 		if(status == "loading"){
 			return {
 				disabled: true,
-				text: "Loading..."
+				text: "Loading...",
+				title: "Importing items..."
 			};
 		} else if(status == "error") {
 			return {
 				disabled: true,
 				icon: "error",
 				intent: "danger",
-				text: "Error"
+				text: "Error",
+				title: "Error while importing items"
 			};
 		} else {
 			return {
 				disabled: !isActive,
-				icon: "inheritance",
+				icon: "send-message",
 				intent: "primary",
 				loading: !isDataReady,
-				text: "Add to Zotero"
+				text: "Send to Zotero",
+				title: isDataReady ? "Import items to Zotero" : "Loading items data..."
 			};
 		}
 	}, [isActive, isDataReady, status]);

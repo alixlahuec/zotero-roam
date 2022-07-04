@@ -147,6 +147,7 @@ function RelatedItemsBar(props) {
 	const showBacklinksButtonProps = useMemo(() => {
 		return cleanSemanticData.backlinks.length == 0
 			? {
+				"aria-disabled": true,
 				disabled: true,
 				icon: null,
 				text: "No related library items"
@@ -158,15 +159,15 @@ function RelatedItemsBar(props) {
 	}, [cleanSemanticData.backlinks.length, isBacklinksListOpen]);
 
 	return (
-		<div className="zotero-roam-page-menu-citations">
+		<div className="zotero-roam-page-menu-citations" role="group">
 			{isError
 				? <ErrorCallout error={error} />
 				:
 				<>
 					<ButtonGroup minimal={true} fill={true}>
-						<Button className={ showClasses.references } loading={isLoading} onClick={showReferences} icon="citation" intent="primary">{ pluralize(refCount, "reference") }</Button>
-						<Button className={ showClasses.citations } loading={isLoading} onClick={showCitations} icon="chat" intent="warning" >{ pluralize(citCount, "citation") }</Button>
-						<Button className={ showClasses.backlinks } loading={isLoading} onClick={toggleBacklinks} {...showBacklinksButtonProps} ></Button>
+						<Button className={ showClasses.references } loading={isLoading} onClick={showReferences} icon="citation" intent="primary" role="menuitem" aria-haspopup="dialog" title="Show references" >{ pluralize(refCount, "reference") }</Button>
+						<Button className={ showClasses.citations } loading={isLoading} onClick={showCitations} icon="chat" intent="warning" role="menuitem" aria-haspopup="dialog" title="Show citations" >{ pluralize(citCount, "citation") }</Button>
+						<Button className={ showClasses.backlinks } loading={isLoading} onClick={toggleBacklinks} {...showBacklinksButtonProps} role="menuitem" title="Show backlinks" />
 					</ButtonGroup>
 					{refCount + citCount > 0
 						? <SemanticPanel
@@ -197,7 +198,7 @@ function ViewItem({ item }) {
 
 	return (
 		<>
-			<Button icon="info-sign" onClick={openPanel}>View item information</Button>
+			<Button icon="info-sign" onClick={openPanel} role="menuitem" aria-haspopup="dialog" >View item information</Button>
 			<AuxiliaryDialog
 				className="view-item-information"
 				isOpen={isPanelOpen}
@@ -214,8 +215,7 @@ ViewItem.propTypes = {
 	item: customPropTypes.cleanLibraryItemType
 };
 
-const CitekeyMenu = React.memo(function CitekeyMenu(props) {
-	const { item, itemList } = props;
+const CitekeyMenu = React.memo(function CitekeyMenu({ item, itemList }) {
 	const { 
 		annotations: annotationsSettings, 
 		metadata: metadataSettings, 
@@ -263,6 +263,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 							href={getPDFLink(pdf, "href")}
 							icon="paperclip"
 							minimal={true}
+							role="menuitem"
 							text={pdf.data.filename || pdf.data.title} />
 					);
 				})
@@ -274,7 +275,7 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 		if(children.notes.length == 0 || !defaults.includes("importNotes")){
 			return null;
 		} else {
-			return <Button icon="comment" onClick={importNotes}>Import notes</Button>;
+			return <Button icon="comment" onClick={importNotes} role="menuitem">Import notes</Button>;
 		}
 	}, [defaults, importNotes, children.notes.length]);
     
@@ -282,10 +283,10 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 		return (
 			<>
 				{defaults.includes("openZoteroLocal")
-					? <ButtonLink icon="application" text="Open in Zotero" href={getLocalLink(item, { format: "target" })} />
+					? <ButtonLink icon="application" text="Open in Zotero" href={getLocalLink(item, { format: "target" })} role="menuitem" />
 					: null}
 				{defaults.includes("openZoteroWeb")
-					? <ButtonLink icon="cloud" text="Open in Zotero [Web library]" href={getWebLink(item, { format: "target" })} />
+					? <ButtonLink icon="cloud" text="Open in Zotero [Web library]" href={getWebLink(item, { format: "target" })} role="menuitem" />
 					: null}
 			</>
 		);
@@ -297,13 +298,13 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 
 	const ext_links = useMemo(() => {
 		let connectedPapersLink = defaults.includes("connectedPapers")
-			? <ButtonLink icon="layout" intent="primary" text="Connected Papers" href={"https://www.connectedpapers.com/" + (doi ? "api/redirect/doi/" + doi : "search?q=" + encodeURIComponent(item.data.title)) } />
+			? <ButtonLink icon="layout" intent="primary" text="Connected Papers" href={"https://www.connectedpapers.com/" + (doi ? "api/redirect/doi/" + doi : "search?q=" + encodeURIComponent(item.data.title)) } role="menuitem" />
 			: null;
 		let semanticLink = doi && defaults.includes("semanticScholar") 
-			? <ButtonLink icon="bookmark" intent="primary" text="Semantic Scholar" href={"https://api.semanticscholar.org/" + doi} /> 
+			? <ButtonLink icon="bookmark" intent="primary" text="Semantic Scholar" href={"https://api.semanticscholar.org/" + doi} role="menuitem" /> 
 			: null;
 		let googleScholarLink = defaults.includes("googleScholar")
-			? <ButtonLink icon="learning" intent="primary" text="Google Scholar" href={"https://scholar.google.com/scholar?q=" + (doi || encodeURIComponent(item.data.title))} />
+			? <ButtonLink icon="learning" intent="primary" text="Google Scholar" href={"https://scholar.google.com/scholar?q=" + (doi || encodeURIComponent(item.data.title))} role="menuitem" />
 			: null;
 
 		return (
@@ -332,11 +333,11 @@ const CitekeyMenu = React.memo(function CitekeyMenu(props) {
 	return (
 		<SentryBoundary feature="menu-citekey" extra={item}>
 			{doiHeader}
-			<Card elevation={0} className="zr-citekey-menu">
-				<div className="zr-citekey-menu--header">
+			<Card elevation={0} className="zr-citekey-menu" role="menubar" aria-label={"Citekey menu for" + item.key}>
+				<div className="zr-citekey-menu--header" role="group">
 					<ButtonGroup className="zr-citekey-menu--actions" minimal={true}>
 						{defaults.includes("addMetadata")
-							? <Button icon="add" onClick={importMetadata}>Add metadata</Button>
+							? <Button icon="add" onClick={importMetadata} role="menuitem" >Add metadata</Button>
 							: null}
 						{notesButton}
 						{defaults.includes("viewItemInfo")

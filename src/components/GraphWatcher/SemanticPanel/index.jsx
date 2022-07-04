@@ -99,7 +99,7 @@ const SemanticPanel = React.memo(function SemanticPanel(props){
 			handleRemove: removeFromImport,
 			handleSelect: addToImport,
 			items: itemsForImport,
-			resetImport: setItemsForImport
+			resetImport: () => setItemsForImport([])
 		};
 	}, [addToImport, itemsForImport, removeFromImport, setItemsForImport]);
 
