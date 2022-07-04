@@ -2,14 +2,6 @@ import React from "react";
 import WebImportPanel from "./WebImportPanel";
 import { badIdentifier, goodIdentifier } from "../../../../mocks/citoid";
 
-window.roamAlphaAPI = {
-	q: () => ([
-		"history",
-		"read",
-		"TODO"
-	])
-};
-
 export default {
 	component: WebImportPanel,
 	args: {

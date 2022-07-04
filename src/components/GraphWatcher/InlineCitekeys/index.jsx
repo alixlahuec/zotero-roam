@@ -6,7 +6,7 @@ import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/cor
 import NotesDrawer from "../../NotesDrawer";
 
 import { useQuery_Items } from "../../../api/queries";
-import { importItemMetadata } from "../../../roam";
+import { importItemMetadata } from "Roam";
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
 
 import { ExtensionContext, UserSettings } from "../../App";

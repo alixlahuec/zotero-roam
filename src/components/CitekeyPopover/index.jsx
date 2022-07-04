@@ -3,7 +3,7 @@ import { arrayOf, func, oneOf, oneOfType, string } from "prop-types";
 import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
-import { importItemMetadata, openInSidebarByUID, openPageByUID } from "../../roam";
+import { importItemMetadata, openInSidebarByUID, openPageByUID } from "Roam";
 import { getLocalLink, getWebLink } from "../../utils";
 import { UserSettings } from "../App";
 import { useRoamCitekeys } from "../RoamCitekeysContext";

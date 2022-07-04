@@ -9,7 +9,7 @@ import { RoamCitekeysProvider } from "../RoamCitekeysContext";
 import SearchPanel from "../SearchPanel";
 
 import { _getBibEntries, _getBibliography, _getCollections, _getChildren, _getItems, _getTags } from "../../api/public";
-import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace } from "../../roam";
+import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace } from "Roam";
 
 import * as customPropTypes from "../../propTypes";
 import Dashboard from "../Dashboard";

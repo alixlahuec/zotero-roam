@@ -1,4 +1,4 @@
-import { getInitialedPages } from "../../../roam";
+import { getInitialedPages } from "Roam";
 import { searchEngine } from "../../../utils";
 
 function getTagStats(tagListData){

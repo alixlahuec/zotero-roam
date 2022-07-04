@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { node } from "prop-types";
 
-import { getCitekeyPages } from "../../roam";
+import { getCitekeyPages } from "Roam";
 
 // https://devtrium.com/posts/how-use-react-context-pro#memoize-values-in-your-context-with-usememo-and-usecallback
 

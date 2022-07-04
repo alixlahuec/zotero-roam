@@ -7,7 +7,7 @@ import NotesDrawer from "../NotesDrawer";
 import ShortcutSequence from "../ShortcutSequence";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
-import { importItemMetadata, importItemNotes, openPageByUID } from "../../roam";
+import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
 import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 

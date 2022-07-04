@@ -11,7 +11,7 @@ import SemanticPanel from "../SemanticPanel";
 
 import { showClasses } from "../classes";
 import { useQuery_Semantic } from "../../../api/queries";
-import { findRoamPage, importItemMetadata, importItemNotes } from "../../../roam";
+import { findRoamPage, importItemMetadata, importItemNotes } from "Roam";
 import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ItemDetails from "../../ItemDetails";

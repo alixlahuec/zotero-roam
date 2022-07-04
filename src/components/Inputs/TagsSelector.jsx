@@ -3,7 +3,7 @@ import { arrayOf, func, string } from "prop-types";
 import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect2 } from "@blueprintjs/select";
 
-import { getAllPages } from "../../roam";
+import { getAllPages } from "Roam";
 import { searchEngine } from "../../utils";
 
 const results_limit = 30;

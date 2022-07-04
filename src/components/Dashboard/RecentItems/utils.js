@@ -1,4 +1,4 @@
-import { getCitekeyPagesWithEditTime } from "../../../roam";
+import { getCitekeyPagesWithEditTime } from "Roam";
 import { identifyChildren } from "../../../utils";
 
 /** Categorizes a list of Zotero items by recent activity

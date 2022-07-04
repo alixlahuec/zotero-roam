@@ -10,6 +10,9 @@ module.exports = {
 		sourceMapFilename: "zoteroRoam.min.js.map"
 	},
 	resolve: {
+        alias: {
+            "Roam": path.resolve(__dirname, "src/roam.js")
+        },
 		extensions: [".js", ".jsx", ".css"]
 	},
 	mode: "production",

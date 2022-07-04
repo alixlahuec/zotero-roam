@@ -1,4 +1,4 @@
-import { findRoamPage } from "./roam";
+import { findRoamPage } from "Roam";
 import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getPDFLink, getWebLink, makeDNP } from "./utils";
 
 /** Formats Zotero notes/annotations items
