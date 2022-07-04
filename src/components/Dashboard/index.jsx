@@ -35,9 +35,7 @@ TabList.propTypes = {
 	onClose: func
 };
 
-const Dashboard = React.memo(function Dashboard(props){
-	const { isOpen, onClose } = props;
-
+const Dashboard = React.memo(function Dashboard({ isOpen, onClose }){
 	return (
 		<AuxiliaryDialog
 			className="dashboard"
