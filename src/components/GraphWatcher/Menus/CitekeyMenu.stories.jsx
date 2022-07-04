@@ -44,10 +44,8 @@ WithInteractions.play = async({ args, canvasElement }) => {
 	await userEvent.click(refButton);
 
 	await waitFor(async() => expect(await canvas.findByRole("dialog", { name: "@" + args.item.key }))
-		.toBeInTheDocument(),
-	{
-		timeout: 6000
-	});
+		.toBeInTheDocument()
+	);
     
 	await userEvent.click(canvas.getAllByText("Add to Zotero")[0]);
 

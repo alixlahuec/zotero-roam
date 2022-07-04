@@ -25,6 +25,7 @@ const addCreator = ([firstName, lastName, role = "author"]) => ({
 
 export const goodIdentifier = "https://www.jmir.org/2021/9/e27283";
 export const badIdentifier = "https://projects.iq.harvard.edu/files/harvarduxgroup/files/ux-research-guide-sample-questions-for-user-interviews.pdf";
+export const semanticIdentifier = "https://doi.org/10.1370/afm.1918";
 
 const data = {
 	[goodIdentifier]: {
@@ -49,7 +50,7 @@ const data = {
 		type: "https://mediawiki.org/wiki/HyperSwitch/errors/unknown_error",
 		uri: "/en.wikipedia.org/v1/data/citation/zotero/https%3A%2F%2Fprojects.iq.harvard.edu%2Ffiles%2Fharvarduxgroup%2Ffiles%2Fux-research-guide-sample-questions-for-user-interviews.pdf"
 	},
-	"https://doi.org/10.1370/afm.1918": {
+	[semanticIdentifier]: {
 		...addCitoidMetadata({
 			abstractNote: "Recently, the recognition that medical care may contribute less to overall health than other aspects of people’s lives do has led policy makers, academics, and even some physicians to argue that clinicians should make screening and action on the social determinants of health their responsibility.",
 			creators: [
