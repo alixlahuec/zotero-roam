@@ -41,7 +41,7 @@ const IconTooltipFooter = React.memo(function IconTooltipFooter() {
 	
 	return <div className="zr-icon-tooltip-footer">
 		<DarkThemeToggle />
-		<a href="https://alix-lahuec.gitbook.io/zotero-roam/" target="_blank" rel="noreferrer">Read the docs</a>
+		<a href="https://alix-lahuec.gitbook.io/zotero-roam/" target="_blank" rel="noreferrer">Docs</a>
 		<span className="zr-icon-tooltip-footer--row">
 			<a href="https://alix-lahuec.gitbook.io/zotero-roam/changelog" target="_blank" rel="noreferrer">Changelog</a>
 			<Tag className="zr-version-tag">v{version}</Tag>
@@ -197,7 +197,9 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 					icon={button_icon}
 					minimal={true} 
 					small={true}
-					onClick={toggleExtension} />
+					onClick={toggleExtension}
+					aria-haspopup="true"
+					title="Toggle the zoteroRoam extension" />
 			</ContextMenu2>
 		</Tooltip2>
 	);
