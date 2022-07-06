@@ -26,6 +26,7 @@ const addCreator = ([firstName, lastName, role = "author"]) => ({
 export const goodIdentifier = "https://www.jmir.org/2021/9/e27283";
 export const badIdentifier = "https://projects.iq.harvard.edu/files/harvarduxgroup/files/ux-research-guide-sample-questions-for-user-interviews.pdf";
 export const semanticIdentifier = "https://doi.org/10.1370/afm.1918";
+export const semanticNotAddedIdentifier = "https://doi.org/10.3122/jabfm.2017.01.160355";
 
 const data = {
 	[goodIdentifier]: {
@@ -76,6 +77,24 @@ const data = {
 			rights: "© 2016 Annals of Family Medicine, Inc.",
 			url: "https://www.annfammed.org/content/14/2/102",
 			volume: "14"
+		})
+	},
+	[semanticNotAddedIdentifier]: {
+		...addCitoidMetadata({
+			abstractNote: "<p>Health extension programs represent an opportunity for practice-based research networks (PBRNs) and primary care practices to develop collaborations reaching beyond the clinic walls to address the upstream social determinants of health and engage in community-based research. The Health Extension Regional Officers (HEROs) program at the University of New Mexico described in this issue of the <i>JABFM</i> is an innovative model with a bidirectional approach to linking academic health centers to community-based practices and organizations. Health extension programs are local, influenced by history, relationships, and support. Oregon9s health extension workforce represents a diverse group that includes practice facilitators, community health workers, and Cooperative Extension agents. PBRNs are measuring success in terms of collaboration across a spectrum of health activities. The Oregon Rural Practice-based Research Network uses a “Four Pillars” model of community engagement, practice transformation, research, and education to involve researchers, health policy experts, educators, and health extension workers to improve community health.</p>",
+			creators: [
+				addCreator(["Lyle J.", "Fagnan"])
+			],
+			date: "2017-01",
+			DOI: "10.3122/jabfm.2017.01.160355",
+			ISSN: "1557-2625, 1558-7118",
+			issue: "1",
+			itemType: "journalArticle",
+			pages: "10-12",
+			publicationTitle: "The Journal of the American Board of Family\n                Medicine",
+			title: "Moving Upstream—Health Extension and Primary Care",
+			url: "https://doi.org/10.3122/jabfm.2017.01.160355",
+			volume: "30"
 		})
 	}
 };

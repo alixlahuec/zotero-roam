@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useEffect} from "react";
+import { useQueryClient } from "react-query";
 import CitekeyMenu from "./CitekeyMenu";
 
 import { expect } from "@storybook/jest";
-import { userEvent, within } from "@storybook/testing-library";
-import { waitFor } from "@storybook/testing-library";
+import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import { items } from "Mocks/zotero/items";
 import { sampleNote } from "Mocks/zotero/notes";
+import { semantics } from "Mocks/semantic-scholar";
+import { parseSemanticDOIs } from "../../../api/utils";
+import { parseDOI } from "../../../utils";
 
 export default {
 	component: CitekeyMenu,
@@ -26,12 +29,31 @@ export default {
 				trigger: (title) => title.length > 3 || false
 			},
 			sciteBadge: {},
+			shortcuts: {},
 			typemap: {}
 		}
 	}
 };
 
-const Template = (args) => <CitekeyMenu {...args} />;
+const Template = (args) => {
+	const client = useQueryClient();
+
+	useEffect(() => {
+		const doi = parseDOI(args.item.data.DOI);
+		const { citations, references } = semantics[doi];
+		client.setQueryData(["semantic", { doi }], {
+			doi,
+			citations: parseSemanticDOIs(citations),
+			references: parseSemanticDOIs(references)
+		});
+
+		return () => {
+			client.clear();
+		};
+	}, [client, args.item]);
+
+	return <CitekeyMenu {...args} />;
+};
 
 export const Default = Template.bind({});
 
