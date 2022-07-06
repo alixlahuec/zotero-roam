@@ -64,7 +64,10 @@ Default.play = async ({ canvasElement }) => {
 		canvas.getByText(
 			"Deleted"
 		)
-	).toBeInTheDocument());
+	).toBeInTheDocument(),
+	{
+		timeout: 3000
+	});
 
 	await expect(document.dispatchEvent).toHaveBeenCalled();
 	await expect(document.dispatchEvent).toHaveBeenCalledWith(expectedEvent);

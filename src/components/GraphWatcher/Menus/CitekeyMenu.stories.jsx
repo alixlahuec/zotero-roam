@@ -10,6 +10,7 @@ import { sampleNote } from "Mocks/zotero/notes";
 import { semantics } from "Mocks/semantic-scholar";
 import { parseSemanticDOIs } from "../../../api/utils";
 import { parseDOI } from "../../../utils";
+import { sleep } from "../../../../.storybook/utils";
 
 export default {
 	component: CitekeyMenu,
@@ -60,6 +61,8 @@ export const Default = Template.bind({});
 export const WithInteractions = Template.bind({});
 WithInteractions.play = async({ args, canvasElement }) => {
 	const canvas = within(canvasElement);
+
+	await sleep(2000);
 
 	const refButton = await canvas.findByRole("menuitem", { name: "Show references" });
 
