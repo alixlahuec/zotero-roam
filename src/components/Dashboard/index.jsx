@@ -40,6 +40,7 @@ const Dashboard = React.memo(function Dashboard({ isOpen, onClose }){
 		<AuxiliaryDialog
 			className="dashboard"
 			isOpen={isOpen}
+			label="zoteroRoam Dashboard"
 			onClose={onClose} >
 			<div className={ Classes.DIALOG_BODY }>
 				<div className="zr-dashboard--main">

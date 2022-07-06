@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { arrayOf, bool, func, shape, string } from "prop-types";
+import { arrayOf, bool, func, number, shape, string } from "prop-types";
 import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
@@ -47,16 +47,15 @@ const LogView = React.memo(function LogView({ itemList, onClose }){
 
 	return (
 		itemsLog == null
-			? <Spinner size={15} />
+			? <Spinner size={15} title="Loading recent items..." />
 			: <div className="zr-recentitems--datalist" >
-				<ListWrapper>
-					{itemsLog.today.length == 0 && itemsLog.yesterday.length == 0 && itemsLog.recent.length == 0
-						? <NonIdealState className="zr-auxiliary" description="No items to display" />
-						: null}
-					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
-					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />
-					<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Recently" onClose={onClose} />
-				</ListWrapper>
+				{itemsLog.numItems == 0
+					? <NonIdealState className="zr-auxiliary" description="No items to display" />
+					: <ListWrapper>
+						<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
+						<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />
+						<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Recently" onClose={onClose} />
+					</ListWrapper>}
 				<Toolbar>
 					<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
 					<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={toggleAbstracts} />
@@ -68,7 +67,8 @@ LogView.propTypes = {
 	itemList: shape({
 		today: arrayOf(customPropTypes.cleanRecentItemType),
 		yesterday: arrayOf(customPropTypes.cleanRecentItemType),
-		recent: arrayOf(customPropTypes.cleanRecentItemType)
+		recent: arrayOf(customPropTypes.cleanRecentItemType),
+		numItems: number
 	}),
 	onClose: func
 };
@@ -85,7 +85,7 @@ const RecentItems = React.memo(function RecentItems({ onClose }){
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 	
 	return <SentryBoundary feature="recent-items">
-		<div>
+		<div style={{ height: "100%" }}>
 			{isLoading
 				? <Spinner />
 				: <LogView itemList={itemList} onClose={onClose} /> }

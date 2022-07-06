@@ -57,10 +57,13 @@ function makeLogFromItems(itemList, asRecentAs = 7){
 
 					if(last_combined_edit > today) {
 						log.today.push(entry);
+						log.numItems += 1;
 					} else if(last_combined_edit > yesterday){
 						log.yesterday.push(entry);
+						log.numItems += 1;
 					} else if(last_combined_edit > recent){
 						log.recent.push(entry);
+						log.numItems += 1;
 					}
 
 					return log;
@@ -69,10 +72,13 @@ function makeLogFromItems(itemList, asRecentAs = 7){
 			}, {
 				today: [],
 				yesterday: [],
-				recent: []
+				recent: [],
+				numItems: 0
 			});
 
-			Object.values(dateView).forEach(arr => arr.sort((a,b) => (a.edited < b.edited ? 1 : -1)));
+			Object.values(dateView)
+				.filter(val => val.constructor === Array)
+				.forEach(arr => arr.sort((a,b) => (a.edited < b.edited ? 1 : -1)));
 
 			resolve(dateView);
 		}, 0);

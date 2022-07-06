@@ -2,10 +2,15 @@
     display: flex;
     flex-direction: column;
     font-size: var(--zr-text-small);
+    min-height: 100%;
 }
 
-.zr-recentitems--datalist > button {
-    align-self: self-end;
+.zr-recentitems--datalist > * {
+    flex: 1 1 auto;
+}
+
+.zr-recentitems--datalist > .zr-datalist--toolbar {
+    flex: 0 1 auto;
 }
 
 .zr-recentitems--datalist .zr-datalist--item {

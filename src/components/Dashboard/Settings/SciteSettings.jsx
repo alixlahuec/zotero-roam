@@ -28,7 +28,7 @@ function SciteSettings(){
 
 	return <>
 		<H3>Scite Badge</H3>
-		<span className={["zr-secondary", "zr-text-small"].join(" ")}>Try different settings by using the controls below. Note : none of these changes will be reflected in your graph.</span>
+		<span className={["zr-secondary", "zr-text-small"].join(" ")}> Changes will not be reflected in your graph.</span>
 		<div zr-role="settings-scite">
 			<div zr-role="scite-example">
 				<SciteBadge 

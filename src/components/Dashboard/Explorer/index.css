@@ -9,7 +9,7 @@
     border-radius: 5px;
     font-size: var(--zr-text-small);
     margin: 10px;
-    padding: 5px;
+    padding: 5px 10px;
 }
 
 .zr-datalist--item.zr-query--result [zr-role="item-header"] {
