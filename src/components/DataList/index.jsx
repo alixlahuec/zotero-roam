@@ -39,8 +39,8 @@ const Pagination = React.memo(function Pagination({ arrows = "last", currentPage
 
 	const controls = (
 		<ControlGroup>
-			<Button disabled={currentPage == 1} icon="chevron-left" minimal={true} onClick={goToPrevious} />
-			<Button disabled={currentPage >= nbPages} icon="chevron-right" minimal={true} onClick={goToNext} />
+			<Button aria-disabled={currentPage == 1} disabled={currentPage == 1} icon="chevron-left" minimal={true} onClick={goToPrevious} title="Go to previous page of results" />
+			<Button aria-disabled={currentPage >= nbPages} disabled={currentPage >= nbPages} icon="chevron-right" minimal={true} onClick={goToNext} title="Go to next page of results" />
 		</ControlGroup>
 	);
 	

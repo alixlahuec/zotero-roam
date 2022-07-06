@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { arrayOf, bool, func, node, string } from "prop-types";
-import { Dialog, } from "@blueprintjs/core";
+import { Dialog, H5, } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../App";
 import "./index.css";
@@ -12,6 +12,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 		className: dialogClass,
 		extraClasses = [],
 		isOpen,
+		label = null,
 		onClose,
 		title = null
 	} = props;
@@ -19,10 +20,24 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 
 	const dialog_class = useMemo(() => ["zr-auxiliary-dialog--" + dialogClass, ...extraClasses].join(" "), [dialogClass, extraClasses]);
 
+	const dialog_label = useMemo(() => {
+		if(!ariaLabelledBy && label){
+			return {
+				element: <H5 id={dialogClass + "-label"} style={{ display: "none" }}>{label}</H5>,
+				id: dialogClass + "-label"
+			};
+		} else {
+			return {
+				element: null,
+				id: null
+			};
+		}
+	}, [ariaLabelledBy, dialogClass, label]);
+
 	return (
 		createPortal(
 			<Dialog
-				aria-labelledby	={ariaLabelledBy}
+				aria-labelledby	={ariaLabelledBy || dialog_label.id}
 				canEscapeKeyClose={true}
 				canOutsideClickClose={true}
 				className={dialog_class}
@@ -33,6 +48,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 				usePortal={false}
 				onClose={onClose}
 			>
+				{dialog_label.element}
 				{props.children}
 			</Dialog>,
 			document.getElementById(portalId))
@@ -44,6 +60,7 @@ AuxiliaryDialog.propTypes = {
 	className: string,
 	extraClasses: arrayOf(string),
 	isOpen: bool,
+	label: string,
 	onClose: func,
 	title: string
 };

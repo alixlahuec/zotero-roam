@@ -107,6 +107,7 @@ const SemanticPagination = React.memo(function SemanticPagination(props){
 			<Toolbar>
 				<SortButtons name={"zr-semantic-sort--" + type} onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
 				<InputGroup
+					aria-label="Search by title, authors (last names), or year"
 					autoComplete="off"
 					id={"semantic-search--" + type}
 					leftIcon="search"

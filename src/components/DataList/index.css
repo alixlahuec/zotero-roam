@@ -14,6 +14,10 @@ ul.zr-datalist--listwrapper {
     padding-left: 0px;
 }
 
+ul.zr-datalist--listwrapper::-webkit-scrollbar {
+    width: 0px;
+}
+
 .zr-datalist--toolbar .bp4-button.bp4-minimal, .zr-datalist--toolbar .bp4-button.bp4-minimal .bp4-icon {
     color: var(--zr-text-co);
 }

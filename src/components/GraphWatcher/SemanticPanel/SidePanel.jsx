@@ -21,7 +21,7 @@ const SelectedImportItem = React.memo(function SelectedImportItem(props) {
 			</div>
 			<div className="selected_state">
 				<ButtonGroup minimal={true} >
-					<Button className="selected_remove-button" icon="cross" intent="danger" onClick={removeItemFromImport} />
+					<Button className="selected_remove-button" icon="cross" intent="danger" onClick={removeItemFromImport} title="Remove item from import" />
 				</ButtonGroup>
 			</div>
 		</li>

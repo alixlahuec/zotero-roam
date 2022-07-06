@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import Tribute from "tributejs";
 

@@ -68,7 +68,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 			/>
 			<Tabs.Expander />
 			<span className="zr-auxiliary" id={labelId}>{title}</span>
-			<Button icon="cross" minimal={true} large={true} onClick={onClose} />
+			<Button icon="cross" minimal={true} large={true} onClick={onClose} title="Close dialog" />
 		</Tabs>
 	);
 });
