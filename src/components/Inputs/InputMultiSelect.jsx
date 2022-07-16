@@ -5,11 +5,13 @@ import { MultiSelect2 } from "@blueprintjs/select";
 
 import { searchEngine } from "../../utils";
 
+import { CustomClasses } from "../../constants";
+
 const popoverProps = {
 	canEscapeKeyClose: false,
 	fill: true,
 	minimal: true,
-	popoverClassName: "zr-popover"
+	popoverClassName: CustomClasses.POPOVER
 };
 
 const tagInputProps = {

@@ -5,8 +5,11 @@ import { Button, Classes, Dialog, Tag } from "@blueprintjs/core";
 import QueryBox from "./QueryBox";
 import { defaultQueryTerm } from "./queries";
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
-import { makeDNP } from "../../../../utils";
+
 import useBool from "../../../../hooks/useBool";
+import { makeDNP } from "../../../../utils";
+
+import { CustomClasses } from "../../../../constants";
 
 function makeValueString(value){
 	if(value == null){
@@ -59,7 +62,7 @@ function TermTag({ handlers, isLast, term, useOR }){
 		<Tag zr-role="filter-tag" interactive={true} minimal={true} onClick={openDialog} onRemove={removeSelf} >
 			{makeTermString(term, !useOR, { parentheses: false })}
 		</Tag>
-		{!isLast && <span className="zr-auxiliary" zr-role="filter-operator">{useOR ? "OR" : "AND"}</span>}
+		{!isLast && <span className={CustomClasses.TEXT_AUXILIARY} zr-role="filter-operator">{useOR ? "OR" : "AND"}</span>}
 		<Dialog canEscapeKeyClose={false} className="zr-query-term-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
 			<div className={Classes.DIALOG_BODY}>
 				<QueryBox handlers={handlersForDialog} isFirstChild={true} isLastChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
@@ -126,7 +129,7 @@ function Filter({ filter, handlers, isOnlyChild, useOR }){
 	return <>
 		<div className="zr-query-filter--elements">
 			<FilterElements handlers={handlersForChild} filter={filter} useOR={useOR} />
-			<Button className="zr-text-small" intent="primary" minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={useOR ? "OR" : "AND"} />
+			<Button className={CustomClasses.TEXT_SMALL} intent="primary" minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={useOR ? "OR" : "AND"} />
 		</div>
 		{!isOnlyChild && <Button className="zr-filter--remove-self" icon="small-cross" minimal={true} onClick={removeSelf} />}
 	</>;
@@ -164,7 +167,7 @@ function QueryFilterList({ handlers, terms, useOR }){
 				<Filter handlers={elemHandlers} isOnlyChild={terms.length == 1} filter={term} useOR={!useOR} />
 			</div>;
 		})}
-		<Button className="zr-text-small" minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
+		<Button className={CustomClasses.TEXT_SMALL} minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
 	</div>;
 }
 QueryFilterList.propTypes = {

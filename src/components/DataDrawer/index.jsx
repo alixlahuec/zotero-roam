@@ -3,6 +3,8 @@ import { Button, Classes, Drawer, Tab, Tabs } from "@blueprintjs/core";
 import { bool, func, object } from "prop-types";
 
 import SentryBoundary from "../Errors/SentryBoundary";
+
+import { CustomClasses } from "../../constants";
 import "./index.css";
 
 function RawItem({ item }){
@@ -17,13 +19,13 @@ function DataDrawer({ item, isOpen, onClose }){
 		<Drawer
 			canEscapeKeyClose={false}
 			canOutsideClickClose={true}
-			className="zr-drawer--data"
+			className={CustomClasses.PREFIX_DRAWER + "data"}
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
 			<SentryBoundary feature="drawer-data" extra={item}>
-				<Tabs animate={false} className="zr-tabs-minimal" id="zr-drawer--data" >
+				<Tabs animate={false} className={CustomClasses.TABS_MINIMAL} id="zr-drawer--data" >
 					<Tab id="item" panel={<RawItem item={item} />} title="Item" />
 					<Tabs.Expander />
 					<Button icon="cross" minimal={true} onClick={onClose} />

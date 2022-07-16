@@ -9,6 +9,7 @@ import NotesDrawer from "../../NotesDrawer";
 import { pluralize } from "../../../utils";
 import useBool from "../../../hooks/useBool";
 
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 function PDFElement({ item }){
 	const [isDataDrawerOpen, { on: openDataDrawer, off: closeDataDrawer }] = useBool(false);
@@ -18,14 +19,14 @@ function PDFElement({ item }){
 		<ListItem className="zr-query--result" >
 			<div zr-role="item-header">
 				<div zr-role="item-details">
-					<span className="zr-auxiliary" zr-role="item-title">{item.title}</span>
-					{item.parent.key && <span className="zr-accent-1">@{item.parent.key}</span>}
-					<Button className="zr-text-small" icon="eye-open" minimal={true} onClick={openDataDrawer} />
+					<span className={CustomClasses.TEXT_AUXILIARY} zr-role="item-title">{item.title}</span>
+					{item.parent.key && <span className={CustomClasses.TEXT_ACCENT_1}>@{item.parent.key}</span>}
+					<Button className={CustomClasses.TEXT_SMALL} icon="eye-open" minimal={true} onClick={openDataDrawer} />
 					{item.annotations.length > 0
-						? <Button className="zr-text-small" icon="duplicate" minimal={true} text={pluralize(item.annotations.length, "linked note")} onClick={openNotesDrawer} />
+						? <Button className={CustomClasses.TEXT_SMALL} icon="duplicate" minimal={true} text={pluralize(item.annotations.length, "linked note")} onClick={openNotesDrawer} />
 						: null}
 				</div>
-				<ButtonLink className="zr-text-small" href={item.link} icon="paperclip">Open PDF</ButtonLink>
+				<ButtonLink className={CustomClasses.TEXT_SMALL} href={item.link} icon="paperclip">Open PDF</ButtonLink>
 			</div>
 		</ListItem>
 		<DataDrawer item={item.raw} isOpen={isDataDrawerOpen} onClose={closeDataDrawer} />

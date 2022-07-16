@@ -5,12 +5,14 @@ import { DateInput, DateRangeInput } from "@blueprintjs/datetime";
 
 import { makeDNP } from "../../utils";
 
+import { CustomClasses } from "../../constants";
+
 const popoverProps = {
 	canEscapeKeyClose: false,
 	fill: true,
 	minimal: true,
 	placement: "bottom",
-	popoverClassName: "zr-popover zr-date-picker"
+	popoverClassName: [CustomClasses.POPOVER, CustomClasses.DATE_PICKER].join(" ")
 };
 
 const dateProps = {
@@ -21,7 +23,7 @@ const dateProps = {
 function InputDateSingle({ value, setValue }){
 	return <DateInput
 		{...dateProps}
-		className="zr-date-input"
+		className={CustomClasses.DATE_INPUT}
 		closeOnSelection={true}
 		highlightCurrentDay={true}
 		onChange={setValue}
@@ -40,7 +42,7 @@ InputDateSingle.propTypes = {
 function InputDateRange({ value, setValue }){
 	return <DateRangeInput
 		{...dateProps}
-		className="zr-date-range-input"
+		className={CustomClasses.DATE_INPUT_RANGE}
 		closeOnSelection={true}
 		highlightCurrentDay={true}
 		onChange={setValue}

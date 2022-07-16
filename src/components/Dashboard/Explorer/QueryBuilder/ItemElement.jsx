@@ -10,6 +10,7 @@ import NotesDrawer from "../../../NotesDrawer";
 import { pluralize } from "../../../../utils";
 import useBool from "../../../../hooks/useBool";
 
+import { CustomClasses } from "../../../../constants";
 import * as customPropTypes from "../../../../propTypes";
 
 function ItemElement({ item, onClose }){
@@ -21,12 +22,12 @@ function ItemElement({ item, onClose }){
 		<ListItem className="zr-query--result" >
 			<div zr-role="item-header">
 				<div zr-role="item-details">
-					<span className="zr-auxiliary" data-item-type={itemType} zr-role="item-title">{title}</span>
-					<span className="zr-accent-1">{meta}</span>
-					<span className="zr-secondary">{publication}</span>
+					<span className={CustomClasses.TEXT_AUXILIARY} data-item-type={itemType} zr-role="item-title">{title}</span>
+					<span className={CustomClasses.TEXT_ACCENT_1}>{meta}</span>
+					<span className={CustomClasses.TEXT_SECONDARY}>{publication}</span>
 					<Button icon="eye-open" minimal={true} onClick={openDataDrawer} />
 					{children.notes.length > 0
-						? <Button className="zr-text-small" icon="duplicate" minimal={true} text={pluralize(children.notes.length, "linked note")} onClick={openNotesDrawer} />
+						? <Button className={CustomClasses.TEXT_SMALL} icon="duplicate" minimal={true} text={pluralize(children.notes.length, "linked note")} onClick={openNotesDrawer} />
 						: null}
 				</div>
 				<CitekeyPopover closeDialog={onClose} inGraph={inGraph} item={raw} notes={children.notes} pdfs={children.pdfs} />

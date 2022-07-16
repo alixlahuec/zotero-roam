@@ -1,7 +1,10 @@
 import React, { useContext, useMemo } from "react";
 import { Callout, H3, Tag } from "@blueprintjs/core";
 import { object } from "prop-types";
+
 import { ExtensionContext } from "../../App";
+
+import { CustomClasses } from "../../../constants";
 
 const obfuscate = (val) => "*".repeat(val.length);
 
@@ -23,13 +26,13 @@ function DataRequest({ request }){
 
 	return <div className="zr-settings--card">
 		<div zr-role="settings-row">
-			<span className="zr-auxiliary">Library</span>
+			<span className={CustomClasses.TEXT_AUXILIARY}>Library</span>
 			<div>
 				{libContents}
 			</div>
 		</div>
 		<div zr-role="settings-row">
-			<span className="zr-auxiliary">Data URI</span>
+			<span className={CustomClasses.TEXT_AUXILIARY}>Data URI</span>
 			<div>
 				{dataURI != null
 					? <span>{dataURI}</span>
@@ -37,7 +40,7 @@ function DataRequest({ request }){
 			</div>
 		</div>
 		<div zr-role="settings-row">
-			<span className="zr-auxiliary">API Key</span>
+			<span className={CustomClasses.TEXT_AUXILIARY}>API Key</span>
 			<div>
 				{apikey != null
 					? <span>{obfuscate(apikey)}</span>
@@ -45,7 +48,7 @@ function DataRequest({ request }){
 			</div>
 		</div>
 		<div zr-role="settings-row">
-			<span className="zr-auxiliary">Parameters</span>
+			<span className={CustomClasses.TEXT_AUXILIARY}>Parameters</span>
 			<div>
 				<span>{params || "None"}</span>
 			</div>

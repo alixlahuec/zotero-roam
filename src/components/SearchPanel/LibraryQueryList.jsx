@@ -11,6 +11,8 @@ import { copyToClipboard, pluralize, searchEngine } from "../../utils";
 
 import useDebounceCallback from "../../hooks/useDebounceCallback";
 import { resultClass, resultKeyClass } from "./classes";
+
+import { CustomClasses } from "../../constants";
 import * as customPropTypes from "../../propTypes";
 
 const query_debounce = 300;
@@ -87,8 +89,8 @@ const SearchResult = React.memo(function SearchResult(props) {
 			<>
 				<span className="zr-library-item--title">{title}</span>
 				<span className="zr-details">
-					<span className="zr-accent-1">{meta}</span>
-					<span className="zr-secondary">{publication}</span>
+					<span className={CustomClasses.TEXT_ACCENT_1}>{meta}</span>
+					<span className={CustomClasses.TEXT_SECONDARY}>{publication}</span>
 				</span>
 			</>
 		}

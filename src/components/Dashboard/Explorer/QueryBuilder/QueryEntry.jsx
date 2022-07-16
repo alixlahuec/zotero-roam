@@ -7,9 +7,11 @@ import InputComponent from "./InputComponent";
 import { defaultQueryTerm, queries } from "./queries";
 import { returnSiblingArray } from "./utils";
 
+import { CustomClasses } from "../../../../constants";
+
 const popoverProps = {
 	minimal: true,
-	popoverClassName: "zr-popover"
+	popoverClassName: CustomClasses.POPOVER
 };
 
 function itemRenderer(item, itemProps) {
@@ -72,7 +74,7 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 		{isOnlyChild
 			? null
 			: <div>
-				<Button className={["zr-query-entry--add-sibling", "zr-text-small"].join(" ")} 
+				<Button className={["zr-query-entry--add-sibling", CustomClasses.TEXT_SMALL].join(" ")} 
 					icon="small-plus" 
 					minimal={true} 
 					onClick={addSiblingTerm} 

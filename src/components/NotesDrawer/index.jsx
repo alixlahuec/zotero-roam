@@ -4,10 +4,13 @@ import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tabs, Tab, Tag } fr
 
 import { UserSettings } from "../App";
 import ButtonLink from "../ButtonLink";
+import SentryBoundary from "../Errors/SentryBoundary";
+
 import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
 
-import SentryBoundary from "../Errors/SentryBoundary";
 import useBool from "../../hooks/useBool";
+
+import { CustomClasses } from "../../constants";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
@@ -35,13 +38,13 @@ function Annotation({ annot }){
 		"backgroundImage": `linear-gradient(120deg, ${color}50 0%, ${color}50 100%)`
 	}), [color]);
 
-	return <div className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>
+	return <div className={["zr-drawer--notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
 		<div zr-role="card-header">
 			<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 			<ButtonGroup minimal={true}>
 				<ShowRaw item={raw} />
-				<ButtonLink className="zr-text-small" href={link_pdf} icon="paperclip" >PDF</ButtonLink>
-				<ButtonLink className="zr-text-small" href={link_page} >Page {page_label}</ButtonLink>
+				<ButtonLink className={CustomClasses.TEXT_SMALL} href={link_pdf} icon="paperclip" >PDF</ButtonLink>
+				<ButtonLink className={CustomClasses.TEXT_SMALL} href={link_page} >Page {page_label}</ButtonLink>
 			</ButtonGroup>
 		</div>
 		<div className="zr-annotation--highlight">
@@ -50,7 +53,7 @@ function Annotation({ annot }){
 		</div>
 		{comment && <div className="zr-annotation--comment"><Icon icon="nest" intent="primary" size={14} />{comment}</div>}
 		<div zr-role="card-footer">
-			<span className="zr-secondary">{makeDateFromAgo(date_modified)}</span>
+			<span className={CustomClasses.TEXT_SECONDARY}>{makeDateFromAgo(date_modified)}</span>
 		</div>
 	</div>;
 }
@@ -65,19 +68,19 @@ function Note({ note }){
 	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings), [notesSettings, raw]);
 
 	return notesList.map((nt, i) => {
-		return <div key={i} className={["zr-drawer--notes-card", "zr-text-small"].join(" ")}>
+		return <div key={i} className={["zr-drawer--notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
 			<div zr-role="card-header">
 				<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 				<ButtonGroup minimal={true}>
 					<ShowRaw item={raw} />
-					<ButtonLink className="zr-text-small" href={link_note} icon="comment">View in Zotero</ButtonLink>
+					<ButtonLink className={CustomClasses.TEXT_SMALL} href={link_note} icon="comment">View in Zotero</ButtonLink>
 				</ButtonGroup>
 			</div>
 			<div className="zr-note--contents">
 				{nt}
 			</div>
 			<div zr-role="card-footer">
-				<span className="zr-secondary">{makeDateFromAgo(date_modified)}</span>
+				<span className={CustomClasses.TEXT_SECONDARY}>{makeDateFromAgo(date_modified)}</span>
 			</div>
 		</div>;
 	});
@@ -115,13 +118,13 @@ const NotesDrawer = React.memo(function NotesDrawer(props){
 		<Drawer
 			canEscapeKeyClose={false}
 			canOutsideClickClose={true}
-			className="zr-drawer--notes"
+			className={CustomClasses.PREFIX_DRAWER + "notes"}
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
 			<SentryBoundary feature="drawer-notes" extra={notes}>
-				<Tabs animate={false} className="zr-tabs-minimal" id="zr-drawer--notes" >
+				<Tabs animate={false} className={CustomClasses.TABS_MINIMAL} id="zr-drawer--notes" >
 					{annots.length > 0 && <Tab id="annotations" panel={<PanelAnnotations annots={annots} />} title="Annotations" />}
 					{noteItems.length > 0 && <Tab id="notes" panel={<PanelNotes notes={noteItems} />} title="Notes" />}
 					<Tabs.Expander />

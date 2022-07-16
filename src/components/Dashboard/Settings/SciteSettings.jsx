@@ -11,6 +11,8 @@ import useNumeric from "../../../hooks/useNumeric";
 import useSelect from "../../../hooks/useSelect";
 import useToggle from "../../../hooks/useToggle";
 
+import { CustomClasses } from "../../../constants";
+
 function SciteSettings(){
 	const { sciteBadge } = useContext(UserSettings);
 	const [doi, setDOI] = useState("10.1126/science.1179052");
@@ -28,7 +30,7 @@ function SciteSettings(){
 
 	return <>
 		<H3>Scite Badge</H3>
-		<span className={["zr-secondary", "zr-text-small"].join(" ")}> Changes will not be reflected in your graph.</span>
+		<span className={[CustomClasses.TEXT_SECONDARY, CustomClasses.TEXT_SMALL].join(" ")}> Changes will not be reflected in your graph.</span>
 		<div zr-role="settings-scite">
 			<div zr-role="scite-example">
 				<SciteBadge 
@@ -43,7 +45,7 @@ function SciteSettings(){
 			<div>
 				<TextField disabled={false} label="Test DOI" value={doi} onChange={setDOI} />
 				<div zr-role="settings-row">
-					<span className="zr-auxiliary">Layout</span>
+					<span className={CustomClasses.TEXT_AUXILIARY}>Layout</span>
 					<div>
 						<RadioGroup inline={true} onChange={toggleLayout} selectedValue={layout}>
 							<Radio label="Horizontal" value="horizontal" />
@@ -55,7 +57,7 @@ function SciteSettings(){
 				<Toggle disabled={false} isChecked={showZero} label="Show Zero" onChange={toggleZero} />
 				<Toggle disabled={false} isChecked={small} label="Small display" onChange={toggleSmall} />
 				<div zr-role="settings-row">
-					<span className="zr-auxiliary">Tooltip Placement</span>
+					<span className={CustomClasses.TEXT_AUXILIARY}>Tooltip Placement</span>
 					<RadioGroup inline={true} onChange={handleTooltipPlacementChange} selectedValue={tooltipPlacement}>
 						<Radio label="Top" value="top" />
 						<Radio label="Right" value="right" />
@@ -65,7 +67,7 @@ function SciteSettings(){
 					</RadioGroup>
 				</div>
 				<div zr-role="settings-row">
-					<span className="zr-auxiliary">Tooltip Slide</span>
+					<span className={CustomClasses.TEXT_AUXILIARY}>Tooltip Slide</span>
 					<div>
 						<NumericInput min={0} minorStepSize={1} onValueChange={handleTooltipSlideChange} value={tooltipSlide} />
 					</div>

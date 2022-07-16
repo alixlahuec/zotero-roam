@@ -4,6 +4,7 @@ import { Button, ButtonGroup, Classes } from "@blueprintjs/core";
 
 import ZoteroImport from "../../ZoteroImport";
 
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 
 const SelectedImportItem = React.memo(function SelectedImportItem(props) {
@@ -14,10 +15,10 @@ const SelectedImportItem = React.memo(function SelectedImportItem(props) {
 	}, [handleRemove, item]);
 
 	return (
-		<li className={["import-items_selected", "zr-text-small"].join(" ")}>
+		<li className={["import-items_selected", CustomClasses.TEXT_SMALL].join(" ")}>
 			<div className="selected_info">
 				<span className={[Classes.TEXT_MUTED, "selected_title"].join(" ")}>{item.title}</span>
-				<span className={["zr-secondary", "selected_origin"].join(" ")}>{item.meta}</span>
+				<span className={[CustomClasses.TEXT_SECONDARY, "selected_origin"].join(" ")}>{item.meta}</span>
 			</div>
 			<div className="selected_state">
 				<ButtonGroup minimal={true} >

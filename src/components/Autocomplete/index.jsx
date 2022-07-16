@@ -2,19 +2,18 @@
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import Tribute from "tributejs";
 
+import { ExtensionContext, UserSettings } from "../App";
+
 import { formatItemReference, escapeRegExp } from "../../utils";
 import { useQuery_Items } from "../../api/queries";
 
-import { ExtensionContext, UserSettings } from "../App";
+import { CustomClasses } from "../../constants";
 import "./index.css";
 
-const tributeClass = "zr-tribute";
-const tributeSelectedClass = "zr-tribute--selected";
-const tributeItemDetailsClass = "zr-tribute--item-details";
 
 const tributeConfig = {
-	selectClass: tributeSelectedClass,
-	containerClass: tributeClass,
+	selectClass: CustomClasses.TRIBUTE_SELECTED,
+	containerClass: CustomClasses.TRIBUTE,
 	lookup: "display",
 	menuShowMinLength: 1,
 	menuItemLimit: 25,
@@ -22,7 +21,7 @@ const tributeConfig = {
 		let { itemType, display } = item.original;
 		return `
         <span data-item-type="${itemType}"></span>
-        <span class="${tributeItemDetailsClass}">${display}</span>
+        <span class="${CustomClasses.TRIBUTE_DETAILS}">${display}</span>
         `;
 	},
 	noMatchTemplate: function () {
@@ -55,8 +54,8 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 							key: item.key,
 							itemType: item.data.itemType,
 							source: "zotero",
-							value: formatItemReference(item, format, {accent_class: "zr-accent-1"}) || item.key,
-							display: formatItemReference(item, display, {accent_class: "zr-accent-1"}) || item.key
+							value: formatItemReference(item, format, {accent_class: CustomClasses.TEXT_ACCENT_1}) || item.key,
+							display: formatItemReference(item, display, {accent_class: CustomClasses.TEXT_ACCENT_1}) || item.key
 						};
 					})
 				: [];
@@ -90,7 +89,7 @@ const Autocomplete = React.memo(function Autocomplete() {
 		let textArea = document.querySelector("textarea.rm-block-input");
 		if (!textArea || textArea.getAttribute("zotero-tribute") != null) return;
 
-		document.querySelectorAll(`.${tributeClass}`).forEach(d=>d.remove());
+		document.querySelectorAll(`.${CustomClasses.TRIBUTE}`).forEach(d=>d.remove());
 
 		textArea.setAttribute("zotero-tribute", "active");
 
@@ -126,7 +125,7 @@ const Autocomplete = React.memo(function Autocomplete() {
 
 		return () => {
 			editingObserver.disconnect();
-			try { document.querySelector(`.${tributeClass}`).remove(); } 
+			try { document.querySelector(`.${CustomClasses.TRIBUTE}`).remove(); } 
 			catch(e){
 				// Do nothing
 			}

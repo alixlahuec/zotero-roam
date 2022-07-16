@@ -6,6 +6,8 @@ import QueryEntry from "./QueryEntry";
 import { defaultQueryTerm } from "./queries";
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
 
+import { CustomClasses } from "../../../../constants";
+
 function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = true }){
 	const { removeSelf, updateSelf } = handlers;
 
@@ -50,7 +52,7 @@ function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = tru
 			</div>
 			{!isOnlyChild && <Button className="zr-query-box--remove-self" icon="cross" minimal={true} onClick={removeSelf} />}
 		</div>
-		<Button className={["zr-query-box--add-sibling", "zr-text-small"].join(" ")} minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={(useOR ? "OR" : "AND")} />
+		<Button className={["zr-query-box--add-sibling", CustomClasses.TEXT_SMALL].join(" ")} minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={(useOR ? "OR" : "AND")} />
 	</>;
 }
 QueryBox.propTypes = {

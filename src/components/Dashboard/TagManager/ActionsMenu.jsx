@@ -5,6 +5,7 @@ import { Menu, MenuItem } from "@blueprintjs/core";
 import MergeAsOptions from "./MergeAsOptions";
 import { useDeleteTags } from "../../../api/write";
 
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 
 function ActionsMenu({ deleteTags = true, library, mergeAs = true, suggestion }) {
@@ -18,7 +19,7 @@ function ActionsMenu({ deleteTags = true, library, mergeAs = true, suggestion })
 	}, [suggestion.use, library, mutate]);
 
 	return (
-		<Menu className="zr-text-small">
+		<Menu className={CustomClasses.TEXT_SMALL}>
 			{mergeAs && suggestion.type 
 				? <MenuItem disabled={["loading", "success"].includes(status)} icon="group-objects" text="Merge as">
 					<MergeAsOptions library={library} options={suggestion.use} />

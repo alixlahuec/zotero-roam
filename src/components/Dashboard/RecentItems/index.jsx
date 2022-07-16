@@ -4,13 +4,16 @@ import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import { ListWrapper, Toolbar } from "../../DataList";
+import SentryBoundary from "../../Errors/SentryBoundary";
 import LogItem from "./LogItem";
+
 import { useQuery_Items } from "../../../api/queries";
 import { makeLogFromItems } from "./utils";
 import { categorizeLibraryItems } from "../../../utils";
 
-import SentryBoundary from "../../Errors/SentryBoundary";
 import useBool from "../../../hooks/useBool";
+
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -22,7 +25,7 @@ const LogViewSublist = React.memo(function LogViewSublist({ allAbstractsShown, i
 	return items.length == 0
 		? null
 		: <>
-			<h5 className="zr-auxiliary">{label}</h5>
+			<h5 className={CustomClasses.TEXT_AUXILIARY}>{label}</h5>
 			{items.map(it => <LogItem key={[it.location, it.key].join("/")} allAbstractsShown={allAbstractsShown} item={it} onClose={onClose} />)}
 		</>;
 });
@@ -50,7 +53,7 @@ const LogView = React.memo(function LogView({ itemList, onClose }){
 			? <Spinner size={15} title="Loading recent items..." />
 			: <div className="zr-recentitems--datalist" >
 				{itemsLog.numItems == 0
-					? <NonIdealState className="zr-auxiliary" description="No items to display" />
+					? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />
 					: <ListWrapper>
 						<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.today} label="Today" onClose={onClose} />
 						<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.yesterday} label="Yesterday" onClose={onClose} />

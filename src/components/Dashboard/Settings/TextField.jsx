@@ -2,13 +2,15 @@ import React from "react";
 import { bool, func, node, string } from "prop-types";
 import { Classes } from "@blueprintjs/core";
 
+import { CustomClasses } from "../../../constants";
+
 function TextField({ disabled = true, label, value, noValue = null, onChange = null }){
 	const activeProps = disabled
 		? {}
 		: { onChange };
 
 	return <div zr-role="settings-row">
-		<span className="zr-auxiliary">{label}</span>
+		<span className={CustomClasses.TEXT_AUXILIARY}>{label}</span>
 		<div zr-role="input-text">
 			{value
 				? <input 

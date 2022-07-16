@@ -8,6 +8,7 @@ import { getLocalLink, getWebLink } from "../../utils";
 import { UserSettings } from "../App";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
+import { CustomClasses } from "../../constants";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
@@ -17,7 +18,7 @@ const popoverMenuProps = {
 	interactionKind: "hover",
 	lazy: true,
 	placement: "right-start",
-	popoverClassName: "zr-popover"
+	popoverClassName: CustomClasses.POPOVER
 };
 
 const CitekeyPopover = React.memo(function CitekeyPopover(props) {
@@ -33,8 +34,8 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 
 	const buttonProps = useMemo(() => {
 		return inGraph
-			? {className: "zr-text-small", onClick: () => openPageByUID(inGraph)}
-			: {className: ["zr-text-small", "zr-auxiliary"].join(" ")};
+			? {className: CustomClasses.TEXT_SMALL, onClick: () => openPageByUID(inGraph)}
+			: {className: [CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")};
 	}, [inGraph]);
 
 	const zoteroLinks = useMemo(() => {
@@ -103,7 +104,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 	const actionsMenu = useMemo(() => {
 		if(!inGraph){
 			return (
-				<Menu className="zr-text-small">
+				<Menu className={CustomClasses.TEXT_SMALL}>
 					<MenuItem icon="add" text="Import metadata" onClick={importMetadata} />
 					<MenuItem icon="inheritance" text="Import & open in sidebar" onClick={importMetadataAndOpen} />
 					<MenuDivider />
@@ -113,7 +114,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 			);
 		} else {
 			return (
-				<Menu className="zr-text-small">
+				<Menu className={CustomClasses.TEXT_SMALL}>
 					<MenuItem 
 						icon="arrow-right" 
 						text="Go to Roam page"

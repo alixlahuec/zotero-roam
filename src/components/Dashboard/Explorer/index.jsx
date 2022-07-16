@@ -4,6 +4,7 @@ import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import { ListItem, ListWrapper } from "../../DataList";
+import SentryBoundary from "../../Errors/SentryBoundary";
 import QueryBuilder from "./QueryBuilder";
 import QueryPDFs from "./QueryPDFs";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
@@ -11,7 +12,7 @@ import { useRoamCitekeys } from "../../RoamCitekeysContext";
 import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems, cleanLibraryItem, cleanLibraryPDF, identifyChildren, identifyPDFConnections } from "../../../utils";
 
-import SentryBoundary from "../../Errors/SentryBoundary";
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -99,7 +100,7 @@ function ExplorerTabs({ itemList, onClose }){
 	return (
 		<Tabs 
 			animate={false}
-			className="zr-tabs-minimal" 
+			className={CustomClasses.TABS_MINIMAL} 
 			id="explorer-lists" 
 			onChange={selectTab}
 			renderActiveTabPanelOnly={false}

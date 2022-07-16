@@ -4,6 +4,8 @@ import { createPortal } from "react-dom";
 import { Classes, Dialog } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../App";
+
+import { CustomClasses } from "../../constants";
 import "./index.css";
 
 const DialogOverlay = React.memo(function DialogOverlay(props) {
@@ -19,7 +21,7 @@ const DialogOverlay = React.memo(function DialogOverlay(props) {
 	} = props;
 	const { portalId } = useContext(ExtensionContext);
     
-	const dialog_class = useMemo(() => "zr-dialog-overlay--" + dialogClass, [dialogClass]);
+	const dialog_class = useMemo(() => CustomClasses.PREFIX_DIALOG_OVERLAY + dialogClass, [dialogClass]);
 	const mainPanelStyle = useMemo(() => {
 		return {
 			flex: "1 1 100%"

@@ -4,14 +4,15 @@ import { Spinner, Tab, Tabs} from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import NoWriteableLibraries from "../../Errors/NoWriteableLibraries";
+import SentryBoundary from "../../Errors/SentryBoundary";
+import LibrarySelect from "../LibrarySelect";
 import TagsDatalist from "./TagsDatalist";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
-import * as customPropTypes from "../../../propTypes";
 
-import SentryBoundary from "../../Errors/SentryBoundary";
+import { CustomClasses } from "../../../constants";
+import * as customPropTypes from "../../../propTypes";
 import "./index.css";
-import LibrarySelect from "../LibrarySelect";
 
 function TagLists({ items, libProps }){
 	const [activeTab, setActiveTab] = useState("suggestions");
@@ -20,7 +21,7 @@ function TagLists({ items, libProps }){
 	return (
 		<Tabs 
 			animate={false}
-			className="zr-tabs-minimal" 
+			className={CustomClasses.TABS_MINIMAL} 
 			id="tag-lists" 
 			onChange={selectTab}
 			renderActiveTabPanelOnly={false}

@@ -8,6 +8,7 @@ import MergeAsOptions from "../MergeAsOptions";
 import { useModifyTags } from "../../../../api/write";
 import { makeSuggestionFor } from "../utils";
 
+import { CustomClasses } from "../../../../constants";
 import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
 
@@ -45,7 +46,7 @@ function AutoMerge({ library, suggestion }){
 	}, [status]);
 
 	return <Button
-		className={["zr-tag-suggestion--auto-merge", "zr-text-small"].join(" ")}
+		className={["zr-tag-suggestion--auto-merge", CustomClasses.TEXT_SMALL].join(" ")}
 		icon="many-to-one"
 		loading={status == "loading"}
 		onClick={triggerMerge}
@@ -70,9 +71,9 @@ function ManualMerge({ library, suggestion }){
 	return <Popover2
 		content={<Menu><MergeAsOptions library={library} options={suggestion.use} /></Menu>}
 		interactionKind="click"
-		popoverClassName="zr-popover"
+		popoverClassName={CustomClasses.POPOVER}
 	>
-		<Button className={["zr-tag-suggestion--merge-as", "zr-text-small"].join(" ")} rightIcon="caret-down" text="Merge as ..." />
+		<Button className={["zr-tag-suggestion--merge-as", CustomClasses.TEXT_SMALL].join(" ")} rightIcon="caret-down" text="Merge as ..." />
 	</Popover2>;
 }
 ManualMerge.propTypes = {
@@ -99,7 +100,7 @@ function Suggest({ entry, library }){
 				content={<ActionsMenu library={library} mergeAs={suggestion.type == "auto"} suggestion={suggestion} />}
 				interactionKind="click"
 				placement="bottom-start"
-				popoverClassName="zr-popover"
+				popoverClassName={CustomClasses.POPOVER}
 			>
 				<Button icon="more" />
 			</Popover2>

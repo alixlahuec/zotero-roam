@@ -6,6 +6,8 @@ import { ListWrapper, Pagination, Toolbar } from "../../DataList";
 import PDFElement from "./PDFElement";
 
 import usePagination from "../../../hooks/usePagination";
+
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 
 const itemsPerPage = 20;
@@ -23,7 +25,7 @@ function QueryPDFs({ items }){
 				? items
 					.slice(...pageLimits)
 					.map((el, i) => <PDFElement key={[el.key, i].join("-")} item={el} />)
-				: <NonIdealState className="zr-auxiliary" description="No items to display" />}
+				: <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />}
 		</ListWrapper>
 		<Toolbar>
 			<Pagination

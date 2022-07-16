@@ -3,14 +3,17 @@ import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
+import SentryBoundary from "../../Errors/SentryBoundary";
 import SemanticPagination from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
 import { pluralize, sortElems } from "../../../utils";
-import SentryBoundary from "../../Errors/SentryBoundary";
 import useMulti from "../../../hooks/useMulti";
+
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
+
 
 const labelId = "zr-semantic-panel-label";
 
@@ -47,7 +50,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 	}, [citations.length]);
 
 	return (
-		<Tabs id="zr-semantic-panel" className="zr-tabs" selectedTabId={isActiveTab} onChange={selectTab} animate={false}>
+		<Tabs id="zr-semantic-panel" className={CustomClasses.TABS} selectedTabId={isActiveTab} onChange={selectTab} animate={false}>
 			<Tab id="is_reference" 
 				panel={<SemanticPagination
 					items={references}
@@ -67,7 +70,7 @@ const SemanticTabList = React.memo(function SemanticTabList(props) {
 				title={citations_title}
 			/>
 			<Tabs.Expander />
-			<span className="zr-auxiliary" id={labelId}>{title}</span>
+			<span className={CustomClasses.TEXT_AUXILIARY} id={labelId}>{title}</span>
 			<Button icon="cross" minimal={true} large={true} onClick={onClose} title="Close dialog" />
 		</Tabs>
 	);

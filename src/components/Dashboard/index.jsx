@@ -8,6 +8,7 @@ import RecentItems from "./RecentItems";
 import Settings from "./Settings";
 import TagManager from "./TagManager";
 
+import { CustomClasses } from "../../constants";
 import "./index.css";
 
 const TabList = React.memo(function TabList(props){
@@ -21,7 +22,7 @@ const TabList = React.memo(function TabList(props){
 	const selectTab = useCallback((newtab, _prevtab, _event) => setActiveTab(newtab), []);
 
 	return(
-		<Tabs animate={false} className="zr-tabs" id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
+		<Tabs animate={false} className={CustomClasses.TABS} id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
 			<Tab className="zr-recentitems" id="recent-items" panel={<RecentItems onClose={onClose} />} title={<><Icon htmlTitle="Recent Items" icon="history" /><span>Recent Items</span></>} />
 			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} />
 			<Tabs.Expander />

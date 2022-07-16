@@ -11,6 +11,8 @@ import {
 	pluralize, 
 	readDNP } from "../../src/utils";
 
+import { CustomClasses } from "../../src/constants";
+
 const date = new Date([2022, 1, 1]);
 const offset = date.getTimezoneOffset();
 
@@ -199,7 +201,7 @@ describe("Formatting Zotero item references", () => {
 	});
 
 	it("formas as Zettlr-like reference", () => {
-		expect(formatItemReference(item, "zettlr")).toBe("<span class=\"zr-accent-1\">Scott et al (2003)</span> The Quantitative Measurement of Organizational Culture in Health Care: A Review of the Available Instruments");
+		expect(formatItemReference(item, "zettlr")).toBe(`<span class="${CustomClasses.TEXT_ACCENT_1}">Scott et al (2003)</span> The Quantitative Measurement of Organizational Culture in Health Care: A Review of the Available Instruments`);
 	});
 });
 

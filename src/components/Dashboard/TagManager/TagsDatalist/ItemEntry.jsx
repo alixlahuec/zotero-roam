@@ -8,6 +8,7 @@ import ZoteroTag from "./ZoteroTag";
 import { pluralize } from "../../../../utils";
 import { getTagUsage, isSingleton, makeSuggestionFor } from "../utils";
 
+import { CustomClasses } from "../../../../constants";
 import * as customPropTypes from "../../../../propTypes";
 
 const ItemEntry = React.memo(function ItemEntry({ entry, library }){
@@ -22,8 +23,8 @@ const ItemEntry = React.memo(function ItemEntry({ entry, library }){
 					{entry.roam.length > 0
 						? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" size={14} />
 						: <Icon icon="blank" />}
-					<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
-					{!is_singleton && <span className="zr-text-small" zr-role="item-additional">
+					<span className={CustomClasses.TEXT_AUXILIARY} zr-role="title">{entry.token}</span>
+					{!is_singleton && <span className={CustomClasses.TEXT_SMALL} zr-role="item-additional">
 						{entry.roam.map(elem => <RoamTag key={elem.title} text={elem.title} uid={elem.uid} /> )}
 						{entry.zotero.map((elem) => {
 							const { tag, meta: { type }} = elem;
@@ -31,7 +32,7 @@ const ItemEntry = React.memo(function ItemEntry({ entry, library }){
 						} )}
 					</span>}
 				</div>
-				<span className={["zr-secondary", "zr-text-small"].join(" ")} zr-role="item-count">{pluralize(usage, "item")}</span>
+				<span className={[CustomClasses.TEXT_SECONDARY, CustomClasses.TEXT_SMALL].join(" ")} zr-role="item-count">{pluralize(usage, "item")}</span>
 				<div zr-role="item-actions">
 					<ActionsMenu deleteTags={true} library={library} mergeAs={true} suggestion={suggestion} />
 				</div>

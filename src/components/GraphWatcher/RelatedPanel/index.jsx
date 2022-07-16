@@ -4,11 +4,12 @@ import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import CitekeyPopover from "../../CitekeyPopover";
+import SentryBoundary from "../../Errors/SentryBoundary";
+
+import useBool from "../../../hooks/useBool";
 import { pluralize, sortElems } from "../../../utils";
 
-import SentryBoundary from "../../Errors/SentryBoundary";
-import useBool from "../../../hooks/useBool";
-
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
@@ -26,7 +27,7 @@ const Abstract = React.memo(function Abstract({ abstract, allAbstractsShown }) {
 	} else {
 		return (
 			<div className="zr-related-item--abstract">
-				<Button className="zr-text-small"
+				<Button className={CustomClasses.TEXT_SMALL}
 					zr-role="abstract-toggle"
 					icon={isVisible ? "chevron-down" : "chevron-right"}
 					onClick={toggleAbstract}
@@ -35,7 +36,7 @@ const Abstract = React.memo(function Abstract({ abstract, allAbstractsShown }) {
 					Abstract
 				</Button>
 				{isVisible
-					? <span zr-role="abstract-text" className="zr-text-small zr-auxiliary">{abstract}</span>
+					? <span zr-role="abstract-text" className={[CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")}>{abstract}</span>
 					: null}
 			</div>
 		);
@@ -48,7 +49,7 @@ Abstract.propTypes = {
 
 const Timestamp = React.memo(function Timestamp({ timestamp, type }){
 	return type == "added_on"
-		? <span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zr-related-item--timestamp"].join(" ")}>
+		? <span className={[Classes.MENU_ITEM_LABEL, CustomClasses.TEXT_SMALL, "zr-related-item--timestamp"].join(" ")}>
 			{timestamp}
 		</span>
 		: null;
@@ -70,7 +71,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 					<div className={ Classes.FILL } style={{display: "flex"}}>
 						<div className="zr-related-item-contents--metadata" >
 							<span className="zr-related-item--title" data-item-type={item.itemType}>{item.title}</span>
-							<span className="zr-accent-1">{item.meta}</span>
+							<span className={CustomClasses.TEXT_ACCENT_1}>{item.meta}</span>
 						</div>
 						<span className="zr-related-item-contents--actions">
 							<CitekeyPopover 
@@ -155,7 +156,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 
 	const headerRight = useMemo(() => {
 		return (
-			<div className={["header-right", "zr-auxiliary"].join(" ")}>
+			<div className={["header-right", CustomClasses.TEXT_AUXILIARY].join(" ")}>
 				<Button icon="cross" minimal={true} onClick={onClose} />
 			</div>
 		);
@@ -173,7 +174,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 					<div className="header-content">
 						<div className="header-left">
 							{panelLabel}
-							<Button className="zr-text-small" 
+							<Button className={CustomClasses.TEXT_SMALL} 
 								icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} 
 								minimal={true} 
 								onClick={toggleAbstracts}

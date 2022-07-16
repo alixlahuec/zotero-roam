@@ -6,6 +6,7 @@ import CitekeyPopover from "../../CitekeyPopover";
 import { ListItem } from "../../DataList";
 import useBool from "../../../hooks/useBool";
 
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 
 function Abstract({ abstract, allAbstractsShown }){
@@ -20,7 +21,7 @@ function Abstract({ abstract, allAbstractsShown }){
 	} else {
 		return (
 			<div className="zr-log-item--abstract">
-				<Button className="zr-text-small"
+				<Button className={CustomClasses.TEXT_SMALL}
 					zr-role="abstract-toggle"
 					icon={isVisible ? "chevron-down" : "chevron-right"}
 					onClick={toggleAbstract}
@@ -29,7 +30,7 @@ function Abstract({ abstract, allAbstractsShown }){
 					Abstract
 				</Button>
 				{isVisible
-					? <span zr-role="abstract-text" className="zr-text-small zr-auxiliary">{abstract}</span>
+					? <span zr-role="abstract-text" className={[CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")}>{abstract}</span>
 					: null}
 			</div>
 		);
@@ -46,9 +47,9 @@ const LogItem = React.memo(function LogItem({ allAbstractsShown, item, onClose }
 	return <ListItem className="zr-log-entry" data-in-graph={(inGraph != false).toString()}>
 		<div zr-role="item-header">
 			<div zr-role="item-details">
-				<span className="zr-auxiliary" data-item-type={itemType} zr-role="item-title">{title}</span>
-				<span className="zr-accent-1">{meta}</span>
-				<span className="zr-secondary">{publication}</span>
+				<span className={CustomClasses.TEXT_AUXILIARY} data-item-type={itemType} zr-role="item-title">{title}</span>
+				<span className={CustomClasses.TEXT_ACCENT_1}>{meta}</span>
+				<span className={CustomClasses.TEXT_SECONDARY}>{publication}</span>
 			</div>
 			<CitekeyPopover closeDialog={onClose} inGraph={inGraph} item={raw} notes={children.notes} pdfs={children.pdfs} />
 		</div>

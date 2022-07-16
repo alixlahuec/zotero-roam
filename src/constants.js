@@ -34,3 +34,28 @@ export const default_typemap = {
 	videoRecording: "Recording",
 	webpage: "Webpage"
 };
+
+export const CustomClasses = {
+	DATALIST_ITEM: "zr-datalist--item",
+	DATALIST_PAGINATION: "zr-datalist--pagination",
+	DATALIST_TOOLBAR: "zr-datalist--toolbar",
+	DATALIST_WRAPPER: "zr-datalist--listwrapper",
+	DATE_INPUT: "zr-date-input",
+	DATE_INPUT_RANGE: "zr-date-range-input",
+	DATE_PICKER: "zr-date-picker",
+	DIVIDER_MINIMAL: "zr-divider-minimal",
+	POPOVER: "zr-popover",
+	PREFIX_DIALOG_AUXILIARY: "zr-auxiliary-dialog--",
+	PREFIX_DIALOG_OVERLAY: "zr-dialog-overlay--",
+	PREFIX_DRAWER: "zr-drawer--",
+	TABS: "zr-tabs",
+	TABS_MINIMAL: "zr-tabs-minimal",
+	TEXT_ACCENT_1: "zr-accent-1",
+	TEXT_ACCENT_2: "zr-accent-2",
+	TEXT_AUXILIARY: "zr-auxiliary",
+	TEXT_SECONDARY: "zr-secondary",
+	TEXT_SMALL: "zr-text-small",
+	TRIBUTE: "zr-tribute",
+	TRIBUTE_SELECTED: "zr-tribute--selected",
+	TRIBUTE_DETAILS: "zr-tribute--item-details"
+};

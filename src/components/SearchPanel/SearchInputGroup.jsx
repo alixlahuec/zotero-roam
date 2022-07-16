@@ -5,6 +5,8 @@ import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprin
 import { UserSettings } from "../App";
 import { dialogLabel } from "./classes";
 
+import { CustomClasses } from "../../constants";
+
 const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 	const { handleClose, 
 		handleKeyDown, handleKeyUp, handleQueryChange, 
@@ -23,7 +25,7 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 	const searchbarRightElement = useMemo(() => {
 		return (
 			<>
-				<Switch className={["zr-quick-copy", "zr-auxiliary"].join(" ")} label="Quick Copy" checked={isQCActive} onChange={toggleQC} role="switch" aria-checked={isQCActive} />
+				<Switch className={["zr-quick-copy", CustomClasses.TEXT_AUXILIARY].join(" ")} label="Quick Copy" checked={isQCActive} onChange={toggleQC} role="switch" aria-checked={isQCActive} />
 				<Button className={Classes.MINIMAL} large={true} icon="cross" onClick={handleClose} title="Close searchbar" />
 			</>
 		);

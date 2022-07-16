@@ -4,7 +4,7 @@ import { items } from "Mocks/zotero/items";
 import { sampleNote } from "Mocks/zotero/notes";
 import { formatNotes, getItemCreators, getItemTags, _getItemCollections, _getItemType } from "../src/public";
 import { formatItemAnnotations, formatItemNotes } from "../src/utils";
-import { default_typemap } from "../src/variables";
+import { default_typemap } from "../src/constants";
 
 test("Notes & Annotations formatting", () => {
 	expect(formatNotes(

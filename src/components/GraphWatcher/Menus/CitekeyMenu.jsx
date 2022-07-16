@@ -2,23 +2,26 @@ import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, bool, shape, string } from "prop-types";
 import { Button, ButtonGroup, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
 
+import { UserSettings } from "../../App";
+import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ButtonLink from "../../ButtonLink";
 import CitekeyPopover from "../../CitekeyPopover";
 import ErrorCallout from "../../Errors/ErrorCallout";
+import SentryBoundary from "../../Errors/SentryBoundary";
+import ItemDetails from "../../ItemDetails";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
 import SciteBadge from "../../SciteBadge";
 import SemanticPanel from "../SemanticPanel";
 
 import { showClasses } from "../classes";
+
 import { useQuery_Semantic } from "../../../api/queries";
 import { findRoamPage, importItemMetadata, importItemNotes } from "Roam";
 import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
-import AuxiliaryDialog from "../../AuxiliaryDialog";
-import ItemDetails from "../../ItemDetails";
 
-import SentryBoundary from "../../Errors/SentryBoundary";
-import { UserSettings } from "../../App";
 import useBool from "../../../hooks/useBool";
+
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 
 function BacklinksItem({ entry }) {
@@ -46,8 +49,8 @@ function BacklinksItem({ entry }) {
 		>
 			<div className="zr-backlink-item--year">{pub_year}</div>
 			<div className="zr-backlink-item--info" data-item-type={data.itemType} >
-				<span zr-role="item-authors" className={pub_type == "reference" ? "zr-accent-1" : "zr-accent-2"}>{meta.creatorSummary || ""}</span>
-				<span zr-role="item-publication" className="zr-secondary">{data.publicationTitle || data.bookTitle || data.university || ""}</span>
+				<span zr-role="item-authors" className={pub_type == "reference" ? CustomClasses.TEXT_ACCENT_1 : CustomClasses.TEXT_ACCENT_2}>{meta.creatorSummary || ""}</span>
+				<span zr-role="item-publication" className={CustomClasses.TEXT_SECONDARY}>{data.publicationTitle || data.bookTitle || data.university || ""}</span>
 				<span zr-role="item-title">{data.title}</span>
 			</div>
 			<div className="zr-backlink-item--state">

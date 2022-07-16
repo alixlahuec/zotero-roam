@@ -10,6 +10,8 @@ import SortButtons from "../../SortButtons";
 import { searchEngine } from "../../../utils";
 import usePagination from "../../../hooks/usePagination";
 import useText from "../../../hooks/useText";
+
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 
 const itemsPerPage = 30;
@@ -124,7 +126,7 @@ const SemanticPagination = React.memo(function SemanticPagination(props){
 						.map(el => 
 							<Item key={[el.doi, el.url, el.title].filter(Boolean).join("-")} 
 								item={el} selectProps={selectProps} type={type} />)
-					: <NonIdealState className="zr-auxiliary" description="No results found" /> }
+					: <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No results found" /> }
 			</ListWrapper>
 			<Toolbar>
 				<Pagination

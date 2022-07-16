@@ -2,23 +2,25 @@ import React, { useCallback, useContext, useMemo } from "react";
 import { func, node, object, oneOf, string } from "prop-types";
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
+import { UserSettings } from "../App";
 import DataDrawer from "../DataDrawer";
 import NotesDrawer from "../NotesDrawer";
+import SentryBoundary from "../Errors/SentryBoundary";
 import ShortcutSequence from "../ShortcutSequence";
-import { useRoamCitekeys } from "../RoamCitekeysContext";
 
 import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
-import { copyToClipboard, makeDateFromAgo } from "../../utils";
+import { useRoamCitekeys } from "../RoamCitekeysContext";
 import { formatItemReferenceForCopy } from "../SearchPanel/utils";
+import { copyToClipboard, makeDateFromAgo } from "../../utils";
 
-import SentryBoundary from "../Errors/SentryBoundary";
-import { UserSettings } from "../App";
 import useBool from "../../hooks/useBool";
+
+import { CustomClasses } from "../../constants";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 const copyPopoverProps = {
-	popoverClassName: "zr-popover"
+	popoverClassName: CustomClasses.POPOVER
 };
 
 /** Creates a formatted reference to an item
@@ -177,7 +179,7 @@ CopyButtons.propTypes = {
 
 function Metadata({ direction = "row", label, children }){
 	return <div zr-role={"metadata-" + direction}>
-		<span className="zr-auxiliary">{label}</span>
+		<span className={CustomClasses.TEXT_AUXILIARY}>{label}</span>
 		<div>{children}</div>
 	</div>;
 }
@@ -335,24 +337,24 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			<div zr-role="item-metadata">
 				<div zr-role="item-metadata--header">
 					<h5>{title}</h5>
-					<span className="zr-accent-1">{authors + " (" + year + ")"}</span>
+					<span className={CustomClasses.TEXT_ACCENT_1}>{authors + " (" + year + ")"}</span>
 					{publication
-						? <span className="zr-secondary">{publication}</span>
+						? <span className={CustomClasses.TEXT_SECONDARY}>{publication}</span>
 						: null}
 					{weblink
-						? <span zr-role="item-weblink" className="zr-secondary" >
+						? <span zr-role="item-weblink" className={CustomClasses.TEXT_SECONDARY} >
 							<a href={weblink.href} rel="noreferrer" target="_blank" >{weblink.title}</a>
 						</span>
 						: null}
 				</div>
 				<Metadata direction="col" label="Abstract">
-					<p zr-role="item-abstract" className={["zr-text-small", Classes.RUNNING_TEXT].join(" ")}>
+					<p zr-role="item-abstract" className={[CustomClasses.TEXT_SMALL, Classes.RUNNING_TEXT].join(" ")}>
 						{abstract}
 					</p>
 				</Metadata>
 				<div zr-role="item-metadata--footer">
 					<Metadata label="Added">
-						<span className="zr-secondary">
+						<span className={CustomClasses.TEXT_SECONDARY}>
 							{makeDateFromAgo(raw.data.dateAdded)}
 						</span>
 						{createdByUser
@@ -361,22 +363,22 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 					</Metadata>
 					{authorsFull.length > 0
 						? <Metadata label="Contributors">
-							{authorsFull.map((aut, i) => <Tag key={i} className="zr-text-small" intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
+							{authorsFull.map((aut, i) => <Tag key={i} className={CustomClasses.TEXT_SMALL} intent="primary" minimal={true}>{aut}{authorsRoles[i] == "author" ? "" : " (" + authorsRoles[i] + ")"}</Tag>)}
 						</Metadata>
 						: null}
 					{tags.length > 0
 						? <Metadata label="Tags">
 							<div>
-								{tags.map((tag, i) => <Tag key={i} className="zr-text-small" minimal={true}>#{tag}</Tag>)}
+								{tags.map((tag, i) => <Tag key={i} className={CustomClasses.TEXT_SMALL} minimal={true}>#{tag}</Tag>)}
 							</div>
 						</Metadata>
 						: null}
 				</div>
 			</div>
 			<div zr-role="item-actions">
-				<Menu className="zr-text-small" data-in-graph={inGraph.toString()} >
+				<Menu className={CustomClasses.TEXT_SMALL} data-in-graph={inGraph.toString()} >
 					{navigator.clipboard && <CopyButtons citekey={key} item={item} />}
-					<MenuDivider className="zr-divider-minimal" title="Actions" />
+					<MenuDivider className={CustomClasses.DIVIDER_MINIMAL} title="Actions" />
 					{goToPageButton}
 					<MenuItem icon="add" 
 						labelElement={shortcutsSettings.importMetadata != false && <ShortcutSequence text={shortcutsSettings.importMetadata} />} 
@@ -386,7 +388,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 					<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
 					<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />
 					{rawData}
-					<MenuDivider className="zr-divider-minimal" title="Linked Content" />
+					<MenuDivider className={CustomClasses.DIVIDER_MINIMAL} title="Linked Content" />
 					{pdfs}
 					{notes}
 				</Menu>

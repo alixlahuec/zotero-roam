@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { arrayOf, func } from "prop-types";
 import { RadioGroup } from "@blueprintjs/core";
 
+import { CustomClasses } from "../../constants";
 import * as customPropTypes from "../../propTypes";
 
 const LibrarySelector = React.memo(function LibrarySelector({ libraries, selectedLib, onSelect }) {
@@ -11,7 +12,7 @@ const LibrarySelector = React.memo(function LibrarySelector({ libraries, selecte
 
 	return (
 		<RadioGroup 
-			className="zr-text-small"
+			className={CustomClasses.TEXT_SMALL}
 			inline={false}
 			name="import-library"
 			onChange={onSelect}

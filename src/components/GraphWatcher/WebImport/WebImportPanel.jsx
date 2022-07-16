@@ -2,15 +2,18 @@ import React, { useCallback, useContext } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
 import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
+import { UserSettings } from "../../App";
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import { CitoidGuide } from "../../Guide";
+import SentryBoundary from "../../Errors/SentryBoundary";
 import ZoteroImport from "../../ZoteroImport";
 
-import SentryBoundary from "../../Errors/SentryBoundary";
-import { UserSettings } from "../../App";
 import { useQuery_Citoid } from "../../../api/queries";
 import { pluralize } from "../../../utils";
+
 import useMulti from "../../../hooks/useMulti";
+
+import { CustomClasses } from "../../../constants";
 
 function useGetCitoids(urls, opts = {}) {
 	return useQuery_Citoid(urls, {
@@ -50,7 +53,7 @@ const WebImportItem = React.memo(function WebImportItem(props){
 						labelElement={<>
 							<a target="_blank" rel="noreferrer" href={item.url}>{item.title}</a>
 							{item.creators
-								? <span className="zr-secondary" zr-role="item-creators" > ({item.creators})</span>
+								? <span className={CustomClasses.TEXT_SECONDARY} zr-role="item-creators" > ({item.creators})</span>
 								: null}
 						</>}
 						onChange={handleCheckUncheck}
@@ -62,7 +65,7 @@ const WebImportItem = React.memo(function WebImportItem(props){
 						: null}
 				</div>
 				<div className="zr-webimport-item--contents" >
-					<span className={["zr-text-small", "zr-auxiliary"].join(" ")} zr-role="item-abstract">
+					<span className={[CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")} zr-role="item-abstract">
 						{item.abstract}
 					</span>
 				</div>
@@ -111,7 +114,7 @@ const WebImportPanel = React.memo(function WebImportPanel(props){
 								</h5>
 								{!noQueriesLoaded && <CitoidGuide />}
 							</div>
-							<div className={["header-right", "zr-auxiliary"].join(" ")}>
+							<div className={["header-right", CustomClasses.TEXT_AUXILIARY].join(" ")}>
 								<Button icon="cross" large={true} minimal={true} onClick={handleClose} title="Close dialog" />
 							</div>
 						</div>

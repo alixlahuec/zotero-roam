@@ -2,22 +2,22 @@ import React, { useCallback, useContext, useMemo } from "react";
 import { arrayOf, bool, func, shape, string} from "prop-types";
 import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 
+import { ExtensionContext } from "../App";
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
 import NoWriteableLibraries from "../Errors/NoWriteableLibraries";
+import SentryBoundary from "../Errors/SentryBoundary";
 import TagsSelector from "../Inputs/TagsSelector";
 
 import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
 import { sortCollections } from "../../utils";
 
-import { ExtensionContext } from "../App";
-import SentryBoundary from "../Errors/SentryBoundary";
-import * as customPropTypes from "../../propTypes";
-
 import useMulti from "../../hooks/useMulti";
 import useSelect from "../../hooks/useSelect";
 
+import { CustomClasses } from "../../constants";
+import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 const ImportButton = React.memo(function ImportButton(props) {
@@ -72,7 +72,7 @@ const ImportButton = React.memo(function ImportButton(props) {
 	}, [isActive, isDataReady, status]);
 
 	return (
-		<Button className={["zr-text-small", "zr-import--trigger"].join(" ")} onClick={triggerImport} {...buttonProps} />
+		<Button className={[CustomClasses.TEXT_SMALL, "zr-import--trigger"].join(" ")} onClick={triggerImport} {...buttonProps} />
 	);
 });
 ImportButton.propTypes = {
@@ -124,7 +124,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 		<SentryBoundary feature="zotero-import" extra={props}>
 			<div className="import-header">
 				<ButtonGroup fill={true} minimal={true}>
-					<Button className={["zr-text-small", "zr-import--cancel"].join(" ")} icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
+					<Button className={[CustomClasses.TEXT_SMALL, "zr-import--cancel"].join(" ")} icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
 					<ImportButton 
 						identifiers={identifiers} 
 						importProps={importProps} 

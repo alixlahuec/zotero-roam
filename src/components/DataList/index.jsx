@@ -2,11 +2,13 @@ import React, { useCallback, useMemo } from "react";
 import { func, node, number, oneOf, string } from "prop-types";
 import { Button, ControlGroup } from "@blueprintjs/core";
 
-import "./index.css";
 import { pluralize } from "../../utils";
 
+import { CustomClasses } from "../../constants";
+import "./index.css";
+
 const ListItem = ({ className, children, ...rest }) => 
-	<li className={[className, "zr-datalist--item"].filter(Boolean).join(" ")} {...rest}>
+	<li className={[className, CustomClasses.DATALIST_ITEM].filter(Boolean).join(" ")} {...rest}>
 		{children}
 	</li>;
 ListItem.propTypes = {
@@ -14,7 +16,7 @@ ListItem.propTypes = {
 	children: node
 };
 
-const ListWrapper = ({ children }) => <ul className="zr-datalist--listwrapper">{children}</ul>;
+const ListWrapper = ({ children }) => <ul className={CustomClasses.DATALIST_WRAPPER}>{children}</ul>;
 ListWrapper.propTypes = {
 	children: node
 };
@@ -33,7 +35,7 @@ const Pagination = React.memo(function Pagination({ arrows = "last", currentPage
 	}, [currentPage, setCurrentPage]);
 
 	const itemsCount = (
-		<span className="zr-text-small" zr-role="items-count">
+		<span className={CustomClasses.TEXT_SMALL} zr-role="items-count">
 			<strong>{(currentPage - 1)*itemsPerPage + 1}-{Math.min(currentPage*itemsPerPage, nbItems)}</strong> / {pluralize(nbItems, "item")}
 		</span>);
 
@@ -45,7 +47,7 @@ const Pagination = React.memo(function Pagination({ arrows = "last", currentPage
 	);
 	
 	return nbItems > 0
-		? <div className="zr-datalist--pagination">
+		? <div className={CustomClasses.DATALIST_PAGINATION}>
 			{arrows == "first" && controls}
 			{itemsCount}
 			{arrows == "last" && controls}
@@ -60,7 +62,7 @@ Pagination.propTypes = {
 	setCurrentPage: func
 };
 
-const Toolbar = ({ children }) => <div className="zr-datalist--toolbar">{children}</div>;
+const Toolbar = ({ children }) => <div className={CustomClasses.DATALIST_TOOLBAR}>{children}</div>;
 Toolbar.propTypes = {
 	children: node
 };

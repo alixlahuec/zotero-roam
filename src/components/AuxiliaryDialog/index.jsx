@@ -4,6 +4,8 @@ import { arrayOf, bool, func, node, string } from "prop-types";
 import { Dialog, H5, } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../App";
+
+import { CustomClasses } from "../../constants";
 import "./index.css";
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
@@ -18,7 +20,7 @@ const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
 	} = props;
 	const { portalId } = useContext(ExtensionContext);
 
-	const dialog_class = useMemo(() => ["zr-auxiliary-dialog--" + dialogClass, ...extraClasses].join(" "), [dialogClass, extraClasses]);
+	const dialog_class = useMemo(() => [CustomClasses.PREFIX_DIALOG_AUXILIARY + dialogClass, ...extraClasses].join(" "), [dialogClass, extraClasses]);
 
 	const dialog_label = useMemo(() => {
 		if(!ariaLabelledBy && label){

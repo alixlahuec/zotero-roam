@@ -6,7 +6,9 @@ import Suggest from "../Suggest";
 
 import { pluralize } from "../../../../utils";
 
+import { CustomClasses } from "../../../../constants";
 import * as customPropTypes from "../../../../propTypes";
+
 
 const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
 
@@ -17,7 +19,7 @@ const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
 					{entry.roam.length > 0
 						? <Icon htmlTitle={"This tag exists in Roam (" + entry.roam.map(el => el.title).join(", ") + ")"} icon="tick-circle" intent="success" size={14} />
 						: <Icon icon="blank" size={14} />}
-					<span className="zr-auxiliary" zr-role="title">{entry.token}</span>
+					<span className={CustomClasses.TEXT_AUXILIARY} zr-role="title">{entry.token}</span>
 				</span>
 				<Tag 
 					htmlTitle={entry.zotero.map(t => t.tag).join(" - ")} 

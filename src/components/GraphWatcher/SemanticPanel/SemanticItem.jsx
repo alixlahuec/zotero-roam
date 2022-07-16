@@ -4,6 +4,7 @@ import { Button, Classes, Icon, Tag } from "@blueprintjs/core";
 
 import CitekeyPopover from "../../CitekeyPopover";
 
+import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 
 const SemanticItem = React.memo(function SemanticItem(props) {
@@ -23,13 +24,13 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 			return (
 				<>
 					{item.url
-						? <a zr-role="item-url" href={item.url} target="_blank" rel="noreferrer" className="zr-text-small" >
+						? <a zr-role="item-url" href={item.url} target="_blank" rel="noreferrer" className={CustomClasses.TEXT_SMALL} >
 							{item.doi || "Semantic Scholar"}
 						</a>
 						: null}
 					<Button text="Add to Zotero" 
 						active={isSelected}
-						className="zr-text-small" 
+						className={CustomClasses.TEXT_SMALL} 
 						icon={isSelected ? "small-cross" : "small-plus"} 
 						intent="primary" 
 						minimal={true} 
@@ -63,7 +64,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				{Object.keys(item.links).map((key) => {
 					return (
 						<span key={key} data-service={key}>
-							<a href={item.links[key]} className={["zr-text-small", "zr-auxiliary"].join(" ")} target="_blank" rel="noreferrer">{key.split("-").map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(" ")}</a>
+							<a href={item.links[key]} className={[CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")} target="_blank" rel="noreferrer">{key.split("-").map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(" ")}</a>
 						</span>
 					);
 				})}
@@ -74,14 +75,14 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 	return (
 		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
 			<div className={ Classes.MENU_ITEM } label={item.doi}>
-				<span className={[Classes.MENU_ITEM_LABEL, "zr-text-small", "zr-related-item--timestamp"].join(" ")}>
+				<span className={[Classes.MENU_ITEM_LABEL, CustomClasses.TEXT_SMALL, "zr-related-item--timestamp"].join(" ")}>
 					{item.year}
 				</span>
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{display: "flex"}}>
 						<div className="zr-related-item-contents--metadata">
-							<span className={type == "is_reference" ? "zr-accent-1" : "zr-accent-2"}>{item.authors}</span>
-							<span className="zr-secondary">{item.meta}</span>
+							<span className={type == "is_reference" ? CustomClasses.TEXT_ACCENT_1 : CustomClasses.TEXT_ACCENT_2}>{item.authors}</span>
+							<span className={CustomClasses.TEXT_SECONDARY}>{item.meta}</span>
 							{item.isInfluential
 								? <Icon className="zr-related-item--decorating-icon" color="#f8c63a" htmlTitle="This item was classified as influential by Semantic Scholar" icon="trending-up" />
 								: null}

@@ -3,11 +3,12 @@ import { arrayOf, func, shape, string } from "prop-types";
 import { Button, MenuItem } from "@blueprintjs/core";
 import { Select2 } from "@blueprintjs/select";
 
+import { CustomClasses } from "../../constants";
 import * as customPropTypes from "../../propTypes";
 
 const popoverProps = {
 	minimal: true,
-	popoverClassName: "zr-popover"
+	popoverClassName: CustomClasses.POPOVER
 };
 
 function itemRenderer(item, itemProps) {
@@ -28,7 +29,7 @@ const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
 			placement="bottom-right"
 			popoverProps={popoverProps}>
 			<Button 
-				className={["zr-dashboard--library-select", "zr-auxiliary", "zr-text-small"].join(" ")} 
+				className={["zr-dashboard--library-select", CustomClasses.TEXT_AUXILIARY, CustomClasses.TEXT_SMALL].join(" ")} 
 				icon="folder-open"
 				minimal={true} 
 				text={path} />

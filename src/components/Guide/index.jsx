@@ -3,6 +3,7 @@ import { element, node, string } from "prop-types";
 import { Icon, H6 } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
+import { CustomClasses } from "../../constants";
 import "./index.css";
 
 function GuideHeader({ children }){
@@ -37,7 +38,7 @@ function Guide({ content, header = "" }){
 			{content}
 		</>;
 	}, [content, header]);
-	return <Popover2 className="zr-guide-popover--target" content={guideContent} interactionKind="hover-target" popoverClassName={["zr-popover", "zr-guide-popover"].join(" ")} >
+	return <Popover2 className="zr-guide-popover--target" content={guideContent} interactionKind="hover-target" popoverClassName={[CustomClasses.POPOVER, "zr-guide-popover"].join(" ")} >
 		<Icon icon="help" size={14} tabIndex="-1" />
 	</Popover2>;
 }

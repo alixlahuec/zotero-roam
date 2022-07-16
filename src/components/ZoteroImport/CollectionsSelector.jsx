@@ -2,6 +2,8 @@ import React, { useCallback } from "react";
 import { array, bool, func, object } from "prop-types";
 import { Checkbox, Spinner } from "@blueprintjs/core";
 
+import { CustomClasses } from "../../constants";
+
 const CollectionOption = React.memo(function CollectionOption(props) {
 	const { collection, isChecked, onSelect } = props;
 	const { data: { name }, depth, key } = collection;
@@ -13,7 +15,7 @@ const CollectionOption = React.memo(function CollectionOption(props) {
 	return (
 		<Checkbox
 			checked={isChecked}
-			className={["zr-text-small", `depth-${depth}`].join(" ")}
+			className={[CustomClasses.TEXT_SMALL, `depth-${depth}`].join(" ")}
 			inline={false}
 			label={name}
 			onChange={handleCheckUncheck}

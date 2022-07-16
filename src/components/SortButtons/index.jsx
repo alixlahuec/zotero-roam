@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
 import { ButtonGroup, Icon } from "@blueprintjs/core";
 
+import { CustomClasses } from "../../constants";
 import "./index.css";
 
 function SortButton(props){
@@ -14,7 +15,7 @@ function SortButton(props){
 		<span className="zr-sort-option" onClick={handleClick} >
 			<input type="radio" checked={isSelected} disabled={isSelected} id={uniqueId} name={name} onChange={() => {}} value={value} />
 			<Icon icon={icon} />
-			<label className="zr-text-small" htmlFor={uniqueId}>{label}</label>
+			<label className={CustomClasses.TEXT_SMALL} htmlFor={uniqueId}>{label}</label>
 		</span>
 	);
 }

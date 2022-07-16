@@ -12,7 +12,7 @@ import { setDefaultHooks } from "./events";
 import { formatNotes, formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemMetadata, _getItemRelated, _getItemType } from "./public";
 import { registerSmartblockCommands } from "./smartblocks";
 import { analyzeUserRequests, setupDarkTheme, setupDependencies, setupPortals } from "./utils";
-import { default_typemap } from "./variables";
+import { default_typemap } from "./constants";
 
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";

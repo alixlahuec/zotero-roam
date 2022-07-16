@@ -2,6 +2,7 @@ import React from "react";
 import { number, shape } from "prop-types";
 import { ProgressBar } from "@blueprintjs/core";
 
+import { CustomClasses } from "../../../../constants";
 import "./index.css";
 
 const Stats = React.memo(function Stats({ stats }){
@@ -13,7 +14,7 @@ const Stats = React.memo(function Stats({ stats }){
 		const roamPct = Math.round(nRoam/nTotal*100)/100;
 		
 		return (
-			<div className={["zr-auxiliary", "zr-text-small"].join(" ")} zr-role="list-stats" >
+			<div className={[CustomClasses.TEXT_AUXILIARY, CustomClasses.TEXT_SMALL].join(" ")} zr-role="list-stats" >
 				<span zr-role="stats-text">
 					Zotero has {nTags} tags, matched in {nTotal} groups
 				</span>

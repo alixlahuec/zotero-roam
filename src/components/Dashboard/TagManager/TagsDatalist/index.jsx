@@ -10,6 +10,8 @@ import Stats from "../Stats";
 
 import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
 import usePagination from "../../../../hooks/usePagination";
+
+import { CustomClasses } from "../../../../constants";
 import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
 
@@ -78,7 +80,7 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 								filter == "suggestions" 
 									? <ItemSuggestion key={el.token} entry={el} library={libProps.currentLibrary} /> 
 									: <ItemEntry key={el.token} entry={el} library={libProps.currentLibrary} />)
-						: <NonIdealState className="zr-auxiliary" description="No items to display" />}
+						: <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />}
 				</ListWrapper>
 				{filter == "all" && <Stats stats={stats} />}
 			</div>

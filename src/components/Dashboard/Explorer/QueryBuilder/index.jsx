@@ -4,11 +4,14 @@ import { NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
 import ItemElement from "./ItemElement";
-import { defaultQueryTerm, runQuerySet } from "./queries";
 import QueryFilterList from "./QueryFilterList";
+
+import { defaultQueryTerm, runQuerySet } from "./queries";
 import { addElemToArray, updateArrayElemAt, removeArrayElemAt } from "./utils";
 
 import usePagination from "../../../../hooks/usePagination";
+
+import { CustomClasses } from "../../../../constants";
 import * as customPropTypes from "../../../../propTypes";
 import "./index.css";
 
@@ -44,7 +47,7 @@ function QueryBuilder({ items, onClose }){
 				? queriedItems
 					.slice(...pageLimits)
 					.map(el => <ItemElement key={[el.location, el.key].join("-")} item={el} onClose={onClose} />)
-				: <NonIdealState className="zr-auxiliary" description="No items to display" />}
+				: <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />}
 		</ListWrapper>
 		<Toolbar>
 			<Pagination
