@@ -6,7 +6,7 @@ import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
 import ItemElement from "./ItemElement";
 import QueryFilterList from "./QueryFilterList";
 
-import { defaultQueryTerm, runQuerySet } from "./queries";
+import { runQuerySet } from "./queries";
 import { addElemToArray, updateArrayElemAt, removeArrayElemAt } from "./utils";
 
 import usePagination from "../../../../hooks/usePagination";
@@ -22,7 +22,7 @@ function QueryBuilder({ items, onClose }){
 	const [useOR, /*setUseOR*/] = useState(true);
 	const [queryTerms, setQueryTerms] = useState([]);
 
-	const addQueryTerm = useCallback(() => setQueryTerms(prev => addElemToArray(prev, [[defaultQueryTerm]])), []);
+	const addQueryTerm = useCallback((val) => setQueryTerms(prev => addElemToArray(prev, [val])), []);
 	const removeQueryTerm = useCallback((index) => setQueryTerms(prev => removeArrayElemAt(prev, index)), []);
 	const handleQueryTermChange = useCallback((index, value) => setQueryTerms(prev => updateArrayElemAt(prev, index, value)), []);
 

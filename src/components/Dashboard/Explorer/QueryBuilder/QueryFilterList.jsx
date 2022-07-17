@@ -1,13 +1,14 @@
-import React, { useCallback, useMemo } from "react";
-import { array, bool, func, shape } from "prop-types";
+import React, { useCallback, useMemo, useState } from "react";
+import { array, bool, func, object, shape } from "prop-types";
 import { Button, Classes, Dialog, Tag } from "@blueprintjs/core";
 
-import QueryBox from "./QueryBox";
 import { defaultQueryTerm } from "./queries";
+import QueryBox from "./QueryBox";
+
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
+import { makeDNP } from "../../../../utils";
 
 import useBool from "../../../../hooks/useBool";
-import { makeDNP } from "../../../../utils";
 
 import { CustomClasses } from "../../../../constants";
 
@@ -42,6 +43,43 @@ function makeTermString(term, useOR, { parentheses = true } = {}){
 	}
 }
 
+function AddTerm({ addTerm, buttonProps = {}, useOR }){
+	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
+	const [term, setTerm] = useState([defaultQueryTerm]);
+
+	const handlers = useMemo(() => {
+		return {
+			removeSelf: () => {},
+			updateSelf: (val) => setTerm(val)
+		};
+	}, []);
+
+	const addToQuery = useCallback(() => {
+		addTerm(term);
+		closeDialog();
+	}, [addTerm, closeDialog, term]);
+
+	return <>
+		<Button className={CustomClasses.TEXT_SMALL} minimal={true} onClick={openDialog} rightIcon="small-plus" small={true} {...buttonProps} />
+		<Dialog canEscapeKeyClose={false} className="zr-query-term-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
+			<div className={Classes.DIALOG_BODY}>
+				<QueryBox handlers={handlers} isFirstChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
+			</div>
+			<div className={Classes.DIALOG_FOOTER}>
+				<div className={Classes.DIALOG_FOOTER_ACTIONS}>
+					<Button minimal={true} onClick={closeDialog} text="Cancel" />
+					<Button intent="primary" minimal={true} onClick={addToQuery} text="OK" />
+				</div>
+			</div>
+		</Dialog>
+	</>;
+}
+AddTerm.propTypes = {
+	addTerm: func,
+	buttonProps: object,
+	useOR: bool
+};
+
 function TermTag({ handlers, isLast, term, useOR }){
 	const { removeSelf, updateSelf } = handlers;
 	const [isDialogOpen, { on: openDialog, off: closeDialog}] = useBool(false);
@@ -65,7 +103,7 @@ function TermTag({ handlers, isLast, term, useOR }){
 		{!isLast && <span className={CustomClasses.TEXT_AUXILIARY} zr-role="filter-operator">{useOR ? "OR" : "AND"}</span>}
 		<Dialog canEscapeKeyClose={false} className="zr-query-term-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
 			<div className={Classes.DIALOG_BODY}>
-				<QueryBox handlers={handlersForDialog} isFirstChild={true} isLastChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
+				<QueryBox handlers={handlersForDialog} isFirstChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
 			</div>
 			<div className={Classes.DIALOG_FOOTER}>
 				<div className={Classes.DIALOG_FOOTER_ACTIONS}>
@@ -129,7 +167,7 @@ function Filter({ filter, handlers, isOnlyChild, useOR }){
 	return <>
 		<div className="zr-query-filter--elements">
 			<FilterElements handlers={handlersForChild} filter={filter} useOR={useOR} />
-			<Button className={CustomClasses.TEXT_SMALL} intent="primary" minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={useOR ? "OR" : "AND"} />
+			<AddTerm addTerm={addTerm} buttonProps={{ intent: "primary", text: useOR ? "OR" : "AND" }} useOR={!useOR} />
 		</div>
 		{!isOnlyChild && <Button className="zr-filter--remove-self" icon="small-cross" minimal={true} onClick={removeSelf} />}
 	</>;
@@ -153,7 +191,7 @@ function QueryFilterList({ handlers, terms, useOR }){
 		let child = terms[index];
 		return {
 			removeSelf: () => removeTerm(index),
-			addTerm: () => updateTerm(index, returnSiblingArray(child, [defaultQueryTerm])),
+			addTerm: (val) => updateTerm(index, returnSiblingArray(child, val)),
 			removeTerm: (subindex) => updateTerm(index, removeArrayElemAt(child, subindex)),
 			updateTerm: (subindex, value) => updateTerm(index, updateArrayElemAt(child, subindex, value))
 		};
@@ -167,7 +205,7 @@ function QueryFilterList({ handlers, terms, useOR }){
 				<Filter handlers={elemHandlers} isOnlyChild={terms.length == 1} filter={term} useOR={!useOR} />
 			</div>;
 		})}
-		<Button className={CustomClasses.TEXT_SMALL} minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")} />
+		<AddTerm addTerm={addTerm} buttonProps={{ text: terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")}} useOR={!useOR} />
 	</div>;
 }
 QueryFilterList.propTypes = {
