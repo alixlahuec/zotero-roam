@@ -91,7 +91,7 @@ function QueriesStatusIcon(props) {
 		<span zr-role="status">
 			{timestamp}
 			{isFetching ? <Spinner size={16} /> : <Icon size={16} {...iconProps} /> }
-			<Button minimal={true} onClick={refreshData} disabled={isFetching}>
+			<Button minimal={true} onClick={refreshData} disabled={isFetching} title="Refresh data">
 				<Icon size={16} icon="refresh" />
 			</Button>
 		</span>

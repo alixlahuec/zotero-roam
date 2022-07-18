@@ -81,7 +81,7 @@ const Backlinks = React.memo(function Backlinks(props) {
 
 		return (
 			<Collapse isOpen={isOpen} keepChildrenMounted={true}>
-				<ul className={[ Classes.LIST_UNSTYLED, "zr-citekey-menu--backlinks"].join(" ")}>
+				<div className="zr-citekey-menu--backlinks" >
 					{references.length > 0 
 						? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="references">
 							{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} />)}
@@ -95,7 +95,7 @@ const Backlinks = React.memo(function Backlinks(props) {
 							{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} />)}
 						</ul> 
 						: null}
-				</ul>
+				</div>
 			</Collapse>
 		);
 	}
