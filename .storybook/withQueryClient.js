@@ -18,9 +18,9 @@ const defaultQueryClient = new QueryClient({
 export const withQueryClient = (Story, context) => {
     // If the story specifies its own query client, use it - otherwise use the default client
     const { args, parameters } = context;
-    if(!args.queryClient){ args.queryClient = defaultQueryClient }
+    if(!parameters.queryClient){ parameters.queryClient = defaultQueryClient }
     return (
-        <QueryClientProvider client={args.queryClient}>
+        <QueryClientProvider client={parameters.queryClient}>
             <Story {...{ args, parameters }} />
         </QueryClientProvider>
     );
