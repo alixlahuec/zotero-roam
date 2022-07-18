@@ -4,11 +4,11 @@
 }
 
 .zr-semantic-panel--side .bp4-button-group button.bp4-intent-primary.zr-import--trigger {
-    color: hsla(var(--zr-accent-1-co), 90%);
+    color: hsla(var(--zr-accent-1-hsl), 90%);
 }
 
 .zr-semantic-panel--side .bp4-button-group button.bp4-intent-warning.zr-import--cancel {
-    color: hsla(var(--zr-accent-2-co), 90%);
+    color: hsla(var(--zr-accent-2-hsl), 90%);
 }
 
 .import-options {

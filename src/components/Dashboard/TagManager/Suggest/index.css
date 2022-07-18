@@ -1,7 +1,7 @@
 .zr-tag-suggestion .bp4-button-group .bp4-button.zr-tag-suggestion--auto-merge,
 .zr-tag-suggestion .bp4-button-group .bp4-button.zr-tag-suggestion--auto-merge.bp4-active,
 .zr-tag-suggestion .bp4-button-group .bp4-button.zr-tag-suggestion--auto-merge:hover {
-    background-color: hsla(var(--zr-accent-1-co), 70%);
+    background-color: hsla(var(--zr-accent-1-hsl), 70%);
     color: white;
 }
 
@@ -12,10 +12,10 @@
 .zr-tag-suggestion .bp4-button-group .bp4-button.zr-tag-suggestion--merge-as,
 .zr-tag-suggestion .bp4-button-group .bp4-button.zr-tag-suggestion--merge-as.bp4-active,
 .zr-tag-suggestion .bp4-button-group .bp4-button.zr-tag-suggestion--merge-as:hover {
-    background-color: hsla(var(--zr-accent-1-co), 10%);
-    color: hsla(var(--zr-accent-1-co), 70%);
+    background-color: hsla(var(--zr-accent-1-hsl), 10%);
+    color: hsla(var(--zr-accent-1-hsl), 70%);
 }
 
 .bp4-button-group .bp4-button.zr-tag-suggestion--merge-as .bp4-icon {
-    color: hsla(var(--zr-accent-1-co), 70%);
+    color: hsla(var(--zr-accent-1-hsl), 70%);
 }

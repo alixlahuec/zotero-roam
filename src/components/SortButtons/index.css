@@ -30,7 +30,7 @@
 }
 
 .zr-sort-option input:checked ~ label {
-    border-bottom: 1px hsla(var(--zr-accent-1-co), 50%) solid;
+    border-bottom: 1px hsla(var(--zr-accent-1-hsl), 50%) solid;
 }
 
 .zr-sort-option span.bp4-icon {

@@ -68,7 +68,7 @@
 }
 
 #zr-item-details [zr-role="item-actions"] .bp4-menu-item > .bp4-icon:first-child {
-    color: hsla(var(--zr-accent-1-co), 40%);
+    color: hsla(var(--zr-accent-1-hsl), 40%);
 }
 
 #zr-item-details [zr-role="metadata-col"],

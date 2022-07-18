@@ -15,7 +15,7 @@
 
 .zr-query-filter--elements {
     align-items: center;
-    background: hsla(var(--zr-accent-1-co), 7%);
+    background: hsla(var(--zr-accent-1-hsl), 7%);
     border-radius: 5px;
     display: flex;
     flex: 0 1 100%;
@@ -63,7 +63,7 @@
 
 .bp4-dialog-body > .zr-query-box > div > .zr-query-box, 
 .bp4-dialog-body > .zr-query-box > div > .zr-query-entry {
-    background: hsla(var(--zr-accent-1-co), 10%);
+    background: hsla(var(--zr-accent-1-hsl), 10%);
     border-radius: 10px;
     padding: 10px;
 }
@@ -119,9 +119,9 @@
 .zr-query-entry--add-sibling.bp4-button:hover,
 .zr-query-entry--add-sibling.bp4-button .bp4-icon,
 .zr-query-entry--add-sibling.bp4-button:hover .bp4-icon {
-    color: hsla(var(--zr-accent-1-co), 75%);
+    color: hsla(var(--zr-accent-1-hsl), 75%);
 }
 
 .zr-query-box > .zr-query-box--remove-self.bp4-button:hover ~ .zr-query-entry {
-    background: hsla(var(--zr-accent-1-co), 10%);
+    background: hsla(var(--zr-accent-1-hsl), 10%);
 }

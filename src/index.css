@@ -1,10 +1,14 @@
 /* TODO: Once all values are confirmed, convert to RGBA then set gradients for states */
 
 :root {
-  --zr-accent-1-co: 220, 80%, 51%;
-  --zr-accent-1: hsla(var(--zr-accent-1-co), 100%);
-  --zr-accent-2-co: 30, 70%, 51%;
-  --zr-accent-2: hsla(var(--zr-accent-2-co), 100%);
+  --zr-accent-1-hsl: 223, 100%, 44%;
+  --zr-accent-2-hsl: 18, 63%, 42%;
+  --zr-negative-hsl: 0, 92%, 41%;
+  --zr-positive-hsl: 155, 58%, 27%;
+  --zr-accent-1: hsla(var(--zr-accent-1-hsl), 100%);
+  --zr-accent-2: hsla(var(--zr-accent-2-hsl), 100%);
+  --zr-negative-co: hsla(var(--zr-negative-hsl), 100%);
+  --zr-positive-co: hsla(var(--zr-positive-hsl), 100%);
   --zr-auxiliary: #5c7080;
   --zr-border-co: #ececec;
   --zr-box-bg: #f8f8f8;
@@ -12,9 +16,7 @@
   --zr-input-size: 240px;
   --zr-minimal-bg: #cad1df26;
   --zr-negative-bg: #fff1f2;
-  --zr-negative-co: #c90808;
   --zr-positive-bg: #45d29826;
-  --zr-positive-co: #1d6e4c;
   --zr-secondary-co: #696969;
   --zr-secondary-fw: 300;
   --zr-shortcut-co: inherit;
@@ -23,17 +25,20 @@
 }
 
 [zr-dark-theme="true"] {
-  --zr-accent-1-co: 202, 100%, 62%;
-  --zr-accent-1: hsla(var(--zr-accent-1-co), 100%);
-  --zr-accent-2: hsla(var(--zr-accent-2-co), 100%);
+  --zr-accent-1-hsl: 202, 100%, 62%;
+  --zr-accent-2-hsl: 30, 70%, 51%;
+  --zr-negative-hsl: 0, 85%, 69%;
+  --zr-positive-hsl: 120, 86%, 75%;
+  --zr-accent-1: hsla(var(--zr-accent-1-hsl), 100%);
+  --zr-accent-2: hsla(var(--zr-accent-2-hsl), 100%);
+  --zr-negative-co: hsla(var(--zr-negative-hsl), 100%);
+  --zr-positive-co: hsla(var(--zr-positive-hsl), 100%);
   --zr-auxiliary: #95a8b7;
   --zr-border-co: #2f3133;
   --zr-box-bg: #191919;
   --zr-dialog-bg: #1f1f1f;
   --zr-negative-bg: #332828;
-  --zr-negative-co: #f36f6f;
   --zr-positive-bg: #5863582e;
-  --zr-positive-co: #86f686;
   --zr-secondary-co: #8ba4bd;
   --zr-secondary-fw: 400;
   --zr-shortcut-co: #9b9b9b;
@@ -73,7 +78,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 [class*="zr"] .bp4-menu-item.bp4-selected, 
 [class*="zr"] .bp4-menu-item.bp4-selected:hover, 
 [class*="zr"] .bp4-menu-item.bp4-selected:active {
-  background: hsla(var(--zr-accent-1-co), 8%);
+  background: hsla(var(--zr-accent-1-hsl), 8%);
   color: inherit;
 }
 
@@ -157,12 +162,12 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 .zr-date-picker .bp4-datepicker .DayPicker-Day.DayPicker-Day--selected {
-  background: hsla(var(--zr-accent-1-co), 90%);
+  background: hsla(var(--zr-accent-1-hsl), 90%);
 }
 
 .zr-date-picker .bp4-daterangepicker .DayPicker-Day--selected-range {
-  background: hsla(var(--zr-accent-1-co), 10%);
-  color: hsla(var(--zr-accent-1-co), 80%);
+  background: hsla(var(--zr-accent-1-hsl), 10%);
+  color: hsla(var(--zr-accent-1-hsl), 80%);
 }
 
 /* Blueprint Elements */
@@ -228,11 +233,11 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 [class*="zr"] a:not(.bp4-menu-item) .bp4-icon {
-    color: hsla(var(--zr-accent-1-co), 75%);
+    color: hsla(var(--zr-accent-1-hsl), 75%);
 }
 
 [class*="zr"] a:not(.bp4-menu-item):hover {
-  color: hsla(var(--zr-accent-1-co), 85%);
+  color: hsla(var(--zr-accent-1-hsl), 85%);
   text-decoration: none;
 }
 
@@ -275,7 +280,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 [class*="zr"] .bp4-slider-track .bp4-slider-progress.bp4-intent-primary {
-  background-color: hsla(var(--zr-accent-1-co), 20%);
+  background-color: hsla(var(--zr-accent-1-hsl), 20%);
 }
 
 [class*="zr"] .bp4-slider-track .bp4-slider-progress:not(.bp4-intent-primary) {
@@ -283,7 +288,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 [class*="zr"] .bp4-slider-handle {
-  background: hsla(var(--zr-accent-1-co), 65%);
+  background: hsla(var(--zr-accent-1-hsl), 65%);
   border-radius: 10px;
   box-shadow: none;
 }
@@ -297,7 +302,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 [class*="zr"] .bp4-control.bp4-switch input:checked ~ .bp4-control-indicator {
-  background-color: hsla(var(--zr-accent-1-co), 90%);
+  background-color: hsla(var(--zr-accent-1-hsl), 90%);
 }
 
 [class*="zr"] .bp4-control.bp4-switch .bp4-control-indicator::before {
@@ -315,21 +320,21 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 }
 
 [class*="zr"] .bp4-control.bp4-radio input:checked ~ .bp4-control-indicator {
-  background-color: hsla(var(--zr-accent-1-co), 75%);
+  background-color: hsla(var(--zr-accent-1-hsl), 75%);
 }
 
 [class*="zr"] .bp4-control.bp4-radio input:not(:checked) ~ .bp4-control-indicator {
-  background-color: hsla(var(--zr-accent-1-co), 10%);
+  background-color: hsla(var(--zr-accent-1-hsl), 10%);
   background-image: none;
 }
 
 [class*="zr"] .bp4-tag.bp4-minimal.bp4-intent-primary {
-  background: hsla(var(--zr-accent-1-co), 10%);
+  background: hsla(var(--zr-accent-1-hsl), 10%);
   color: var(--zr-accent-1);
 }
 
 [class*="zr"] .bp4-tag.bp4-minimal.bp4-intent-warning {
-  background: hsla(var(--zr-accent-2-co), 15%);
+  background: hsla(var(--zr-accent-2-hsl), 15%);
   color: var(--zr-accent-2);
 }
 
@@ -393,7 +398,7 @@ button.bp4-button.zr-auxiliary{color: var(--zr-auxiliary);}
 .zr-tabs.bp4-tabs > .bp4-tab-list > .bp4-tab[aria-selected="true"],
 .zr-tabs-minimal.bp4-tabs > .bp4-tab-list > .bp4-tab[aria-selected="true"] {
   box-shadow: none;
-  color: hsla(var(--zr-accent-1-co), 80%);
+  color: hsla(var(--zr-accent-1-hsl), 80%);
   font-weight: 500;
   opacity: 1;
 }

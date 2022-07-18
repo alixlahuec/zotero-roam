@@ -3,5 +3,5 @@
 }
 
 .zr-context-menu .bp4-menu-item.bp4-intent-primary {
-    color: hsla(var(--zr-accent-1-co), 95%);
+    color: hsla(var(--zr-accent-1-hsl), 95%);
 }
