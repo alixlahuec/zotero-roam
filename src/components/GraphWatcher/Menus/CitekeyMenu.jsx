@@ -168,9 +168,9 @@ function RelatedItemsBar(props) {
 				:
 				<>
 					<ButtonGroup minimal={true} fill={true}>
-						<Button className={ showClasses.references } loading={isLoading} onClick={showReferences} icon="citation" intent="primary" role="menuitem" aria-haspopup="dialog" title="Show references" >{ pluralize(refCount, "reference") }</Button>
-						<Button className={ showClasses.citations } loading={isLoading} onClick={showCitations} icon="chat" intent="warning" role="menuitem" aria-haspopup="dialog" title="Show citations" >{ pluralize(citCount, "citation") }</Button>
-						<Button className={ showClasses.backlinks } loading={isLoading} onClick={toggleBacklinks} {...showBacklinksButtonProps} role="menuitem" title="Show backlinks" />
+						<Button className={ showClasses.references } loading={isLoading} minimal={true} onClick={showReferences} icon="citation" intent="primary" role="menuitem" aria-haspopup="dialog" title="Show references" >{ pluralize(refCount, "reference") }</Button>
+						<Button className={ showClasses.citations } loading={isLoading} minimal={true} onClick={showCitations} icon="chat" intent="warning" role="menuitem" aria-haspopup="dialog" title="Show citations" >{ pluralize(citCount, "citation") }</Button>
+						<Button className={ showClasses.backlinks } loading={isLoading} minimal={true} onClick={toggleBacklinks} {...showBacklinksButtonProps} role="menuitem" title="Show backlinks" />
 					</ButtonGroup>
 					{refCount + citCount > 0
 						? <SemanticPanel
