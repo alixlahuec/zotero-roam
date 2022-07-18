@@ -107,6 +107,10 @@
     color: var(--zr-auxiliary);
 }
 
+.zr-query-entry .zr-date-input input {
+    outline: none;
+}
+
 .zr-query-box--add-sibling.bp4-button,
 .zr-query-box--add-sibling.bp4-button:hover {
     background: var(--zr-box-bg);

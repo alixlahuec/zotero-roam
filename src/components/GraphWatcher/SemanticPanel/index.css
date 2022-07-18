@@ -47,7 +47,7 @@
     background: 0;
     box-shadow: none;
     font-size: 1em;
-    color: #818181;
+    color: var(--zr-auxiliary);
 }
 
 .zr-semantic-panel--main .zr-related-item[data-in-library="true"] .zr-related-item--timestamp {
