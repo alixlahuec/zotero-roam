@@ -1,6 +1,10 @@
 import { unmountComponentAtNode } from "react-dom";
-import "./typedefs";
+import * as Sentry from "@sentry/react";
+
 import zrToaster from "./components/ExtensionToaster";
+
+import { default_typemap } from "./constants";
+import "./typedefs";
 
 /** Generates a data requests configuration object
  * @param {Array} reqs - Data requests provided by the user
@@ -1051,6 +1055,43 @@ function setupDarkTheme(use_dark = false){
 	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
 }
 
+function _setupDataRequests(dataRequests, handlers){
+	const { getBibEntries, getBibliography, getCollections, _getItemCollections, getTags } = handlers;
+	const requests = analyzeUserRequests(dataRequests);
+
+	// If successful, set public utils
+
+	window.zoteroRoam.getBibEntries = async(citekeys) => {
+		let { libraries } = requests;
+		return await getBibEntries(citekeys, libraries);
+	};
+    
+	window.zoteroRoam.getBibliography = async(item, config = {}) => {
+		let { libraries } = requests;
+		let location = item.library.type + "s/" + item.library.id;
+		let library = libraries.find(lib => lib.path == location);
+    
+		return await getBibliography(item, library, config);
+	};
+    
+	window.zoteroRoam.getItemCollections = (item, { brackets = true } = {}) => {
+		let location = item.library.type + "s/" + item.library.id;
+		let library = requests.libraries.find(lib => lib.path == location);
+		let collectionList = getCollections(library);
+    
+		return _getItemCollections(item, collectionList, { brackets });
+	};
+
+	window.zoteroRoam.getTags = (location) => {
+		let { libraries } = requests;
+		let library = libraries.find(lib => lib.path == location);
+    
+		return getTags(library);
+	};
+
+	return requests;
+}
+
 /** Injects external scripts into the page
  * @param {{id: String, src: String}[]} deps - List of scripts to inject 
  */
@@ -1069,36 +1110,122 @@ function setupDependencies(deps){
 		document.getElementsByTagName("head")[0].appendChild(script);
 	});
 }
+
+function setupInitialSettings(settingsObject){
+	const {
+		annotations = {},
+		autocomplete = {},
+		autoload = false,
+		copy = {},
+		darkTheme = false,
+		// dataRequests = [],
+		metadata = {},
+		notes = {},
+		pageMenu = {},
+		render_inline = false,
+		sciteBadge = {},
+		shareErrors = true,
+		shortcuts = {},
+		typemap = {},
+		webimport = {}
+	} = settingsObject;
+	
+	return {
+		annotations: {
+			comment_prefix: "",
+			comment_suffix: "",
+			group_by: false,
+			highlight_prefix: "[[>]]",
+			highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
+			use: "formatted",
+			...annotations
+		},
+		autocomplete,
+		autoload,
+		copy: {
+			always: false,
+			defaultFormat: "citekey",
+			overrideKey: "shiftKey",
+			useQuickCopy: false,
+			...copy
+		},
+		darkTheme,
+		metadata: {
+			use: "function",
+			...metadata
+		},
+		notes: {
+			split_char: "/n",
+			use: "text",
+			...notes
+		},
+		pageMenu: {
+			defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
+			trigger: (title) => title.length > 3 || false,
+			...pageMenu
+		},
+		render_inline,
+		sciteBadge: {
+			layout: "horizontal",
+			showLabels: false,
+			showZero: true,
+			small: false,
+			tooltipPlacement: "auto",
+			tooltipSlide: 0,
+			...sciteBadge
+		},
+		shareErrors,
+		shortcuts: {
+			"copyDefault": false,
+			"copyCitation": false,
+			"copyCitekey": false,
+			"copyPageRef": false,
+			"copyTag": false,
+			"focusSearchBar": false,
+			"goToItemPage": false,
+			"importMetadata": false,
+			"toggleDashboard": false,
+			"toggleNotes": "alt+N",
+			"toggleSearchPanel": "alt+E",
+			"toggleQuickCopy": false,
+			...shortcuts
+		},
+		typemap: {
+			...default_typemap,
+			...typemap
+		},
+		webimport: {
+			tags: [],
+			...webimport
+		}
+	};
+}
+
 /** Injects DOM elements to be used as React portals by the extension
  * @param {String} slotID - The id to be given to the extension's icon's slot in the topbar 
  * @param {String} portalID - The id to be given to the extension's designated div portal for overlays etc.
  */
 function setupPortals(slotID, portalID){
-	// Topbar slot for the extension's icon
-	let exists = document.getElementById(slotID);
-	if(exists){
-		try{
-			unmountComponentAtNode(exists);
-			exists.remove();
-		} catch(e){
-			console.error(e);
-		}
-	}
+
+	unmountExtensionIfExists(slotID, portalID);
 
 	let roamSearchbar = document.querySelector(".rm-topbar .rm-find-or-create-wrapper");
 	let extensionSlot = document.createElement("span");
 	extensionSlot.id = slotID;
 	roamSearchbar.insertAdjacentElement("afterend", extensionSlot);
 
-	// Portal for the extension's overlays
-	try{ 
-		document.getElementById(portalID).remove(); 
-	} catch(e){
-		// Do nothing
-	}
 	let zrPortal = document.createElement("div");
 	zrPortal.id = portalID;
 	document.getElementById("app").appendChild(zrPortal);
+}
+
+function setupSentry(isUserEnabled = false, config = {}){
+	// https://github.com/getsentry/sentry-javascript/issues/2039
+	if(isUserEnabled){
+		Sentry.setContext("config", config);
+	} else {
+		Sentry.getCurrentHub().getClient().getOptions().enabled = false;
+	}
 }
 
 /** Simplifies data structure for Zotero 6 annotations
@@ -1285,6 +1412,25 @@ function splitNotes(notes, split_char){
 	return notes.map(n => n.data.note.split(split_char));
 }
 
+function unmountExtensionIfExists(slotID, portalID){
+	let existingSlot = document.getElementById(slotID);
+	if(existingSlot){
+		try{
+			unmountComponentAtNode(existingSlot);
+			existingSlot.remove();
+		} catch(e){
+			console.error(e);
+		}
+	}
+
+	// Portal for the extension's overlays
+	try{ 
+		document.getElementById(portalID).remove(); 
+	} catch(e){
+		// Do nothing
+	}
+}
+
 export {
 	analyzeUserRequests,
 	categorizeLibraryItems,
@@ -1321,10 +1467,14 @@ export {
 	readDNP,
 	searchEngine,
 	setupDarkTheme,
+	_setupDataRequests,
 	setupDependencies,
+	setupInitialSettings,
 	setupPortals,
+	setupSentry,
 	simplifyZoteroAnnotations,
 	simplifyZoteroNotes,
 	sortCollections,
-	sortElems
+	sortElems,
+	unmountExtensionIfExists
 };
