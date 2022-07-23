@@ -201,7 +201,7 @@ export const handleItems = [
 		(req, res, ctx) => {
 			
 			const { libraryType, libraryID } = req.params;
-			const itemsData = JSON.parse(req.body);
+			const itemsData = req.json();
 			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
 
 			const output = itemsData.reduce((obj, item) => {
