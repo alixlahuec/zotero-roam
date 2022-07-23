@@ -11,8 +11,8 @@ coverage:
   status:
     project:
       default:
-        target: 70%
-        threshold: 10%
+        target: 75%
+        threshold: 5%
       dev:
         paths:
           - .storybook/
@@ -22,11 +22,11 @@ coverage:
       components:
         paths:
           - src/components/
-        target: 60%
-        threshold: 10%
+        target: 70%
+        threshold: 5%
       utils:
         paths:
           - src/hooks/
           - src/utils.js
-        target: 75%
-        threshold: 10%
+        target: 80%
+        threshold: 5%
