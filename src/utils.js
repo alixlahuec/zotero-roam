@@ -12,7 +12,12 @@ import "./typedefs";
  */
 function analyzeUserRequests(reqs){
 	if(reqs.length == 0){
-		throw new Error("At least one data request must be specified for the extension to function. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
+		console.warn("At least one data request must be specified for the extension to function. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
+		return {
+			dataRequests: [],
+			apiKeys: [],
+			libraries: []
+		};
 	} else {
 		let fallbackAPIKey = reqs.find(req => req.apikey)?.apikey;
 		if(!fallbackAPIKey){
@@ -1056,38 +1061,10 @@ function setupDarkTheme(use_dark = false){
 }
 
 function _setupDataRequests(dataRequests, handlers){
-	const { getBibEntries, getBibliography, getCollections, _getItemCollections, getTags } = handlers;
 	const requests = analyzeUserRequests(dataRequests);
 
 	// If successful, set public utils
-
-	window.zoteroRoam.getBibEntries = async(citekeys) => {
-		let { libraries } = requests;
-		return await getBibEntries(citekeys, libraries);
-	};
-    
-	window.zoteroRoam.getBibliography = async(item, config = {}) => {
-		let { libraries } = requests;
-		let location = item.library.type + "s/" + item.library.id;
-		let library = libraries.find(lib => lib.path == location);
-    
-		return await getBibliography(item, library, config);
-	};
-    
-	window.zoteroRoam.getItemCollections = (item, { brackets = true } = {}) => {
-		let location = item.library.type + "s/" + item.library.id;
-		let library = requests.libraries.find(lib => lib.path == location);
-		let collectionList = getCollections(library);
-    
-		return _getItemCollections(item, collectionList, { brackets });
-	};
-
-	window.zoteroRoam.getTags = (location) => {
-		let { libraries } = requests;
-		let library = libraries.find(lib => lib.path == location);
-    
-		return getTags(library);
-	};
+	setupRequestUtils(requests, handlers);
 
 	return requests;
 }
@@ -1201,6 +1178,46 @@ function setupInitialSettings(settingsObject){
 	};
 }
 
+function setupExtraUtils(settings, handlers){
+	const { _getItemMetadata, _getItemType } = handlers;
+
+	window.zoteroRoam.getItemMetadata = (item, pdfs, notes) => _getItemMetadata(item, pdfs, notes, settings.typemap, settings.notes, settings.annotations);
+
+	window.zoteroRoam.getItemType = (item, { brackets = true } = {}) => _getItemType(item, settings.typemap, { brackets });
+}
+
+function setupRequestUtils(requests, handlers){
+	const { getBibEntries, getBibliography, getCollections, _getItemCollections, getTags } = handlers;
+
+	window.zoteroRoam.getBibEntries = async(citekeys) => {
+		let { libraries } = requests;
+		return await getBibEntries(citekeys, libraries);
+	};
+    
+	window.zoteroRoam.getBibliography = async(item, config = {}) => {
+		let { libraries } = requests;
+		let location = item.library.type + "s/" + item.library.id;
+		let library = libraries.find(lib => lib.path == location);
+    
+		return await getBibliography(item, library, config);
+	};
+    
+	window.zoteroRoam.getItemCollections = (item, { brackets = true } = {}) => {
+		let location = item.library.type + "s/" + item.library.id;
+		let library = requests.libraries.find(lib => lib.path == location);
+		let collectionList = getCollections(library);
+    
+		return _getItemCollections(item, collectionList, { brackets });
+	};
+
+	window.zoteroRoam.getTags = (location) => {
+		let { libraries } = requests;
+		let library = libraries.find(lib => lib.path == location);
+    
+		return getTags(library);
+	};
+}
+
 /** Injects DOM elements to be used as React portals by the extension
  * @param {String} slotID - The id to be given to the extension's icon's slot in the topbar 
  * @param {String} portalID - The id to be given to the extension's designated div portal for overlays etc.
@@ -1222,6 +1239,7 @@ function setupPortals(slotID, portalID){
 function setupSentry(isUserEnabled = false, config = {}){
 	// https://github.com/getsentry/sentry-javascript/issues/2039
 	if(isUserEnabled){
+		Sentry.getCurrentHub().getClient().getOptions().enabled = true;
 		Sentry.setContext("config", config);
 	} else {
 		Sentry.getCurrentHub().getClient().getOptions().enabled = false;
@@ -1471,6 +1489,8 @@ export {
 	setupDependencies,
 	setupInitialSettings,
 	setupPortals,
+	setupExtraUtils,
+	setupRequestUtils,
 	setupSentry,
 	simplifyZoteroAnnotations,
 	simplifyZoteroNotes,
