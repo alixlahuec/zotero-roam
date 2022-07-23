@@ -6,9 +6,13 @@ const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath } } = libraries;
 
 describe("Parsing user data requests", () => {
-	it("throws if no user requests are provided", () => {
+	it("passes if an empty array of requests is provided", () => {
 		expect(() => analyzeUserRequests([]))
-			.toThrow("At least one data request must be specified for the extension to function. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
+			.toEqual({
+				apiKeys: [],
+				dataRequests: [],
+				libraries: []
+			});
 	});
 	
 	it("throws if none of the requests has an API key", () => {
