@@ -59,7 +59,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 SearchPanel.propTypes = {
 	isOpen: bool,
 	onClose: func,
-	status: oneOf(["on", "off"])
+	status: oneOf(["on", "off", "disabled"])
 };
 
 export default SearchPanel;

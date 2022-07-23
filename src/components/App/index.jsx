@@ -36,7 +36,12 @@ class App extends Component {
 			isDashboardOpen: false,
 			isSearchPanelOpen: false,
 			lastCursorLocation: null,
-			status: this.props.userSettings.autoload ? "on" : "off"
+			status: (
+				this.props.extension.dataRequests.length == 0
+					? "disabled"
+					: this.props.userSettings.autoload 
+						? "on" 
+						: "off")
 		};
 		this.toggleExtension = this.toggleExtension.bind(this);
 		this.closeSearchPanel = this.closeSearchPanel.bind(this);

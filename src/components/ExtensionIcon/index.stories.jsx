@@ -29,8 +29,14 @@ const Template = (args) => {
 	return <ExtensionIcon {...args} status={status} toggleExtension={toggleStatus} />;
 };
 
-export const Default = Template.bind({});
-Default.play = async({ canvasElement }) => {
+const DisabledTemplate = (args) => {
+	return <ExtensionIcon {...args} status="disabled" />;
+};
+
+export const Disabled = DisabledTemplate.bind({});
+
+export const WithInteractions = Template.bind({});
+WithInteractions.play = async({ canvasElement }) => {
 	const canvas = within(canvasElement);
 	const icon = canvas.getByRole("button", { name: "Toggle the zoteroRoam extension" });
 

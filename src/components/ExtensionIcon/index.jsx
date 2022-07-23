@@ -193,13 +193,13 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 				<Button id="zotero-roam-icon"
 					status={status}
 					data-status={data_status}
-					disabled={false}
+					disabled={status == "disabled"}
 					icon={button_icon}
 					minimal={true} 
 					small={true}
 					onClick={toggleExtension}
 					aria-haspopup="true"
-					title="Toggle the zoteroRoam extension" />
+					title={status == "disabled" ? "zoteroRoam is disabled" : "Click to toggle the zoteroRoam extension"} />
 			</ContextMenu2>
 		</Tooltip2>
 	);
@@ -207,7 +207,7 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 ExtensionIcon.propTypes = {
 	openDashboard: func,
 	openSearchPanel: func,
-	status: oneOf(["on", "off"]),
+	status: oneOf(["on", "off", "disabled"]),
 	toggleExtension: func
 };
 
