@@ -198,10 +198,11 @@ export const handleItems = [
 	),
 	rest.post(
 		zotero(":libraryType/:libraryID/items"),
-		(req, res, ctx) => {
+		async(req, res, ctx) => {
 			
 			const { libraryType, libraryID } = req.params;
-			const itemsData = req.json();
+			const itemsData = await req.json();
+			console.log(itemsData);
 			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
 
 			const output = itemsData.reduce((obj, item) => {
