@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTags, writeCitoids, writeItems } from "./utils";
 import { emitCustomEvent } from "../events";
 
@@ -22,7 +22,7 @@ const useDeleteTags = () => {
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
-					refetchInactive: true
+					refetchType: "inactive"
 				}, {
 					throwOnError: true
 				});
@@ -64,7 +64,7 @@ const useImportCitoids = () => {
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
-					refetchInactive: true
+					refetchType: "inactive"
 				});
 			}
 
@@ -132,7 +132,7 @@ const useModifyTags = () => {
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
-					refetchInactive: true
+					refetchType: "inactive"
 				});
 			}
 

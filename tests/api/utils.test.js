@@ -1,5 +1,5 @@
 import axios from "axios";
-import { QueryClient } from "react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { citoids } from "Mocks/citoid";
 import { makeItemMetadata } from "Mocks/zotero/common";
 import { findCollections } from "Mocks/zotero/collections";

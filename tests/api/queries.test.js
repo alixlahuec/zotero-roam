@@ -1,5 +1,5 @@
 import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react-hooks";
 
 import { goodIdentifier, badIdentifier } from "Mocks/citoid";

@@ -5,7 +5,7 @@ import { libraries } from "Mocks/zotero/libraries";
 
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 const { keyWithFullAccess: { key: masterKey }} = apiKeys;
 const { userLibrary } = libraries;

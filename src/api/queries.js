@@ -1,4 +1,4 @@
-import { useQueries, useQuery, useQueryClient } from "react-query";
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
 
 /** Uses a React query to retrieve Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity` and `staleTime = 10min`.
@@ -29,7 +29,9 @@ const useQuery_Citoid = (urls, opts = {}) => {
 			...rest
 		};
 	});
-	return useQueries(queriesDefs);
+	return useQueries({
+		queries: queriesDefs
+	});
 };
 
 /** Uses collection React queries for specific libraries. By default, `staleTime = 5 min` and `refetchInterval = 5 min`.
@@ -54,7 +56,9 @@ const useQuery_Collections = (libraries, opts = {}) => {
 			...rest
 		};
 	});
-	return useQueries(queriesDefs);
+	return useQueries({
+		queries: queriesDefs
+	});
 };
 
 /** Uses item React queries for specific data requests. By default, `staleTime = 1 min` and `refetchInterval = 1 min`.
@@ -80,7 +84,9 @@ const useQuery_Items = (reqs, opts = {}) => {
 			...rest
 		};
 	});
-	return useQueries(queriesDefs);
+	return useQueries({
+		queries: queriesDefs
+	});
 };
 
 /** Uses permission React queries for specific API keys. By default, `staleTime = 1 hour` and `refetchInterval = 1 hour`.
@@ -102,7 +108,9 @@ const useQuery_Permissions = (keys, opts = {}) => {
 			...rest
 		};
 	});
-	return useQueries(queriesDefs);
+	return useQueries({
+		queries: queriesDefs
+	});
 };
 
 /** Uses a React query to retrieve Semantic Scholar citation data for a specific DOI. By default, `cacheTime = Infinity`.
@@ -144,7 +152,9 @@ const useQuery_Tags = (libraries, opts = {}) => {
 			...rest
 		};
 	});
-	return useQueries(queriesDefs);
+	return useQueries({
+		queries: queriesDefs
+	});
 };
 
 const useWriteableLibraries = (libraries) => {

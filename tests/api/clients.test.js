@@ -1,4 +1,4 @@
-import { QueryClient } from "react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { fetchItems } from "../../src/api/utils";
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";

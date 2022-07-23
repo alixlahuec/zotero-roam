@@ -1,5 +1,5 @@
 import React, { useEffect} from "react";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import CitekeyMenu from "./CitekeyMenu";
 
 import { expect } from "@storybook/jest";
