@@ -28,7 +28,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 							{item.doi || "Semantic Scholar"}
 						</a>
 						: null}
-					<Button text="Add to Zotero" 
+					<Button text={!isSelected ? "Add to Zotero" : "Remove"} 
 						active={isSelected}
 						className={CustomClasses.TEXT_SMALL} 
 						icon={isSelected ? "small-cross" : "small-plus"} 

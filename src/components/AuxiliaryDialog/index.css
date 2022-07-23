@@ -91,10 +91,17 @@
 .zr-related-item-contents--metadata .zr-related-item--decorating-icon {margin: 0px 10px;}
 .zr-related-item-contents--actions{text-align:right;flex: 1 0 auto;}
 
-.zr-related-item-contents--actions button.bp4-small, 
+.zr-related-item-contents--actions [zr-role="item-url"] + button.bp4-small, 
+.zr-related-item-contents--actions a {
+    overflow-wrap: break-word;
+}
+
+.zr-related-item-contents--actions [zr-role="item-url"] + button.bp4-small {
+    opacity: 0.8;
+}
+
 .zr-related-item-contents--actions a {
     opacity: 0.65;
-    overflow-wrap: break-word;
 }
 
 .zr-related-item-contents--actions button .bp4-button-text {overflow-wrap: anywhere;}

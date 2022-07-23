@@ -2,7 +2,7 @@
 
 :root {
   --zr-accent-1-hsl: 223, 100%, 44%;
-  --zr-accent-2-hsl: 18, 63%, 42%;
+  --zr-accent-2-hsl: 18, 63%, 39%;
   --zr-negative-hsl: 0, 92%, 41%;
   --zr-positive-hsl: 155, 58%, 27%;
   --zr-accent-1: hsla(var(--zr-accent-1-hsl), 100%);
@@ -257,9 +257,10 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
     border-color: hsla(var(--zr-base-tone), 20%);
 }
 
+[class*="zr"] .bp4-button.bp4-minimal.bp4-active[class*="bp4-intent-"],
 [class*="zr"] .bp4-button-group.bp4-minimal button[class*="bp4-intent-"]:not(.bp4-disabled):not(.bp4-outlined):hover {
-    background-color: hsla(var(--zr-base-tone), 10%);
-    color: hsla(var(--zr-base-tone), 90%);
+    background-color: hsla(var(--zr-base-tone), 5%);
+    color: hsla(var(--zr-base-tone), 97%);
 }
 
 [class*="zr"] a:not(.bp4-menu-item) .bp4-icon {
