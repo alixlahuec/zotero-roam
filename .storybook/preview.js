@@ -15,6 +15,8 @@ import { withQueryClient } from "./withQueryClient";
 import { withRoamCitekeys } from './withRoamCitekeys';
 import { withUserSettings } from "./withUserSettings";
 
+import { A11Y_RULES } from "./a11y-rules";
+
 // Initialize MSW
 initialize({
     onUnhandledRequest: ({ method, url }) => {
@@ -71,19 +73,7 @@ export const parameters = {
     },
     a11y: {
         config: {
-            rules: [
-                {
-                    // Contrast check always returns incomplete for QuickCopy toggle
-                    // This is due to background being provided by the sibling `input` element
-                    id: "color-contrast",
-                    selector: "*:not(label.zr-quick-copy)"
-                },
-                {
-                    // The loading state for Blueprint's Button doesn't provide a title to the spinner
-                    id: "aria-progressbar-name",
-                    selector: "[role=\"progressbar\"]:not(.bp4-button-spinner)"
-                }
-            ]
+            rules: A11Y_RULES
         }
     }
 }
