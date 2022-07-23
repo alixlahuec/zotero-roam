@@ -38,7 +38,7 @@ export const Disabled = DisabledTemplate.bind({});
 export const WithInteractions = Template.bind({});
 WithInteractions.play = async({ canvasElement }) => {
 	const canvas = within(canvasElement);
-	const icon = canvas.getByRole("button", { name: "Toggle the zoteroRoam extension" });
+	const icon = canvas.getByRole("button", { name: "Click to toggle the zoteroRoam extension" });
 
 	await sleep(2000);
 
