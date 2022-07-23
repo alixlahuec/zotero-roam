@@ -25,9 +25,9 @@ function ItemElement({ item, onClose }){
 					<span className={CustomClasses.TEXT_AUXILIARY} data-item-type={itemType} zr-role="item-title">{title}</span>
 					<span className={CustomClasses.TEXT_ACCENT_1}>{meta}</span>
 					<span className={CustomClasses.TEXT_SECONDARY}>{publication}</span>
-					<Button icon="eye-open" minimal={true} onClick={openDataDrawer} />
+					<Button icon="eye-open" minimal={true} onClick={openDataDrawer} title="Show the item's raw metadata" />
 					{children.notes.length > 0
-						? <Button className={CustomClasses.TEXT_SMALL} icon="duplicate" minimal={true} text={pluralize(children.notes.length, "linked note")} onClick={openNotesDrawer} />
+						? <Button className={CustomClasses.TEXT_SMALL} icon="duplicate" minimal={true} text={pluralize(children.notes.length, "linked note")} onClick={openNotesDrawer} title="Show the item's linked notes" />
 						: null}
 				</div>
 				<CitekeyPopover closeDialog={onClose} inGraph={inGraph} item={raw} notes={children.notes} pdfs={children.pdfs} />

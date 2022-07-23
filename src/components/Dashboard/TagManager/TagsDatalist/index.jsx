@@ -62,7 +62,7 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
 
 	return (
 		matchedTags == null
-			? <Spinner size={15} />
+			? <Spinner size={15} title="Loading tags data..." />
 			: <div className="zr-tagmanager--datalist" >
 				<Toolbar>
 					<SortButtons name={"zr-tagmanager-sort-" + filter} onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />

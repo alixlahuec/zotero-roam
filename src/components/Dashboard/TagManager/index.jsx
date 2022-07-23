@@ -67,7 +67,7 @@ const TabContents = React.memo(function TabContents({ libraries }){
 
 	return <div>
 		{isLoading
-			? <Spinner />
+			? <Spinner title="Loading tags..." />
 			: <TagLists items={data} libProps={libProps} /> }
 	</div>;
 });
@@ -81,7 +81,7 @@ const TagManager = React.memo(function TagManager(){
 
 	return <SentryBoundary feature="tag-manager">
 		{isLoading
-			? <Spinner />
+			? <Spinner title="Loading libraries..." />
 			: writeableLibraries.length == 0
 				? <NoWriteableLibraries />
 				: <TabContents libraries={writeableLibraries} />}

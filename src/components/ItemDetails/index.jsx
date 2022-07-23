@@ -62,19 +62,19 @@ function CopyOption(props){
 		switch(format){
 		case "page-reference":
 			return pageRefCombo != false
-				? <ShortcutSequence text={pageRefCombo} />
+				? <ShortcutSequence action="copy as page reference" text={pageRefCombo} />
 				: null;
 		case "tag":
 			return tagCombo != false
-				? <ShortcutSequence text={tagCombo} /> 
+				? <ShortcutSequence action="copy as tag" text={tagCombo} /> 
 				: null;
 		case "citation":
 			return citationCombo != false
-				? <ShortcutSequence text={citationCombo} />
+				? <ShortcutSequence action="copy as citation" text={citationCombo} />
 				: null;
 		case "citekey":
 			return citekeyCombo != false
-				? <ShortcutSequence text={citekeyCombo} />
+				? <ShortcutSequence action="copy as citekey" text={citekeyCombo} />
 				: null;
 		default:
 			return null;
@@ -113,7 +113,7 @@ function CopyButtons(props){
 
 	const label = useMemo(() => {
 		return shortcutsSettings.copyDefault != false
-			? <ShortcutSequence text={shortcutsSettings.copyDefault} />
+			? <ShortcutSequence action="copy as default" text={shortcutsSettings.copyDefault} />
 			: null;
 	}, [shortcutsSettings]);
 
@@ -243,7 +243,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 	const goToPageButton = useMemo(() => {
 		let label = shortcutsSettings.goToItemPage != false
-			? <ShortcutSequence text={shortcutsSettings.goToItemPage} />
+			? <ShortcutSequence action="go to the item's page" text={shortcutsSettings.goToItemPage} />
 			: null;
 		return inGraph 
 			? <MenuItem icon="arrow-right" labelElement={label} onClick={navigateToPage} text="Go to Roam page" />
@@ -269,7 +269,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			return null;
 		} else {
 			let label = shortcutsSettings.toggleNotes != false
-				? <ShortcutSequence text={shortcutsSettings.toggleNotes} />
+				? <ShortcutSequence action="toggle the notes panel" text={shortcutsSettings.toggleNotes} />
 				: null;
 			return <>
 				<MenuItem icon="highlight" labelElement={label} onClick={showNotes} text="Highlights & Notes" />
@@ -381,7 +381,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 					<MenuDivider className={CustomClasses.DIVIDER_MINIMAL} title="Actions" />
 					{goToPageButton}
 					<MenuItem icon="add" 
-						labelElement={shortcutsSettings.importMetadata != false && <ShortcutSequence text={shortcutsSettings.importMetadata} />} 
+						labelElement={shortcutsSettings.importMetadata != false && <ShortcutSequence action="import the item's metadata" text={shortcutsSettings.importMetadata} />} 
 						onClick={importMetadata} 
 						text="Import metadata" />
 					{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Import notes" />}

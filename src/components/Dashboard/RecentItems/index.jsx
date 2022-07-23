@@ -17,6 +17,10 @@ import { CustomClasses } from "../../../constants";
 import * as customPropTypes from "../../../propTypes";
 import "./index.css";
 
+const sliderHandleProps = {
+	"aria-label": "Select how many days to include in the list"
+};
+
 function labelRenderer(num, { isHandleTooltip }) {
 	return isHandleTooltip ? `Last ${num} days` : false;
 }
@@ -60,7 +64,7 @@ const LogView = React.memo(function LogView({ itemList, onClose }){
 						<LogViewSublist allAbstractsShown={allAbstractsShown} items={itemsLog.recent} label="Recently" onClose={onClose} />
 					</ListWrapper>}
 				<Toolbar>
-					<Slider labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
+					<Slider handleHtmlProps={sliderHandleProps} labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
 					<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={toggleAbstracts} />
 				</Toolbar>
 			</div>
@@ -90,7 +94,7 @@ const RecentItems = React.memo(function RecentItems({ onClose }){
 	return <SentryBoundary feature="recent-items">
 		<div style={{ height: "100%" }}>
 			{isLoading
-				? <Spinner />
+				? <Spinner title="Loading library items..." />
 				: <LogView itemList={itemList} onClose={onClose} /> }
 		</div>
 	</SentryBoundary>;

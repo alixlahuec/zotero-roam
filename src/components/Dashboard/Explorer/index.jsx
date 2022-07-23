@@ -76,7 +76,7 @@ function TabContents({ itemList, onClose, show }){
 	}, [itemList, roamCitekeys, show]);
 
 	return filteredData == null
-		? <Spinner size={15} />
+		? <Spinner size={15} title="Loading items..." />
 		: show == "items" 
 			? <QueryBuilder items={filteredData} onClose={onClose} />
 			: show == "pdfs"
@@ -140,7 +140,7 @@ function Explorer({ onClose }){
 	return <SentryBoundary feature="data-explorer">
 		<div>
 			{isLoading
-				? <Spinner />
+				? <Spinner title="Loading libraries..." />
 				: <ExplorerTabs itemList={itemList} onClose={onClose} /> }
 		</div>
 	</SentryBoundary>;

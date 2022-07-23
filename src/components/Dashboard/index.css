@@ -24,6 +24,10 @@
     width: 100%;
 }
 
+.zr-dashboard--main > .bp4-tabs > .bp4-tab-panel::-webkit-scrollbar {
+    width: 0px;
+}
+
 .zr-dashboard--main .zr-datalist--listwrapper {
     max-height: none;
 }

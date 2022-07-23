@@ -20,7 +20,10 @@ export default {
 				overrideKey: "shiftKey",
 				useQuickCopy: false
 			},
-			shortcuts: {}
+			shortcuts: {
+				copyDefault: false,
+				importMetadata: false
+			}
 		}
 	}
 };
