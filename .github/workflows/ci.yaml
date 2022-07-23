@@ -21,7 +21,9 @@ jobs:
 
       # Storybook test runner (https://storybook.js.org/docs/react/writing-tests/test-runner#set-up-ci-to-run-tests)
       - name: Install Playwright
-        run: npx playwright install --with-deps
+        run: |
+          sudo apt-get update
+          npx playwright install --with-deps
       - name: Build Storybook
         run: npm run build-storybook
       - name: Serve Storybook and run tests
