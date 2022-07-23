@@ -7,7 +7,7 @@ const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath } } = l
 
 describe("Parsing user data requests", () => {
 	it("passes if an empty array of requests is provided", () => {
-		expect(() => analyzeUserRequests([]))
+		expect(analyzeUserRequests([]))
 			.toEqual({
 				apiKeys: [],
 				dataRequests: [],
