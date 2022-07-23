@@ -27,8 +27,8 @@
 
 /* Citations Tab */
 
-.zr-semantic-panel--main .bp4-tab[data-tab-id="is_citation"][aria-selected="true"],
-.zr-semantic-panel--main .bp4-tab[data-tab-id="is_citation"]:not([aria-disabled="true"]):hover {
+.zr-semantic-panel--main .zr-tabs.bp4-tabs > .bp4-tab-list > .bp4-tab[data-tab-id="is_citation"][aria-selected="true"],
+.zr-semantic-panel--main .zr-tabs.bp4-tabs > .bp4-tab-list > .bp4-tab[data-tab-id="is_citation"]:not([aria-disabled="true"]):hover {
     color: var(--zr-accent-2);
 }
 
