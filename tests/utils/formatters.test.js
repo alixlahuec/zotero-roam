@@ -175,7 +175,7 @@ describe("Making PDF links", () => {
 			data: {filename: "Scott et al (2003).pdf", key: "A12BCDEF", linkMode: "unknown mode", title: "Organizational Culture", url: "https://example.com"},
 			library: {id: 12345, type: "user"}
 		};
-		expect(getPDFLink(unknownModeItem, "markdown")).toBe("Organizational Culture](https://example.com)");
+		expect(getPDFLink(unknownModeItem, "markdown")).toBe("[Organizational Culture](https://example.com)");
 	});
 });
 
