@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import React, { Component } from "react";
-import { QueryClient, QueryClientProvider } from "tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
 import ExtensionIcon from "../ExtensionIcon";
