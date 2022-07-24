@@ -50,7 +50,7 @@ function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = tru
 
 				})}
 			</div>
-			{!isOnlyChild && <Button className="zr-query-box--remove-self" icon="cross" minimal={true} onClick={removeSelf} />}
+			{!isOnlyChild && <Button className="zr-query-box--remove-self" icon="cross" minimal={true} onClick={removeSelf} title="Remove query group" />}
 		</div>
 		<Button className={["zr-query-box--add-sibling", CustomClasses.TEXT_SMALL].join(" ")} minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={(useOR ? "OR" : "AND")} />
 	</>;

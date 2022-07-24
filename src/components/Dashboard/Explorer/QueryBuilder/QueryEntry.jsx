@@ -9,6 +9,14 @@ import { returnSiblingArray } from "./utils";
 
 import { CustomClasses } from "../../../../constants";
 
+const propertyProps = {
+	title: "Select a property to query"
+};
+
+const relationshipProps = {
+	title: "Select a relationship to test for the property"
+};
+
 const popoverProps = {
 	minimal: true,
 	popoverClassName: CustomClasses.POPOVER
@@ -55,18 +63,22 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 				filterable={false} 
 				itemRenderer={itemRenderer}
 				items={Object.keys(queries)}
+				menuProps={propertyProps}
 				onItemSelect={handlePropertyChange}
 				placement="bottom"
-				popoverProps={popoverProps}>
+				popoverProps={popoverProps}
+				popoverTargetProps={propertyProps} >
 				<Button minimal={true} rightIcon="caret-down" text={property} />
 			</Select2>
 			<Select2 
 				filterable={false} 
 				itemRenderer={itemRenderer}
 				items={Object.keys(queries[property])}
+				menuProps={relationshipProps}
 				onItemSelect={handleRelationshipChange}
 				placement="bottom"
-				popoverProps={popoverProps}>
+				popoverProps={popoverProps}
+				popoverTargetProps={relationshipProps} >
 				<Button minimal={true} rightIcon="caret-down" text={relationship} />
 			</Select2>
 			<InputComponent property={property} relationship={relationship} value={value} setValue={handleValueChange} />
@@ -80,7 +92,7 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 					onClick={addSiblingTerm} 
 					small={true} 
 					text={(useOR ? "OR" : "AND")} />
-				<Button className="zr-query-entry--remove-self" icon={isOnlyChild ? "cross" : "small-cross"} intent={isOnlyChild ? null : "danger"} minimal={true} onClick={removeSelf} />
+				<Button className="zr-query-entry--remove-self" icon={isOnlyChild ? "cross" : "small-cross"} intent={isOnlyChild ? null : "danger"} minimal={true} onClick={removeSelf} title="Remove query term" />
 			</div>}
 	</div>;
 }
