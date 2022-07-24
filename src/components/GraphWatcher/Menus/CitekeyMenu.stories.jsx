@@ -68,7 +68,7 @@ WithInteractions.play = async({ args, canvasElement }) => {
 
 	await userEvent.click(refButton);
 
-	await waitFor(async() => expect(await canvas.findByRole("dialog", { name: "@" + args.item.key }))
+	await waitFor(async() => expect(await canvas.findByRole("dialog", { name: "Works related to @" + args.item.key }))
 		.toBeInTheDocument()
 	);
     
