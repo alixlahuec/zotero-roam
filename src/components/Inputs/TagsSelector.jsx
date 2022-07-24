@@ -17,6 +17,11 @@ const popoverProps = {
 	popoverClassName: CustomClasses.POPOVER
 };
 const tagInputProps = {
+	inputProps: {
+		"aria-label": "Add tags from Roam",
+		placeholder: "Add tag",
+		title: "Add tags from Roam"
+	},
 	leftIcon: "tag",
 	tagProps: {
 		minimal: true

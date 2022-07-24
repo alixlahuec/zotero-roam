@@ -119,6 +119,10 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
   max-width: var(--zr-input-size);
 }
 
+[class*="zr"] .bp4-multi-select input.bp4-input-ghost.bp4-multi-select-tag-input-input::placeholder {
+    opacity: 0.8;
+}
+
 .zr-date-range-input {
   max-width: calc(2 * var(--zr-input-size));
 }
