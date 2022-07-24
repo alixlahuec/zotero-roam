@@ -168,7 +168,15 @@ describe("Making PDF links", () => {
 			library: {id: 12345, type: "user"}
 		};
 		expect(getPDFLink(pdfItem, "markdown")).toBe("[Scott et al (2003).pdf](zotero://open-pdf/library/items/A12BCDEF)");
-	});	
+	});
+    
+	it("has fallback defaults", () => {
+		const unknownModeItem = {
+			data: {filename: "Scott et al (2003).pdf", key: "A12BCDEF", linkMode: "unknown mode", title: "Organizational Culture", url: "https://example.com"},
+			library: {id: 12345, type: "user"}
+		};
+		expect(getPDFLink(unknownModeItem, "markdown")).toBe("Organizational Culture](https://example.com)");
+	});
 });
 
 // Other

@@ -1053,6 +1053,7 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
 
 }
 
+/* istanbul ignore next */
 /** Sets up the extension's theme (light vs dark)
  * @param {Boolean} use_dark - If the extension's theme should be `dark`
  */
@@ -1060,6 +1061,7 @@ function setupDarkTheme(use_dark = false){
 	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
 }
 
+/* istanbul ignore next */
 function _setupDataRequests(dataRequests, handlers){
 	const requests = analyzeUserRequests(dataRequests);
 
@@ -1069,6 +1071,7 @@ function _setupDataRequests(dataRequests, handlers){
 	return requests;
 }
 
+/* istanbul ignore next */
 /** Injects external scripts into the page
  * @param {{id: String, src: String}[]} deps - List of scripts to inject 
  */
@@ -1178,6 +1181,7 @@ function setupInitialSettings(settingsObject){
 	};
 }
 
+/* istanbul ignore next */
 function setupExtraUtils(settings, handlers){
 	const { _getItemMetadata, _getItemType } = handlers;
 
@@ -1186,6 +1190,7 @@ function setupExtraUtils(settings, handlers){
 	window.zoteroRoam.getItemType = (item, { brackets = true } = {}) => _getItemType(item, settings.typemap, { brackets });
 }
 
+/* istanbul ignore next */
 function setupRequestUtils(requests, handlers){
 	const { getBibEntries, getBibliography, getCollections, _getItemCollections, getTags } = handlers;
 
@@ -1236,6 +1241,7 @@ function setupPortals(slotID, portalID){
 	document.getElementById("app").appendChild(zrPortal);
 }
 
+/* istanbul ignore next */
 function setupSentry(isUserEnabled = false, config = {}){
 	// https://github.com/getsentry/sentry-javascript/issues/2039
 	if(isUserEnabled){
