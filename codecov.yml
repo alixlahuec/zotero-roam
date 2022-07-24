@@ -11,7 +11,7 @@ coverage:
   status:
     project:
       default:
-        target: 75%
+        target: 80%
         threshold: 5%
       dev:
         paths:
@@ -22,11 +22,11 @@ coverage:
       components:
         paths:
           - src/components/
-        target: 70%
+        target: 80%
         threshold: 5%
       utils:
         paths:
           - src/hooks/
           - src/utils.js
-        target: 80%
+        target: 85%
         threshold: 5%
