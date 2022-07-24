@@ -157,7 +157,7 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 	const headerRight = useMemo(() => {
 		return (
 			<div className={["header-right", CustomClasses.TEXT_AUXILIARY].join(" ")}>
-				<Button icon="cross" minimal={true} onClick={onClose} />
+				<Button icon="cross" minimal={true} onClick={onClose} title="Close dialog" />
 			</div>
 		);
 	}, [onClose]);
@@ -175,11 +175,11 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 						<div className="header-left">
 							{panelLabel}
 							<Button className={CustomClasses.TEXT_SMALL} 
-								icon={isShowingAllAbstracts ? "eye-off" : "eye-open"} 
+								icon="vertical-inbetween" 
 								minimal={true} 
 								onClick={toggleAbstracts}
 								zr-role="toggle-abstracts" >
-								{isShowingAllAbstracts ? "Hide" : "Show"} all abstracts
+								{isShowingAllAbstracts ? "Hide" : "Show"} abstracts
 							</Button>
 						</div>
 						{headerRight}

@@ -50,22 +50,22 @@
 .bp4-dialog[class*="zr-auxiliary-dialog--"] .header-content {
     align-items: center;
     display:flex;
-    flex-wrap:wrap;
     margin: 0px;
     width: 100%;
 }
 
 .bp4-dialog[class*="zr-auxiliary-dialog--"] .header-left {
+    align-content: space-between;
     align-items: center;
     display: flex;
-    flex: 0 1 66%;
+    flex: 0 1 100%;
     overflow-wrap:anywhere;
     padding-left:min(15px, 2vw);
 }
 
 .bp4-dialog[class*="zr-auxiliary-dialog--"] .header-right {
     align-self: baseline;
-    flex: 0 1 34%;
+    flex: 0 0 auto;
     text-align: right;
 }
 

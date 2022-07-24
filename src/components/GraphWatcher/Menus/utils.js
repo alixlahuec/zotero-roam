@@ -35,8 +35,12 @@ const addPageMenus = () => {
 	}
 };
 
-/** Formats a list of items for display in AuxiliaryDialog
- * @param {Object[]} items - The item to format
+/** Formats an item for display in AuxiliaryDialog
+ * @param {ZoteroItem} item - The item to format
+ * @param {{
+ * pdfs: ZoteroItem[],
+ * notes: ZoteroItem[]
+ * }} libraryData - The list of attachments in the library
  * @param {Map} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.  
  * @returns {{
  * abstract: String,

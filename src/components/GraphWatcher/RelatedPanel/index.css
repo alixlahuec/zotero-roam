@@ -5,6 +5,10 @@
     margin-bottom: 10vh;
 }
 
+.zr-auxiliary-dialog--related .rendered-div {
+    margin-bottom: 15px;
+}
+
 .zr-auxiliary-dialog--related [zr-role="toggle-abstracts"] {
     color: var(--zr-text-co);
     margin: 0px 15px;
@@ -17,7 +21,7 @@
 .zr-auxiliary-dialog--related [zr-role="abstract-text"] {
     display: block;
     padding: 10px;
-    padding-top: 0px;
+    padding-top: 3px;
     line-height: 1.4em;
     text-align: justify;
     white-space: break-spaces;
