@@ -1104,7 +1104,7 @@ function setupInitialSettings(settingsObject){
 		pageMenu = {},
 		render_inline = false,
 		sciteBadge = {},
-		shareErrors = true,
+		shareErrors = false,
 		shortcuts = {},
 		typemap = {},
 		webimport = {}

@@ -1,6 +1,8 @@
-import { analyzeUserRequests } from "../../src/utils";
+import { default_typemap } from "../../src/constants";
 import { apiKeys} from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
+
+import { analyzeUserRequests, setupInitialSettings } from "../../src/utils";
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath } } = libraries;
@@ -92,5 +94,71 @@ describe("Parsing mock data requests", () => {
 					{ apikey: masterKey, path: groupPath}
 				]
 			});
+	});
+});
+
+describe("Parsing initial user settings", () => {
+	const defaults = {
+		annotations: {
+			comment_prefix: "",
+			comment_suffix: "",
+			group_by: false,
+			highlight_prefix: "[[>]]",
+			highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
+			use: "formatted"
+		},
+		autocomplete: {},
+		autoload: false,
+		copy: {
+			always: false,
+			defaultFormat: "citekey",
+			overrideKey: "shiftKey",
+			useQuickCopy: false
+		},
+		darkTheme: false,
+		metadata: {
+			use: "function"
+		},
+		notes: {
+			split_char: "/n",
+			use: "text"
+		},
+		pageMenu: {
+			defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
+			trigger: (title) => title.length > 3 || false
+		},
+		render_inline: false,
+		sciteBadge: {
+			layout: "horizontal",
+			showLabels: false,
+			showZero: true,
+			small: false,
+			tooltipPlacement: "auto",
+			tooltipSlide: 0
+		},
+		shareErrors: false,
+		shortcuts: {
+			"copyDefault": false,
+			"copyCitation": false,
+			"copyCitekey": false,
+			"copyPageRef": false,
+			"copyTag": false,
+			"focusSearchBar": false,
+			"goToItemPage": false,
+			"importMetadata": false,
+			"toggleDashboard": false,
+			"toggleNotes": "alt+N",
+			"toggleSearchPanel": "alt+E",
+			"toggleQuickCopy": false
+		},
+		typemap: default_typemap,
+		webimport: {
+			tags: []
+		}
+	};
+
+	it("should return defaults if given no settings", () => {
+		expect(JSON.stringify(setupInitialSettings({ dataRequests: [] })))
+			.toEqual(JSON.stringify(defaults));
 	});
 });
