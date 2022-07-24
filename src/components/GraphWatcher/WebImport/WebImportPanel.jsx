@@ -43,8 +43,8 @@ const WebImportItem = React.memo(function WebImportItem(props){
 	}, [item.url, onSelect]);
     
 	return (
-		<li className="zr-webimport-item" onClick={handleCheckUncheck} >
-			<div className={ Classes.MENU_ITEM } label={item.url}>
+		<li className="zr-webimport-item" aria-label={item.url} onClick={handleCheckUncheck} >
+			<div className={ Classes.MENU_ITEM }>
 				<div className="zr-webimport-item--header" >
 					<Checkbox
 						checked={isSelected}

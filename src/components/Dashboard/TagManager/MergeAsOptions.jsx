@@ -69,7 +69,7 @@ function MergeAsCustom({ disabled, library, tags }){
 				</div>
 				<div className={Classes.DIALOG_FOOTER}>
 					<div className={Classes.DIALOG_FOOTER_ACTIONS}>
-						<Button disabled={value.length == 0} loading={status == "loading"} onClick={triggerMerge} text="OK" />
+						<Button disabled={value.length == 0} loading={status == "loading"} minimal={true} onClick={triggerMerge} text="OK" title="Confirm modification of tag(s)" />
 					</div>
 				</div>
 			</Dialog>

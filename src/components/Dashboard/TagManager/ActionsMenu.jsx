@@ -26,7 +26,7 @@ function ActionsMenu({ deleteTags = true, library, mergeAs = true, suggestion })
 				</MenuItem>
 				: null}
 			{deleteTags
-				? <MenuItem disabled={["loading", "success"].includes(status)} icon="trash" intent="danger" text={status == "success" ? "Deleted" : "Delete tag(s)"} onClick={triggerDelete} />
+				? <MenuItem disabled={["loading", "success"].includes(status)} icon={status == "success" ? "tick" : "trash"} intent="danger" text={status == "success" ? "Deleted" : "Delete tag(s)"} onClick={triggerDelete} />
 				: null}
 		</Menu>
 	);
