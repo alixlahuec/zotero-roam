@@ -1436,6 +1436,7 @@ function splitNotes(notes, split_char){
 	return notes.map(n => n.data.note.split(split_char));
 }
 
+/* istanbul ignore next */
 function unmountExtensionIfExists(slotID, portalID){
 	let existingSlot = document.getElementById(slotID);
 	if(existingSlot){
