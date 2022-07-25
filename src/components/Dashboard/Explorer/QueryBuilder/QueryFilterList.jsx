@@ -169,7 +169,7 @@ function Filter({ filter, handlers, isOnlyChild, useOR }){
 			<FilterElements handlers={handlersForChild} filter={filter} useOR={useOR} />
 			<AddTerm addTerm={addTerm} buttonProps={{ intent: "primary", text: useOR ? "OR" : "AND" }} useOR={!useOR} />
 		</div>
-		{!isOnlyChild && <Button className="zr-filter--remove-self" icon="small-cross" minimal={true} onClick={removeSelf} />}
+		{!isOnlyChild && <Button className="zr-filter--remove-self" icon="small-cross" minimal={true} onClick={removeSelf} title="Remove query group" />}
 	</>;
 }
 Filter.propTypes = {
