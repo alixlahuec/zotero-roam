@@ -1,7 +1,14 @@
 import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./utils";
+import * as namespace from "./public";
 
-async function _getBibEntries(citekeys, libraries, queryClient){
-	let libraryItems = _getItems("items", {}, queryClient);
+/** Compiles a list of bibliographic entries from citekeys
+ * @param {String[]} citekeys - The items' citekeys
+ * @param {ZoteroLibrary[]} libraries - The loaded libraries
+ * @param {*} queryClient - The current Roam Query client
+ * @returns {String} The compiled bibliography
+ */
+export async function _getBibEntries(citekeys, libraries, queryClient){
+	let libraryItems = namespace._getItems("items", {}, queryClient);
 	let groupedList = citekeys.reduce((obj, citekey) => {
 		let libItem = libraryItems.find(it => it.key == citekey);
 		if(libItem){
@@ -37,7 +44,7 @@ async function _getBibEntries(citekeys, libraries, queryClient){
  * @param {{include: String, linkwrap: Boolean, locale: String, style: String}} config - Optional parameters to use in the API call
  * @returns 
  */
-async function _getBibliography(item, library, config){
+export async function _getBibliography(item, library, config){
 	let itemKey = item.data.key;
 	let bib = await fetchBibliography(itemKey, library, config);
 	return cleanBibliographyHTML(bib);
@@ -48,13 +55,13 @@ async function _getBibliography(item, library, config){
  * @param {*} queryClient - The React Query client to use
  * @returns The item's children
  */
-function _getChildren(item, queryClient) {
+export function _getChildren(item, queryClient) {
 	let location = item.library.type + "s/" + item.library.id;
-	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, queryClient)
+	return namespace._getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, queryClient)
 		.filter(el => el.data.parentItem == item.data.key);
 }
 
-function _getCollections(library, queryClient){
+export function _getCollections(library, queryClient){
 	const { apikey, path } = library;
 	let datastore = queryClient.getQueryData(["collections", { apikey, library: path }]);
 	return datastore.data;
@@ -66,7 +73,7 @@ function _getCollections(library, queryClient){
  * @param {*} queryClient - The React Query client to use
  * @returns {ZoteroItem[]} - The requested items
  */
-function _getItems(select = "all", filters = {}, queryClient) {
+export function _getItems(select = "all", filters = {}, queryClient) {
 	let items = queryClient.getQueriesData(["items"], filters).map(query => (query[1] || {}).data || []).flat(1);
 	switch(select){
 	case "items":
@@ -92,17 +99,8 @@ function _getItems(select = "all", filters = {}, queryClient) {
  * @param {*} queryClient - The React Query client to access
  * @returns 
  */
-function _getTags(library, queryClient) {
+export function _getTags(library, queryClient) {
 	const { apikey, path } = library;
 	let datastore = queryClient.getQueryData(["tags", { apikey, library: path }]);
 	return datastore.data;
 }
-
-export {
-	_getBibEntries,
-	_getBibliography,
-	_getCollections,
-	_getChildren,
-	_getItems,
-	_getTags
-};
