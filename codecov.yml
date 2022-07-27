@@ -27,6 +27,7 @@ coverage:
       utils:
         paths:
           - src/hooks/
+          - src/setup.js
           - src/utils.js
         target: 95%
         threshold: 5%

@@ -1,8 +1,8 @@
-import { default_typemap } from "../../src/constants";
+import { TYPEMAP_DEFAULT } from "../../src/constants";
 import { apiKeys} from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 
-import { analyzeUserRequests, setupInitialSettings } from "../../src/utils";
+import { analyzeUserRequests, setupInitialSettings } from "../../src/setup";
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath } } = libraries;
@@ -151,7 +151,7 @@ describe("Parsing initial user settings", () => {
 			"toggleSearchPanel": "alt+E",
 			"toggleQuickCopy": false
 		},
-		typemap: default_typemap,
+		typemap: TYPEMAP_DEFAULT,
 		webimport: {
 			tags: []
 		}

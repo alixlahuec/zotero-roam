@@ -2,7 +2,7 @@ import React from "react";
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 import { ExtensionContext } from "../src/components/App";
-import { analyzeUserRequests } from "../src/utils";
+import { analyzeUserRequests } from "../src/setup";
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath} } = libraries;

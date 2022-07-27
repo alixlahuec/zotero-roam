@@ -1,60 +1,7 @@
-import { unmountComponentAtNode } from "react-dom";
-import * as Sentry from "@sentry/react";
-
 import zrToaster from "./components/ExtensionToaster";
 
-import { default_typemap } from "./constants";
 import "./typedefs";
 
-/** Generates a data requests configuration object
- * @param {Array} reqs - Data requests provided by the user
- * @returns {{dataRequests: {dataURI: String, apikey: String, params: String, name: String, library: String}[], apiKeys: Array, libraries: Array}} A configuration object for the extension to use
- */
-function analyzeUserRequests(reqs){
-	if(reqs.length == 0){
-		console.warn("At least one data request must be specified for the extension to function. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
-		return {
-			dataRequests: [],
-			apiKeys: [],
-			libraries: []
-		};
-	} else {
-		let fallbackAPIKey = reqs.find(req => req.apikey)?.apikey;
-		if(!fallbackAPIKey){
-			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
-		} else {
-			const dataRequests = reqs.map((req, i) => {
-				let { dataURI, apikey = fallbackAPIKey, params = "", name = `${i}`} = req;
-				if(!dataURI){
-					throw new Error("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
-				} else {
-					let library = dataURI.match(/(users|groups)\/(\d+?)(?=\/items)/g)?.[0];
-					if(!library){
-						throw new Error(`An incorrect data URI was provided for a request : ${dataURI}. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
-					} else {
-						return { dataURI, apikey, params, name, library };
-					}
-				}
-			});
-
-			const apiKeys = Array.from(new Set(dataRequests.map(req => req.apikey)));
-			const libraries = dataRequests.reduce((arr, req) => {
-				let { library: path, apikey} = req;
-				let has_lib = arr.find(lib => lib.path == path);
-				if(!has_lib){
-					arr.push({ path, apikey });
-				}
-				return arr;
-			}, []);
-
-			return {
-				dataRequests,
-				apiKeys,
-				libraries
-			};
-		}
-	}
-}
 
 /** Categorizes library items according to their type (items, PDFs attachments, notes)
  * @param {Object[]} datastore - The items to categorize 
@@ -1053,205 +1000,6 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
 
 }
 
-/* istanbul ignore next */
-/** Sets up the extension's theme (light vs dark)
- * @param {Boolean} use_dark - If the extension's theme should be `dark`
- */
-function setupDarkTheme(use_dark = false){
-	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
-}
-
-/* istanbul ignore next */
-function _setupDataRequests(dataRequests, handlers){
-	const requests = analyzeUserRequests(dataRequests);
-
-	// If successful, set public utils
-	setupRequestUtils(requests, handlers);
-
-	return requests;
-}
-
-/* istanbul ignore next */
-/** Injects external scripts into the page
- * @param {{id: String, src: String}[]} deps - List of scripts to inject 
- */
-function setupDependencies(deps){
-	deps.forEach(dep => {
-		let { id, src } = dep;
-		try { 
-			document.getElementById(id).remove(); 
-		} catch(e){
-			// Do nothing
-		}
-		let script = document.createElement("script");
-		script.src = src;
-		script.type = "application/javascript";
-		script.async = true;
-		document.getElementsByTagName("head")[0].appendChild(script);
-	});
-}
-
-function setupInitialSettings(settingsObject){
-	const {
-		annotations = {},
-		autocomplete = {},
-		autoload = false,
-		copy = {},
-		darkTheme = false,
-		// dataRequests = [],
-		metadata = {},
-		notes = {},
-		pageMenu = {},
-		render_inline = false,
-		sciteBadge = {},
-		shareErrors = false,
-		shortcuts = {},
-		typemap = {},
-		webimport = {}
-	} = settingsObject;
-	
-	return {
-		annotations: {
-			comment_prefix: "",
-			comment_suffix: "",
-			group_by: false,
-			highlight_prefix: "[[>]]",
-			highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
-			use: "formatted",
-			...annotations
-		},
-		autocomplete,
-		autoload,
-		copy: {
-			always: false,
-			defaultFormat: "citekey",
-			overrideKey: "shiftKey",
-			useQuickCopy: false,
-			...copy
-		},
-		darkTheme,
-		metadata: {
-			use: "function",
-			...metadata
-		},
-		notes: {
-			split_char: "/n",
-			use: "text",
-			...notes
-		},
-		pageMenu: {
-			defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
-			trigger: (title) => title.length > 3 || false,
-			...pageMenu
-		},
-		render_inline,
-		sciteBadge: {
-			layout: "horizontal",
-			showLabels: false,
-			showZero: true,
-			small: false,
-			tooltipPlacement: "auto",
-			tooltipSlide: 0,
-			...sciteBadge
-		},
-		shareErrors,
-		shortcuts: {
-			"copyDefault": false,
-			"copyCitation": false,
-			"copyCitekey": false,
-			"copyPageRef": false,
-			"copyTag": false,
-			"focusSearchBar": false,
-			"goToItemPage": false,
-			"importMetadata": false,
-			"toggleDashboard": false,
-			"toggleNotes": "alt+N",
-			"toggleSearchPanel": "alt+E",
-			"toggleQuickCopy": false,
-			...shortcuts
-		},
-		typemap: {
-			...default_typemap,
-			...typemap
-		},
-		webimport: {
-			tags: [],
-			...webimport
-		}
-	};
-}
-
-/* istanbul ignore next */
-function setupExtraUtils(settings, handlers){
-	const { _getItemMetadata, _getItemType } = handlers;
-
-	window.zoteroRoam.getItemMetadata = (item, pdfs, notes) => _getItemMetadata(item, pdfs, notes, settings.typemap, settings.notes, settings.annotations);
-
-	window.zoteroRoam.getItemType = (item, { brackets = true } = {}) => _getItemType(item, settings.typemap, { brackets });
-}
-
-/* istanbul ignore next */
-function setupRequestUtils(requests, handlers){
-	const { getBibEntries, getBibliography, getCollections, _getItemCollections, getTags } = handlers;
-
-	window.zoteroRoam.getBibEntries = async(citekeys) => {
-		let { libraries } = requests;
-		return await getBibEntries(citekeys, libraries);
-	};
-    
-	window.zoteroRoam.getBibliography = async(item, config = {}) => {
-		let { libraries } = requests;
-		let location = item.library.type + "s/" + item.library.id;
-		let library = libraries.find(lib => lib.path == location);
-    
-		return await getBibliography(item, library, config);
-	};
-    
-	window.zoteroRoam.getItemCollections = (item, { brackets = true } = {}) => {
-		let location = item.library.type + "s/" + item.library.id;
-		let library = requests.libraries.find(lib => lib.path == location);
-		let collectionList = getCollections(library);
-    
-		return _getItemCollections(item, collectionList, { brackets });
-	};
-
-	window.zoteroRoam.getTags = (location) => {
-		let { libraries } = requests;
-		let library = libraries.find(lib => lib.path == location);
-    
-		return getTags(library);
-	};
-}
-
-/** Injects DOM elements to be used as React portals by the extension
- * @param {String} slotID - The id to be given to the extension's icon's slot in the topbar 
- * @param {String} portalID - The id to be given to the extension's designated div portal for overlays etc.
- */
-function setupPortals(slotID, portalID){
-
-	unmountExtensionIfExists(slotID, portalID);
-
-	let roamSearchbar = document.querySelector(".rm-topbar .rm-find-or-create-wrapper");
-	let extensionSlot = document.createElement("span");
-	extensionSlot.id = slotID;
-	roamSearchbar.insertAdjacentElement("afterend", extensionSlot);
-
-	let zrPortal = document.createElement("div");
-	zrPortal.id = portalID;
-	document.getElementById("app").appendChild(zrPortal);
-}
-
-/* istanbul ignore next */
-function setupSentry(isUserEnabled = false, config = {}){
-	// https://github.com/getsentry/sentry-javascript/issues/2039
-	if(isUserEnabled){
-		Sentry.getCurrentHub().getClient().getOptions().enabled = true;
-		Sentry.setContext("config", config);
-	} else {
-		Sentry.getCurrentHub().getClient().getOptions().enabled = false;
-	}
-}
-
 /** Simplifies data structure for Zotero 6 annotations
  * @param {Object[]} annotations - The list of annotations to simplify
  * @returns {{
@@ -1436,28 +1184,7 @@ function splitNotes(notes, split_char){
 	return notes.map(n => n.data.note.split(split_char));
 }
 
-/* istanbul ignore next */
-function unmountExtensionIfExists(slotID, portalID){
-	let existingSlot = document.getElementById(slotID);
-	if(existingSlot){
-		try{
-			unmountComponentAtNode(existingSlot);
-			existingSlot.remove();
-		} catch(e){
-			console.error(e);
-		}
-	}
-
-	// Portal for the extension's overlays
-	try{ 
-		document.getElementById(portalID).remove(); 
-	} catch(e){
-		// Do nothing
-	}
-}
-
 export {
-	analyzeUserRequests,
 	categorizeLibraryItems,
 	cleanAuthorLastName,
 	cleanAuthorsNames,
@@ -1491,17 +1218,8 @@ export {
 	pluralize,
 	readDNP,
 	searchEngine,
-	setupDarkTheme,
-	_setupDataRequests,
-	setupDependencies,
-	setupInitialSettings,
-	setupPortals,
-	setupExtraUtils,
-	setupRequestUtils,
-	setupSentry,
 	simplifyZoteroAnnotations,
 	simplifyZoteroNotes,
 	sortCollections,
-	sortElems,
-	unmountExtensionIfExists
+	sortElems
 };

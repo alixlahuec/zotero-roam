@@ -1,5 +1,14 @@
+export const EXTENSION_VERSION = "0.7.0";
+
+export const EXTENSION_PORTAL_ID = "zotero-roam-portal";
+export const EXTENSION_SLOT_ID = "zotero-roam-slot";
+
+export const DEPENDENCIES_SCRIPTS = [
+	{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"}
+];
+
 /* istanbul ignore file */
-export const default_typemap = {
+export const TYPEMAP_DEFAULT = {
 	artwork: "Illustration",
 	audioRecording: "Recording",
 	bill: "Legislation",

@@ -7,88 +7,74 @@ import { HotkeysProvider } from "@blueprintjs/core";
 
 import zrToaster from "./components/ExtensionToaster";
 
+import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./constants";
+
 import { App, getBibEntries, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
 import { setDefaultHooks } from "./events";
 import { formatNotes, formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemMetadata, _getItemRelated, _getItemType } from "./public";
+import { initialize, setupDarkTheme, setupDependencies, setupPortals, setupSentry  } from "./setup";
 import { registerSmartblockCommands } from "./smartblocks";
-import { setupDarkTheme, _setupDataRequests, setupDependencies, setupPortals, setupSentry, setupInitialSettings } from "./utils";
 
+// TODO: remove once revert to Blueprint v3 is completed
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "./index.css";
 
-Sentry.init({
-	autoSessionTracking: false,
-	beforeSend: (event) => {
-		// https://romain-clement.net/articles/sentry-url-fragments/
-		if(event.request?.url) {
-			event.request.url = event.request.url.split("#")[0];
-		}
 
-		if(!event.exception.values.some(val => val.stacktrace.frames.some(frame => frame.module.includes("zotero-roam/./src")))){
-			return null;
-		}
+(async()=>{
 
-		return event;
-	},
-	dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
-	integrations: [new BrowserTracing()],
-  
-	// Set tracesSampleRate to 1.0 to capture 100%
-	// of transactions for performance monitoring.
-	// We recommend adjusting this value in production
-	tracesSampleRate: 1.0
-});
+	window.zoteroRoam = {};
 
-window.zoteroRoam = {};
-
-(()=>{
-
-	const extension = {
-		version: "0.7.0",
-		portalId: "zotero-roam-portal"
-	};
-
-	const extensionSlot = "zotero-roam-slot";
-	setupPortals(extensionSlot, extension.portalId);
-
-	const {
-		darkTheme,
-		dataRequests
-	} = window.zoteroRoam_settings;
-
-	// Use object merging to handle undefined settings
-	window.zoteroRoam.config = {
-		version: extension.version,
-		userSettings: setupInitialSettings(window.zoteroRoam_settings)
-	};
-
-	// https://github.com/getsentry/sentry-javascript/issues/2039
-	setupSentry(window.zoteroRoam.config.userSettings.shareErrors, {
-		install: "roam/js",
-		rawRequests: dataRequests,
-		version: window.zoteroRoam.config.version,
-		...window.zoteroRoam.config.userSettings
+	Sentry.init({
+		autoSessionTracking: false,
+		beforeSend: (event) => {
+			// https://romain-clement.net/articles/sentry-url-fragments/
+			if(event.request?.url) {
+				event.request.url = event.request.url.split("#")[0];
+			}
+    
+			if(!event.exception.values.some(val => val.stacktrace.frames.some(frame => frame.module.includes("zotero-roam/./src")))){
+				return null;
+			}
+    
+			return event;
+		},
+		dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
+		integrations: [new BrowserTracing()],
+      
+		// Set tracesSampleRate to 1.0 to capture 100%
+		// of transactions for performance monitoring.
+		// We recommend adjusting this value in production
+		tracesSampleRate: 1.0
 	});
 
-	window.zoteroRoam.formatNotes = formatNotes;
-	window.zoteroRoam.formatPDFs = formatPDFs;
-	window.zoteroRoam.getChildren = getChildren;
-	window.zoteroRoam.getItems = getItems;
-	window.zoteroRoam.getItemCreators = getItemCreators;
-	window.zoteroRoam.getItemTags = getItemTags;
+	setupPortals();
+
+	const manualSettings = window.zoteroRoam_settings;
 
 	try {
-		const requests = _setupDataRequests(dataRequests, {
-			getBibEntries, getBibliography, getCollections, _getItemCollections, getTags
+
+		const { requests, settings } = await initialize("roam/js", { 
+			manualSettings,
+			utils: {
+				getBibEntries,
+				getBibliography,
+				getCollections,
+				_getItemCollections,
+				_getItemMetadata,
+				_getItemType,
+				getTags
+			}
 		});
-		
-		window.zoteroRoam.config.requests = requests;
 
-		window.zoteroRoam.getItemMetadata = (item, pdfs, notes) => _getItemMetadata(item, pdfs, notes, window.zoteroRoam.config.userSettings.typemap, window.zoteroRoam.config.userSettings.notes, window.zoteroRoam.config.userSettings.annotations);
-
+		window.zoteroRoam.formatNotes = formatNotes;
+		window.zoteroRoam.formatPDFs = formatPDFs;
+		window.zoteroRoam.getChildren = getChildren;
+		window.zoteroRoam.getItems = getItems;
+		window.zoteroRoam.getItemCreators = getItemCreators;
+		window.zoteroRoam.getItemTags = getItemTags;
 		window.zoteroRoam.getItemRelated = (item, { return_as = "citekeys", brackets = true } = {}) => {
 			const { type: libType, id: libID } = item.library;
 			const datastore = getItems("items").filter(it => it.library.id == libID && it.library.type == libType);
@@ -96,23 +82,31 @@ window.zoteroRoam = {};
 			return _getItemRelated(item, datastore, { return_as, brackets });
 		};
 
-		window.zoteroRoam.getItemType = (item, { brackets = true } = {}) => _getItemType(item, window.zoteroRoam.config.userSettings.typemap, { brackets });
-
-		setupDarkTheme(darkTheme);
-		setupDependencies([
-			{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"}
-		]);
+		setupDarkTheme(settings.darkTheme);
+		setupDependencies();
 		setDefaultHooks();
+		// https://github.com/getsentry/sentry-javascript/issues/2039
+		setupSentry(settings.shareErrors, {
+			install: "roam/js",
+			rawRequests: manualSettings.dataRequests,
+			version: EXTENSION_VERSION,
+			...settings
+		});
+
 		registerSmartblockCommands(getItems);
 
 		render(
 			<HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
 				<App
-					extension={{...extension, ...requests}}
+					extension={{
+						portalId: EXTENSION_PORTAL_ID,
+						version: EXTENSION_VERSION,
+						...requests
+					}}
 					userSettings={window.zoteroRoam.config.userSettings}
 				/>
 			</HotkeysProvider>, 
-			document.getElementById(extensionSlot)
+			document.getElementById(EXTENSION_SLOT_ID)
 		);
 	} catch (e) {
 		console.error(e);

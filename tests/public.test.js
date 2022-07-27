@@ -4,7 +4,7 @@ import { items } from "Mocks/zotero/items";
 import { sampleNote } from "Mocks/zotero/notes";
 import { formatNotes, getItemCreators, getItemTags, _getItemCollections, _getItemType } from "../src/public";
 import { formatItemAnnotations, formatItemNotes } from "../src/utils";
-import { default_typemap } from "../src/constants";
+import { TYPEMAP_DEFAULT } from "../src/constants";
 
 test("Notes & Annotations formatting", () => {
 	expect(formatNotes(
@@ -106,13 +106,13 @@ test("Retrieving tags data for an item", () => {
 test("Retrieving the formatted type for an item", () => {
 	expect(_getItemType(
 		{ data: { itemType: "journalArticle" }},
-		default_typemap,
+		TYPEMAP_DEFAULT,
 		{ brackets: true }
 	)).toBe("[[Article]]");
 
 	expect(_getItemType(
 		{ data: { itemType: "bookSection" }},
-		default_typemap,
+		TYPEMAP_DEFAULT,
 		{ brackets: false }
 	)).toBe("Chapter");
 });
