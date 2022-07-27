@@ -1,3 +1,5 @@
+import { BrowserTracing } from "@sentry/tracing";
+
 export const EXTENSION_VERSION = "0.7.0";
 
 export const EXTENSION_PORTAL_ID = "zotero-roam-portal";
@@ -6,6 +8,29 @@ export const EXTENSION_SLOT_ID = "zotero-roam-slot";
 export const DEPENDENCIES_SCRIPTS = [
 	{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"}
 ];
+
+export const SENTRY_CONFIG = {
+	autoSessionTracking: false,
+	beforeSend: (event) => {
+		// https://romain-clement.net/articles/sentry-url-fragments/
+		if(event.request?.url) {
+			event.request.url = event.request.url.split("#")[0];
+		}
+
+		if(!event.exception.values.some(val => val.stacktrace.frames.some(frame => frame.module.includes("zotero-roam/./src")))){
+			return null;
+		}
+
+		return event;
+	},
+	dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
+	integrations: [new BrowserTracing()],
+  
+	// Set tracesSampleRate to 1.0 to capture 100%
+	// of transactions for performance monitoring.
+	// We recommend adjusting this value in production
+	tracesSampleRate: 0.8
+};
 
 /* istanbul ignore file */
 export const TYPEMAP_DEFAULT = {

@@ -2,18 +2,17 @@
 import React from "react";
 import { render } from "react-dom";
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
 import { HotkeysProvider } from "@blueprintjs/core";
 
+import { App, getBibEntries, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
 import zrToaster from "./components/ExtensionToaster";
 
-import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./constants";
-
-import { App, getBibEntries, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
 import { setDefaultHooks } from "./events";
 import { formatNotes, formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemMetadata, _getItemRelated, _getItemType } from "./public";
 import { initialize, setupDarkTheme, setupDependencies, setupPortals, setupSentry  } from "./setup";
 import { registerSmartblockCommands } from "./smartblocks";
+
+import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION, SENTRY_CONFIG } from "./constants";
 
 // TODO: remove once revert to Blueprint v3 is completed
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -27,28 +26,7 @@ import "./index.css";
 
 	window.zoteroRoam = {};
 
-	Sentry.init({
-		autoSessionTracking: false,
-		beforeSend: (event) => {
-			// https://romain-clement.net/articles/sentry-url-fragments/
-			if(event.request?.url) {
-				event.request.url = event.request.url.split("#")[0];
-			}
-    
-			if(!event.exception.values.some(val => val.stacktrace.frames.some(frame => frame.module.includes("zotero-roam/./src")))){
-				return null;
-			}
-    
-			return event;
-		},
-		dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
-		integrations: [new BrowserTracing()],
-      
-		// Set tracesSampleRate to 1.0 to capture 100%
-		// of transactions for performance monitoring.
-		// We recommend adjusting this value in production
-		tracesSampleRate: 1.0
-	});
+	Sentry.init(SENTRY_CONFIG);
 
 	setupPortals();
 
