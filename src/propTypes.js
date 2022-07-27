@@ -215,12 +215,6 @@ const cleanSemanticReturnObjectType = shape({
 /**
  * USER SETTINGS
  */
-const copySettingsType = shape({
-	always: bool,
-	defaultFormat: oneOfType([func, oneOf(["citation", "citekey", "page-reference", "raw", "tag"])]),
-	overrideKey: oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
-	useQuickCopy: bool
-});
 
 const extensionType = shape({
 	apiKeys: arrayOf(string),
@@ -230,49 +224,74 @@ const extensionType = shape({
 	version: string
 });
 
+const annotationsSettingsType = shape({
+	comment_prefix: string,
+	comment_suffix: string,
+	func: string,
+	group_by: oneOf(["day_added", false]),
+	highlight_prefix: string,
+	highlight_suffix: string,
+	use: oneOf(["formatted", "raw"])
+});
+
+const autocompleteSettingsType = shape({
+	trigger: string,
+	display: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),
+	format: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"])
+});
+
+const copySettingsType = shape({
+	always: bool,
+	defaultFormat: oneOfType([func, oneOf(["citation", "citekey", "page-reference", "raw", "tag"])]),
+	overrideKey: oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
+	useQuickCopy: bool
+});
+
+const metadataSettingsType = shape({
+	func: string,
+	smartblock: object,
+	use: oneOf(["function", "smartblock"])
+});
+
+const notesSettingsType = shape({
+	func: string,
+	split_char: string,
+	use: oneOf(["raw", "text"])
+});
+
+const pageMenuSettingsType = shape({
+	defaults: arrayOf(string),
+	trigger: oneOfType([func, bool])
+});
+
+const sciteBadgeSettingsType = shape({
+	layout: oneOf(["horizontal", "vertical"]),
+	showLabels: bool,
+	showZero: bool,
+	small: bool,
+	tooltipPlacement: oneOf(["auto", "top", "left", "right", "bottom"]),
+	tooltipSlide: number
+});
+
+const webImportSettingsType = shape({
+	tags: arrayOf(string)
+});
+
 const userSettingsType = shape({
-	annotations: shape({
-		comment_prefix: string,
-		comment_suffix: string,
-		func: string,
-		group_by: oneOf(["day_added", false]),
-		highlight_prefix: string,
-		highlight_suffix: string,
-		use: oneOf(["formatted", "raw"])
-	}),
-	autocomplete: shape({
-		trigger: string,
-		display: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),
-		format: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"])
-	}),
+	annotations: annotationsSettingsType,
+	autocomplete: autocompleteSettingsType,
 	autoload: bool,
 	copy: copySettingsType,
 	darkTheme: bool,
-	metadata: object,
-	notes: shape({
-		func: string,
-		split_char: string,
-		use: oneOf(["raw", "text"])
-	}),
-	pageMenu: shape({
-		defaults: arrayOf(string),
-		trigger: oneOfType([func, bool])
-	}),
+	metadata: metadataSettingsType,
+	notes: notesSettingsType,
+	pageMenu: pageMenuSettingsType,
 	render_inline: bool,
-	sciteBadge: shape({
-		layout: oneOf(["horizontal", "vertical"]),
-		showLabels: bool,
-		showZero: bool,
-		small: bool,
-		tooltipPlacement: oneOf(["auto", "top", "left", "right", "bottom"]),
-		tooltipSlide: number
-	}),
+	sciteBadge: sciteBadgeSettingsType,
 	shareErrors: bool,
 	shortcuts: object,
 	typemap: object,
-	webimport: shape({
-		tags: arrayOf(string)
-	})
+	webimport: webImportSettingsType
 });
 
 export {
@@ -290,7 +309,14 @@ export {
 	cleanRelatedItemType,
 	cleanSemanticReturnType,
 	cleanSemanticReturnObjectType,
+	annotationsSettingsType,
+	autocompleteSettingsType,
 	copySettingsType,
+	metadataSettingsType,
+	notesSettingsType,
+	pageMenuSettingsType,
+	sciteBadgeSettingsType,
+	webImportSettingsType,
 	extensionType,
 	userSettingsType
 };
