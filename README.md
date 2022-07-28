@@ -12,4 +12,4 @@ Read the extension documentation [on GitBook](https://alix-lahuec.gitbook.io/zot
 
 Metadata templates shared by the community are available on the [Roam graph of Academia Roamana](https://roamresearch.com/#/app/AcademiaRoamana/page/pJvpz2sln). 
 
-If you run into any issues/bugs, or have difficulties getting setup, reach out on the extension's [dedicated Discord channel](https://discord.com/invite/NkAjrm7Xpw) (part of Academia Roamana) or directly on [Twitter @AlixLahuec](https://twitter.com/AlixLahuec). You can also file bug reports by creating a GitHub issue for this repository.
+If you run into any issues/bugs, or have difficulties getting setup, reach out on the extension's [dedicated Discord channel](https://discord.com/invite/NkAjrm7Xpw) (part of Academia Roamana) or directly on [Twitter @AlixLahuec](https://twitter.com/AlixLahuec). You can also share feedback or file bug reports by [creating a GitHub issue](https://github.com/alixlahuec/zotero-roam/issues).
