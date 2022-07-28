@@ -21,8 +21,7 @@
         "autoGenerate": true,
         "draft": true,
         "release": true,
-        "releaseName": "v${version}",
-        "tokenRef": "RELEASE_IT_TOKEN"
+        "releaseName": "v${version}"
     },
     "npm": {
         "allowSameVersion": true,
