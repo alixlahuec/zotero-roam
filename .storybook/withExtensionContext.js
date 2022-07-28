@@ -17,7 +17,7 @@ const defaultReqs = [
 const defaultContext = {
     ...analyzeUserRequests(defaultReqs),
     portalId: "root",
-    version: process.env.PACKAGE_VERSION
+    version: "VERSION"
 }
 
 export const withExtensionContext = (Story, context) => {

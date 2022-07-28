@@ -20,12 +20,7 @@ module.exports = {
                   "Mocks": path.resolve(__dirname, "..", "mocks"),
                   "Roam": require.resolve("../mocks/roam.js")
               }
-          },
-          plugins: [
-              new webpack.DefinePlugin({
-                  PACKAGE_VERSION: JSON.stringify(require.resolve(__dirname, "package.json").version)
-              })
-          ]
+          }
       }
   },
 };
