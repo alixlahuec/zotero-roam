@@ -45,7 +45,6 @@ module.exports = merge(baseConfig, {
         sourceMapFilename: "extension.js.map"
     },
     plugins: [
-        ...baseConfig.plugins,
         new MiniCssExtractPlugin({
             filename: "extension.css",
         }),

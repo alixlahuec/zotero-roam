@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 
-export const EXTENSION_VERSION = PACKAGE_VERSION;
+export const EXTENSION_VERSION = require("../package.json").version;
 
 export const EXTENSION_PORTAL_ID = "zotero-roam-portal";
 export const EXTENSION_SLOT_ID = "zotero-roam-slot";

@@ -34,10 +34,5 @@ module.exports = {
 				use: ["style-loader", "css-loader"]
 			}
 		]
-	},
-    plugins: [
-        new webpack.DefinePlugin({
-            PACKAGE_VERSION: JSON.stringify(require("./package.json").version)
-        })
-    ]
+	}
 };

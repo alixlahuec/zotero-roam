@@ -6,6 +6,8 @@ import { libraries } from "Mocks/zotero/libraries";
 
 import { analyzeUserRequests } from "../src/setup";
 
+import { EXTENSION_VERSION } from "../src/constants";
+
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath} } = libraries;
 
@@ -17,7 +19,7 @@ const defaultReqs = [
 const defaultContext = {
     ...analyzeUserRequests(defaultReqs),
     portalId: "root",
-    version: "VERSION"
+    version: EXTENSION_VERSION
 }
 
 export const withExtensionContext = (Story, context) => {
