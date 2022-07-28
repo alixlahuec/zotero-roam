@@ -1,0 +1,60 @@
+.import-header{
+    margin-bottom:20px;
+    margin-top:5px;
+}
+
+.zr-semantic-panel--side .bp4-button-group button.bp4-intent-primary.zr-import--trigger {
+    color: hsla(var(--zr-accent-1-hsl), 90%);
+}
+
+.zr-semantic-panel--side .bp4-button-group button.bp4-intent-warning.zr-import--cancel {
+    color: hsla(var(--zr-accent-2-hsl), 90%);
+}
+
+.import-options {
+    color: var(--zr-text-co);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.options-library-list, 
+.options-collections-list{
+    flex:1 0 50%;
+}
+
+.options-library-list label{
+    font-weight:600;
+}
+
+.options-collections-list {
+    max-height: 50vh;
+    overflow-y:scroll;
+    padding-top:2px;
+}
+.options-collections-list::-webkit-scrollbar {
+    width:0.2em;
+}
+.options-collections-list label{
+    font-weight:400;
+    margin-left: 40px;
+    margin-bottom:0px;
+}
+.options-collections-list label.depth-0{
+    margin-left:0px;
+}
+.options-collections-list label.depth-1{
+    margin-left:20px;
+}
+
+.zr-webimport-panel--side .zr-input-tags.bp4-popover2-target {
+    width: 100%;
+}
+
+.import-options .bp4-input.bp4-multi-select {
+    background: var(--zr-dialog-bg);
+    border: 1px var(--zr-border-co) solid;
+    box-shadow: none;
+    color: var(--zr-text-co);
+    font-size: var(--zr-text-small);
+    margin: 20px 0px;
+}

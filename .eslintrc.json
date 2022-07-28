@@ -1,0 +1,56 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "jest/globals": true,
+        "PACKAGE_VERSION": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:storybook/recommended"
+    ],
+    "ignorePatterns": ["webpack.*config.js"],
+    "overrides": [
+        {
+          "files": ["tests/**"],
+          "plugins": ["jest"],
+          "extends": ["plugin:jest/recommended"],
+          "rules": { "jest/prefer-expect-assertions": "off" }
+        }
+      ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 13,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "jest"
+    ],
+    "rules": {
+        "indent": [
+            "error",
+            "tab"
+        ],
+        "linebreak-style": [
+            "error",
+            "windows"
+        ],
+        "no-unused-vars": [
+            "error",
+            { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}

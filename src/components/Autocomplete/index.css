@@ -1,0 +1,32 @@
+.zr-tribute {
+    background-color: var(--zr-dialog-bg);
+    border: 1px var(--zr-border-co) solid;
+    border-radius: 3px;
+    color: var(--zr-text-co);
+    margin-top: 8px;
+    max-height: 300px;
+    max-width: 450px;
+    overflow-y: scroll;
+}
+
+.zr-tribute ul {
+    list-style-type: none;
+    margin-bottom: 0px;
+    padding: 0px;
+}
+
+.zr-tribute ul li {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--zr-text-small);
+    line-height: 1.5;
+    padding: 3px 8px;
+}
+
+.zr-tribute--item-details {
+    flex: 0 1 100%;
+}
+
+.zr-tribute--selected {
+    background: hsla(var(--zr-accent-1-hsl), 8%);
+}
