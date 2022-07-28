@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 
 export const EXTENSION_VERSION = "0.7.0";
@@ -24,7 +25,12 @@ export const SENTRY_CONFIG = {
 		return event;
 	},
 	dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
-	integrations: [new BrowserTracing()],
+	integrations: [
+		new BrowserTracing(), 
+		new Sentry.Integrations.GlobalHandlers({
+			onunhandledrejection: false
+		})
+	],
   
 	// Set tracesSampleRate to 1.0 to capture 100%
 	// of transactions for performance monitoring.
