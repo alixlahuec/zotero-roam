@@ -1,8 +1,12 @@
 import React from "react";
+import { ExtensionContext } from "../src/components/App";
+
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
-import { ExtensionContext } from "../src/components/App";
+
 import { analyzeUserRequests } from "../src/setup";
+
+import { EXTENSION_VERSION } from "../src/constants";
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath} } = libraries;
@@ -15,7 +19,7 @@ const defaultReqs = [
 const defaultContext = {
     ...analyzeUserRequests(defaultReqs),
     portalId: "root",
-    version: "0.7.0"
+    version: EXTENSION_VERSION
 }
 
 export const withExtensionContext = (Story, context) => {
