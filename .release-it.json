@@ -1,0 +1,31 @@
+{
+    "hooks": {
+        "before:init": [
+            "npm run ci:lint",
+            "npm run ci:test"
+        ],
+        "after:bump": [
+            "npm run build:dev",
+            "npm run build:prod",
+            "npm run build:roam"
+        ]
+    },
+    "git": {
+        "commitArgs": ["-S"],
+        "commitMessage": "chore: release ${version}",
+        "tag": true,
+        "tagMatch": "[0-9]*\\.[0-9]*\\.[0-9]*"
+    },
+    "github": {
+        "assets": ["dist/*.js", "extension.css", "extension.js"],
+        "autoGenerate": true,
+        "draft": true,
+        "release": true,
+        "releaseName": "v${version}",
+        "tokenRef": "RELEASE_IT_TOKEN"
+    },
+    "npm": {
+        "allowSameVersion": true,
+        "publish": true
+    }
+}
