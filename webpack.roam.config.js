@@ -11,9 +11,10 @@ module.exports = merge(baseConfig, {
         outputModule: true,
     },
     externals: {
-        "@blueprintjs/core": ["Blueprint", "Core"],
-        "@blueprintjs/datetime": ["Blueprint", "DateTime"],
-        "@blueprintjs/select": ["Blueprint", "Select"],
+        // TODO: revert back to Blueprint v3 for Roam Depot
+        // "@blueprintjs/core": ["Blueprint", "Core"],
+        // "@blueprintjs/datetime": ["Blueprint", "DateTime"],
+        // "@blueprintjs/select": ["Blueprint", "Select"],
         react: "React",
         "react-dom": "ReactDOM",
     },
