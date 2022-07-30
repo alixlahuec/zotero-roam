@@ -26,7 +26,7 @@ function categorizeLibraryItems(datastore){
 }
 
 /** Extracts an author's last name
- * @param {string} name - The author's full name
+ * @param {String} name - The author's full name
  * @returns The author's last name
  */
 function cleanAuthorLastName(name){
@@ -39,7 +39,7 @@ function cleanAuthorLastName(name){
 }
 
 /** Formats authoring metadata
- * @param {string[]} names - The last names of the author(s)
+ * @param {String[]} names - The last names of the author(s)
  * @returns The formatted authoring string
  */
 function cleanAuthorsNames(names){
@@ -58,8 +58,8 @@ function cleanAuthorsNames(names){
 }
 
 /** Converts library data into a simplified list of top-level items, with their metadata, children, and links
- * @param {Object[]} arr - The library's contents, including top-level items, attachments and notes/annotations
- * @param {Map} roamCitekeys - The map of citekey pages present in Roam 
+ * @param {ZoteroItem[]} arr - The library's contents, including top-level items, attachments and notes/annotations
+ * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
  * @returns {Object[]} The simplified items
  * @see cleanLibraryReturnArrayType
  */
@@ -78,9 +78,9 @@ function cleanLibrary(arr, roamCitekeys){
 
 /** Formats a Zotero item's metadata into a clean format, with Roam & children data
  * @param {ZoteroItem|Object} item - The Zotero item
- * @param {Object[]} pdfs - The Zotero item's attached PDFs
- * @param {Object[]} notes - The Zotero item's notes and annotations
- * @param {Map} roamCitekeys - The map of citekey pages present in Roam 
+ * @param {ZoteroItem[]} pdfs - The Zotero item's attached PDFs
+ * @param {ZoteroItem[]} notes - The Zotero item's notes and annotations
+ * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
  * @returns {Object} The simplified item
  * @see cleanLibraryItemType
  */
@@ -186,9 +186,8 @@ function cleanNewlines(text){
 	return cleanText;
 }
 
-/** Formats the metadata of a Semantic Scholar entry
- * @param {Object} item - The Semantic Scholar entry to format 
- * @returns {{
+/**
+ * @typedef {{
  * authors: String, 
  * authorsLastNames: String,
  * authorsString: String,
@@ -201,7 +200,12 @@ function cleanNewlines(text){
  * url: String,
  * year: String,
  * _multiField: String
- * }[]} The formatted entry
+ * }}
+ * CleanSemanticItem
+ */
+/** Formats the metadata of a Semantic Scholar entry
+ * @param {Object} item - The Semantic Scholar entry to format 
+ * @returns {CleanSemanticItem[]} The formatted entry
  * @see cleanSemanticItemType
  */
 function cleanSemanticItem(item){
@@ -244,11 +248,19 @@ function cleanSemanticItem(item){
 	return clean_item;
 }
 
+/**
+ * @typedef {{
+ * ...CleanSemanticItem, 
+ * inGraph: (Boolean|String), 
+ * inLibrary: (Boolean|{children: {pdfs: ZoteroItem[], notes: ZoteroItem[]}, raw: ZoteroItem})
+ * }}
+ * CleanSemanticReturn
+ */
 /** Matches a clean Semantic Scholar entry to Zotero and Roam data
  * @param {Object} semanticItem - A Semantic Scholar item, as returned by {@link cleanSemanticItem}
- * @param {{items: Array, pdfs: Array, notes: Array}} datastore - The categorized list of Zotero items to match against 
- * @param {Map} roamCitekeys - The map of citekey pages in the Roam graph 
- * @returns {Object} - The matched entry for the item
+ * @param {{items: ZoteroItem[], pdfs: ZoteroItem[], notes: ZoteroItem[]}} datastore - The categorized list of Zotero items to match against 
+ * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
+ * @returns {CleanSemanticReturn} - The matched entry for the item
  * @see cleanSemanticReturnType
  */
 function cleanSemanticMatch(semanticItem, {items = [], pdfs = [], notes = []} = {}, roamCitekeys){
@@ -284,14 +296,19 @@ function cleanSemanticMatch(semanticItem, {items = [], pdfs = [], notes = []} = 
 	}
 }
 
+/**
+ * @typedef {{
+ * citations: CleanSemanticReturn[],
+ * references: CleanSemanticReturn[],
+ * backlinks: CleanSemanticReturn[]
+ * }}
+ * CleanSemanticReturnObject
+ */
 /** Formats a list of Semantic Scholar entries for display
  * @param {ZoteroItem[]} datastore - The list of Zotero items to match against 
  * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to format 
- * @param {Map} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
- * @returns {{
- * citations: Object[], 
- * references: Object[],
- * backlinks: Object[]}} The formatted list
+ * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
+ * @returns {CleanSemanticReturnObject} The formatted list
  * @see cleanSemanticReturnObjectType
  */
 function cleanSemantic(datastore, semantic, roamCitekeys){
@@ -719,7 +736,7 @@ function identifyPDFConnections(itemKey, parentKey, location, {items = [], notes
 
 /** Creates a dictionary from a String Array
  * @param {String[]} arr - The array from which to make the dictionary
- * @returns {Object<String,String[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
+ * @returns {Object.<string, string[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
  */
 function makeDictionary(arr){
 	return arr.reduce((dict, elem) => {
@@ -1000,9 +1017,10 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
 
 }
 
-/** Simplifies data structure for Zotero 6 annotations
- * @param {Object[]} annotations - The list of annotations to simplify
- * @returns {{
+// TODO: write typedef for a Zotero annotation
+
+/**
+ * @typedef{{
  * color: String,
  * comment: String,
  * date_added: String,
@@ -1021,7 +1039,12 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
  * tags: String[],
  * text: String|null,
  * type: ("highlight"|"image")
- * }[]} The simplified array of annotations
+ * }}
+ * SimplifiedZoteroAnnotation
+ */
+/** Simplifies data structure for Zotero 6 annotations
+ * @param {Object[]} annotations - The list of annotations to simplify
+ * @returns {SimplifiedZoteroAnnotation[]} The simplified array of annotations
  */
 function simplifyZoteroAnnotations(annotations){
 	return annotations.map(annot => {
