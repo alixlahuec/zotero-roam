@@ -228,7 +228,7 @@ export const handleItems = [
 						obj.successful.push({
 							...libraryCopy,
 							data: {
-								...rest
+								...props
 							}
 						});
 					}
