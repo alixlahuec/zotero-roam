@@ -1,7 +1,7 @@
-import { zotero, makeItemMetadata } from "./common";
-import { rest } from "msw";
+import { citoids, semanticIdentifier } from "../citoid";
+import { makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
-import { semanticIdentifier, citoids } from "../citoid";
+import { rest } from "msw";
 
 const { userLibrary, groupLibrary } = libraries;
 
@@ -206,7 +206,7 @@ export const handleItems = [
 			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
 
 			const output = itemsData.reduce((obj, item) => {
-				const { key, version, ...rest } = item;
+				const { key, version, ...props } = item;
     
 				if(!key){
 					// We're not actually adding the item to the data, so no need to ensure keys are unique
@@ -215,7 +215,7 @@ export const handleItems = [
 						...makeItemMetadata({
 							library,
 							version: library.version,
-							...rest
+							...props
 						})
 					});
 				} else {
@@ -243,7 +243,7 @@ export const handleItems = [
 				unchanged: []
 			});
     
-			for(let cat in output){
+			for(const cat in output){
 				output[cat] = Object.fromEntries(output[cat].map((el, i) => [i, el]));
 			}
 

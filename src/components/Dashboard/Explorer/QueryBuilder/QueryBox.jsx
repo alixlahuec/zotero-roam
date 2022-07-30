@@ -1,10 +1,11 @@
-import React, { useCallback} from "react";
+import React, { useCallback } from "react";
 import { array, bool, func, shape } from "prop-types";
 import { Button } from "@blueprintjs/core";
 
 import QueryEntry from "./QueryEntry";
-import { defaultQueryTerm } from "./queries";
+
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
+import { defaultQueryTerm } from "./queries";
 
 import { CustomClasses } from "../../../../constants";
 
@@ -35,7 +36,7 @@ function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = tru
 			{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "OR" : "AND"}</span>}
 			<div>
 				{terms.map((tm, index) => {
-					let termProps = {
+					const termProps = {
 						handlers: makeHandlersForChild(index),
 						isFirstChild: index == 0,
 						isOnlyChild: terms.length == 1,

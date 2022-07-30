@@ -90,7 +90,7 @@ describe("Search queries", () => {
 		expect(runQuerySet(
 			[
 				[
-					{ property: "Item added", relationship: "after", value: new Date([2022,1,1])},
+					{ property: "Item added", relationship: "after", value: new Date([2022,1,1]) },
 					{ property: "Citekey", relationship: "exists", value: null }
 				],
 				{ property: "Item type", relationship: "is any of", value: ["conferencePaper", "journalArticle"] }
@@ -130,8 +130,8 @@ describe("Search queries", () => {
 
 	describe("Querying citekey", () => {
 		const items = [
-			{ raw: { has_citekey: true }},
-			{ raw: { has_citekey: false }}
+			{ raw: { has_citekey: true } },
+			{ raw: { has_citekey: false } }
 		];
 
 		const cases = [
@@ -153,8 +153,8 @@ describe("Search queries", () => {
 
 	describe("Querying DOI", () => {
 		const items = [
-			{ raw: { data: { DOI: "" }}},
-			{ raw: { data: { DOI: "10.234/biomed.567" }}}
+			{ raw: { data: { DOI: "" } } },
+			{ raw: { data: { DOI: "10.234/biomed.567" } } }
 		];
 
 		const cases = [
@@ -176,9 +176,9 @@ describe("Search queries", () => {
 
 	describe("Querying added-on date", () => {
 		const items = [
-			{ raw: { data: { dateAdded: "2022-03-13T12:00:00Z"}}},
-			{ raw: { data: { dateAdded: "2022-04-21T15:30:00Z" }}},
-			{ raw: { data: { dateAdded: "2021-11-30T04:45:00Z" }}}
+			{ raw: { data: { dateAdded: "2022-03-13T12:00:00Z" } } },
+			{ raw: { data: { dateAdded: "2022-04-21T15:30:00Z" } } },
+			{ raw: { data: { dateAdded: "2021-11-30T04:45:00Z" } } }
 		];
 
 		const cases = [
@@ -229,8 +229,8 @@ describe("Search queries", () => {
 
 	describe("Querying notes", () => {
 		const items = [
-			{ children: { notes: [] }},
-			{ children: { notes: [{}] }}
+			{ children: { notes: [] } },
+			{ children: { notes: [{}] } }
 		];
 
 		const cases = [
@@ -252,8 +252,8 @@ describe("Search queries", () => {
 
 	describe("Querying PDFs", () => {
 		const items = [
-			{ children: { pdfs: [] }},
-			{ children: { pdfs: [{}] }}
+			{ children: { pdfs: [] } },
+			{ children: { pdfs: [{}] } }
 		];
 
 		const cases = [
@@ -324,7 +324,7 @@ describe("Search queries", () => {
 
 	describe("Querying title", () => {
 		const items = [
-			{ title: "Designing systems that work"},
+			{ title: "Designing systems that work" },
 			{ title: "Systems thinking and architecture" },
 			{ title: "Knowledge management" }
 		];

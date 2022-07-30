@@ -1,5 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { bool, func, object, shape } from "prop-types";
+
 import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
@@ -32,14 +33,14 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 	}, [handleClose, isQCActive, toggleQC]);
 
 	const hotkeys = useMemo(() => {
-		let defaultProps = {
+		const defaultProps = {
 			allowInInput: true,
 			global: true,
 			preventDefault: true,
 			stopPropagation: true
 		};
 
-		let configs = {
+		const configs = {
 			"focusSearchBar": {
 				label: "Focus the searchbar",
 				onKeyDown: () => searchbar.current.focus()
@@ -62,7 +63,7 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 		
 	}, [searchbar, shortcutsSettings, toggleQC]);
 
-	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
+	useHotkeys(hotkeys, { showDialogKeyCombo: "shift+Z+R" });
 
 	return (
 		<InputGroup

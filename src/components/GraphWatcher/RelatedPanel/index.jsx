@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { arrayOf, bool, func, oneOf, oneOfType, shape, string } from "prop-types";
+
 import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
@@ -7,10 +8,13 @@ import CitekeyPopover from "../../CitekeyPopover";
 import SentryBoundary from "../../Errors/SentryBoundary";
 
 import useBool from "../../../hooks/useBool";
+
 import { pluralize, sortElems } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
+
 import "./index.css";
 
 const labelId = "zr-related-panel-label";
@@ -68,7 +72,7 @@ const RelatedItem = React.memo(function RelatedItem(props) {
 			<div className={ Classes.MENU_ITEM } label={item.key}>
 				<Timestamp timestamp={item.timestamp} type={type} />
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
-					<div className={ Classes.FILL } style={{display: "flex"}}>
+					<div className={ Classes.FILL } style={{ display: "flex" }}>
 						<div className="zr-related-item-contents--metadata" >
 							<span className="zr-related-item--title" data-item-type={item.itemType}>{item.title}</span>
 							<span className={CustomClasses.TEXT_ACCENT_1}>{item.meta}</span>
@@ -100,7 +104,7 @@ const RelatedList = React.memo(function RelatedList(props) {
 	const { allAbstractsShown, closeDialog, items, type } = props;
 
 	const sortedItems = useMemo(() => {
-		let sort = type == "added_on" ? "added" : "meta";
+		const sort = type == "added_on" ? "added" : "meta";
 		return sortElems(items, sort);
 	}, [items, type]);
 
@@ -147,6 +151,8 @@ const RelatedPanel = React.memo(function RelatedPanel(props) {
 				string: "item",
 				suffix: " tagged with " + title
 			};
+		default:
+            //
 		}
 	}, [show]);
 

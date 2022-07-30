@@ -1,6 +1,6 @@
 import { searchEngine } from "../../../../utils";
 
-const defaultQueryTerm = { property: "Citekey", relationship: "exists", value: null};
+const defaultQueryTerm = { property: "Citekey", relationship: "exists", value: null };
 
 const types = ["date", "date-range", "multiselect", "select", "text", null];
 
@@ -75,7 +75,7 @@ const queries = {
 				if(value == null){
 					return true;
 				} else {
-					let dateCheck = value;
+					const dateCheck = value;
 					dateCheck.setHours(0,0,0);
 					return new Date(item.raw.data.dateAdded) < dateCheck;
 				}
@@ -89,7 +89,7 @@ const queries = {
 				if(value == null){
 					return true;
 				} else {
-					let dateCheck = value;
+					const dateCheck = value;
 					dateCheck.setHours(0,0,0);
 					return new Date(item.raw.data.dateAdded) > dateCheck;
 				}
@@ -100,14 +100,14 @@ const queries = {
 			defaultInput: [null, null],
 			inputType: "date-range",
 			testItem: (item, value) => {
-				let [from, to] = value;
+				const [from, to] = value;
 				let afterFrom
 					, beforeTo;
 				
 				if(from == null){
 					afterFrom = true;
 				} else {
-					let fromCheck = from;
+					const fromCheck = from;
 					fromCheck.setHours(0,0,0);
 					afterFrom = new Date(item.raw.data.dateAdded) > fromCheck;
 				}
@@ -115,7 +115,7 @@ const queries = {
 				if(to == null){
 					beforeTo = true;
 				} else {
-					let toCheck = to;
+					const toCheck = to;
 					toCheck.setHours(0,0,0);
 					beforeTo = new Date(item.raw.data.dateAdded) < toCheck;
 				}
@@ -198,7 +198,7 @@ const queries = {
 			testItem: (item, value = []) => {
 				if(item.tags.length == 0 || value.length == 0){ return false; }
 				return value.some(tag => searchEngine(tag, item.tags, { match: "exact" }));
-			}},
+			} },
 		"do not include": {
 			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
@@ -231,11 +231,11 @@ function runQueryTerm(term, useOR = false, item){
 	if(term.constructor === Array){
 		return runQuerySet(term, useOR, item);
 	} else if(term.constructor === Object){
-		let { property, relationship, value } = term;
+		const { property, relationship, value } = term;
 		if(!property || !relationship){ 
 			return true; 
 		} else {
-			let { testItem } = queries[property][relationship];
+			const { testItem } = queries[property][relationship];
 			return testItem(item, value);
 		}
 	} else {

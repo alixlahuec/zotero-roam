@@ -1,15 +1,20 @@
 import React, { useCallback, useMemo } from "react";
 import { arrayOf, oneOf, oneOfType, shape, string } from "prop-types";
+
 import { Button, ButtonGroup, Menu } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ActionsMenu from "../ActionsMenu";
 import MergeAsOptions from "../MergeAsOptions";
+
 import { useModifyTags } from "../../../../api/write";
+
 import { makeSuggestionFor } from "../utils";
 
 import { CustomClasses } from "../../../../constants";
+
 import * as customPropTypes from "../../../../propTypes";
+
 import "./index.css";
 
 function AutoMerge({ library, suggestion }){

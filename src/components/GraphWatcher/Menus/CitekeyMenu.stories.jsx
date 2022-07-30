@@ -1,15 +1,16 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+
 import CitekeyMenu from "./CitekeyMenu";
 
-import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
 
 import { items } from "Mocks/zotero/items";
+import { parseDOI } from "../../../utils";
+import { parseSemanticDOIs } from "../../../api/utils";
 import { sampleNote } from "Mocks/zotero/notes";
 import { semantics } from "Mocks/semantic-scholar";
-import { parseSemanticDOIs } from "../../../api/utils";
-import { parseDOI } from "../../../utils";
 import { sleep } from "../../../../.storybook/utils";
 
 export default {
@@ -22,8 +23,8 @@ export default {
 			notes: [sampleNote]
 		}
 	},
-    parameters: {
-        userSettings: {
+	parameters: {
+		userSettings: {
 			annotations: {},
 			metadata: {},
 			notes: {},
@@ -35,7 +36,7 @@ export default {
 			shortcuts: {},
 			typemap: {}
 		}
-    }
+	}
 };
 
 const Template = (args) => {

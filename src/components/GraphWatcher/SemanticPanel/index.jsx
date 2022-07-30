@@ -1,17 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
+
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
-import SentryBoundary from "../../Errors/SentryBoundary";
 import SemanticPagination from "./SemanticPagination";
+import SentryBoundary from "../../Errors/SentryBoundary";
 import SidePanel from "./SidePanel";
 
 import { pluralize, sortElems } from "../../../utils";
 import useMulti from "../../../hooks/useMulti";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
+
 import "./index.css";
 
 

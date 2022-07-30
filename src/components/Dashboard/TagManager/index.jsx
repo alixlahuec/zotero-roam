@@ -1,17 +1,20 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, func, objectOf, shape, string } from "prop-types";
-import { Spinner, Tab, Tabs} from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
+import { Spinner, Tab, Tabs } from "@blueprintjs/core";
+
+import LibrarySelect from "../LibrarySelect";
 import NoWriteableLibraries from "../../Errors/NoWriteableLibraries";
 import SentryBoundary from "../../Errors/SentryBoundary";
-import LibrarySelect from "../LibrarySelect";
 import TagsDatalist from "./TagsDatalist";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
+
 import "./index.css";
 
 function TagLists({ items, libProps }){

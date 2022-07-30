@@ -34,25 +34,68 @@
         "jest"
     ],
     "rules": {
+        "arrow-spacing": "error",
+        "curly": [
+            "error",
+            "all"
+        ],
+        "default-case": "error",
+        "dot-notation": "warn",
         "indent": [
             "error",
             "tab"
+        ],
+        "key-spacing": [
+            "error",
+            { "beforeColon": false, "afterColon": true, "mode": "strict" }
         ],
         "linebreak-style": [
             "error",
             "windows"
         ],
+        "no-alert": "error",
+        "no-await-in-loop": "warn",
+        "no-duplicate-imports": [
+            "error",
+            { "includeExports": true }
+        ],
+        "no-implicit-coercion": "warn",
+        "no-label-var": "error",
+        "no-param-reassign": "error",
+        "no-shadow": "error",
         "no-unused-vars": [
             "error",
             { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }
         ],
+        "no-var": "error",
+        "object-curly-spacing": [
+            "warn",
+            "always"
+        ],
+        "prefer-const": "warn",
         "quotes": [
             "error",
             "double"
         ],
+        "require-await": "error",
         "semi": [
             "error",
             "always"
+        ],
+        "sort-imports": [
+            "warn",
+            { "allowSeparatedGroups": true }
+        ]
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        },
+        "linkComponents": [
+            {
+                "name": "ButtonLink",
+                "linkAttribute": "href"
+            }
         ]
     }
 }

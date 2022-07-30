@@ -2,30 +2,30 @@ import { getTagStats, getTagUsage, isSingleton, makeSuggestionFor, matchTagData,
 
 jest.mock("Roam", () => ({
 	getInitialedPages: () => [
-		{title: "culture", uid: "abcdef"},
-		{title: "systems", uid: "pqrst"}
+		{ title: "culture", uid: "abcdef" },
+		{ title: "systems", uid: "pqrst" }
 	]
 }));
 
 const tagList = [
 	{
-		roam: [{title: "TODO"}],
+		roam: [{ title: "TODO" }],
 		zotero: [
-			{tag: "TODO", meta: {type: 1, numItems: 2}},
-			{tag: "todo", meta: {type: 0, numItems: 4}}
+			{ tag: "TODO", meta: { type: 1, numItems: 2 } },
+			{ tag: "todo", meta: { type: 0, numItems: 4 } }
 		]
 	},
 	{
-		roam: [{title: "history"}],
+		roam: [{ title: "history" }],
 		zotero: [
-			{tag:"history", meta: {type: 1, numItems: 13}}
+			{ tag: "history", meta: { type: 1, numItems: 13 } }
 		]
 	},
 	{
 		roam: [],
 		zotero: [
-			{tag: "culture", meta: {type: 0, numItems: 7}},
-			{tag: "Culture", meta: {type: 1, numItems: 1}}
+			{ tag: "culture", meta: { type: 0, numItems: 7 } },
+			{ tag: "Culture", meta: { type: 1, numItems: 1 } }
 		]
 	}
 ];
@@ -41,16 +41,16 @@ test("Collects tag stats", () => {
 });
 
 test("Counts tag usage", () => {
-	expect(getTagUsage(tagList[0], { count_roam: false})).toBe(6);
+	expect(getTagUsage(tagList[0], { count_roam: false })).toBe(6);
 	expect(getTagUsage(tagList[1], { count_roam: true })).toBe(14);
 	expect(getTagUsage(tagList[2])).toBe(8);
 });
 
 test("Identifies singleton tags", () => {
-	expect(isSingleton({roam: [], zotero: [{tag: "culture"}]})).toBe(true);
-	expect(isSingleton({roam: [{title: "culture"}], zotero: [{tag: "culture"}]})).toBe(true);
-	expect(isSingleton({roam: [{title: "Culture"}], zotero: [{tag: "culture"}]})).toBe(false);
-	expect(isSingleton({roam: [], zotero: [{tag: "culture"}, {tag: "Culture"}]})).toBe(false);
+	expect(isSingleton({ roam: [], zotero: [{ tag: "culture" }] })).toBe(true);
+	expect(isSingleton({ roam: [{ title: "culture" }], zotero: [{ tag: "culture" }] })).toBe(true);
+	expect(isSingleton({ roam: [{ title: "Culture" }], zotero: [{ tag: "culture" }] })).toBe(false);
+	expect(isSingleton({ roam: [], zotero: [{ tag: "culture" }, { tag: "Culture" }] })).toBe(false);
 });
 
 test("Makes correct suggestions for tags", () => {
@@ -84,7 +84,7 @@ test("Makes correct suggestions for tags", () => {
     
 	expect(makeSuggestionFor({
 		roam: [],
-		zotero: [{tag: "PKM"}]
+		zotero: [{ tag: "PKM" }]
 	}))
 		.toEqual({
 			recommend: "PKM",
@@ -97,7 +97,7 @@ test("Makes correct suggestions for tags", () => {
     
 	expect(makeSuggestionFor({
 		roam: [],
-		zotero: [{tag: "PKM", meta: {type: 0}}, {tag: "PKM", meta: {type: 1}}]
+		zotero: [{ tag: "PKM", meta: { type: 0 } }, { tag: "PKM", meta: { type: 1 } }]
 	}))
 		.toEqual({
 			recommend: "PKM",
@@ -109,8 +109,8 @@ test("Makes correct suggestions for tags", () => {
 		});
     
 	expect(makeSuggestionFor({
-		roam: [{title: "housing"}, {title: "Housing"}],
-		zotero: [{tag: "housing"}]
+		roam: [{ title: "housing" }, { title: "Housing" }],
+		zotero: [{ tag: "housing" }]
 	}))
 		.toEqual({
 			recommend: null,
@@ -124,19 +124,19 @@ test("Makes correct suggestions for tags", () => {
 
 test("Match Zotero tags with Roam pages", async() => {
 	const tags = {
-		"c": [{token: "culture", roam: [], zotero: [{tag: "culture"}]}],
+		"c": [{ token: "culture", roam: [], zotero: [{ tag: "culture" }] }],
 		"s": [
-			{token: "stocks", roam: [], zotero: [{tag: "stocks"}]},
-			{token: "systems", roam: [], zotero: [{tag: "systems"}]}
+			{ token: "stocks", roam: [], zotero: [{ tag: "stocks" }] },
+			{ token: "systems", roam: [], zotero: [{ tag: "systems" }] }
 		]
 	};
 
 	await expect(matchTagData(tags))
 		.resolves
 		.toEqual([
-			{token: "culture", roam: [{title: "culture", uid: "abcdef"}], zotero: [{tag: "culture"}]},
-			{token: "stocks", roam: [], zotero: [{tag: "stocks"}]},
-			{token: "systems", roam: [{title: "systems", uid: "pqrst"}], zotero: [{tag: "systems"}]}
+			{ token: "culture", roam: [{ title: "culture", uid: "abcdef" }], zotero: [{ tag: "culture" }] },
+			{ token: "stocks", roam: [], zotero: [{ tag: "stocks" }] },
+			{ token: "systems", roam: [{ title: "systems", uid: "pqrst" }], zotero: [{ tag: "systems" }] }
 		]);
 });
 

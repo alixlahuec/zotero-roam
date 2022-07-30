@@ -7,7 +7,7 @@ import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { useQueryClient } from "@tanstack/react-query";
 
-const { keyWithFullAccess: { key: masterKey }} = apiKeys;
+const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary } = libraries;
 
 export default {

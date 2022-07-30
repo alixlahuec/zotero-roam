@@ -1,29 +1,31 @@
 /* istanbul ignore file */
-import { emitCustomEvent } from "./events";
-import { _getItemMetadata } from "./public";
-import { use_smartblock_metadata } from "./smartblocks";
 import { executeFunctionByName, formatZoteroAnnotations, formatZoteroNotes } from "./utils";
+import { _getItemMetadata } from "./public";
+import { emitCustomEvent } from "./events";
+import { use_smartblock_metadata } from "./smartblocks";
 
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
  * @param {{string: String, children?: Array}} object - The block Object to use as template 
  */
 async function addBlockObject(parentUID, object) {
-	let {string: blockString, children = [], ...opts} = object;
+	const { string: blockString, children = [], ...opts } = object;
 	
 	if(typeof(blockString) === "undefined"){
 		console.log(object);
 		throw new Error("All blocks passed as an Object must have a string property.");
 	} else {
-		let blockUID = await createRoamBlock(parentUID, blockString, 0, opts);
+		const blockUID = await createRoamBlock(parentUID, blockString, 0, opts);
 		// If the Object has a `children` property
 		if(children.constructor === Array){
 			// Go through each child element, starting by the last
 			// Recursion will ensure all nested children will be added
 			for(let j = children.length - 1; j >= 0; j--){
 				if(children[j].constructor === Object){
+					// eslint-disable-next-line no-await-in-loop
 					await addBlockObject(blockUID, children[j]);
 				} else if(children[j].constructor === String){
+					// eslint-disable-next-line no-await-in-loop
 					await createRoamBlock(blockUID, children[j], 0, {});
 				} else {
 					console.log(children[j]);
@@ -43,7 +45,7 @@ async function addBlockObject(parentUID, object) {
  * @returns The outcome of the operation
  */
 async function addBlocksArray(parentUID, arr){
-	let defaultOutcome = {
+	const defaultOutcome = {
 		args: {
 			blocks: arr,
 			uid: parentUID
@@ -58,9 +60,11 @@ async function addBlocksArray(parentUID, arr){
 			for(let k = arr.length - 1; k >= 0; k--){
 				// If the element is an Object, pass it to addBlockObject to recursively process its contents
 				if(arr[k].constructor === Object){
+					// eslint-disable-next-line no-await-in-loop
 					await addBlockObject(parentUID, arr[k]);
 				} else if(arr[k].constructor === String) {
 					// If the element is a simple String, add the corresponding block & move on
+					// eslint-disable-next-line no-await-in-loop
 					await createRoamBlock(parentUID, arr[k], 0, {});
 				} else {
 					console.log(arr[k]);
@@ -104,13 +108,13 @@ function addPaletteCommand(label, onSelect){
  * @see https://roamresearch.com/#/app/developer-documentation/page/Sq5IhwNQY
  */
 async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
-	let blockUID = window.roamAlphaAPI.util.generateUID();
-	let blockContents = {
+	const blockUID = window.roamAlphaAPI.util.generateUID();
+	const blockContents = {
 		"string": string,
 		"uid": blockUID
 	};
 	if(Object.keys(opts).length > 0){
-		for(let k of Object.keys(opts)){
+		for(const k of Object.keys(opts)){
 			if(["children-view-type", "alignment", "heading"].includes(k)){
 				blockContents[k] = opts[k];
 			}
@@ -125,7 +129,7 @@ async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
  * @returns {String|false} The UID of the Roam page (if it exists), otherwise `false`
  */
 function findRoamPage(title){
-	let pageSearch = window.roamAlphaAPI.q(`[
+	const pageSearch = window.roamAlphaAPI.q(`[
 		:find ?uid 
 		:in $ ?title 
 		:where
@@ -177,8 +181,8 @@ function getCitekeyPagesWithEditTime(){
 		]`)
 		.filter(p => p.time)
 		.map(p => {
-			let { title, uid } = p;
-			let latest_edit = p["_parents"] ? Math.max(...p["_parents"].map(c => c.time)) : p.time;
+			const { title, uid } = p;
+			const latest_edit = p._parents ? Math.max(...p._parents.map(c => c.time)) : p.time;
 			return [title, { edited: new Date(Math.max(latest_edit, p.time)), uid }];
 		}));
 }
@@ -202,7 +206,7 @@ function getCurrentCursorLocation(){
 	const blockElement = document.getElementById(blockElementID) || {};
 	const { selectionStart = null, selectionEnd = null } = blockElement;
 
-	let output = {
+	const output = {
 		id: blockElementID,
 		location: {
 			"block-uid": blockUID,
@@ -245,25 +249,25 @@ function getInitialedPages(keys){
  * @param {SettingsAnnotations} annotationsSettings
  * @returns If successful, a detailed outcome of the import ; otherwise, the first error encountered.
  */
-async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, metadataSettings, typemap, notesSettings, annotationsSettings){
-	let title = "@" + item.key;
-	let pageUID = uid || window.roamAlphaAPI.util.generateUID();
-	let page = { new: null, title, uid: pageUID };
+async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, metadataSettings, typemap, notesSettings, annotationsSettings){
+	const title = "@" + item.key;
+	const pageUID = uid || window.roamAlphaAPI.util.generateUID();
+	const page = { new: null, title, uid: pageUID };
 	
 	if(pageUID != uid){
-		window.roamAlphaAPI.createPage({ page: { title, "uid": pageUID}});
+		window.roamAlphaAPI.createPage({ page: { title, "uid": pageUID } });
 		page.new = true;
 	} else {
 		page.new = false;
 	}
 	
-	let { use, func = null, smartblock: { param, paramValue }} = metadataSettings;
+	const { use, func = null, smartblock: { param, paramValue } } = metadataSettings;
 
 	// TODO: Add support or options for passing formatted children (PDFs/notes) to SmartBlock
 	if(use == "smartblock"){
-		let context = { item, notes, page, pdfs };
+		const context = { item, notes, page, pdfs };
 		try {
-			let outcome = await use_smartblock_metadata({ param, paramValue }, context);
+			const outcome = await use_smartblock_metadata({ param, paramValue }, context);
 			emitCustomEvent("metadata-added", outcome);
 
 			return outcome;
@@ -273,10 +277,10 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, metad
 		}
 	} else {
 		try {
-			let metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : _getItemMetadata(item, pdfs, notes, typemap, notesSettings, annotationsSettings);
-			let { args, error, success } = await addBlocksArray(pageUID, metadata);
+			const metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : _getItemMetadata(item, pdfs, notes, typemap, notesSettings, annotationsSettings);
+			const { args, error, success } = await addBlocksArray(pageUID, metadata);
 
-			let outcome = {
+			const outcome = {
 				args,
 				error,
 				page,
@@ -305,24 +309,24 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, metad
  * @param {SettingsAnnotations} annotationsSettings - The user's `annotations` settings
  * @returns If successful, a detailed outcome of the immport ; otherwise, the first error encountered.
  */
-async function importItemNotes({item, notes = []} = {}, uid, notesSettings, annotationsSettings){
-	let title = "@" + item.key;
-	let pageUID = uid || window.roamAlphaAPI.util.generateUID();
-	let page = { new: null, title, uid: pageUID };
+async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, annotationsSettings){
+	const title = "@" + item.key;
+	const pageUID = uid || window.roamAlphaAPI.util.generateUID();
+	const page = { new: null, title, uid: pageUID };
 
 	if(pageUID != uid){
-		window.roamAlphaAPI.createPage({ page: { title, "uid": pageUID}});
+		window.roamAlphaAPI.createPage({ page: { title, "uid": pageUID } });
 		page.new = true;
 	} else {
 		page.new = false;
 	}
 
 	try {
-		let formattedAnnots = formatZoteroAnnotations(notes.filter(n => n.data.itemType == "annotation"), annotationsSettings);
-		let formattedNotes = formatZoteroNotes(notes.filter(n => n.data.itemType == "note"), notesSettings);
-		let { args, error, success } = await addBlocksArray(pageUID, [...formattedAnnots, ...formattedNotes]);
+		const formattedAnnots = formatZoteroAnnotations(notes.filter(n => n.data.itemType == "annotation"), annotationsSettings);
+		const formattedNotes = formatZoteroNotes(notes.filter(n => n.data.itemType == "note"), notesSettings);
+		const { args, error, success } = await addBlocksArray(pageUID, [...formattedAnnots, ...formattedNotes]);
 
-		let outcome = {
+		const outcome = {
 			args,
 			error,
 			page,
@@ -346,8 +350,8 @@ async function importItemNotes({item, notes = []} = {}, uid, notesSettings, anno
  */
 function maybeReturnCursorToPlace(place = {}){
 	if(place && place.location){
-		let { id, ...rest} = place;
-		let blockStillExists = document.getElementById(id) || false;
+		const { id, ...rest } = place;
+		const blockStillExists = document.getElementById(id) || false;
 		if(blockStillExists){
 			window.roamAlphaAPI.ui.setBlockFocusAndSelection(rest);
 		}
@@ -360,7 +364,7 @@ function maybeReturnCursorToPlace(place = {}){
  * @see https://roamresearch.com/#/app/developer-documentation/page/yHDobV8KV
  */
 async function openInSidebarByUID(uid, type = "outline"){
-	await window.roamAlphaAPI.ui.rightSidebar.addWindow({ window: { type, "block-uid": uid}});
+	await window.roamAlphaAPI.ui.rightSidebar.addWindow({ window: { type, "block-uid": uid } });
 }
 
 /** Navigates to a Roam page, based on its UID.
@@ -368,7 +372,7 @@ async function openInSidebarByUID(uid, type = "outline"){
  * @see https://roamresearch.com/#/app/developer-documentation/page/_VyuLpfWb
  */
 async function openPageByUID(uid){
-	await window.roamAlphaAPI.ui.mainWindow.openPage({ page: { uid }});
+	await window.roamAlphaAPI.ui.mainWindow.openPage({ page: { uid } });
 }
 
 export {

@@ -1,9 +1,10 @@
 import { QueryClient } from "@tanstack/react-query";
 import { fetchItems } from "../../src/api/utils";
+
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 
-const { keyWithFullAccess: { key: masterKey }} = apiKeys;
+const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 
 describe("Zotero client handles errors", () => {
 	const cases = [

@@ -1,7 +1,7 @@
 
-import { zoteroClient, semanticClient, citoidClient } from "./clients";
-import { emitCustomEvent } from "../events";
+import { citoidClient, semanticClient, zoteroClient } from "./clients";
 import { makeDictionary, parseDOI, searchEngine } from "../utils";
+import { emitCustomEvent } from "../events";
 
 /** Categorizes Zotero tags into tokens, based on similar spellings
  * @param {String[]} z_data - The tags to be categorized, as Strings
@@ -9,12 +9,12 @@ import { makeDictionary, parseDOI, searchEngine } from "../utils";
  * @returns {{token: String, roam: [], zotero: Object[]}[]} The Array of tokenized tags, sorted alphabetically
  */
 function categorizeZoteroTags(z_data, tagMap){
-	let output = [];
-	let zdata = Array.from(z_data).sort((a,b) => a > b ? -1 : 1);
+	const output = [];
+	const zdata = Array.from(z_data).sort((a,b) => a > b ? -1 : 1);
 	
-	for(let elem of zdata){
-		let in_table = output.findIndex(tk => searchEngine(elem, tk.token, { any_case: true, match: "exact", search_compounds: true}));
-		let z_item = tagMap.get(elem);
+	for(const elem of zdata){
+		const in_table = output.findIndex(tk => searchEngine(elem, tk.token, { any_case: true, match: "exact", search_compounds: true }));
+		const z_item = tagMap.get(elem);
 		if(in_table == -1){
 			output.push({
 				token: elem.toLowerCase(), 
@@ -40,15 +40,15 @@ function categorizeZoteroTags(z_data, tagMap){
 function cleanBibliographyHTML(bib){
 	// Grab only the string (strip outer divs)
 	// TODO: Support other styles than CSL
-	let bibString = bib.match("csl-entry\">(.+)</div>")[1];
+	const bibString = bib.match("csl-entry\">(.+)</div>")[1];
 	// Use a textarea element to decode HTML
-	let formatter = document.createElement("textarea");
+	const formatter = document.createElement("textarea");
 	formatter.innerHTML = bibString;
 	let formattedBib = formatter.innerText;
 	// Convert italics
 	formattedBib = formattedBib.replaceAll(/<\/?i>/g, "__");
 	// Convert links
-	let linkRegex = /<a href="(.+)">(.+)<\/a>/g;
+	const linkRegex = /<a href="(.+)">(.+)<\/a>/g;
 	formattedBib = formattedBib.replaceAll(linkRegex, "[$2]($1)");
 
 	return formattedBib;
@@ -69,8 +69,8 @@ async function deleteTags(tags, library, version){
 		console.warn("Only 50 Zotero tags can be deleted at once : any additional tags provided will be ignored.");
 	}
 
-	let tagList = tags.slice(0,50).map(t => encodeURIComponent(t)).join(" || ");
-	return zoteroClient.delete(
+	const tagList = tags.slice(0,50).map(t => encodeURIComponent(t)).join(" || ");
+	return await zoteroClient.delete(
 		`${path}/tags`, 
 		{ 
 			headers: { 
@@ -89,7 +89,7 @@ async function deleteTags(tags, library, version){
  * @returns {Object[]} The processed dataset : each item gains a `has_citekey` property, and its `key` property is assigned its citekey 
  */
 function extractCitekeys(arr){
-	let itemList = [...arr];
+	const itemList = [...arr];
 	return itemList.map(item => {
 		item.has_citekey = false;
 		if(typeof(item.data.extra) !== "undefined"){
@@ -109,12 +109,12 @@ function extractCitekeys(arr){
  * @returns {Promise<Object[]>} The additional results to the original request
  */
 async function fetchAdditionalData(req, totalResults) {
-	let { dataURI, apikey, params = "", since = null } = req;
-	let nbExtraCalls = Math.ceil((totalResults / 100) - 1);
-	let apiCalls = [];
+	const { dataURI, apikey, params = "", since = null } = req;
+	const nbExtraCalls = Math.ceil((totalResults / 100) - 1);
+	const apiCalls = [];
 
 	for(let i=1; i <= nbExtraCalls; i++){
-		let reqParams = new URLSearchParams(params);
+		const reqParams = new URLSearchParams(params);
 		if(since){
 			reqParams.set("since", since);
 		}
@@ -129,7 +129,7 @@ async function fetchAdditionalData(req, totalResults) {
 	}
 
 	try {
-		let responses = await Promise.all(apiCalls);
+		const responses = await Promise.all(apiCalls);
 		return responses.map(res => res.data).flat(1);
 	} catch(error){
 		return Promise.reject(error);
@@ -140,11 +140,11 @@ async function fetchBibEntries(itemKeys, library) {
 	const { apikey, path } = library;
 
 	// * Only 100 entries can be retrieved at once
-	let apiCalls = [];
-	let nbCalls = Math.ceil(itemKeys.length / 100);
+	const apiCalls = [];
+	const nbCalls = Math.ceil(itemKeys.length / 100);
 
 	for(let i=1; i <= nbCalls; i++){
-		let keyList = itemKeys.slice(100*(i-1), 100*i);
+		const keyList = itemKeys.slice(100*(i-1), 100*i);
 		apiCalls.push(zoteroClient.get(`${path}/items`, {
 			headers: {
 				"Zotero-API-Key": apikey
@@ -156,11 +156,11 @@ async function fetchBibEntries(itemKeys, library) {
 		}));
 	}
 
-	let bibResults = await Promise.all(apiCalls);
+	const bibResults = await Promise.all(apiCalls);
 	return bibResults
 		.map(res => res.data)
 		.flat(1)
-		.map(entry => entry["biblatex"])
+		.map(entry => entry.biblatex)
 		.join("\n");
 
 }
@@ -177,7 +177,7 @@ async function fetchBibliography(itemKey, library, config = {}) {
 	const { include = "bib", linkwrap = 0, locale = "en-US", style = "chicago-note-bibliography" } = config;
 	
 	try {
-		let { data } = await zoteroClient.get(
+		const { data } = await zoteroClient.get(
 			`${path}/items/${itemKey}`, 
 			{
 				headers: { "Zotero-API-Key": apikey },
@@ -202,7 +202,7 @@ async function fetchBibliography(itemKey, library, config = {}) {
  */
 async function fetchCitoid(query) {
 	try {
-		let { data } = await citoidClient.get(encodeURIComponent(query));
+		const { data } = await citoidClient.get(encodeURIComponent(query));
 		return {
 			item: data[0],
 			query
@@ -223,7 +223,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 	const { apikey, path } = library;
 
 	try {
-		let { data: modified, headers } = await zoteroClient.get(
+		const { data: modified, headers } = await zoteroClient.get(
 			`${path}/collections`,
 			{ 
 				headers: { "Zotero-API-Key": apikey },
@@ -232,7 +232,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
 		totalResults = Number(totalResults);
 		if(totalResults > 100){
-			let additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since}, totalResults);
+			const additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since }, totalResults);
 			modified.push(...additional);
 		}
 
@@ -273,7 +273,7 @@ async function fetchDeleted(library, since) {
 	const { apikey, path } = library;
 
 	try {
-		let { data } = await zoteroClient.get(
+		const { data } = await zoteroClient.get(
 			`${path}/deleted`, 
 			{ 
 				headers: { "Zotero-API-Key": apikey },
@@ -293,21 +293,21 @@ async function fetchDeleted(library, since) {
  * @returns {Promise<{data: Object[], lastUpdated: Integer}>}
  */
 async function fetchItems(req, { match = [] } = {}, queryClient) {
-	let { apikey, dataURI, params, library, since = 0 } = req;
-	let paramsQuery = new URLSearchParams(params);
+	const { apikey, dataURI, params, library, since = 0 } = req;
+	const paramsQuery = new URLSearchParams(params);
 	paramsQuery.set("since", since);
 	paramsQuery.set("start", 0);
 	paramsQuery.set("limit", 100);
 
 	try {
-		let { data: modified, headers } = await zoteroClient.get(`${dataURI}?${paramsQuery.toString()}`, 
+		const { data: modified, headers } = await zoteroClient.get(`${dataURI}?${paramsQuery.toString()}`, 
 			{ 
 				headers: { "Zotero-API-Key": apikey } 
 			});
 		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
 		totalResults = Number(totalResults);
 		if(totalResults > 100){
-			let additional = await fetchAdditionalData({ dataURI, apikey, params, since }, totalResults);
+			const additional = await fetchAdditionalData({ dataURI, apikey, params, since }, totalResults);
 			modified.push(...additional);
 		}
 
@@ -318,8 +318,8 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			// Retrieve deleted items, if any
 			deleted = await fetchDeleted({ apikey, path: library }, since);
 
-			let tagsQueryKey = ["tags", { apikey, library }];
-			let { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {};
+			const tagsQueryKey = ["tags", { apikey, library }];
+			const { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {};
 			if(modified.length > 0 || Number(latest_tags_version) < Number(lastUpdated)){
 				// Refetch tags data
 				queryClient.refetchQueries(tagsQueryKey);
@@ -352,7 +352,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
  */
 async function fetchPermissions(apikey) {
 	try {
-		let { data } = await zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } });
+		const { data } = await zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } });
 		return data;
 	} catch(error){
 		return Promise.reject(error);
@@ -365,7 +365,7 @@ async function fetchPermissions(apikey) {
 **/
 async function fetchSemantic(doi) {
 	try {
-		let { data: { citations, references } } = await semanticClient.get(`${doi}`);
+		const { data: { citations, references } } = await semanticClient.get(`${doi}`);
 		return { 
 			doi, 
 			citations: parseSemanticDOIs(citations), 
@@ -384,11 +384,11 @@ async function fetchTags(library) {
 	const { apikey, path } = library;
 
 	try {
-		let { data, headers } = await zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } });
+		const { data, headers } = await zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } });
 		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
 		totalResults = Number(totalResults);
 		if(totalResults > 100){
-			let additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey}, totalResults);
+			const additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey }, totalResults);
 			data.push(...additional);
 		}
 		return { 
@@ -405,11 +405,11 @@ async function fetchTags(library) {
  * @returns The list of categorized tags
  */
 function makeTagList(tags){
-	let tagMap = makeTagMap(tags);
-	let zdict = makeDictionary(Array.from(tagMap.keys()));
-	let zkeys = Object.keys(zdict).sort((a,b) => a < b ? -1 : 1);
+	const tagMap = makeTagMap(tags);
+	const zdict = makeDictionary(Array.from(tagMap.keys()));
+	const zkeys = Object.keys(zdict).sort((a,b) => a < b ? -1 : 1);
 
-	let output = {};
+	const output = {};
 	zkeys.forEach(key => {
 		output[key] = categorizeZoteroTags(zdict[key], tagMap);
 	});
@@ -423,9 +423,9 @@ function makeTagList(tags){
 function makeTagMap(tags){
 	return tags.reduce(
 		function(map,t){
-			let { tag, meta : { type } } = t;
+			const { tag, meta: { type } } = t;
 			if(map.has(tag)){
-				let entry = map.get(tag);
+				const entry = map.get(tag);
 				if(entry.constructor === Array){
 					if(entry.every(el => el.tag != tag || el.meta.type != type)){
 						map.set(tag, [...entry, t]);
@@ -452,11 +452,11 @@ function makeTagMap(tags){
  */
 function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
 	let oldData = arr || [];
-	let { modified = [], deleted = [] } = update;
+	const { modified = [], deleted = [] } = update;
 
 	// To avoid mutating the original arrays
 	let modifiedData = [...modified];
-	let deletedData = [...deleted];
+	const deletedData = [...deleted];
 
 	// Remove deleted items
 	if(deletedData.length > 0){
@@ -473,9 +473,9 @@ function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
 	} else if(oldData.length == 0){
 		return modifiedData;
 	} else {
-		let [...datastore] = arr;
+		const [...datastore] = arr;
 		modifiedData.forEach(item => {
-			let duplicateIndex = datastore.findIndex(i => i.data.key == item.data.key);
+			const duplicateIndex = datastore.findIndex(i => i.data.key == item.data.key);
 			if(duplicateIndex == -1){
 				datastore.push(item);
 			} else {
@@ -492,7 +492,7 @@ function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
  */
 function parseSemanticDOIs(arr){
 	return arr.map(elem => {
-		let { doi, ...rest } = elem;
+		const { doi, ...rest } = elem;
 		return {
 			doi: parseDOI(doi),
 			...rest
@@ -505,16 +505,16 @@ function parseSemanticDOIs(arr){
  * @param {{library: ZoteroLibrary, collections: String[], tags: String[]}} config - The options to be used for the import. 
  * @returns 
  */
-function writeCitoids(items, {library, collections = [], tags = []} = {}){
+function writeCitoids(items, { library, collections = [], tags = [] } = {}){
 	const { apikey, path } = library;
 	const clean_tags = tags.map(t => { return { tag: t }; });
 	// * Only 50 items can be added at once
 	// * https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
-	let apiCalls = [];
-	let nbCalls = Math.ceil(items.length / 50);
+	const apiCalls = [];
+	const nbCalls = Math.ceil(items.length / 50);
 
 	for(let i=1; i <= nbCalls; i++){
-		let itemsData = items
+		const itemsData = items
 			.slice(50*(i-1),50*i)
 			.map(citoid => {
 				// Remove key and version from the data object
@@ -541,11 +541,11 @@ function writeItems(dataList, library){
 	const { apikey, path } = library;
 	// * Only 50 items can be added at once
 	// * https://www.zotero.org/support/dev/web_api/v3/write_requests#updating_multiple_objects
-	let apiCalls = [];
-	let nbCalls = Math.ceil(dataList.length / 50);
+	const apiCalls = [];
+	const nbCalls = Math.ceil(dataList.length / 50);
 
 	for(let i=1; i <= nbCalls; i++){
-		let itemsData = dataList.slice(50*(i-1),50*i);
+		const itemsData = dataList.slice(50*(i-1),50*i);
 		apiCalls.push(zoteroClient.post(`${path}/items`, JSON.stringify(itemsData), { headers: { "Zotero-API-Key": apikey } }));
 	}
 

@@ -1,19 +1,23 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape } from "prop-types";
+
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import { ListItem, ListWrapper } from "../../DataList";
-import SentryBoundary from "../../Errors/SentryBoundary";
 import QueryBuilder from "./QueryBuilder";
 import QueryPDFs from "./QueryPDFs";
-import { useRoamCitekeys } from "../../RoamCitekeysContext";
+import SentryBoundary from "../../Errors/SentryBoundary";
 
 import { useQuery_Items } from "../../../api/queries";
+import { useRoamCitekeys } from "../../RoamCitekeysContext";
+
 import { categorizeLibraryItems, cleanLibraryItem, cleanLibraryPDF, identifyChildren, identifyPDFConnections } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
+
 import "./index.css";
 
 function cleanLibraryData(itemList, roamCitekeys){
@@ -21,9 +25,9 @@ function cleanLibraryData(itemList, roamCitekeys){
 		setTimeout(() => {
 			const data = itemList.items
 				.map(item => {
-					let itemKey = item.data.key;
-					let location = item.library.type + "s/" + item.library.id;
-					let { pdfs, notes } = identifyChildren(itemKey, location, { pdfs: itemList.pdfs, notes: itemList.notes });
+					const itemKey = item.data.key;
+					const location = item.library.type + "s/" + item.library.id;
+					const { pdfs, notes } = identifyChildren(itemKey, location, { pdfs: itemList.pdfs, notes: itemList.notes });
 
 					return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
 				});
@@ -37,10 +41,10 @@ function cleanLibraryData_PDF(itemList){
 		setTimeout(() => {
 			const data = itemList.pdfs
 				.map(pdf => {
-					let itemKey = pdf.data.key;
-					let parentKey = pdf.data.parentItem;
-					let location = pdf.library.type + "s/" + pdf.library.id;
-					let { parent, annotations } = identifyPDFConnections(itemKey, parentKey, location, { items: itemList.items, notes: itemList.notes });
+					const itemKey = pdf.data.key;
+					const parentKey = pdf.data.parentItem;
+					const location = pdf.library.type + "s/" + pdf.library.id;
+					const { parent, annotations } = identifyPDFConnections(itemKey, parentKey, location, { items: itemList.items, notes: itemList.notes });
 					
 					return cleanLibraryPDF(pdf, parent, annotations);
 				});

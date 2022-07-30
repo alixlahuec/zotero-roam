@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Menu } from "@blueprintjs/core";
 import MergeAsOptions from "./MergeAsOptions";
 
@@ -8,7 +9,7 @@ import { libraries } from "Mocks/zotero/libraries";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
-const { keyWithFullAccess: { key: masterKey }} = apiKeys;
+const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary } = libraries;
 
 export default {

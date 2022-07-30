@@ -35,7 +35,7 @@ function itemPredicate(query, item) {
 }
 
 function itemRenderer(item, itemProps) {
-	let { handleClick, modifiers: { active } } = itemProps;
+	const { handleClick, modifiers: { active } } = itemProps;
 	return <MenuItem active={active} key={item.value} onClick={handleClick} text={item.label} />;
 }
 
@@ -50,7 +50,7 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }){
 		initialContent={null}
 		itemPredicate={itemPredicate}
 		itemRenderer={itemRenderer}
-        itemsEqual="value"
+		itemsEqual="value"
 		items={options}
 		onItemSelect={onItemSelect}
 		onRemove={onRemove}
@@ -59,7 +59,7 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }){
 		selectedItems={selectedItems}
 		tagInputProps={tagInputProps}
 		tagRenderer={tagRenderer}
-        {...props}
+		{...props}
 	/>;
 }
 InputMultiSelect.propTypes = {

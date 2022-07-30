@@ -1,19 +1,24 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { bool, func, node, object, shape } from "prop-types";
+
 import { Menu, MenuItem } from "@blueprintjs/core";
 import { QueryList, renderFilteredItems } from "@blueprintjs/select";
 
 import { UserSettings } from "../App";
 import ItemDetails from "../ItemDetails";
 import SearchInputGroup from "./SearchInputGroup";
-import { formatItemReferenceForCopy } from "./utils";
-import { copyToClipboard, pluralize, searchEngine } from "../../utils";
 
 import useDebounceCallback from "../../hooks/useDebounceCallback";
+
+import { copyToClipboard, pluralize, searchEngine } from "../../utils";
+import { formatItemReferenceForCopy } from "./utils";
+
 import { resultClass, resultKeyClass } from "./classes";
 
 import { CustomClasses } from "../../constants";
+
 import * as customPropTypes from "../../propTypes";
+
 
 const query_debounce = 300;
 const query_threshold = 0;
@@ -43,7 +48,7 @@ function itemListRenderer(listProps){
 	const initialContent = null;
 
 	const totalResults = filteredItems.length;
-	const menuContent = renderFilteredItems({ filteredItems: filteredItems.slice(0, results_limit), itemsParentRef, ...rest}, noResults, initialContent);
+	const menuContent = renderFilteredItems({ filteredItems: filteredItems.slice(0, results_limit), itemsParentRef, ...rest }, noResults, initialContent);
 
 	if(menuContent == null){
 		return null;
@@ -56,8 +61,8 @@ function itemListRenderer(listProps){
 }
 
 function listItemRenderer(item, itemProps) {
-	let { handleClick, modifiers /*, query*/ } = itemProps;
-	let elemKey = [item.location, item.key].join("-");
+	const { handleClick, modifiers /*, query*/ } = itemProps;
+	const elemKey = [item.location, item.key].join("-");
 
 	return <SearchResult key={elemKey}
 		handleClick={handleClick}
@@ -126,8 +131,8 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 	const { copy: copySettings } = useContext(UserSettings);
 
 	const searchbar = useRef();
-	let [selectedItemID, itemSelect] = useState(null);
-	let [query, setQuery] = useState();
+	const [selectedItemID, itemSelect] = useState(null);
+	const [query, setQuery] = useState();
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 	const [debouncedCallback, ] = useDebounceCallback(_query => { }, query_debounce);
 
@@ -168,21 +173,21 @@ const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 		}
 	}, [items, selectedItemID]);
 
-	const handleQueryChange = useCallback((query, _e) => {
+	const handleQueryChange = useCallback((queryString, _e) => {
 		handleItemSelect(null);
-		setQuery(query);
-		debouncedCallback(query);
+		setQuery(queryString);
+		debouncedCallback(queryString);
 	}, [handleItemSelect, debouncedCallback]);
 
 	const listRenderer = useCallback((listProps) => {
-		const { handleKeyUp, handleKeyDown, handleQueryChange, itemList } = listProps;
+		const { handleKeyUp, handleKeyDown, handleQueryChange: queryHandler, itemList } = listProps;
 		return (
 			<div className="zr-querylist">
 				<SearchInputGroup 
 					handleClose={handleClose}
 					handleKeyDown={handleKeyDown} 
 					handleKeyUp={handleKeyUp} 
-					handleQueryChange={handleQueryChange}
+					handleQueryChange={queryHandler}
 					quickCopyProps={quickCopyProps}
 					searchbar={searchbar} />
 				<RenderedList handleClose={handleClose} handleKeyDown={handleKeyDown} handleKeyUp={handleKeyUp} itemList={itemList} selectedItem={selectedItem} />

@@ -1,9 +1,12 @@
 import React from "react";
+
 import { Backlinks } from "./CitekeyMenu";
-import { semanticIdentifier, citoids } from "Mocks/citoid";
-import { semantics } from "Mocks/semantic-scholar";
+
+import { citoids, semanticIdentifier } from "Mocks/citoid";
 import { cleanSemanticItem } from "../../../utils";
 import { items } from "Mocks/zotero/items";
+import { semantics } from "Mocks/semantic-scholar";
+
 
 const semanticCitoid = citoids[semanticIdentifier];
 const semanticEntry = Object.values(semantics)[0].references.find(ref => ref.title == semanticCitoid.title);
@@ -15,14 +18,14 @@ export default {
 		isOpen: true,
 		origin: "2016"
 	},
-    parameters: {
-        userSettings: {
+	parameters: {
+		userSettings: {
 			annotations: {},
 			metadata: {},
 			notes: {},
 			typemap: {}
 		}
-    }
+	}
 };
 
 const Template = (args) => <Backlinks {...args} />;

@@ -7,6 +7,7 @@ import { ListItem } from "../../DataList";
 import useBool from "../../../hooks/useBool";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
 
 function Abstract({ abstract, allAbstractsShown }){

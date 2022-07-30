@@ -1,6 +1,6 @@
-import { zotero, makeEntityLinks, makeLibraryMetadata } from "./common";
-import { rest } from "msw";
+import { makeEntityLinks, makeLibraryMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
+import { rest } from "msw";
 
 const { userLibrary } = libraries;
 
@@ -40,7 +40,7 @@ export const handleBibliography = rest.get(
 		const { libraryType, libraryID, itemKey } = req.params;
 		const include = req.url.searchParams.get("include");
         
-		const { key, version, library, links, meta, [include]: output } = findBibliographyEntry({ key: itemKey, path: `${libraryType}/${libraryID}`});
+		const { key, version, library, links, meta, [include]: output } = findBibliographyEntry({ key: itemKey, path: `${libraryType}/${libraryID}` });
 
 		return res(
 			ctx.json({

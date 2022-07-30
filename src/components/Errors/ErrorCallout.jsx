@@ -1,5 +1,7 @@
-import React from "react";
+
 import { func, instanceOf, string } from "prop-types";
+import React from "react";
+
 import { Button, Callout } from "@blueprintjs/core";
 
 function ErrorCallout({ buttonText = "Go back", error, resetErrorBoundary = null }) {

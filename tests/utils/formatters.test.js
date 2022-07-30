@@ -3,9 +3,9 @@ import {
 	getLocalLink, 
 	getPDFLink, 
 	getWebLink, 
-	makeDateFromAgo,
+	makeDNP,
+	makeDateFromAgo, 
 	makeDictionary, 
-	makeDNP, 
 	makeTimestamp, 
 	parseDOI, 
 	pluralize, 
@@ -125,55 +125,55 @@ describe("Parsing DOIs", () => {
 
 describe("Making Zotero local link", () => {
 	it("creates Markdown link by default", () => {
-		const item = {data: {key: "A12BCDEF"}, library: {type: "user", id: 12345}};
+		const item = { data: { key: "A12BCDEF" }, library: { type: "user", id: 12345 } };
 		expect(getLocalLink(item)).toBe("[Local library](zotero://select/library/items/A12BCDEF)");
 	});
 
 	it("correctly generates the target URL", () => {
-		const item = {data: {key: "A12BCDEF"}, library: {type: "user", id: 12345}};
-		expect(getLocalLink(item, {format: "target"})).toBe("zotero://select/library/items/A12BCDEF");
+		const item = { data: { key: "A12BCDEF" }, library: { type: "user", id: 12345 } };
+		expect(getLocalLink(item, { format: "target" })).toBe("zotero://select/library/items/A12BCDEF");
 	});
 
 	it("correctly generates the target URL for an item in a group library", () => {
-		const item = {data: {key: "A12BCDEF"}, library: {type: "group", id: 12345}};
-		expect(getLocalLink(item, {format: "target"})).toBe("zotero://select/groups/12345/items/A12BCDEF");
+		const item = { data: { key: "A12BCDEF" }, library: { type: "group", id: 12345 } };
+		expect(getLocalLink(item, { format: "target" })).toBe("zotero://select/groups/12345/items/A12BCDEF");
 	});
 	
 });
 
 describe("Making Zotero web link", () => {
 	it("creates Markdown link by default", () => {
-		const item = {data: {key: "A12BCDEF"}, library: {type: "user", id: 12345}};
+		const item = { data: { key: "A12BCDEF" }, library: { type: "user", id: 12345 } };
 		expect(getWebLink(item)).toBe("[Web library](https://www.zotero.org/users/12345/items/A12BCDEF)");
 	});
 	
 	it("correctly generates the target URL", () => {
-		const item = {data: {key: "A12BCDEF"}, library: {type: "user", id: 12345}};
-		expect(getWebLink(item, {format: "target"})).toBe("https://www.zotero.org/users/12345/items/A12BCDEF");
+		const item = { data: { key: "A12BCDEF" }, library: { type: "user", id: 12345 } };
+		expect(getWebLink(item, { format: "target" })).toBe("https://www.zotero.org/users/12345/items/A12BCDEF");
 	});
 });
 
 describe("Making PDF links", () => {
 	it("creates target link by default", () => {
 		const pdfItem = {
-			data: {filename: "Scott et al (2003).pdf", key: "A12BCDEF", linkMode: "linked_file", title: "Organizational Culture"},
-			library: {id: 12345, type: "user"}
+			data: { filename: "Scott et al (2003).pdf", key: "A12BCDEF", linkMode: "linked_file", title: "Organizational Culture" },
+			library: { id: 12345, type: "user" }
 		};
 		expect(getPDFLink(pdfItem)).toBe("zotero://open-pdf/library/items/A12BCDEF");
 	});
 	
 	it("correctly generates Markdown link", () => {
 		const pdfItem = {
-			data: {filename: "Scott et al (2003).pdf", key: "A12BCDEF", linkMode: "linked_file", title: "Organizational Culture"},
-			library: {id: 12345, type: "user"}
+			data: { filename: "Scott et al (2003).pdf", key: "A12BCDEF", linkMode: "linked_file", title: "Organizational Culture" },
+			library: { id: 12345, type: "user" }
 		};
 		expect(getPDFLink(pdfItem, "markdown")).toBe("[Scott et al (2003).pdf](zotero://open-pdf/library/items/A12BCDEF)");
 	});
     
 	it("has fallback defaults", () => {
 		const unknownModeItem = {
-			data: {filename: "Scott et al (2003).pdf", key: "A12BCDEF", linkMode: "unknown mode", title: "Organizational Culture", url: "https://example.com"},
-			library: {id: 12345, type: "user"}
+			data: { filename: "Scott et al (2003).pdf", key: "A12BCDEF", linkMode: "unknown mode", title: "Organizational Culture", url: "https://example.com" },
+			library: { id: 12345, type: "user" }
 		};
 		expect(getPDFLink(unknownModeItem, "markdown")).toBe("[Organizational Culture](https://example.com)");
 	});
@@ -182,7 +182,7 @@ describe("Making PDF links", () => {
 // Other
 
 describe("Formatting Zotero item references", () => {
-	const item = {data:{title: "The Quantitative Measurement of Organizational Culture in Health Care: A Review of the Available Instruments"}, key: "scottOrganizationalCulture2003", meta: {creatorSummary: "Scott et al", parsedDate: "2003"}};
+	const item = { data: { title: "The Quantitative Measurement of Organizational Culture in Health Care: A Review of the Available Instruments" }, key: "scottOrganizationalCulture2003", meta: { creatorSummary: "Scott et al", parsedDate: "2003" } };
 
 	it("formats as inline reference", () => {
 		expect(formatItemReference(item, "inline")).toBe("Scott et al (2003)");

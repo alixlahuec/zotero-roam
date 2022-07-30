@@ -1,6 +1,6 @@
-import { zotero, makeCollection, makeItemMetadata } from "./common";
-import { rest } from "msw";
+import { makeCollection, makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
+import { rest } from "msw";
 
 const { userLibrary, groupLibrary } = libraries;
 

@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Button } from "@blueprintjs/core";
 
 import ButtonLink from "../../ButtonLink";
@@ -10,10 +11,11 @@ import { pluralize } from "../../../utils";
 import useBool from "../../../hooks/useBool";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
 function PDFElement({ item }){
 	const [isDataDrawerOpen, { on: openDataDrawer, off: closeDataDrawer }] = useBool(false);
-	const [isNotesDrawerOpen, { on: openNotesDrawer, off: closeNotesDrawer}] = useBool(false);
+	const [isNotesDrawerOpen, { on: openNotesDrawer, off: closeNotesDrawer }] = useBool(false);
 
 	return <>
 		<ListItem className="zr-query--result" >

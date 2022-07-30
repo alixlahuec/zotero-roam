@@ -4,15 +4,18 @@ import { bool, func, oneOf} from "prop-types";
 import { ExtensionContext, UserSettings } from "../App";
 import DialogOverlay from "../DialogOverlay";
 import LibraryQueryList from "./LibraryQueryList";
+import SentryBoundary from "../Errors/SentryBoundary";
+
+import useBool from "../../hooks/useBool";
+import { useQuery_Items } from "../../api/queries";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
-import { useQuery_Items } from "../../api/queries";
 import { cleanLibrary } from "../../utils";
 
-import SentryBoundary from "../Errors/SentryBoundary";
-import useBool from "../../hooks/useBool";
 import { dialogClass, dialogLabel } from "./classes";
+
 import "./index.css";
+
 
 function useGetItems(reqs, roamCitekeys, opts = {}){
 	const itemQueries = useQuery_Items(reqs, {
@@ -50,7 +53,7 @@ const SearchPanel = React.memo(function SearchPanel(props) {
 					handleClose={onClose}
 					isOpen={isOpen}
 					items={items}
-					quickCopyProps={{ isActive: quickCopyActive, toggle: toggleQuickCopy}} />
+					quickCopyProps={{ isActive: quickCopyActive, toggle: toggleQuickCopy }} />
 			</SentryBoundary>
 		</DialogOverlay>
 	);

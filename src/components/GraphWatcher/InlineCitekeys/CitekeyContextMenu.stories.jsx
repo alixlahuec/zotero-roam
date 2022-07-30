@@ -1,7 +1,9 @@
 import React, { useContext, useRef } from "react";
 import { ExtensionContext } from "../../App";
-import { items } from "Mocks/zotero/items";
+
 import { CitekeyContextMenu, useGetItems } from ".";
+
+import { items } from "Mocks/zotero/items";
 
 export default {
 	component: CitekeyContextMenu,
@@ -26,7 +28,7 @@ export default {
 				]
 			}
 		},
-        userSettings: {
+		userSettings: {
 			annotations: {},
 			metadata: {},
 			notes: {},

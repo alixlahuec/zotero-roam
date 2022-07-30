@@ -1,17 +1,18 @@
-import { menuPrefix, menuClasses } from "../classes";
+import { menuClasses, menuPrefix } from "../classes";
 import { findRoamPage } from "Roam";
+
 import { identifyChildren, makeTimestamp, readDNP } from "../../../utils";
 
 const dnpRegex = new RegExp(/(.+) ([0-9]+).{2}, ([0-9]{4})/g);
 
 const addPageMenus = () => {
-	let newPages = Array.from(document.querySelectorAll("h1.rm-title-display"))
+	const newPages = Array.from(document.querySelectorAll("h1.rm-title-display"))
 		.filter(page => !(page.parentElement.querySelector(`[class*=${menuPrefix}]`)));
 	for(const page of newPages) {
-		let title = page.querySelector("span") ? page.querySelector("span").innerText : page.innerText;
-		let pageUID = findRoamPage(title);
+		const title = page.querySelector("span") ? page.querySelector("span").innerText : page.innerText;
+		const pageUID = findRoamPage(title);
 		
-		let menu = document.createElement("div");
+		const menu = document.createElement("div");
 		menu.setAttribute("data-title", title);
 		if(pageUID) { menu.setAttribute("data-uid", pageUID); }
 
@@ -57,13 +58,13 @@ const addPageMenus = () => {
  * }[]} The formatted array
  * @see cleanRelatedItemType
  */
-function cleanRelatedItem(item, {pdfs = [], notes = []} = {}, roamCitekeys){
-	let creator = item.meta.creatorSummary || "";
-	let pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
-	let itemKey = item.data.key;
-	let location = item.library.type + "s/" + item.library.id;
+function cleanRelatedItem(item, { pdfs = [], notes = [] } = {}, roamCitekeys){
+	const creator = item.meta.creatorSummary || "";
+	const pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
+	const itemKey = item.data.key;
+	const location = item.library.type + "s/" + item.library.id;
 
-	let children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
+	const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
 
 	return {
 		abstract: item.data.abstractNote || "",

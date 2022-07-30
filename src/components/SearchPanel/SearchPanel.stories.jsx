@@ -5,7 +5,9 @@ import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import zrToaster from "../ExtensionToaster";
+
 import { items } from "Mocks/zotero/items";
+
 
 export default {
 	component: SearchPanel,
@@ -14,8 +16,8 @@ export default {
 		onClose: () => {},
 		status: "on"
 	},
-    parameters: {
-        userSettings: {
+	parameters: {
+		userSettings: {
 			copy: {
 				always: true,
 				defaultFormat: "citekey",
@@ -27,7 +29,7 @@ export default {
 				importMetadata: false
 			}
 		}
-    }
+	}
 };
 
 const Template = (args) => <SearchPanel {...args} />;

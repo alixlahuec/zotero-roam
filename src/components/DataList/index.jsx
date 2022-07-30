@@ -1,10 +1,12 @@
 import React, { useCallback, useMemo } from "react";
 import { func, node, number, oneOf, string } from "prop-types";
+
 import { Button, ControlGroup } from "@blueprintjs/core";
 
 import { pluralize } from "../../utils";
 
 import { CustomClasses } from "../../constants";
+
 import "./index.css";
 
 const ListItem = ({ className, children, ...rest }) => 

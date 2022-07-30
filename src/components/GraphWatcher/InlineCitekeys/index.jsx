@@ -1,16 +1,18 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
 import { bool, func, instanceOf, number, object, shape } from "prop-types";
+import { createPortal } from "react-dom";
+
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
 import NotesDrawer from "../../NotesDrawer";
 
+import useBool from "../../../hooks/useBool";
 import { useQuery_Items } from "../../../api/queries";
-import { importItemMetadata } from "Roam";
+
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
+import { importItemMetadata } from "Roam";
 
 import { ExtensionContext, UserSettings } from "../../App";
-import useBool from "../../../hooks/useBool";
 import "./index.css";
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation
@@ -29,19 +31,19 @@ const useGetItems = (reqs) => {
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => {
 			if(datastore.data){
-				let lib = categorizeLibraryItems(datastore.data);
+				const lib = categorizeLibraryItems(datastore.data);
 
 				return lib.items.map(item => {
-					let hasURL = item.data.url;
-					let hasDOI = parseDOI(item.data.DOI);
-					let weblink = hasURL
+					const hasURL = item.data.url;
+					const hasDOI = parseDOI(item.data.DOI);
+					const weblink = hasURL
 						? { href: hasURL, title: hasURL }
 						: hasDOI
-							? { href: "https://doi/org/" + hasDOI, title: hasDOI}
+							? { href: "https://doi/org/" + hasDOI, title: hasDOI }
 							: false;
-					let location = item.library.type + "s/" + item.library.id;
+					const location = item.library.type + "s/" + item.library.id;
 
-					let children = identifyChildren(item.data.key, location, { pdfs: lib.pdfs, notes: lib.notes });
+					const children = identifyChildren(item.data.key, location, { pdfs: lib.pdfs, notes: lib.notes });
 
 					return [
 						"@" + item.key,
@@ -53,8 +55,8 @@ const useGetItems = (reqs) => {
 								raw: item,
 								weblink,
 								zotero: {
-									local: getLocalLink(item, {format: "target"}),
-									web: getWebLink(item, {format: "target"})
+									local: getLocalLink(item, { format: "target" }),
+									web: getWebLink(item, { format: "target" })
 								}
 							}
 						}
@@ -98,8 +100,8 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	}, []);
 
 	const importMetadata = useCallback(() => {
-		let { pdfs = [], notes = [] } = itemData.children;
-		importItemMetadata({item: itemData.raw, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings, annotationsSettings);
+		const { pdfs = [], notes = [] } = itemData.children;
+		importItemMetadata({ item: itemData.raw, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings, annotationsSettings);
 		onClose();
 	}, [annotationsSettings, itemData.raw, itemData.children, metadataSettings, notesSettings, onClose, pageUID, typemap]);
 
@@ -112,14 +114,14 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		if(!(itemData?.children?.pdfs?.length > 0)){
 			return null;
 		} else {
-			let { pdfs = [] } = itemData.children;
-			let libLoc = itemData.location.startsWith("groups/") ? itemData.location : "library";
+			const { pdfs = [] } = itemData.children;
+			const libLoc = itemData.location.startsWith("groups/") ? itemData.location : "library";
 			
 			return (
 				<>
 					<MenuDivider title="PDF Attachments" />
 					{pdfs.map((p,i) => {
-						let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
+						const pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
 						return <MenuItem key={i} className="zr-context-menu--option" 
 							href={pdfHref} 
 							icon="paperclip"
@@ -136,7 +138,7 @@ const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 		if(!(itemData?.children?.notes?.length > 0)){
 			return null;
 		} else {
-			let { notes = [] } = itemData.children;
+			const { notes = [] } = itemData.children;
 
 			return (
 				<>
@@ -203,15 +205,15 @@ const InlineCitekeys = React.memo(function InlineCitekeys() {
 	const { render_inline } = useContext(UserSettings);
 
 	const [isContextMenuOpen, setContextMenuOpen] = useState(false);
-	const [contextMenuCoordinates, setContextMenuCoordinates] = useState({left: 0, top:0});
+	const [contextMenuCoordinates, setContextMenuCoordinates] = useState({ left: 0, top: 0 });
 	const [contextMenuTarget, setContextMenuTarget] = useState(null);
 
 	const itemsMap = useGetItems(dataRequests);
     
 	const openContextMenu = useCallback((e) => {
 		e.preventDefault();
-		const { pageX: left, pageY: top, target} = e;
-		setContextMenuCoordinates({left, top});
+		const { pageX: left, pageY: top, target } = e;
+		setContextMenuCoordinates({ left, top });
 		setContextMenuTarget(target);
 		setContextMenuOpen(true);
 	}, []);
@@ -222,15 +224,15 @@ const InlineCitekeys = React.memo(function InlineCitekeys() {
 	}, []);
 
 	const renderCitekeyRefs = useCallback(() => {
-		let refCitekeys = document.querySelectorAll("span[data-link-title^='@']");
+		const refCitekeys = document.querySelectorAll("span[data-link-title^='@']");
 
 		for(let i=0;i<refCitekeys.length;i++){
-			let refCitekeyElement = refCitekeys[i];
-			let linkElement = refCitekeyElement.getElementsByClassName("rm-page-ref")[0];
-			let citekey = refCitekeyElement.getAttribute("data-link-title");
+			const refCitekeyElement = refCitekeys[i];
+			const linkElement = refCitekeyElement.getElementsByClassName("rm-page-ref")[0];
+			const citekey = refCitekeyElement.getAttribute("data-link-title");
 
-			let prev_status = refCitekeyElement.getAttribute("data-in-library");
-			let current_status = itemsMap.has(citekey).toString();
+			const prev_status = refCitekeyElement.getAttribute("data-in-library");
+			const current_status = itemsMap.has(citekey).toString();
 
 			if(prev_status != null && prev_status == current_status){
 				// If the item's status has not changed, move on
@@ -256,10 +258,10 @@ const InlineCitekeys = React.memo(function InlineCitekeys() {
 	}, [itemsMap, render_inline, openContextMenu]);
 
 	const cleanupCitekeyRefs = useCallback(() => {
-		let refCitekeys = document.querySelectorAll("span[data-link-title^='@'][data-in-library]");
+		const refCitekeys = document.querySelectorAll("span[data-link-title^='@'][data-in-library]");
 		refCitekeys.forEach(ck => { 
 			ck.removeAttribute("data-in-library");
-			let linkElement = ck.getElementsByClassName("rm-page-ref")[0];
+			const linkElement = ck.getElementsByClassName("rm-page-ref")[0];
 			linkElement.textContent = ck.getAttribute("data-link-title");
 			if(render_inline == true){
 				linkElement.removeEventListener("contextmenu", openContextMenu);   

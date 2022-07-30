@@ -5,9 +5,9 @@ export default {
 	component: InputMultiSelect,
 	args: {
 		options: [
-			{label: "history", value: "history" }, 
-			{label: "culture", value: "culture" }, 
-			{label: "TODO", value: "TODO" }
+			{ label: "history", value: "history" }, 
+			{ label: "culture", value: "culture" }, 
+			{ label: "TODO", value: "TODO" }
 		]
 	}
 };

@@ -14,11 +14,13 @@ function getTagStats(tagListData){
 		out.nRoam += tk.in_roam;
 		return out;
 	}, 
-	{nTags: 0, nAuto: 0, nRoam: 0, nTotal: tagListData.length});
+	{ nTags: 0, nAuto: 0, nRoam: 0, nTotal: tagListData.length });
 }
 
-function getTagUsage(entry, {count_roam = false} = {}){
-	return entry.zotero.reduce((count, tag) => count += tag.meta.numItems, 0) + (count_roam ? entry.roam.length : 0);
+function getTagUsage(entry, { count_roam = false } = {}){
+	return entry.zotero.reduce((count, tag) => {
+		return count + tag.meta.numItems;
+	}, 0) + (count_roam ? entry.roam.length : 0);
 }
 
 function isSingleton(entry){
@@ -26,8 +28,8 @@ function isSingleton(entry){
 }
 
 function makeSuggestionFor(entry){
-	let roamTags = entry.roam.map((el) => el.title);
-	let zoteroTags = entry.zotero.reduce((arr, el) => {
+	const roamTags = entry.roam.map((el) => el.title);
+	const zoteroTags = entry.zotero.reduce((arr, el) => {
 		if (roamTags.includes(el.tag) || arr.includes(el.tag)) {
 		// Do nothing
 		} else {
@@ -36,7 +38,7 @@ function makeSuggestionFor(entry){
 		return arr;
 	}, []);
 
-	let use = {
+	const use = {
 		roam: roamTags,
 		zotero: zoteroTags
 	};
@@ -92,14 +94,14 @@ function matchTagData(tagList){
 	return new Promise((resolve) => {
 		setTimeout(() => {
 			const data = Object.keys(tagList).map(initial => {
-				let rdata = getInitialedPages(Array.from(new Set([initial, initial.toUpperCase()])))
+				const rdata = getInitialedPages(Array.from(new Set([initial, initial.toUpperCase()])))
 					.sort((a,b) => a.title > b.title ? -1 : 1);
-				let zdata = Array.from(tagList[initial]);
+				const zdata = Array.from(tagList[initial]);
 				
-				for(let elem of rdata){
-					let in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, {match: "exact"}));
+				for(const elem of rdata){
+					const in_table = zdata.findIndex(token => searchEngine(elem.title, token.token, { match: "exact" }));
 					if(in_table >= 0){
-						let { roam, ...rest } = zdata[in_table];
+						const { roam, ...rest } = zdata[in_table];
 						zdata[in_table] = { 
 							// * Spread is required because array cloning via Array.from, spread, etc. is only shallow
 							// * i.e, nested arrays will be copied as references not values
@@ -124,7 +126,7 @@ function matchTagData(tagList){
  * @returns 
  */
 function sortTags(tagList, by = "alphabetical"){
-	let arr = [...tagList];
+	const arr = [...tagList];
 	switch(by){
 	case "usage":
 		return arr.sort((a,b) => {

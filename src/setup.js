@@ -1,10 +1,11 @@
-import { unmountComponentAtNode } from "react-dom";
 import * as Sentry from "@sentry/react";
+import { unmountComponentAtNode } from "react-dom";
+
 
 import {
+	DEPENDENCIES_SCRIPTS,
 	EXTENSION_PORTAL_ID,
 	EXTENSION_SLOT_ID,
-	DEPENDENCIES_SCRIPTS,
 	TYPEMAP_DEFAULT
 } from "./constants";
 
@@ -22,16 +23,16 @@ export function analyzeUserRequests(reqs){
 			libraries: []
 		};
 	} else {
-		let fallbackAPIKey = reqs.find(req => req.apikey)?.apikey;
+		const fallbackAPIKey = reqs.find(req => req.apikey)?.apikey;
 		if(!fallbackAPIKey){
 			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 		} else {
 			const dataRequests = reqs.map((req, i) => {
-				let { dataURI, apikey = fallbackAPIKey, params = "", name = `${i}`} = req;
+				const { dataURI, apikey = fallbackAPIKey, params = "", name = `${i}` } = req;
 				if(!dataURI){
 					throw new Error("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 				} else {
-					let library = dataURI.match(/(users|groups)\/(\d+?)(?=\/items)/g)?.[0];
+					const library = dataURI.match(/(users|groups)\/(\d+?)(?=\/items)/g)?.[0];
 					if(!library){
 						throw new Error(`An incorrect data URI was provided for a request : ${dataURI}. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
 					} else {
@@ -42,8 +43,8 @@ export function analyzeUserRequests(reqs){
 
 			const apiKeys = Array.from(new Set(dataRequests.map(req => req.apikey)));
 			const libraries = dataRequests.reduce((arr, req) => {
-				let { library: path, apikey} = req;
-				let has_lib = arr.find(lib => lib.path == path);
+				const { library: path, apikey } = req;
+				const has_lib = arr.find(lib => lib.path == path);
 				if(!has_lib){
 					arr.push({ path, apikey });
 				}
@@ -83,7 +84,7 @@ export function setupInitialSettings(settingsObject){
 		annotations: {
 			comment_prefix: "",
 			comment_suffix: "",
-            func: null,
+			func: null,
 			group_by: false,
 			highlight_prefix: "[[>]]",
 			highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
@@ -92,11 +93,11 @@ export function setupInitialSettings(settingsObject){
 		},
 		autoload,
 		autocomplete: {
-            display: "citekey",
-            format: "citation",
-            trigger: null,
-            ...autocomplete
-        },
+			display: "citekey",
+			format: "citation",
+			trigger: null,
+			...autocomplete
+		},
 		copy: {
 			always: false,
 			defaultFormat: "citekey",
@@ -106,16 +107,16 @@ export function setupInitialSettings(settingsObject){
 		},
 		darkTheme,
 		metadata: {
-            func: null,
-            smartblock: {
-                param: "srcUid",
-                paramValue: ""
-            },
+			func: null,
+			smartblock: {
+				param: "srcUid",
+				paramValue: ""
+			},
 			use: "function",
 			...metadata
 		},
 		notes: {
-            func: null,
+			func: null,
 			split_char: "/n",
 			use: "text",
 			...notes
@@ -167,7 +168,7 @@ async function configRoamDepot({ extensionAPI }){
 	const current = extensionAPI.settings.getAll();
 	const settings = setupInitialSettings(Object.fromEntries(current || new Map()));
 
-	let setterCalls = [];
+	const setterCalls = [];
 	Object.entries(settings).forEach(([key, val]) => {
 		setterCalls.push(extensionAPI.settings.set(key, val));
 	});
@@ -177,10 +178,10 @@ async function configRoamDepot({ extensionAPI }){
 	let requests = extensionAPI.settings.get("requests");
 	if(!requests){
 		requests = {
-            dataRequests: [],
-            apiKeys: [],
-            libraries: []
-        };
+			dataRequests: [],
+			apiKeys: [],
+			libraries: []
+		};
 		await extensionAPI.settings.set("requests", requests);
 	}
 
@@ -285,12 +286,12 @@ export function setupPortals(){
 
 	unmountExtensionIfExists();
 
-	let roamSearchbar = document.querySelector(".rm-topbar .rm-find-or-create-wrapper");
-	let extensionSlot = document.createElement("span");
+	const roamSearchbar = document.querySelector(".rm-topbar .rm-find-or-create-wrapper");
+	const extensionSlot = document.createElement("span");
 	extensionSlot.id = EXTENSION_SLOT_ID;
 	roamSearchbar.insertAdjacentElement("afterend", extensionSlot);
 
-	let zrPortal = document.createElement("div");
+	const zrPortal = document.createElement("div");
 	zrPortal.id = EXTENSION_PORTAL_ID;
 	document.getElementById("app").appendChild(zrPortal);
 }
@@ -308,7 +309,7 @@ export function setupSentry(isUserEnabled = false, config = {}){
 
 /* istanbul ignore next */
 export function unmountExtensionIfExists(){
-	let existingSlot = document.getElementById(EXTENSION_SLOT_ID);
+	const existingSlot = document.getElementById(EXTENSION_SLOT_ID);
 	if(existingSlot){
 		try{
 			unmountComponentAtNode(existingSlot);

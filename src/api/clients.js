@@ -11,7 +11,7 @@ axiosRetry(zoteroClient, {
 	retries: 2,
 	retryCondition: (error) => {
 		if(error.response){
-			let { status } = error.response;
+			const { status } = error.response;
 			if(status == 429 || status >= 500){
 				return true;
 			} else {
@@ -23,8 +23,8 @@ axiosRetry(zoteroClient, {
 	},
 	retryDelay: (retryCount, error) => {
 		if(error.response){
-			let { headers } = error.response;
-			return (headers["backoff"] || headers["retry-after"] || retryCount) * 1000;
+			const { headers } = error.response;
+			return (headers.backoff || headers["retry-after"] || retryCount) * 1000;
 		} else {
 			return retryCount * 3000;
 		}

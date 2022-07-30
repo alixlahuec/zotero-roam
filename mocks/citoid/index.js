@@ -6,7 +6,7 @@ const addSampleMetadata = () => ({
 	version: 0
 });
 
-const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ...rest }) => ({
+const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ...props }) => ({
 	...addSampleMetadata,
 	creators,
 	date,
@@ -14,7 +14,7 @@ const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ..
 	tags,
 	title,
 	url,
-	...rest
+	...props
 });
 
 const addCreator = ([firstName, lastName, role = "author"]) => ({
@@ -67,11 +67,11 @@ const data = {
 			publicationTitle: "The Annals of Family Medicine",
 			shortTitle: "Theory vs Practice",
 			tags: [
-				{"tag":"primary healthcare","type":1},
-				{"tag":"social determinants of health","type":1},
-				{"tag":"professional burnout","type":1},
-				{"tag":"healthcare delivery","type":1},
-				{"tag":"physician’s roles","type":1}
+				{ "tag": "primary healthcare","type": 1 },
+				{ "tag": "social determinants of health","type": 1 },
+				{ "tag": "professional burnout","type": 1 },
+				{ "tag": "healthcare delivery","type": 1 },
+				{ "tag": "physician’s roles","type": 1 }
 			],
 			title: "Theory vs Practice: Should Primary Care Practice Take on Social Determinants of Health Now? No.",
 			rights: "© 2016 Annals of Family Medicine, Inc.",

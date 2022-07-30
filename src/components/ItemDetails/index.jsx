@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useMemo } from "react";
 import { func, node, object, oneOf, string } from "prop-types";
+
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
@@ -8,16 +9,19 @@ import NotesDrawer from "../NotesDrawer";
 import SentryBoundary from "../Errors/SentryBoundary";
 import ShortcutSequence from "../ShortcutSequence";
 
-import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
-import { useRoamCitekeys } from "../RoamCitekeysContext";
-import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 import { copyToClipboard, makeDateFromAgo } from "../../utils";
+import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
+import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 
 import useBool from "../../hooks/useBool";
+import { useRoamCitekeys } from "../RoamCitekeysContext";
 
 import { CustomClasses } from "../../constants";
+
 import * as customPropTypes from "../../propTypes";
+
 import "./index.css";
+
 
 const copyPopoverProps = {
 	popoverClassName: CustomClasses.POPOVER
@@ -30,7 +34,7 @@ const copyPopoverProps = {
  * @returns The formatted reference
  */
 const makeItemReference = (citekey, format, item) => {
-	let pageRef = "[[@" + citekey + "]]";
+	const pageRef = "[[@" + citekey + "]]";
 	switch(format){
 	case "page-reference":
 		return pageRef;
@@ -45,8 +49,8 @@ const makeItemReference = (citekey, format, item) => {
 };
 
 function CopyOption(props){
-	let { citekey, format, item } = props;
 	const { shortcuts: shortcutsSettings } = useContext(UserSettings);
+	const { citekey, format, item } = props;
 
 	const textOutput = useMemo(() => makeItemReference(citekey, format, item), [citekey, format, item]);
 	const formatCitekey = useCallback(() => copyToClipboard(textOutput), [textOutput]);
@@ -102,7 +106,7 @@ function CopyButtons(props){
 	}, [defaultCopyText]);
 
 	const optionsMenu = useMemo(() => {
-		let standardOptions = ["citekey", "tag", "page-reference", "citation"]
+		const standardOptions = ["citekey", "tag", "page-reference", "citation"]
 			.filter(op => op != defaultCopyFormat)
 			.map(op => <CopyOption key={op} citekey={citekey} format={op} item={item} />);
 		return <>
@@ -125,7 +129,7 @@ function CopyButtons(props){
 			stopPropagation: true
 		};
 
-		let configs = {
+		const configs = {
 			"copyDefault": {
 				label: "Copy the item in view (default format)",
 				onKeyDown: () => copyAsDefault()
@@ -160,7 +164,7 @@ function CopyButtons(props){
 
 	}, [citekey, copyAsDefault, item, shortcutsSettings]);
 
-	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
+	useHotkeys(hotkeys, { showDialogKeyCombo: "shift+Z+R" });
 
 	return <MenuItem 	
 		icon="clipboard"
@@ -205,7 +209,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		title, 
 		weblink, 
 		year,
-		zotero} = item;
+		zotero } = item;
 	const [isNotesDrawerOpen, { toggle: toggleNotes, on: showNotes, off: closeNotes }] = useBool(false);
 	const [isDataDrawerOpen, { on: showData, off: closeData }] = useBool(false);
 	
@@ -219,7 +223,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 	const importMetadata = useCallback(async() => {
 		const { pdfs = [], notes = [] } = children;
-		const outcome = await importItemMetadata({item: item.raw, pdfs, notes }, inGraph, metadataSettings, typemap, notesSettings, annotationsSettings);
+		const outcome = await importItemMetadata({ item: item.raw, pdfs, notes }, inGraph, metadataSettings, typemap, notesSettings, annotationsSettings);
 		if(outcome.success){
 			updateRoamCitekeys();
 		}
@@ -242,7 +246,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 	}, [closeDialog, inGraph]);
 
 	const goToPageButton = useMemo(() => {
-		let label = shortcutsSettings.goToItemPage != false
+		const label = shortcutsSettings.goToItemPage != false
 			? <ShortcutSequence action="go to the item's page" text={shortcutsSettings.goToItemPage} />
 			: null;
 		return inGraph 
@@ -254,11 +258,11 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		if(children.pdfs.length == 0){
 			return null;
 		} else {
-			let firstElem = children.pdfs[0];
-			let libLoc = firstElem.library.type == "group" ? `groups/${firstElem.library.id}` : "library";
+			const firstElem = children.pdfs[0];
+			const libLoc = firstElem.library.type == "group" ? `groups/${firstElem.library.id}` : "library";
             
 			return children.pdfs.map(p => {
-				let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
+				const pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
 				return <MenuItem key={p.key} href={pdfHref} icon="paperclip" multiline={true} rel="noreferrer" target="_blank" text={p.data.filename || p.data.title} />;
 			});
 		}
@@ -268,7 +272,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		if(children.notes.length == 0){
 			return null;
 		} else {
-			let label = shortcutsSettings.toggleNotes != false
+			const label = shortcutsSettings.toggleNotes != false
 				? <ShortcutSequence action="toggle the notes panel" text={shortcutsSettings.toggleNotes} />
 				: null;
 			return <>
@@ -295,7 +299,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 			stopPropagation: true
 		};
 
-		let shortcutsList = [];
+		const shortcutsList = [];
 
 		if(pageCombo){
 			shortcutsList.push({
@@ -330,7 +334,7 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 
 	}, [children.notes, importMetadata, inGraph, navigateToPage, shortcutsSettings, toggleNotes]);
 
-	useHotkeys(hotkeys, {showDialogKeyCombo: "shift+Z+R"});
+	useHotkeys(hotkeys, { showDialogKeyCombo: "shift+Z+R" });
 
 	return <div id="zr-item-details">
 		<SentryBoundary feature="dialog-item" extra={item}>

@@ -1,6 +1,7 @@
-import { formatItemReferenceForCopy } from "./utils";
 import { cleanLibraryItem } from "../../utils";
+import { formatItemReferenceForCopy } from "./utils";
 import { items } from "Mocks/zotero/items";
+
 
 test("Item reference formatting", () => {
 	const sample_item = items.find(it => it.key == "blochImplementingSocialInterventions2021");

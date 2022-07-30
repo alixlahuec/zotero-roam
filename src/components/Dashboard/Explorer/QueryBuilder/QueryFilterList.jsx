@@ -1,13 +1,12 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { array, bool, func, object, shape } from "prop-types";
-import { Button, Classes, Dialog, Tag } from "@blueprintjs/core";
 
-import { defaultQueryTerm } from "./queries";
+import { Button, Classes, Dialog, Tag } from "@blueprintjs/core";
 import QueryBox from "./QueryBox";
 
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
+import { defaultQueryTerm } from "./queries";
 import { makeDNP } from "../../../../utils";
-
 import useBool from "../../../../hooks/useBool";
 
 import { CustomClasses } from "../../../../constants";
@@ -23,7 +22,7 @@ function makeValueString(value){
 }
 
 function joinTerm(term){
-	const {property, relationship, value} = term;
+	const { property, relationship, value } = term;
 	const valueString = value == null
 		? ""
 		: value?.constructor == Array 
@@ -36,7 +35,7 @@ function makeTermString(term, useOR, { parentheses = true } = {}){
 	if(term.constructor === Object){
 		return joinTerm(term);
 	} else {
-		let output = term
+		const output = term
 			.map(tm => makeTermString(tm, !useOR))
 			.join(useOR ? " or " : " and ");
 		return parentheses ? `(${output})` : output;
@@ -82,7 +81,7 @@ AddTerm.propTypes = {
 
 function TermTag({ handlers, isLast, term, useOR }){
 	const { removeSelf, updateSelf } = handlers;
-	const [isDialogOpen, { on: openDialog, off: closeDialog}] = useBool(false);
+	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 
 	const removeSelfCleanly = useCallback(() => {
 		closeDialog();
@@ -135,7 +134,7 @@ function FilterElements({ filter, handlers, useOR }){
 	}, [removeTerm, updateTerm]);
 	
 	return filter.map((term, index) => {
-		let elemHandlers = makeHandlersForChild(index);
+		const elemHandlers = makeHandlersForChild(index);
 		return <TermTag key={index} handlers={elemHandlers} isLast={index == filter.length - 1} term={term} useOR={useOR} />;
 	});
 }
@@ -188,7 +187,7 @@ function QueryFilterList({ handlers, terms, useOR }){
 	const { addTerm, removeTerm, updateTerm } = handlers;
 
 	const makeHandlersForChild = useCallback((index) => {
-		let child = terms[index];
+		const child = terms[index];
 		return {
 			removeSelf: () => removeTerm(index),
 			addTerm: (val) => updateTerm(index, returnSiblingArray(child, val)),
@@ -199,13 +198,13 @@ function QueryFilterList({ handlers, terms, useOR }){
 
 	return <div className="zr-query-filters">
 		{terms.map((term, index) => {
-			let elemHandlers = makeHandlersForChild(index);
+			const elemHandlers = makeHandlersForChild(index);
 			return <div className="zr-query-filter" key={index}>
 				{index > 0 && <span zr-role="filter-list-operator">{useOR ? "OR" : "AND"}</span>}
 				<Filter handlers={elemHandlers} isOnlyChild={terms.length == 1} filter={term} useOR={!useOR} />
 			</div>;
 		})}
-		<AddTerm addTerm={addTerm} buttonProps={{ text: terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND")}} useOR={!useOR} />
+		<AddTerm addTerm={addTerm} buttonProps={{ text: terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND") }} useOR={!useOR} />
 	</div>;
 }
 QueryFilterList.propTypes = {

@@ -1,5 +1,6 @@
 import React from "react";
 import { func } from "prop-types";
+
 import { Button } from "@blueprintjs/core";
 
 import CitekeyPopover from "../../../CitekeyPopover";
@@ -11,12 +12,13 @@ import { pluralize } from "../../../../utils";
 import useBool from "../../../../hooks/useBool";
 
 import { CustomClasses } from "../../../../constants";
+
 import * as customPropTypes from "../../../../propTypes";
 
 function ItemElement({ item, onClose }){
 	const { children, inGraph, itemType, meta, publication, raw, title } = item;
-	const [isDataDrawerOpen, { on: openDataDrawer, off: closeDataDrawer}] = useBool(false);
-	const [isNotesDrawerOpen, { on: openNotesDrawer, off: closeNotesDrawer}] = useBool(false);
+	const [isDataDrawerOpen, { on: openDataDrawer, off: closeDataDrawer }] = useBool(false);
+	const [isNotesDrawerOpen, { on: openNotesDrawer, off: closeNotesDrawer }] = useBool(false);
 
 	return <>
 		<ListItem className="zr-query--result" >

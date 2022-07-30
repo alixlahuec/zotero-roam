@@ -6,7 +6,7 @@ const defaultTransform = (value) => value;
  * @param {{start: any, transform: function}} config 
  * @returns {[any, function]}
  */
-const useSelect = ({start = null, transform = defaultTransform}) => {
+const useSelect = ({ start = null, transform = defaultTransform }) => {
 	const [state, setState] = useState(start);
 
 	const set = useCallback((event) => {

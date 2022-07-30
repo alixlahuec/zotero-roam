@@ -1,18 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { func } from "prop-types";
+
 import { NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
 import ItemElement from "./ItemElement";
 import QueryFilterList from "./QueryFilterList";
 
+import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "./utils";
 import { runQuerySet } from "./queries";
-import { addElemToArray, updateArrayElemAt, removeArrayElemAt } from "./utils";
 
 import usePagination from "../../../../hooks/usePagination";
 
 import { CustomClasses } from "../../../../constants";
+
 import * as customPropTypes from "../../../../propTypes";
+
 import "./index.css";
 
 const itemsPerPage = 20;

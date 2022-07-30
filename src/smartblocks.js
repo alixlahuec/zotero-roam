@@ -26,7 +26,7 @@ const sbCommands = (getItems) => {
  */
 function processQuery(query, props){
 	// eslint-disable-next-line no-useless-escape
-	let components = query.split(/([\|\&]?)([^\&\|\(\)]+|\(.+\))([\|\&]?)/).filter(Boolean);
+	const components = query.split(/([\|\&]?)([^\&\|\(\)]+|\(.+\))([\|\&]?)/).filter(Boolean);
 	if(components.includes("|")){
 		return eval_or(components.filter(c => c != "|"), props);
 	} else {
@@ -67,11 +67,11 @@ function eval_or(terms, props){
  */
 function eval_term(term, props){
 	if(term.startsWith("(") && term.endsWith(")")){
-		let clean_str = term.slice(1, -1);
+		const clean_str = term.slice(1, -1);
 		return processQuery(clean_str, props);
 	} else {
 		if(term.startsWith("-")){
-			let clean_str = term.slice(1);
+			const clean_str = term.slice(1);
 			return !props.includes(clean_str);
 		} else {
 			return props.includes(term);
@@ -87,7 +87,7 @@ function eval_term(term, props){
 function registerSmartblockCommands(getItems){
 	const commands = sbCommands(getItems);
 	Object.keys(commands).forEach(k => {
-		let {help, handler} = commands[k];
+		const { help, handler } = commands[k];
 		window.roamjs?.extension?.smartblocks?.registerCommand({
 			text: k,
 			help: help,
@@ -110,11 +110,11 @@ function registerSmartblockCommands(getItems){
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 async function use_smartblock_metadata(config, context){
-    let { param: sbProp, paramValue: sbPropValue } = config;
-	let { item, notes, page, pdfs } = context;
-	let { title, uid, ...args} = page;
+	const { param: sbProp, paramValue: sbPropValue } = config;
+	const { item, notes, page, pdfs } = context;
+	const { title, uid, ...args } = page;
 
-	let defaultOutcome = {
+	const defaultOutcome = {
 		args: {
 			...args,
 			smartblock: config,
@@ -130,7 +130,7 @@ async function use_smartblock_metadata(config, context){
 		success: null
 	};
 
-	let obj = {
+	const obj = {
 		targetUid: uid,
 		variables: {},
 		[sbProp]: sbPropValue
@@ -144,13 +144,13 @@ async function use_smartblock_metadata(config, context){
 		await window.roamjs?.extension?.smartblocks?.triggerSmartblock(obj);
 		return Promise.resolve({
 			...defaultOutcome, 
-			success: true});
+			success: true });
 	} catch(e){
 		console.error(e);
 		return Promise.resolve({
 			...defaultOutcome,
 			error: e,
-			success: false});
+			success: false });
 	}
 }
 

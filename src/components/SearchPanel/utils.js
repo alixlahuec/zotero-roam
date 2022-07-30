@@ -4,8 +4,8 @@
  * @returns {String} The formatted reference to the item
  */
 function formatItemReferenceForCopy(simplifiedItem, format){
-	let citekey = simplifiedItem.key;
-	let pageRef = "[[@" + citekey + "]]";
+	const citekey = simplifiedItem.key;
+	const pageRef = "[[@" + citekey + "]]";
 
 	switch(true){
 	case (format instanceof Function):

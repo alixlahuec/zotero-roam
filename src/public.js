@@ -35,11 +35,11 @@ function formatPDFs(pdfs, as = "links"){
 			return pdfs.map(file => ({
 				title: file.data.title, 
 				key: file.key, 
-				link: getPDFLink(file, as = "href")
+				link: getPDFLink(file, "href")
 			}));
 		case "links":
 		default:
-			return pdfs.map(file => getPDFLink(file, as = "markdown"));
+			return pdfs.map(file => getPDFLink(file, "markdown"));
 		}
 	}
 }
@@ -87,7 +87,7 @@ function getItemCreators(item, { return_as = "string", brackets = true, use_type
 	case "string":
 	default:
 		return creatorsInfoList.map(creator => {
-			let creatorTag = (brackets == true ? `[[${creator.name}]]` : creator.name);
+			const creatorTag = (brackets == true ? `[[${creator.name}]]` : creator.name);
 			return (use_type == true ? creatorTag + (creator.type == "author" ? "" : ` (${creator.type})`) : creatorTag);
 		});
 	}
@@ -157,12 +157,12 @@ function _getItemRelated(item, datastore, { return_as = "string", brackets = tru
 		let relatedItems = item.data.relations["dc:relation"];
 		if(relatedItems.constructor === String){ relatedItems = [relatedItems]; }
         
-		let output = [];
-		let relRegex = /(users|groups)\/([^/]+)\/items\/(.+)/g;
+		const output = [];
+		const relRegex = /(users|groups)\/([^/]+)\/items\/(.+)/g;
         
 		relatedItems.forEach(itemURI => {
-			let [ , , , itemKey] = Array.from(itemURI.matchAll(relRegex))[0];
-			let libItem = datastore.find(it => it.data.key == itemKey);
+			const [ , , , itemKey] = Array.from(itemURI.matchAll(relRegex))[0];
+			const libItem = datastore.find(it => it.data.key == itemKey);
 			if(libItem){ output.push(libItem); }
 		});
         

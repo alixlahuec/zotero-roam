@@ -1,9 +1,11 @@
 import React, { useMemo } from "react";
 import { element, node, string } from "prop-types";
-import { Icon, H6 } from "@blueprintjs/core";
+
+import { H6, Icon } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import { CustomClasses } from "../../constants";
+
 import "./index.css";
 
 function GuideHeader({ children }){

@@ -1,13 +1,14 @@
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import { array, func, objectOf, oneOf } from "prop-types";
+
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 
 import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/queries";
+import useBool from "../../hooks/useBool";
 import { makeTimestamp } from "../../utils";
 
 import { ExtensionContext, UserSettings } from "../App";
-import useBool from "../../hooks/useBool";
 import "./index.css";
 
 const betaTag = <Tag intent="primary" minimal={true}>Beta</Tag>;
@@ -19,7 +20,7 @@ function DarkThemeToggle (){
 	const [useDark, { set: setUseDark, toggle: toggleDark }] = useBool(darkTheme);
 	
 	const toggleDarkTheme = useCallback(() => {
-		let is_currently_dark = isCurrentlyDark();
+		const is_currently_dark = isCurrentlyDark();
 		document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (!is_currently_dark).toString());
 		toggleDark();
 	}, [toggleDark]);
@@ -50,14 +51,14 @@ const IconTooltipFooter = React.memo(function IconTooltipFooter() {
 });
 
 function QueriesStatusIcon(props) {
-	let { queries } = props;
-	let updated = queries.map(q => q.dataUpdatedAt).filter(Boolean);
-	let timestamp = updated.length > 0 ? <span zr-role="timestamp">{makeTimestamp(Math.max(...updated))}</span> : null;
+	const { queries } = props;
+	const updated = queries.map(q => q.dataUpdatedAt).filter(Boolean);
+	const timestamp = updated.length > 0 ? <span zr-role="timestamp">{makeTimestamp(Math.max(...updated))}</span> : null;
 
-	let isFetching = queries.some(q => q.isFetching);
-	let isSuccess = queries.every(q => q.isSuccess);
-	let isLoadingError = queries.some(q => q.isLoadingError);
-	let isRefetchError = queries.some(q => q.isRefetchError);
+	const isFetching = queries.some(q => q.isFetching);
+	const isSuccess = queries.every(q => q.isSuccess);
+	const isLoadingError = queries.some(q => q.isLoadingError);
+	const isRefetchError = queries.some(q => q.isRefetchError);
 
 	const refreshData = useCallback(() => {
 		queries.forEach(q => {

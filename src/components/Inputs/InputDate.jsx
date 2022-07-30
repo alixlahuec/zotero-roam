@@ -1,11 +1,13 @@
-import React from "react";
 import { arrayOf, func, instanceOf } from "prop-types";
-import { Icon } from "@blueprintjs/core";
+import React from "react";
+
 import { DateInput, DateRangeInput } from "@blueprintjs/datetime";
+import { Icon } from "@blueprintjs/core";
 
 import { makeDNP } from "../../utils";
 
 import { CustomClasses } from "../../constants";
+
 
 const popoverProps = {
 	canEscapeKeyClose: false,

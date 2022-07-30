@@ -18,17 +18,17 @@ const Template = (args) => {
 export const WithIcons = Template.bind({});
 WithIcons.args = {
 	options: [
-		{icon: "eye-open", label: "Visibility", value: "visibility"},
-		{icon: "history", label: "Publication Year", value: "published"},
-		{icon: "cloud", label: "Location", value: "location"}
+		{ icon: "eye-open", label: "Visibility", value: "visibility" },
+		{ icon: "history", label: "Publication Year", value: "published" },
+		{ icon: "cloud", label: "Location", value: "location" }
 	]
 };
 
 export const WithoutIcons = Template.bind({});
 WithoutIcons.args = {
 	options: [
-		{label: "Alphabetical (A-Z)", value: "alphabetical"},
-		{label: "Publication Year", value: "published"},
-		{label: "Priority", value: "priority"}
+		{ label: "Alphabetical (A-Z)", value: "alphabetical" },
+		{ label: "Publication Year", value: "published" },
+		{ label: "Priority", value: "priority" }
 	]
 };

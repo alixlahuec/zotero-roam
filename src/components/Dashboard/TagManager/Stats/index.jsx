@@ -1,15 +1,17 @@
-import React from "react";
 import { number, shape } from "prop-types";
+import React from "react";
+
 import { ProgressBar } from "@blueprintjs/core";
 
 import { CustomClasses } from "../../../../constants";
+
 import "./index.css";
 
 const Stats = React.memo(function Stats({ stats }){
 	if(!stats){
 		return null;
 	} else {
-		const { nTags, nRoam, nAuto, nTotal} = stats;
+		const { nTags, nRoam, nAuto, nTotal } = stats;
 		const autoPct = Math.round(nAuto/nTags*100)/100;
 		const roamPct = Math.round(nRoam/nTotal*100)/100;
 		

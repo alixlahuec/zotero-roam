@@ -1,5 +1,7 @@
 import zrToaster from "./components/ExtensionToaster";
+
 import { pluralize } from "./utils";
+
 
 const events = [
 	/**
@@ -83,7 +85,7 @@ const events = [
  */
 function emitCustomEvent(type, detail = {}, target = document){
 	if(events.includes(type)){
-		let e = new CustomEvent(`zotero-roam:${type}`, {bubbles: true, cancelable: true, detail: detail});
+		const e = new CustomEvent(`zotero-roam:${type}`, { bubbles: true, cancelable: true, detail: detail });
 		target.dispatchEvent(e);
 	} else {
 		console.warn(`Event type "${type}" is not recognized`);
@@ -95,7 +97,7 @@ function emitCustomEvent(type, detail = {}, target = document){
  */
 function setDefaultHooks(){
 	document.addEventListener("zotero-roam:metadata-added", (e) => {
-		let { error, page: { title }, success } = e.detail;
+		const { error, page: { title }, success } = e.detail;
 		if(error){
 			console.error(error);
 			zrToaster.show({
@@ -113,7 +115,7 @@ function setDefaultHooks(){
 		}
 	});
 	document.addEventListener("zotero-roam:notes-added", (e) => {
-		let { error, page: { title }, raw: { notes }, success } = e.detail;
+		const { error, page: { title }, raw: { notes }, success } = e.detail;
 		if(error){
 			console.error(error);
 			zrToaster.show({
@@ -133,7 +135,7 @@ function setDefaultHooks(){
 	document.addEventListener("zotero-roam:write", (e) => {
 		// ! For debugging:
 		console.log(e.detail);
-		let { data: { failed, successful }, error, library } = e.detail;
+		const { data: { failed, successful }, error, library } = e.detail;
 		if(error){ console.error(error); }
 		if(failed.length > 0){ console.log(failed); }
 
@@ -143,13 +145,13 @@ function setDefaultHooks(){
 				message: `Import to Zotero failed : \n ${[error, failed].filter(Boolean).join("\n")}`
 			});
 		} else {
-			let itemsOutcome = successful.reduce((counts, res) => {
+			const itemsOutcome = successful.reduce((counts, res) => {
 				counts.success += Object.keys(res.data.successful).length;
 				counts.error += Object.keys(res.data.failed).length;
 			}, { error: 0, success: 0 });
 			// ! For debugging:
 			console.log(itemsOutcome);
-			let isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
+			const isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
 
 			if(isFullSuccess){
 				zrToaster.show({
@@ -165,7 +167,7 @@ function setDefaultHooks(){
 		}
 	});
 	document.addEventListener("zotero-roam:tags-deleted", (e) => {
-		let { error, library, tags } = e.detail;
+		const { error, library, tags } = e.detail;
 		if(error){
 			console.error(error);
 			zrToaster.show({
@@ -180,7 +182,7 @@ function setDefaultHooks(){
 		}
 	});
 	document.addEventListener("zotero-roam:tags-modified", (e) => {
-		let { data: { failed, successful }, error, library } = e.detail;
+		const { data: { failed, successful }, error, library } = e.detail;
 		if(error){ console.error(error); }
 		if(failed.length > 0){ console.log(failed); }
 
@@ -190,12 +192,12 @@ function setDefaultHooks(){
 				message: `Tag modification failed : \n ${[error, failed].filter(Boolean).join("\n")}`
 			});
 		} else {
-			let itemsOutcome = successful.reduce((counts, res) => {
+			const itemsOutcome = successful.reduce((counts, res) => {
 				counts.success += Object.keys(res.data.successful).length;
 				counts.error += Object.keys(res.data.failed).length;
 				return counts;
-			}, { error: 0, success : 0 });
-			let isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
+			}, { error: 0, success: 0 });
+			const isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
 
 			if(isFullSuccess){
 				zrToaster.show({

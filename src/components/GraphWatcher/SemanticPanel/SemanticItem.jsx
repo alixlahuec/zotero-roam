@@ -1,10 +1,12 @@
 import React, { useCallback, useMemo } from "react";
 import { bool, func, oneOf, oneOfType, string } from "prop-types";
+
 import { Button, Classes, Icon, Tag } from "@blueprintjs/core";
 
 import CitekeyPopover from "../../CitekeyPopover";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
 
 const SemanticItem = React.memo(function SemanticItem(props) {
@@ -39,7 +41,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				</>
 			);
 		} else {
-			let { children: { pdfs, notes }, raw} = inLibrary;
+			const { children: { pdfs, notes }, raw } = inLibrary;
 			return (
 				<CitekeyPopover inGraph={inGraph} item={raw} notes={notes} pdfs={pdfs} />
 			);
@@ -51,7 +53,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 			<div className="zr-related-item--intents">
 				{item.intent.length > 0
 					? item.intent.map(int => {
-						let capitalizedIntent = int.charAt(0).toUpperCase() + int.slice(1);
+						const capitalizedIntent = int.charAt(0).toUpperCase() + int.slice(1);
 						return <Tag key={int} data-semantic-intent={int} htmlTitle={"This citation was classified as related to " + capitalizedIntent + " by Semantic Scholar"} minimal={true}>{capitalizedIntent}</Tag>;})
 					: null}
 			</div>
@@ -64,7 +66,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 				{Object.keys(item.links).map((key) => {
 					return (
 						<span key={key} data-service={key}>
-							<a href={item.links[key]} className={[CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")} target="_blank" rel="noreferrer">{key.split("-").map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(" ")}</a>
+							<a href={item.links[key]} className={[CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")} target="_blank" rel="noreferrer">{key.split("-").map(k => k.charAt(0).toUpperCase() + k.slice(1)).join(" ")}</a>
 						</span>
 					);
 				})}
@@ -79,7 +81,7 @@ const SemanticItem = React.memo(function SemanticItem(props) {
 					{item.year}
 				</span>
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
-					<div className={ Classes.FILL } style={{display: "flex"}}>
+					<div className={ Classes.FILL } style={{ display: "flex" }}>
 						<div className="zr-related-item-contents--metadata">
 							<span className={type == "is_reference" ? CustomClasses.TEXT_ACCENT_1 : CustomClasses.TEXT_ACCENT_2}>{item.authors}</span>
 							<span className={CustomClasses.TEXT_SECONDARY}>{item.meta}</span>

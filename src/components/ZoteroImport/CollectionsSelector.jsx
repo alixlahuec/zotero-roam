@@ -1,8 +1,10 @@
 import React, { useCallback } from "react";
 import { array, bool, func, object } from "prop-types";
+
 import { Checkbox, Spinner } from "@blueprintjs/core";
 
 import { CustomClasses } from "../../constants";
+
 
 const CollectionOption = React.memo(function CollectionOption(props) {
 	const { collection, isChecked, onSelect } = props;

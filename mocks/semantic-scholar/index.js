@@ -121,9 +121,9 @@ const data = {
 			}
 		],
 		s2FieldsOfStudy: [
-			{category: "Medicine", source: "external"},
-			{category: "Medicine", source: "s2-fos-model"},
-			{category: "Political Science", source: "s2-fos-model"}
+			{ category: "Medicine", source: "external" },
+			{ category: "Medicine", source: "s2-fos-model" },
+			{ category: "Political Science", source: "s2-fos-model" }
 		],
 		title: "Implementing social interventions in primary care",
 		topics: [],

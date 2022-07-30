@@ -36,7 +36,7 @@ function createNewItemRenderer(query, active, handleClick){
 }
 
 function itemRenderer(item, itemProps) {
-	let { handleClick, modifiers: { active } } = itemProps;
+	const { handleClick, modifiers: { active } } = itemProps;
 	return <MenuItem active={active} key={item} onClick={handleClick} text={item} />;
 }
 
@@ -84,7 +84,7 @@ const TagsSelector = React.memo(function TagsSelector({ selectedTags, onRemove, 
 			selectedItems={selectedTags}
 			tagInputProps={tagInputProps}
 			tagRenderer={tagRenderer}
-            {...props}
+			{...props}
 		/>
 	);
 });

@@ -23,10 +23,10 @@ test("Simplifies notes", () => {
 
 describe("Parsing HTML notes", () => {
 	const notes = [
-		{data: {note: "<h1>Note Title</h1><div class=\"div-class\"><span>Lorem ipsum</span></div>"}},
-		{data: {note: "Click <a href=\"https://example.com\">here</a> to open a link"}},
-		{data: {note: "See <a class=\"link-class\" href=\"https://example.com\">there</a> for a link with attributes"}},
-		{data: {note: "\n\nSome text\n"}}
+		{ data: { note: "<h1>Note Title</h1><div class=\"div-class\"><span>Lorem ipsum</span></div>" } },
+		{ data: { note: "Click <a href=\"https://example.com\">here</a> to open a link" } },
+		{ data: { note: "See <a class=\"link-class\" href=\"https://example.com\">there</a> for a link with attributes" } },
+		{ data: { note: "\n\nSome text\n" } }
 	];	
 
 	it("cleans markup from rich tags", () => {

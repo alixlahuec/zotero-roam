@@ -1,11 +1,13 @@
 import React, { useCallback } from "react";
 import { arrayOf, bool, oneOf, oneOfType, shape, string } from "prop-types";
+
 import { Menu, MenuItem } from "@blueprintjs/core";
 
 import MergeAsOptions from "./MergeAsOptions";
 import { useDeleteTags } from "../../../api/write";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
 
 function ActionsMenu({ deleteTags = true, library, mergeAs = true, suggestion }) {

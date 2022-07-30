@@ -1,9 +1,10 @@
-import { expect } from "@storybook/jest";
 import React, { useRef } from "react";
+import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { HotkeysProvider } from "@blueprintjs/core";
+import { expect } from "@storybook/jest";
+
 import SearchInputGroup from "./SearchInputGroup";
 import useBool from "../../hooks/useBool";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 export default {
 	component: SearchInputGroup,
@@ -13,8 +14,8 @@ export default {
 		handleKeyUp: () => {},
 		handleQueryChange: () => {}
 	},
-    parameters: {
-        userSettings: {
+	parameters: {
+		userSettings: {
 			copy: {
 				useQuickCopy: false,
 			},
@@ -23,14 +24,14 @@ export default {
 				toggleQuickCopy: "alt+Q"
 			}
 		}
-    }
+	}
 };
 
 const Template = (args) => {
 	const searchbar = useRef();
 	const [qcActive, { toggle: toggleQC }] = useBool(false);
 
-	return <HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
+	return <HotkeysProvider dialogProps={{ globalGroupName: "zoteroRoam" }}>
 		<SearchInputGroup {...args} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} searchbar={searchbar} />
 	</HotkeysProvider>;
 };
@@ -38,8 +39,8 @@ const Template = (args) => {
 export const Default = Template.bind({});
 
 export const WithInteractions = Template.bind({});
-WithInteractions.play = async ({ args, canvasElement, parameters }) => {
-	const { userSettings: { copy }} = parameters;
+WithInteractions.play = async ({ canvasElement, parameters }) => {
+	const { userSettings: { copy } } = parameters;
 	const canvas = within(canvasElement);
 
 	// Hotkey for toggling QuickCopy

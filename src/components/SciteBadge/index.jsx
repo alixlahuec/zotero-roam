@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { bool, number, oneOf, string} from "prop-types";
+import { bool, number, oneOf, string } from "prop-types";
+
 import "./index.css";
+
 
 /** Create a Scite badge element, for manual rendering through window.__SCITE.insertBadges()
  * @param {string} doi - The DOI for which the badge should be made

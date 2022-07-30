@@ -1,9 +1,11 @@
-import React from "react";
 import { arrayOf, func, shape, string } from "prop-types";
+import React from "react";
+
 import { Button, MenuItem } from "@blueprintjs/core";
 import { Select2 } from "@blueprintjs/select";
 
 import { CustomClasses } from "../../constants";
+
 import * as customPropTypes from "../../propTypes";
 
 const popoverProps = {

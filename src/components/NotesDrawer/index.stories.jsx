@@ -1,5 +1,7 @@
 import React from "react";
+
 import NotesDrawer from ".";
+
 
 const note1 = {
 	data: {
@@ -84,14 +86,14 @@ export default {
 		isOpen: true,
 		onClose: () => {},
 	},
-    parameters: {
-        userSettings: {
+	parameters: {
+		userSettings: {
 			notes: {
 				split_char: "/n",
 				use: "text"
 			}
 		}
-    }
+	}
 };
 
 const Template = (args) => <NotesDrawer {...args} />;

@@ -1,18 +1,19 @@
 /* istanbul ignore file */
 import React, { useContext, useMemo } from "react";
-import { createPortal } from "react-dom";
 import { arrayOf, object } from "prop-types";
-
-import { useQuery_Items } from "../../../api/queries";
-import { categorizeLibraryItems } from "../../../utils";
+import { createPortal } from "react-dom";
 
 import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
 import { ExtensionContext, UserSettings } from "../../App";
+import { useQuery_Items } from "../../../api/queries";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
+
+import { categorizeLibraryItems } from "../../../utils";
 import { cleanRelatedItem } from "./utils";
+
 import "./index.css";
 
 function CitekeyMenuFactory({ menus }){
@@ -36,17 +37,17 @@ function CitekeyMenuFactory({ menus }){
 					if(trigger.constructor === Boolean){
 						return trigger;
 					} else {
-						let title = menu.getAttribute("data-citekey");
+						const title = menu.getAttribute("data-citekey");
 						return trigger(title);
 					}
 				})
 				.map(menu => {
-					let item = citekeyItems.find(it => it.key == menu.getAttribute("data-citekey"));
+					const item = citekeyItems.find(it => it.key == menu.getAttribute("data-citekey"));
 					return { div: menu, item };
 				})
 				.filter(menu => menu.item)
 				.map((menu, i) => {
-					let { item, div } = menu;
+					const { item, div } = menu;
 					return (
 						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} />, div)
 					);
@@ -74,7 +75,7 @@ function DNPMenuFactory({ menus }){
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 	
 	const dnpPortals = useMemo(() => {
-		let { items, pdfs, notes } = itemList;
+		const { items, pdfs, notes } = itemList;
 
 		if(!items){
 			return null;
@@ -84,21 +85,21 @@ function DNPMenuFactory({ menus }){
 					if(trigger.constructor === Boolean){
 						return trigger;
 					} else {
-						let title = menu.getAttribute("data-title");
+						const title = menu.getAttribute("data-title");
 						return trigger(title);
 					}
 				})
 				.map(menu => {
-					let title = menu.getAttribute("data-title");
-					let dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date"))).toDateString();
-					let added = items
+					const title = menu.getAttribute("data-title");
+					const dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date"))).toDateString();
+					const added = items
 						.filter(it => new Date(it.data.dateAdded).toDateString() == dnp_date)
-						.map(it => cleanRelatedItem(it, {pdfs, notes}, roamCitekeys));
-					return { div: menu, added, date: dnp_date, title};
+						.map(it => cleanRelatedItem(it, { pdfs, notes }, roamCitekeys));
+					return { div: menu, added, date: dnp_date, title };
 				})
 				.filter(menu => menu.added)
 				.map((menu, i) => {
-					let { added, date, div, title } = menu;
+					const { added, date, div, title } = menu;
 					return (
 						createPortal(<DNPMenu key={i} 
 							added={added} date={date} title={title} />, div)
@@ -142,7 +143,7 @@ function TagMenuFactory({ menus }){
 	}, [itemList.items]);
 
 	const tagPortals = useMemo(() => {
-		let { items, pdfs, notes } = itemList;
+		const { items, pdfs, notes } = itemList;
 		if(!items){
 			return null;
 		} else {
@@ -151,13 +152,13 @@ function TagMenuFactory({ menus }){
 					if(trigger.constructor === Boolean){
 						return trigger;
 					} else {
-						let title = menu.getAttribute("data-title");
+						const title = menu.getAttribute("data-title");
 						return trigger(title);
 					}
 				})
 				.map(menu => {
-					let title = menu.getAttribute("data-title");
-					let results = with_tags_or_abstract.reduce((obj, item) => {
+					const title = menu.getAttribute("data-title");
+					const results = with_tags_or_abstract.reduce((obj, item) => {
 						if(item.abstract.includes(title)){
 							obj.with_abstract.push(cleanRelatedItem(item.itemData, { pdfs, notes }, roamCitekeys));
 						}
@@ -165,13 +166,13 @@ function TagMenuFactory({ menus }){
 							obj.with_tags.push(cleanRelatedItem(item.itemData, { pdfs, notes }, roamCitekeys));
 						}
 						return obj;
-					}, { with_tags: [], with_abstract: []});
+					}, { with_tags: [], with_abstract: [] });
 					
 					return { div: menu, tag: title, ...results };
 				})
 				.filter(menu => menu.with_tags.length > 0 || menu.with_abstract.length > 0)
 				.map((menu,i) => {
-					let { with_tags, with_abstract, div, tag } = menu;
+					const { with_tags, with_abstract, div, tag } = menu;
 					return (
 						createPortal(<TagMenu key={i} 
 							tag={tag} inAbstract={with_abstract} tagged={with_tags} />, div)

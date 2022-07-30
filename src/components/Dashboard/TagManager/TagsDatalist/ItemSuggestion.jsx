@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Icon, Tag } from "@blueprintjs/core";
 
 import { ListItem } from "../../../DataList";
@@ -7,6 +8,7 @@ import Suggest from "../Suggest";
 import { pluralize } from "../../../../utils";
 
 import { CustomClasses } from "../../../../constants";
+
 import * as customPropTypes from "../../../../propTypes";
 
 

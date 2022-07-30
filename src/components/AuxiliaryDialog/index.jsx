@@ -1,11 +1,12 @@
+import { Dialog, H5 } from "@blueprintjs/core";
 import React, { useContext, useMemo } from "react";
-import { createPortal } from "react-dom";
 import { arrayOf, bool, func, node, string } from "prop-types";
-import { Dialog, H5, } from "@blueprintjs/core";
+import { createPortal } from "react-dom";
 
 import { ExtensionContext } from "../App";
 
 import { CustomClasses } from "../../constants";
+
 import "./index.css";
 
 const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {

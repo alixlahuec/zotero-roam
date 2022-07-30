@@ -38,7 +38,7 @@ export const sampleImageAnnot = makeAnnot({
 		annotationComment: "Good figure to dissect",
 		annotationText: "",
 		annotationType: "image",
-		tags: [{tag: "TODO"}],
+		tags: [{ tag: "TODO" }],
 	}
 });
 
@@ -51,6 +51,6 @@ export const sampleAnnot = makeAnnot({
 		annotationComment: "This is an interesting passage, let's look into it further later.",
 		annotationText: "Digital health literacy may have an impact on the use of digital health services such as virtual visits.",
 		annotationType: "highlight",
-		tags: [{tag: "Important"},{tag: "TODO"}]
+		tags: [{ tag: "Important" },{ tag: "TODO" }]
 	}
 });

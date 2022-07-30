@@ -1,9 +1,12 @@
 import React from "react";
-import LibraryQueryList from "./LibraryQueryList";
-import useBool from "../../hooks/useBool";
-import { cleanLibrary } from "../../utils";
 
+import LibraryQueryList from "./LibraryQueryList";
+
+import useBool from "../../hooks/useBool";
+
+import { cleanLibrary } from "../../utils";
 import { items } from "Mocks/zotero/items";
+
 
 // Provide one Roam citekey to have in-graph state in story
 const cleanItems = cleanLibrary(items, new Map([["@blochImplementingSocialInterventions2021", "fp3_5grl"]]));
@@ -14,8 +17,8 @@ export default {
 		handleClose: () => {},
 		isOpen: true
 	},
-    parameters: {
-        userSettings: {
+	parameters: {
+		userSettings: {
 			copy: {
 				always: false,
 				defaultFormat: "citekey",
@@ -26,7 +29,7 @@ export default {
 				// Disable shortcuts for stories
 			}
 		}
-    }
+	}
 };
 
 const Template = (args) => {

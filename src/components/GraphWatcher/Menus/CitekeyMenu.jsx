@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { arrayOf, bool, shape, string } from "prop-types";
+
 import { Button, ButtonGroup, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
 
 import { UserSettings } from "../../App";
@@ -7,26 +8,27 @@ import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ButtonLink from "../../ButtonLink";
 import CitekeyPopover from "../../CitekeyPopover";
 import ErrorCallout from "../../Errors/ErrorCallout";
-import SentryBoundary from "../../Errors/SentryBoundary";
 import ItemDetails from "../../ItemDetails";
-import { useRoamCitekeys } from "../../RoamCitekeysContext";
 import SciteBadge from "../../SciteBadge";
 import SemanticPanel from "../SemanticPanel";
+import SentryBoundary from "../../Errors/SentryBoundary";
+
+import useBool from "../../../hooks/useBool";
+import { useQuery_Semantic } from "../../../api/queries";
+import { useRoamCitekeys } from "../../RoamCitekeysContext";
 
 import { showClasses } from "../classes";
 
-import { useQuery_Semantic } from "../../../api/queries";
-import { findRoamPage, importItemMetadata, importItemNotes } from "Roam";
 import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
-
-import useBool from "../../../hooks/useBool";
+import { findRoamPage, importItemMetadata, importItemNotes } from "Roam";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
 
 function BacklinksItem({ entry }) {
 	const { _type, inLibrary, inGraph } = entry;
-	const { children: { pdfs, notes }, raw: item} = inLibrary;
+	const { children: { pdfs, notes }, raw: item } = inLibrary;
 	const { key, data, meta } = item;
 
 	const pub_year = meta.parsedDate ? new Date(meta.parsedDate).getUTCFullYear() : "";
@@ -69,7 +71,7 @@ const Backlinks = React.memo(function Backlinks(props) {
 	if(items.length == 0){
 		return null;
 	} else {
-		let itemList = [...items];
+		const itemList = [...items];
 		const sortedItems = itemList.sort((a,b) => compareItemsByYear(a.inLibrary.raw, b.inLibrary.raw));
 		const references = sortedItems.filter(it => it._type == "cited");
 		const citations = sortedItems.filter(it => it._type == "citing");
@@ -113,7 +115,7 @@ function RelatedItemsBar(props) {
 	
 	const [isBacklinksListOpen, { toggle: toggleBacklinks }] = useBool(false);
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
-	const [isShowing, setShowing] = useState({title, type: "is_reference"});
+	const [isShowing, setShowing] = useState({ title, type: "is_reference" });
 
 	const showReferences = useCallback(() => {
 		setShowing({
@@ -142,7 +144,7 @@ function RelatedItemsBar(props) {
 				references: []
 			};
 		} else {
-			let { citations = [], references = [] } = data;
+			const { citations = [], references = [] } = data;
 			return cleanSemantic(itemList, { citations, references }, roamCitekeys);
 		}
 	}, [data, itemList, roamCitekeys]);
@@ -232,9 +234,9 @@ const CitekeyMenu = React.memo(function CitekeyMenu({ item, itemList }) {
 	const pageUID = findRoamPage("@" + item.key);
 
 	const children = useMemo(() => {
-		let itemKey = item.data.key;
-		let location = item.library.type + "s/" + item.library.id;
-		let { pdfs, notes } = itemList;
+		const itemKey = item.data.key;
+		const location = item.library.type + "s/" + item.library.id;
+		const { pdfs, notes } = itemList;
 
 		return identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
 	}, [itemList, item]);
@@ -246,12 +248,12 @@ const CitekeyMenu = React.memo(function CitekeyMenu({ item, itemList }) {
 	}, [doi]);
 
 	const importMetadata = useCallback(async() => {
-		let { pdfs, notes } = children;
+		const { pdfs, notes } = children;
 		return await importItemMetadata({ item, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings, annotationsSettings);
 	}, [annotationsSettings, children, item, metadataSettings, notesSettings, pageUID, typemap]);
     
 	const importNotes = useCallback(async() => {
-		return await importItemNotes({item, notes: children.notes }, pageUID, notesSettings, annotationsSettings);
+		return await importItemNotes({ item, notes: children.notes }, pageUID, notesSettings, annotationsSettings);
 	}, [annotationsSettings, children.notes, item, notesSettings, pageUID]);
 
 	const pdfLinks = useMemo(() => {
@@ -300,13 +302,13 @@ const CitekeyMenu = React.memo(function CitekeyMenu({ item, itemList }) {
 	}, [defaults, doi, sciteBadgeSettings]);
 
 	const ext_links = useMemo(() => {
-		let connectedPapersLink = defaults.includes("connectedPapers")
+		const connectedPapersLink = defaults.includes("connectedPapers")
 			? <ButtonLink icon="layout" intent="primary" text="Connected Papers" href={"https://www.connectedpapers.com/" + (doi ? "api/redirect/doi/" + doi : "search?q=" + encodeURIComponent(item.data.title)) } role="menuitem" />
 			: null;
-		let semanticLink = doi && defaults.includes("semanticScholar") 
+		const semanticLink = doi && defaults.includes("semanticScholar") 
 			? <ButtonLink icon="bookmark" intent="primary" text="Semantic Scholar" href={"https://api.semanticscholar.org/" + doi} role="menuitem" /> 
 			: null;
-		let googleScholarLink = defaults.includes("googleScholar")
+		const googleScholarLink = defaults.includes("googleScholar")
 			? <ButtonLink icon="learning" intent="primary" text="Google Scholar" href={"https://scholar.google.com/scholar?q=" + (doi || encodeURIComponent(item.data.title))} role="menuitem" />
 			: null;
 

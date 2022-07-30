@@ -1,10 +1,13 @@
 import React from "react";
+
 import ExtensionIcon from ".";
 
-import { expect } from "@storybook/jest";
 import { screen, userEvent, waitFor, within } from "@storybook/testing-library";
-import useToggle from "../../hooks/useToggle";
+import { expect } from "@storybook/jest";
+
 import { sleep } from "../../../.storybook/utils";
+import useToggle from "../../hooks/useToggle";
+
 
 export default {
 	component: ExtensionIcon,
@@ -16,11 +19,11 @@ export default {
 		openDashboard: { action: true },
 		openSearchPanel: { action: true }
 	},
-    parameters: {
-        userSettings: {
-            darkTheme: false
+	parameters: {
+		userSettings: {
+			darkTheme: false
 		}
-    }
+	}
 };
 
 const Template = (args) => {
@@ -51,7 +54,7 @@ WithInteractions.play = async({ canvasElement }) => {
     
 	await sleep(1000);
 
-	await userEvent.click(icon, {button: 2});
+	await userEvent.click(icon, { button: 2 });
 
 	await waitFor(() => expect(screen.getByText("Dashboard"))
 		.toBeInTheDocument(),

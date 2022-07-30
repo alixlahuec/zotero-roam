@@ -1,5 +1,6 @@
 import { sampleAnnot, sampleImageAnnot } from "Mocks/zotero/annotations";
 import { libraries } from "Mocks/zotero/libraries";
+
 import {
 	compareAnnotationIndices,
 	formatZoteroAnnotations,

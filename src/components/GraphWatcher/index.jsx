@@ -23,10 +23,10 @@ const GraphWatcher = React.memo(function GraphWatcher(){
 	const updatePageElements = useCallback(() => {
 		// Page menus
 		setMenus((prevState) => {
-			let update = {};
+			const update = {};
 
 			const currentMenus = findPageMenus();
-			for(let key of Object.keys(currentMenus)){
+			for(const key of Object.keys(currentMenus)){
 				if(hasNodeListChanged(prevState[key], currentMenus[key])){
 					update[key] = currentMenus[key];
 				}

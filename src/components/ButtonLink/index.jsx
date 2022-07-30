@@ -1,6 +1,6 @@
-import React from "react";
 import { bool, node, string } from "prop-types";
 import { AnchorButton } from "@blueprintjs/core";
+import React from "react";
 
 function ButtonLink(props) {
 	const { children = null, href, minimal = true, ...otherProps } = props;

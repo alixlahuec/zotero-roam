@@ -1,4 +1,4 @@
-const { checkA11y, configureAxe, getViolations, injectAxe } = require('axe-playwright');
+const { checkA11y, configureAxe,/* getViolations,*/ injectAxe } = require('axe-playwright');
 const fs = require('fs');
 
 const { A11Y_RULES } = require("./a11y-rules");
@@ -17,7 +17,7 @@ module.exports = {
     async preRender(page, _context) {
         await injectAxe(page);
     },
-    async postRender(page, context) {
+    async postRender(page, _context) {
 
         await configureAxe(page, {
             rules: A11Y_RULES

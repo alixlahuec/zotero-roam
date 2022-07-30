@@ -1,5 +1,5 @@
-import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
 /** Uses a React query to retrieve Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity` and `staleTime = 10min`.
  *  There is no refetch scheduled, since the data should not change over the course of a session.
@@ -10,7 +10,7 @@ import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSeman
  */
 const useQuery_Citoid = (urls, opts = {}) => {
 	// Defaults for this query
-	let { 
+	const { 
 		cacheTime = Infinity,
 		retry = (failureCount, error) => {
 			return (failureCount < 1 && error.toJSON().status != 404);
@@ -18,8 +18,8 @@ const useQuery_Citoid = (urls, opts = {}) => {
 		staleTime = 1000 * 60 * 10,
 		...rest } = opts;
 	// Factory
-	let queriesDefs = urls.map((url) => {
-		let queryKey = ["citoid", { url }];
+	const queriesDefs = urls.map((url) => {
+		const queryKey = ["citoid", { url }];
 		return {
 			queryKey: queryKey,
 			queryFn: (_queryKey) => fetchCitoid(url),
@@ -41,13 +41,13 @@ const useQuery_Citoid = (urls, opts = {}) => {
  */
 const useQuery_Collections = (libraries, opts = {}) => {
 	// Defaults for this query
-	let { staleTime = 1000 * 60 * 5, refetchInterval = 1000 * 60 * 5, ...rest} = opts;
+	const { staleTime = 1000 * 60 * 5, refetchInterval = 1000 * 60 * 5, ...rest } = opts;
 	// Factory
 	const client = useQueryClient();
-	let queriesDefs = libraries.map((lib) => {
-		let { path, apikey } = lib;
-		let queryKey = ["collections", { library: path, apikey }];
-		let { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
+	const queriesDefs = libraries.map((lib) => {
+		const { path, apikey } = lib;
+		const queryKey = ["collections", { library: path, apikey }];
+		const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
 		return {
 			queryKey: queryKey,
 			queryFn: (_queryKey) => fetchCollections(lib, since, { match }),
@@ -68,14 +68,14 @@ const useQuery_Collections = (libraries, opts = {}) => {
  */
 const useQuery_Items = (reqs, opts = {}) => {
 	// Defaults for this query
-	let { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest} = opts;
+	const { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest } = opts;
 	
 	// Factory
 	const client = useQueryClient();
-	let queriesDefs = reqs.map((req) => {
-		let { params, library, ...identifiers } = req;
-		let queryKey = ["items", library,  {...identifiers}];
-		let { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
+	const queriesDefs = reqs.map((req) => {
+		const { params, library, ...identifiers } = req;
+		const queryKey = ["items", library,  { ...identifiers }];
+		const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
 		return {
 			queryKey: queryKey,
 			queryFn: (_queryKey) => fetchItems({ ...req,  since }, { match }, client),
@@ -96,10 +96,10 @@ const useQuery_Items = (reqs, opts = {}) => {
  */
 const useQuery_Permissions = (keys, opts = {}) => {
 	// Defaults for this query
-	let { staleTime = 1000 * 60 * 60, refetchInterval = 1000 * 60 * 60, ...rest } = opts;
+	const { staleTime = 1000 * 60 * 60, refetchInterval = 1000 * 60 * 60, ...rest } = opts;
 	// Factory
-	let queriesDefs = keys.map((apikey) => {
-		let queryKey = ["permissions", { apikey }];
+	const queriesDefs = keys.map((apikey) => {
+		const queryKey = ["permissions", { apikey }];
 		return {
 			queryKey: queryKey,
 			queryFn: (_queryKey) => fetchPermissions(apikey),
@@ -121,9 +121,9 @@ const useQuery_Permissions = (keys, opts = {}) => {
  */
 const useQuery_Semantic = (doi, opts = {}) => {
 	// Defaults for this query
-	let { cacheTime = Infinity, ...rest } = opts;
+	const { cacheTime = Infinity, ...rest } = opts;
 	// Factory
-	let queryKey = ["semantic", { doi }];
+	const queryKey = ["semantic", { doi }];
 	return useQuery({
 		queryKey,
 		queryFn: (_queryKey) => fetchSemantic(doi),
@@ -140,11 +140,11 @@ const useQuery_Semantic = (doi, opts = {}) => {
  */
 const useQuery_Tags = (libraries, opts = {}) => {
 	// Defaults for this query
-	let { staleTime = 1000 * 60 * 3, ...rest } = opts;
+	const { staleTime = 1000 * 60 * 3, ...rest } = opts;
 	// Factory
-	let queriesDefs = libraries.map((lib) => {
-		let { apikey, path } = lib;
-		let queryKey = ["tags", { apikey, library: path }];
+	const queriesDefs = libraries.map((lib) => {
+		const { apikey, path } = lib;
+		const queryKey = ["tags", { apikey, library: path }];
 		return {
 			queryKey: queryKey,
 			queryFn: (_queryKey) => fetchTags({ apikey, path }),
@@ -167,13 +167,13 @@ const useWriteableLibraries = (libraries) => {
 
 	const data = libraries
 		.filter(lib => {
-			let keyData = permissions.find(k => k.key == lib.apikey);
+			const keyData = permissions.find(k => k.key == lib.apikey);
 			if(!keyData){
 				return false;
 			} else {
-				let { access } = keyData;
-				let [libType, libId] = lib.path.split("/");
-				let permissionsList = libType == "users" ? (access.user || {}) : (access.groups[libId] || access.groups.all);
+				const { access } = keyData;
+				const [libType, libId] = lib.path.split("/");
+				const permissionsList = libType == "users" ? (access.user || {}) : (access.groups[libId] || access.groups.all);
 				return permissionsList?.write || false;
 			}
 		});

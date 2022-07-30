@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { arrayOf, func, oneOf, shape} from "prop-types";
+import { arrayOf, func, oneOf, shape } from "prop-types";
+
 import { InputGroup, NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "../../DataList";
@@ -12,6 +13,7 @@ import usePagination from "../../../hooks/usePagination";
 import useText from "../../../hooks/useText";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
 
 const itemsPerPage = 30;
@@ -30,21 +32,21 @@ function search(query, items){
 }
 
 function sort(items, sortBy){
-	let arr = [...items];
+	const arr = [...items];
 	switch(sortBy){
 	case "library": {
-		let categorized = arr.reduce((obj, elem) => {
+		const categorized = arr.reduce((obj, elem) => {
 			if(elem.inLibrary == false){
 				obj.notLibrary.push(elem);
 			} else {
 				obj.library.push(elem);
 			}
 			return obj;
-		}, { library: [], notLibrary: []});
+		}, { library: [], notLibrary: [] });
 		return [...categorized.library, ...categorized.notLibrary];
 	}
 	case "influential": {
-		let categorized = arr.reduce((obj, elem) => {
+		const categorized = arr.reduce((obj, elem) => {
 			if(elem.isInfluential){
 				obj.influential.push(elem);
 			} else {
@@ -60,9 +62,9 @@ function sort(items, sortBy){
 	}
 }
 
-function Item({item, selectProps, type}){
-	let { handleRemove, handleSelect, items: selectedItems } = selectProps;
-	let isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
+function Item({ item, selectProps, type }){
+	const { handleRemove, handleSelect, items: selectedItems } = selectProps;
+	const isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
 
 	return <SemanticItem key={item.doi} 
 		handleRemove={handleRemove} 
@@ -98,7 +100,7 @@ const SemanticPagination = React.memo(function SemanticPagination(props){
 
 	const sortOptions = useMemo(() => [
 		{ icon: "sort", label: "Publication Year", value: "year" },
-		{ icon: "graph", label: "In Library", value: "library"},
+		{ icon: "graph", label: "In Library", value: "library" },
 		{ icon: "trending-up", label: "Highly Influential", value: "influential" }
 	], []);
 

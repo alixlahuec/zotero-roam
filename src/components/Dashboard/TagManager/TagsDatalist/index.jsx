@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, objectOf, oneOf, shape, string } from "prop-types";
+
 import { NonIdealState, Spinner } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
@@ -12,7 +13,9 @@ import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
 import usePagination from "../../../../hooks/usePagination";
 
 import { CustomClasses } from "../../../../constants";
+
 import * as customPropTypes from "../../../../propTypes";
+
 import "./index.css";
 
 const itemsPerPage = 30;
@@ -54,7 +57,7 @@ const TagsDatalist = React.memo(function TagsDatalist(props){
     
 	const sortOptions = useMemo(() => [
 		{ icon: "sort-desc", label: "Most Used", value: "usage" },
-		{ icon: "sort-alphabetical", label: "Name", value: "alphabetical"},
+		{ icon: "sort-alphabetical", label: "Name", value: "alphabetical" },
 		{ icon: "star", label: "In Roam", value: "roam" }
 	], []);
 

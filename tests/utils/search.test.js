@@ -2,7 +2,7 @@ import { searchEngine } from "../../src/utils";
 
 describe("Search engine inputs", () => {
 	it("rejects invalid search inputs", () => {
-		expect(() => searchEngine("query", {text: ""}))
+		expect(() => searchEngine("query", { text: "" }))
 			.toThrow();
 	});
 	
@@ -18,13 +18,13 @@ describe("Search engine inputs", () => {
 });
 
 test("Case-sensitive search", () => {
-	let targets = [
+	const targets = [
 		"You could use some systems thinking.",
 		"What about systems?",
 		"Systems are key.",
 		"Really, SYSTEMS you say?"
 	];
-	expect(targets.map(target => searchEngine("systems", target, { any_case: false})))
+	expect(targets.map(target => searchEngine("systems", target, { any_case: false })))
 		.toEqual([
 			true, 
 			true, 
@@ -35,7 +35,7 @@ test("Case-sensitive search", () => {
 
 describe("Search - matching modes", () => {
 	it("matches on partial words", () => {
-		let targets = [
+		const targets = [
 			"There are new renderings.",
 			"This might rend the cloth.",
 			"Is this a trend?"
@@ -49,7 +49,7 @@ describe("Search - matching modes", () => {
 	});
 	
 	it("matches on word boundaries only", () => {
-		let targets = [
+		const targets = [
 			"This was the turning point of the enterprise.",
 			"The turn of the century upended it all.",
 			"They did not expect his return."
@@ -63,7 +63,7 @@ describe("Search - matching modes", () => {
 	});
 
 	it("finds exact matches - single-word query", () => {
-		let targets = [
+		const targets = [
 			"organization",
 			"organizational",
 			"an organization",
@@ -77,7 +77,7 @@ describe("Search - matching modes", () => {
 	});
 	
 	it("finds exact matches - multi-word query", () => {
-		let targets = [
+		const targets = [
 			"knowledge management",
 			"personal knowledge management",
 		];
@@ -91,7 +91,7 @@ describe("Search - matching modes", () => {
 
 describe("Search - compounds", () => {
 	it("matches compounds - single-word query", () => {
-		let targets = [
+		const targets = [
 			"These antipatterns provide unique insights.",
 			"This is likely one of its anti-patterns.",
 			"You can begin by identifying anti patterns."
@@ -105,7 +105,7 @@ describe("Search - compounds", () => {
 	});
 	
 	it("matches compounds - multi-word query", () => {
-		let targets = [
+		const targets = [
 			"There are inter-operational models in development",
 			"I've been reading about interoperational models",
 			"These inter operational models are questionable"
@@ -121,7 +121,7 @@ describe("Search - compounds", () => {
 
 describe("Search - word order", () => {
 	it("matches words in the order provided", () => {
-		let targets = [
+		const targets = [
 			"That would decide world order",
 			"There could be order in the world"
 		];
@@ -133,7 +133,7 @@ describe("Search - word order", () => {
 	});
 	
 	it("matches words in any order", () => {
-		let targets = [
+		const targets = [
 			"That would decide world order",
 			"There could be order in the world"
 		];
@@ -145,7 +145,7 @@ describe("Search - word order", () => {
 	});
 
 	it("matches in the order provided, on word boundaries", () => {
-		let targets = [
+		const targets = [
 			"That would decide world order",
 			"There could be order in the world",
 			"World order is a long way from here",
@@ -163,7 +163,7 @@ describe("Search - word order", () => {
 	});
 	
 	it("matches words in any order, on word boundaries", () => {
-		let targets = [
+		const targets = [
 			"That would decide world order",
 			"There could be order in the world",
 			"World order is a long way from here",

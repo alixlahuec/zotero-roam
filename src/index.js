@@ -22,7 +22,7 @@ import "@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "./index.css";
 
 
-(async()=>{
+(async() => {
 
 	window.zoteroRoam = {};
 

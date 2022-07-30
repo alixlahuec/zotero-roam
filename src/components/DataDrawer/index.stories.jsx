@@ -1,5 +1,5 @@
-import React from "react";
 import DataDrawer from ".";
+import React from "react";
 
 import { items } from "Mocks/zotero/items";
 

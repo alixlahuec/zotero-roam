@@ -1,7 +1,7 @@
 import React from "react";
 import WebImportPanel from "./WebImportPanel";
 
-import { badIdentifier, goodIdentifier, citoids } from "Mocks/citoid";
+import { badIdentifier, citoids, goodIdentifier } from "Mocks/citoid";
 import { libraries } from "Mocks/zotero/libraries";
 
 import { expect, jest } from "@storybook/jest";
@@ -15,11 +15,11 @@ export default {
 		isOpen: true,
 		onClose: () => {}
 	},
-    parameters: {
-        userSettings: {
+	parameters: {
+		userSettings: {
 			typemap: {}
 		}
-    }
+	}
 };
 
 const Template = (args) => <WebImportPanel {...args} />;

@@ -1,7 +1,7 @@
-import React from "react";
-import { ErrorBoundary } from "@sentry/react";
 import { array, node, object, oneOfType, string } from "prop-types";
+import React from "react";
 
+import { ErrorBoundary } from "@sentry/react";
 import ErrorCallout from "./ErrorCallout";
 
 function SentryBoundary(props){
@@ -12,7 +12,7 @@ function SentryBoundary(props){
 				scope.setTag("feature", feature);
 			}
 			if(extra){
-				scope.setExtras({...extra});
+				scope.setExtras({ ...extra });
 			}
 		}}
 		fallback={({ error, resetError }) => (

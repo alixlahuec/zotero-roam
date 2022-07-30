@@ -1,7 +1,7 @@
-import { zotero } from "./common";
-import { rest } from "msw";
 import { libraries } from "./libraries";
+import { rest } from "msw";
 import { searchEngine } from "../../src/utils";
+import { zotero } from "./common";
 
 const { userLibrary, groupLibrary } = libraries;
 
@@ -28,7 +28,7 @@ const makeTag = ({ tag, library, type = 1, numItems = 1 }) => {
 
 export const findTags = (path, token) => {
 	const tagList = data[path];
-	return tagList.filter(t => searchEngine(t.tag, token, { any_case: true, match: "exact", search_compounds: true}));
+	return tagList.filter(t => searchEngine(t.tag, token, { any_case: true, match: "exact", search_compounds: true }));
 };
 
 const data = {

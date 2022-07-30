@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { arrayOf, bool, func, shape, string} from "prop-types";
+import { arrayOf, bool, func, shape, string } from "prop-types";
+
 import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../App";
@@ -11,14 +12,17 @@ import TagsSelector from "../Inputs/TagsSelector";
 
 import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
-import { sortCollections } from "../../utils";
-
 import useMulti from "../../hooks/useMulti";
 import useSelect from "../../hooks/useSelect";
 
+import { sortCollections } from "../../utils";
+
 import { CustomClasses } from "../../constants";
+
 import * as customPropTypes from "../../propTypes";
+
 import "./index.css";
+
 
 const ImportButton = React.memo(function ImportButton(props) {
 	const { identifiers, importProps, isActive, resetImport } = props;
@@ -95,7 +99,7 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 	const [selectedColls, { set: setSelectedColls, toggle: onCollSelect }] = useMulti({
 		start: []
 	});
-	const [selectedTags, {add: onTagSelect, remove: onTagRemove }] = useMulti({
+	const [selectedTags, { add: onTagSelect, remove: onTagRemove }] = useMulti({
 		start: []
 	});
 
@@ -105,8 +109,8 @@ const ImportPanel = React.memo(function ImportPanel(props) {
 	}, [handleLibSelection, setSelectedColls]);
 
 	const selectedLibCollections = useMemo(() => {
-		let libCollections = collections.filter(cl => {
-			let { id, type } = cl.library;
+		const libCollections = collections.filter(cl => {
+			const { id, type } = cl.library;
 			return (type + "s/" + id) == selectedLib.path;
 		});
 		return sortCollections(libCollections);

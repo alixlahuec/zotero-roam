@@ -1,11 +1,13 @@
 import React, { useContext, useMemo } from "react";
 import { bool, func, node, string } from "prop-types";
 import { createPortal } from "react-dom";
+
 import { Classes, Dialog } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../App";
 
 import { CustomClasses } from "../../constants";
+
 import "./index.css";
 
 const DialogOverlay = React.memo(function DialogOverlay(props) {

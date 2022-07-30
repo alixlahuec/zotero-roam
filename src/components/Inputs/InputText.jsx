@@ -1,6 +1,8 @@
 import React, { useCallback } from "react";
 import { func, string } from "prop-types";
+
 import { Icon, InputGroup } from "@blueprintjs/core";
+
 
 function InputText({ value, setValue }){
 	const handleValueChange = useCallback((event) => setValue(event.target.value), [setValue]);

@@ -1,14 +1,17 @@
 import React from "react";
+
 import { Icon } from "@blueprintjs/core";
 
-import { ListItem } from "../../../DataList";
 import ActionsMenu from "../ActionsMenu";
+import { ListItem } from "../../../DataList";
 import RoamTag from "./RoamTag";
 import ZoteroTag from "./ZoteroTag";
-import { pluralize } from "../../../../utils";
+
 import { getTagUsage, isSingleton, makeSuggestionFor } from "../utils";
+import { pluralize } from "../../../../utils";
 
 import { CustomClasses } from "../../../../constants";
+
 import * as customPropTypes from "../../../../propTypes";
 
 const ItemEntry = React.memo(function ItemEntry({ entry, library }){
@@ -27,7 +30,7 @@ const ItemEntry = React.memo(function ItemEntry({ entry, library }){
 					{!is_singleton && <span className={CustomClasses.TEXT_SMALL} zr-role="item-additional">
 						{entry.roam.map(elem => <RoamTag key={elem.title} text={elem.title} uid={elem.uid} /> )}
 						{entry.zotero.map((elem) => {
-							const { tag, meta: { type }} = elem;
+							const { tag, meta: { type } } = elem;
 							return <ZoteroTag key={[tag, type].join("_")} tagElement={elem} />;
 						} )}
 					</span>}

@@ -1,15 +1,17 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { arrayOf, func, oneOf, oneOfType, string } from "prop-types";
 import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
+import { arrayOf, func, oneOf, oneOfType, string } from "prop-types";
 import { Popover2 } from "@blueprintjs/popover2";
 
-import { importItemMetadata, openInSidebarByUID, openPageByUID } from "Roam";
-import { getLocalLink, getWebLink } from "../../utils";
 import { UserSettings } from "../App";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
-import { CustomClasses } from "../../constants";
+import { getLocalLink, getWebLink } from "../../utils";
+import { importItemMetadata, openInSidebarByUID, openPageByUID } from "Roam";
+
 import * as customPropTypes from "../../propTypes";
+import { CustomClasses } from "../../constants";
+
 import "./index.css";
 
 const popoverMenuProps = {
@@ -34,8 +36,8 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 
 	const buttonProps = useMemo(() => {
 		return inGraph
-			? {className: CustomClasses.TEXT_SMALL, onClick: () => openPageByUID(inGraph)}
-			: {className: [CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")};
+			? { className: CustomClasses.TEXT_SMALL, onClick: () => openPageByUID(inGraph) }
+			: { className: [CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ") };
 	}, [inGraph]);
 
 	const zoteroLinks = useMemo(() => {
@@ -44,19 +46,19 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 				<MenuItem 
 					icon="application"
 					text="Open in Zotero (app)"
-					href={getLocalLink(item, {format: "target"})} 
+					href={getLocalLink(item, { format: "target" })} 
 					target="_blank" />
 				<MenuItem 
 					icon="cloud"
 					text="Open in Zotero (web)"
-					href={getWebLink(item, {format: "target"})} 
+					href={getWebLink(item, { format: "target" })} 
 					target="_blank" />
 			</>
 		);
 	}, [item]);
 
 	const importMetadata = useCallback(async() => {
-		let outcome = await importItemMetadata({ item, pdfs, notes}, inGraph, metadataSettings, typemap, notesSettings, annotationsSettings);
+		const outcome = await importItemMetadata({ item, pdfs, notes }, inGraph, metadataSettings, typemap, notesSettings, annotationsSettings);
 		if(outcome.success && outcome.page.new){
 			updateRoamCitekeys();
 		}
@@ -64,7 +66,7 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 	}, [annotationsSettings, inGraph, item, metadataSettings, pdfs, notes, notesSettings, typemap, updateRoamCitekeys]);
 
 	const importMetadataAndOpen = useCallback(async() => {
-		let { success, args: { uid }} = await importMetadata();
+		const { success, args: { uid } } = await importMetadata();
 		if(success){
 			openInSidebarByUID(uid);
 		}
@@ -81,12 +83,12 @@ const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 
 	const pdfChildren = useMemo(() => {
 		if(pdfs.length > 0){
-			let libLoc = item.library.type == "group" ? ("groups/" + item.library.id) : "library";
+			const libLoc = item.library.type == "group" ? ("groups/" + item.library.id) : "library";
 			return (
 				<>
 					<MenuDivider title="PDF Attachments" />
 					{pdfs.map((p,i) => {
-						let pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
+						const pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
 						return <MenuItem key={i} 
 							href={pdfHref} 
 							icon="paperclip"

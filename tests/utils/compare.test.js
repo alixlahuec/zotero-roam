@@ -5,11 +5,11 @@ import {
 	sortElems } from "../../src/utils";
 
 test("Sorts Zotero items by publication year & creators", () => {
-	const a = {meta: {creatorSummary: "Smith et al.", parsedDate: ""}};
-	const b = {meta: {creatorSummary: "Scott et al.", parsedDate: ""}};
-	const c = {meta: {creatorSummary: "Smith et al.", parsedDate: "2022-01-01"}};
-	const d = {meta: {creatorSummary: "Tikki and Noald", parsedDate: "2021-01-01"}};
-	const e = {meta: {creatorSummary: "Chen and Talmanes", parsedDate: "2021"}};
+	const a = { meta: { creatorSummary: "Smith et al.", parsedDate: "" } };
+	const b = { meta: { creatorSummary: "Scott et al.", parsedDate: "" } };
+	const c = { meta: { creatorSummary: "Smith et al.", parsedDate: "2022-01-01" } };
+	const d = { meta: { creatorSummary: "Tikki and Noald", parsedDate: "2021-01-01" } };
+	const e = { meta: { creatorSummary: "Chen and Talmanes", parsedDate: "2021" } };
 
 	expect([
 		[a,b].sort(compareItemsByYear),
@@ -255,31 +255,31 @@ describe("Zotero collections sorting", () => {
 	
 		expect(sortCollections(colls))
 			.toMatchObject([
-				{key: "N7W92H48", depth: 0},
-				{key: "M7MNCCXU", depth: 1},
-				{key: "QM6T3KHX", depth: 0},
-				{key: "TVPC4XK4", depth: 1},
-				{key: "2GUIGKC9", depth: 0}
+				{ key: "N7W92H48", depth: 0 },
+				{ key: "M7MNCCXU", depth: 1 },
+				{ key: "QM6T3KHX", depth: 0 },
+				{ key: "TVPC4XK4", depth: 1 },
+				{ key: "2GUIGKC9", depth: 0 }
 			]);
 	});
 });
 
 test("Sorts object arrays on a string key", () => {
 	const arr = [
-		{title: "Quantitative theory"},
-		{title: "Quantitative measurement"},
-		{title: "Chaos theory"},
-		{title: "Barometry"},
-		{title: "Swarm intelligence"},
-		{title: "Non-competitive signaling"}
+		{ title: "Quantitative theory" },
+		{ title: "Quantitative measurement" },
+		{ title: "Chaos theory" },
+		{ title: "Barometry" },
+		{ title: "Swarm intelligence" },
+		{ title: "Non-competitive signaling" }
 	];
 	expect(sortElems(arr, "title"))
 		.toEqual([
-			{title: "Barometry"},
-			{title: "Chaos theory"},
-			{title: "Non-competitive signaling"},
-			{title: "Quantitative measurement"},
-			{title: "Quantitative theory"},
-			{title: "Swarm intelligence"}
+			{ title: "Barometry" },
+			{ title: "Chaos theory" },
+			{ title: "Non-competitive signaling" },
+			{ title: "Quantitative measurement" },
+			{ title: "Quantitative theory" },
+			{ title: "Swarm intelligence" }
 		]);
 });

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { bool, func, oneOf } from "prop-types";
+
 import { Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../AuxiliaryDialog";
@@ -8,6 +9,7 @@ import RecentItems from "./RecentItems";
 import TagManager from "./TagManager";
 
 import { CustomClasses } from "../../constants";
+
 import "./index.css";
 
 const TabList = React.memo(function TabList(props){

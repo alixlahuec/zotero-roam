@@ -1,5 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
+
 import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
 import { UserSettings } from "../../App";
@@ -8,10 +9,10 @@ import { CitoidGuide } from "../../Guide";
 import SentryBoundary from "../../Errors/SentryBoundary";
 import ZoteroImport from "../../ZoteroImport";
 
-import { useQuery_Citoid } from "../../../api/queries";
-import { pluralize } from "../../../utils";
-
 import useMulti from "../../../hooks/useMulti";
+import { useQuery_Citoid } from "../../../api/queries";
+
+import { pluralize } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
 

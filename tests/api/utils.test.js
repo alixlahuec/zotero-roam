@@ -1,18 +1,20 @@
-import axios from "axios";
 import { QueryClient } from "@tanstack/react-query";
-import { citoids } from "Mocks/citoid";
-import { makeItemMetadata } from "Mocks/zotero/common";
-import { findCollections } from "Mocks/zotero/collections";
-import { apiKeys } from "Mocks/zotero/keys";
-import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
-import { deletions } from "Mocks/zotero/deleted";
-import { items, findItems, findBibEntry } from "Mocks/zotero/items";
-import { libraries } from "Mocks/zotero/libraries";
-import { semantics } from "Mocks/semantic-scholar";
-import { tags, findTags } from "Mocks/zotero/tags";
-import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
+import axios from "axios";
 
-const { keyWithFullAccess: { key: masterKey }} = apiKeys;
+import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
+import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
+import { findBibEntry, findItems, items } from "Mocks/zotero/items";
+import { findTags, tags } from "Mocks/zotero/tags";
+import { apiKeys } from "Mocks/zotero/keys";
+import { citoids } from "Mocks/citoid";
+import { deletions } from "Mocks/zotero/deleted";
+import { findCollections } from "Mocks/zotero/collections";
+import { libraries } from "Mocks/zotero/libraries";
+import { makeItemMetadata } from "Mocks/zotero/common";
+import { semantics } from "Mocks/semantic-scholar";
+
+
+const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary, groupLibrary } = libraries;
 const getLibraryPath = (library) => {
 	return library.type + "s/" + library.id;
@@ -38,13 +40,13 @@ describe("Cleaning XHTML markup for bibliography entries", () => {
 
 test("Extracting citekeys for Zotero items", () => {
 	const cases = [
-		{ key: "ABCD1234", data: { extra: "Citation Key: someCitekey1994" }},
-		{ key: "PQRST789", data: { extra: "" }}
+		{ key: "ABCD1234", data: { extra: "Citation Key: someCitekey1994" } },
+		{ key: "PQRST789", data: { extra: "" } }
 	];
 
 	const expectations = [
 		{ key: "someCitekey1994", data: { extra: "Citation Key: someCitekey1994" }, has_citekey: true },
-		{ key: "PQRST789", data: { extra: "" }, has_citekey: false}
+		{ key: "PQRST789", data: { extra: "" }, has_citekey: false }
 	];
 
 	expect(extractCitekeys(cases)).toEqual(expectations);
@@ -88,16 +90,16 @@ describe("Creating formatted tag lists", () => {
 });
 
 test("Selecting and formatting Semantic DOIs", () => {
-	const items = [
+	const testItems = [
 		{ doi: null },
-		{ doi: "invalid.DOI"},
-		{ doi: "10.1186/S40985-018-0094-7"},
+		{ doi: "invalid.DOI" },
+		{ doi: "10.1186/S40985-018-0094-7" },
 		{ doi: "10.1370/afm.1918" }
 	];
 
-	expect(parseSemanticDOIs(items))
+	expect(parseSemanticDOIs(testItems))
 		.toEqual([
-			{ doi: "10.1186/s40985-018-0094-7"},
+			{ doi: "10.1186/s40985-018-0094-7" },
 			{ doi: "10.1370/afm.1918" }
 		]);
 });
@@ -253,7 +255,7 @@ describe("Fetching mocked items", () => {
 			});
 
 			const sinceLatest = await fetchItems(
-				{ apikey: masterKey, dataURI: `${path}/items`, library: path, params: "", since: version},
+				{ apikey: masterKey, dataURI: `${path}/items`, library: path, params: "", since: version },
 				{ match: itemData },
 				queryClient
 			);
@@ -272,7 +274,7 @@ describe("Updating mocked items", () => {
 		"%# Updating an item from %s",
 		async(_libName, libraryDetails) => {
 			const { type, id, path } = libraryDetails;
-			const sample_item = findItems({ type, id, since: 0})[0];
+			const sample_item = findItems({ type, id, since: 0 })[0];
 
 			const res = await writeItems(
 				[{ key: sample_item.data.key, version: sample_item.version, tags: [{ tag: "TEST_TAG", type: 0 }] }],

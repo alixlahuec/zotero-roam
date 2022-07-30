@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTags, writeCitoids, writeItems } from "./utils";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { emitCustomEvent } from "../events";
 
 /** Delete tags from a Zotero library
@@ -7,11 +7,11 @@ import { emitCustomEvent } from "../events";
  * @returns 
  */
 const useDeleteTags = () => {
-	let client = useQueryClient();
+	const client = useQueryClient();
 
 	return useMutation((variables) => {
 		const { library: { apikey, path }, tags } = variables;
-		let { lastUpdated: version } = client.getQueryData(["tags", { apikey, library: path }]);
+		const { lastUpdated: version } = client.getQueryData(["tags", { apikey, library: path }]);
 
 		return deleteTags(tags, { apikey, path }, version);
 	}, {
@@ -42,11 +42,11 @@ const useDeleteTags = () => {
  * @returns 
  */
 const useImportCitoids = () => {
-	let client = useQueryClient();
+	const client = useQueryClient();
 
 	return useMutation((variables) => {
 		const { collections = [], items, library, tags = [] } = variables;
-		return writeCitoids(items, { library, collections, tags});
+		return writeCitoids(items, { library, collections, tags });
 	}, {
 		onSettled: (data, error, variables, _context) => {
 			const { collections, items, library: { path }, tags } = variables;
@@ -85,24 +85,24 @@ const useImportCitoids = () => {
  * @returns
  */
 const useModifyTags = () => {
-	let client = useQueryClient();
+	const client = useQueryClient();
 
 	return useMutation((variables) => {
 		const { into, library: { apikey, path }, tags } = variables;
-		let dataList = [];
-		let libItems = client.getQueriesData(["items", path])
+		const dataList = [];
+		const libItems = client.getQueriesData(["items", path])
 			.map(query => (query[1] || {}).data || []).flat(1)
 			.filter(i => !["attachment", "note", "annotation"].includes(i.data.itemType) && i.data.tags.length > 0);
 
 		libItems.forEach(i => {
-			let itemTags = i.data.tags;
+			const itemTags = i.data.tags;
 			// If the item already has the target tag, with type 0 (explicit or implicit) - remove it from the array before the filtering :
-			let has_clean_tag = itemTags.findIndex(i => i.tag == into && (i.type == 0 || !i.type));
+			const has_clean_tag = itemTags.findIndex(it => it.tag == into && (it.type == 0 || !it.type));
 			if (has_clean_tag > -1) {
 				itemTags.splice(has_clean_tag, 1);
 			}
 			// Compare the lengths of the tag arrays, before vs. after filtering out the tags to be renamed
-			let cleanTags = itemTags.filter(t => !tags.includes(t.tag));
+			const cleanTags = itemTags.filter(t => !tags.includes(t.tag));
 			if (cleanTags.length < itemTags.length) {
 				// If they do not match (aka, there are tags to be removed/renamed), insert the target tag & add to the dataList
 				cleanTags.push({ tag: into, type: 0 });

@@ -1,20 +1,23 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, number, shape, string } from "prop-types";
+
 import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
 import { ExtensionContext } from "../../App";
 import { ListWrapper, Toolbar } from "../../DataList";
-import SentryBoundary from "../../Errors/SentryBoundary";
 import LogItem from "./LogItem";
-
-import { useQuery_Items } from "../../../api/queries";
-import { makeLogFromItems } from "./utils";
-import { categorizeLibraryItems } from "../../../utils";
+import SentryBoundary from "../../Errors/SentryBoundary";
 
 import useBool from "../../../hooks/useBool";
+import { useQuery_Items } from "../../../api/queries";
+
+import { categorizeLibraryItems } from "../../../utils";
+import { makeLogFromItems } from "./utils";
 
 import { CustomClasses } from "../../../constants";
+
 import * as customPropTypes from "../../../propTypes";
+
 import "./index.css";
 
 const sliderHandleProps = {

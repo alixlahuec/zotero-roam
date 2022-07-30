@@ -1,9 +1,12 @@
 import React, { useCallback } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
+
 import { ButtonGroup, Icon } from "@blueprintjs/core";
 
 import { CustomClasses } from "../../constants";
+
 import "./index.css";
+
 
 function SortButton(props){
 	const { icon, isSelected, label, name, onClick, value } = props;

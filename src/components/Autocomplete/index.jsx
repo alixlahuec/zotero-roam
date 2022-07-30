@@ -18,7 +18,7 @@ const tributeConfig = {
 	menuShowMinLength: 1,
 	menuItemLimit: 25,
 	menuItemTemplate: (item) => {
-		let { itemType, display } = item.original;
+		const { itemType, display } = item.original;
 		return `
         <span data-item-type="${itemType}"></span>
         <span class="${CustomClasses.TRIBUTE_DETAILS}">${display}</span>
@@ -54,8 +54,8 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 							key: item.key,
 							itemType: item.data.itemType,
 							source: "zotero",
-							value: formatItemReference(item, format, {accent_class: CustomClasses.TEXT_ACCENT_1}) || item.key,
-							display: formatItemReference(item, display, {accent_class: CustomClasses.TEXT_ACCENT_1}) || item.key
+							value: formatItemReference(item, format, { accent_class: CustomClasses.TEXT_ACCENT_1 }) || item.key,
+							display: formatItemReference(item, display, { accent_class: CustomClasses.TEXT_ACCENT_1 }) || item.key
 						};
 					})
 				: [];
@@ -86,34 +86,33 @@ const Autocomplete = React.memo(function Autocomplete() {
 
 	// Detect if a block is currently being edited
 	const checkEditingMode = useCallback(() => {
-		let textArea = document.querySelector("textarea.rm-block-input");
-		if (!textArea || textArea.getAttribute("zotero-tribute") != null) return;
+		const textArea = document.querySelector("textarea.rm-block-input");
+		if (!textArea || textArea.getAttribute("zotero-tribute") != null) {return;}
 
-		document.querySelectorAll(`.${CustomClasses.TRIBUTE}`).forEach(d=>d.remove());
+		document.querySelectorAll(`.${CustomClasses.TRIBUTE}`).forEach(d => d.remove());
 
 		textArea.setAttribute("zotero-tribute", "active");
 
-		var tribute = new Tribute(tributeFactory);
+		const tribute = new Tribute(tributeFactory);
 		tribute.attach(textArea);
 
 		textArea.addEventListener("tribute-replaced", (e) => {
-			let item = e.detail.item;
+			const item = e.detail.item;
 			if(item.original.source == "zotero"){
-				let textArea = document.querySelector("textarea.rm-block-input");
-				let triggerString = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
-				let triggerPos = e.detail.context.mentionPosition;
+				const triggerString = e.detail.context.mentionTriggerChar + e.detail.context.mentionText;
+				const triggerPos = e.detail.context.mentionPosition;
 
-				let replacement = e.detail.item.original.value;
-				let blockContents = e.target.defaultValue;
+				const replacement = e.detail.item.original.value;
+				const blockContents = e.target.defaultValue;
 
-				let escapedTrigger = escapeRegExp(triggerString);
-				let triggerRegex = new RegExp(escapedTrigger, "g");
-				let newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
+				const escapedTrigger = escapeRegExp(triggerString);
+				const triggerRegex = new RegExp(escapedTrigger, "g");
+				const newText = blockContents.replaceAll(triggerRegex, (match, pos) => (pos == triggerPos) ? replacement : match );
 
-				var setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+				const setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
 				setValue.call(textArea, newText);
 
-				var ev = new Event("input", { bubbles: true });
+				const ev = new Event("input", { bubbles: true });
 				textArea.dispatchEvent(ev); 
 			}
 		});
@@ -121,7 +120,7 @@ const Autocomplete = React.memo(function Autocomplete() {
 
 	useEffect(() => {
 		const editingObserver = new MutationObserver(checkEditingMode);
-		editingObserver.observe(document, { childList: true, subtree: true});
+		editingObserver.observe(document, { childList: true, subtree: true });
 
 		return () => {
 			editingObserver.disconnect();

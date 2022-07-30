@@ -1,5 +1,6 @@
-import { executeFunctionByName } from "../../src/utils";
 import { emitCustomEvent } from "../../src/events";
+import { executeFunctionByName } from "../../src/utils";
+
 
 describe("Executing a function by name", () => {
 	it("executes a function attached to the window", () => {

@@ -1,18 +1,22 @@
 import React, { useContext, useMemo } from "react";
 import { arrayOf, bool, func, object } from "prop-types";
-import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tabs, Tab, Tag } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
+import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tab, Tabs, Tag } from "@blueprintjs/core";
+
 import ButtonLink from "../ButtonLink";
 import SentryBoundary from "../Errors/SentryBoundary";
 
-import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
-
 import useBool from "../../hooks/useBool";
 
+import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
+
 import { CustomClasses } from "../../constants";
+
 import * as customPropTypes from "../../propTypes";
+
 import "./index.css";
+
 
 function ShowRaw({ item }){
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
@@ -31,10 +35,10 @@ ShowRaw.propTypes = {
 };
 
 function Annotation({ annot }){
-	let { color, comment, date_modified, link_page, link_pdf, page_label, raw, tags, text, type } = annot;
+	const { color, comment, date_modified, link_page, link_pdf, page_label, raw, tags, text, type } = annot;
 
 	// https://shannonpayne.com.au/how-to-create-a-low-highlight-text-effect-using-css/
-	let highlightStyle = useMemo(() => ({
+	const highlightStyle = useMemo(() => ({
 		"backgroundImage": `linear-gradient(120deg, ${color}50 0%, ${color}50 100%)`
 	}), [color]);
 
@@ -62,8 +66,8 @@ Annotation.propTypes = {
 };
 
 function Note({ note }){
-	let { date_modified, link_note, raw, tags } = note;
 	const { notes: notesSettings } = useContext(UserSettings);
+	const { date_modified, link_note, raw, tags } = note;
 
 	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings), [notesSettings, raw]);
 
@@ -90,7 +94,7 @@ Note.propTypes = {
 };
 
 function PanelAnnotations({ annots }){
-	let clean_annotations = simplifyZoteroAnnotations(annots)
+	const clean_annotations = simplifyZoteroAnnotations(annots)
 		.sort((a,b) => compareAnnotationIndices(a.sortIndex, b.sortIndex));
 
 	return clean_annotations.map(annot => <Annotation key={annot.key} annot={annot} /> );
@@ -100,7 +104,7 @@ PanelAnnotations.propTypes = {
 };
 
 function PanelNotes({ notes }){
-	let clean_notes = simplifyZoteroNotes(notes);
+	const clean_notes = simplifyZoteroNotes(notes);
 
 	return clean_notes.map(nt => <Note key={nt.key} note={nt} />);
 }

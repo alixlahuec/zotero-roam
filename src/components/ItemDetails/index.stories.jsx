@@ -1,11 +1,14 @@
-import { userEvent, waitFor, within } from "@storybook/testing-library";
-import { expect, jest } from "@storybook/jest";
 import React from "react";
-import ItemDetails from ".";
 
+import ItemDetails from ".";
 import zrToaster from "../ExtensionToaster";
-import { items } from "Mocks/zotero/items";
+
+import { expect, jest } from "@storybook/jest";
+import { userEvent, waitFor, within } from "@storybook/testing-library";
+
 import { cleanLibraryItem } from "../../utils";
+import { items } from "Mocks/zotero/items";
+
 
 export default {
 	component: ItemDetails,
@@ -17,8 +20,8 @@ export default {
 			[],
 			new Map([]))
 	},
-    parameters: {
-        userSettings: {
+	parameters: {
+		userSettings: {
 			annotations: {},
 			copy: {},
 			metadata: {},
@@ -35,7 +38,7 @@ export default {
 			},
 			typemap: {}
 		}
-    }
+	}
 };
 
 const Template = (args) => <ItemDetails {...args} />;

@@ -1,9 +1,11 @@
 import React, { useCallback } from "react";
 import { any, bool, func, oneOf, shape, string } from "prop-types";
+
 import { Button, MenuItem } from "@blueprintjs/core";
 import { Select2 } from "@blueprintjs/select";
 
 import InputComponent from "./InputComponent";
+
 import { defaultQueryTerm, queries } from "./queries";
 import { returnSiblingArray } from "./utils";
 
@@ -36,10 +38,10 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 		updateSelf(returnSiblingArray(term, defaultQueryTerm));
 	}, [term, updateSelf]);
 
-	const handlePropChange = useCallback((update) => updateSelf({ ...term, ...update}), [term, updateSelf]);
+	const handlePropChange = useCallback((update) => updateSelf({ ...term, ...update }), [term, updateSelf]);
 
 	const handlePropertyChange = useCallback((newProp) => {
-		let updates = { property: newProp };
+		const updates = { property: newProp };
 		// Update relationship also, if necessary
 		if(!Object.keys(queries[newProp]).includes(relationship)){ updates.relationship = Object.keys(queries[newProp])[0]; }
 		// Update value also, if necessary
@@ -48,13 +50,13 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 		handlePropChange(updates);
 	}, [handlePropChange, relationship, value]);
 	const handleRelationshipChange = useCallback((newRel) => {
-		let updates = { relationship: newRel };
+		const updates = { relationship: newRel };
 		// Update value also, if necessary
 		if(!queries[property][newRel].checkInput(value)) { updates.value = queries[property][newRel].defaultInput; }
 
 		handlePropChange(updates);
 	}, [handlePropChange, property, value]);
-	const handleValueChange = useCallback((value) => handlePropChange({ value }), [handlePropChange]);
+	const handleValueChange = useCallback((val) => handlePropChange({ value: val }), [handlePropChange]);
 
 	return <div className="zr-query-entry">
 		{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}

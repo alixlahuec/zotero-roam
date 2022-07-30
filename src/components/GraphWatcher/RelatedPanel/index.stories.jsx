@@ -1,11 +1,12 @@
 import React from "react";
 import RelatedPanel from ".";
 
-import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
 
-import { items } from "Mocks/zotero/items";
 import { cleanRelatedItem } from "../Menus/utils";
+import { items } from "Mocks/zotero/items";
+
 
 export default {
 	component: RelatedPanel,
@@ -18,14 +19,14 @@ export default {
 			type: "added_on"
 		}
 	},
-    parameters: {
-        userSettings: {
+	parameters: {
+		userSettings: {
 			annotations: {},
 			metadata: {},
 			notes: {},
 			typemap: {}
 		}
-    }
+	}
 };
 
 const Template = (args) => <RelatedPanel {...args} />;
@@ -36,7 +37,7 @@ export const WithInteractions = Template.bind({});
 WithInteractions.play = async({ canvasElement }) => {
 	const canvas = within(canvasElement);
 
-	await userEvent.click(canvas.getByRole("button", { name: "Show abstracts"}));
+	await userEvent.click(canvas.getByRole("button", { name: "Show abstracts" }));
 
 	await waitFor(() => expect(
 		canvas.getByRole(

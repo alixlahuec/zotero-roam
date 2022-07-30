@@ -1,14 +1,17 @@
 /* istanbul ignore file */
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { arrayOf, object, string } from "prop-types";
+import { createPortal } from "react-dom";
+
 import { Button } from "@blueprintjs/core";
+import WebImportPanel from "./WebImportPanel";
+
+import useBool from "../../../hooks/useBool";
 
 import { hasNodeListChanged } from "../../../utils";
 
-import WebImportPanel from "./WebImportPanel";
-import useBool from "../../../hooks/useBool";
 import "./index.css";
+
 
 const WebImportButton = React.memo(function WebImportButton({ urls }){
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
@@ -30,8 +33,8 @@ function WebImportFactory({ divs }){
 
 	const updateBlocksWithLinks = useCallback(() => {
 		setBlocksWithLinks((prevState) => {
-			let currentBlocks = divs.filter(div => {
-				let links = div?.parentElement?.querySelectorAll(".rm-block a:not(.rm-alias--page):not(.rm-alias--block)") || [];
+			const currentBlocks = divs.filter(div => {
+				const links = div?.parentElement?.querySelectorAll(".rm-block a:not(.rm-alias--page):not(.rm-alias--block)") || [];
 				return links.length > 0;
 			});
 			if(hasNodeListChanged(prevState, currentBlocks)){
