@@ -19,10 +19,6 @@ export default {
 	},
     parameters: {
         userSettings: {
-			annotations: {},
-			copy: {},
-			metadata: {},
-			notes: {},
 			shortcuts: {
 				"copyDefault": "alt+D",
 				"copyCitation": "alt+C+T",
@@ -32,8 +28,7 @@ export default {
 				"goToItemPage": "alt+G",
 				"importMetadata": "alt+M",
 				"toggleNotes": "alt+N",
-			},
-			typemap: {}
+			}
 		}
     }
 };

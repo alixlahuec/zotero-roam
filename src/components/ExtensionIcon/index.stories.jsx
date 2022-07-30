@@ -15,12 +15,7 @@ export default {
 	argTypes: {
 		openDashboard: { action: true },
 		openSearchPanel: { action: true }
-	},
-    parameters: {
-        userSettings: {
-            darkTheme: false
-		}
-    }
+	}
 };
 
 const Template = (args) => {

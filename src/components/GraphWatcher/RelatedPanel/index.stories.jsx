@@ -17,15 +17,7 @@ export default {
 			title: "January 1st, 2022",
 			type: "added_on"
 		}
-	},
-    parameters: {
-        userSettings: {
-			annotations: {},
-			metadata: {},
-			notes: {},
-			typemap: {}
-		}
-    }
+	}
 };
 
 const Template = (args) => <RelatedPanel {...args} />;
