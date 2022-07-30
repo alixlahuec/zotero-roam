@@ -51,3 +51,30 @@
  * }}
  * ZoteroTag
  */
+
+/**
+ * @typedef {{
+ * comment_prefix: String,
+ * comment_suffix: String,
+ * func: String,
+ * group_by: ("day_added"|false),
+ * highlight_prefix: String,
+ * highlight_suffix: String,
+ * use: ("formatted"|"raw")
+ * }}
+ * SettingsAnnotations
+ */
+
+/**
+ * @typedef {{
+ * func: String,
+ * split_char: String,
+ * use: ("raw"|"text")
+ * }}
+ * SettingsNotes
+ */
+
+/**
+ * @typedef {Object.<string, string>}
+ * SettingsTypemap
+ */

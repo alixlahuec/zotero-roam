@@ -3,8 +3,8 @@ import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getPDFLink, g
 
 /** Formats Zotero notes/annotations items
  * @param {ZoteroItem[]} notes - The Array of Zotero notes/annotations
- * @param {{func: String, split_char: String, use: ("raw"|"text")}} notesSettings - The settings to use for the formatting of the notes
- * @param {{comment_prefix: String, comment_suffix: String, func: String, group_by: ("day_added"|false), highlight_prefix: String, highlight_suffix: String, use: ("formatted"|"raw")}}
+ * @param {SettingsNotes} notesSettings - The settings to use for the formatting of the notes
+ * @param {SettingsAnnotations} annotationsSettings - The settings to use for the formatting of the annotations
  * @returns The formatted Array
  */
 function formatNotes(notes, notesSettings, annotationsSettings){
@@ -93,7 +93,15 @@ function getItemCreators(item, { return_as = "string", brackets = true, use_type
 	}
 }
 
-
+/** Formats an item's and its children's metadata for import to Roam using the default template
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {ZoteroItem} pdfs - The item's PDFs, if any
+ * @param {ZoteroItem} notes - The item's linked notes, if any
+ * @param {SettingsTypemap} typemap - The user's `typemap` settings
+ * @param {SettingsNotes} notesSettings - The user's `notes` settings
+ * @param {SettingsAnnotations} annotationsSettings - The user's `annotations` settings
+ * @returns The formatted metadata output
+ */
 function _getItemMetadata(item, pdfs, notes, typemap, notesSettings, annotationsSettings) {
 	let metadata = [];
 

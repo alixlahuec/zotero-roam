@@ -240,7 +240,10 @@ function getInitialedPages(keys){
  * @param {{item: ZoteroItem, pdfs: ZoteroItem[], notes: ZoteroItem[]}} itemData - The item's Zotero data and its children, if any
  * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
  * @param {Object} config - The user's `metadata` settings 
- * @returns IF successful, a detailed outcome of the import ; otherwise, the first error encountered.
+ * @param {SettingsTypemap} typemap
+ * @param {SettingsNotes} notesSettings
+ * @param {SettingsAnnotations} annotationsSettings
+ * @returns If successful, a detailed outcome of the import ; otherwise, the first error encountered.
  */
 async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, config, typemap, notesSettings, annotationsSettings){
 	let title = "@" + item.key;
@@ -298,8 +301,8 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
  * @fires zotero-roam:notes-added
  * @param {{item: ZoteroItem, notes: ZoteroItem[]}} itemData - The item's Zotero data and its notes, if any 
  * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value
- * @param {Object} notesSettings - The user's `notes` settings
- * @param {Object} annotationsSettings - The user's `annotations` settings
+ * @param {SettingsNotes} notesSettings - The user's `notes` settings
+ * @param {SettingsAnnotations} annotationsSettings - The user's `annotations` settings
  * @returns If successful, a detailed outcome of the immport ; otherwise, the first error encountered.
  */
 async function importItemNotes({item, notes = []} = {}, uid, notesSettings, annotationsSettings){

@@ -601,7 +601,7 @@ function formatItemReference(item, format, {accent_class = "zr-accent-1"} = {}){
 
 /** Formats an array of Zotero annotations into Roam blocks, with optional configuration
  * @param {ZoteroItem[]} annotations - The Zotero annotations to format
- * @param {{func: String, use:("raw"|"formatted"), ...}} config - Additional settings 
+ * @param {SettingsAnnotations} config - Additional settings 
  * @returns The formatted annotations
  */
 function formatZoteroAnnotations(annotations, { func = null, use = "raw", ...settings } = {}){
@@ -615,7 +615,7 @@ function formatZoteroAnnotations(annotations, { func = null, use = "raw", ...set
 
 /** Formats an array of Zotero notes into Roam blocks, with optional configuration
  * @param {ZoteroItem[]} notes - The Zotero notes to format
- * @param {{func: String, split_char: String, use:("raw"|"text")}} config - Additional settings
+ * @param {SettingsNotes} config - Additional settings
  * @returns The formatted notes
  */
 function formatZoteroNotes(notes, { func = null, split_char = "\n", use = "raw" } = {}){
