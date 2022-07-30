@@ -166,7 +166,6 @@ function getCitekeyPages(){
 }
 
 /** Retrieves the list of citekey pages (i.e, starting with `@`) in the Roam graph, with their last-edit time
- * @returns {{edited: Date, title: String, uid: String}[]} The Array of citekey pages
  * @returns {Map<String, {edited: Date, uid: String}>} A Map whose `keys` are the pages' titles, and whose `entries` contain the pages' UIDs and last-edit times
  */
 function getCitekeyPagesWithEditTime(){
@@ -184,6 +183,17 @@ function getCitekeyPagesWithEditTime(){
 		}));
 }
 
+/**
+ * @typedef {{
+ * id: String,
+ * location: {"block-uid": String, "window-id": String},
+ * selection: ({start: Integer, end: Integer}|undefined)
+ * }}
+ * CursorLocation
+ */
+/** Retrieves the current cursor location in the Roam interface, to enable returning focus to its previous state after an interaction with the extension's interface (e.g opening a dialog).
+ * @returns {CursorLocation} Information about the cursor's location
+ */
 function getCurrentCursorLocation(){
 	const { "block-uid": blockUID, "window-id": windowID } = window.roamAlphaAPI.ui.getFocusedBlock();
 	if(!blockUID || !windowID){ return null; }
@@ -328,6 +338,9 @@ async function importItemNotes({item, notes = []} = {}, uid, notesSettings, anno
 	}
 }
 
+/** Places the cursor in a given location, if it is specified
+ * @param {CursorLocation} place 
+ */
 function maybeReturnCursorToPlace(place = {}){
 	if(place && place.location){
 		let { id, ...rest} = place;
