@@ -1,4 +1,4 @@
-import { array, arrayOf, bool, func, instanceOf, number, object, oneOf, oneOfType, shape, string } from "prop-types";
+import { array, arrayOf, bool, func, instanceOf, number, object, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
 
 const zoteroCollectionType = shape({
 	data: object,
@@ -169,7 +169,7 @@ const cleanRelatedItemType = shape({
 /**
  * @see cleanSemanticItem
  */
-const cleanSemanticItemType = shape({
+const cleanSemanticItem = {
 	authors: string,
 	authorsLastNames: string,
 	authorsString: string,
@@ -182,13 +182,14 @@ const cleanSemanticItemType = shape({
 	url: string,
 	year: string,
 	_multiField: string
-});
+};
+const cleanSemanticItemType = shape(cleanSemanticItem);
 
 /**
  * @see cleanSemanticMatch
  */
 const cleanSemanticReturnType = shape({
-	...cleanSemanticItemType,
+	...cleanSemanticItem,
 	inGraph: oneOfType([string, oneOf([false])]),
 	inLibrary: oneOfType([
 		shape({
