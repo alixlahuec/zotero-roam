@@ -14,7 +14,15 @@ export default {
 	args: {
 		isOpen: true,
 		origin: "2016"
-	}
+	},
+    parameters: {
+        userSettings: {
+			annotations: {},
+			metadata: {},
+			notes: {},
+			typemap: {}
+		}
+    }
 };
 
 const Template = (args) => <Backlinks {...args} />;

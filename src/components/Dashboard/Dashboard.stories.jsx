@@ -9,7 +9,23 @@ export default {
 	args: {
 		isOpen: true,
 		onClose: () => {}
-	}
+	},
+    parameters: {
+        userSettings: {
+			annotations: {},
+			autocomplete: {},
+			copy: {},
+			metadata: {},
+			notes: {},
+			pageMenu: {
+				defaults: [],
+				trigger: () => true
+			},
+			sciteBadge: {},
+			shortcuts: {},
+			typemap: {}
+		}
+    }
 };
 
 const Template = (args) => <Dashboard {...args} />;
