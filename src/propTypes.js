@@ -264,7 +264,7 @@ const notesSettingsType = shape({
 });
 
 const pageMenuSettingsType = shape({
-	defaults: arrayOf(string),
+	defaults: arrayOf(oneOf(["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"])),
 	trigger: oneOfType([func, bool])
 });
 
@@ -281,7 +281,7 @@ const webImportSettingsType = shape({
 	tags: arrayOf(string)
 });
 
-const userSettingsType = shape({
+const userSettings = {
 	annotations: annotationsSettingsType,
 	autocomplete: autocompleteSettingsType,
 	autoload: bool,
@@ -293,10 +293,11 @@ const userSettingsType = shape({
 	render_inline: bool,
 	sciteBadge: sciteBadgeSettingsType,
 	shareErrors: bool,
-	shortcuts: object,
-	typemap: object,
+	shortcuts: objectOf(string),
+	typemap: objectOf(string),
 	webimport: webImportSettingsType
-});
+};
+const userSettingsType = shape(userSettings);
 
 export {
 	zoteroCollectionType,
