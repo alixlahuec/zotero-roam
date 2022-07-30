@@ -4,7 +4,6 @@ import * as Sentry from "@sentry/react";
 import {
 	EXTENSION_PORTAL_ID,
 	EXTENSION_SLOT_ID,
-	EXTENSION_VERSION,
 	DEPENDENCIES_SCRIPTS,
 	TYPEMAP_DEFAULT
 } from "./constants";
@@ -72,6 +71,7 @@ export function setupInitialSettings(settingsObject){
 		notes = {},
 		pageMenu = {},
 		render_inline = false,
+        // requests = { dataRequests: [], apiKeys: [], libraries: []}
 		sciteBadge = {},
 		shareErrors = false,
 		shortcuts = {},
@@ -174,10 +174,14 @@ async function configRoamDepot({ extensionAPI }){
 
 	await Promise.all(setterCalls);
 
-	let requests = extensionAPI.settings.get("dataRequests");
+	let requests = extensionAPI.settings.get("requests");
 	if(!requests){
-		requests = analyzeUserRequests([]);
-		await extensionAPI.settings.set("dataRequests", requests);
+		requests = {
+            dataRequests: [],
+            apiKeys: [],
+            libraries: []
+        };
+		await extensionAPI.settings.set("requests", requests);
 	}
 
 	return {
@@ -240,15 +244,10 @@ function setupPublicAPI({ requests, settings, utils }){
 /* istanbul ignore next */
 export async function initialize(setup = "roam/js", { extensionAPI, manualSettings, utils } = {}){
 	const { requests, settings } = setup == "roam/js"
-		? configRoamJS({ manualSettings, utils })
-		: await configRoamDepot({ extensionAPI, utils });
-    
-	window.zoteroRoam.config = {
-		requests,
-		version: EXTENSION_VERSION,
-		userSettings: settings
-	};
+		? configRoamJS({ manualSettings })
+		: await configRoamDepot({ extensionAPI });
 
+    // TODO: for Roam Depot, make the utils reactive to changes in any of their dependencies (via context?)
 	setupPublicAPI({ requests, settings, utils });
 
 }
