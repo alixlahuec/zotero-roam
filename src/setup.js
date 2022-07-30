@@ -83,14 +83,20 @@ export function setupInitialSettings(settingsObject){
 		annotations: {
 			comment_prefix: "",
 			comment_suffix: "",
+            func: null,
 			group_by: false,
 			highlight_prefix: "[[>]]",
 			highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
 			use: "formatted",
 			...annotations
 		},
-		autocomplete,
 		autoload,
+		autocomplete: {
+            display: "citekey",
+            format: "citation",
+            trigger: null,
+            ...autocomplete
+        },
 		copy: {
 			always: false,
 			defaultFormat: "citekey",
@@ -100,10 +106,16 @@ export function setupInitialSettings(settingsObject){
 		},
 		darkTheme,
 		metadata: {
+            func: null,
+            smartblock: {
+                param: "srcUid",
+                paramValue: ""
+            },
 			use: "function",
 			...metadata
 		},
 		notes: {
+            func: null,
 			split_char: "/n",
 			use: "text",
 			...notes

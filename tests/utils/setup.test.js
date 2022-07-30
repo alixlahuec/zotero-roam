@@ -102,13 +102,18 @@ describe("Parsing initial user settings", () => {
 		annotations: {
 			comment_prefix: "",
 			comment_suffix: "",
+            func: null,
 			group_by: false,
 			highlight_prefix: "[[>]]",
 			highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
 			use: "formatted"
 		},
-		autocomplete: {},
 		autoload: false,
+		autocomplete: {
+            display: "citekey",
+            format: "citation",
+            trigger: null,
+        },
 		copy: {
 			always: false,
 			defaultFormat: "citekey",
@@ -117,9 +122,15 @@ describe("Parsing initial user settings", () => {
 		},
 		darkTheme: false,
 		metadata: {
+            func: null,
+            smartblock: {
+                param: "srcUid",
+                paramValue: ""
+            },
 			use: "function"
 		},
 		notes: {
+            func: null,
 			split_char: "/n",
 			use: "text"
 		},
