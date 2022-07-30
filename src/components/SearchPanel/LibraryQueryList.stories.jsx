@@ -12,8 +12,10 @@ export default {
 	component: LibraryQueryList,
 	args: {
 		handleClose: () => {},
-		isOpen: true,
-		userSettings: {
+		isOpen: true
+	},
+    parameters: {
+        userSettings: {
 			copy: {
 				always: false,
 				defaultFormat: "citekey",
@@ -24,7 +26,7 @@ export default {
 				// Disable shortcuts for stories
 			}
 		}
-	}
+    }
 };
 
 const Template = (args) => {

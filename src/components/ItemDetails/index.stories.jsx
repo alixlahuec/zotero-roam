@@ -15,8 +15,10 @@ export default {
 			items.find(it => it.key == "pintoExploringDifferentMethods2021"),
 			[],
 			[],
-			new Map([])),
-		userSettings: {
+			new Map([]))
+	},
+    parameters: {
+        userSettings: {
 			annotations: {},
 			copy: {},
 			metadata: {},
@@ -33,7 +35,7 @@ export default {
 			},
 			typemap: {}
 		}
-	}
+    }
 };
 
 const Template = (args) => <ItemDetails {...args} />;
