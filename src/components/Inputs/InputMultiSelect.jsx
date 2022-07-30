@@ -20,7 +20,7 @@ const tagInputProps = {
 		placeholder: "Add...",
 		spellCheck: "false"
 	},
-	placeholder: "Enter a value"
+	placeholder: "Click to add an element"
 };
 
 function itemPredicate(query, item) {
@@ -50,6 +50,7 @@ function InputMultiSelect({ options = [], value = [], setValue }){
 		initialContent={null}
 		itemPredicate={itemPredicate}
 		itemRenderer={itemRenderer}
+        itemsEqual="value"
 		items={options}
 		onItemSelect={onItemSelect}
 		onRemove={onRemove}
