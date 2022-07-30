@@ -8,7 +8,13 @@ import { userEvent, waitFor, within } from "@storybook/testing-library";
 export default {
 	component: SearchInputGroup,
 	args: {
-		userSettings: {
+		handleClose: () => {},
+		handleKeyDown: () => {},
+		handleKeyUp: () => {},
+		handleQueryChange: () => {}
+	},
+    parameters: {
+        userSettings: {
 			copy: {
 				useQuickCopy: false,
 			},
@@ -16,12 +22,8 @@ export default {
 				focusSearchBar: "alt+F",
 				toggleQuickCopy: "alt+Q"
 			}
-		},
-		handleClose: () => {},
-		handleKeyDown: () => {},
-		handleKeyUp: () => {},
-		handleQueryChange: () => {}
-	}
+		}
+    }
 };
 
 const Template = (args) => {
@@ -36,8 +38,8 @@ const Template = (args) => {
 export const Default = Template.bind({});
 
 export const WithInteractions = Template.bind({});
-WithInteractions.play = async ({ args, canvasElement }) => {
-	const { userSettings: { copy }} = args;
+WithInteractions.play = async ({ args, canvasElement, parameters }) => {
+	const { userSettings: { copy }} = parameters;
 	const canvas = within(canvasElement);
 
 	// Hotkey for toggling QuickCopy

@@ -13,11 +13,13 @@ export default {
 	component: WebImportPanel,
 	args: {
 		isOpen: true,
-		onClose: () => {},
-		userSettings: {
+		onClose: () => {}
+	},
+    parameters: {
+        userSettings: {
 			typemap: {}
 		}
-	}
+    }
 };
 
 const Template = (args) => <WebImportPanel {...args} />;

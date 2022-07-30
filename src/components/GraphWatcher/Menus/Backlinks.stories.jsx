@@ -13,14 +13,16 @@ export default {
 	component: Backlinks,
 	args: {
 		isOpen: true,
-		origin: "2016",
-		userSettings: {
+		origin: "2016"
+	},
+    parameters: {
+        userSettings: {
 			annotations: {},
 			metadata: {},
 			notes: {},
 			typemap: {}
 		}
-	}
+    }
 };
 
 const Template = (args) => <Backlinks {...args} />;

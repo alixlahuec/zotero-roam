@@ -83,13 +83,15 @@ export default {
 	args: {
 		isOpen: true,
 		onClose: () => {},
-		userSettings: {
+	},
+    parameters: {
+        userSettings: {
 			notes: {
 				split_char: "/n",
 				use: "text"
 			}
 		}
-	}
+    }
 };
 
 const Template = (args) => <NotesDrawer {...args} />;

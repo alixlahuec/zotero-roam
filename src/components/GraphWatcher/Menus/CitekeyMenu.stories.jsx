@@ -20,8 +20,10 @@ export default {
 			items,
 			pdfs: [],
 			notes: [sampleNote]
-		},
-		userSettings: {
+		}
+	},
+    parameters: {
+        userSettings: {
 			annotations: {},
 			metadata: {},
 			notes: {},
@@ -33,7 +35,7 @@ export default {
 			shortcuts: {},
 			typemap: {}
 		}
-	}
+    }
 };
 
 const Template = (args) => {

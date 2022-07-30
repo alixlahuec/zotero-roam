@@ -12,8 +12,10 @@ export default {
 	args: {
 		isOpen: true,
 		onClose: () => {},
-		status: "on",
-		userSettings: {
+		status: "on"
+	},
+    parameters: {
+        userSettings: {
 			copy: {
 				always: true,
 				defaultFormat: "citekey",
@@ -25,7 +27,7 @@ export default {
 				importMetadata: false
 			}
 		}
-	}
+    }
 };
 
 const Template = (args) => <SearchPanel {...args} />;

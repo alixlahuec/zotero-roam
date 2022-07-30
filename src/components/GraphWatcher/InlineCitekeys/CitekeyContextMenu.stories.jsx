@@ -11,13 +11,7 @@ export default {
 			top: 80
 		},
 		isOpen: true,
-		onClose: () => {},
-		userSettings: {
-			annotations: {},
-			metadata: {},
-			notes: {},
-			typemap: {}
-		}
+		onClose: () => {}
 	},
 	parameters: {
 		a11y: {
@@ -31,6 +25,12 @@ export default {
 					}
 				]
 			}
+		},
+        userSettings: {
+			annotations: {},
+			metadata: {},
+			notes: {},
+			typemap: {}
 		}
 	}
 };

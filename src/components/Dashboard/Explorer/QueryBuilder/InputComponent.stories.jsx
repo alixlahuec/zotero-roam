@@ -3,7 +3,7 @@ import InputComponent from "./InputComponent";
 
 export default {
 	component: InputComponent,
-	args: {
+	parameters: {
 		userSettings: {
 			typemap: {
 				journalArticle: "Paper",

@@ -2,11 +2,11 @@ import React from "react";
 import { UserSettings } from "../src/components/App";
 
 export const withUserSettings = (Story, context) => {
-    const { args/*, parameters */} = context;
+    const { parameters: { userSettings = {} } } = context;
 
-    if(args.userSettings){
+    if(userSettings){
         return (
-            <UserSettings.Provider value={args.userSettings}>
+            <UserSettings.Provider value={userSettings}>
                 <Story {...context} />
             </UserSettings.Provider>
         );

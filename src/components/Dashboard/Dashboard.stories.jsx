@@ -1,14 +1,17 @@
-import { expect } from "@storybook/jest";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
 import React from "react";
 import Dashboard from ".";
+
+import { expect } from "@storybook/jest";
+import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 export default {
 	component: Dashboard,
 	args: {
 		isOpen: true,
-		onClose: () => {},
-		userSettings: {
+		onClose: () => {}
+	},
+    parameters: {
+        userSettings: {
 			annotations: {},
 			autocomplete: {},
 			copy: {},
@@ -18,12 +21,11 @@ export default {
 				defaults: [],
 				trigger: () => true
 			},
-			render_inline: true,
 			sciteBadge: {},
 			shortcuts: {},
 			typemap: {}
 		}
-	}
+    }
 };
 
 const Template = (args) => <Dashboard {...args} />;
