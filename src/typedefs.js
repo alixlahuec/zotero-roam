@@ -68,6 +68,15 @@
 /**
  * @typedef {{
  * func: String,
+ * smartblock: {SmartblockConfig},
+ * use: ("function"|"smartblock")
+ * }}
+ * SettingsMetadata
+ */
+
+/**
+ * @typedef {{
+ * func: String,
  * split_char: String,
  * use: ("raw"|"text")
  * }}
@@ -77,4 +86,23 @@
 /**
  * @typedef {Object.<string, string>}
  * SettingsTypemap
+ */
+
+
+// ---------------------------------------
+
+/**
+ * @typedef {{
+ * param: ("srcName"|"srcUid"),
+ * paramValue: String
+ * }}
+ * SmartblockConfig
+ */
+
+/**
+ * @typedef {{
+ * help: String,
+ * handler: Function
+ * }}
+ * SmartblockCommand
  */

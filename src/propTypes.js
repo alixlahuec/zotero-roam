@@ -249,7 +249,11 @@ const copySettingsType = shape({
 
 const metadataSettingsType = shape({
 	func: string,
-	smartblock: object,
+	smartblock: shape({
+        param: oneOf(["srcName", "srcUid"]),
+        paramValue: string
+        // TODO: check if there is additional SmartBlock config to describe and support
+    }),
 	use: oneOf(["function", "smartblock"])
 });
 

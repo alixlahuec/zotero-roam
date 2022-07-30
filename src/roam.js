@@ -239,13 +239,13 @@ function getInitialedPages(keys){
  * @fires zotero-roam:metadata-added
  * @param {{item: ZoteroItem, pdfs: ZoteroItem[], notes: ZoteroItem[]}} itemData - The item's Zotero data and its children, if any
  * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
- * @param {Object} config - The user's `metadata` settings 
+ * @param {SettingsMetadata} metadataSettings - The user's `metadata` settings 
  * @param {SettingsTypemap} typemap
  * @param {SettingsNotes} notesSettings
  * @param {SettingsAnnotations} annotationsSettings
  * @returns If successful, a detailed outcome of the import ; otherwise, the first error encountered.
  */
-async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, config, typemap, notesSettings, annotationsSettings){
+async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, metadataSettings, typemap, notesSettings, annotationsSettings){
 	let title = "@" + item.key;
 	let pageUID = uid || window.roamAlphaAPI.util.generateUID();
 	let page = { new: null, title, uid: pageUID };
@@ -257,13 +257,13 @@ async function importItemMetadata({item, pdfs = [], notes = []} = {}, uid, confi
 		page.new = false;
 	}
 	
-	let { use, func = null, smartblock = {}} = config;
+	let { use, func = null, smartblock: { param, paramValue }} = metadataSettings;
 
 	// TODO: Add support or options for passing formatted children (PDFs/notes) to SmartBlock
 	if(use == "smartblock"){
 		let context = { item, notes, page, pdfs };
 		try {
-			let outcome = await use_smartblock_metadata(smartblock, context);
+			let outcome = await use_smartblock_metadata({ param, paramValue }, context);
 			emitCustomEvent("metadata-added", outcome);
 
 			return outcome;

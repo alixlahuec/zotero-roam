@@ -1,7 +1,7 @@
 /* istanbul ignore next */
 /** Generates the list of custom SmartBlocks commands to register
- * @param {function} getItems - The exposed utility that returns available Zotero items. See {@link App} component.
- * @returns {Object} The list of commands to register
+ * @param {Function} getItems - The exposed utility that returns available Zotero items. See {@link App} component.
+ * @returns {Object.<string, SmartblockCommand>} The list of commands to register
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 const sbCommands = (getItems) => {
@@ -81,6 +81,7 @@ function eval_term(term, props){
 
 /* istanbul ignore next */
 /** Register the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
+ * @param {Function} getItems - The exposed utility that returns available Zotero items. See {@link App} component.
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 function registerSmartblockCommands(getItems){
@@ -99,7 +100,7 @@ function registerSmartblockCommands(getItems){
 
 /* istanbul ignore next */
 /** Triggers a given SmartBlock to import an item's metadata
- * @param {Object} config - The identification for the SmartBlock to be used.
+ * @param {SmartblockConfig} config - The identification for the SmartBlock to be used.
  * @param {{
  * item: ZoteroItem,
  * notes: ZoteroItem[],
@@ -109,8 +110,10 @@ function registerSmartblockCommands(getItems){
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 async function use_smartblock_metadata(config, context){
+    let { param: sbProp, paramValue: sbPropValue } = config;
 	let { item, notes, page, pdfs } = context;
 	let { title, uid, ...args} = page;
+
 	let defaultOutcome = {
 		args: {
 			...args,
@@ -130,7 +133,7 @@ async function use_smartblock_metadata(config, context){
 	let obj = {
 		targetUid: uid,
 		variables: {},
-		...config
+		[sbProp]: sbPropValue
 	};
 
 	Object.keys(context).forEach(k => {
