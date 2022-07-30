@@ -183,7 +183,6 @@ const cleanSemanticItem = {
 	year: string,
 	_multiField: string
 };
-const cleanSemanticItemType = shape(cleanSemanticItem);
 
 /**
  * @see cleanSemanticMatch

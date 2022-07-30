@@ -36,12 +36,12 @@ function itemPredicate(query, item) {
 
 function itemRenderer(item, itemProps) {
 	let { handleClick, modifiers: { active } } = itemProps;
-	return <MenuItem active={active} key={item} onClick={handleClick} text={item.label} />;
+	return <MenuItem active={active} key={item.value} onClick={handleClick} text={item.label} />;
 }
 
 function tagRenderer(item){ return item.label; }
 
-function InputMultiSelect({ options = [], value = [], setValue }){
+function InputMultiSelect({ options = [], value = [], setValue, ...props }){
 	const selectedItems = useMemo(() => options.filter(op => value.includes(op.value)), [options, value]);
 	const onItemSelect = useCallback((item, _event) => setValue([...value, item.value]), [setValue, value]);
 	const onRemove = useCallback((item, _index) => setValue(value.filter(val => val != item.value)), [setValue, value]);
@@ -59,6 +59,7 @@ function InputMultiSelect({ options = [], value = [], setValue }){
 		selectedItems={selectedItems}
 		tagInputProps={tagInputProps}
 		tagRenderer={tagRenderer}
+        {...props}
 	/>;
 }
 InputMultiSelect.propTypes = {

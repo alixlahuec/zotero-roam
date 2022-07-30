@@ -53,7 +53,7 @@ function itemListPredicate(query, items) {
 		.slice(0, results_limit);
 }
 
-const TagsSelector = React.memo(function TagsSelector({ selectedTags, onRemove, onSelect }) {
+const TagsSelector = React.memo(function TagsSelector({ selectedTags, onRemove, onSelect, ...props }) {
 	const [roamPages,] = useState(() => getAllPages()); // https://tkdodo.eu/blog/things-to-know-about-use-state
 
 	const addTag = useCallback((tag, _event) => {
@@ -84,6 +84,7 @@ const TagsSelector = React.memo(function TagsSelector({ selectedTags, onRemove, 
 			selectedItems={selectedTags}
 			tagInputProps={tagInputProps}
 			tagRenderer={tagRenderer}
+            {...props}
 		/>
 	);
 });
