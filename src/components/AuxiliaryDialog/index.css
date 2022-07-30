@@ -15,11 +15,6 @@
     box-shadow: none;
 }
 
-.bp4-dialog[class*="zr-auxiliary-dialog--"] h4.bp4-heading {
-    color: var(--zr-secondary-co);
-    font-size: var(--zr-text-small);
-}
-
 .bp4-dialog[class*="zr-auxiliary-dialog--"] .bp4-dialog-body {
     margin: 0px;
 }
