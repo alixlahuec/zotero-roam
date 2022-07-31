@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/query-core";
 
-import { entries, items } from "Mocks/zotero/items";
+import { bibs, findBibliographyEntry } from "../mocks/zotero/bib";
+import { entries, findItems, items } from "Mocks/zotero/items";
 import { apiKeys } from "Mocks/zotero/keys";
 import { findCollections } from "Mocks/zotero/collections";
 import { libraries } from "Mocks/zotero/libraries";
@@ -10,8 +11,8 @@ import { samplePDF } from "Mocks/zotero/pdfs";
 import { tags } from "Mocks/zotero/tags";
 
 import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
+import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
 import { formatItemAnnotations, formatItemNotes } from "../src/utils";
-import { makeTagList } from "../src/api/utils";
 
 import ZoteroRoam from "../src/extension";
 
@@ -172,6 +173,36 @@ describe("Retrieval utils", () => {
 			.toEqual(_getItemTags(sample_item, {}));
 	});
 
+	describe("Retrieving bibliography for an item", () => {
+		// Necessary since jsdom does not support innerText
+		// It shouldn't give discrepant results here
+		// https://github.com/jsdom/jsdom/issues/1245#issuecomment-763535573
+		beforeAll(() => {
+			Object.defineProperty(HTMLElement.prototype, "innerText", {
+				get() {
+					return this.textContent;
+				}
+			});
+		});
+
+		test("It should return the clean bibliography", async() => {
+			const sample_bib = bibs.itemInLibrary;
+			const { library: { type, id } } = sample_bib;
+			const path = type + "s/" + id;
+			const itemKey = sample_bib.key;
+
+			const sample_item = findItems({ type, id, since: 0 }).find(it => it.data.key == itemKey);
+
+			const res = await extension.getBibliography(sample_item, {});
+
+			const { bib } = findBibliographyEntry({ key: itemKey, path });
+
+			expect(res)
+				.toEqual(cleanBibliographyHTML(bib));
+		});
+    
+	});
+
 	test("Retrieving bibliographic entries for a list of citekeys", async() => {
 		// getItems() retrieves queries data with an inclusive query,
 		// so no need to reproduce the exact query key that would exist in prod
@@ -186,9 +217,9 @@ describe("Retrieval utils", () => {
 		const citekeys = Object.keys(entries);
 		const expected = Object.values(entries).map(entry => entry.biblatex).join("\n");
     
-		const bibs = await extension.getBibEntries(citekeys);
+		const bibEntries = await extension.getBibEntries(citekeys);
     
-		expect(bibs)
+		expect(bibEntries)
 			.toEqual(expected);
 	});
 

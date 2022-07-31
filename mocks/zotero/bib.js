@@ -20,6 +20,18 @@ export const findBibliographyEntry = ({ key, path }) => {
 };
 
 const data = {
+	"itemInLibrary": {
+		...addMetadata({
+			key: "PPD648N6",
+			library: userLibrary,
+			version: 1
+		}),
+		meta: {
+			creatorSummary: "Bloch and Rozmovits",
+			parsedDate: "2021-11-08"
+		},
+		bib: "<div class=\"csl-bib-body\" style=\"line-height: 1.35; padding-left: 1em; text-indent:-1em;\">\n  <div class=\"csl-entry\">Bloch, Gary, and Linda Rozmovits. &#x201C;Implementing Social Interventions in Primary Care.&#x201D; <i>CMAJ</i> 193, no. 44 (November 8, 2021): E1696&#x2013;1701. https://doi.org/10.1503/cmaj.210229.</div>\n</div>"
+	},
 	"itemFromUserLibrary": {
 		...addMetadata({
 			key: "PYTM394",
