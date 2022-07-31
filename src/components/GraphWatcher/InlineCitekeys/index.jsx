@@ -22,7 +22,7 @@ import { importItemMetadata } from "Roam";
 import "./index.css";
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation
- * @param {Object[]} reqs - The data requests to use to retrieve items
+ * @param {DataRequest[]} reqs - The data requests to use to retrieve items
  * @returns {Map<String,
  * {citation: String, 
  * data: {

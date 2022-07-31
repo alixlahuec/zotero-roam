@@ -39,9 +39,9 @@ const tributeConfig = {
 };
 
 /** Custom hook to retrieve library items and return them in a convenient format for the Tribute, sorted by last-modified
- * @param {Object[]} reqs - The data requests to use to retrieve items 
- * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} format - The format the item should be pasted as
- * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} display - The format the item should be displayed in 
+ * @param {DataRequest[]} reqs - The data requests to use to retrieve items 
+ * @param {AutocompleteItemFormat} format - The format the item should be pasted as
+ * @param {AutocompleteItemFormat} display - The format the item should be displayed in 
  * @returns {{key: String, itemType: String, source: ("zotero"), value: String, display: String}[]} The array of Tribute entries
  */
 const useGetItems = (reqs, format = "citekey", display = "citekey") => {

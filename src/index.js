@@ -41,11 +41,9 @@ import "./index.css";
 		});
 
 		// https://github.com/getsentry/sentry-javascript/issues/2039
-		setupSentry(settings.shareErrors, {
-			install: "roam/js",
-			rawRequests: manualSettings.dataRequests,
-			version: EXTENSION_VERSION,
-			...settings
+		setupSentry(settings.other.shareErrors, {
+			install: INSTALL_CONTEXT,
+			version: EXTENSION_VERSION
 		});
 
 		setup({ settings });
