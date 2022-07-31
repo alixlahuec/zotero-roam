@@ -30,7 +30,7 @@ function categorizeLibraryItems(datastore){
  * @returns The author's last name
  */
 function cleanAuthorLastName(name){
-	let components = name.replaceAll(".", " ").split(" ").filter(Boolean);
+	const components = name.replaceAll(".", " ").split(" ").filter(Boolean);
 	if(components.length == 1){
 		return components[0];
 	} else {
@@ -64,13 +64,13 @@ function cleanAuthorsNames(names){
  * @see cleanLibraryReturnArrayType
  */
 function cleanLibrary(arr, roamCitekeys){
-	let lib = categorizeLibraryItems(arr);
+	const lib = categorizeLibraryItems(arr);
 
 	return lib.items
 		.map(item => {
-			let itemKey = item.data.key;
-			let location = item.library.type + "s/" + item.library.id;
-			let { pdfs, notes } = identifyChildren(itemKey, location, { pdfs: lib.pdfs, notes: lib.notes });
+			const itemKey = item.data.key;
+			const location = item.library.type + "s/" + item.library.id;
+			const { pdfs, notes } = identifyChildren(itemKey, location, { pdfs: lib.pdfs, notes: lib.notes });
 
 			return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
 		});
@@ -85,32 +85,32 @@ function cleanLibrary(arr, roamCitekeys){
  * @see cleanLibraryItemType
  */
 function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
-	let hasURL = item.data.url;
-	let hasDOI = parseDOI(item.data.DOI);
-	let weblink = hasURL
+	const hasURL = item.data.url;
+	const hasDOI = parseDOI(item.data.DOI);
+	const weblink = hasURL
 		? { href: hasURL, title: hasURL }
 		: hasDOI
-			? { href: "https://doi/org/" + hasDOI, title: hasDOI}
+			? { href: "https://doi/org/" + hasDOI, title: hasDOI }
 			: false;
 	
-	let creators = item.data.creators.map(cre => {
+	const creators = item.data.creators.map(cre => {
 		return {
 			full: cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ") || "",
 			last: cre.lastName || cre.name || "",
 			role: cre.creatorType || ""
 		};
 	});
-	let tags = Array.from(new Set(item.data.tags.map(t => t.tag)));
+	const tags = Array.from(new Set(item.data.tags.map(t => t.tag)));
 
-	let authors = item.meta.creatorSummary || "";
-	let maybeYear = !item.meta.parsedDate
+	const authors = item.meta.creatorSummary || "";
+	const maybeYear = !item.meta.parsedDate
 		? ""
 		: isNaN(new Date(item.meta.parsedDate))
 			? ""
 			: (new Date(item.meta.parsedDate)).getUTCFullYear().toString();
-	let pub_year = maybeYear ? `(${maybeYear})` : "";
+	const pub_year = maybeYear ? `(${maybeYear})` : "";
 
-	let clean_item = {
+	const clean_item = {
 		abstract: item.data.abstractNote || "",
 		authors,
 		authorsFull: creators.map(cre => cre.full),
@@ -133,8 +133,8 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 		weblink,
 		year: maybeYear,
 		zotero: {
-			local: getLocalLink(item, {format: "target"}),
-			web: getWebLink(item, {format: "target"})
+			local: getLocalLink(item, { format: "target" }),
+			web: getWebLink(item, { format: "target" })
 		},
 		raw: item
 	};
@@ -209,7 +209,7 @@ function cleanNewlines(text){
  * @see cleanSemanticItemType
  */
 function cleanSemanticItem(item){
-	let clean_item = {
+	const clean_item = {
 		authors: "",
 		doi: parseDOI(item.doi),
 		intent: item.intent,
@@ -231,7 +231,7 @@ function cleanSemanticItem(item){
 		clean_item.links["semantic-scholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
 	}
 	if(item.arxivId){
-		clean_item.links["arxiv"] = `https://arxiv.org/abs/${item.arxivId}`;
+		clean_item.links.arxiv = `https://arxiv.org/abs/${item.arxivId}`;
 	}
 	if(item.doi){
 		clean_item.links["connected-papers"] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
@@ -263,8 +263,8 @@ function cleanSemanticItem(item){
  * @returns {CleanSemanticReturn} - The matched entry for the item
  * @see cleanSemanticReturnType
  */
-function cleanSemanticMatch(semanticItem, {items = [], pdfs = [], notes = []} = {}, roamCitekeys){
-	let cleanSemantic = cleanSemanticItem(semanticItem);
+function cleanSemanticMatch(semanticItem, { items = [], pdfs = [], notes = [] } = {}, roamCitekeys){
+	const cleanSemantic = cleanSemanticItem(semanticItem);
 	if(!cleanSemantic.doi){
 		return {
 			...cleanSemantic,
@@ -272,7 +272,7 @@ function cleanSemanticMatch(semanticItem, {items = [], pdfs = [], notes = []} = 
 			inLibrary: false
 		};
 	} else {
-		let libItem = items.find(it => parseDOI(it.data.DOI) == cleanSemantic.doi);
+		const libItem = items.find(it => parseDOI(it.data.DOI) == cleanSemantic.doi);
 		if(!libItem){
 			return {
 				...cleanSemantic,
@@ -280,9 +280,9 @@ function cleanSemanticMatch(semanticItem, {items = [], pdfs = [], notes = []} = 
 				inLibrary: false
 			};	
 		} else { 
-			let itemKey = libItem.data.key;
-			let location = libItem.library.type + "s/" + libItem.library.id;
-			let children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
+			const itemKey = libItem.data.key;
+			const location = libItem.library.type + "s/" + libItem.library.id;
+			const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
 
 			return {
 				...cleanSemantic,
@@ -312,21 +312,21 @@ function cleanSemanticMatch(semanticItem, {items = [], pdfs = [], notes = []} = 
  * @see cleanSemanticReturnObjectType
  */
 function cleanSemantic(datastore, semantic, roamCitekeys){
-	let { items = [], pdfs = [], notes = []} = datastore;
-	let itemsWithDOIs = items.filter(it => it.data.DOI);
+	const { items = [], pdfs = [], notes = [] } = datastore;
+	const itemsWithDOIs = items.filter(it => it.data.DOI);
 	// * Note: DOIs from the Semantic Scholar queries are sanitized at fetch
-	let { citations = [], references = [] } = semantic;
+	const { citations = [], references = [] } = semantic;
 
-	let clean_citations = citations.map((cit) => {
-		let cleanProps = cleanSemanticMatch(cit, {items: itemsWithDOIs, pdfs, notes}, roamCitekeys);
+	const clean_citations = citations.map((cit) => {
+		const cleanProps = cleanSemanticMatch(cit, { items: itemsWithDOIs, pdfs, notes }, roamCitekeys);
 		return {
 			...cleanProps,
 			_type: "citing"
 		};
 	});
 
-	let clean_references = references.map((ref) => {
-		let cleanProps = cleanSemanticMatch(ref, {items: itemsWithDOIs, pdfs, notes}, roamCitekeys);
+	const clean_references = references.map((ref) => {
+		const cleanProps = cleanSemanticMatch(ref, { items: itemsWithDOIs, pdfs, notes }, roamCitekeys);
 		return {
 			...cleanProps,
 			_type: "cited"
@@ -346,8 +346,8 @@ function cleanSemantic(datastore, semantic, roamCitekeys){
  * @returns {(0|1)} The comparison outcome
  */
 function compareAnnotationIndices(a, b){
-	let [pageA = 0, lineA = 0, colA = 0] = a;
-	let [pageB = 0, lineB = 0, colB = 0] = b;
+	const [pageA = 0, lineA = 0, colA = 0] = a;
+	const [pageB = 0, lineB = 0, colB = 0] = b;
 
 	if(pageA < pageB){
 		return -1;
@@ -384,7 +384,7 @@ function compareItemsByYear(a, b) {
 		if(!b.meta.parsedDate){
 			return -1;
 		} else {
-			let date_diff = new Date(a.meta.parsedDate).getUTCFullYear() - new Date(b.meta.parsedDate).getUTCFullYear();
+			const date_diff = new Date(a.meta.parsedDate).getUTCFullYear() - new Date(b.meta.parsedDate).getUTCFullYear();
 			if(date_diff < 0){
 				return -1;
 			} else if(date_diff == 0){
@@ -451,10 +451,10 @@ function escapeRegExp(string) {
  * @returns {*} The output of the function
  */
 function executeFunctionByName(functionName, context /*, args */) {
-	var args = Array.prototype.slice.call(arguments, 2);
-	var namespaces = functionName.split(".");
-	var func = namespaces.pop();
-	for (var i = 0; i < namespaces.length; i++) {
+	const args = Array.prototype.slice.call(arguments, 2);
+	const namespaces = functionName.split(".");
+	const func = namespaces.pop();
+	for (let i = 0; i < namespaces.length; i++) {
 		context = context[namespaces[i]];
 	}
 	return context[func].apply(context, args);
@@ -467,29 +467,29 @@ function executeFunctionByName(functionName, context /*, args */) {
  */
 function formatAnnotationWithParams(annotation, { highlight_prefix = "[[>]]", highlight_suffix = "([p. {{page_label}}]({{link_page}})) {{tags_string}}", comment_prefix = "", comment_suffix = "" } = {}){
 	if(annotation.type == "highlight"){
-		let { comment, page_label, link_page, tags_string, text } = annotation;
+		const { comment, page_label, link_page, tags_string, text } = annotation;
 
-		let elems = {
+		const elems = {
 			highlightPre: highlight_prefix,
 			highlightSuff: highlight_suffix,
 			commentPre: comment_prefix,
 			commentSuff: comment_suffix
 		};
 
-		let specs = {
+		const specs = {
 			page_label,
 			link_page,
 			tags_string
 		};
 
-		for(let prop in specs){
-			for(let el in elems){
+		for(const prop in specs){
+			for(const el in elems){
 				elems[el] = elems[el].replaceAll(`{{${prop}}}`, `${specs[prop]}`);
 			}
 		}
 
-		let highlightBlock = [elems.highlightPre, text, elems.highlightSuff].filter(Boolean).join(" ");
-		let commentBlock = comment ? [elems.commentPre, comment, elems.commentSuff].filter(Boolean).join(" ") : false;
+		const highlightBlock = [elems.highlightPre, text, elems.highlightSuff].filter(Boolean).join(" ");
+		const commentBlock = comment ? [elems.commentPre, comment, elems.commentSuff].filter(Boolean).join(" ") : false;
 
 		return {
 			string: highlightBlock,
@@ -509,13 +509,13 @@ function formatAnnotationWithParams(annotation, { highlight_prefix = "[[>]]", hi
  * @returns An array of block objects, ready for import into Roam.
  */
 function formatItemAnnotations(annotations, { group_by = false, highlight_prefix, highlight_suffix, comment_prefix, comment_suffix } = {}){
-	let annots = simplifyZoteroAnnotations(annotations);
+	const annots = simplifyZoteroAnnotations(annotations);
 
 	if(group_by == "day_added"){
-		let day_dict = annots
+		const day_dict = annots
 			.sort((a,b) => a.date_added < b.date_added ? -1 : 1)
 			.reduce((dict, elem) => {
-				let ymd = new Date(elem.date_added).toLocaleDateString("en-CA");
+				const ymd = new Date(elem.date_added).toLocaleDateString("en-CA");
 				if(dict[ymd]){
 					dict[ymd].push(elem);
 				} else {
@@ -526,7 +526,7 @@ function formatItemAnnotations(annotations, { group_by = false, highlight_prefix
 		return Object.keys(day_dict)
 			.sort((a,b) => new Date(a.split("-")) < new Date(b.split("-")) ? -1 : 1)
 			.map(date => {
-				let sortedAnnots = day_dict[date].sort((a,b) => compareAnnotationIndices(a.sortIndex, b.sortIndex));
+				const sortedAnnots = day_dict[date].sort((a,b) => compareAnnotationIndices(a.sortIndex, b.sortIndex));
 				return {
 					string: makeDNP(new Date(date.split("-")), { brackets: true }),
 					children: sortedAnnots
@@ -571,7 +571,7 @@ function formatItemNotes(notes, split_char){
  * @param {{accent_class: String}} config - Additional parameters 
  * @returns {String} The formatted reference
  */
-function formatItemReference(item, format, {accent_class = "zr-accent-1"} = {}){
+function formatItemReference(item, format, { accent_class = "zr-accent-1" } = {}){
 	const citekey = "@" + item.key;
 	const pub_year = !item.meta.parsedDate 
 		? ""
@@ -633,9 +633,9 @@ function formatZoteroNotes(notes, { func = null, split_char = "\n", use = "raw" 
  * @param {{format: ("markdown"|"target"), text?: String}} config - Additional settings
  * @returns A link to the item, either as a Markdown link or a URI
  */
-function getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
-	let location = item.library.type == "group" ? `groups/${item.library.id}` : "library";
-	let target = `zotero://select/${location}/items/${item.data.key}`;
+function getLocalLink(item, { format = "markdown", text = "Local library" } = {}){
+	const location = item.library.type == "group" ? `groups/${item.library.id}` : "library";
+	const target = `zotero://select/${location}/items/${item.data.key}`;
 	switch(format){
 	case "markdown":
 		return `[${text}](${target})`;
@@ -652,7 +652,7 @@ function getLocalLink(item, {format = "markdown", text = "Local library"} = {}){
  * @returns The link to the PDF
  */
 function getPDFLink(pdfItem, as = "href"){
-	let libLoc = pdfItem.library.type == "group" ? `groups/${pdfItem.library.id}` : "library";
+	const libLoc = pdfItem.library.type == "group" ? `groups/${pdfItem.library.id}` : "library";
 	let href = "";
 	let name = "";
 	
@@ -678,9 +678,9 @@ function getPDFLink(pdfItem, as = "href"){
  * @param {{format: ("markdown"|"target"), text?: String}} config - Additional settings 
  * @returns A link to the item, either as a Markdown link or a URL
  */
-function getWebLink(item, {format = "markdown", text = "Web library"} = {}){
-	let location = ((item.library.type == "user") ? "users" : "groups") + `/${item.library.id}`;
-	let target = `https://www.zotero.org/${location}/items/${item.data.key}`;
+function getWebLink(item, { format = "markdown", text = "Web library" } = {}){
+	const location = ((item.library.type == "user") ? "users" : "groups") + `/${item.library.id}`;
+	const target = `https://www.zotero.org/${location}/items/${item.data.key}`;
 	switch(format){
 	case "markdown":
 		return `[${text}](${target})`;
@@ -706,10 +706,10 @@ function hasNodeListChanged(prev, current){
  * @param {{pdfs: ZoteroItem[], notes: ZoteroItem[]}} data - The items among which children are to be identified 
  * @returns The item's children
  */
-function identifyChildren(itemKey, location, {pdfs = [], notes = []} = {}){
-	let pdfItems = pdfs.filter(p => p.data.parentItem == itemKey && (p.library.type + "s/" + p.library.id == location));
-	let pdfKeys = pdfItems.map(p => p.key);
-	let noteItems = notes.filter(n => ((n.data.itemType == "note" && n.data.parentItem == itemKey) || (n.data.itemType == "annotation" && pdfKeys.includes(n.data.parentItem))) && n.library.type + "s/" + n.library.id == location);
+function identifyChildren(itemKey, location, { pdfs = [], notes = [] } = {}){
+	const pdfItems = pdfs.filter(p => p.data.parentItem == itemKey && (p.library.type + "s/" + p.library.id == location));
+	const pdfKeys = pdfItems.map(p => p.key);
+	const noteItems = notes.filter(n => ((n.data.itemType == "note" && n.data.parentItem == itemKey) || (n.data.itemType == "annotation" && pdfKeys.includes(n.data.parentItem))) && n.library.type + "s/" + n.library.id == location);
 
 	return {
 		pdfs: pdfItems,
@@ -724,9 +724,9 @@ function identifyChildren(itemKey, location, {pdfs = [], notes = []} = {}){
  * @param {{items: ZoteroItem[], notes: ZoteroItem[]}} data - The items among which connections are to be identified 
  * @returns The item's connections
  */
-function identifyPDFConnections(itemKey, parentKey, location, {items = [], notes = []} = {}){
-	let parentItem = items.find(it => it.data.key == parentKey && (it.library.type + "s/" + it.library.id == location));
-	let annotationItems = notes.filter(n => n.data.itemType == "annotation" && n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location);
+function identifyPDFConnections(itemKey, parentKey, location, { items = [], notes = [] } = {}){
+	const parentItem = items.find(it => it.data.key == parentKey && (it.library.type + "s/" + it.library.id == location));
+	const annotationItems = notes.filter(n => n.data.itemType == "annotation" && n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location);
 	
 	return {
 		parent: parentItem,
@@ -740,7 +740,7 @@ function identifyPDFConnections(itemKey, parentKey, location, {items = [], notes
  */
 function makeDictionary(arr){
 	return arr.reduce((dict, elem) => {
-		let initial = elem.charAt(0).toLowerCase();
+		const initial = elem.charAt(0).toLowerCase();
 		if(dict[initial]){
 			dict[initial].push(elem);
 		} else {
@@ -757,11 +757,11 @@ function makeDictionary(arr){
  * @returns
  */
 function makeDateFromAgo(date){
-	let thisdate = date.constructor === Date ? date : new Date(date);
+	const thisdate = date.constructor === Date ? date : new Date(date);
 	// Vars
-	let today = new Date();
+	const today = new Date();
 	today.setHours(0,0,0);
-	let yesterday = new Date();
+	const yesterday = new Date();
 	yesterday.setDate(today.getDate() - 1);
 	yesterday.setHours(0,0,0);
 
@@ -770,9 +770,9 @@ function makeDateFromAgo(date){
 	} else if(thisdate > yesterday){
 		return `Yesterday at ${makeTimestamp(thisdate)}`;
 	} else {
-		let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		let monthDay =`${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}`;
-		let maybeYear = thisdate.getFullYear() != today.getFullYear() ? thisdate.getFullYear() : false;
+		const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		const monthDay =`${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}`;
+		const maybeYear = thisdate.getFullYear() != today.getFullYear() ? thisdate.getFullYear() : false;
 
 		return [monthDay, maybeYear].filter(Boolean).join(" ");
 	}
@@ -783,10 +783,10 @@ function makeDateFromAgo(date){
  * @param {{brackets: Boolean}} config - Additional parameters 
  * @returns 
  */
-function makeDNP(date, {brackets = true} = {}){
-	let thisdate = date.constructor === Date ? date : new Date(date);
-	let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-	let dateString = `${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}, ${thisdate.getFullYear()}`;
+function makeDNP(date, { brackets = true } = {}){
+	const thisdate = date.constructor === Date ? date : new Date(date);
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	const dateString = `${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}, ${thisdate.getFullYear()}`;
 	if(brackets){
 		return `[[${dateString}]]`;
 	} else{
@@ -799,7 +799,7 @@ function makeDNP(date, {brackets = true} = {}){
  * @returns {String} The number in ordinal format
  */
 function makeOrdinal(i) {
-	let j = i % 10;
+	const j = i % 10;
 	if (j == 1 & i != 11) {
 		return i + "st";
 	} else if (j == 2 & i != 12) {
@@ -816,7 +816,7 @@ function makeOrdinal(i) {
  * @returns A timestamp in text format, HH:MM
  */
 function makeTimestamp(date){
-	let d = date.constructor === Date ? date : new Date(date);
+	const d = date.constructor === Date ? date : new Date(date);
 	return `${d.getHours()}:${("0" + d.getMinutes()).slice(-2)}`;
 }
 
@@ -838,7 +838,7 @@ function parseDOI(doi){
 		return false;
 	} else {
 		// Clean up the DOI format if needed, to extract prefix + suffix only
-		let formatCheck = doi.match(/10\.([0-9]+?)\/(.+)/g);
+		const formatCheck = doi.match(/10\.([0-9]+?)\/(.+)/g);
 		if(formatCheck){
 			return formatCheck[0].toLowerCase();
 		} else {
@@ -852,7 +852,7 @@ function parseDOI(doi){
  */
 function parseNoteBlock(block){
 	let cleanBlock = block;
-	let formattingSpecs = {
+	const formattingSpecs = {
 		"<blockquote>": "> ",
 		"</blockquote>": "",
 		"<strong>": "**",
@@ -867,19 +867,19 @@ function parseNoteBlock(block){
 		"<u>": "",
 		"</u>": ""
 	};
-	for(let prop in formattingSpecs){
+	for(const prop in formattingSpecs){
 		cleanBlock = cleanBlock.replaceAll(`${prop}`, `${formattingSpecs[prop]}`);
 	}
 
 	// HTML tags that might have attributes : p, div, span, headers
-	let richTags = ["p", "div", "span", "h1", "h2", "h3", "h4", "h5", "h6"];
+	const richTags = ["p", "div", "span", "h1", "h2", "h3", "h4", "h5", "h6"];
 	richTags.forEach(tag => {
 		// eslint-disable-next-line no-useless-escape
-		let tagRegex = new RegExp(`<\/?${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag> or </tag>, and the case with modifiers : <tag :modifier>
+		const tagRegex = new RegExp(`<\/?${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag> or </tag>, and the case with modifiers : <tag :modifier>
 		cleanBlock = cleanBlock.replaceAll(tagRegex, tag.startsWith("h") ? "**" : "");
 	});
 
-	let linkRegex = /<a.+?href="(.+?)">(.+?)<\/a>/g;
+	const linkRegex = /<a.+?href="(.+?)">(.+?)<\/a>/g;
 	cleanBlock = cleanBlock.replaceAll(linkRegex, "[$2]($1)");
 
 	cleanBlock = cleanNewlines(cleanBlock);
@@ -904,10 +904,10 @@ function pluralize(num, string, suffix = "") {
  */
 function readDNP(string, { as_date = true } = {}){
 	// eslint-disable-next-line no-unused-vars
-	let [match, mm, dd, yy] = Array.from(string.matchAll(/(.+) ([0-9]+).{2}, ([0-9]{4})/g))[0];
-	let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	const [match, mm, dd, yy] = Array.from(string.matchAll(/(.+) ([0-9]+).{2}, ([0-9]{4})/g))[0];
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     
-	let parsedDate = [parseInt(yy), months.findIndex(month => month == mm) + 1, parseInt(dd)];
+	const parsedDate = [parseInt(yy), months.findIndex(month => month == mm) + 1, parseInt(dd)];
     
 	return as_date ? new Date([...parsedDate]) : parsedDate;
 }
@@ -918,11 +918,11 @@ function readDNP(string, { as_date = true } = {}){
  * @param {{any_case: Boolean, match: ("exact"|"partial"|"word"), search_compounds: Boolean, word_order: ("strict"|"loose")}} config - Additional configuration
  * @returns {Boolean} `true` if the query is matched in the target (if String) or any of its elements (if String Array) ; `false` otherwise.
  */
-function searchEngine(query, target, { any_case = true, match = "partial", search_compounds = true, word_order = "strict"} = {}){
+function searchEngine(query, target, { any_case = true, match = "partial", search_compounds = true, word_order = "strict" } = {}){
 	if(target.constructor === String){
-		return searchEngine_string(query, target, { any_case, match, search_compounds, word_order});
+		return searchEngine_string(query, target, { any_case, match, search_compounds, word_order });
 	} else if(target.constructor === Array){
-		return target.some(el => searchEngine_string(query, el, { any_case, match, search_compounds, word_order}));
+		return target.some(el => searchEngine_string(query, el, { any_case, match, search_compounds, word_order }));
 	} else {
 		throw new Error(`Unexpected input type ${target.constructor} : target should be a String or an Array`);
 	}
@@ -934,7 +934,7 @@ function searchEngine(query, target, { any_case = true, match = "partial", searc
  * @param {{any_case: Boolean, match: ("exact"|"partial"|"word"), search_compounds: Boolean, word_order: ("strict"|"loose")}} config - Additional configuration
  * @returns {Boolean} `true` if the query is matched in the target string ; `false` otherwise.
  */
-function searchEngine_string(str, text, {any_case = true, match = "partial", search_compounds = true , word_order = "strict"} = {}){
+function searchEngine_string(str, text, { any_case = true, match = "partial", search_compounds = true , word_order = "strict" } = {}){
 	let query = str;
 	let target = text;
 
@@ -945,8 +945,8 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
 	}
 
 	// Is the query multi-word? Aka, has 1+ space(s) ?
-	let queryWords = query.split(" ");
-	let isHyphenated = queryWords.some(w => w.includes("-"));
+	const queryWords = query.split(" ");
+	const isHyphenated = queryWords.some(w => w.includes("-"));
 
 	if(queryWords.length == 1){
 		// Single-word query
@@ -959,13 +959,13 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
 		}
 		// Then carry on with the search op
 		if(match == "partial"){
-			let searchReg = new RegExp(searchString, "g");
+			const searchReg = new RegExp(searchString, "g");
 			return searchReg.test(target);
 		} else if(match == "exact"){
-			let searchReg = new RegExp("^" + searchString + "$", "g");
+			const searchReg = new RegExp("^" + searchString + "$", "g");
 			return searchReg.test(target);
 		} else if(match == "word") {
-			let searchReg = new RegExp("(?:\\W|^)" + searchString + "(?:\\W|$)", "g");
+			const searchReg = new RegExp("(?:\\W|^)" + searchString + "(?:\\W|$)", "g");
 			return searchReg.test(target);
 		}
 	} else {
@@ -989,27 +989,27 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
 		// Then carry on with the search op
 		if(word_order == "loose"){
 			if(match == "word"){
-				let searchArrayReg = searchArray.map(t => "(?:\\W|^)" + t + "(?:\\W|$)");
+				const searchArrayReg = searchArray.map(t => "(?:\\W|^)" + t + "(?:\\W|$)");
 				return searchArrayReg.every(exp => {
-					let regex = new RegExp(exp, "g");
+					const regex = new RegExp(exp, "g");
 					return regex.test(target);
 				});
 			} else {
 				// Partial matching
 				return searchArray.every(exp => {
-					let regex = new RegExp(exp, "g");
+					const regex = new RegExp(exp, "g");
 					return regex.test(target);
 				});
 			}
 		} else {
 			if(match == "partial"){
-				let searchReg = new RegExp(searchArray.join(" "), "g");
+				const searchReg = new RegExp(searchArray.join(" "), "g");
 				return searchReg.test(target);
 			} else if(match == "exact"){
-				let searchReg = new RegExp("^" + searchArray.join(" ") + "$", "g");
+				const searchReg = new RegExp("^" + searchArray.join(" ") + "$", "g");
 				return searchReg.test(target);
 			} else {
-				let searchReg = new RegExp("(?:\\W|^)" + searchArray.join(" ") + "(?:\\W|$)", "g");
+				const searchReg = new RegExp("(?:\\W|^)" + searchArray.join(" ") + "(?:\\W|$)", "g");
 				return searchReg.test(target);
 			}
 		}
@@ -1048,7 +1048,7 @@ function searchEngine_string(str, text, {any_case = true, match = "partial", sea
  */
 function simplifyZoteroAnnotations(annotations){
 	return annotations.map(annot => {
-		let { 
+		const { 
 			annotationColor: color, 
 			annotationComment: comment, 
 			annotationPageLabel: page_label,
@@ -1062,13 +1062,13 @@ function simplifyZoteroAnnotations(annotations){
 			tags
 		} = annot.data;
 
-		let day_added = makeDNP(date_added, { brackets: false });
-		let day_modified = makeDNP(date_modified, { brackets: false });
-		let library = annot.library.type + "s/" + annot.library.id;
-		let libLoc = library.startsWith("groups/") ? library : "library";
-		let position = JSON.parse(annotationPosition);
-		let link_pdf = `zotero://open-pdf/${libLoc}/items/${parent_item}`;
-		let link_page = link_pdf + `?page=${position.pageIndex + 1}`;
+		const day_added = makeDNP(date_added, { brackets: false });
+		const day_modified = makeDNP(date_modified, { brackets: false });
+		const library = annot.library.type + "s/" + annot.library.id;
+		const libLoc = library.startsWith("groups/") ? library : "library";
+		const position = JSON.parse(annotationPosition);
+		const link_pdf = `zotero://open-pdf/${libLoc}/items/${parent_item}`;
+		const link_page = link_pdf + `?page=${position.pageIndex + 1}`;
 
 		return {
 			color,
@@ -1110,7 +1110,7 @@ function simplifyZoteroAnnotations(annotations){
  */
 function simplifyZoteroNotes(notes){
 	return notes.map(nt => {
-		let {
+		const {
 			dateAdded: date_added,
 			dateModified: date_modified,
 			parentItem: parent_item,
@@ -1118,9 +1118,9 @@ function simplifyZoteroNotes(notes){
 			tags
 		} = nt.data;
 
-		let location = nt.library.type + "s/" + nt.library.id;
-		let libLoc = location.startsWith("groups/") ? location : "library";
-		let link_note = `zotero://select/${libLoc}/items/${nt.key}`;
+		const location = nt.library.type + "s/" + nt.library.id;
+		const libLoc = location.startsWith("groups/") ? location : "library";
+		const link_note = `zotero://select/${libLoc}/items/${nt.key}`;
 
 		return {
 			date_added,
@@ -1143,13 +1143,13 @@ function simplifyZoteroNotes(notes){
  * @returns The sorted array
  */
 function sortCollectionChildren(parent, children, depth = 0){
-	let parColl = parent;
+	const parColl = parent;
 	parColl.depth = depth;
 	
-	let chldn = children.filter(ch => ch.data.parentCollection == parColl.key);
+	const chldn = children.filter(ch => ch.data.parentCollection == parColl.key);
 	// If the collection has children, recurse
 	if(chldn.length > 0){
-		let collArray = [parColl];
+		const collArray = [parColl];
 		// Go through each child collection 1-by-1
 		// If a child has children itself, the recursion should ensure everything gets added where it should
 		for(let j = 0; j < chldn.length; j++){
@@ -1169,13 +1169,13 @@ function sortCollectionChildren(parent, children, depth = 0){
 function sortCollections(arr){
 	if(arr.length > 0){
 		// Sort collections A-Z
-		let array = [...arr].sort((a,b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
-		let orderedArray = [];
-		let topColls = array.filter(cl => !cl.data.parentCollection);
+		const array = [...arr].sort((a,b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
+		const orderedArray = [];
+		const topColls = array.filter(cl => !cl.data.parentCollection);
 		topColls.forEach((cl, i) => { topColls[i].depth = 0; });
-		let childColls = array.filter(cl => cl.data.parentCollection);
+		const childColls = array.filter(cl => cl.data.parentCollection);
 		for(let k = 0; k < topColls.length; k++){
-			let chldn = childColls.filter(ch => ch.data.parentCollection == topColls[k].key);
+			const chldn = childColls.filter(ch => ch.data.parentCollection == topColls[k].key);
 			// If the collection has children, pass it to sortCollectionChildren to recursively process the nested collections
 			if(chldn.length > 0){
 				orderedArray.push(...sortCollectionChildren(topColls[k], childColls));
