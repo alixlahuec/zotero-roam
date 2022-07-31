@@ -2,6 +2,12 @@ import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./
 import { _getBibEntries, _getBibliography } from "./api/public";
 import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 
+/**
+ * Creates a new public API instance for the extension. This is meant to make available an interface for users as well as other plugins to consume some of the extension's data and functionalities, in a controlled manner. Updates are provided by settings widgets.
+ * @borrows _formatPDFs as ZoteroRoam#formatPDFs
+ * @borrows _getItemCreators as ZoteroRoam#getItemCreators
+ * @borrows _getItemTags as ZoteroRoam#getItemTags
+ */
 export default class ZoteroRoam {
 	#libraries;
 	#queryClient;
@@ -27,15 +33,17 @@ export default class ZoteroRoam {
 		this.#settings[op] = val;
 	}
 
+
+	formatPDFs = _formatPDFs;
+	getItemCreators = _getItemCreators;
+	getItemTags = _getItemTags;
+
+
 	formatNotes(notes) {
 		return _formatNotes(notes, {
 			annotationsSettings: this.#settings.annotations,
 			notesSettings: this.#settings.notes
 		});
-	}
-
-	formatPDFs(...args){
-		return _formatPDFs(...args);
 	}
 
 	async getBibEntries(citekeys) {
@@ -71,10 +79,6 @@ export default class ZoteroRoam {
 		return _getItemCollections(item, collectionList, { brackets });
 	}
 
-	getItemCreators(...args){
-		return _getItemCreators(...args);
-	}
-
 	/* istanbul ignore next */
 	getItemMetadata(item, pdfs, notes) {
 		return _getItemMetadata(item, pdfs, notes, {
@@ -90,10 +94,6 @@ export default class ZoteroRoam {
 			.filter(it => it.library.id == libID && it.library.type == libType);
 
 		return _getItemRelated(item, datastore, { return_as, brackets });
-	}
-
-	getItemTags(...args){
-		return _getItemTags(...args);
 	}
 
 	getItemType(item, { brackets = true } = {}) {
