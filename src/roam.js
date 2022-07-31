@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import { executeFunctionByName, formatZoteroAnnotations, formatZoteroNotes } from "./utils";
-import { _getItemMetadata } from "./public";
+import { _getItemMetadata } from "./extension";
 import { emitCustomEvent } from "./events";
 import { use_smartblock_metadata } from "./smartblocks";
 
@@ -277,7 +277,7 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 		}
 	} else {
 		try {
-			const metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : _getItemMetadata(item, pdfs, notes, typemap, notesSettings, annotationsSettings);
+			const metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : _getItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap });
 			const { args, error, success } = await addBlocksArray(pageUID, metadata);
 
 			const outcome = {

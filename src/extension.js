@@ -190,7 +190,7 @@ export function _getItemCollections(item, collectionList, { brackets = true } = 
  * }} settings - The user's current settings
  * @returns The formatted metadata output
  */
-function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap }) {
+export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap }) {
 	const metadata = [];
 
 	if (item.data.title) { metadata.push(`Title:: ${item.data.title}`); } // Title, if available
