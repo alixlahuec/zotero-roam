@@ -71,8 +71,8 @@ function _getItemCollections(item, collectionList, { brackets = true } = {}){
  * @returns {String|String[]|{name: String, type: String, inGraph: (String|false)}[]} The formatted creators list
  */
 function getItemCreators(item, { return_as = "string", brackets = true, use_type = true } = {}){
-	let creatorsInfoList = item.data.creators.map(creator => {
-		let nameTag = creator.name || `${[creator.firstName, creator.lastName].filter(Boolean).join(" ")}`;
+	const creatorsInfoList = item.data.creators.map(creator => {
+		const nameTag = creator.name || `${[creator.firstName, creator.lastName].filter(Boolean).join(" ")}`;
 		return {
 			name: nameTag,
 			type: creator.creatorType,
@@ -134,8 +134,8 @@ function _getItemMetadata(item, pdfs, notes, typemap, notesSettings, annotations
  * @returns {String|String[]} The formatted tags, if any
  */
 function getItemTags(item, { return_as = "string", brackets = true } = {}){
-	let tags = item.data.tags.map(t => t.tag);
-	let tagList = (brackets == true ? tags.map(el => `#[[${el}]]`) : tags);
+	const tags = item.data.tags.map(t => t.tag);
+	const tagList = (brackets == true ? tags.map(el => `#[[${el}]]`) : tags);
 
 	switch(return_as){
 	case "array":

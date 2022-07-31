@@ -266,13 +266,13 @@ export function setupDarkTheme(use_dark = false){
  */
 export function setupDependencies(){
 	DEPENDENCIES_SCRIPTS.forEach(dep => {
-		let { id, src } = dep;
+		const { id, src } = dep;
 		try { 
 			document.getElementById(id).remove(); 
 		} catch(e){
 			// Do nothing
 		}
-		let script = document.createElement("script");
+		const script = document.createElement("script");
 		script.src = src;
 		script.type = "application/javascript";
 		script.async = true;
