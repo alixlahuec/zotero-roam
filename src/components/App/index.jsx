@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { Component } from "react";
+import { bool, objectOf, string } from "prop-types";
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
 import Dashboard from "../Dashboard";
@@ -8,15 +9,17 @@ import ExtensionIcon from "../ExtensionIcon";
 import GraphWatcher from "../GraphWatcher";
 import SearchPanel from "../SearchPanel";
 
-import { _getBibEntries, _getBibliography, _getCollections, _getChildren, _getItems, _getTags } from "../../api/public";
 import { RoamCitekeysProvider } from "../RoamCitekeysContext";
+import { useOtherSettings } from "../UserSettings/Other";
+import { useRequestsSettings } from "../UserSettings/Requests";
+import { useShortcutsSettings } from "../UserSettings/Shortcuts";
+
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace } from "Roam";
 
 import * as customPropTypes from "../../propTypes";
 
 
 const ExtensionContext = React.createContext();
-const UserSettings = React.createContext();
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -30,6 +33,16 @@ const queryClient = new QueryClient({
 	}
 });
 
+// https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component
+const AppWrapper = (props) => {
+	const [otherSettings] = useOtherSettings();
+	const [requests] = useRequestsSettings();
+	const [shortcuts] = useShortcutsSettings();
+
+	return <App autoload={otherSettings.autoload} requests={requests} shortcuts={shortcuts} {...props} />;
+};
+
+// TODO: make component reactive to changes in dataRequests, shortcuts
 class App extends Component {
 	constructor(props){
 		super(props);
@@ -38,9 +51,9 @@ class App extends Component {
 			isSearchPanelOpen: false,
 			lastCursorLocation: null,
 			status: (
-				this.props.extension.dataRequests.length == 0
+				this.props.requests.dataRequests.length == 0
 					? "disabled"
-					: this.props.userSettings.autoload 
+					: this.props.autoload 
 						? "on" 
 						: "off")
 		};
@@ -64,7 +77,7 @@ class App extends Component {
 		};
 		this.hotkeys = Object.keys(this.shortcutsConfig)
 			.map(cmd => {
-				let combo = this.props.userSettings.shortcuts[cmd];
+				const combo = this.props.shortcuts[cmd];
 				if(combo != false){
 					return {
 						allowInInput: true,
@@ -86,29 +99,40 @@ class App extends Component {
 		addPaletteCommand("zoteroRoam : Open Dashboard", this.openDashboard);
 	}
 
+	componentDidUpdate(prevProps){
+		if(this.props.requests.dataRequests.length == 0 && prevProps.requests.dataRequests.length > 0){
+			this.setState((_prev) => {
+				queryClient.clear();
+				return {
+					status: "disabled"
+				};
+			});
+		}
+		// In the case of a change in requests, the old requests should become inactive & be eventually cleared
+		// TODO: check if *changed* requests would require an explicit update
+	}
+
 	render() {
 		let { status, isDashboardOpen, isSearchPanelOpen } = this.state;
-		let { extension, userSettings } = this.props;
+		const { extension } = this.props;
 		
 		return (
 			<HotkeysTarget2 hotkeys={this.hotkeys} options={this.hotkeysOptions}>
 				<QueryClientProvider client={queryClient}>
 					<ExtensionContext.Provider value={extension}>
-						<UserSettings.Provider value={userSettings}>
-							<ExtensionIcon
-								openDashboard={this.openDashboard}
-								openSearchPanel={this.openSearchPanel}
-								status={status} 
-								toggleExtension={this.toggleExtension} />
-							<RoamCitekeysProvider>
-								{status == "on" ? <GraphWatcher /> : null}
-								<SearchPanel
-									isOpen={isSearchPanelOpen}
-									onClose={this.closeSearchPanel}
-									status={status} />
-								<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
-							</RoamCitekeysProvider>
-						</UserSettings.Provider>
+						<ExtensionIcon
+							openDashboard={this.openDashboard}
+							openSearchPanel={this.openSearchPanel}
+							status={status} 
+							toggleExtension={this.toggleExtension} />
+						<RoamCitekeysProvider>
+							{status == "on" ? <GraphWatcher /> : null}
+							<SearchPanel
+								isOpen={isSearchPanelOpen}
+								onClose={this.closeSearchPanel}
+								status={status} />
+							<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
+						</RoamCitekeysProvider>
 					</ExtensionContext.Provider>
 				</QueryClientProvider>
 			</HotkeysTarget2>
@@ -164,26 +188,14 @@ class App extends Component {
 
 }
 App.propTypes = {
-	extension: customPropTypes.extensionType,
-	userSettings: customPropTypes.userSettingsType
+	autoload: bool,
+	requests: customPropTypes.requestsType,
+	shortcuts: objectOf(string),
+	extension: customPropTypes.extensionType
 };
 
-// Utilities to be exposed via global zoteroRoam variable, for consumption by users :
-const getBibEntries = (citekeys, libraries) => _getBibEntries(citekeys, libraries, queryClient);
-const getBibliography = async(item, library, config = {}) => await _getBibliography(item, library, config);
-const getChildren = (item) => _getChildren(item, queryClient);
-const getCollections = (library) => _getCollections(library, queryClient);
-const getItems = (select = "all", filters = {}) => _getItems(select, filters, queryClient);
-const getTags = (library) => _getTags(library, queryClient);
-
 export {
-	App,
+	AppWrapper,
 	ExtensionContext,
-	getBibEntries,
-	getBibliography,
-	getCollections,
-	getChildren,
-	getItems,
-	getTags,
-	UserSettings
+	queryClient
 };

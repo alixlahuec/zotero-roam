@@ -206,51 +206,12 @@ function configRoamJS({ manualSettings }){
 }
 
 /* istanbul ignore next */
-function setupPublicAPI({ requests, settings, utils }){
-	const { getBibEntries, getBibliography, getCollections, _getItemCollections, _getItemMetadata, _getItemType, getTags } = utils;
-
-	window.zoteroRoam.getBibEntries = async(citekeys) => {
-		let { libraries } = requests;
-		return await getBibEntries(citekeys, libraries);
-	};
-    
-	window.zoteroRoam.getBibliography = async(item, config = {}) => {
-		let { libraries } = requests;
-		let location = item.library.type + "s/" + item.library.id;
-		let library = libraries.find(lib => lib.path == location);
-    
-		return await getBibliography(item, library, config);
-	};
-    
-	window.zoteroRoam.getItemCollections = (item, { brackets = true } = {}) => {
-		let location = item.library.type + "s/" + item.library.id;
-		let library = requests.libraries.find(lib => lib.path == location);
-		let collectionList = getCollections(library);
-    
-		return _getItemCollections(item, collectionList, { brackets });
-	};
-
-	window.zoteroRoam.getItemMetadata = (item, pdfs, notes) => _getItemMetadata(item, pdfs, notes, settings.typemap, settings.notes, settings.annotations);
-
-	window.zoteroRoam.getItemType = (item, { brackets = true } = {}) => _getItemType(item, settings.typemap, { brackets });
-
-	window.zoteroRoam.getTags = (location) => {
-		let { libraries } = requests;
-		let library = libraries.find(lib => lib.path == location);
-    
-		return getTags(library);
-	};
-}
-
-/* istanbul ignore next */
-export async function initialize(setup = "roam/js", { extensionAPI, manualSettings, utils } = {}){
-	const { requests, settings } = setup == "roam/js"
+export async function initialize(context = "roam/js", { extensionAPI, manualSettings } = {}){
+	const { requests, settings } = context == "roam/js"
 		? configRoamJS({ manualSettings })
 		: await configRoamDepot({ extensionAPI });
-
-    // TODO: for Roam Depot, make the utils reactive to changes in any of their dependencies (via context?)
-	setupPublicAPI({ requests, settings, utils });
-
+    
+	return { requests, settings };
 }
 
 /* istanbul ignore next */

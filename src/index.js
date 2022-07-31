@@ -4,11 +4,11 @@ import { render } from "react-dom";
 import * as Sentry from "@sentry/react";
 import { HotkeysProvider } from "@blueprintjs/core";
 
-import { App, getBibEntries, getBibliography, getChildren, getCollections, getItems, getTags } from "./components/App";
+import { AppWrapper, queryClient } from "./components/App";
+import { UserSettingsProvider } from "./components/UserSettings";
 import zrToaster from "./components/ExtensionToaster";
 
 import { setDefaultHooks } from "./events";
-import { formatNotes, formatPDFs, getItemCreators, getItemTags, _getItemCollections, _getItemMetadata, _getItemRelated, _getItemType } from "./public";
 import { initialize, setupDarkTheme, setupDependencies, setupPortals, setupSentry  } from "./setup";
 import { registerSmartblockCommands } from "./smartblocks";
 
@@ -24,7 +24,7 @@ import "./index.css";
 
 (async() => {
 
-	window.zoteroRoam = {};
+	const INSTALL_CONTEXT = "roam/js";
 
 	Sentry.init(SENTRY_CONFIG);
 
@@ -34,35 +34,11 @@ import "./index.css";
 
 	try {
 
-		const { requests, settings } = await initialize("roam/js", { 
-			manualSettings,
-			utils: {
-				getBibEntries,
-				getBibliography,
-				getCollections,
-				_getItemCollections,
-				_getItemMetadata,
-				_getItemType,
-				getTags
-			}
-		});
+		const { requests, settings } = await initialize(INSTALL_CONTEXT, { manualSettings });
 
 		window.zoteroRoam.formatNotes = formatNotes;
 		window.zoteroRoam.formatPDFs = formatPDFs;
 		window.zoteroRoam.getChildren = getChildren;
-		window.zoteroRoam.getItems = getItems;
-		window.zoteroRoam.getItemCreators = getItemCreators;
-		window.zoteroRoam.getItemTags = getItemTags;
-		window.zoteroRoam.getItemRelated = (item, { return_as = "citekeys", brackets = true } = {}) => {
-			const { type: libType, id: libID } = item.library;
-			const datastore = getItems("items").filter(it => it.library.id == libID && it.library.type == libType);
-			
-			return _getItemRelated(item, datastore, { return_as, brackets });
-		};
-
-		setupDarkTheme(settings.darkTheme);
-		setupDependencies();
-		setDefaultHooks();
 		// https://github.com/getsentry/sentry-javascript/issues/2039
 		setupSentry(settings.shareErrors, {
 			install: "roam/js",
@@ -77,12 +53,15 @@ import "./index.css";
 			<HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
 				<App
 					extension={{
-						portalId: EXTENSION_PORTAL_ID,
-						version: EXTENSION_VERSION,
-						...requests
-					}}
-					userSettings={window.zoteroRoam.config.userSettings}
-				/>
+			<HotkeysProvider dialogProps={{ globalGroupName: "zoteroRoam" }}>
+				<UserSettingsProvider extensionAPI={null} init={{ ...settings, requests }}>
+					<AppWrapper
+						extension={{
+							portalId: EXTENSION_PORTAL_ID,
+							version: EXTENSION_VERSION,
+						}}
+					/>
+				</UserSettingsProvider>
 			</HotkeysProvider>, 
 			document.getElementById(EXTENSION_SLOT_ID)
 		);
