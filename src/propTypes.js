@@ -1,4 +1,4 @@
-import { array, arrayOf, bool, func, instanceOf, number, object, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
+import { arrayOf, bool, func, instanceOf, number, object, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
 
 const zoteroCollectionType = shape({
 	data: object,
@@ -217,9 +217,6 @@ const cleanSemanticReturnObjectType = shape({
  */
 
 const extensionType = shape({
-	apiKeys: arrayOf(string),
-	dataRequests: array,
-	libraries: arrayOf(zoteroLibraryType),
 	portalId: string,
 	version: string
 });
@@ -288,6 +285,22 @@ const webImportSettingsType = shape({
 	tags: arrayOf(string)
 });
 
+const requests = {
+	dataRequests: arrayOf(shape({
+		apikey: string,
+		dataURI: string,
+		library: string,
+		name: string,
+		params: string
+	})),
+	apiKeys: arrayOf(string),
+	libraries: arrayOf(shape({
+		apikey: string,
+		path: string
+	}))
+};
+const requestsType = shape(requests);
+
 const userSettings = {
 	annotations: annotationsSettingsType,
 	autocomplete: autocompleteSettingsType,
@@ -302,6 +315,11 @@ const userSettings = {
 	webimport: webImportSettingsType
 };
 const userSettingsType = shape(userSettings);
+
+const initSettingsType = shape({
+	...requests,
+	...userSettings
+});
 
 export {
 	zoteroCollectionType,
@@ -328,5 +346,7 @@ export {
 	sciteBadgeSettingsType,
 	webImportSettingsType,
 	extensionType,
-	userSettingsType
+	requestsType,
+	userSettingsType,
+	initSettingsType
 };
