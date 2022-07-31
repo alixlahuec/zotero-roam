@@ -166,19 +166,20 @@ export function setupInitialSettings(settingsObject){
 	};
 }
 
+// TODO: can settings be deleted? (e.g if migrated/deprecated)
 /* istanbul ignore next */
-async function configRoamDepot({ extensionAPI }){
+function configRoamDepot({ extensionAPI }){
 	const current = extensionAPI.settings.getAll();
 	// For development
 	console.log(current);
 	const settings = setupInitialSettings(current || {});
 
-	const setterCalls = [];
 	Object.entries(settings).forEach(([key, val]) => {
-		setterCalls.push(extensionAPI.settings.set(key, val));
+		extensionAPI.settings.set(key, val);
 	});
 
-	await Promise.all(setterCalls);
+	// For development
+	console.log(extensionAPI.settings.getAll());
 
 	let requests = extensionAPI.settings.get("requests");
 	if(!requests){
@@ -187,7 +188,7 @@ async function configRoamDepot({ extensionAPI }){
 			apiKeys: [],
 			libraries: []
 		};
-		await extensionAPI.settings.set("requests", requests);
+		extensionAPI.settings.set("requests", requests);
 	}
 
 	return {
@@ -211,10 +212,10 @@ function configRoamJS({ manualSettings }){
 }
 
 /* istanbul ignore next */
-export async function initialize(context = "roam/js", { extensionAPI, manualSettings } = {}){
+export function initialize(context = "roam/js", { extensionAPI, manualSettings } = {}){
 	const { requests, settings } = context == "roam/js"
 		? configRoamJS({ manualSettings })
-		: await configRoamDepot({ extensionAPI });
+		: configRoamDepot({ extensionAPI });
     
 	return { requests, settings };
 }

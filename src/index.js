@@ -20,7 +20,7 @@ import "@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "./index.css";
 
 
-(async() => {
+(() => {
 
 	const INSTALL_CONTEXT = "roam/js";
 
@@ -32,7 +32,7 @@ import "./index.css";
 
 	try {
 
-		const { requests, settings } = await initialize(INSTALL_CONTEXT, { manualSettings });
+		const { requests, settings } = initialize(INSTALL_CONTEXT, { manualSettings });
 
 		window.zoteroRoam = new ZoteroRoam({
 			queryClient,
