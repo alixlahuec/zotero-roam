@@ -12,7 +12,7 @@ import {
 
 /** Generates a data requests configuration object
  * @param {Array} reqs - Data requests provided by the user
- * @returns {{dataRequests: {dataURI: String, apikey: String, params: String, name: String, library: String}[], apiKeys: Array, libraries: Array}} A configuration object for the extension to use
+ * @returns {ConfigRequests} A configuration object for the extension to use
  */
 export function analyzeUserRequests(reqs){
 	if(reqs.length == 0){

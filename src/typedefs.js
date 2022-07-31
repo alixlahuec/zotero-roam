@@ -54,6 +54,25 @@
 
 /**
  * @typedef {{
+ * apikey: String,
+ * dataURI: String,
+ * library: String,
+ * name: String,
+ * params: String
+ * }}
+ * DataRequest
+ */
+/**
+ * @typedef {{
+ * dataRequests: DataRequest[],
+ * apiKeys: String[],
+ * libraries: ZoteroLibrary[]
+ * }}
+ * ConfigRequests
+ */
+
+/**
+ * @typedef {{
  * comment_prefix: String,
  * comment_suffix: String,
  * func: String,
@@ -63,6 +82,18 @@
  * use: ("formatted"|"raw")
  * }}
  * SettingsAnnotations
+ */
+
+/**
+ * @typedef {("citekey"|"inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr")} AutocompleteItemFormat
+ */
+/**
+ * @typedef {{
+ * trigger: String,
+ * display: AutocompleteItemFormat,
+ * format: AutocompleteItemFormat
+ * }}
+ * SettingsAutocomplete
  */
 
 /**

@@ -62,7 +62,7 @@ const useQuery_Collections = (libraries, opts = {}) => {
 };
 
 /** Uses item React queries for specific data requests. By default, `staleTime = 1 min` and `refetchInterval = 1 min`.
- * @param {{apikey: String, dataURI: String, params: String, name: String, library: String}[]} reqs - The targeted data requests
+ * @param {DataRequest[]} reqs - The targeted data requests
  * @param {Object} opts - Optional configuration to use with the queries
  * @returns The item React queries that correspond to the data requests
  */

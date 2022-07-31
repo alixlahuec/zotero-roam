@@ -9,10 +9,10 @@ import * as namespace from "./public";
  */
 export async function _getBibEntries(citekeys, libraries, queryClient){
 	let libraryItems = namespace._getItems("items", {}, queryClient);
-	let groupedList = citekeys.reduce((obj, citekey) => {
-		let libItem = libraryItems.find(it => it.key == citekey);
+	const groupedList = citekeys.reduce((obj, citekey) => {
+		const libItem = libraryItems.find(it => it.key == citekey);
 		if(libItem){
-			let location = libItem.library.type + "s/" + libItem.library.id;
+			const location = libItem.library.type + "s/" + libItem.library.id;
 			if(Object.keys(obj).includes(location)){
 				obj[location].push(libItem.data.key);
 			} else {
@@ -22,17 +22,17 @@ export async function _getBibEntries(citekeys, libraries, queryClient){
 		return obj;
 	}, {});
 
-	let bibEntries = [];
+	const bibEntries = [];
 
 	Object.keys(groupedList)
 		.forEach(libPath => {
-			let library = libraries.find(lib => lib.path == libPath);
+			const library = libraries.find(lib => lib.path == libPath);
 			if(library){
 				bibEntries.push(fetchBibEntries(groupedList[libPath], library));
 			}
 		});
 	
-	let bibOutput = await Promise.all(bibEntries);
+	const bibOutput = await Promise.all(bibEntries);
 	
 	return bibOutput.join("\n");
 
