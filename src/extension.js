@@ -8,7 +8,8 @@ export default class ZoteroRoam {
 	#settings;
 	constructor({ queryClient, requests, settings }) {
 		const { libraries } = requests;
-		const { annotations, metadata, notes, typemap } = settings;
+		const { annotations, notes, typemap } = settings;
+
 		this.#libraries = libraries;
 		this.#queryClient = queryClient;
 		this.#settings = { annotations, notes, typemap };
