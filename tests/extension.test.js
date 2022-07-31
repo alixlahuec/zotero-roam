@@ -6,6 +6,7 @@ import { findCollections } from "Mocks/zotero/collections";
 import { libraries } from "Mocks/zotero/libraries";
 import { sampleAnnot } from "Mocks/zotero/annotations";
 import { sampleNote } from "Mocks/zotero/notes";
+import { samplePDF } from "Mocks/zotero/pdfs";
 import { tags } from "Mocks/zotero/tags";
 
 import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
@@ -41,8 +42,12 @@ describe("Formatting utils", () => {
 	});
 
 	test("PDFs formatting", () => {
-		expect(extension.formatPDFs([], "links"))
-			.toEqual(_formatPDFs([], "as"));
+		expect(extension.formatPDFs([samplePDF], "links"))
+			.toEqual(_formatPDFs([samplePDF], "links"));
+		expect(extension.formatPDFs([samplePDF], "identity"))
+			.toEqual(_formatPDFs([samplePDF], "identity"));
+		expect(extension.formatPDFs(false))
+			.toEqual([]);
 	});
     
 	test("Retrieving the formatted type for an item", () => {
@@ -80,6 +85,23 @@ describe("Retrieval utils", () => {
 				typemap: {}
 			}
 		}); 
+	});
+
+	test("Retrieving children data for an item", () => {
+		const targetLibrary = Object.values(libraries).find(lib => lib.type == samplePDF.library.type && lib.id == samplePDF.library.id);
+		const parentItem = items.find(it => it.data.key == samplePDF.data.parentItem);
+		// getItemChildren() retrieves queries data by matching the data URI,
+		// so no need to reproduce the exact query key that would exist in prod
+		client.setQueryData(
+			["items", { apikey: masterKey, dataURI: targetLibrary.path + "/items", library: targetLibrary.path }],
+			(_prev) => ({
+				data: [parentItem, samplePDF],
+				lastUpdated: targetLibrary.version
+			})
+		);
+
+		expect(extension.getItemChildren(parentItem))
+			.toEqual([samplePDF]);
 	});
 
 	test("Retrieving collections data for an item", () => {
@@ -153,25 +175,25 @@ describe("Retrieval utils", () => {
 		client.setQueryData(
 			["items"],
 			(_prev) => ({
-				data: [...items, sampleAnnot, sampleNote],
+				data: [...items, sampleAnnot, sampleNote, samplePDF],
 				lastUpdated: 9999
 			})
 		);
 
 		expect(extension.getItems())
-			.toEqual([...items, sampleAnnot, sampleNote]);
+			.toEqual([...items, sampleAnnot, sampleNote, samplePDF]);
 
 		expect(extension.getItems("all"))
-			.toEqual([...items, sampleAnnot, sampleNote]);
+			.toEqual([...items, sampleAnnot, sampleNote, samplePDF]);
     
 		expect(extension.getItems("annotations"))
 			.toEqual([sampleAnnot]);
         
 		expect(extension.getItems("attachments"))
-			.toEqual([]);
+			.toEqual([samplePDF]);
 
 		expect(extension.getItems("children"))
-			.toEqual([sampleAnnot, sampleNote]);
+			.toEqual([sampleAnnot, sampleNote, samplePDF]);
         
 		expect(extension.getItems("items"))
 			.toEqual([...items]);
@@ -180,7 +202,7 @@ describe("Retrieval utils", () => {
 			.toEqual([sampleNote]);
 
 		expect(extension.getItems("pdfs"))
-			.toEqual([]);
+			.toEqual([samplePDF]);
 	});
 
 	describe("Retrieving tags data for a library", () => {

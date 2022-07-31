@@ -10,6 +10,7 @@ import { items } from "Mocks/zotero/items";
 import { parseDOI } from "../../../utils";
 import { parseSemanticDOIs } from "../../../api/utils";
 import { sampleNote } from "Mocks/zotero/notes";
+import { samplePDF } from "Mocks/zotero/pdfs";
 import { semantics } from "Mocks/semantic-scholar";
 import { sleep } from "../../../../.storybook/utils";
 
@@ -19,7 +20,7 @@ export default {
 		item: items.find(it => it.key == "blochImplementingSocialInterventions2021"),
 		itemList: {
 			items,
-			pdfs: [],
+			pdfs: [samplePDF],
 			notes: [sampleNote]
 		}
 	},
