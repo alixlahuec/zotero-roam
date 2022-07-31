@@ -15,7 +15,7 @@ function ItemType({ inputType, value, setValue }){
 
 	const typeOptions = useMemo(() => {
 		return Object.keys(typemap)
-			.map(k => ({ value: k, label: typemap[k]}));
+			.map(k => ({ value: k, label: typemap[k] }));
 	}, [typemap]);
 
 	if(inputType == "multiselect"){

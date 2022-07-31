@@ -72,7 +72,7 @@ export function setupInitialSettings(settingsObject){
 		notes = {},
 		other = {},
 		pageMenu = {},
-        // requests = { dataRequests: [], apiKeys: [], libraries: []}
+		// requests = { dataRequests: [], apiKeys: [], libraries: []}
 		sciteBadge = {},
 		shortcuts = {},
 		typemap = {},

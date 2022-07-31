@@ -113,7 +113,7 @@ class App extends Component {
 	}
 
 	render() {
-		let { status, isDashboardOpen, isSearchPanelOpen } = this.state;
+		const { status, isDashboardOpen, isSearchPanelOpen } = this.state;
 		const { extension } = this.props;
 		
 		return (
@@ -141,7 +141,7 @@ class App extends Component {
 
 	toggleExtension() {
 		this.setState((prevState) => {
-			let { status } = prevState;
+			const { status } = prevState;
 			if (status == "on") {
 				// Aka, turning off the extension
 				queryClient.clear();

@@ -1,8 +1,8 @@
 /* istanbul ignore file */
-import React from "react";
-import { render } from "react-dom";
 import * as Sentry from "@sentry/react";
 import { HotkeysProvider } from "@blueprintjs/core";
+import React from "react";
+import { render } from "react-dom";
 
 import { AppWrapper, queryClient } from "./components/App";
 import { UserSettingsProvider } from "./components/UserSettings";
