@@ -169,7 +169,9 @@ export function setupInitialSettings(settingsObject){
 /* istanbul ignore next */
 async function configRoamDepot({ extensionAPI }){
 	const current = extensionAPI.settings.getAll();
-	const settings = setupInitialSettings(Object.fromEntries(current || new Map()));
+	// For development
+	console.log(current);
+	const settings = setupInitialSettings(current || {});
 
 	const setterCalls = [];
 	Object.entries(settings).forEach(([key, val]) => {
