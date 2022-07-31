@@ -44,6 +44,11 @@ const FORMAT_OPTIONS = [
 	{ label: "Tag", value: "tag" }
 ];
 
+/**
+ * Options for Quick Copy's override key
+ * @readonly
+ * @enum {{label: String, value: String}}
+ */
 export const OVERRIDE_KEY_OPTIONS = [
 	{ label: "Alt", value: "altKey" },
 	{ label: "Ctrl", value: "ctrlKey" },

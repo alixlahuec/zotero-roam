@@ -1,13 +1,17 @@
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 
+/** @constant {String} The extension's current version (from package.json) */
 export const EXTENSION_VERSION = require("../package.json").version;
 
+/** @constant {String} The HTML id for the extension's portals' container */
 export const EXTENSION_PORTAL_ID = "zotero-roam-portal";
+/** @constant {String} The HTML id for the extension's icon's container */
 export const EXTENSION_SLOT_ID = "zotero-roam-slot";
 
+/** @constant {{id: String, src: String}[]} The list of external scripts that cannot be imported, and have to be injected in the page */
 export const DEPENDENCIES_SCRIPTS = [
-	{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js"}
+	{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js" }
 ];
 
 export const SENTRY_CONFIG = {
