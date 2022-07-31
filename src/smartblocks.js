@@ -1,15 +1,14 @@
 /* istanbul ignore next */
 /** Generates the list of custom SmartBlocks commands to register
- * @param {Function} getItems - The exposed utility that returns available Zotero items. See {@link App} component.
  * @returns {Object.<string, SmartblockCommand>} The list of commands to register
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
-const sbCommands = (getItems) => {
+const sbCommands = () => {
 	return {
 		"ZOTERORANDOMCITEKEY": {
 			help: "Return one or more Zotero citekeys, with optional tag query",
 			handler: (_context) => (nb = "1", query="") => {
-				return getItems("items")
+				return window?.zoteroRoam?.getItems?.("items")
 					.filter(it => processQuery(query, it.data.tags.map(t => t.tag)))
 					.map(it => "@" + it.key)
 					.sort(() => 0.5 - Math.random())
@@ -81,11 +80,10 @@ function eval_term(term, props){
 
 /* istanbul ignore next */
 /** Register the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
- * @param {Function} getItems - The exposed utility that returns available Zotero items. See {@link App} component.
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
-function registerSmartblockCommands(getItems){
-	const commands = sbCommands(getItems);
+function registerSmartblockCommands(){
+	const commands = sbCommands();
 	Object.keys(commands).forEach(k => {
 		const { help, handler } = commands[k];
 		window.roamjs?.extension?.smartblocks?.registerCommand({
