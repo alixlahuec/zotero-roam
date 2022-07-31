@@ -18,8 +18,19 @@ export const makeCollection = ({ key, library, name, version, hasParent = false,
 	version
 });
 
-export const makeEntityLinks = ({ key, library }) => {
+export const makeEntityLinks = ({ key, library, parentItem = null }) => {
 	const { type, name, path } = library;
+	let upLink = {};
+
+	if(parentItem){
+		upLink = {
+			up: {
+				href: `https://api.zotero.org/${path}/items/${parentItem}`,
+				type: "application/json"
+			}
+		};
+	}
+	
 	return {
 		self: {
 			href: `https://api.zotero.org/${path}/items/${key}`,
@@ -28,7 +39,8 @@ export const makeEntityLinks = ({ key, library }) => {
 		alternate: {
 			href: `https://www.zotero.org/${type == "user" ? name : path}/items/${key}`,
 			type: "text/html"
-		}
+		},
+		...upLink
 	};
 };
 

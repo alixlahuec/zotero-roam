@@ -21,7 +21,7 @@ const makeAnnot = ({ key, library, parentItem, version, data }) => {
 			...data
 		},
 		key,
-		links: makeEntityLinks({ key, library }),
+		links: makeEntityLinks({ key, library, parentItem }),
 		library: makeLibraryMetadata(library),
 		meta: {},
 		version,

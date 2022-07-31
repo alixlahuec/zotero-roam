@@ -18,7 +18,7 @@ const makeNote = ({ key, library, data, note, numChildren = 0, parentItem, versi
 			version,
 			...data
 		},
-		links: makeEntityLinks({ key, library }),
+		links: makeEntityLinks({ key, library, parentItem }),
 		library: makeLibraryMetadata(library),
 		meta: {
 			numChildren
