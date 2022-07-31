@@ -1,0 +1,58 @@
+.zr-settings-list {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+}
+
+.zr-settings-list > h3.bp4-heading {
+    border-top: 1px var(--zr-border-co) solid;
+    color: var(--zr-text-co);
+    font-size: 1.15rem;
+    padding-top: 10px;
+    margin: 10px 0px;
+    padding: 0px 10px;
+    padding-top: 10px;
+}
+
+.zr-settings-list > h3.bp4-heading:first-child {
+    margin-top: 0px;
+}
+
+.zr-settings-list h4.bp4-heading {
+    color: var(--zr-accent-1);
+    font-size: 1.05rem;
+    font-weight: 400;
+    margin: 0px;
+    margin-bottom: 5px;
+}
+
+.zr-settings-list [zr-role="settings-row"] {
+    align-items: center;
+    display: flex;
+    font-size: 0.9em;
+    justify-content: space-between;
+    padding: 5px 10px
+}
+
+.zr-settings-list [zr-role="settings-row"] > div:first-child {
+    flex: 1 1 50%;
+    padding-right: 10px;
+}
+
+.zr-settings-list [zr-role="settings-row"] > [zr-role="input-text"] {
+    flex: auto;
+    text-align: right;
+}
+
+.zr-settings-list .zr-setting--single-input > button {
+    background: hsla(var(--zr-accent-1-hsl), 7%);
+}
+
+.zr-settings-list .zr-setting--single-input > button:hover {
+    background: hsla(var(--zr-accent-1-hsl), 10%);
+}
+
+.zr-settings-list [zr-role="setting-description"] {
+    color: var(--zr-auxiliary);
+    font-size: var(--zr-text-small);
+}
