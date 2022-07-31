@@ -16,6 +16,7 @@ import { pluralize } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
 
+
 function useGetCitoids(urls, opts = {}) {
 	return useQuery_Citoid(urls, {
 		...opts,

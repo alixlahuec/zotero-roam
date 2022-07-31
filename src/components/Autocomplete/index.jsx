@@ -4,10 +4,11 @@ import Tribute from "tributejs";
 
 import { ExtensionContext, UserSettings } from "../App";
 
-import { formatItemReference, escapeRegExp } from "../../utils";
+import { escapeRegExp, formatItemReference } from "../../utils";
 import { useQuery_Items } from "../../api/queries";
 
 import { CustomClasses } from "../../constants";
+
 import "./index.css";
 
 

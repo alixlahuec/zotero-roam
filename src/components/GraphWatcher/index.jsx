@@ -1,16 +1,17 @@
 /* istanbul ignore file */
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 
+import { CitekeyMenuFactory, DNPMenuFactory, TagMenuFactory } from "./Menus";
 import Autocomplete from "../Autocomplete";
 import InlineCitekeys from "./InlineCitekeys";
-import { CitekeyMenuFactory, DNPMenuFactory, TagMenuFactory } from "./Menus";
 import { UserSettings } from "../App";
+import WebImportFactory from "./WebImport";
 
 import { addPageMenus, findPageMenus } from "./Menus/utils";
-import {  findWebimportDivs, setWebimportDivs } from "./WebImport/utils";
-import { hasNodeListChanged } from "../../utils";
+import { findWebimportDivs, setWebimportDivs } from "./WebImport/utils";
 import { menuPrefix, webimportClass } from "./classes";
-import WebImportFactory from "./WebImport";
+import { hasNodeListChanged } from "../../utils";
+
 
 const GraphWatcher = React.memo(function GraphWatcher(){
 	// From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html

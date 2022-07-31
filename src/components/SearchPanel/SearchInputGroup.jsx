@@ -4,6 +4,7 @@ import { bool, func, object, shape } from "prop-types";
 import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprintjs/core";
 
 import { UserSettings } from "../App";
+
 import { dialogLabel } from "./classes";
 
 import { CustomClasses } from "../../constants";

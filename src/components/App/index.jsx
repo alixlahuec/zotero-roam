@@ -1,18 +1,19 @@
 /* istanbul ignore file */
-import React, { Component } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { Component } from "react";
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
+import Dashboard from "../Dashboard";
 import ExtensionIcon from "../ExtensionIcon";
 import GraphWatcher from "../GraphWatcher";
-import { RoamCitekeysProvider } from "../RoamCitekeysContext";
 import SearchPanel from "../SearchPanel";
 
 import { _getBibEntries, _getBibliography, _getCollections, _getChildren, _getItems, _getTags } from "../../api/public";
+import { RoamCitekeysProvider } from "../RoamCitekeysContext";
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace } from "Roam";
 
 import * as customPropTypes from "../../propTypes";
-import Dashboard from "../Dashboard";
+
 
 const ExtensionContext = React.createContext();
 const UserSettings = React.createContext();

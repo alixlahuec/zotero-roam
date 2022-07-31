@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { bool, func, oneOf} from "prop-types";
+import { bool, func, oneOf } from "prop-types";
 
 import { ExtensionContext, UserSettings } from "../App";
 import DialogOverlay from "../DialogOverlay";
