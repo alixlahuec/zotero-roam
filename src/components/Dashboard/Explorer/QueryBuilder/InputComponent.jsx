@@ -1,7 +1,7 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { any, array, func, oneOf, string } from "prop-types";
 
-import { UserSettings } from "../../../App";
+import { useTypemapSettings } from "../../../UserSettings/Typemap";
 
 import { InputDateRange, InputDateSingle } from "../../../Inputs/InputDate";
 import InputMultiSelect from "../../../Inputs/InputMultiSelect";
@@ -11,7 +11,7 @@ import TagsSelector from "../../../Inputs/TagsSelector";
 import { queries, types } from "./queries";
 
 function ItemType({ inputType, value, setValue }){
-	const { typemap } = useContext(UserSettings);
+	const [typemap] = useTypemapSettings();
 
 	const typeOptions = useMemo(() => {
 		return Object.keys(typemap)

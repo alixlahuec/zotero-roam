@@ -1,9 +1,8 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
 
 import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
-import { UserSettings } from "../../App";
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import { CitoidGuide } from "../../Guide";
 import SentryBoundary from "../../Errors/SentryBoundary";
@@ -11,6 +10,7 @@ import ZoteroImport from "../../ZoteroImport";
 
 import useMulti from "../../../hooks/useMulti";
 import { useQuery_Citoid } from "../../../api/queries";
+import { useTypemapSettings } from "../../UserSettings/Typemap";
 
 import { pluralize } from "../../../utils";
 
@@ -38,7 +38,7 @@ function useGetCitoids(urls, opts = {}) {
 
 const WebImportItem = React.memo(function WebImportItem(props){
 	const { isSelected, item, onSelect } = props;
-	const { typemap } = useContext(UserSettings);
+	const [typemap] = useTypemapSettings();
 
 	const handleCheckUncheck = useCallback(() => {
 		onSelect(item.url);

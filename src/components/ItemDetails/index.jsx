@@ -1,9 +1,8 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { func, node, object, oneOf, string } from "prop-types";
 
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
-import { UserSettings } from "../App";
 import DataDrawer from "../DataDrawer";
 import NotesDrawer from "../NotesDrawer";
 import SentryBoundary from "../Errors/SentryBoundary";
@@ -13,8 +12,14 @@ import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
 import { formatItemReferenceForCopy } from "../SearchPanel/utils";
 
+import { useAnnotationsSettings } from "../UserSettings/Annotations";
 import useBool from "../../hooks/useBool";
+import { useCopySettings } from "../UserSettings/Copy";
+import { useMetadataSettings } from "../UserSettings/Metadata";
+import { useNotesSettings } from "../UserSettings/Notes";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
+import { useShortcutsSettings } from "../UserSettings/Shortcuts";
+import { useTypemapSettings } from "../UserSettings/Typemap";
 
 import { CustomClasses } from "../../constants";
 
@@ -49,8 +54,8 @@ const makeItemReference = (citekey, format, item) => {
 };
 
 function CopyOption(props){
-	const { shortcuts: shortcutsSettings } = useContext(UserSettings);
 	const { citekey, format, item } = props;
+	const [shortcutsSettings] = useShortcutsSettings();
 
 	const textOutput = useMemo(() => makeItemReference(citekey, format, item), [citekey, format, item]);
 	const formatCitekey = useCallback(() => copyToClipboard(textOutput), [textOutput]);
@@ -95,7 +100,8 @@ CopyOption.propTypes = {
 
 function CopyButtons(props){
 	const { citekey, item } = props;
-	const { copy: { defaultFormat: defaultCopyFormat}, shortcuts: shortcutsSettings } = useContext(UserSettings);
+	const [{ defaultFormat: defaultCopyFormat }] = useCopySettings();
+	const [shortcutsSettings] = useShortcutsSettings();
 
 	const defaultCopyText = useMemo(() => {
 		return formatItemReferenceForCopy(item, defaultCopyFormat);
@@ -212,13 +218,13 @@ const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
 		zotero } = item;
 	const [isNotesDrawerOpen, { toggle: toggleNotes, on: showNotes, off: closeNotes }] = useBool(false);
 	const [isDataDrawerOpen, { on: showData, off: closeData }] = useBool(false);
-	
-	const { 
-		annotations: annotationsSettings, 
-		metadata: metadataSettings, 
-		notes: notesSettings, 
-		shortcuts: shortcutsSettings, 
-		typemap } = useContext(UserSettings);
+
+	const [annotationsSettings] = useAnnotationsSettings();
+	const [metadataSettings] = useMetadataSettings();
+	const [notesSettings] = useNotesSettings();
+	const [shortcutsSettings] = useShortcutsSettings();
+	const [typemap] = useTypemapSettings();
+
 	const [, updateRoamCitekeys] = useRoamCitekeys();
 
 	const importMetadata = useCallback(async() => {

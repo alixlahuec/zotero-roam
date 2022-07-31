@@ -1,13 +1,14 @@
-import React, { useContext } from "react";
 import { bool, func, oneOf } from "prop-types";
+import React from "react";
 
-import { ExtensionContext, UserSettings } from "../App";
 import DialogOverlay from "../DialogOverlay";
 import LibraryQueryList from "./LibraryQueryList";
 import SentryBoundary from "../Errors/SentryBoundary";
 
 import useBool from "../../hooks/useBool";
+import { useCopySettings } from "../UserSettings/Copy";
 import { useQuery_Items } from "../../api/queries";
+import { useRequestsSettings } from "../UserSettings/Requests";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
 
 import { cleanLibrary } from "../../utils";
@@ -31,11 +32,10 @@ function useGetItems(reqs, roamCitekeys, opts = {}){
 	return itemQueries.map(q => q.data || []).flat(1);
 }
 
-const SearchPanel = React.memo(function SearchPanel(props) {
-	const { isOpen, onClose, status } = props;
-	const { dataRequests } = useContext(ExtensionContext);
+const SearchPanel = React.memo(function SearchPanel({ isOpen, onClose, status }) {
+	const [{ useQuickCopy }] = useCopySettings();
+	const [{ dataRequests }] = useRequestsSettings();
 	const [roamCitekeys,] = useRoamCitekeys();
-	const { copy: { useQuickCopy} } = useContext(UserSettings);
 
 	const [quickCopyActive, { toggle: toggleQuickCopy }] = useBool(useQuickCopy); // Is QuickCopy active by default ?
 

@@ -1,11 +1,13 @@
 /* istanbul ignore file */
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { CitekeyMenuFactory, DNPMenuFactory, TagMenuFactory } from "./Menus";
 import Autocomplete from "../Autocomplete";
 import InlineCitekeys from "./InlineCitekeys";
-import { UserSettings } from "../App";
 import WebImportFactory from "./WebImport";
+
+import { useAutocompleteSettings } from "../UserSettings/Autocomplete";
+import { useWebImportSettings } from "../UserSettings/WebImport";
 
 import { addPageMenus, findPageMenus } from "./Menus/utils";
 import { findWebimportDivs, setWebimportDivs } from "./WebImport/utils";
@@ -19,7 +21,8 @@ const GraphWatcher = React.memo(function GraphWatcher(){
 	const mounted = useRef(false);
 	const [{ citekeyMenus, dnpMenus, tagMenus }, setMenus] = useState({ citekeyMenus: [], dnpMenus: [], tagMenus: []});
 	const [webimports, setWebimports] = useState([]);
-	const { autocomplete: { trigger }, webimport: { tags }} = useContext(UserSettings);
+	const [{ trigger }] = useAutocompleteSettings();
+	const [{ tags }] = useWebImportSettings();
 
 	const updatePageElements = useCallback(() => {
 		// Page menus

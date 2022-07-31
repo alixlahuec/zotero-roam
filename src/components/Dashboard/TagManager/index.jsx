@@ -1,7 +1,6 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { arrayOf, func, objectOf, shape, string } from "prop-types";
 
-import { ExtensionContext } from "../../App";
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
 import LibrarySelect from "../LibrarySelect";
@@ -10,6 +9,7 @@ import SentryBoundary from "../../Errors/SentryBoundary";
 import TagsDatalist from "./TagsDatalist";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
+import { useRequestsSettings } from "../../UserSettings/Requests";
 
 import { CustomClasses } from "../../../constants";
 
@@ -79,7 +79,7 @@ TabContents.propTypes = {
 };
 
 const TagManager = React.memo(function TagManager(){
-	const { libraries } = useContext(ExtensionContext);
+	const [{ libraries }] = useRequestsSettings();
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
 
 	return <SentryBoundary feature="tag-manager">

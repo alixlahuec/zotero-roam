@@ -4,11 +4,15 @@ import { array, func, objectOf, oneOf } from "prop-types";
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 
+import { ExtensionContext } from "../App";
+
 import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/queries";
 import useBool from "../../hooks/useBool";
+import { useOtherSettings } from "../UserSettings/Other";
+import { useRequestsSettings } from "../UserSettings/Requests";
+
 import { makeTimestamp } from "../../utils";
 
-import { ExtensionContext, UserSettings } from "../App";
 import "./index.css";
 
 const betaTag = <Tag intent="primary" minimal={true}>Beta</Tag>;
@@ -16,7 +20,7 @@ const betaTag = <Tag intent="primary" minimal={true}>Beta</Tag>;
 const isCurrentlyDark = () => document.getElementsByTagName("body")[0].getAttribute("zr-dark-theme") == "true";
 
 function DarkThemeToggle (){
-	const { darkTheme } = useContext(UserSettings);
+	const [{ darkTheme }] = useOtherSettings();
 	const [useDark, { set: setUseDark, toggle: toggleDark }] = useBool(darkTheme);
 	
 	const toggleDarkTheme = useCallback(() => {
@@ -123,7 +127,7 @@ QueriesStatusList.propTypes = {
 
 const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 	const { openDashboard, openSearchPanel, status, toggleExtension } = props;
-	const { apiKeys, dataRequests, libraries } = useContext(ExtensionContext);
+	const [{ apiKeys, dataRequests, libraries }] = useRequestsSettings();
     
 	const queryOpts = useMemo(() => {
 		return {

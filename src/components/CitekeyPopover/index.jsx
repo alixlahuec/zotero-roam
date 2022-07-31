@@ -1,10 +1,13 @@
-import React, { useCallback, useContext, useMemo } from "react";
 import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
+import React, { useCallback, useMemo } from "react";
 import { arrayOf, func, oneOf, oneOfType, string } from "prop-types";
 import { Popover2 } from "@blueprintjs/popover2";
 
-import { UserSettings } from "../App";
+import { useAnnotationsSettings } from "../UserSettings/Annotations";
+import { useMetadataSettings } from "../UserSettings/Metadata";
+import { useNotesSettings } from "../UserSettings/Notes";
 import { useRoamCitekeys } from "../RoamCitekeysContext";
+import { useTypemapSettings } from "../UserSettings/Typemap";
 
 import { getLocalLink, getWebLink } from "../../utils";
 import { importItemMetadata, openInSidebarByUID, openPageByUID } from "Roam";
@@ -25,7 +28,10 @@ const popoverMenuProps = {
 
 const CitekeyPopover = React.memo(function CitekeyPopover(props) {
 	const { closeDialog, inGraph, item, notes = [], pdfs = [] } = props;
-	const { annotations: annotationsSettings, metadata: metadataSettings, notes: notesSettings, typemap } = useContext(UserSettings);
+	const [annotationsSettings] = useAnnotationsSettings();
+	const [metadataSettings] = useMetadataSettings();
+	const [notesSettings] = useNotesSettings();
+	const [typemap] = useTypemapSettings();
 	const [, updateRoamCitekeys] = useRoamCitekeys();
 
 	const handleClose = useCallback(() => {

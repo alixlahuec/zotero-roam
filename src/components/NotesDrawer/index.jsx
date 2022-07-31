@@ -1,13 +1,13 @@
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { arrayOf, bool, func, object } from "prop-types";
 
-import { UserSettings } from "../App";
 import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tab, Tabs, Tag } from "@blueprintjs/core";
 
 import ButtonLink from "../ButtonLink";
 import SentryBoundary from "../Errors/SentryBoundary";
 
 import useBool from "../../hooks/useBool";
+import { useNotesSettings } from "../UserSettings/Notes";
 
 import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
 
@@ -66,8 +66,8 @@ Annotation.propTypes = {
 };
 
 function Note({ note }){
-	const { notes: notesSettings } = useContext(UserSettings);
 	const { date_modified, link_note, raw, tags } = note;
+	const [notesSettings] = useNotesSettings();
 
 	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings), [notesSettings, raw]);
 

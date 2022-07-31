@@ -1,8 +1,9 @@
 /* istanbul ignore file */
-import React, { useCallback, useContext, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import Tribute from "tributejs";
 
-import { ExtensionContext, UserSettings } from "../App";
+import { useAutocompleteSettings } from "../UserSettings/Autocomplete";
+import { useRequestsSettings } from "../UserSettings/Requests";
 
 import { escapeRegExp, formatItemReference } from "../../utils";
 import { useQuery_Items } from "../../api/queries";
@@ -69,8 +70,8 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 };
 
 const Autocomplete = React.memo(function Autocomplete() {
-	const { dataRequests } = useContext(ExtensionContext);
-	const { autocomplete: { trigger, display = "citekey", format = "citation" } } = useContext(UserSettings);
+	const [{ dataRequests }] = useRequestsSettings();
+	const [{ trigger, display = "citekey", format = "citation" }] = useAutocompleteSettings();
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const formattedLib = useGetItems(dataRequests, format, display) || [];

@@ -1,9 +1,9 @@
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { bool, func, object, shape } from "prop-types";
 
 import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprintjs/core";
 
-import { UserSettings } from "../App";
+import { useShortcutsSettings } from "../UserSettings/Shortcuts";
 
 import { dialogLabel } from "./classes";
 
@@ -14,7 +14,7 @@ const SearchInputGroup = React.memo(function SearchInputGroup(props) {
 		handleKeyDown, handleKeyUp, handleQueryChange, 
 		quickCopyProps: { isActive: isQCActive, toggle: toggleQC }, 
 		searchbar } = props;
-	const { shortcuts: shortcutsSettings } = useContext(UserSettings);
+	const [shortcutsSettings] = useShortcutsSettings();
 
 	const searchbarLeftElement = useMemo(() => 
 		<Icon id={dialogLabel} 

@@ -1,15 +1,15 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape } from "prop-types";
 
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
-import { ExtensionContext } from "../../App";
 import { ListItem, ListWrapper } from "../../DataList";
 import QueryBuilder from "./QueryBuilder";
 import QueryPDFs from "./QueryPDFs";
 import SentryBoundary from "../../Errors/SentryBoundary";
 
 import { useQuery_Items } from "../../../api/queries";
+import { useRequestsSettings } from "../../UserSettings/Requests";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
 
 import { categorizeLibraryItems, cleanLibraryItem, cleanLibraryPDF, identifyChildren, identifyPDFConnections } from "../../../utils";
@@ -131,7 +131,7 @@ ExplorerTabs.propTypes = {
 };
 
 function Explorer({ onClose }){
-	const { dataRequests } = useContext(ExtensionContext);
+	const [{ dataRequests }] = useRequestsSettings();
 	const itemQueries = useQuery_Items(dataRequests, {
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => datastore.data

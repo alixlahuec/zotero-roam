@@ -1,9 +1,8 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
 
 import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 
-import { ExtensionContext } from "../App";
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
 import NoWriteableLibraries from "../Errors/NoWriteableLibraries";
@@ -13,6 +12,7 @@ import TagsSelector from "../Inputs/TagsSelector";
 import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
 import useMulti from "../../hooks/useMulti";
+import { useRequestsSettings } from "../UserSettings/Requests";
 import useSelect from "../../hooks/useSelect";
 
 import { sortCollections } from "../../utils";
@@ -166,7 +166,7 @@ ImportPanel.propTypes = {
 
 const ZoteroImport = React.memo(function ZoteroImport(props) {
 	const { identifiers, isActive, resetImport } = props;
-	const { libraries } = useContext(ExtensionContext);
+	const [{ libraries }] = useRequestsSettings();
 
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
 

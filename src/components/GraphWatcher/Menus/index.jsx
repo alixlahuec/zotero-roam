@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { arrayOf, object } from "prop-types";
 import { createPortal } from "react-dom";
 
@@ -7,8 +7,9 @@ import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
-import { ExtensionContext, UserSettings } from "../../App";
+import { usePageMenuSettings } from "../../UserSettings/PageMenu";
 import { useQuery_Items } from "../../../api/queries";
+import { useRequestsSettings } from "../../UserSettings/Requests";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
 
 import { categorizeLibraryItems } from "../../../utils";
@@ -17,8 +18,9 @@ import { cleanRelatedItem } from "./utils";
 import "./index.css";
 
 function CitekeyMenuFactory({ menus }){
-	const { dataRequests } = useContext(ExtensionContext);
-	const { pageMenu: { trigger } } = useContext(UserSettings);
+	const [{ trigger }] = usePageMenuSettings();
+	const [{ dataRequests }] = useRequestsSettings();
+
 	const itemQueries = useQuery_Items(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
@@ -62,8 +64,8 @@ CitekeyMenuFactory.propTypes = {
 };
 
 function DNPMenuFactory({ menus }){
-	const { dataRequests } = useContext(ExtensionContext);
-	const { pageMenu: { trigger } } = useContext(UserSettings);
+	const [{ trigger }] = usePageMenuSettings();
+	const [{ dataRequests }] = useRequestsSettings();
 	const [roamCitekeys,] = useRoamCitekeys();
 
 	const itemQueries = useQuery_Items(dataRequests, {
@@ -115,8 +117,8 @@ DNPMenuFactory.propTypes = {
 };
 
 function TagMenuFactory({ menus }){
-	const { dataRequests } = useContext(ExtensionContext);
-	const { pageMenu: { trigger } } = useContext(UserSettings);
+	const [{ trigger }] = usePageMenuSettings();
+	const [{ dataRequests }] = useRequestsSettings();
 	const [roamCitekeys,] = useRoamCitekeys();
 	
 	const itemQueries = useQuery_Items(dataRequests, {

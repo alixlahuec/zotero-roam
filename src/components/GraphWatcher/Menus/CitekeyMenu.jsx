@@ -1,9 +1,8 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { arrayOf, bool, shape, string } from "prop-types";
 
 import { Button, ButtonGroup, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
 
-import { UserSettings } from "../../App";
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ButtonLink from "../../ButtonLink";
 import CitekeyPopover from "../../CitekeyPopover";
@@ -13,9 +12,15 @@ import SciteBadge from "../../SciteBadge";
 import SemanticPanel from "../SemanticPanel";
 import SentryBoundary from "../../Errors/SentryBoundary";
 
+import { useAnnotationsSettings } from "../../UserSettings/Annotations";
 import useBool from "../../../hooks/useBool";
+import { useMetadataSettings } from "../../UserSettings/Metadata";
+import { useNotesSettings } from "../../UserSettings/Notes";
+import { usePageMenuSettings } from "../../UserSettings/PageMenu";
 import { useQuery_Semantic } from "../../../api/queries";
 import { useRoamCitekeys } from "../../RoamCitekeysContext";
+import { useSciteSettings } from "../../UserSettings/Scite";
+import { useTypemapSettings } from "../../UserSettings/Typemap";
 
 import { showClasses } from "../classes";
 
@@ -221,13 +226,13 @@ ViewItem.propTypes = {
 };
 
 const CitekeyMenu = React.memo(function CitekeyMenu({ item, itemList }) {
-	const { 
-		annotations: annotationsSettings, 
-		metadata: metadataSettings, 
-		notes: notesSettings, 
-		pageMenu: { defaults }, 
-		sciteBadge: sciteBadgeSettings, 
-		typemap } = useContext(UserSettings);
+	const [annotationsSettings] = useAnnotationsSettings();
+	const [metadataSettings] = useMetadataSettings();
+	const [notesSettings] = useNotesSettings();
+	const [{ defaults }] = usePageMenuSettings();
+	const [sciteBadgeSettings] = useSciteSettings();
+	const [typemap] = useTypemapSettings();
+	
 	const [roamCitekeys,] = useRoamCitekeys();
 
 	const doi = parseDOI(item.data.DOI);

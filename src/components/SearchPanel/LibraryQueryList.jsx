@@ -1,13 +1,13 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { bool, func, node, object, shape } from "prop-types";
 
 import { Menu, MenuItem } from "@blueprintjs/core";
 import { QueryList, renderFilteredItems } from "@blueprintjs/select";
 
-import { UserSettings } from "../App";
 import ItemDetails from "../ItemDetails";
 import SearchInputGroup from "./SearchInputGroup";
 
+import { useCopySettings } from "../UserSettings/Copy";
 import useDebounceCallback from "../../hooks/useDebounceCallback";
 
 import { copyToClipboard, pluralize, searchEngine } from "../../utils";
@@ -128,7 +128,7 @@ RenderedList.propTypes = {
 
 const LibraryQueryList = React.memo(function LibraryQueryList(props) {
 	const { handleClose, isOpen, items, quickCopyProps } = props;
-	const { copy: copySettings } = useContext(UserSettings);
+	const [copySettings] = useCopySettings();
 
 	const searchbar = useRef();
 	const [selectedItemID, itemSelect] = useState(null);

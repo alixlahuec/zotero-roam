@@ -4,7 +4,14 @@ import { createPortal } from "react-dom";
 
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
+import { ExtensionContext } from "../../App";
 import NotesDrawer from "../../NotesDrawer";
+import { useAnnotationsSettings } from "../../UserSettings/Annotations";
+import { useMetadataSettings } from "../../UserSettings/Metadata";
+import { useNotesSettings } from "../../UserSettings/Notes";
+import { useOtherSettings } from "../../UserSettings/Other";
+import { useRequestsSettings } from "../../UserSettings/Requests";
+import { useTypemapSettings } from "../../UserSettings/Typemap";
 
 import useBool from "../../../hooks/useBool";
 import { useQuery_Items } from "../../../api/queries";
@@ -12,7 +19,6 @@ import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
 import { importItemMetadata } from "Roam";
 
-import { ExtensionContext, UserSettings } from "../../App";
 import "./index.css";
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation
@@ -74,7 +80,10 @@ const useGetItems = (reqs) => {
 
 const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, onClose, target } = props;
-	const { annotations: annotationsSettings, metadata: metadataSettings, notes: notesSettings, typemap } = useContext(UserSettings);
+	const [annotationsSettings] = useAnnotationsSettings();
+	const [metadataSettings] = useMetadataSettings();
+	const [notesSettings] = useNotesSettings();
+	const [typemap] = useTypemapSettings();
 	const [isNotesDrawerOpen, { on: showNotesDrawer, off: closeDrawer }] = useBool(false);
 
 	const citekey = target?.parentElement.dataset.linkTitle;
@@ -201,8 +210,9 @@ CitekeyContextMenu.propTypes = {
 
 /* istanbul ignore next */
 const InlineCitekeys = React.memo(function InlineCitekeys() {
-	const { dataRequests, portalId } = useContext(ExtensionContext);
-	const { render_inline } = useContext(UserSettings);
+	const { portalId } = useContext(ExtensionContext);
+	const [{ dataRequests }] = useRequestsSettings();
+	const [{ render_inline }] = useOtherSettings();
 
 	const [isContextMenuOpen, setContextMenuOpen] = useState(false);
 	const [contextMenuCoordinates, setContextMenuCoordinates] = useState({ left: 0, top: 0 });

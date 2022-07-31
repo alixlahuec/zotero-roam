@@ -1,9 +1,9 @@
-import React, { useContext, useRef } from "react";
-import { ExtensionContext } from "../../App";
+import React, { useRef } from "react";
 
 import { CitekeyContextMenu, useGetItems } from ".";
 
 import { items } from "Mocks/zotero/items";
+import { useRequestsSettings } from "../../UserSettings/Requests";
 
 export default {
 	component: CitekeyContextMenu,
@@ -38,7 +38,7 @@ export default {
 };
 
 const Template = (args) => {
-	const { dataRequests } = useContext(ExtensionContext);
+	const [{ dataRequests }] = useRequestsSettings();
 	const targetElement = useRef();
 	const itemsMap = useGetItems(dataRequests);
 	const citekey = "@" + items[0].key;

@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, number, shape, string } from "prop-types";
 
 import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
-import { ExtensionContext } from "../../App";
 import { ListWrapper, Toolbar } from "../../DataList";
 import LogItem from "./LogItem";
 import SentryBoundary from "../../Errors/SentryBoundary";
 
 import useBool from "../../../hooks/useBool";
 import { useQuery_Items } from "../../../api/queries";
+import { useRequestsSettings } from "../../UserSettings/Requests";
 
 import { categorizeLibraryItems } from "../../../utils";
 import { makeLogFromItems } from "./utils";
@@ -84,7 +84,7 @@ LogView.propTypes = {
 };
 
 const RecentItems = React.memo(function RecentItems({ onClose }){
-	const { dataRequests } = useContext(ExtensionContext);
+	const [{ dataRequests }] = useRequestsSettings();
 	const itemQueries = useQuery_Items(dataRequests, {
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => datastore.data
