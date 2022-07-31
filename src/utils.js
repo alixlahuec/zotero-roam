@@ -264,18 +264,18 @@ function cleanSemanticItem(item){
  * @see cleanSemanticReturnType
  */
 function cleanSemanticMatch(semanticItem, { items = [], pdfs = [], notes = [] } = {}, roamCitekeys){
-	const cleanSemantic = cleanSemanticItem(semanticItem);
-	if(!cleanSemantic.doi){
+	const cleanItem = cleanSemanticItem(semanticItem);
+	if(!cleanItem.doi){
 		return {
-			...cleanSemantic,
+			...cleanItem,
 			inGraph: false,
 			inLibrary: false
 		};
 	} else {
-		const libItem = items.find(it => parseDOI(it.data.DOI) == cleanSemantic.doi);
+		const libItem = items.find(it => parseDOI(it.data.DOI) == cleanItem.doi);
 		if(!libItem){
 			return {
-				...cleanSemantic,
+				...cleanItem,
 				inGraph: false,
 				inLibrary: false
 			};	
@@ -285,7 +285,7 @@ function cleanSemanticMatch(semanticItem, { items = [], pdfs = [], notes = [] } 
 			const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
 
 			return {
-				...cleanSemantic,
+				...cleanItem,
 				inGraph: roamCitekeys.has("@" + libItem.key) ? roamCitekeys.get("@" + libItem.key) : false,
 				inLibrary: {
 					children,
@@ -454,10 +454,12 @@ function executeFunctionByName(functionName, context /*, args */) {
 	const args = Array.prototype.slice.call(arguments, 2);
 	const namespaces = functionName.split(".");
 	const func = namespaces.pop();
+    
+	let ctx = context;
 	for (let i = 0; i < namespaces.length; i++) {
-		context = context[namespaces[i]];
+		ctx = ctx[namespaces[i]];
 	}
-	return context[func].apply(context, args);
+	return ctx[func].apply(ctx, args);
 }
 
 /** Formats a single Zotero annotation with params
