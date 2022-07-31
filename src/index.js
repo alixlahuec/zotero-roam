@@ -10,6 +10,7 @@ import zrToaster from "./components/ExtensionToaster";
 
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION, SENTRY_CONFIG } from "./constants";
 import { initialize, setup, setupPortals, setupSentry  } from "./setup";
+import ZoteroRoam from "./extension";
 
 // TODO: remove once revert to Blueprint v3 is completed
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -33,9 +34,6 @@ import "./index.css";
 
 		const { requests, settings } = await initialize(INSTALL_CONTEXT, { manualSettings });
 
-		window.zoteroRoam.formatNotes = formatNotes;
-		window.zoteroRoam.formatPDFs = formatPDFs;
-		window.zoteroRoam.getChildren = getChildren;
 		window.zoteroRoam = new ZoteroRoam({
 			queryClient,
 			requests,
@@ -53,9 +51,6 @@ import "./index.css";
 		setup({ settings });
 
 		render(
-			<HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>
-				<App
-					extension={{
 			<HotkeysProvider dialogProps={{ globalGroupName: "zoteroRoam" }}>
 				<UserSettingsProvider extensionAPI={null} init={{ ...settings, requests }}>
 					<AppWrapper
