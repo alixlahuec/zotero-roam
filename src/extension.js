@@ -3,30 +3,33 @@ import { _getBibEntries, _getBibliography } from "./api/public";
 import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 
 export default class ZoteroRoam {
+	#libraries;
+	#queryClient;
+	#settings;
 	constructor({ queryClient, requests, settings }) {
 		const { libraries } = requests;
 		const { annotations, metadata, notes, typemap } = settings;
+		this.#libraries = libraries;
+		this.#queryClient = queryClient;
+		this.#settings = { annotations, notes, typemap };
 
-		this.libraries = libraries;
-		this.queryClient = queryClient;
-		this.settings = { annotations, metadata, notes, typemap };
 	}
 
 	// To be called in the RequestsWidget
 	/* istanbul ignore next */
 	updateLibraries(val) {
-		this.libraries = val;
+		this.#libraries = val;
 	}
 
 	/* istanbul ignore next */
 	updateSetting(op, val) {
-		this.settings[op] = val;
+		this.#settings[op] = val;
 	}
 
 	formatNotes(notes) {
 		return _formatNotes(notes, {
-			annotationsSettings: this.settings.annotations,
-			notesSettings: this.settings.notes
+			annotationsSettings: this.#settings.annotations,
+			notesSettings: this.#settings.notes
 		});
 	}
 
@@ -36,32 +39,32 @@ export default class ZoteroRoam {
 
 	async getBibEntries(citekeys) {
 		return await _getBibEntries(citekeys, {
-			libraries: this.libraries,
-			queryClient: this.queryClient
+			libraries: this.#libraries,
+			queryClient: this.#queryClient
 		});
 	}
 
 	async getBibliography(item, config = {}) {
 		return await _getBibliography(item, config, {
-			libraries: this.libraries
+			libraries: this.#libraries
 		});
 	}
 
 	getChildren(item) {
 		return _getChildren(item, {
-			queryClient: this.queryClient
+			queryClient: this.#queryClient
 		});
 	}
 
 	getCollections(library) {
 		return _getCollections(library, {
-			queryClient: this.queryClient
+			queryClient: this.#queryClient
 		});
 	}
 
 	getItemCollections(item, { brackets = true } = {},) {
 		const location = item.library.type + "s/" + item.library.id;
-		const library = this.libraries.find(lib => lib.path == location);
+		const library = this.#libraries.find(lib => lib.path == location);
 		const collectionList = this.getCollections(library);
 
 		return _getItemCollections(item, collectionList, { brackets });
@@ -74,9 +77,9 @@ export default class ZoteroRoam {
 	/* istanbul ignore next */
 	getItemMetadata(item, pdfs, notes) {
 		return _getItemMetadata(item, pdfs, notes, {
-			annotationsSettings: this.settings.annotations,
-			notesSettings: this.settings.notes,
-			typemap: this.settings.typemap
+			annotationsSettings: this.#settings.annotations,
+			notesSettings: this.#settings.notes,
+			typemap: this.#settings.typemap
 		});
 	}
 
@@ -94,20 +97,20 @@ export default class ZoteroRoam {
 
 	getItemType(item, { brackets = true } = {}) {
 		return _getItemType(item, { brackets }, {
-			typemap: this.settings.typemap
+			typemap: this.#settings.typemap
 		});
 	}
 
 	getItems(select = "all", filters = {}) {
 		return _getItems(select, filters, {
-			queryClient: this.queryClient
+			queryClient: this.#queryClient
 		});
 	}
 
 	getTags(location) {
 		return _getTags(location, {
-			libraries: this.libraries,
-			queryClient: this.queryClient
+			libraries: this.#libraries,
+			queryClient: this.#queryClient
 		});
 	}
 }
