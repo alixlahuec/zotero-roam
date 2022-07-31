@@ -39,6 +39,12 @@ import "./index.css";
 		window.zoteroRoam.formatNotes = formatNotes;
 		window.zoteroRoam.formatPDFs = formatPDFs;
 		window.zoteroRoam.getChildren = getChildren;
+		window.zoteroRoam = new ZoteroRoam({
+			queryClient,
+			requests,
+			settings,
+		});
+
 		// https://github.com/getsentry/sentry-javascript/issues/2039
 		setupSentry(settings.shareErrors, {
 			install: "roam/js",
