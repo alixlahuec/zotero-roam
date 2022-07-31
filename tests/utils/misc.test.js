@@ -1,5 +1,5 @@
+import { executeFunctionByName, hasNodeListChanged } from "../../src/utils";
 import { emitCustomEvent } from "../../src/events";
-import { executeFunctionByName } from "../../src/utils";
 
 
 describe("Executing a function by name", () => {
@@ -20,4 +20,36 @@ test("Event emitter warns about unrecognized event names", () => {
 	console.warn = jest.fn();
 	emitCustomEvent("unrecognized-event-name");
 	expect(console.warn).toHaveBeenCalled();
+});
+
+describe("Checking for changes in a list of nodes", () => {
+	const someDiv = document.createElement("div");
+	const anotherDiv = document.createElement("div");
+
+	test("Empty list doesn't get identified as a change", () => {
+		expect(hasNodeListChanged([], []))
+			.toBe(false);
+	});
+
+	test("Identical list doesn't get identified as a change", () => {
+		expect(hasNodeListChanged([someDiv], [someDiv]))
+			.toBe(false);
+	});
+
+	test("Non-empty list becoming empty is a change", () => {
+		expect(hasNodeListChanged([someDiv], []))
+			.toBe(true);
+	});
+
+	test("Empty list becoming non-empty is a change", () => {
+		expect(hasNodeListChanged([], [someDiv]))
+			.toBe(true);
+	});
+
+	test("Change in list contents is a change", () => {
+		expect(hasNodeListChanged([someDiv], [anotherDiv]))
+			.toBe(true);
+		expect(hasNodeListChanged([someDiv], [someDiv, anotherDiv]))
+			.toBe(true);
+	});
 });
