@@ -143,6 +143,22 @@ describe("Retrieval utils", () => {
 			.toEqual(_getItemCreators(sample_item, {}));
 	});
 
+	test("Retrieving relations data for an item", () => {
+		const semanticItem = items.find(it => it.data.key == "_SEMANTIC_ITEM_");
+		// getItems() retrieves queries data with an inclusive query,
+		// so no need to reproduce the exact query key that would exist in prod
+		client.setQueryData(
+			["items"],
+			(_prev) => ({
+				data: items,
+				lastUpdated: 9999
+			})
+		);
+
+		expect(extension.getItemRelated(semanticItem, { return_as: "array", brackets: false }))
+			.toEqual([items.find(it => it.data.key == "PPD648N6").key]);
+	});
+
 	test("Retrieving tags data for an item", () => {
 		const sample_item = items.find(it => it.data.tags.length > 0);
 		expect(extension.getItemTags(sample_item, {}))

@@ -115,6 +115,9 @@ const data = [
 				date: citoids[semanticIdentifier].date,
 				DOI: citoids[semanticIdentifier].DOI,
 				publicationTitle: citoids[semanticIdentifier].publicationTitle,
+				relations: {
+					"dc:relation": userLibrary.path + "/items/" + "PPD648N6"
+				},
 				tags: citoids[semanticIdentifier].tags,
 				url: citoids[semanticIdentifier].url
 			}
