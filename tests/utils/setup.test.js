@@ -108,7 +108,6 @@ describe("Parsing initial user settings", () => {
 			highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
 			use: "formatted"
 		},
-		autoload: false,
 		autocomplete: {
 			display: "citekey",
 			format: "citation",
@@ -120,7 +119,6 @@ describe("Parsing initial user settings", () => {
 			overrideKey: "shiftKey",
 			useQuickCopy: false
 		},
-		darkTheme: false,
 		metadata: {
 			func: null,
 			smartblock: {
@@ -134,11 +132,16 @@ describe("Parsing initial user settings", () => {
 			split_char: "/n",
 			use: "text"
 		},
+		other: {
+			autoload: false,
+			darkTheme: false,
+			render_inline: false,
+			shareErrors: false
+		},
 		pageMenu: {
 			defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
 			trigger: (title) => title.length > 3 || false
 		},
-		render_inline: false,
 		sciteBadge: {
 			layout: "horizontal",
 			showLabels: false,
@@ -147,7 +150,6 @@ describe("Parsing initial user settings", () => {
 			tooltipPlacement: "auto",
 			tooltipSlide: 0
 		},
-		shareErrors: false,
 		shortcuts: {
 			"copyDefault": false,
 			"copyCitation": false,

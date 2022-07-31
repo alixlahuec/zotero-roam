@@ -64,17 +64,14 @@ export function setupInitialSettings(settingsObject){
 	const {
 		annotations = {},
 		autocomplete = {},
-		autoload = false,
 		copy = {},
-		darkTheme = false,
 		// dataRequests = [],
 		metadata = {},
 		notes = {},
+		other = {},
 		pageMenu = {},
-		render_inline = false,
         // requests = { dataRequests: [], apiKeys: [], libraries: []}
 		sciteBadge = {},
-		shareErrors = false,
 		shortcuts = {},
 		typemap = {},
 		webimport = {}
@@ -91,7 +88,6 @@ export function setupInitialSettings(settingsObject){
 			use: "formatted",
 			...annotations
 		},
-		autoload,
 		autocomplete: {
 			display: "citekey",
 			format: "citation",
@@ -105,7 +101,6 @@ export function setupInitialSettings(settingsObject){
 			useQuickCopy: false,
 			...copy
 		},
-		darkTheme,
 		metadata: {
 			func: null,
 			smartblock: {
@@ -121,12 +116,18 @@ export function setupInitialSettings(settingsObject){
 			use: "text",
 			...notes
 		},
+		other: {
+			autoload: false,
+			darkTheme: false,
+			render_inline: false,
+			shareErrors: false,
+			...other
+		},
 		pageMenu: {
 			defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
 			trigger: (title) => title.length > 3 || false,
 			...pageMenu
 		},
-		render_inline,
 		sciteBadge: {
 			layout: "horizontal",
 			showLabels: false,
@@ -136,7 +137,6 @@ export function setupInitialSettings(settingsObject){
 			tooltipSlide: 0,
 			...sciteBadge
 		},
-		shareErrors,
 		shortcuts: {
 			"copyDefault": false,
 			"copyCitation": false,

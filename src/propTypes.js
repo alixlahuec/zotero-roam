@@ -263,6 +263,13 @@ const notesSettingsType = shape({
 	use: oneOf(["raw", "text"])
 });
 
+const otherSettingsType = shape({
+	autoload: bool,
+	darkTheme: bool,
+	render_inline: bool,
+	shareErrors: bool
+});
+
 const pageMenuSettingsType = shape({
 	defaults: arrayOf(oneOf(["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"])),
 	trigger: oneOfType([func, bool])
@@ -284,15 +291,12 @@ const webImportSettingsType = shape({
 const userSettings = {
 	annotations: annotationsSettingsType,
 	autocomplete: autocompleteSettingsType,
-	autoload: bool,
 	copy: copySettingsType,
-	darkTheme: bool,
 	metadata: metadataSettingsType,
 	notes: notesSettingsType,
+	other: otherSettingsType,
 	pageMenu: pageMenuSettingsType,
-	render_inline: bool,
 	sciteBadge: sciteBadgeSettingsType,
-	shareErrors: bool,
 	shortcuts: objectOf(string),
 	typemap: objectOf(string),
 	webimport: webImportSettingsType
@@ -319,6 +323,7 @@ export {
 	copySettingsType,
 	metadataSettingsType,
 	notesSettingsType,
+	otherSettingsType,
 	pageMenuSettingsType,
 	sciteBadgeSettingsType,
 	webImportSettingsType,
