@@ -83,23 +83,23 @@ export default class ZoteroRoam {
 		});
 	}
 
-	// TODO: decide whether this should be exposed in its current state, or if it should only require the item's citekey
-	/** Retrieves the children for a given item
-     * @param {ZoteroItem} item - The targeted item
-     * @returns 
-     */
-	getChildren(item) {
-		return _getChildren(item, {
-			queryClient: this.#queryClient
-		});
-	}
-
 	/** Retrieves the list of collections for a given library
      * @param {ZoteroLibrary} library - The targeted library
      * @returns 
      */
 	getCollections(library) {
 		return _getCollections(library, {
+			queryClient: this.#queryClient
+		});
+	}
+
+	// TODO: decide whether this should be exposed in its current state, or if it should only require the item's citekey
+	/** Retrieves the children for a given item
+     * @param {ZoteroItem} item - The targeted item
+     * @returns 
+     */
+	getItemChildren(item) {
+		return _getItemChildren(item, {
 			queryClient: this.#queryClient
 		});
 	}
@@ -218,7 +218,7 @@ function _formatNotes(notes, { annotationsSettings, notesSettings }) {
  * @param {{ queryClient: * }} context - The current context for the extension
  * @returns The item's children
  */
-function _getChildren(item, { queryClient }) {
+function _getItemChildren(item, { queryClient }) {
 	const location = item.library.type + "s/" + item.library.id;
 	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, { queryClient })
 		.filter(el => el.data.parentItem == item.data.key);
