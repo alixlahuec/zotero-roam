@@ -34,5 +34,9 @@ module.exports = {
 				use: ["style-loader", "css-loader"]
 			}
 		]
-	}
+    },
+    performance: {
+        maxAssetSize: 2000000,
+        maxEntrypointSize: 2000000,
+    }
 };
