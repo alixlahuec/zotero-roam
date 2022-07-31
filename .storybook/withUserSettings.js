@@ -18,7 +18,7 @@ const initRequests = analyzeUserRequests(defaultReqs);
 const initSettings = setupInitialSettings({});
 
 const init = {
-    ...initRequests,
+    requests: initRequests,
     ...initSettings
 };
 
