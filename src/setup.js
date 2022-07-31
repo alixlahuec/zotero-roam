@@ -127,7 +127,8 @@ export function setupInitialSettings(settingsObject){
 		},
 		pageMenu: {
 			defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
-			trigger: (title) => title.length > 3 || false,
+			// TODO: readd filter by page title length
+			trigger: true,
 			...pageMenu
 		},
 		sciteBadge: {

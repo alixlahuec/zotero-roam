@@ -140,7 +140,7 @@ describe("Parsing initial user settings", () => {
 		},
 		pageMenu: {
 			defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
-			trigger: (title) => title.length > 3 || false
+			trigger: true
 		},
 		sciteBadge: {
 			layout: "horizontal",
