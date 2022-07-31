@@ -270,6 +270,7 @@ export function setupSentry(isUserEnabled = false, config = {}){
 	}
 }
 
+/* istanbul ignore next */
 export function setup({ settings }){
 	setupDarkTheme(settings.other.darkTheme);
 	setupDependencies();

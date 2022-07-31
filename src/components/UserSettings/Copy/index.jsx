@@ -44,7 +44,7 @@ const FORMAT_OPTIONS = [
 	{ label: "Tag", value: "tag" }
 ];
 
-const OVERRIDE_KEY_OPTIONS = [
+export const OVERRIDE_KEY_OPTIONS = [
 	{ label: "Alt", value: "altKey" },
 	{ label: "Ctrl", value: "ctrlKey" },
 	{ label: "Shift", value: "shiftKey" },
