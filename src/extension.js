@@ -1,9 +1,10 @@
 import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
-import { _getBibEntries, _getBibliography } from "./api/public";
+import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 
+
 /**
- * Creates a new public API instance for the extension. This is meant to make available an interface for users as well as other plugins to consume some of the extension's data and functionalities, in a controlled manner. Updates are provided by settings widgets.
+ * Creates a new public API instance for the extension. This is meant to make available an interface for users as well as other plugins to consume some of the extension's data and functionalities, in a controlled manner. Updates to settings are done by the relevant widgets.
  * @borrows _formatPDFs as ZoteroRoam#formatPDFs
  * @borrows _getItemCreators as ZoteroRoam#getItemCreators
  * @borrows _getItemTags as ZoteroRoam#getItemTags
@@ -213,15 +214,54 @@ function _formatNotes(notes, { annotationsSettings, notesSettings }) {
 	}
 }
 
-/** Returns the (cached) children for a given item
- * @param {ZoteroItem} item - The targeted Zotero item
- * @param {{ queryClient: * }} context - The current context for the extension
- * @returns The item's children
+/** Compiles a bibliography for a list of items
+ * @param {String[]} citekeys - The targeted items' citekeys
+ * @param {{ libraries: ZoteroLibrary[], queryClient: * }} context - The current context for the extension
+ * @returns The compiled bibliography
  */
-function _getItemChildren(item, { queryClient }) {
+async function _getBibEntries(citekeys, { libraries, queryClient }) {
+	const libraryItems = _getItems("items", {}, { queryClient });
+	const groupedList = citekeys.reduce((obj, citekey) => {
+		const libItem = libraryItems.find(it => it.key == citekey);
+		if (libItem) {
+			const location = libItem.library.type + "s/" + libItem.library.id;
+			if (Object.keys(obj).includes(location)) {
+				obj[location].push(libItem.data.key);
+			} else {
+				obj[location] = [libItem.data.key];
+			}
+		}
+		return obj;
+	}, {});
+
+	const bibEntries = [];
+
+	Object.keys(groupedList)
+		.forEach(libPath => {
+			const library = libraries.find(lib => lib.path == libPath);
+			if (library) {
+				bibEntries.push(fetchBibEntries(groupedList[libPath], library));
+			}
+		});
+
+	const bibOutput = await Promise.all(bibEntries);
+
+	return bibOutput.join("\n");
+
+}
+
+/** Returns an item's formatted bibliography as returned by the Zotero API
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {ConfigBibliography} config - Optional parameters to use in the API call
+ * @param {{libraries: ZoteroLibrary[]}} requests - The user's current requests
+ * @returns 
+ */
+async function _getBibliography(item, config, { libraries }){
 	const location = item.library.type + "s/" + item.library.id;
-	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, { queryClient })
-		.filter(el => el.data.parentItem == item.data.key);
+	const library = libraries.find(lib => lib.path == location);
+
+	const bib = await fetchBibliography(item.data.key, library, config);
+	return cleanBibliographyHTML(bib);
 }
 
 /** Retrieves the (cached) list of collections for a given library
@@ -235,13 +275,24 @@ function _getCollections(library, { queryClient }) {
 	return datastore.data;
 }
 
+/** Returns the (cached) children for a given item
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {{ queryClient: * }} context - The current context for the extension
+ * @returns The item's children
+ */
+function _getItemChildren(item, { queryClient }) {
+	const location = item.library.type + "s/" + item.library.id;
+	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, { queryClient })
+		.filter(el => el.data.parentItem == item.data.key);
+}
+
 /** Retrieves an item's collections' names, from a given list of collections
  * @param {ZoteroItem} item - The targeted Zotero item
  * @param {ZoteroCollection[]} collectionList - The list of library collections to match data to
  * @param {{brackets: Boolean}} config - Additional configuration 
  * @returns {String[]} The Array containing the names of the item's collections, if any
  */
-export function _getItemCollections(item, collectionList, { brackets = true } = {}) {
+function _getItemCollections(item, collectionList, { brackets = true } = {}) {
 	if (item.data.collections.length > 0) {
 		const output = [];
 
@@ -300,7 +351,7 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
  * @param {SettingsTypemap} typemap - The typemap to be used
  * @returns {String} The clean type for the item
  */
-export function _getItemType(item, { brackets = true } = {}, { typemap }) {
+function _getItemType(item, { brackets = true } = {}, { typemap }) {
 	const type = typemap[item.data.itemType] || item.data.itemType;
 	return (brackets == true ? `[[${type}]]` : type);
 }
@@ -311,9 +362,9 @@ export function _getItemType(item, { brackets = true } = {}, { typemap }) {
  * @param {{ queryClient: * }} context - The current context for the extension
  * @returns {ZoteroItem[]} - The requested items
  */
-export function _getItems(select, filters, { queryClient }) {
+function _getItems(select, filters, { queryClient }) {
 	const items = queryClient.getQueriesData(["items"], filters).map(query => (query[1] || {}).data || []).flat(1);
-	
+
 	switch (select) {
 	case "items":
 		return items.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType));
