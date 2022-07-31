@@ -40,7 +40,7 @@ export async function _getBibEntries(citekeys, { libraries, queryClient }){
 
 /** Returns an item's formatted bibliography as returned by the Zotero API
  * @param {ZoteroItem} item - The targeted Zotero item
- * @param {{include: String, linkwrap: Boolean, locale: String, style: String}} config - Optional parameters to use in the API call
+ * @param {ConfigBibliography} config - Optional parameters to use in the API call
  * @param {{libraries: ZoteroLibrary[]}} requests - The user's current requests
  * @returns 
  */

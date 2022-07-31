@@ -9,9 +9,20 @@ import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, m
  * @borrows _getItemTags as ZoteroRoam#getItemTags
  */
 export default class ZoteroRoam {
+	/** @private */
 	#libraries;
+	/** @private */
 	#queryClient;
+	/** @private */
 	#settings;
+
+	/**
+     * @param {{
+     * queryClient: *,
+     * requests: ConfigRequests,
+     * settings: {annotations: SettingsAnnotations, notes: SettingsNotes, typemap: SettingsTypemap}
+     * }} context - The context in which the instance is being created
+     */
 	constructor({ queryClient, requests, settings }) {
 		const { libraries } = requests;
 		const { annotations, notes, typemap } = settings;
@@ -39,6 +50,10 @@ export default class ZoteroRoam {
 	getItemTags = _getItemTags;
 
 
+	/** Formats Zotero notes and annotations, with current user settings
+     * @param {ZoteroItem[]} notes 
+     * @returns 
+     */
 	formatNotes(notes) {
 		return _formatNotes(notes, {
 			annotationsSettings: this.#settings.annotations,
@@ -46,6 +61,10 @@ export default class ZoteroRoam {
 		});
 	}
 
+	/** Retrieves the bibliographic entries for a list of items
+     * @param {String[]} citekeys - The targeted items' citekeys
+     * @returns 
+     */
 	async getBibEntries(citekeys) {
 		return await _getBibEntries(citekeys, {
 			libraries: this.#libraries,
@@ -53,24 +72,43 @@ export default class ZoteroRoam {
 		});
 	}
 
+	/** Retrieves the formatted bibliography for a given item, with optional config
+     * @param {ZoteroItem} item - The targeted item
+     * @param {ConfigBibliography} config - Optional parameters to use to format the bibliography
+     * @returns 
+     */
 	async getBibliography(item, config = {}) {
 		return await _getBibliography(item, config, {
 			libraries: this.#libraries
 		});
 	}
 
+	// TODO: decide whether this should be exposed in its current state, or if it should only require the item's citekey
+	/** Retrieves the children for a given item
+     * @param {ZoteroItem} item - The targeted item
+     * @returns 
+     */
 	getChildren(item) {
 		return _getChildren(item, {
 			queryClient: this.#queryClient
 		});
 	}
 
+	/** Retrieves the list of collections for a given library
+     * @param {ZoteroLibrary} library - The targeted library
+     * @returns 
+     */
 	getCollections(library) {
 		return _getCollections(library, {
 			queryClient: this.#queryClient
 		});
 	}
 
+	/** Retrieves the list of collections for a given item
+     * @param {ZoteroItem} item - The targeted library
+     * @param {{brackets: Boolean}} config - Optional parameters to use to format the collections 
+     * @returns 
+     */
 	getItemCollections(item, { brackets = true } = {},) {
 		const location = item.library.type + "s/" + item.library.id;
 		const library = this.#libraries.find(lib => lib.path == location);
@@ -79,7 +117,14 @@ export default class ZoteroRoam {
 		return _getItemCollections(item, collectionList, { brackets });
 	}
 
+	// TODO: decide whether this should be exposed in its current state, or if it should only require the item / the item's citekey
 	/* istanbul ignore next */
+	/** Formats an item's metadata into Roam blocks
+     * @param {ZoteroItem} item - The targeted item
+     * @param {ZoteroItem[]} pdfs - The item's linked PDFs, if any
+     * @param {ZoteroItem[]} notes - The item's linked notes, if any
+     * @returns 
+     */
 	getItemMetadata(item, pdfs, notes) {
 		return _getItemMetadata(item, pdfs, notes, {
 			annotationsSettings: this.#settings.annotations,
@@ -88,7 +133,13 @@ export default class ZoteroRoam {
 		});
 	}
 
-	getItemRelated(item, { return_as = "citekeys", brackets = true } = {}) {
+	// TODO: decide whether this should be exposed in its current state, or if it should only require the item's citekey
+	/** Retrieves the in-library relations for a given item
+     * @param {ZoteroItem} item - The targeted item
+     * @param {{return_as: ("string"|"raw"|"array"), brackets: Boolean}} config - Optional parameters to use to format the relations
+     * @returns 
+     */
+	getItemRelated(item, { return_as = "string", brackets = true } = {}) {
 		const { type: libType, id: libID } = item.library;
 		const datastore = this.getItems("items")
 			.filter(it => it.library.id == libID && it.library.type == libType);
@@ -96,20 +147,43 @@ export default class ZoteroRoam {
 		return _getItemRelated(item, datastore, { return_as, brackets });
 	}
 
+	// TODO: decide whether this should be exposed in its current state, or if it should only require the item's citekey
+	/** Retrieves an item's type
+     * @param {ZoteroItem} item - The targeted item
+     * @param {{brackets: Boolean}} config - Optional parameters to use to format the type
+     * @returns 
+     */
 	getItemType(item, { brackets = true } = {}) {
 		return _getItemType(item, { brackets }, {
 			typemap: this.#settings.typemap
 		});
 	}
 
-	getItems(select = "all", filters = {}) {
-		return _getItems(select, filters, {
+	/** Retrieves all / a subset of all items currently available to the extension 
+     * @example
+     * // Returns the full list of items currently loaded
+     * .getItems("all")
+     * // Returns all items currently loaded, except for annotations, notes, and attachments
+     * .getItems("items")
+     * @param {("all"|"annotations"|"attachments"|"children"|"items"|"notes"|"pdfs")} select - The targeted set of items
+     * @returns 
+     */
+	getItems(select = "all") {
+		return _getItems(select, {}, {
 			queryClient: this.#queryClient
 		});
 	}
 
-	getTags(location) {
-		return _getTags(location, {
+	// TODO: add check to verify if the library is part of the requests, if not throw
+	/** Retrieves the map of tags for a given library
+     * @example
+     * // Returns the map of tags for the library of user ID 123456 
+     * .getTags("users/123456")
+     * @param {String} path - The path of the targeted library 
+     * @returns 
+     */
+	getTags(path) {
+		return _getTags(path, {
 			libraries: this.#libraries,
 			queryClient: this.#queryClient
 		});

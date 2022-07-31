@@ -54,6 +54,16 @@
 
 /**
  * @typedef {{
+ * include: String,
+ * linkwrap: Boolean,
+ * locale: String,
+ * style: String
+ * }}
+ * ConfigBibliography
+ */
+
+/**
+ * @typedef {{
  * apikey: String,
  * dataURI: String,
  * library: String,
@@ -62,6 +72,7 @@
  * }}
  * DataRequest
  */
+
 /**
  * @typedef {{
  * dataRequests: DataRequest[],
