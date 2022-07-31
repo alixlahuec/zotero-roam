@@ -8,11 +8,8 @@ import { AppWrapper, queryClient } from "./components/App";
 import { UserSettingsProvider } from "./components/UserSettings";
 import zrToaster from "./components/ExtensionToaster";
 
-import { setDefaultHooks } from "./events";
-import { initialize, setupDarkTheme, setupDependencies, setupPortals, setupSentry  } from "./setup";
-import { registerSmartblockCommands } from "./smartblocks";
-
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION, SENTRY_CONFIG } from "./constants";
+import { initialize, setup, setupPortals, setupSentry  } from "./setup";
 
 // TODO: remove once revert to Blueprint v3 is completed
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -53,7 +50,7 @@ import "./index.css";
 			...settings
 		});
 
-		registerSmartblockCommands(getItems);
+		setup({ settings });
 
 		render(
 			<HotkeysProvider dialogProps={{globalGroupName: "zoteroRoam"}}>

@@ -1,6 +1,8 @@
 import * as Sentry from "@sentry/react";
 import { unmountComponentAtNode } from "react-dom";
 
+import { registerSmartblockCommands } from "./smartblocks";
+import { setDefaultHooks } from "./events";
 
 import {
 	DEPENDENCIES_SCRIPTS,
@@ -218,14 +220,14 @@ export async function initialize(context = "roam/js", { extensionAPI, manualSett
 /** Sets up the extension's theme (light vs dark)
  * @param {Boolean} use_dark - If the extension's theme should be `dark`
  */
-export function setupDarkTheme(use_dark = false){
+function setupDarkTheme(use_dark = false){
 	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
 }
 
 /* istanbul ignore next */
 /** Injects external scripts into the page
  */
-export function setupDependencies(){
+function setupDependencies(){
 	DEPENDENCIES_SCRIPTS.forEach(dep => {
 		const { id, src } = dep;
 		try { 
@@ -266,6 +268,13 @@ export function setupSentry(isUserEnabled = false, config = {}){
 	} else {
 		Sentry.getCurrentHub().getClient().getOptions().enabled = false;
 	}
+}
+
+export function setup({ settings }){
+	setupDarkTheme(settings.other.darkTheme);
+	setupDependencies();
+	setDefaultHooks();
+	registerSmartblockCommands();
 }
 
 /* istanbul ignore next */
