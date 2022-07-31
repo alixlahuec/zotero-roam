@@ -145,6 +145,7 @@ describe("Retrieval utils", () => {
 
 	test("Retrieving relations data for an item", () => {
 		const semanticItem = items.find(it => it.data.key == "_SEMANTIC_ITEM_");
+		const relatedItem = items.find(it => it.data.key == "PPD648N6");
 		// getItems() retrieves queries data with an inclusive query,
 		// so no need to reproduce the exact query key that would exist in prod
 		client.setQueryData(
@@ -156,7 +157,13 @@ describe("Retrieval utils", () => {
 		);
 
 		expect(extension.getItemRelated(semanticItem, { return_as: "array", brackets: false }))
-			.toEqual([items.find(it => it.data.key == "PPD648N6").key]);
+			.toEqual([relatedItem.key]);
+		expect(extension.getItemRelated(semanticItem, { return_as: "raw", brackets: false }))
+			.toEqual([relatedItem]);
+		expect(extension.getItemRelated(semanticItem, { return_as: "string", brackets: false }))
+			.toEqual(relatedItem.key);
+		expect(extension.getItemRelated(semanticItem, { return_as: "string", brackets: true }))
+			.toEqual(`[[@${relatedItem.key}]]`);
 	});
 
 	test("Retrieving tags data for an item", () => {
