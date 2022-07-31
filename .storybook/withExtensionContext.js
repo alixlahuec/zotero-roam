@@ -3,7 +3,7 @@ import { ExtensionContext } from "../src/components/App";
 
 const defaultContext = {
     portalId: "root",
-    version: EXTENSION_VERSION
+    version: "VERSION"
 }
 
 export const withExtensionContext = (Story, context) => {

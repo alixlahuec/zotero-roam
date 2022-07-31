@@ -68,7 +68,7 @@ const LogView = React.memo(function LogView({ itemList, onClose }){
 					</ListWrapper>}
 				<Toolbar>
 					<Slider handleHtmlProps={sliderHandleProps} labelRenderer={labelRenderer} min={3} max={30} onChange={setAsRecentAs} stepSize={1} value={asRecentAs} />
-					<Switch checked={allAbstractsShown} label="Show all abstracts" onChange={toggleAbstracts} />
+					<Switch aria-checked={allAbstractsShown} checked={allAbstractsShown} label="Show all abstracts" role="switch" onChange={toggleAbstracts} />
 				</Toolbar>
 			</div>
 	);
