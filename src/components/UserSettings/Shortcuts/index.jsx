@@ -1,5 +1,7 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { func, node, objectOf, string } from "prop-types";
+import { func, node } from "prop-types";
+
+import * as customPropTypes from "../../../propTypes";
 
 
 const ShortcutsSettings = React.createContext({});
@@ -22,7 +24,7 @@ const ShortcutsProvider = ({ children, init, updater }) => {
 };
 ShortcutsProvider.propTypes = {
 	children: node,
-	init: objectOf(string),
+	init: customPropTypes.shortcutsSettingsType,
 	updater: func
 };
 

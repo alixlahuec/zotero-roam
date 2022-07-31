@@ -281,6 +281,8 @@ const sciteBadgeSettingsType = shape({
 	tooltipSlide: number
 });
 
+const shortcutsSettingsType = objectOf(oneOfType([bool, string]));
+
 const webImportSettingsType = shape({
 	tags: arrayOf(string)
 });
@@ -310,7 +312,7 @@ const userSettings = {
 	other: otherSettingsType,
 	pageMenu: pageMenuSettingsType,
 	sciteBadge: sciteBadgeSettingsType,
-	shortcuts: objectOf(string),
+	shortcuts: shortcutsSettingsType,
 	typemap: objectOf(string),
 	webimport: webImportSettingsType
 };
@@ -344,6 +346,7 @@ export {
 	otherSettingsType,
 	pageMenuSettingsType,
 	sciteBadgeSettingsType,
+	shortcutsSettingsType,
 	webImportSettingsType,
 	extensionType,
 	requestsType,

@@ -1,7 +1,8 @@
 /* istanbul ignore file */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { Component } from "react";
-import { bool, objectOf, string } from "prop-types";
+import { bool } from "prop-types";
+
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
 import Dashboard from "../Dashboard";
@@ -189,9 +190,9 @@ class App extends Component {
 }
 App.propTypes = {
 	autoload: bool,
+	extension: customPropTypes.extensionType,
 	requests: customPropTypes.requestsType,
-	shortcuts: objectOf(string),
-	extension: customPropTypes.extensionType
+	shortcuts: customPropTypes.shortcutsSettingsType
 };
 
 export {
