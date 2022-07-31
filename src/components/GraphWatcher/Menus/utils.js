@@ -5,6 +5,7 @@ import { identifyChildren, makeTimestamp, readDNP } from "../../../utils";
 
 const dnpRegex = new RegExp(/(.+) ([0-9]+).{2}, ([0-9]{4})/g);
 
+/* istanbul ignore next */
 const addPageMenus = () => {
 	const newPages = Array.from(document.querySelectorAll("h1.rm-title-display"))
 		.filter(page => !(page.parentElement.querySelector(`[class*=${menuPrefix}]`)));
