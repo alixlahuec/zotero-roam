@@ -168,7 +168,7 @@ async function fetchBibEntries(itemKeys, library) {
 /** Retrieves an item's formatted bibliographic entry as returned by the Zotero API
  * @param {String} itemKey - The item's Zotero key
  * @param {ZoteroLibrary} library - The item's Zotero library
- * @param {{include: String, linkwrap: Boolean, locale: String, style: String}} config - Optional parameters to use in the API call
+ * @param {ConfigBibliography} config - Optional parameters to use in the API call
  * @returns
  */
 async function fetchBibliography(itemKey, library, config = {}) {
