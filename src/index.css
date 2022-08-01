@@ -202,16 +202,26 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
   color: var(--zr-text-co);
 }
 
-[class*="zr"] .bp4-callout.bp4-intent-danger {
-  background: var(--zr-negative-bg);
+[class*="zr"] .bp4-callout[class*="bp4-intent"] {
+    background: var(--zr-bg-tone);
 }
 
-[class*="zr"] .bp4-callout.bp4-intent-danger,
-[class*="zr"] .bp4-callout.bp4-intent-danger[class*=bp4-icon-]::before, 
-[class*="zr"] .bp4-callout.bp4-intent-danger > .bp4-icon:first-child, 
-[class*="zr"] .bp4-callout.bp4-intent-danger .bp4-heading,
-[class*="zr"] .bp4-button.bp4-outlined.bp4-intent-danger {
-  color: var(--zr-negative-co);
+[class*="zr"] .bp4-callout.bp4-intent-warning {
+    --zr-bg-tone: hsla(var(--zr-accent-2-hsl), 10%);
+    --zr-co-tone: hsla(var(--zr-accent-2-hsl), 100%);
+}
+
+[class*="zr"] .bp4-callout.bp4-intent-danger {
+    --zr-bg-tone: var(--zr-negative-bg);
+    --zr-co-tone: var(--zr-negative-co);
+}
+
+[class*="zr"] .bp4-callout[class*="bp4-intent"],
+[class*="zr"] .bp4-callout[class*="bp4-intent"][class*=bp4-icon-]::before, 
+[class*="zr"] .bp4-callout[class*="bp4-intent"] > .bp4-icon:first-child, 
+[class*="zr"] .bp4-callout[class*="bp4-intent"] .bp4-heading,
+[class*="zr"] .bp4-button.bp4-outlined[class*="bp4-intent"] {
+    color: var(--zr-co-tone);
 }
 
 [class*="zr"] a:focus {
@@ -263,6 +273,10 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
 [class*="zr"] .bp4-button-group.bp4-minimal button.bp4-intent-danger {
     --zr-base-tone: var(--zr-negative-hsl);
     color: hsla(var(--zr-negative-hsl), 95%);
+}
+
+[class*="zr"] .bp4-button.bp4-minimal[class*="bp4-intent-"]:hover {
+    background: hsla(var(--zr-base-tone), 10%);
 }
 
 [class*="zr"] .bp4-button[class*="bp4-intent-"]:not(.bp4-disabled) {
