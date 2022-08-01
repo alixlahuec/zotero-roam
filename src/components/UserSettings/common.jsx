@@ -107,7 +107,7 @@ const SingleInput = ({ buttonProps = {}, description= null, menuTitle, onChange,
 			placement="bottom"
 			popoverProps={popoverProps}
 			popoverTargetProps={popoverTargetProps} >
-			<Button alignText="right" minimal={true} text={options.find(op => op.value == value).label} {...buttonProps} />
+			<Button alignText="right" minimal={true} rightIcon="caret-down" text={options.find(op => op.value == value).label} {...buttonProps} />
 		</Select2>
 	</Row>;
 };

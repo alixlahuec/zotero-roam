@@ -46,6 +46,7 @@
 
 .zr-settings-list .zr-setting--single-input > button {
     background: hsla(var(--zr-accent-1-hsl), 7%);
+    color: var(--zr-text-co);
 }
 
 .zr-settings-list .zr-setting--single-input > button:hover {
