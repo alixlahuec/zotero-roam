@@ -126,7 +126,7 @@ QueriesStatusList.propTypes = {
 };
 
 const ExtensionIcon = React.memo(function ExtensionIcon(props) {
-	const { openDashboard, openSearchPanel, status, toggleExtension } = props;
+	const { openDashboard, openSearchPanel, openSettingsPanel, status, toggleExtension } = props;
 	const [{ apiKeys, dataRequests, libraries }] = useRequestsSettings();
     
 	const queryOpts = useMemo(() => {
@@ -160,6 +160,7 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 	const tooltipContent = useMemo(() => {
 		return <>
 			<span><strong>Status : </strong> {status}</span>
+			{status == "disabled" && <Button aria-haspopup="dialog" icon="warning-sign" intent="warning" minimal={true} onClick={openSettingsPanel} text="Click to finish setting up zoteroRoam" title="Click to open zoteroRoam settings" />}
 			<Divider />
 			{status == "on"
 				? <>
@@ -171,16 +172,17 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 				: null}
 			<IconTooltipFooter />
 		</>;
-	}, [queries, status]);
+	}, [openSettingsPanel, queries, status]);
 
 	const contextMenu = useMemo(() => {
 		return (
 			<Menu>
+				<MenuItem text="Settings" icon="settings" onClick={openSettingsPanel} />
 				<MenuItem text="Dashboard" icon="dashboard" labelElement={betaTag} onClick={openDashboard} />
 				<MenuItem text="Search in library" icon="search" onClick={openSearchPanel} />
 			</Menu>
 		);
-	}, [openDashboard, openSearchPanel]);
+	}, [openDashboard, openSearchPanel, openSettingsPanel]);
 
 	return (
 		<Tooltip2 popoverClassName="zr-icon-tooltip" 
@@ -212,6 +214,7 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 ExtensionIcon.propTypes = {
 	openDashboard: func,
 	openSearchPanel: func,
+	openSettingsPanel: func,
 	status: oneOf(["on", "off", "disabled"]),
 	toggleExtension: func
 };

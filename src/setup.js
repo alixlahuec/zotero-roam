@@ -152,6 +152,7 @@ export function setupInitialSettings(settingsObject){
 			"toggleDashboard": false,
 			"toggleNotes": "alt+N",
 			"toggleSearchPanel": "alt+E",
+			"toggleSettingsPanel": false,
 			"toggleQuickCopy": false,
 			...shortcuts
 		},

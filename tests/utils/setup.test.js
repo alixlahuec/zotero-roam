@@ -162,6 +162,7 @@ describe("Parsing initial user settings", () => {
 			"toggleDashboard": false,
 			"toggleNotes": "alt+N",
 			"toggleSearchPanel": "alt+E",
+			"toggleSettingsPanel": false,
 			"toggleQuickCopy": false
 		},
 		typemap: TYPEMAP_DEFAULT,

@@ -18,6 +18,7 @@ import { useShortcutsSettings } from "../UserSettings/Shortcuts";
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace } from "Roam";
 
 import * as customPropTypes from "../../propTypes";
+import { SettingsDialog } from "../UserSettings";
 
 
 const ExtensionContext = React.createContext();
@@ -50,6 +51,7 @@ class App extends Component {
 		this.state = {
 			isDashboardOpen: false,
 			isSearchPanelOpen: false,
+			isSettingsPanelOpen: false,
 			lastCursorLocation: null,
 			status: (
 				this.props.requests.dataRequests.length == 0
@@ -65,6 +67,9 @@ class App extends Component {
 		this.closeDashboard = this.closeDashboard.bind(this);
 		this.openDashboard = this.openDashboard.bind(this);
 		this.toggleDashboard = this.toggleDashboard.bind(this);
+		this.closeSettings = this.closeSettings.bind(this);
+		this.openSettings = this.openSettings.bind(this);
+		this.toggleSettings = this.toggleSettings.bind(this);
 
 		this.shortcutsConfig = {
 			"toggleDashboard": {
@@ -74,6 +79,10 @@ class App extends Component {
 			"toggleSearchPanel": {
 				label: "Show/hide the search panel",
 				onKeyDown: () => this.toggleSearchPanel()
+			},
+			"toggleSettingsPanel": {
+				label: "Show/hide the settings panel",
+				onKeyDown: () => this.toggleSettings()
 			}
 		};
 		this.hotkeys = Object.keys(this.shortcutsConfig)
@@ -114,7 +123,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { status, isDashboardOpen, isSearchPanelOpen } = this.state;
+		const { status, isDashboardOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
 		const { extension } = this.props;
 		
 		return (
@@ -124,8 +133,10 @@ class App extends Component {
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
 							openSearchPanel={this.openSearchPanel}
+							openSettingsPanel={this.openSettings}
 							status={status} 
 							toggleExtension={this.toggleExtension} />
+						<SettingsDialog isOpen={isSettingsPanelOpen} onClose={this.closeSettings} />
 						<RoamCitekeysProvider>
 							{status == "on" ? <GraphWatcher /> : null}
 							<SearchPanel
@@ -185,6 +196,18 @@ class App extends Component {
 		if(this.state.status == "on"){
 			this.setState((prev) => ({ isDashboardOpen: !prev.isDashboardOpen }));
 		}
+	}
+
+	closeSettings() {
+		this.setState((_prev) => ({ isSettingsPanelOpen: false }));
+	}
+
+	openSettings() {
+		this.setState((_prev) => ({ isSettingsPanelOpen: true }));
+	}
+
+	toggleSettings() {
+		this.setState((prev) => ({ isSettingsPanelOpen: !prev.isSettingsPanelOpen }));
 	}
 
 }

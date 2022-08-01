@@ -1,11 +1,16 @@
 #zotero-roam-icon[status="on"][data-status="ready"] {
   background-color: #60f06042;
 }
-#zotero-roam-icon[data-status="loading"] > .bp4-icon {
-  color: #f7c99b;
+#zotero-roam-icon[data-status="loading"] > .bp4-icon,
+#zotero-roam-icon[status="disabled"].bp4-button.bp4-disabled > .bp4-icon {
+  color: #f7c99b!important;
 }
 #zotero-roam-icon[data-status="error"] > .bp4-icon {
   color: #b71c1c;
+}
+
+.zr-icon-tooltip > .bp4-popover2-content > span:first-child {
+    display: block;
 }
 
 .zr-icon-tooltip.bp4-tooltip2 .bp4-popover2-arrow-fill {
