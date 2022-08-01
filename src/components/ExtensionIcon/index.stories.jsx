@@ -14,10 +14,12 @@ export default {
 	args: {
 		openDashboard: () => {},
 		openSearchPanel: () => {},
+		openSettingsPanel: () => {}
 	},
 	argTypes: {
 		openDashboard: { action: true },
-		openSearchPanel: { action: true }
+		openSearchPanel: { action: true },
+		openSettingsPanel: { action: true }
 	},
 	parameters: {
 		userSettings: {
