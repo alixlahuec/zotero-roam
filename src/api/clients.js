@@ -10,6 +10,7 @@ const zoteroClient = axios.create({
 axiosRetry(zoteroClient, {
 	retries: 2,
 	retryCondition: (error) => {
+		/* istanbul ignore else */
 		if(error.response){
 			const { status } = error.response;
 			if(status == 429 || status >= 500){
@@ -22,6 +23,7 @@ axiosRetry(zoteroClient, {
 		}
 	},
 	retryDelay: (retryCount, error) => {
+		/* istanbul ignore else */
 		if(error.response){
 			const { headers } = error.response;
 			return (headers.backoff || headers["retry-after"] || retryCount) * 1000;

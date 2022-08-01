@@ -52,6 +52,7 @@ const useImportCitoids = () => {
 			const { collections, items, library: { path }, tags } = variables;
 
 			const outcome = data.reduce((obj, res) => {
+				/* istanbul ignore else */
 				if(res.status == "fulfilled"){
 					obj.successful.push(res.value);
 				} else {
@@ -120,6 +121,7 @@ const useModifyTags = () => {
 			const { into, library: { path }, tags } = variables;
 
 			const outcome = data.reduce((obj, res) => {
+				/* istanbul ignore else */
 				if(res.status == "fulfilled"){
 					obj.successful.push(res.value);
 				} else {
@@ -128,6 +130,7 @@ const useModifyTags = () => {
 				return obj;
 			},{ successful: [], failed: [] });
 
+			/* istanbul ignore if */
 			if(!error && outcome.successful.length > 0){
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version

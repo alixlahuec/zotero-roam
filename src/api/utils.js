@@ -65,6 +65,7 @@ async function deleteTags(tags, library, version){
 	// * Only 50 tags can be deleted at once
 	// * Since each deletion is version-dependent, the extension won't support deleting more for now
 	// https://www.zotero.org/support/dev/web_api/v3/write_requests#deleting_multiple_tags
+	/* istanbul ignore if */
 	if(tags.length > 50){
 		console.warn("Only 50 Zotero tags can be deleted at once : any additional tags provided will be ignored.");
 	}
@@ -131,7 +132,7 @@ async function fetchAdditionalData(req, totalResults) {
 	try {
 		const responses = await Promise.all(apiCalls);
 		return responses.map(res => res.data).flat(1);
-	} catch(error){
+	} catch(error) /* istanbul ignore next */ {
 		return Promise.reject(error);
 	}
 }
@@ -191,7 +192,7 @@ async function fetchBibliography(itemKey, library, config = {}) {
 		);
 
 		return data[include];
-	} catch(error){
+	} catch(error) /* istanbul ignore next */ {
 		return Promise.reject(error);
 	}
 }
@@ -254,7 +255,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 			data: matchWithCurrentData({ modified, deleted: deleted.collections }, match),
 			lastUpdated: Number(lastUpdated)
 		};
-	} catch(error){
+	} catch(error) /* istanbul ignore next */ {
 		emitCustomEvent("update-collections", {
 			success: false,
 			library,
@@ -281,7 +282,7 @@ async function fetchDeleted(library, since) {
 			}
 		);
 		return data;
-	} catch(error){
+	} catch(error) /* istanbul ignore next */ {
 		return Promise.reject(error);
 	}
 }
@@ -354,7 +355,7 @@ async function fetchPermissions(apikey) {
 	try {
 		const { data } = await zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } });
 		return data;
-	} catch(error){
+	} catch(error) /* istanbul ignore next */ {
 		return Promise.reject(error);
 	}
 }
@@ -371,7 +372,7 @@ async function fetchSemantic(doi) {
 			citations: parseSemanticDOIs(citations), 
 			references: parseSemanticDOIs(references) 
 		};
-	} catch(error){
+	} catch(error) /* istanbul ignore next */ {
 		return Promise.reject(error);
 	}
 }
@@ -395,7 +396,7 @@ async function fetchTags(library) {
 			data: makeTagList(data), 
 			lastUpdated: Number(lastUpdated)
 		};
-	} catch(error){
+	} catch(error) /* istanbul ignore next */ {
 		return Promise.reject(error);
 	}
 }
