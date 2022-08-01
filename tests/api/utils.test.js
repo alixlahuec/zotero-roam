@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
-import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
+import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
 import { findBibEntry, findItems, items } from "Mocks/zotero/items";
 import { findTags, tags } from "Mocks/zotero/tags";
 import { apiKeys } from "Mocks/zotero/keys";
@@ -87,6 +87,54 @@ describe("Creating formatted tag lists", () => {
 			expect(makeTagList(tags[path])).toEqual(expectations[path]);
 		}
 	);
+});
+
+test("Merging data updates", () => {
+	const itemsList = [
+		{ data: { key: "ABC" } },
+		{ data: { key: "DEF" } },
+		{ data: { key: "GHI" } }
+	];
+
+	expect(matchWithCurrentData(
+		{ 
+			modified: [itemsList[1]], 
+			deleted: [] 
+		}, 
+		[itemsList[0]], 
+		{ with_citekey: false }
+	))
+		.toEqual([itemsList[0], itemsList[1]]);
+    
+	expect(matchWithCurrentData(
+		{
+			modified: [itemsList[2]],
+			deleted: []
+		},
+		itemsList,
+		{ with_citekey: false }
+	))
+		.toEqual(itemsList);
+
+	expect(matchWithCurrentData(
+		{ 
+			modified: [], 
+			deleted: [itemsList[0].data.key]
+		}, 
+		[itemsList[0]], 
+		{ with_citekey: false }
+	))
+		.toEqual([]);
+    
+	expect(matchWithCurrentData(
+		{
+			modified: [itemsList[1]],
+			deleted: [itemsList[2].data.key]
+		},
+		itemsList,
+		{ with_citekey: false }
+	))
+		.toEqual(itemsList.slice(0,2));
 });
 
 test("Selecting and formatting Semantic DOIs", () => {

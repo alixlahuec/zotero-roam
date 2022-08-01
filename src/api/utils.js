@@ -450,22 +450,18 @@ function makeTagMap(tags){
  * @param {{with_citekey?: Boolean}} config - Additional parameters 
  * @returns {Object[]} - The merged dataset
  */
-function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
-	let oldData = arr || [];
+function matchWithCurrentData(update, arr = [], { with_citekey = false } = {}) {
 	const { modified = [], deleted = [] } = update;
-
-	// To avoid mutating the original arrays
-	let modifiedData = [...modified];
+	// If the data has citekeys, transform before pushing
+	const modifiedData = with_citekey
+		? extractCitekeys([...modified])
+		: [...modified];
 	const deletedData = [...deleted];
 
 	// Remove deleted items
-	if(deletedData.length > 0){
-		oldData = oldData.filter(item => !deletedData.includes(item.data.key));
-	}
-	// If the data has citekeys, transform before pushing
-	if(with_citekey){
-		modifiedData = extractCitekeys(modifiedData);
-	}
+	const oldData = deletedData.length == 0
+		? arr
+		: arr.filter(item => !deletedData.includes(item.data.key));
 
 	// Update datastore
 	if(modifiedData.length == 0){
@@ -473,7 +469,7 @@ function matchWithCurrentData(update, arr, { with_citekey = false } = {}) {
 	} else if(oldData.length == 0){
 		return modifiedData;
 	} else {
-		const [...datastore] = arr;
+		const [...datastore] = oldData;
 		modifiedData.forEach(item => {
 			const duplicateIndex = datastore.findIndex(i => i.data.key == item.data.key);
 			if(duplicateIndex == -1){
@@ -567,6 +563,7 @@ export {
 	fetchSemantic,
 	fetchTags,
 	makeTagList,
+	matchWithCurrentData,
 	parseSemanticDOIs,
 	writeCitoids,
 	writeItems
