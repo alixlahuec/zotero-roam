@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 import { initialize, mswDecorator } from "msw-storybook-addon";
 import { fallbackHandler, roamAssetsHandler, apiHandlers } from "Mocks/handlers";
+import { useEffect, useGlobals } from "@storybook/addons";
 import { rest } from "msw";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
@@ -26,8 +27,13 @@ initialize({
 
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
 const withTheme = (Story, context) => {
-  const isDark = context.globals.theme == "dark";
-  return <div className="zr-" zr-dark-theme={isDark.toString()} 
+    const [{ theme }, /* updateGlobals */] = useGlobals();
+
+  useEffect(() => {
+    document.getElementById("root").parentElement.setAttribute("zr-dark-theme", (theme == "dark").toString());
+  }, [theme]);
+
+  return <div className="zr-" 
     style={{ backgroundColor: "var(--zr-dialog-bg)", margin: "50px", padding: "20px", height: "1000px" }}>
     <Story {...context} />
   </div>;
