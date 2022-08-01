@@ -10,9 +10,12 @@ const OtherSettings = React.createContext({});
 const OtherSettingsProvider = ({ children, init, updater }) => {
 	const [other, _setOther] = useState(init);
 
-	const setOther = useCallback((val) => {
-		_setOther(val);
-		updater(val);
+	const setOther = useCallback((updateFn) => {
+		_setOther((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [other, setOther], [other, setOther]);

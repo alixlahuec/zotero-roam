@@ -10,9 +10,12 @@ const MetadataSettings = React.createContext({});
 const MetadataProvider = ({ children, init, updater }) => {
 	const [metadata, _setMetadata] = useState(init);
 
-	const setMetadata = useCallback((val) => {
-		_setMetadata(val);
-		updater(val);
+	const setMetadata = useCallback((updateFn) => {
+		_setMetadata((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [metadata, setMetadata], [metadata, setMetadata]);

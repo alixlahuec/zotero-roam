@@ -8,9 +8,12 @@ const SciteSettings = React.createContext({});
 const SciteProvider = ({ children, init, updater }) => {
 	const [sciteBadge, _setSciteBadge] = useState(init);
 
-	const setSciteBadge = useCallback((val) => {
-		_setSciteBadge(val);
-		updater(val);
+	const setSciteBadge = useCallback((updateFn) => {
+		_setSciteBadge((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [sciteBadge, setSciteBadge], [sciteBadge, setSciteBadge]);

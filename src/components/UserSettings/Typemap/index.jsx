@@ -7,10 +7,13 @@ const TypemapSettings = React.createContext({});
 const TypemapProvider = ({ children, init, updater }) => {
 	const [typemap, _setTypemap] = useState(init);
 
-	const setTypemap = useCallback((val) => {
-		_setTypemap(val);
-		updater(val);
-		window?.zoteroRoam?.updateSetting?.("annotations", val);
+	const setTypemap = useCallback((updateFn) => {
+		_setTypemap((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			window?.zoteroRoam?.updateSetting?.("annotations", update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [typemap, setTypemap], [typemap, setTypemap]);

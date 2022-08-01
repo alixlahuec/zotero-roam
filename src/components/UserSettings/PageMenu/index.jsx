@@ -9,9 +9,12 @@ const PageMenuSettings = React.createContext({});
 const PageMenuProvider = ({ children, init, updater }) => {
 	const [pageMenu, _setPageMenu] = useState(init);
 
-	const setPageMenu = useCallback((val) => {
-		_setPageMenu(val);
-		updater(val);
+	const setPageMenu = useCallback((updateFn) => {
+		_setPageMenu((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [pageMenu, setPageMenu], [pageMenu, setPageMenu]);

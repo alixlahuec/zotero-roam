@@ -9,9 +9,13 @@ const RequestsSettings = React.createContext({});
 const RequestsProvider = ({ children, init, updater }) => {
 	const [requests, _setRequests] = useState(init);
 
-	const setRequests = useCallback((val) => {
-		_setRequests(val);
-		updater(val);
+	const setRequests = useCallback((updateFn) => {
+		_setRequests((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			window?.zoteroRoam?.updateLibraries?.(update.libraries);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [requests, setRequests], [requests, setRequests]);

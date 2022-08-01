@@ -10,9 +10,12 @@ const WebImportSettings = React.createContext({});
 const WebImportProvider = ({ children, init, updater }) => {
 	const [webImport, _setWebImport] = useState(init);
 
-	const setWebImport = useCallback((val) => {
-		_setWebImport(val);
-		updater(val);
+	const setWebImport = useCallback((updateFn) => {
+		_setWebImport((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [webImport, setWebImport], [webImport, setWebImport]);

@@ -10,9 +10,12 @@ const CopySettings = React.createContext({});
 const CopyProvider = ({ children, init, updater }) => {
 	const [copy, _setCopy] = useState(init);
 
-	const setCopy = useCallback((val) => {
-		_setCopy(val);
-		updater(val);
+	const setCopy = useCallback((updateFn) => {
+		_setCopy((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [copy, setCopy], [copy, setCopy]);

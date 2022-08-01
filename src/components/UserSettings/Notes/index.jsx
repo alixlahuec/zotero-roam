@@ -10,10 +10,13 @@ const NotesSettings = React.createContext({});
 const NotesProvider = ({ children, init, updater }) => {
 	const [notes, _setNotes] = useState(init);
 
-	const setNotes = useCallback((val) => {
-		_setNotes(val);
-		updater(val);
-		window?.zoteroRoam?.updateSetting?.("notes", val);
+	const setNotes = useCallback((updateFn) => {
+		_setNotes((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			window?.zoteroRoam?.updateSetting?.("notes", update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [notes, setNotes], [notes, setNotes]);

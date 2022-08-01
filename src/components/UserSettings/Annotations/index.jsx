@@ -10,10 +10,13 @@ const AnnotationsSettings = React.createContext({});
 const AnnotationsProvider = ({ children, init, updater }) => {
 	const [annotations, _setAnnotations] = useState(init);
 
-	const setAnnotations = useCallback((val) => {
-		_setAnnotations(val);
-		updater(val);
-		window?.zoteroRoam?.updateSetting?.("annotations", val);
+	const setAnnotations = useCallback((updateFn) => {
+		_setAnnotations((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			window?.zoteroRoam?.updateSetting?.("annotations", update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [annotations, setAnnotations], [annotations, setAnnotations]);

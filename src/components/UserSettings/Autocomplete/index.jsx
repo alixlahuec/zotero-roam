@@ -9,9 +9,12 @@ const AutocompleteSettings = React.createContext({});
 const AutocompleteProvider = ({ children, init, updater }) => {
 	const [autocomplete, _setAutocomplete] = useState(init);
 
-	const setAutocomplete = useCallback((val) => {
-		_setAutocomplete(val);
-		updater(val);
+	const setAutocomplete = useCallback((updateFn) => {
+		_setAutocomplete((prevState) => {
+			const update = updateFn(prevState);
+			updater(update);
+			return update;
+		});
 	}, [updater]);
 
 	const contextValue = useMemo(() => [autocomplete, setAutocomplete], [autocomplete, setAutocomplete]);
