@@ -229,8 +229,8 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 				headers: { "Zotero-API-Key": apikey },
 				params: { since }
 			});
-		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
-		totalResults = Number(totalResults);
+		const { "last-modified-version": lastUpdated, "total-results": totalResultsStr } = headers;
+		const totalResults = Number(totalResultsStr);
 		if(totalResults > 100){
 			const additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since }, totalResults);
 			modified.push(...additional);
@@ -304,8 +304,8 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			{ 
 				headers: { "Zotero-API-Key": apikey } 
 			});
-		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
-		totalResults = Number(totalResults);
+		const { "last-modified-version": lastUpdated, "total-results": totalResultsStr } = headers;
+		const totalResults = Number(totalResultsStr);
 		if(totalResults > 100){
 			const additional = await fetchAdditionalData({ dataURI, apikey, params, since }, totalResults);
 			modified.push(...additional);
@@ -385,8 +385,8 @@ async function fetchTags(library) {
 
 	try {
 		const { data, headers } = await zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } });
-		let { "last-modified-version": lastUpdated, "total-results": totalResults } = headers;
-		totalResults = Number(totalResults);
+		const { "last-modified-version": lastUpdated, "total-results": totalResultsStr } = headers;
+		const totalResults = Number(totalResultsStr);
 		if(totalResults > 100){
 			const additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey }, totalResults);
 			data.push(...additional);
