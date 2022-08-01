@@ -4,12 +4,9 @@ import {
 	cleanAuthorsNames, 
 	cleanLibrary, 
 	cleanSemantic, 
-	identifyChildren,
-	identifyPDFConnections } from "../../src/utils";
+	identifyChildren } from "../../src/utils";
 import { items } from "Mocks/zotero/items";
 import { libraries } from "Mocks/zotero/libraries";
-import { sampleAnnot } from "Mocks/zotero/annotations";
-import { samplePDF } from "Mocks/zotero/pdfs";
 import { semantics } from "Mocks/semantic-scholar";
 
 
@@ -239,23 +236,5 @@ test("Identifies the children of a Zotero item", () => {
 				{ key: "child_note" },
 				{ key: "child_annotation" }
 			]
-		});
-});
-
-test("Identifies the connections of a PDF item", () => {
-	const parentKey = samplePDF.data.parentItem;
-	const parent = items.find(it => it.data.key == parentKey);
-
-	expect(identifyPDFConnections(
-		samplePDF.data.key, 
-		parentKey, 
-		samplePDF.library.type + "s/" + samplePDF.library.id, 
-		{ 
-			items: items, 
-			notes: [sampleAnnot] 
-		}))
-		.toEqual({
-			parent,
-			annotations: [sampleAnnot]
 		});
 });
