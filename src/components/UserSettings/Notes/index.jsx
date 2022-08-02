@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { func as funcType, node } from "prop-types";
 
-import { SingleInput, TextField } from "../common";
+import { RowGroup, RowGroupOption, TextField, TextWithSelect } from "../common";
 
 import * as customPropTypes from "../../../propTypes";
 
@@ -39,7 +39,12 @@ const useNotesSettings = () => {
 	return context;
 };
 
-const USE_OPTIONS = [
+const USE_OPTIONS = {
+	"default": "Default formatter",
+	"function": "Custom function"
+};
+
+const WITH_OPTIONS = [
 	{ label: "Raw metadata", value: "raw" },
 	{ label: "Text contents", value: "text" }
 ];
@@ -50,7 +55,8 @@ function NotesWidget(){
 		{
 			func,
 			split_char,
-			use
+			use,
+			__with
 		},
 		setOpts
 	] = useNotesSettings();
@@ -66,14 +72,37 @@ function NotesWidget(){
 		return {
 			updateFuncName: (val) => updateSingleValue("func", val),
 			updateSplitChar: (val) => updateSingleValue("split_char", val),
-			updateUseFormat: (val) => updateSingleValue("use", val)
+			updateUseType: (val) => updateSingleValue("use", val),
+			updateWithFormat: (val) => updateSingleValue("__with", val)
 		};
 	}, [setOpts]);
 
+	const customFuncButtonProps = useMemo(() => ({
+		intent: "primary",
+		rightIcon: "caret-down"
+	}), []);
+
 	return <>
-		<TextField description="Enter the name of a custom function, or leave blank to use the default formatter" ifEmpty={true} label="Enter the name of the function to use for formatting notes" onChange={handlers.updateFuncName} placeholder="Type a function's name" title="Formatting function" value={func} />
-		<TextField description="The character(s) on which to split up notes into blocks" ifEmpty={true} label="Enter a character or set of characters to use to split notes into blocks" onChange={handlers.updateSplitChar} title="Divider" value={split_char} />
-		<SingleInput description="The format in which the notes should be passed to the formatting function" menuTitle="Select an input format" onChange={handlers.updateUseFormat} options={USE_OPTIONS} title="Receive notes as" value={use} />
+		<TextField description="The character(s) on which to split up notes into blocks" ifEmpty={true} label="Enter a character or set of characters to use to split notes into blocks" onChange={handlers.updateSplitChar} placeholder="e.g \n, </p>" title="Divider" value={split_char} />
+		<RowGroup title="Formatter"
+			description="Choose a way to format annotations metadata when importing from Zotero." 
+			onChange={handlers.updateUseType}
+			options={USE_OPTIONS}
+			selected={use}>
+			<RowGroupOption id="default" />
+			<RowGroupOption id="function" description="Enter the name of a custom function">
+				<TextWithSelect 
+					onSelectChange={handlers.updateWithFormat} 
+					onValueChange={handlers.updateFuncName} 
+					placeholder="Type a function's name" 
+					selectButtonProps={customFuncButtonProps} 
+					selectOptions={WITH_OPTIONS} 
+					selectValue={__with} 
+					textValue={func} 
+					inputLabel="Enter the name of the function to use for formatting notes" 
+					selectLabel="Select an input format for your custom function" />
+			</RowGroupOption>
+		</RowGroup>
 	</>;
 }
 

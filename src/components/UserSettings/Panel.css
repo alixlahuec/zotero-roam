@@ -23,20 +23,63 @@
     font-size: 1.05rem;
     font-weight: 400;
     margin: 0px;
-    margin-bottom: 5px;
 }
 
-.zr-settings-list [zr-role="settings-row"] {
+.zr-settings-list h5.bp4-heading {
+    color: var(--zr-auxiliary);
+    margin: 0px;
+}
+
+.zr-settings-list h5.bp4-heading,
+.zr-settings-list .zr-settings-rowgroup--option > .bp4-control-indicator {
+    font-size: 0.95rem;
+}
+
+.zr-settings-list [zr-row-option-selected="true"] h5.bp4-heading {
+    color: var(--zr-text-co);
+}
+
+.zr-settings-list [zr-role="settings-row"],
+.zr-settings-list [zr-role="settings-rowgroup--option"] {
     align-items: center;
     display: flex;
     font-size: 0.9em;
     justify-content: space-between;
+}
+
+.zr-settings-list [zr-role="settings-row"] {
     padding: 5px 10px
 }
 
-.zr-settings-list [zr-role="settings-row"] > div:first-child {
+.zr-settings-list [zr-role="settings-rowgroup--option"] {
+    padding: 0px 10px;
+}
+
+.zr-settings-list [zr-role="settings-rowgroup--option"] [zr-role="settings-row"] {
+    padding: 0px;
+}
+
+.zr-settings-list [zr-role="settings-row-group"] {
+    padding: 5px 10px;
+}
+
+[zr-role="settings-row-group"] > div:first-child:not(:empty) {
+    padding-bottom: 5px;
+}
+
+.zr-settings-list [zr-role="settings-row"] > div:first-child:not(:empty),
+.zr-settings-list [zr-role="settings-rowgroup--option"] > .zr-settings-rowgroup--option {
     flex: 1 1 50%;
     padding-right: 10px;
+}
+
+.zr-settings-list [zr-role="settings-rowgroup--option"] > .zr-settings-rowgroup--option {
+    align-items: baseline;
+    display: flex;
+}
+
+.zr-settings-list .zr-settings-rowgroup--option[zr-row-option-selected="false"] {
+    opacity: 0.6;
 }
 
 .zr-settings-list [zr-role="settings-row"] > [zr-role="input-text"] {
@@ -46,14 +89,8 @@
 
 .zr-settings-list .zr-setting--single-input > button {
     background: hsla(var(--zr-accent-1-hsl), 7%);
-    color: var(--zr-text-co);
 }
 
 .zr-settings-list .zr-setting--single-input > button:hover {
     background: hsla(var(--zr-accent-1-hsl), 10%);
-}
-
-.zr-settings-list [zr-role="setting-description"] {
-    color: var(--zr-auxiliary);
-    font-size: var(--zr-text-small);
 }
