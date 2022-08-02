@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
-import { arrayOf, bool, func, node, object, oneOfType, shape, string } from "prop-types";
+import { arrayOf, bool, func, node, object, objectOf, oneOfType, shape, string } from "prop-types";
 
-import { Button, Classes, H4, InputGroup, MenuItem, Switch } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, H4, H5, InputGroup, MenuItem, Switch } from "@blueprintjs/core";
 import { Select2 } from "@blueprintjs/select";
 
 import InputMultiSelect from "../Inputs/InputMultiSelect";
@@ -23,15 +23,80 @@ function renderAsMenuItem(item, itemProps) {
 }
 
 const Row = ({ children }) => <div zr-role="settings-row">{children}</div>;
+Row.propTypes = {
+	children: node
+};
 
-const Title = ({ children }) => <H4 className={CustomClasses.TEXT_AUXILIARY}>{children}</H4>;
+const RowGroup = ({ children, description = null, onChange, options, selected, title = null }) => {
+	const childrenWithProps = React.Children.map(children, (child) => {
+		if (React.isValidElement(child)) {
+			return React.cloneElement(child, { handleSelect: onChange, options, selected });
+		}
+		return child;
+	});
 
-const Description = ({ children }) => <span zr-role="setting-description">{children}</span>;
+	return <div zr-role="settings-row-group">
+		<div>
+			{title && <Title>{title}</Title>}
+			{description && <Description>{description}</Description>}
+		</div>
+		{childrenWithProps}
+	</div>;
+};
+RowGroup.propTypes = {
+	children: node,
+	description: string,
+	onChange: func,
+	options: objectOf(string),
+	selected: string,
+	title: string
+};
 
-const MultiInput = ({ description = null, options, setValue, title, value }) => {
+const RowGroupOption = ({ children, description = null, handleSelect, id, options, selected }) => {
+	const onChange = useCallback(() => handleSelect(id), [handleSelect, id]);
+
+	return <div zr-role="settings-rowgroup--option" zr-row-option-selected={(selected == id).toString()}>
+		<Checkbox
+			checked={selected == id}
+			className="zr-settings-rowgroup--option"
+			inline={false}
+			labelElement={<div>
+				<OptionTitle>{options[id]}</OptionTitle>
+				{description && <Description>{description}</Description>}
+			</div>}
+			onChange={onChange}
+		/>
+		{children}
+	</div>;
+};
+RowGroupOption.propTypes = {
+	children: node,
+	description: string,
+	handleSelect: func,
+	id: string,
+	options: objectOf(string),
+	selected: string
+};
+
+const Title = ({ children }) => <H4>{children}</H4>;
+Title.propTypes = {
+	children: node
+};
+
+const OptionTitle = ({ children }) => <H5>{children}</H5>;
+OptionTitle.propTypes = {
+	children: node
+};
+
+const Description = ({ children }) => <span className={[CustomClasses.TEXT_SECONDARY, CustomClasses.TEXT_SMALL].join(" ")}>{children}</span>;
+Description.propTypes = {
+	children: node
+};
+
+const MultiInput = ({ description = null, options, setValue, title = null, value }) => {
 	return <Row>
 		<div>
-			<Title>{title}</Title>
+			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
 		<TextInput>
@@ -50,7 +115,7 @@ MultiInput.propTypes = {
 	value: arrayOf(string)
 };
 
-const RoamTagsInput = ({ description, onChange, title, value }) => {
+const RoamTagsInput = ({ description, onChange, title = null, value }) => {
 	const selectTag = useCallback((val) => {
 		onChange(Array.from(new Set([...value, val])));
 	}, [onChange, value]);
@@ -61,7 +126,7 @@ const RoamTagsInput = ({ description, onChange, title, value }) => {
 
 	return <Row>
 		<div>
-			<Title>{title}</Title>
+			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
 		<TextInput>
@@ -76,7 +141,7 @@ RoamTagsInput.propTypes = {
 	value: arrayOf(string)
 };
 
-const SingleInput = ({ buttonProps = {}, description= null, menuTitle, onChange, options, title, value }) => {
+const SingleInput = ({ buttonProps = {}, description= null, menuTitle, onChange, options, title = null, value }) => {
 
 	const menuProps = useMemo(() => ({
 		title: menuTitle
@@ -93,7 +158,7 @@ const SingleInput = ({ buttonProps = {}, description= null, menuTitle, onChange,
 
 	return <Row>
 		<div>
-			<Title>{title}</Title>
+			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
 		<Select2
@@ -107,7 +172,7 @@ const SingleInput = ({ buttonProps = {}, description= null, menuTitle, onChange,
 			placement="bottom"
 			popoverProps={popoverProps}
 			popoverTargetProps={popoverTargetProps} >
-			<Button alignText="right" minimal={true} rightIcon="caret-down" text={options.find(op => op.value == value).label} {...buttonProps} />
+			<Button alignText="right" intent="primary" minimal={true} rightIcon="caret-down" text={options.find(op => op.value == value).label} {...buttonProps} />
 		</Select2>
 	</Row>;
 };
@@ -122,13 +187,16 @@ SingleInput.propTypes = {
 };
 
 const TextInput = ({ children }) => <div className="zr-text-input" zr-role="input-text">{children}</div>;
+TextInput.propTypes = {
+	children: node
+};
 
-const TextField = ({ description = null, ifEmpty = null, label = null, onChange = null, placeholder = null, title, value, ...extraProps }) => {
+const TextField = ({ description = null, ifEmpty = null, label = null, onChange = null, placeholder = null, title = null, value, ...extraProps }) => {
 	const valueHandler = useCallback((event) => onChange(event.target.value), [onChange]);
 
 	return <Row>
 		<div>
-			<Title>{title}</Title>
+			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
 		<TextInput>
@@ -159,7 +227,7 @@ TextField.propTypes = {
 	value: string
 };
 
-const TextWithSelect = ({ description = null, onSelectChange, onValueChange, placeholder = null, selectOptions, selectValue, textValue, title, inputGroupProps = {}, inputLabel, selectButtonProps = {}, selectProps = {}, selectLabel }) => {
+const TextWithSelect = ({ description = null, onSelectChange, onValueChange, placeholder = null, selectOptions, selectValue, textValue, title = null, inputGroupProps = {}, inputLabel, selectButtonProps = {}, selectProps = {}, selectLabel }) => {
 	const selectHandler = useCallback((item) => onSelectChange(item.value), [onSelectChange]);
     
 	const selectElement = useMemo(() => {
@@ -196,7 +264,7 @@ const TextWithSelect = ({ description = null, onSelectChange, onValueChange, pla
 
 	return <Row>
 		<div>
-			<Title>{title}</Title>
+			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
 		<InputGroup
@@ -230,10 +298,10 @@ TextWithSelect.propTypes = {
 	selectLabel: string
 };
 
-const Toggle = ({ description = null, isChecked, label, onChange = null, title, ...extraProps }) => (
+const Toggle = ({ description = null, isChecked, label, onChange = null, title = null, ...extraProps }) => (
 	<Row>
 		<div>
-			<Title>{title}</Title>
+			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
 		<Switch aria-checked={isChecked} checked={isChecked} aria-label={label} onChange={onChange} role="switch" {...extraProps} />
@@ -250,6 +318,8 @@ Toggle.propTypes = {
 export {
 	MultiInput,
 	RoamTagsInput,
+	RowGroup,
+	RowGroupOption,
 	SingleInput,
 	TextField,
 	TextWithSelect,
