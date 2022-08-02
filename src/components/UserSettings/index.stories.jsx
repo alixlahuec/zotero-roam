@@ -128,3 +128,14 @@ WithInteractions.play = async({ canvasElement, parameters }) => {
 		.toBe(OVERRIDE_KEY_OPTIONS[OVERRIDE_KEY_OPTIONS.length - 1].label);
 
 };
+
+export const NoRequests = Template.bind({});
+NoRequests.parameters = {
+	userSettings: {
+		requests: {
+			apiKeys: [],
+			dataRequests: [],
+			libraries: []
+		}
+	}
+};
