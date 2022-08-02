@@ -358,13 +358,18 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
   width: max-content;
 }
 
-[class*="zr"] .bp4-control.bp4-switch input:checked ~ .bp4-control-indicator {
-  background-color: hsla(var(--zr-accent-1-hsl), 90%);
+[class*="zr"] .bp4-control.bp4-switch input:checked ~ .bp4-control-indicator,
+[class*="zr"] .bp4-control.bp4-checkbox input:checked ~ .bp4-control-indicator {
+  background-color: hsla(var(--zr-accent-1-hsl), 70%);
 }
 
 [class*="zr"] .bp4-control.bp4-switch .bp4-control-indicator::before {
   background: var(--zr-dialog-bg);
   box-shadow: none;
+}
+
+[class*="zr"] .bp4-control.bp4-checkbox input:checked ~ .bp4-control-indicator {
+    box-shadow: none;
 }
 
 [class*="zr"] .bp4-control.bp4-radio {
