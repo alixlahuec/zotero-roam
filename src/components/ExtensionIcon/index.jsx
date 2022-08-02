@@ -146,7 +146,7 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 	const allowContext = itemQueries.some(q => q.data);
 
 	const data_status = useMemo(() => hasLoadingError ? "error" : (isCurrentlyLoading ? "loading" : "ready"), [isCurrentlyLoading, hasLoadingError]);
-	const button_icon = useMemo(() => hasLoadingError ? "issue" : "manual", [hasLoadingError]);
+	const button_icon = useMemo(() => status == "disabled" ? "warning-sign" : hasLoadingError ? "issue" : "manual", [hasLoadingError, status]);
 
 	const queries = useMemo(() => {
 		return {
