@@ -84,6 +84,14 @@
     opacity: 0.6;
 }
 
+.zr-settings-list .zr-settings--card {
+    border: 1px var(--zr-border-co) solid;
+    border-radius: 3px;
+    color: var(--zr-text-co);
+    flex: 0 0 45%;
+    padding: 5px 10px;
+}
+
 .zr-settings-list [zr-role="settings-row-col"] {
     display: flex;
     flex-wrap: wrap;

@@ -5,8 +5,8 @@ import { MetadataProvider, MetadataWidget } from "./Metadata";
 import { NotesProvider, NotesWidget } from "./Notes";
 import { OtherSettingsProvider, OtherSettingsWidget } from "./Other";
 import { PageMenuProvider, PageMenuWidget } from "./PageMenu";
+import { RequestsProvider, RequestsWidget } from "./Requests";
 import { WebImportProvider, WebImportWidget } from "./WebImport";
-import { RequestsProvider } from "./Requests";
 import { SciteProvider } from "./Scite";
 import { ShortcutsProvider } from "./Shortcuts";
 import { TypemapProvider } from "./Typemap";
@@ -15,7 +15,8 @@ import { TypemapProvider } from "./Typemap";
 export const SETTINGS_CONFIG = [
 	{
 		component: RequestsProvider,
-		id: "requests"
+		id: "requests",
+		widget: RequestsWidget
 	},
 	{
 		component: AnnotationsProvider,
