@@ -289,14 +289,16 @@ const webImportSettingsType = shape({
 	tags: arrayOf(string)
 });
 
+const dataRequestType = shape({
+	apikey: string,
+	dataURI: string,
+	library: string,
+	name: string,
+	params: string
+});
+
 const requests = {
-	dataRequests: arrayOf(shape({
-		apikey: string,
-		dataURI: string,
-		library: string,
-		name: string,
-		params: string
-	})),
+	dataRequests: arrayOf(dataRequestType),
 	apiKeys: arrayOf(string),
 	libraries: arrayOf(shape({
 		apikey: string,
@@ -351,6 +353,7 @@ export {
 	shortcutsSettingsType,
 	webImportSettingsType,
 	extensionType,
+	dataRequestType,
 	requestsType,
 	userSettingsType,
 	initSettingsType
