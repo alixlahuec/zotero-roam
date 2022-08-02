@@ -27,6 +27,25 @@ Row.propTypes = {
 	children: node
 };
 
+const RowCol = ({ children, description = null, rightElement = null, title = null }) => (
+	<div zr-role="settings-row-col">
+		<div>
+			{title && <Title>{title}</Title>}
+			{description && <Description>{description}</Description>}
+		</div>
+		{rightElement}
+		<div zr-role="settings-row-col--container">
+			{children}
+		</div>
+	</div>
+);
+RowCol.propTypes = {
+	children: node,
+	description: string,
+	rightElement: node,
+	title: string
+};
+
 const RowGroup = ({ children, description = null, onChange, options, selected, title = null }) => {
 	const childrenWithProps = React.Children.map(children, (child) => {
 		if (React.isValidElement(child)) {
@@ -318,6 +337,7 @@ Toggle.propTypes = {
 export {
 	MultiInput,
 	RoamTagsInput,
+	RowCol,
 	RowGroup,
 	RowGroupOption,
 	SingleInput,
