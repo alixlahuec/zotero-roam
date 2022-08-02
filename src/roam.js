@@ -261,7 +261,7 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 		page.new = false;
 	}
 	
-	const { use, func = null, smartblock: { param, paramValue } } = metadataSettings;
+	const { use = "default", func = "", smartblock: { param, paramValue } } = metadataSettings;
 
 	// TODO: Add support or options for passing formatted children (PDFs/notes) to SmartBlock
 	if(use == "smartblock"){
@@ -277,7 +277,9 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 		}
 	} else {
 		try {
-			const metadata = func ? await executeFunctionByName(func, window, item, pdfs, notes) : _getItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap });
+			const metadata = (use == "function" && func) 
+				? await executeFunctionByName(func, window, item, pdfs, notes) 
+				: _getItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap });
 			const { args, error, success } = await addBlocksArray(pageUID, metadata);
 
 			const outcome = {

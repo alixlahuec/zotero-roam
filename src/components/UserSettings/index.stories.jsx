@@ -22,7 +22,8 @@ export default {
 				group_by: false,
 				highlight_prefix: "[[>]]",
 				highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
-				use: "raw"
+				use: "default",
+				__with: "raw"
 			},
 			autocomplete: {
 				trigger: "@",
@@ -41,12 +42,13 @@ export default {
 					param: "srcUid",
 					paramValue: "ABC123F"
 				},
-				use: "function"
+				use: "default"
 			},
 			notes: {
 				func: "",
 				split_char: "\n",
-				use: "raw"
+				use: "default",
+				__with: "raw"
 			},
 			other: {
 				autoload: true,

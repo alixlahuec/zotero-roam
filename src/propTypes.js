@@ -228,7 +228,8 @@ const annotationsSettingsType = shape({
 	group_by: oneOf(["day_added", false]),
 	highlight_prefix: string,
 	highlight_suffix: string,
-	use: oneOf(["formatted", "raw"])
+	use: oneOf(["default", "function"]),
+	__with: oneOf(["formatted", "raw"])
 });
 
 const autocompleteSettingsType = shape({
@@ -251,13 +252,14 @@ const metadataSettingsType = shape({
 		paramValue: string
 		// TODO: check if there is additional SmartBlock config to describe and support
 	}),
-	use: oneOf(["function", "smartblock"])
+	use: oneOf(["default", "function", "smartblock"])
 });
 
 const notesSettingsType = shape({
 	func: string,
 	split_char: string,
-	use: oneOf(["raw", "text"])
+	use: oneOf(["default", "function"]),
+	__with: oneOf(["raw", "text"])
 });
 
 const otherSettingsType = shape({

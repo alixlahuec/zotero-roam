@@ -606,10 +606,10 @@ function formatItemReference(item, format, { accent_class = "zr-accent-1" } = {}
  * @param {SettingsAnnotations} config - Additional settings 
  * @returns The formatted annotations
  */
-function formatZoteroAnnotations(annotations, { func = null, use = "raw", ...settings } = {}){
-	if(func){
-		// If the user has provided a function, execute it with the desired input
-		return executeFunctionByName(func, window, use == "raw" ? annotations : simplifyZoteroAnnotations(annotations));
+function formatZoteroAnnotations(annotations, { func = "", use = "default", __with = "raw", ...settings } = {}){
+	if(use == "function" && func){
+		// If the user has provided a custom function, execute it with the desired input
+		return executeFunctionByName(func, window, __with == "raw" ? annotations : simplifyZoteroAnnotations(annotations));
 	} else {
 		return formatItemAnnotations(annotations, { ...settings });
 	}
@@ -620,10 +620,10 @@ function formatZoteroAnnotations(annotations, { func = null, use = "raw", ...set
  * @param {SettingsNotes} config - Additional settings
  * @returns The formatted notes
  */
-function formatZoteroNotes(notes, { func = null, split_char = "\n", use = "raw" } = {}){
-	if(func){
-		// If the user has provided a function, execute it with the desired input
-		return executeFunctionByName(func, window, use == "raw" ? notes : splitNotes(notes, split_char));
+function formatZoteroNotes(notes, { func = "", split_char = "\n", use = "default", __with = "raw" } = {}){
+	if(use == "function" && func){
+		// If the user has provided a custom function, execute it with the desired input
+		return executeFunctionByName(func, window, __with == "raw" ? notes : splitNotes(notes, split_char));
 	} else {
 		// Otherwise use the default formatter
 		return formatItemNotes(notes, split_char);

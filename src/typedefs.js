@@ -90,7 +90,8 @@
  * group_by: ("day_added"|false),
  * highlight_prefix: String,
  * highlight_suffix: String,
- * use: ("formatted"|"raw")
+ * use: ("default"|"function"),
+ * __with: ("formatted"|"raw")
  * }}
  * SettingsAnnotations
  */
@@ -111,7 +112,7 @@
  * @typedef {{
  * func: String,
  * smartblock: {SmartblockConfig},
- * use: ("function"|"smartblock")
+ * use: ("default"|"function"|"smartblock")
  * }}
  * SettingsMetadata
  */
@@ -120,7 +121,8 @@
  * @typedef {{
  * func: String,
  * split_char: String,
- * use: ("raw"|"text")
+ * use: ("default"|"function")
+ * __with: ("raw"|"text")
  * }}
  * SettingsNotes
  */

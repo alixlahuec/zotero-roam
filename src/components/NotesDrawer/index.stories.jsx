@@ -90,7 +90,7 @@ export default {
 		userSettings: {
 			notes: {
 				split_char: "/n",
-				use: "text"
+				__with: "text"
 			}
 		}
 	}
