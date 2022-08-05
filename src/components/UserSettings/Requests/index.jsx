@@ -48,16 +48,16 @@ const useRequestsSettings = () => {
 const obfuscate = (val) => "*".repeat(val.length);
 
 function DataRequest({ request }){
-	const { apikey, dataURI, library, params = "" } = request;
+	const { apikey, dataURI, library: { path, type }, params = "" } = request;
 
 	const libContents = useMemo(() => {
-		const tagProps = library.startsWith("users/")
+		const tagProps = type == "users"
 			? { icon: "user", htmlTitle: "User library" }
-			: library.startsWith("groups/")
+			: type == "groups"
 				? { icon: "people", htmlTitle: "Group library" }
 				: {};
-		return <Tag minimal={true} {...tagProps}>{library}</Tag>;
-	}, [library]);
+		return <Tag minimal={true} {...tagProps}>{path}</Tag>;
+	}, [path, type]);
 
 	return <div className="zr-settings--card">
 		<div zr-role="settings-row">
