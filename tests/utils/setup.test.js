@@ -54,8 +54,8 @@ describe("Parsing user data requests", () => {
 			.toEqual({
 				dataRequests: [
 					{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", name: "My personal library", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } },
-					{ dataURI: "users/12345/items/top", apikey: "XXXXXXXXXX", name: "1", library: { id: "12345", path: "users/12345", type: "users", uri: "items/top" } },
-					{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", name: "2", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items/top" } },
+					{ dataURI: "users/12345/items/top", apikey: "XXXXXXXXXX", name: "", library: { id: "12345", path: "users/12345", type: "users", uri: "items/top" } },
+					{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", name: "", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items/top" } },
 				],
 				apiKeys: ["XXXXXXXXXX"],
 				libraries: [
