@@ -48,14 +48,14 @@ describe("Parsing user data requests", () => {
 		const reqs = [
 			{ dataURI: "users/12345/items", name: "My personal library" },
 			{ dataURI: "users/12345/items/top" },
-			{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", params: "limit=100" }
+			{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX" }
 		];
 		expect(analyzeUserRequests(reqs))
 			.toEqual({
 				dataRequests: [
-					{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", params: "", name: "My personal library", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } },
-					{ dataURI: "users/12345/items/top", apikey: "XXXXXXXXXX", params: "", name: "1", library: { id: "12345", path: "users/12345", type: "users", uri: "items/top" } },
-					{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", params: "limit=100", name: "2", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items/top" } },
+					{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", name: "My personal library", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } },
+					{ dataURI: "users/12345/items/top", apikey: "XXXXXXXXXX", name: "1", library: { id: "12345", path: "users/12345", type: "users", uri: "items/top" } },
+					{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", name: "2", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items/top" } },
 				],
 				apiKeys: ["XXXXXXXXXX"],
 				libraries: [
@@ -85,8 +85,7 @@ describe("Parsing mock data requests", () => {
 							type: "users",
 							uri: "items"
 						}, 
-						name: "My user library", 
-						params: "" },
+						name: "My user library" },
 					{ 
 						apikey: masterKey, 
 						dataURI: groupPath + "/items", 
@@ -96,8 +95,7 @@ describe("Parsing mock data requests", () => {
 							type: "groups",
 							uri: "items"
 						}, 
-						name: "My group library", 
-						params: "" }
+						name: "My group library" }
 				],
 				libraries: [
 					{ apikey: masterKey, path: userPath },

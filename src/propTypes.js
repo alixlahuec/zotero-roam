@@ -298,8 +298,7 @@ const dataRequestType = shape({
 		type: oneOf(["groups", "users"]),
 		uri: string
 	}),
-	name: string,
-	params: string
+	name: string
 });
 
 const requests = {

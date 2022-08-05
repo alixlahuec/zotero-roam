@@ -105,17 +105,17 @@ function extractCitekeys(arr){
 
 /** Retrieves additional data from the Zotero API, when the original results are greater than the limit of n = 100.
  *  A minimum of parameters are required so that the function can be used for all data types.
- * @param {{dataURI: String, apikey: String, since?: Integer, params?: String}} req - The parameters of the request 
+ * @param {{dataURI: String, apikey: String, since?: Integer}} req - The parameters of the request 
  * @param {Integer} totalResults - The total number of results indicated by the original response 
  * @returns {Promise<Object[]>} The additional results to the original request
  */
 async function fetchAdditionalData(req, totalResults) {
-	const { dataURI, apikey, params = "", since = null } = req;
+	const { dataURI, apikey, since = null } = req;
 	const nbExtraCalls = Math.ceil((totalResults / 100) - 1);
 	const apiCalls = [];
 
 	for(let i=1; i <= nbExtraCalls; i++){
-		const reqParams = new URLSearchParams(params);
+		const reqParams = new URLSearchParams("");
 		if(since){
 			reqParams.set("since", since);
 		}
@@ -289,13 +289,13 @@ async function fetchDeleted(library, since) {
 
 /** Requests data from the Zotero API, based on a specific data URI
  * @fires zotero-roam:update
- * @param {{apikey: String, dataURI: String, params: String, name: String, library: String}} req - The parameters of the request 
+ * @param {DataRequest} req - The parameters of the request 
  * @param {{match: Object[]}} config - Additional parameters
  * @returns {Promise<{data: Object[], lastUpdated: Integer}>}
  */
 async function fetchItems(req, { match = [] } = {}, queryClient) {
-	const { apikey, dataURI, params, library, since = 0 } = req;
-	const paramsQuery = new URLSearchParams(params);
+	const { apikey, dataURI, library, since = 0 } = req;
+	const paramsQuery = new URLSearchParams("");
 	paramsQuery.set("since", since);
 	paramsQuery.set("start", 0);
 	paramsQuery.set("limit", 100);
@@ -308,7 +308,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 		const { "last-modified-version": lastUpdated, "total-results": totalResultsStr } = headers;
 		const totalResults = Number(totalResultsStr);
 		if(totalResults > 100){
-			const additional = await fetchAdditionalData({ dataURI, apikey, params, since }, totalResults);
+			const additional = await fetchAdditionalData({ dataURI, apikey, since }, totalResults);
 			modified.push(...additional);
 		}
 

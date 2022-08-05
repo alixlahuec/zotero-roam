@@ -129,8 +129,7 @@ describe("Hook for items queries", () => {
 			apikey: masterKey,
 			dataURI: `${lib.path}/items`,
 			library: lib.path,
-			name: `${ind}`,
-			params: ""
+			name: `${ind}`
 		}));
 
 		const { result, waitFor } = renderHook(() => useQuery_Items(reqs, {}), { wrapper });
