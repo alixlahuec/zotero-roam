@@ -292,7 +292,12 @@ const webImportSettingsType = shape({
 const dataRequestType = shape({
 	apikey: string,
 	dataURI: string,
-	library: string,
+	library: shape({
+		id: string,
+		path: string,
+		type: oneOf(["groups", "users"]),
+		uri: string
+	}),
 	name: string,
 	params: string
 });
