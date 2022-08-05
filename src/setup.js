@@ -34,7 +34,7 @@ export function analyzeUserRequests(reqs){
 				if(!dataURI){
 					throw new Error("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 				} else {
-					const match = [...dataURI.matchAll(/(users|groups)\/(\d+?)\/(items.+)/g)];
+					const match = [...dataURI.matchAll(/(users|groups)\/(\d+?)\/(items.*)/g)];
 					if(match.length == 0){
 						throw new Error(`An incorrect data URI was provided for a request : ${dataURI}. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
 					} else {

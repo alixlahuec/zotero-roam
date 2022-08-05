@@ -80,7 +80,7 @@ describe("Parsing mock data requests", () => {
 						apikey: masterKey, 
 						dataURI: userPath + "/items", 
 						library: {
-							id: userLibID,
+							id: String(userLibID),
 							path: userPath,
 							type: "users",
 							uri: "items"
@@ -91,7 +91,7 @@ describe("Parsing mock data requests", () => {
 						apikey: masterKey, 
 						dataURI: groupPath + "/items", 
 						library: {
-							id: groupLibID,
+							id: String(groupLibID),
 							path: groupPath,
 							type: "groups",
 							uri: "items"
