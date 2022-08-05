@@ -34,18 +34,30 @@ export function analyzeUserRequests(reqs){
 				if(!dataURI){
 					throw new Error("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 				} else {
-					const library = dataURI.match(/(users|groups)\/(\d+?)(?=\/items)/g)?.[0];
-					if(!library){
+					const match = [...dataURI.matchAll(/(users|groups)\/(\d+?)\/(items.+)/g)];
+					if(match.length == 0){
 						throw new Error(`An incorrect data URI was provided for a request : ${dataURI}. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
 					} else {
-						return { dataURI, apikey, params, name, library };
+						const [/*input*/, library_type, library_id, items_uri] = match[0];
+						return { 
+							apikey, 
+							dataURI, 
+							library: {
+								id: library_id,
+								path: library_type + "/" + library_id,
+								type: library_type,
+								uri: items_uri
+							}, 
+							name, 
+							params 
+						};
 					}
 				}
 			});
 
 			const apiKeys = Array.from(new Set(dataRequests.map(req => req.apikey)));
 			const libraries = dataRequests.reduce((arr, req) => {
-				const { library: path, apikey } = req;
+				const { library: { path }, apikey } = req;
 				const has_lib = arr.find(lib => lib.path == path);
 				if(!has_lib){
 					arr.push({ path, apikey });

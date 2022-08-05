@@ -5,7 +5,7 @@ import { libraries } from "Mocks/zotero/libraries";
 import { analyzeUserRequests, setupInitialSettings } from "../../src/setup";
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
-const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath } } = libraries;
+const { userLibrary: { id: userLibID, path: userPath }, groupLibrary: { id: groupLibID, path: groupPath } } = libraries;
 
 describe("Parsing user data requests", () => {
 	it("passes if an empty array of requests is provided", () => {
@@ -53,9 +53,9 @@ describe("Parsing user data requests", () => {
 		expect(analyzeUserRequests(reqs))
 			.toEqual({
 				dataRequests: [
-					{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", params: "", name: "My personal library", library: "users/12345" },
-					{ dataURI: "users/12345/items/top", apikey: "XXXXXXXXXX", params: "", name: "1", library: "users/12345" },
-					{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", params: "limit=100", name: "2", library: "groups/98765" },
+					{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", params: "", name: "My personal library", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } },
+					{ dataURI: "users/12345/items/top", apikey: "XXXXXXXXXX", params: "", name: "1", library: { id: "12345", path: "users/12345", type: "users", uri: "items/top" } },
+					{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", params: "limit=100", name: "2", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items/top" } },
 				],
 				apiKeys: ["XXXXXXXXXX"],
 				libraries: [
@@ -79,13 +79,23 @@ describe("Parsing mock data requests", () => {
 					{ 
 						apikey: masterKey, 
 						dataURI: userPath + "/items", 
-						library: userPath, 
+						library: {
+							id: userLibID,
+							path: userPath,
+							type: "users",
+							uri: "items"
+						}, 
 						name: "My user library", 
 						params: "" },
 					{ 
 						apikey: masterKey, 
 						dataURI: groupPath + "/items", 
-						library: groupPath, 
+						library: {
+							id: groupLibID,
+							path: groupPath,
+							type: "groups",
+							uri: "items"
+						}, 
 						name: "My group library", 
 						params: "" }
 				],

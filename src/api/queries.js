@@ -73,8 +73,8 @@ const useQuery_Items = (reqs, opts = {}) => {
 	// Factory
 	const client = useQueryClient();
 	const queriesDefs = reqs.map((req) => {
-		const { params, library, ...identifiers } = req;
-		const queryKey = ["items", library,  { ...identifiers }];
+		const { params, library: { path }, ...identifiers } = req;
+		const queryKey = ["items", path,  { ...identifiers }];
 		const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
 		return {
 			queryKey: queryKey,

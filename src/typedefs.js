@@ -66,7 +66,7 @@
  * @typedef {{
  * apikey: String,
  * dataURI: String,
- * library: String,
+ * library: { id: String, path: String, type: ("groups"|"users"), uri: String },
  * name: String,
  * params: String
  * }}
