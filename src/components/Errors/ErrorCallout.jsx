@@ -7,7 +7,7 @@ import { Button, Callout } from "@blueprintjs/core";
 function ErrorCallout({ buttonText = "Go back", error, resetErrorBoundary = null }) {
 
 	return (
-		<Callout intent="danger" icon="warning" title={error.name} >
+		<Callout intent="danger" title={error.name} >
 			<p>{error.message}</p>
 			{resetErrorBoundary != null && <Button intent="danger" onClick={resetErrorBoundary} outlined={true} text={buttonText} />}
 		</Callout>

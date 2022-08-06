@@ -78,8 +78,7 @@ function NotesWidget(){
 	}, [setOpts]);
 
 	const customFuncButtonProps = useMemo(() => ({
-		intent: "primary",
-		rightIcon: "caret-down"
+		intent: "primary"
 	}), []);
 
 	return <>
@@ -94,7 +93,7 @@ function NotesWidget(){
 				<TextWithSelect 
 					onSelectChange={handlers.updateWithFormat} 
 					onValueChange={handlers.updateFuncName} 
-					placeholder="Type a function's name" 
+					placeholder="e.g, myFunction" 
 					selectButtonProps={customFuncButtonProps} 
 					selectOptions={WITH_OPTIONS} 
 					selectValue={__with} 

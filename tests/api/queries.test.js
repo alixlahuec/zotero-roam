@@ -125,7 +125,7 @@ describe("Hook for collections queries", () => {
 
 describe("Hook for items queries", () => {
 	it("returns fetch results", async() => {
-		const reqs = Object.values(libraries).map((lib, ind) => ({
+		const reqs = Object.values(libraries).map((lib) => ({
 			apikey: masterKey,
 			dataURI: `${lib.path}/items`,
 			library: lib.path,

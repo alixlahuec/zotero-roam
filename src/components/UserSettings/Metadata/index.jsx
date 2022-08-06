@@ -93,8 +93,7 @@ function MetadataWidget(){
 	}, [setOpts]);
 
 	const smartblockButtonProps = useMemo(() => ({
-		intent: "primary",
-		rightIcon: "caret-down"
+		intent: "primary"
 	}), []);
 
 	return (

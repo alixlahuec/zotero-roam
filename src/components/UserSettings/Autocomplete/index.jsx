@@ -86,7 +86,7 @@ function AutocompleteWidget(){
 	return <>
 		<SingleInput description="The format in which to display suggestions" menuTitle="Select a display format" onChange={handlers.updateDisplay} options={DISPLAY_OPTIONS} title="Display" value={display} />
 		<SingleInput description="The format in which to insert the reference" menuTitle="Select a formatting option" onChange={handlers.updateFormat} options={FORMAT_OPTIONS} title="Format" value={format} />
-		<TextField description="The character(s) that should trigger the autocomplete" ifEmpty={true} label="Enter a trigger for the 'autocomplete' feature" onChange={handlers.updateTrigger} placeholder="Enter a value to enable the feature" title="Trigger" value={trigger} />
+		<TextField description="The character(s) that should trigger the autocomplete. If no value is provided, the feature will be disabled." ifEmpty={true} label="Enter a trigger for the 'autocomplete' feature" onChange={handlers.updateTrigger} placeholder="e.g, @" title="Trigger" value={trigger} />
 	</>;
 }
 

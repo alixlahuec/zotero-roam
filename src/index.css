@@ -200,6 +200,8 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
   background: var(--zr-box-bg);
   border: 1px var(--zr-border-co) solid;
   color: var(--zr-text-co);
+  margin: 10px;
+  width: auto;
 }
 
 [class*="zr"] .bp4-callout[class*="bp4-intent"] {
