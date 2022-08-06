@@ -30,27 +30,53 @@ export function analyzeUserRequests(reqs){
 			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 		} else {
 			const dataRequests = reqs.map((req) => {
-				const { dataURI, apikey = fallbackAPIKey, name = "" } = req;
-				if(!dataURI){
-					throw new Error("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+				const { apikey = fallbackAPIKey, dataURI, library, name = "" } = req;
+				if(library){
+					const { id, type } = library;
+                    
+					if(!id || isNaN(id)){
+						throw new Error("A library ID is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+					}
+
+					if(!type || !["users", "groups"].includes(type)){
+						throw new Error("A library type is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+					}
+
+					return {
+						apikey,
+						dataURI: [type, id, "items"].join("/"),
+						library: {
+							id,
+							path: [type, id].join("/"),
+							type,
+							uri: "items"
+						},
+						name
+					};
 				} else {
+
+					if(!dataURI){
+						throw new Error("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+					}
+                    
 					const match = [...dataURI.matchAll(/(users|groups)\/(\d+?)\/(items.*)/g)];
+					
 					if(match.length == 0){
 						throw new Error(`An incorrect data URI was provided for a request : ${dataURI}. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
-					} else {
-						const [/*input*/, library_type, library_id, items_uri] = match[0];
-						return { 
-							apikey, 
-							dataURI, 
-							library: {
-								id: library_id,
-								path: library_type + "/" + library_id,
-								type: library_type,
-								uri: items_uri
-							}, 
-							name 
-						};
-					}
+					} 
+                    
+					const [/*input*/, type, id, uri] = match[0];
+					return { 
+						apikey, 
+						dataURI, 
+						library: {
+							id,
+							path: [type, id].join("/"),
+							type,
+							uri
+						}, 
+						name 
+					};
 				}
 			});
 
