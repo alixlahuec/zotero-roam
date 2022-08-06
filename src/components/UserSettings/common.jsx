@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { arrayOf, bool, func, node, object, objectOf, oneOfType, shape, string } from "prop-types";
 
-import { Button, Checkbox, Classes, H4, H5, InputGroup, MenuItem, Switch } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, MenuItem, Switch } from "@blueprintjs/core";
 import { Select2 } from "@blueprintjs/select";
 
 import InputMultiSelect from "../Inputs/InputMultiSelect";
@@ -247,37 +247,18 @@ TextField.propTypes = {
 };
 
 const TextWithSelect = ({ description = null, onSelectChange, onValueChange, placeholder = null, selectOptions, selectValue, textValue, title = null, inputGroupProps = {}, inputLabel, selectButtonProps = {}, selectProps = {}, selectLabel }) => {
+	const { menuProps, popoverTargetProps, ...otherProps } = selectProps;
 	const selectHandler = useCallback((item) => onSelectChange(item.value), [onSelectChange]);
     
-	const selectElement = useMemo(() => {
-		const { menuProps, popoverTargetProps, ...otherProps } = selectProps;
+	const mergedMenuProps = useMemo(() => ({
+		title: selectLabel,
+		...menuProps
+	}), [selectLabel, menuProps]);
 
-		const mergedMenuProps = {
-			title: selectLabel,
-			...menuProps
-		};
-
-		const mergedPopoverTargetProps = {
-			title: selectLabel,
-			...popoverTargetProps
-		};
-
-		return <Select2
-			className={CustomClasses.TEXT_SMALL}
-			fill={false}
-			filterable={false}
-			itemRenderer={renderAsMenuItem}
-			itemsEqual="value"
-			items={selectOptions}
-			menuProps={mergedMenuProps} 
-			onItemSelect={selectHandler}
-			placement="bottom"
-			popoverProps={popoverProps}
-			popoverTargetProps={mergedPopoverTargetProps}
-			{...otherProps} >
-			<Button alignText="right" minimal={true} text={selectOptions.find(op => op.value == selectValue).label} {...selectButtonProps} />
-		</Select2>;
-	}, [selectButtonProps, selectHandler, selectLabel, selectOptions, selectProps, selectValue]);
+	const mergedPopoverTargetProps = useMemo(() => ({
+		title: selectLabel,
+		...popoverTargetProps
+	}), [selectLabel, popoverTargetProps]);
 
 	const valueHandler = useCallback((event) => onValueChange(event.target.value), [onValueChange]);
 
@@ -286,19 +267,35 @@ const TextWithSelect = ({ description = null, onSelectChange, onValueChange, pla
 			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
-		<InputGroup
-			aria-label={inputLabel}
-			autoComplete="off"
-			className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")}
-			leftElement={selectElement}
-			onChange={valueHandler}
-			placeholder={placeholder}
-			spellCheck="false"
-			title={inputLabel}
-			type="text"
-			value={textValue}
-			{...inputGroupProps}
-		/>
+		<ControlGroup className="zr-text-select-group">
+			<Select2
+				className={CustomClasses.TEXT_SMALL}
+				fill={false}
+				filterable={false}
+				itemRenderer={renderAsMenuItem}
+				itemsEqual="value"
+				items={selectOptions}
+				menuProps={mergedMenuProps} 
+				onItemSelect={selectHandler}
+				placement="bottom"
+				popoverProps={popoverProps}
+				popoverTargetProps={mergedPopoverTargetProps}
+				{...otherProps} >
+				<Button active={true} alignText="right" minimal={true} rightIcon="caret-down" text={selectOptions.find(op => op.value == selectValue).label} {...selectButtonProps} />
+			</Select2>
+			<InputGroup
+				aria-label={inputLabel}
+				autoComplete="off"
+				className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")}
+				onChange={valueHandler}
+				placeholder={placeholder}
+				spellCheck="false"
+				title={inputLabel}
+				type="text"
+				value={textValue}
+				{...inputGroupProps}
+			/>
+		</ControlGroup>
 	</Row>;
 };
 TextWithSelect.propTypes = {
