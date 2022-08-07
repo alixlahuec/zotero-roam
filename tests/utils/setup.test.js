@@ -117,7 +117,7 @@ describe("Parsing mock data requests", () => {
 	it("should be a valid configuration", () => {
 		const reqs = [
 			{ dataURI: userPath + "/items", apikey: masterKey, name: "My user library" },
-			{ dataURI: groupPath + "/items", apikey: masterKey, name: "My group library" }
+			{ dataURI: groupPath + "/items", apikey: "", name: "My group library" }
 		];
 		expect(analyzeUserRequests(reqs))
 			.toEqual({
@@ -167,7 +167,7 @@ describe("Parsing initial user settings", () => {
 		autocomplete: {
 			display: "citekey",
 			format: "citation",
-			trigger: null,
+			trigger: "",
 		},
 		copy: {
 			always: false,

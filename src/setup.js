@@ -30,7 +30,7 @@ export function analyzeUserRequests(reqs){
 			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 		} else {
 			const dataRequests = reqs.map((req) => {
-				const { apikey = fallbackAPIKey, dataURI, library, name = "" } = req;
+				const { apikey, dataURI, library, name = "" } = req;
 				if(library){
 					const { id, type } = library;
                     
@@ -43,7 +43,7 @@ export function analyzeUserRequests(reqs){
 					}
 
 					return {
-						apikey,
+						apikey: apikey || fallbackAPIKey,
 						dataURI: [type, id, "items"].join("/"),
 						library: {
 							id,
@@ -67,7 +67,7 @@ export function analyzeUserRequests(reqs){
                     
 					const [/*input*/, type, id, uri] = match[0];
 					return { 
-						apikey, 
+						apikey: apikey || fallbackAPIKey, 
 						dataURI, 
 						library: {
 							id,
@@ -80,7 +80,7 @@ export function analyzeUserRequests(reqs){
 				}
 			});
 
-			const apiKeys = Array.from(new Set(dataRequests.map(req => req.apikey)));
+			const apiKeys = Array.from(new Set(dataRequests.map(req => req.apikey))).filter(Boolean);
 			const libraries = dataRequests.reduce((arr, req) => {
 				const { library: { path }, apikey } = req;
 				const has_lib = arr.find(lib => lib.path == path);
@@ -131,7 +131,7 @@ export function setupInitialSettings(settingsObject){
 		autocomplete: {
 			display: "citekey",
 			format: "citation",
-			trigger: null,
+			trigger: "",
 			...autocomplete
 		},
 		copy: {
