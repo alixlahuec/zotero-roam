@@ -38,34 +38,40 @@ NoRequests.args = {
 NoRequests.play = async({ args, canvasElement }) => {
 	const canvas = within(canvasElement);
 
-	await expect(canvas.queryByRole("textbox", { name: "Library" })).not.toBeInTheDocument();
+	const existingLibs = canvasElement.querySelectorAll(".zr-data-request.existing");
+	const newLibForm = within(canvasElement.querySelector(".zr-data-request.new"));
 
-	const validateButton = canvas.getByRole("button", { name: "OK" });
+	await expect(existingLibs.length).toBe(0);
+	await expect(newLibForm.getByRole("textbox", { name: "Library" }))
+		.toHaveFocus();
 
+	const validateButton = canvas.getAllByRole("button", { name: "OK" })[0];
+
+	// Validation on empty req list shouldn't display an error
 	await userEvent.click(validateButton);
 	await expect(canvas.queryByRole("heading", { name: "Error" })).not.toBeInTheDocument();
 
-	await userEvent.click(canvas.getByRole("button", { name: "Add request" }));
+	const addReqToListButton = newLibForm.getByRole("button", { name: "Add" });
 
-	const libTypeControl = canvas.queryByRole("button", { name: "users" });
-	const libIDInput = canvas.queryByRole("textbox", { name: "Library" });
-	const apikeyInput = canvas.queryByRole("textbox", { name: "API Key" });
-	const libNameInput = canvas.queryByRole("textbox", { name: "Name" });
-
-	await expect(libTypeControl).toBeInTheDocument();
-	await expect(libIDInput).toBeInTheDocument();
-	await expect(apikeyInput).toBeInTheDocument();
-	await expect(libNameInput).toBeInTheDocument();
-
+	// Validation with empty req should display an error
+	await userEvent.click(addReqToListButton);
 	await userEvent.click(validateButton);
 	await expect(canvas.queryByRole("heading", { name: "Error" })).toBeInTheDocument();
 
+	const firstLibForm = within(canvasElement.querySelector(".zr-data-request.existing"));
+	// const libTypeControl = firstLibForm.getByRole("button", { name: "users" });
+	const libIDInput = firstLibForm.getByRole("textbox", { name: "Library" });
+	const apikeyInput = firstLibForm.getByRole("textbox", { name: "API Key" });
+	// const libNameInput = firstLibForm.getByRole("textbox", { name: "Name" });
+
+	// Change in any of the inputs should make the error callout disappear
 	await userEvent.type(libIDInput, "12345");
 	await expect(canvas.queryByRole("heading", { name: "Error" })).not.toBeInTheDocument();
 
+	// Validation on valid req should pass, and cause the dialog to be closed
 	await userEvent.type(apikeyInput, "key");
-
 	await userEvent.click(validateButton);
-
+	await expect(canvas.queryByRole("heading", { name: "Error" })).not.toBeInTheDocument();
 	await expect(args.closeDialog).toHaveBeenCalled();
+
 };

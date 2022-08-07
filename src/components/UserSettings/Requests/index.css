@@ -1,3 +1,12 @@
+.zr-data-requests-dialog {
+    background: var(--zr-dialog-bg);
+    min-width: 50%;
+}
+
+.zr-data-requests-dialog .bp4-heading {
+    margin: 20px 0px;
+}
+
 .zr-data-request {
     margin: 10px;
 }
@@ -5,16 +14,14 @@
 .zr-data-request > .bp4-control-group {
     align-items: end;
     flex-wrap: nowrap;
-    justify-content: space-between;
 }
 
 .zr-data-request > .bp4-control-group > .bp4-form-group {
-    flex: auto;
     margin-bottom: 0px;
 }
 
 .zr-data-request > .bp4-control-group > .bp4-form-group:first-child {
-    flex: 0 1 50%;
+    flex: 0 1 40%;
 }
 
 .zr-data-request .bp4-form-group > label {

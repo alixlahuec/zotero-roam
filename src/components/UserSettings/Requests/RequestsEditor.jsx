@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { arrayOf, func, number, shape } from "prop-types";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { any, arrayOf, func, number, shape } from "prop-types";
 
-import { Button, Classes, ControlGroup, FormGroup, InputGroup, MenuItem } from "@blueprintjs/core";
+import { Button, Classes, ControlGroup, FormGroup, H6, InputGroup, MenuItem } from "@blueprintjs/core";
 import ErrorCallout from "../../Errors/ErrorCallout";
 import { Select2 } from "@blueprintjs/select";
 
@@ -31,9 +31,12 @@ const LIB_TYPE_OPTIONS = [
 	{ label: "Group library", value: "groups" }
 ];
 
-function RequestInput({ handlers, pos, req }){
-	const { apikey = "", library: { type = "users", id = "" }, name = "" } = req;
-	const { removeReq, updateReq } = handlers;
+const libTypeMenuProps = {
+	title: "Select the type of library you want to use"
+};
+
+function DataRequestForm({ inputRef = null, pos, req, updateReq }){
+	const { apikey, library: { type, id }, name } = req;
 
 	const changeHandlers = useMemo(() => {
 		function updateTextProp(prop, event){
@@ -55,58 +58,91 @@ function RequestInput({ handlers, pos, req }){
 
 		return {
 			updateAPIKey: (event) => updateTextProp("apikey", event),
-			updateLibraryType: (val) => updateLibraryParams("type", val),
+			updateLibraryType: (item) => updateLibraryParams("type", item.value),
 			updateLibraryID: (event) => updateLibraryParams("id", event.target.value),
 			updateName: (event) => updateTextProp("name", event)
 		};
 	}, [req, updateReq]);
+    
+	return <>
+		<FormGroup label="Library" labelFor={"req-library" + pos}>
+			<ControlGroup>
+				<Select2 
+					filterable={false}
+					itemRenderer={renderAsMenuItem}
+					items={LIB_TYPE_OPTIONS} 
+					menuProps={libTypeMenuProps}
+					onItemSelect={changeHandlers.updateLibraryType} 
+					placement="bottom-right"
+					popoverProps={popoverProps}
+					popoverTargetProps={libTypeMenuProps} >
+					<Button 
+						active={true}
+						className={CustomClasses.TEXT_SMALL} 
+						icon={type == "users" ? "user" : "people"}
+						intent="primary"
+						minimal={true}
+						rightIcon="caret-down"
+						text={type} />
+				</Select2>
+				<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-library" + pos} inputRef={inputRef} onChange={changeHandlers.updateLibraryID} placeholder="e.g, 123456" value={id} />
+			</ControlGroup>
+		</FormGroup>
+		<FormGroup label="API Key" labelFor={"req-apikey" + pos}>
+			<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-apikey" + pos} onChange={changeHandlers.updateAPIKey} placeholder="Zotero API key" value={apikey} />
+		</FormGroup>
+		<FormGroup label="Name" labelFor={"req-name" + pos}>
+			<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-name" + pos} onChange={changeHandlers.updateName} placeholder="Nickname (optional)" value={name} />
+		</FormGroup>
+	</>;
+}
+DataRequestForm.propTypes = {
+	inputRef: any,
+	pos: number,
+	req: customPropTypes.dataRequestType,
+	updateReq: func
+};
 
-	const menuProps = {
-		title: "Select the type of library you want to use"
-	};
+const defaultReq = {
+	apikey: "",
+	library: {
+		type: "users",
+		id: ""
+	},
+	name: ""
+};
 
-	const popoverTargetProps = {
-		style: { textAlign: "right" },
-		title: "Select the type of library you want to use"
-	};
+function NewRequest({ addReq, inputRef }){
+	const [req, updateReq] = useState(defaultReq);
 
+	const addToReqList = useCallback(() => {
+		addReq(req);
+		updateReq(defaultReq);
+	}, [addReq, req]);
 
-	return <div className="zr-data-request" >
+	return <div className="zr-data-request new">
 		<ControlGroup>
-			<FormGroup label="Library" labelFor={"req-library" + pos}>
-				<ControlGroup>
-					<Select2 
-						filterable={false}
-						itemRenderer={renderAsMenuItem}
-						items={LIB_TYPE_OPTIONS} 
-						menuProps={menuProps}
-						onItemSelect={changeHandlers.updateLibraryType} 
-						placement="bottom-right"
-						popoverProps={popoverProps}
-						popoverTargetProps={popoverTargetProps} >
-						<Button 
-							active={true}
-							className={CustomClasses.TEXT_SMALL} 
-							icon={type == "users" ? "user" : "people"}
-							intent="primary"
-							minimal={true}
-							rightIcon="caret-down"
-							text={type} />
-					</Select2>
-					<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-library" + pos} onChange={changeHandlers.updateLibraryID} placeholder="e.g, 123456" value={id} />
-				</ControlGroup>
-			</FormGroup>
-			<FormGroup label="API Key" labelFor={"req-apikey" + pos}>
-				<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-apikey" + pos} onChange={changeHandlers.updateAPIKey} placeholder="Zotero API key" value={apikey} />
-			</FormGroup>
-			<FormGroup label="Name" labelFor={"req-name" + pos}>
-				<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-name" + pos} onChange={changeHandlers.updateName} placeholder="Nickname (optional)" value={name} />
-			</FormGroup>
+			<DataRequestForm inputRef={inputRef} pos="new" req={req} updateReq={updateReq} />
+			<Button className={[CustomClasses.TEXT_SMALL, Classes.FIXED]} intent="success" minimal={true} onClick={addToReqList} text="Add" title="Add the request" />
+		</ControlGroup>
+	</div>;
+}
+NewRequest.propTypes = {
+	addReq: func,
+	inputRef: any
+};
+
+function ExistingRequest({ handlers, pos, req }){
+	const { removeReq, updateReq } = handlers;
+
+	return <div className="zr-data-request existing" >
+		<ControlGroup>
+			<DataRequestForm pos={pos} req={req} updateReq={updateReq} />
 			<Button className={Classes.FIXED} icon="remove" intent="danger" minimal={true} onClick={removeReq} title="Remove the request" />
 		</ControlGroup>
 	</div>;
 }
-RequestInput.propTypes = {
+ExistingRequest.propTypes = {
 	handlers: shape({
 		removeReq: func,
 		updateReq: func
@@ -118,22 +154,20 @@ RequestInput.propTypes = {
 function RequestsEditor({ closeDialog, dataRequests = [], updateRequests }){
 	const [reqList, setReqList] = useState(dataRequests);
 	const [validationError, setValidationError] = useState(null);
+	const newReqField = useRef();
 
 	useEffect(() => {
 		setValidationError(null);
 	}, [reqList]);
 
-	const addReq = useCallback(() => {
+	useEffect(() => {
+		newReqField?.current?.focus();
+	}, []);
+
+	const addReq = useCallback((val) => {
 		setReqList((prevState) => addElemToArray(
 			prevState, 
-			{
-				apikey: "",
-				library: {
-					id: "",
-					type: "users"
-				},
-				name: ""
-			}
+			val
 		));
 	}, []);
 
@@ -156,8 +190,9 @@ function RequestsEditor({ closeDialog, dataRequests = [], updateRequests }){
 
 	return <>
 		<div className={Classes.DIALOG_BODY}>
-			{reqList.map((req, i) => <RequestInput key={i} pos={i} req={req} handlers={makeHandlersForReq(i)} />)}
-			<Button className={CustomClasses.TEXT_SMALL} intent="warning" minimal={true} onClick={addReq} rightIcon="add" text="Add request" />
+			{reqList.map((req, i) => <ExistingRequest key={i} pos={i} req={req} handlers={makeHandlersForReq(i)} />)}
+			<H6>Add a new request</H6>
+			<NewRequest addReq={addReq} inputRef={newReqField} />
 			{validationError && <ErrorCallout error={validationError} />}
 		</div>
 		<div className={Classes.DIALOG_FOOTER}>

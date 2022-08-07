@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 import { Button, Dialog } from "@blueprintjs/core";
 import DataRequest from "./DataRequest";
@@ -23,12 +23,14 @@ function RequestsWidget(){
 
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 
+	const updateRequests = useCallback((val) => setOpts(_prevState => val), [setOpts]);
+
 	return <>
 		<RowCol title="Data Requests" description="Choose which items to sync from Zotero" rightElement={<Button className={CustomClasses.TEXT_SMALL} icon={dataRequests.length == 0 ? "arrow-right" : null} intent="warning" minimal={true} onClick={openDialog} text={dataRequests.length == 0 ? "Add request" : "Edit"} />}>
 			{dataRequests.map((req) => <DataRequest key={req.name} request={req} />)}
 		</RowCol>
-		<Dialog isOpen={isDialogOpen} onClose={closeDialog}>
-			<RequestsEditor closeDialog={closeDialog} dataRequests={dataRequests} updateRequests={setOpts} />
+		<Dialog className="zr-data-requests-dialog" isOpen={isDialogOpen} onClose={closeDialog}>
+			<RequestsEditor closeDialog={closeDialog} dataRequests={dataRequests} updateRequests={updateRequests} />
 		</Dialog>
 	</>;
 }
