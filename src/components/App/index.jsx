@@ -117,6 +117,10 @@ class App extends Component {
 					status: "disabled"
 				};
 			});
+		} else if(prevProps.requests.dataRequests.length == 0 && this.props.requests.dataRequests.length > 0){
+			this.setState((_prev) => ({
+				status: "on"
+			}));
 		}
 		// In the case of a change in requests, the old requests should become inactive & be eventually cleared
 		// TODO: check if *changed* requests would require an explicit update
