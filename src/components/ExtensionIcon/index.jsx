@@ -142,10 +142,11 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 	const collectionQueries = useQuery_Collections(libraries, queryOpts);
     
 	const isCurrentlyLoading = [...permissionQueries, ...itemQueries, ...tagQueries, ...collectionQueries].some(q => q.isLoading);
+	const isCurrentlyFetching = [...permissionQueries, ...itemQueries, ...tagQueries, ...collectionQueries].some(q => q.fetchStatus == "fetching");
 	const hasLoadingError = [...permissionQueries, ...itemQueries, ...tagQueries, ...collectionQueries].some(q => q.isLoadingError);
 	const allowContext = itemQueries.some(q => q.data);
 
-	const data_status = useMemo(() => hasLoadingError ? "error" : (isCurrentlyLoading ? "loading" : "ready"), [isCurrentlyLoading, hasLoadingError]);
+	const data_status = useMemo(() => hasLoadingError ? "error" : ((isCurrentlyLoading && isCurrentlyFetching) ? "loading" : "ready"), [isCurrentlyFetching, isCurrentlyLoading, hasLoadingError]);
 	const button_icon = useMemo(() => status == "disabled" ? "warning-sign" : hasLoadingError ? "issue" : "manual", [hasLoadingError, status]);
 
 	const queries = useMemo(() => {
@@ -178,11 +179,11 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 		return (
 			<Menu>
 				<MenuItem text="Settings" icon="settings" onClick={openSettingsPanel} />
-				<MenuItem text="Dashboard" icon="dashboard" labelElement={betaTag} onClick={openDashboard} />
-				<MenuItem text="Search in library" icon="search" onClick={openSearchPanel} />
+				<MenuItem disabled={!allowContext} text="Dashboard" icon="dashboard" labelElement={betaTag} onClick={openDashboard} />
+				<MenuItem disabled={!allowContext} text="Search in library" icon="search" onClick={openSearchPanel} />
 			</Menu>
 		);
-	}, [openDashboard, openSearchPanel, openSettingsPanel]);
+	}, [allowContext, openDashboard, openSearchPanel, openSettingsPanel]);
 
 	return (
 		<Tooltip2 popoverClassName="zr-icon-tooltip" 
@@ -194,7 +195,6 @@ const ExtensionIcon = React.memo(function ExtensionIcon(props) {
 			hoverCloseDelay={450} 
 		>
 			<ContextMenu2
-				disabled={!allowContext}
 				content={contextMenu}
 			>
 				<Button id="zotero-roam-icon"
