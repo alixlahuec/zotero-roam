@@ -9,6 +9,11 @@
     width: calc(100% - 2*(var(--zr-dialog-gutter) + var(--zr-dialog-margin)));
 }
 
+.bp4-dialog[class*="zr-auxiliary-dialog--"]::-webkit-scrollbar,
+.bp4-dialog[class*="zr-auxiliary-dialog--"] ::-webkit-scrollbar {
+    background: var(--zr-box-bg);
+}
+
 .bp4-dialog[class*="zr-auxiliary-dialog--"] > .bp4-dialog-header {
     background: var(--zr-dialog-bg);
     border-bottom: 1px var(--zr-border-co) solid;

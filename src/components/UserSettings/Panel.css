@@ -98,6 +98,10 @@
     justify-content: space-between;
 }
 
+.zr-settings-list [zr-role="settings-row-col"] > button.bp4-button {
+    height: fit-content;
+}
+
 .zr-settings-list [zr-role="settings-row-col--container"] {
     display: flex;
     flex: 0 0 100%;
