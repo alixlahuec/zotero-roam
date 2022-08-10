@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func as funcType, node } from "prop-types";
 
 import * as customPropTypes from "../../../propTypes";
 import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect } from "../common";
 
 
-const AnnotationsSettings = React.createContext({});
+const AnnotationsSettings = createContext({});
 
 const AnnotationsProvider = ({ children, init, updater }) => {
 	const [annotations, _setAnnotations] = useState(init);

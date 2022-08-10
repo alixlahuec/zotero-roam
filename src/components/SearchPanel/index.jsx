@@ -1,5 +1,5 @@
 import { bool, func, oneOf } from "prop-types";
-import React from "react";
+import { memo } from "react";
 
 import DialogOverlay from "../DialogOverlay";
 import LibraryQueryList from "./LibraryQueryList";
@@ -32,7 +32,7 @@ function useGetItems(reqs, roamCitekeys, opts = {}){
 	return itemQueries.map(q => q.data || []).flat(1);
 }
 
-const SearchPanel = React.memo(function SearchPanel({ isOpen, onClose, status }) {
+const SearchPanel = memo(function SearchPanel({ isOpen, onClose, status }) {
 	const [{ useQuickCopy }] = useCopySettings();
 	const [{ dataRequests }] = useRequestsSettings();
 	const [roamCitekeys,] = useRoamCitekeys();

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { HotkeysProvider } from "@blueprintjs/core";
 import { expect } from "@storybook/jest";

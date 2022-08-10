@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { arrayOf, func, string } from "prop-types";
 import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect2 } from "@blueprintjs/select";
@@ -53,7 +53,7 @@ function itemListPredicate(query, items) {
 		.slice(0, results_limit);
 }
 
-const TagsSelector = React.memo(function TagsSelector({ selectedTags, onRemove, onSelect, ...props }) {
+const TagsSelector = memo(function TagsSelector({ selectedTags, onRemove, onSelect, ...props }) {
 	const [roamPages,] = useState(() => getAllPages()); // https://tkdodo.eu/blog/things-to-know-about-use-state
 
 	const addTag = useCallback((tag, _event) => {

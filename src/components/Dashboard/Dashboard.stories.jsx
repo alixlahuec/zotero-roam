@@ -1,5 +1,3 @@
-import React from "react";
-
 import Dashboard from ".";
 
 import { userEvent, waitFor, within } from "@storybook/testing-library";

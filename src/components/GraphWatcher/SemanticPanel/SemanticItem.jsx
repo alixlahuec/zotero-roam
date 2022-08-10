@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { bool, func, oneOf, oneOfType, string } from "prop-types";
 
 import { Button, Classes, Icon, Tag } from "@blueprintjs/core";
@@ -9,7 +9,7 @@ import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
 
-const SemanticItem = React.memo(function SemanticItem(props) {
+const SemanticItem = memo(function SemanticItem(props) {
 	const { handleRemove, handleSelect, inGraph, isSelected, item, type } = props;
 	const { inLibrary } = item;
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape } from "prop-types";
 
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";

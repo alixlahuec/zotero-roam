@@ -1,9 +1,9 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
 
 import * as customPropTypes from "../../../propTypes";
 
-const SciteSettings = React.createContext({});
+const SciteSettings = createContext({});
 
 const SciteProvider = ({ children, init, updater }) => {
 	const [sciteBadge, _setSciteBadge] = useState(init);

@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import React, { useCallback, useEffect, useMemo } from "react";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import Tribute from "tributejs";
 
 import { useAutocompleteSettings } from "../UserSettings/Autocomplete";
@@ -69,7 +69,7 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 	return data;
 };
 
-const Autocomplete = React.memo(function Autocomplete() {
+const Autocomplete = memo(function Autocomplete() {
 	const [{ dataRequests }] = useRequestsSettings();
 	const [{ trigger, display = "citekey", format = "citation" }] = useAutocompleteSettings();
 

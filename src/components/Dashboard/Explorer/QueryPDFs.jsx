@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { NonIdealState } from "@blueprintjs/core";
 import { arrayOf } from "prop-types";
 

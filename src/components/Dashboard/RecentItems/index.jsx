@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, number, shape, string } from "prop-types";
 
 import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
@@ -28,7 +28,7 @@ function labelRenderer(num, { isHandleTooltip }) {
 	return isHandleTooltip ? `Last ${num} days` : false;
 }
 
-const LogViewSublist = React.memo(function LogViewSublist({ allAbstractsShown, items, label, onClose }){
+const LogViewSublist = memo(function LogViewSublist({ allAbstractsShown, items, label, onClose }){
 	return items.length == 0
 		? null
 		: <>
@@ -43,7 +43,7 @@ LogViewSublist.propTypes = {
 	onClose: func
 };
 
-const LogView = React.memo(function LogView({ itemList, onClose }){
+const LogView = memo(function LogView({ itemList, onClose }){
 	const [asRecentAs, setAsRecentAs] = useState(7);
 	const [allAbstractsShown, { toggle: toggleAbstracts }] = useBool(false);
 	const [itemsLog, setItemsLog] = useState(null);
@@ -83,7 +83,7 @@ LogView.propTypes = {
 	onClose: func
 };
 
-const RecentItems = React.memo(function RecentItems({ onClose }){
+const RecentItems = memo(function RecentItems({ onClose }){
 	const [{ dataRequests }] = useRequestsSettings();
 	const itemQueries = useQuery_Items(dataRequests, {
 		notifyOnChangeProps: ["data"],

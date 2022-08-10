@@ -1,10 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
 
 import * as customPropTypes from "../../../propTypes";
 
 
-const RequestsSettings = React.createContext({});
+const RequestsSettings = createContext({});
 
 const RequestsProvider = ({ children, init, updater }) => {
 	const [requests, _setRequests] = useState(init);

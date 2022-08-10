@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { Children, isValidElement, cloneElement, useCallback, useMemo } from "react";
 import { arrayOf, bool, func, node, object, objectOf, oneOfType, shape, string } from "prop-types";
 
 import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, MenuItem, Switch } from "@blueprintjs/core";
@@ -47,9 +47,9 @@ RowCol.propTypes = {
 };
 
 const RowGroup = ({ children, description = null, onChange, options, selected, title = null }) => {
-	const childrenWithProps = React.Children.map(children, (child) => {
-		if (React.isValidElement(child)) {
-			return React.cloneElement(child, { handleSelect: onChange, options, selected });
+	const childrenWithProps = Children.map(children, (child) => {
+		if (isValidElement(child)) {
+			return cloneElement(child, { handleSelect: onChange, options, selected });
 		}
 		return child;
 	});

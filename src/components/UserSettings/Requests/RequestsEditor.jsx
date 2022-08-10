@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { any, arrayOf, func, number, shape } from "prop-types";
 
 import { Button, Classes, ControlGroup, FormGroup, H6, InputGroup, MenuItem } from "@blueprintjs/core";

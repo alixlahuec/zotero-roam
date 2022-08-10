@@ -1,4 +1,3 @@
-import React from "react";
 import SearchPanel from ".";
 
 import { expect, jest } from "@storybook/jest";

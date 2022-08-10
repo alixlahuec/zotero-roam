@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { node, object } from "prop-types";
 
 import { SETTINGS_CONFIG } from "./mapping";

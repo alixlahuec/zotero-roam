@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Backlinks } from "./CitekeyMenu";
 
 import { citoids, semanticIdentifier } from "Mocks/citoid";

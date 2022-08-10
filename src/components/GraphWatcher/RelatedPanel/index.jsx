@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { arrayOf, bool, func, oneOf, oneOfType, shape, string } from "prop-types";
 
 import { Button, Classes } from "@blueprintjs/core";
@@ -19,7 +19,7 @@ import "./index.css";
 
 const labelId = "zr-related-panel-label";
 
-const Abstract = React.memo(function Abstract({ abstract, allAbstractsShown }) {
+const Abstract = memo(function Abstract({ abstract, allAbstractsShown }) {
 	const [isVisible, { set: setVisible, toggle: toggleAbstract }] = useBool(allAbstractsShown);
 
 	useEffect(() => {
@@ -51,7 +51,7 @@ Abstract.propTypes = {
 	allAbstractsShown: bool
 };
 
-const Timestamp = React.memo(function Timestamp({ timestamp, type }){
+const Timestamp = memo(function Timestamp({ timestamp, type }){
 	return type == "added_on"
 		? <span className={[Classes.MENU_ITEM_LABEL, CustomClasses.TEXT_SMALL, "zr-related-item--timestamp"].join(" ")}>
 			{timestamp}
@@ -63,7 +63,7 @@ Timestamp.propTypes = {
 	type: oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
 };
 
-const RelatedItem = React.memo(function RelatedItem(props) {
+const RelatedItem = memo(function RelatedItem(props) {
 	const { allAbstractsShown, closeDialog, inGraph, item, type } = props;
 	const { children: { pdfs, notes }, raw } = item;
 
@@ -100,7 +100,7 @@ RelatedItem.propTypes = {
 	type: oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
 };
 
-const RelatedList = React.memo(function RelatedList(props) {
+const RelatedList = memo(function RelatedList(props) {
 	const { allAbstractsShown, closeDialog, items, type } = props;
 
 	const sortedItems = useMemo(() => {
@@ -129,7 +129,7 @@ RelatedList.propTypes = {
 	type: oneOf(["added_on", "with_abstract", "with_tag"])
 };
 
-const RelatedPanel = React.memo(function RelatedPanel(props) {
+const RelatedPanel = memo(function RelatedPanel(props) {
 	const { isOpen, items, onClose, show } = props;
 	const [isShowingAllAbstracts, { toggle: toggleAbstracts }] = useBool(false);
 

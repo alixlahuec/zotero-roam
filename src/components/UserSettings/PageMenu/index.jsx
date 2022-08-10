@@ -1,10 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
 
 import * as customPropTypes from "../../../propTypes";
 import { MultiInput, SingleInput } from "../common";
 
-const PageMenuSettings = React.createContext({});
+const PageMenuSettings = createContext({});
 
 const PageMenuProvider = ({ children, init, updater }) => {
 	const [pageMenu, _setPageMenu] = useState(init);

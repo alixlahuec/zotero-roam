@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { arrayOf, bool, shape, string } from "prop-types";
 
 import { Button, ButtonGroup, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
@@ -70,7 +70,7 @@ BacklinksItem.propTypes = {
 	entry: customPropTypes.cleanSemanticReturnType.isRequired
 };
 
-const Backlinks = React.memo(function Backlinks(props) {
+const Backlinks = memo(function Backlinks(props) {
 	const { isOpen, items = [], origin } = props;
 
 	if(items.length == 0){
@@ -225,7 +225,7 @@ ViewItem.propTypes = {
 	item: customPropTypes.cleanLibraryItemType
 };
 
-const CitekeyMenu = React.memo(function CitekeyMenu({ item, itemList }) {
+const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 	const [annotationsSettings] = useAnnotationsSettings();
 	const [metadataSettings] = useMetadataSettings();
 	const [notesSettings] = useNotesSettings();

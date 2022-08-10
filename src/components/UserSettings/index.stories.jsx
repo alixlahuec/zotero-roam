@@ -1,4 +1,3 @@
-import React from "react";
 import { SettingsDialog } from ".";
 
 import { userEvent, within } from "@storybook/testing-library";

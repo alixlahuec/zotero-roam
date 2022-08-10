@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 
 import { Icon } from "@blueprintjs/core";
 
@@ -14,7 +14,7 @@ import { CustomClasses } from "../../../../constants";
 
 import * as customPropTypes from "../../../../propTypes";
 
-const ItemEntry = React.memo(function ItemEntry({ entry, library }){
+const ItemEntry = memo(function ItemEntry({ entry, library }){
 	const is_singleton = isSingleton(entry);
 	const suggestion = makeSuggestionFor(entry);
 	const usage = getTagUsage(entry);

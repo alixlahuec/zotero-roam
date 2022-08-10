@@ -1,4 +1,3 @@
-import React from "react";
 import WebImportPanel from "./WebImportPanel";
 
 import { badIdentifier, citoids, goodIdentifier } from "Mocks/citoid";

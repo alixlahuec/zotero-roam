@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { bool, func, string } from "prop-types";
 import { Button } from "@blueprintjs/core";
 
@@ -42,7 +42,7 @@ Abstract.propTypes = {
 	allAbstractsShown: bool
 };
 
-const LogItem = React.memo(function LogItem({ allAbstractsShown, item, onClose }){
+const LogItem = memo(function LogItem({ allAbstractsShown, item, onClose }){
 	const { abstract, children, inGraph, itemType, meta, publication, raw, title } = item;
 
 	return <ListItem className="zr-log-entry" data-in-graph={(inGraph != false).toString()}>

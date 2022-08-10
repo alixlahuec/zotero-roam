@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { memo, useCallback } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
 
 import { ButtonGroup, Icon } from "@blueprintjs/core";
@@ -31,7 +31,7 @@ SortButton.propTypes = {
 	value: string
 };
 
-const SortButtons = React.memo(function SortButtons(props){
+const SortButtons = memo(function SortButtons(props){
 	const { name, onSelect, options, selectedOption } = props;
 	return (
 		<ButtonGroup minimal={true} >

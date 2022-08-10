@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { RoamCitekeys } from "../src/components/RoamCitekeysContext";
 
 export const withRoamCitekeys = (Story, context) => {

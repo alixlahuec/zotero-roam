@@ -1,5 +1,3 @@
-import React from "react";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react-hooks";
 
@@ -12,7 +10,7 @@ import { semantics } from "Mocks/semantic-scholar";
 import { tags } from "Mocks/zotero/tags";
 
 import { makeTagList, parseSemanticDOIs } from "../../src/api/utils";
-import { useQuery_Citoid, useQuery_Collections, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries"; 
+import { useQuery_Citoid, useQuery_Collections, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
 
 
 const { 
@@ -166,7 +164,7 @@ describe("Hook for tags queries", () => {
 			.toEqual(tagData);
 	});
 });
-  
+
 describe("Hook for writeable libraries", () => {
 	test("Key with full access", async() => {
 		const libs = [

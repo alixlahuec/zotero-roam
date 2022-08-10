@@ -1,4 +1,3 @@
-import React from "react";
 import { HotkeysProvider } from "@blueprintjs/core";
 
 export const withHotkeysProvider = (Story, context) => {

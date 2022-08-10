@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { memo, useCallback } from "react";
 import { arrayOf, bool, func, object, string } from "prop-types";
 
 import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
@@ -36,7 +36,7 @@ function useGetCitoids(urls, opts = {}) {
 	});
 }
 
-const WebImportItem = React.memo(function WebImportItem(props){
+const WebImportItem = memo(function WebImportItem(props){
 	const { isSelected, item, onSelect } = props;
 	const [typemap] = useTypemapSettings();
 
@@ -81,7 +81,7 @@ WebImportItem.propTypes = {
 	onSelect: func
 };
 
-const WebImportPanel = React.memo(function WebImportPanel(props){
+const WebImportPanel = memo(function WebImportPanel(props){
 	const { isOpen, onClose, urls } = props;
 	const [selected, { set: setSelected, toggle: onItemSelect }] = useMulti({
 		start: []

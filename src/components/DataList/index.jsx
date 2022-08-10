@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { func, node, number, oneOf, string } from "prop-types";
 
 import { Button, ControlGroup } from "@blueprintjs/core";
@@ -23,7 +23,7 @@ ListWrapper.propTypes = {
 	children: node
 };
 
-const Pagination = React.memo(function Pagination({ arrows = "last", currentPage, itemsPerPage = 30, nbItems, setCurrentPage }){
+const Pagination = memo(function Pagination({ arrows = "last", currentPage, itemsPerPage = 30, nbItems, setCurrentPage }){
 	const nbPages = useMemo(() => nbItems == 0 ? 0 : Math.ceil(nbItems / itemsPerPage), [itemsPerPage, nbItems]);
 	const goToNext = useCallback(() => {
 		if(currentPage < nbPages){

@@ -1,4 +1,3 @@
-import React from "react";
 import { UserSettingsProvider} from "../src/components/UserSettings";
 
 import { apiKeys } from "Mocks/zotero/keys";

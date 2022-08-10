@@ -1,5 +1,4 @@
 import { array, node, object, oneOfType, string } from "prop-types";
-import React from "react";
 
 import { ErrorBoundary } from "@sentry/react";
 import ErrorCallout from "./ErrorCallout";

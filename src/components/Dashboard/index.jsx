@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { bool, func, oneOf } from "prop-types";
 
 import { Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
@@ -12,7 +12,7 @@ import { CustomClasses } from "../../constants";
 
 import "./index.css";
 
-const TabList = React.memo(function TabList(props){
+const TabList = memo(function TabList(props){
 	const { defaultTab, onClose } = props;
 	const [isActiveTab, setActiveTab] = useState(defaultTab);
 
@@ -36,7 +36,7 @@ TabList.propTypes = {
 	onClose: func
 };
 
-const Dashboard = React.memo(function Dashboard({ isOpen, onClose }){
+const Dashboard = memo(function Dashboard({ isOpen, onClose }){
 	return (
 		<AuxiliaryDialog
 			className="dashboard"

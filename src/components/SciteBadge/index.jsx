@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { bool, number, oneOf, string } from "prop-types";
 
 import "./index.css";
@@ -13,7 +13,7 @@ import "./index.css";
  * @param {string} tooltipPlacement - Where should the tooltip be displayed ?
  * @param {Integer} tooltipSlide - Should the tooltip be positioned with offset ? 
  **/
-const SciteBadge = React.memo(function SciteBadge(props) {
+const SciteBadge = memo(function SciteBadge(props) {
 	const {
 		doi,
 		layout = "horizontal",

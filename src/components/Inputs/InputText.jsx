@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { func, string } from "prop-types";
 
 import { Icon, InputGroup } from "@blueprintjs/core";

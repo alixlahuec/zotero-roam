@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { arrayOf, func, shape } from "prop-types";
 
 import { Button, ButtonGroup, Classes } from "@blueprintjs/core";
@@ -9,7 +9,7 @@ import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
 
-const SelectedImportItem = React.memo(function SelectedImportItem(props) {
+const SelectedImportItem = memo(function SelectedImportItem(props) {
 	const { handleRemove, item } = props;
 
 	const removeItemFromImport = useCallback(() => {
@@ -35,7 +35,7 @@ SelectedImportItem.propTypes = {
 	item: customPropTypes.cleanSemanticReturnType
 };
 
-const SidePanel = React.memo(function SidePanel({ selectProps }) {
+const SidePanel = memo(function SidePanel({ selectProps }) {
 	const { handleRemove, items, resetImport } = selectProps;
 
 	const importActive = items.length > 0;

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { arrayOf, string } from "prop-types";
 import { Button } from "@blueprintjs/core";
 

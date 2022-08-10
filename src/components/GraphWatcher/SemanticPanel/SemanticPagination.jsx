@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape } from "prop-types";
 
 import { InputGroup, NonIdealState } from "@blueprintjs/core";
@@ -85,7 +85,7 @@ Item.propTypes = {
 	type: oneOf(["is_citation", "is_reference"])
 };
 
-const SemanticPagination = React.memo(function SemanticPagination(props){
+const SemanticPagination = memo(function SemanticPagination(props){
 	const { items, selectProps, type } = props;
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [query, onQueryChange] = useText("");

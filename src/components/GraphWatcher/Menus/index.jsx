@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { arrayOf, object } from "prop-types";
 import { createPortal } from "react-dom";
 

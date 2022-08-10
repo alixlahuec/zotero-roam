@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo } from "react";
 import { array, func, objectOf, oneOf } from "prop-types";
 
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
@@ -41,7 +41,7 @@ function DarkThemeToggle (){
 		onChange={toggleDarkTheme} />;
 }
 
-const IconTooltipFooter = React.memo(function IconTooltipFooter() {
+const IconTooltipFooter = memo(function IconTooltipFooter() {
 	const { version } = useContext(ExtensionContext);
 	
 	return <div className="zr-icon-tooltip-footer">
@@ -125,7 +125,7 @@ QueriesStatusList.propTypes = {
 	queries: objectOf(array)
 };
 
-const ExtensionIcon = React.memo(function ExtensionIcon(props) {
+const ExtensionIcon = memo(function ExtensionIcon(props) {
 	const { openDashboard, openSearchPanel, openSettingsPanel, status, toggleExtension } = props;
 	const [{ apiKeys, dataRequests, libraries }] = useRequestsSettings();
     

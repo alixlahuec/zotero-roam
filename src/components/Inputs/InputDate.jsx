@@ -1,5 +1,4 @@
 import { arrayOf, func, instanceOf } from "prop-types";
-import React from "react";
 
 import { DateInput, DateRangeInput } from "@blueprintjs/datetime";
 import { Icon } from "@blueprintjs/core";

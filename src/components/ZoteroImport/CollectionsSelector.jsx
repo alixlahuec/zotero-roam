@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { memo, useCallback } from "react";
 import { array, bool, func, object } from "prop-types";
 
 import { Checkbox, Spinner } from "@blueprintjs/core";
@@ -6,7 +6,7 @@ import { Checkbox, Spinner } from "@blueprintjs/core";
 import { CustomClasses } from "../../constants";
 
 
-const CollectionOption = React.memo(function CollectionOption(props) {
+const CollectionOption = memo(function CollectionOption(props) {
 	const { collection, isChecked, onSelect } = props;
 	const { data: { name }, depth, key } = collection;
 
@@ -30,7 +30,7 @@ CollectionOption.propTypes = {
 	onSelect: func
 };
 
-const CollectionsSelector = React.memo(function CollectionsSelector(props) {
+const CollectionsSelector = memo(function CollectionsSelector(props) {
 	const { collections, onSelect, selectedCollections } = props;
 
 	return (

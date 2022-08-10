@@ -1,5 +1,3 @@
-import React from "react";
-
 import LibraryQueryList from "./LibraryQueryList";
 
 import useBool from "../../hooks/useBool";

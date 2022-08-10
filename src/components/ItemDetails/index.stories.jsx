@@ -1,5 +1,3 @@
-import React from "react";
-
 import ItemDetails from ".";
 import zrToaster from "../ExtensionToaster";
 

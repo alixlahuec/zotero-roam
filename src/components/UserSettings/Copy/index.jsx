@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
 
 import { SingleInput, Toggle } from "../common";
 
 import * as customPropTypes from "../../../propTypes";
 
-const CopySettings = React.createContext({});
+const CopySettings = createContext({});
 
 const CopyProvider = ({ children, init, updater }) => {
 	const [copy, _setCopy] = useState(init);

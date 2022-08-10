@@ -1,4 +1,3 @@
-import React from "react";
 import { Tag } from "@blueprintjs/core";
 
 import * as customPropTypes from "../../../../propTypes";

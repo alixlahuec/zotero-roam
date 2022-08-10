@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 
 import { Icon, Tag } from "@blueprintjs/core";
 
@@ -12,7 +12,7 @@ import { CustomClasses } from "../../../../constants";
 import * as customPropTypes from "../../../../propTypes";
 
 
-const ItemSuggestion = React.memo(function ItemSuggestion({ entry, library }){
+const ItemSuggestion = memo(function ItemSuggestion({ entry, library }){
 
 	return (
 		<ListItem className="zr-tag-suggestion" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import { memo, useContext, useMemo } from "react";
 import { bool, func, node, string } from "prop-types";
 import { createPortal } from "react-dom";
 
@@ -10,7 +10,7 @@ import { CustomClasses } from "../../constants";
 
 import "./index.css";
 
-const DialogOverlay = React.memo(function DialogOverlay(props) {
+const DialogOverlay = memo(function DialogOverlay(props) {
 	const { 
 		ariaLabelledBy,
 		children, 

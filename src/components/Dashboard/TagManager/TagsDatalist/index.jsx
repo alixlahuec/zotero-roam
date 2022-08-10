@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, objectOf, oneOf, shape, string } from "prop-types";
 
 import { NonIdealState, Spinner } from "@blueprintjs/core";
@@ -20,7 +20,7 @@ import "./index.css";
 
 const itemsPerPage = 30;
 
-const TagsDatalist = React.memo(function TagsDatalist(props){
+const TagsDatalist = memo(function TagsDatalist(props){
 	const { filter, items, libProps } = props;
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [sortBy, setSortBy] = useState("usage");

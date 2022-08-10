@@ -1,6 +1,5 @@
 
 import { func, instanceOf, string } from "prop-types";
-import React from "react";
 
 import { Button, Callout } from "@blueprintjs/core";
 

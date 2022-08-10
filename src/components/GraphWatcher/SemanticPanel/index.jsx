@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
 
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
@@ -20,7 +20,7 @@ import "./index.css";
 
 const labelId = "zr-semantic-panel-label";
 
-const SemanticTabList = React.memo(function SemanticTabList(props) {
+const SemanticTabList = memo(function SemanticTabList(props) {
 	const { defaultTab, items, onClose, selectProps, title } = props;
 	const [isActiveTab, setActiveTab] = useState(defaultTab);
 	
@@ -91,7 +91,7 @@ SemanticTabList.propTypes = {
 	title: string
 };
 
-const SemanticPanel = React.memo(function SemanticPanel(props){
+const SemanticPanel = memo(function SemanticPanel(props){
 	const { isOpen, items, onClose, show } = props;
 	const [itemsForImport, { set: setItemsForImport, add: addToImport, remove: removeFromImport }] = useMulti({
 		start: [],

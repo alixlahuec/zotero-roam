@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { arrayOf, func, shape, string } from "prop-types";
 import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect2 } from "@blueprintjs/select";

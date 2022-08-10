@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { arrayOf, bool, oneOf, oneOfType, shape, string } from "prop-types";
 
 import { Menu, MenuItem } from "@blueprintjs/core";

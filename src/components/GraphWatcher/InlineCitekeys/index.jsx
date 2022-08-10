@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { bool, func, instanceOf, number, object, shape } from "prop-types";
 import { createPortal } from "react-dom";
 
@@ -78,7 +78,7 @@ const useGetItems = (reqs) => {
 	return new Map(data);
 };
 
-const CitekeyContextMenu = React.memo(function CitekeyContextMenu(props) {
+const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, onClose, target } = props;
 	const [annotationsSettings] = useAnnotationsSettings();
 	const [metadataSettings] = useMetadataSettings();
@@ -209,7 +209,7 @@ CitekeyContextMenu.propTypes = {
 };
 
 /* istanbul ignore next */
-const InlineCitekeys = React.memo(function InlineCitekeys() {
+const InlineCitekeys = memo(function InlineCitekeys() {
 	const { portalId } = useContext(ExtensionContext);
 	const [{ dataRequests }] = useRequestsSettings();
 	const [{ render_inline }] = useOtherSettings();

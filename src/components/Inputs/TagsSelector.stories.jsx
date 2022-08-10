@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import TagsSelector from "./TagsSelector";
 
 import { userEvent, waitFor, within } from "@storybook/testing-library";

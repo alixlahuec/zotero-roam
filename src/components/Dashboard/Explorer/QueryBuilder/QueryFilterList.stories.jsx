@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import QueryFilterList from "./QueryFilterList";
 
 import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "./utils";

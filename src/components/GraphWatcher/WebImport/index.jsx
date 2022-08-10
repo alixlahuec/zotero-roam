@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { arrayOf, object, string } from "prop-types";
 import { createPortal } from "react-dom";
 
@@ -13,7 +13,7 @@ import { hasNodeListChanged } from "../../../utils";
 import "./index.css";
 
 
-const WebImportButton = React.memo(function WebImportButton({ urls }){
+const WebImportButton = memo(function WebImportButton({ urls }){
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 
 	return <>

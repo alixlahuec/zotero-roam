@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
 
 import * as customPropTypes from "../../../propTypes";
 import { RoamTagsInput } from "../common";
 
 
-const WebImportSettings = React.createContext({});
+const WebImportSettings = createContext({});
 
 const WebImportProvider = ({ children, init, updater }) => {
 	const [webImport, _setWebImport] = useState(init);

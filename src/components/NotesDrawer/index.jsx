@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { arrayOf, bool, func, object } from "prop-types";
 
 import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tab, Tabs, Tag } from "@blueprintjs/core";
@@ -112,7 +112,7 @@ PanelNotes.propTypes = {
 	notes: arrayOf(customPropTypes.zoteroItemType)
 };
 
-const NotesDrawer = React.memo(function NotesDrawer(props){
+const NotesDrawer = memo(function NotesDrawer(props){
 	const { isOpen, notes, onClose } = props;
 
 	const annots = useMemo(() => notes.filter(n => n.data.itemType == "annotation"), [notes]);

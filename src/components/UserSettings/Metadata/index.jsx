@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func as funcType, node } from "prop-types";
 
 import { RowGroup, RowGroupOption, TextField, TextWithSelect } from "../common";
 
 import * as customPropTypes from "../../../propTypes";
 
-const MetadataSettings = React.createContext({});
+const MetadataSettings = createContext({});
 
 const MetadataProvider = ({ children, init, updater }) => {
 	const [metadata, _setMetadata] = useState(init);

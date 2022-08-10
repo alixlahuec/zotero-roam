@@ -1,5 +1,4 @@
 import { bool, func } from "prop-types";
-import React from "react";
 
 import { Button, Classes } from "@blueprintjs/core";
 

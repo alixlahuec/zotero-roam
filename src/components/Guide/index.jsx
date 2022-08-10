@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { element, node, string } from "prop-types";
 
 import { H6, Icon } from "@blueprintjs/core";

@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 
 import { CitekeyMenuFactory, DNPMenuFactory, TagMenuFactory } from "./Menus";
 import Autocomplete from "../Autocomplete";
@@ -15,7 +15,7 @@ import { menuPrefix, webimportClass } from "./classes";
 import { hasNodeListChanged } from "../../utils";
 
 
-const GraphWatcher = React.memo(function GraphWatcher(){
+const GraphWatcher = memo(function GraphWatcher(){
 	// From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
 	// https://jasonwatmore.com/post/2021/08/27/react-how-to-check-if-a-component-is-mounted-or-unmounted
 	const mounted = useRef(false);

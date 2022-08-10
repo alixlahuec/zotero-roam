@@ -1,8 +1,8 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node, objectOf, string } from "prop-types";
 
 
-const TypemapSettings = React.createContext({});
+const TypemapSettings = createContext({});
 
 const TypemapProvider = ({ children, init, updater }) => {
 	const [typemap, _setTypemap] = useState(init);

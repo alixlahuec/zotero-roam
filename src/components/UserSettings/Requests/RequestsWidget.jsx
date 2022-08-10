@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 
 import { Button, Dialog } from "@blueprintjs/core";
 import DataRequest from "./DataRequest";

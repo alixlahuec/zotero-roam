@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
 
 import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
@@ -24,7 +24,7 @@ import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 
-const ImportButton = React.memo(function ImportButton(props) {
+const ImportButton = memo(function ImportButton(props) {
 	const { identifiers, importProps, isActive, resetImport } = props;
 
 	const citoidQueries = useQuery_Citoid(identifiers, { 
@@ -90,7 +90,7 @@ ImportButton.propTypes = {
 	resetImport: func
 };
 
-const ImportPanel = React.memo(function ImportPanel(props) {
+const ImportPanel = memo(function ImportPanel(props) {
 	const { collections, identifiers, isActive, libraries, resetImport } = props;
 	const [selectedLib, handleLibSelection] = useSelect({
 		start: libraries[0],
@@ -164,7 +164,7 @@ ImportPanel.propTypes = {
 	resetImport: func
 };
 
-const ZoteroImport = React.memo(function ZoteroImport(props) {
+const ZoteroImport = memo(function ZoteroImport(props) {
 	const { identifiers, isActive, resetImport } = props;
 	const [{ libraries }] = useRequestsSettings();
 

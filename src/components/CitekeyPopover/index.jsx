@@ -1,5 +1,5 @@
 import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
-import React, { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { arrayOf, func, oneOf, oneOfType, string } from "prop-types";
 import { Popover2 } from "@blueprintjs/popover2";
 
@@ -26,7 +26,7 @@ const popoverMenuProps = {
 	popoverClassName: CustomClasses.POPOVER
 };
 
-const CitekeyPopover = React.memo(function CitekeyPopover(props) {
+const CitekeyPopover = memo(function CitekeyPopover(props) {
 	const { closeDialog, inGraph, item, notes = [], pdfs = [] } = props;
 	const [annotationsSettings] = useAnnotationsSettings();
 	const [metadataSettings] = useMetadataSettings();

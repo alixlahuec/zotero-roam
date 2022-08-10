@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
 
 import { Toggle } from "../common";
 
 import * as customPropTypes from "../../../propTypes";
 
-const OtherSettings = React.createContext({});
+const OtherSettings = createContext({});
 
 const OtherSettingsProvider = ({ children, init, updater }) => {
 	const [other, _setOther] = useState(init);

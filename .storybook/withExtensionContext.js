@@ -1,4 +1,3 @@
-import React from "react";
 import { ExtensionContext } from "../src/components/App";
 
 const defaultContext = {

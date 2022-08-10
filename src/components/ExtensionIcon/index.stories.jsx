@@ -1,5 +1,3 @@
-import React from "react";
-
 import ExtensionIcon from ".";
 
 import { screen, userEvent, waitFor, within } from "@storybook/testing-library";

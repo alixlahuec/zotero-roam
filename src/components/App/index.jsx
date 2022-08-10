@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React, { Component } from "react";
+import { createContext, Component } from "react";
 import { bool } from "prop-types";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
@@ -21,7 +21,7 @@ import * as customPropTypes from "../../propTypes";
 import { SettingsDialog } from "../UserSettings";
 
 
-const ExtensionContext = React.createContext();
+const ExtensionContext = createContext();
 
 const queryClient = new QueryClient({
 	defaultOptions: {

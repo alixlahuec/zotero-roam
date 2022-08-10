@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import ActionsMenu from "./ActionsMenu";
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";

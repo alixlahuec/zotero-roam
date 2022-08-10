@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { any, array, func, oneOf, string } from "prop-types";
 
 import { useTypemapSettings } from "../../../UserSettings/Typemap";

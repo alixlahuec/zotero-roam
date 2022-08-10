@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { func, node, object, oneOf, string } from "prop-types";
 
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
@@ -199,7 +199,7 @@ Metadata.propTypes = {
 	label: string
 };
 
-const ItemDetails = React.memo(function ItemDetails({ closeDialog, item }) {
+const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 	const {
 		abstract, 
 		authors, 

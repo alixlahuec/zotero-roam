@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { bool, func, node, object, shape } from "prop-types";
 
 import { Menu, MenuItem } from "@blueprintjs/core";
@@ -75,7 +75,7 @@ function testItemsEquality(a,b){
 	return (a.itemKey == b.itemKey && a.location == b.location);
 }
 
-const SearchResult = React.memo(function SearchResult(props) {
+const SearchResult = memo(function SearchResult(props) {
 	const { item, handleClick, modifiers } = props;
 	const { inGraph, itemType, key, meta, publication, title } = item;
 
@@ -108,7 +108,7 @@ SearchResult.propTypes = {
 	modifiers: object
 };
 
-const RenderedList = React.memo(function RenderedList(props){
+const RenderedList = memo(function RenderedList(props){
 	const { handleClose, /*handleKeyDown, handleKeyUp,*/ itemList, selectedItem } = props;
 
 	return selectedItem 
@@ -126,7 +126,7 @@ RenderedList.propTypes = {
 	selectedItem: customPropTypes.cleanLibraryItemType
 };
 
-const LibraryQueryList = React.memo(function LibraryQueryList(props) {
+const LibraryQueryList = memo(function LibraryQueryList(props) {
 	const { handleClose, isOpen, items, quickCopyProps } = props;
 	const [copySettings] = useCopySettings();
 

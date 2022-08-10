@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { Fragment, useCallback } from "react";
 import { array, bool, func, shape } from "prop-types";
 import { Button } from "@blueprintjs/core";
 
@@ -43,11 +43,13 @@ function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = tru
 						useOR: !useOR
 					};
 
-					return <React.Fragment key={index}>
-						{tm.constructor === Array
-							? <QueryBox terms={tm} {...termProps} />
-							: <QueryEntry term={tm} {...termProps} />}
-					</React.Fragment>;
+					return (
+                        <Fragment key={index}>
+                            {tm.constructor === Array
+                                ? <QueryBox terms={tm} {...termProps} />
+                                : <QueryEntry term={tm} {...termProps} />}
+                        </Fragment>
+                    );
 
 				})}
 			</div>

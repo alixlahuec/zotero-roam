@@ -1,10 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
 
 import * as customPropTypes from "../../../propTypes";
 import { SingleInput, TextField } from "../common";
 
-const AutocompleteSettings = React.createContext({});
+const AutocompleteSettings = createContext({});
 
 const AutocompleteProvider = ({ children, init, updater }) => {
 	const [autocomplete, _setAutocomplete] = useState(init);

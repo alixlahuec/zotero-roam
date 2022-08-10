@@ -1,5 +1,4 @@
 import { bool, func, object } from "prop-types";
-import React from "react";
 
 import { Button, Classes, Drawer, Tab, Tabs } from "@blueprintjs/core";
 import SentryBoundary from "../Errors/SentryBoundary";

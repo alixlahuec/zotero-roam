@@ -1,5 +1,5 @@
 import { arrayOf, func, shape, string } from "prop-types";
-import React from "react";
+import { memo } from "react";
 
 import { Button, MenuItem } from "@blueprintjs/core";
 import { Select2 } from "@blueprintjs/select";
@@ -19,7 +19,7 @@ function itemRenderer(item, itemProps) {
 	return <MenuItem key={item} onClick={handleClick} text={item} />;
 }
 
-const LibrarySelect = React.memo(function LibrarySelect({ libProps }){
+const LibrarySelect = memo(function LibrarySelect({ libProps }){
 	const { currentLibrary: { path }, onSelect, options } = libProps;
 
 	return (

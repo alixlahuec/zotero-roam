@@ -1,5 +1,5 @@
 import { Dialog, H5 } from "@blueprintjs/core";
-import React, { useContext, useMemo } from "react";
+import { memo, useContext, useMemo } from "react";
 import { arrayOf, bool, func, node, string } from "prop-types";
 import { createPortal } from "react-dom";
 
@@ -9,7 +9,7 @@ import { CustomClasses } from "../../constants";
 
 import "./index.css";
 
-const AuxiliaryDialog = React.memo(function AuxiliaryDialog(props) {
+const AuxiliaryDialog = memo(function AuxiliaryDialog(props) {
 	const {
 		ariaLabelledBy = null,
 		className: dialogClass,

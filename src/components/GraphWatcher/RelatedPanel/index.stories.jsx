@@ -1,4 +1,3 @@
-import React from "react";
 import RelatedPanel from ".";
 
 import { userEvent, waitFor, within } from "@storybook/testing-library";

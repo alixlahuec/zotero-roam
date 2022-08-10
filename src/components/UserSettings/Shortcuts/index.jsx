@@ -1,10 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
 
 import * as customPropTypes from "../../../propTypes";
 
 
-const ShortcutsSettings = React.createContext({});
+const ShortcutsSettings = createContext({});
 
 const ShortcutsProvider = ({ children, init, updater }) => {
 	const [shortcuts, _setShortcuts] = useState(init);

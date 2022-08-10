@@ -1,5 +1,5 @@
 import { number, shape } from "prop-types";
-import React from "react";
+import { memo } from "react";
 
 import { ProgressBar } from "@blueprintjs/core";
 
@@ -7,7 +7,7 @@ import { CustomClasses } from "../../../../constants";
 
 import "./index.css";
 
-const Stats = React.memo(function Stats({ stats }){
+const Stats = memo(function Stats({ stats }){
 	if(!stats){
 		return null;
 	} else {
