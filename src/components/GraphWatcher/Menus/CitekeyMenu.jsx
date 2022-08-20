@@ -1,7 +1,7 @@
 import { arrayOf, bool, shape, string } from "prop-types";
 import { memo, useCallback, useMemo, useState } from "react";
 
-import { Button, ButtonGroup, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
+import { Button, ButtonGroup, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "../../AuxiliaryDialog";
 import ButtonLink from "../../ButtonLink";
@@ -81,10 +81,7 @@ const Backlinks = memo(function Backlinks(props) {
 		const references = sortedItems.filter(it => it._type == "cited");
 		const citations = sortedItems.filter(it => it._type == "citing");
 
-		const separator = <span>
-			<Tag className="zr-backlinks-divider--tag" minimal={true} multiline={true}>{origin}</Tag>
-			<Divider />
-		</span>;
+		const separator = <Tag className="zr-backlinks-divider--tag" fill={true} minimal={true} multiline={true}>{origin}</Tag>;
 
 		return (
 			<Collapse isOpen={isOpen} keepChildrenMounted={true}>

@@ -21,6 +21,7 @@ import "./index.css";
 
 const popoverProps = {
 	autoFocus: true,
+	boundary: "window",
 	className: "zr-library-item-popover",
 	interactionKind: "hover",
 	lazy: true,

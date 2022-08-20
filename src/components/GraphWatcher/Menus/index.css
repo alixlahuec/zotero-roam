@@ -61,16 +61,12 @@ button[class*='zr-page-menu-show--'] {
     width: 100%;
 }
 
-.zr-citekey-menu--backlinks [list-type="references"] li:nth-child(even) {background-color:#e8f0ff;}
-.zr-citekey-menu--backlinks [list-type="citations"] li:nth-child(even) {background-color:#fff3e9;}
 .zr-backlink-item{
     align-items:flex-start;
     display:flex;
     padding:0px;
 }
 
-.zr-backlink-item[data-backlink-type="reference"]:hover {background-color:#e1ecff;}
-.zr-backlink-item[data-backlink-type="citation"]:hover {background-color:#fff6e1;}
 .zr-backlink-item--year, .zr-backlink-item--info{font-size:0.9em;padding: 0px 0px 6px 10px;}
 .zr-backlink-item--year{flex: 0 0 auto;}
 .zr-backlink-item--info{line-height:normal;flex: 1 2 90%;}
@@ -118,20 +114,3 @@ button[class*='zr-page-menu-show--'] {
     .zr-backlink-item--state{flex: 1 2 auto;}
     .zr-citekey-menu .bp4-button {font-size: 0.85em;}
 }
-
-/* DARK THEME */
-
-[zr-dark-theme="true"] .zr-citekey-menu--backlinks [zr-role="sublist"][list-type="references"] li:nth-child(even) {
-    background-color:var(--zr-dark-elem-bg, #2B3143);
-}
-
-[zr-dark-theme="true"] .zr-citekey-menu--backlinks [zr-role="sublist"][list-type="citations"] li:nth-child(even) {
-    background-color: var(--zr-dark-elem-bg-2, #3d332b);
-}
-
-[zr-dark-theme="true"] .zr-backlink-item[data-backlink-type="reference"]:hover,
-[zr-dark-theme="true"] .zr-backlink-item[data-backlink-type="citation"]:hover {
-    background-color: var(--zr-dark-selected-bc,#191919);
-}
-
-/* TODO: Set up system for backlinks colors, using vars */
