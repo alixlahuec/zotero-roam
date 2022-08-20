@@ -166,8 +166,7 @@ export function setupInitialSettings(settingsObject){
 		},
 		pageMenu: {
 			defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
-			// TODO: readd filter by page title length
-			trigger: true,
+			trigger: "default",
 			...pageMenu
 		},
 		sciteBadge: {

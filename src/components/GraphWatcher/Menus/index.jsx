@@ -1,7 +1,7 @@
 /* istanbul ignore file */
-import { useMemo } from "react";
 import { arrayOf, object } from "prop-types";
 import { createPortal } from "react-dom";
+import { useMemo } from "react";
 
 import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
@@ -35,12 +35,13 @@ function CitekeyMenuFactory({ menus }){
 			return null;
 		} else {
 			return menus
-				.filter(menu => {
+				.filter(_menu => {
 					if(trigger.constructor === Boolean){
 						return trigger;
 					} else {
-						const title = menu.getAttribute("data-citekey");
-						return trigger(title);
+						// If trigger isn't a Boolean, set default behavior
+						// i.e citekey menus are always shown
+						return true;
 					}
 				})
 				.map(menu => {
@@ -83,12 +84,13 @@ function DNPMenuFactory({ menus }){
 			return null;
 		} else {
 			return menus
-				.filter(menu => {
+				.filter(_menu => {
 					if(trigger.constructor === Boolean){
 						return trigger;
 					} else {
-						const title = menu.getAttribute("data-title");
-						return trigger(title);
+						// If trigger isn't a Boolean, set default behavior
+						// i.e DNP menus are always shown
+						return true;
 					}
 				})
 				.map(menu => {
@@ -154,8 +156,10 @@ function TagMenuFactory({ menus }){
 					if(trigger.constructor === Boolean){
 						return trigger;
 					} else {
+						// If trigger isn't a Boolean, set default behavior
+						// i.e page menus are shown only if the page title is > 5 characters
 						const title = menu.getAttribute("data-title");
-						return trigger(title);
+						return title.length > 5;
 					}
 				})
 				.map(menu => {

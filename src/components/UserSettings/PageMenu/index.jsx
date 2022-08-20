@@ -51,8 +51,8 @@ const ELEM_OPTIONS = [
 	{ label: "Citations & References", value: "citingPapers" }
 ];
 
-// TODO: re-allow the use of a function
 const TRIGGER_OPTIONS = [
+	{ label: "Default", value: "default" },
 	{ label: "Always", value: true },
 	{ label: "Never", value: false }
 ];

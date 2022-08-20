@@ -270,7 +270,7 @@ const otherSettingsType = shape({
 
 const pageMenuSettingsType = shape({
 	defaults: arrayOf(oneOf(["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"])),
-	trigger: oneOfType([func, bool])
+	trigger: oneOfType([bool, oneOf(["default"])])
 });
 
 const sciteBadgeSettingsType = shape({
