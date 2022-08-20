@@ -1,5 +1,5 @@
-import { memo, useCallback, useMemo, useState } from "react";
 import { arrayOf, bool, shape, string } from "prop-types";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import { Button, ButtonGroup, Card, Classes, Collapse, Divider, Tag } from "@blueprintjs/core";
 

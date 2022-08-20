@@ -1,5 +1,5 @@
-import { useCallback } from "react";
 import { node, object } from "prop-types";
+import { useCallback } from "react";
 
 import { SETTINGS_CONFIG } from "./mapping";
 
@@ -11,7 +11,6 @@ function UserSettingsProvider({ extensionAPI = {}, children, init }){
 		if(!extensionAPI.settings){
 			return null;
 		} else {
-			console.log(extensionAPI, id, val);
 			extensionAPI.settings.set(id, val);
 		}
 	}, [extensionAPI]);

@@ -63,8 +63,12 @@ button[class*='zr-page-menu-show--'] {
 
 .zr-citekey-menu--backlinks [list-type="references"] li:nth-child(even) {background-color:#e8f0ff;}
 .zr-citekey-menu--backlinks [list-type="citations"] li:nth-child(even) {background-color:#fff3e9;}
+.zr-backlink-item{
+    align-items:flex-start;
+    display:flex;
+    padding:0px;
+}
 
-.zr-backlink-item{display:flex;align-items:flex-start;padding:0px;}
 .zr-backlink-item[data-backlink-type="reference"]:hover {background-color:#e1ecff;}
 .zr-backlink-item[data-backlink-type="citation"]:hover {background-color:#fff6e1;}
 .zr-backlink-item--year, .zr-backlink-item--info{font-size:0.9em;padding: 0px 0px 6px 10px;}

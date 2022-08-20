@@ -1,6 +1,7 @@
-import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
-import { memo, useCallback, useMemo } from "react";
 import { arrayOf, func, oneOf, oneOfType, string } from "prop-types";
+import { memo, useCallback, useMemo } from "react";
+
+import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import { useAnnotationsSettings } from "../UserSettings/Annotations";
@@ -17,7 +18,8 @@ import { CustomClasses } from "../../constants";
 
 import "./index.css";
 
-const popoverMenuProps = {
+
+const popoverProps = {
 	autoFocus: true,
 	className: "zr-library-item-popover",
 	interactionKind: "hover",
@@ -140,7 +142,7 @@ const CitekeyPopover = memo(function CitekeyPopover(props) {
 	}, [importMetadata, importMetadataAndOpen, inGraph, navigateToPage, openPageInSidebar, pdfChildren, zoteroLinks]);
 
 	return (
-		<Popover2 {...popoverMenuProps} content={actionsMenu}>
+		<Popover2 {...popoverProps} content={actionsMenu}>
 			<Button data-in-graph={(inGraph != false).toString()} minimal={true} rightIcon="chevron-right" small={true} text={"@" + item.key} {...buttonProps} />
 		</Popover2>
 	);

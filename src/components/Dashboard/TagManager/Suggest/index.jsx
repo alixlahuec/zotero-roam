@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from "react";
 import { arrayOf, oneOf, oneOfType, shape, string } from "prop-types";
+import { useCallback, useMemo } from "react";
 
 import { Button, ButtonGroup, Menu } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
