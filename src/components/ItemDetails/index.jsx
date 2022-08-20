@@ -1,5 +1,5 @@
-import { memo, useCallback, useMemo } from "react";
 import { func, node, object, oneOf, string } from "prop-types";
+import { memo, useCallback, useMemo } from "react";
 
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
@@ -10,7 +10,7 @@ import ShortcutSequence from "../ShortcutSequence";
 
 import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
-import { formatItemReferenceForCopy } from "../SearchPanel/utils";
+import { formatItemReferenceWithDefault } from "../SearchPanel/utils";
 
 import { useAnnotationsSettings } from "../UserSettings/Annotations";
 import useBool from "../../hooks/useBool";
@@ -100,26 +100,31 @@ CopyOption.propTypes = {
 
 function CopyButtons(props){
 	const { citekey, item } = props;
-	const [{ defaultFormat: defaultCopyFormat }] = useCopySettings();
+	const [copySettings] = useCopySettings();
 	const [shortcutsSettings] = useShortcutsSettings();
 
 	const defaultCopyText = useMemo(() => {
-		return formatItemReferenceForCopy(item, defaultCopyFormat);
-	}, [defaultCopyFormat, item]);
+		return formatItemReferenceWithDefault(item, copySettings);
+	}, [copySettings, item]);
 
 	const copyAsDefault = useCallback(() => {
 		copyToClipboard(defaultCopyText);
 	}, [defaultCopyText]);
 
 	const optionsMenu = useMemo(() => {
-		const standardOptions = ["citekey", "tag", "page-reference", "citation"]
-			.filter(op => op != defaultCopyFormat)
-			.map(op => <CopyOption key={op} citekey={citekey} format={op} item={item} />);
+		let standardOptions = ["citation", "citekey", "page-reference", "tag"];
+        
+		if(copySettings.useAsDefault == "preset"){
+			standardOptions = standardOptions.filter(op => op != copySettings.preset);
+		}
+
+		standardOptions = standardOptions.map(op => <CopyOption key={op} citekey={citekey} format={op} item={item} />);
+		
 		return <>
 			<MenuItem htmlTitle={defaultCopyText} labelElement={<Tag intent="success" minimal={true}>Default</Tag>} onClick={copyAsDefault} text={defaultCopyText} />
 			{standardOptions}
 		</>;
-	}, [citekey, copyAsDefault, defaultCopyFormat, defaultCopyText, item]);
+	}, [citekey, copyAsDefault, copySettings, defaultCopyText, item]);
 
 	const label = useMemo(() => {
 		return shortcutsSettings.copyDefault != false
@@ -184,7 +189,7 @@ function CopyButtons(props){
 }
 CopyButtons.propTypes = {
 	citekey: string,
-	item: object
+	item: customPropTypes.cleanLibraryItemType
 };
 
 function Metadata({ direction = "row", label, children }){

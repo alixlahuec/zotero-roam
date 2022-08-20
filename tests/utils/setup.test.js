@@ -171,8 +171,10 @@ describe("Parsing initial user settings", () => {
 		},
 		copy: {
 			always: false,
-			defaultFormat: "citekey",
 			overrideKey: "shiftKey",
+			preset: "citekey",
+			template: "@{{key}}",
+			useAsDefault: "preset",
 			useQuickCopy: false
 		},
 		metadata: {

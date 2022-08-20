@@ -31,8 +31,10 @@ export default {
 			},
 			copy: {
 				always: false,
-				defaultFormat: "citekey",
 				overrideKey: "altKey",
+				preset: "citekey",
+				template: "@{{key}}",
+				useAsDefault: "preset",
 				useQuickCopy: false
 			},
 			metadata: {

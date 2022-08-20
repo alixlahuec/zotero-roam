@@ -1,5 +1,5 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { bool, func, node, object, shape } from "prop-types";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Menu, MenuItem } from "@blueprintjs/core";
 import { QueryList, renderFilteredItems } from "@blueprintjs/select";
@@ -11,7 +11,7 @@ import { useCopySettings } from "../UserSettings/Copy";
 import useDebounceCallback from "../../hooks/useDebounceCallback";
 
 import { copyToClipboard, pluralize, searchEngine } from "../../utils";
-import { formatItemReferenceForCopy } from "./utils";
+import { formatItemReferenceWithDefault } from "./utils";
 
 import { resultClass, resultKeyClass } from "./classes";
 
@@ -146,7 +146,7 @@ const LibraryQueryList = memo(function LibraryQueryList(props) {
 			} else {
 				if(quickCopyProps.isActive){
 					// Mode: Quick Copy
-					copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
+					copyToClipboard(formatItemReferenceWithDefault(item, copySettings));
 					if(copySettings.overrideKey && e[copySettings.overrideKey] == true){
 						searchbar.current.blur();
 						itemSelect({ key, location });
@@ -155,7 +155,7 @@ const LibraryQueryList = memo(function LibraryQueryList(props) {
 					}
 				} else {
 					if(copySettings.always == true){
-						copyToClipboard(formatItemReferenceForCopy(item, copySettings.defaultFormat));
+						copyToClipboard(formatItemReferenceWithDefault(item, copySettings));
 					}
 					searchbar.current.blur();
 					itemSelect({ key, location });

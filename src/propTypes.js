@@ -1,4 +1,4 @@
-import { arrayOf, bool, func, instanceOf, number, object, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
+import { arrayOf, bool, instanceOf, number, object, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
 
 const zoteroCollectionType = shape({
 	data: object,
@@ -240,8 +240,10 @@ const autocompleteSettingsType = shape({
 
 const copySettingsType = shape({
 	always: bool,
-	defaultFormat: oneOfType([func, oneOf(["citation", "citekey", "page-reference", "raw", "tag"])]),
 	overrideKey: oneOf(["altKey", "ctrlKey", "metaKey", "shiftKey"]),
+	preset: oneOf(["citation", "citekey", "page-reference", "raw", "tag"]),
+	template: string,
+	useAsDefault: oneOf(["preset", "template"]),
 	useQuickCopy: bool
 });
 

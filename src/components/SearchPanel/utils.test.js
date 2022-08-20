@@ -1,39 +1,63 @@
 import { cleanLibraryItem } from "../../utils";
-import { formatItemReferenceForCopy } from "./utils";
+import { formatItemReferenceWithDefault } from "./utils";
 import { items } from "Mocks/zotero/items";
 
 
-test("Item reference formatting", () => {
+describe("Item reference formatting - with preset", () => {
 	const sample_item = items.find(it => it.key == "blochImplementingSocialInterventions2021");
 	const simplifiedItem = cleanLibraryItem(sample_item, [], [], new Map([]));
 
-	expect(formatItemReferenceForCopy(
-		simplifiedItem,
-		"page-reference"))
-		.toBe("[[@blochImplementingSocialInterventions2021]]");
+	const cases = [
+		["page-reference", "[[@blochImplementingSocialInterventions2021]]"],
+		["raw", "blochImplementingSocialInterventions2021"],
+		["tag", "#[[@blochImplementingSocialInterventions2021]]"],
+		["citation", "[Bloch and Rozmovits (2021)]([[@blochImplementingSocialInterventions2021]])"],
+		["citekey", "@blochImplementingSocialInterventions2021"]
+	];
 
-	expect(formatItemReferenceForCopy(
-		simplifiedItem,
-		"raw"))
-		.toBe("blochImplementingSocialInterventions2021");
+	test.each(cases)(
+		"%s",
+		(preset, expectation) => {
+			expect(formatItemReferenceWithDefault(
+				simplifiedItem, 
+				{
+					preset,
+					template: "",
+					useAsDefault: "preset"
+				}
+			)).toBe(expectation);
+		}
+	);
 
-	expect(formatItemReferenceForCopy(
-		simplifiedItem,
-		"tag"))
-		.toBe("#[[@blochImplementingSocialInterventions2021]]");
+});
 
-	expect(formatItemReferenceForCopy(
-		simplifiedItem,
-		"citation"))
-		.toBe("[Bloch and Rozmovits (2021)]([[@blochImplementingSocialInterventions2021]])");
-    
-	expect(formatItemReferenceForCopy(
-		simplifiedItem,
-		"citekey"))
-		.toBe("@blochImplementingSocialInterventions2021");
-    
-	expect(formatItemReferenceForCopy(
-		simplifiedItem,
-		(citekey, raw) => `[@${citekey}](${raw.data.url})`))
-		.toBe(`[@blochImplementingSocialInterventions2021](${sample_item.data.url})`);
+describe("Item reference formatting - with template", () => {
+	const sample_item = items.find(it => it.key == "blochImplementingSocialInterventions2021");
+	const simplifiedItem = cleanLibraryItem(sample_item, [], [], new Map([]));
+	
+	const cases = [
+		["@{{key}}", "@blochImplementingSocialInterventions2021"],
+		[
+			"[{{title}}]([[@{{key}}]])", 
+			"[Implementing social interventions in primary care]([[@blochImplementingSocialInterventions2021]])"
+		],
+		[
+			"[{{authors}} ({{year}})]([[@{{key}}]])",
+			"[Bloch and Rozmovits (2021)]([[@blochImplementingSocialInterventions2021]])"
+		]
+	];
+
+	test.each(cases)(
+		"%# - %s",
+		(template, expectation) => {
+			expect(formatItemReferenceWithDefault(
+				simplifiedItem, 
+				{
+					preset: "",
+					template,
+					useAsDefault: "template"
+				}
+			)).toBe(expectation);
+		}
+	);
 });

@@ -84,6 +84,11 @@
     opacity: 0.6;
 }
 
+.zr-settings-list .zr-settings-rowgroup--option > input[type="checkbox"],
+.zr-settings-list .zr-settings-rowgroup--option > .bp4-control-indicator {
+    flex: 0 0 auto;
+}
+
 .zr-settings-list .zr-settings--card {
     border: 1px var(--zr-border-co) solid;
     border-radius: 3px;

@@ -136,8 +136,10 @@ export function setupInitialSettings(settingsObject){
 		},
 		copy: {
 			always: false,
-			defaultFormat: "citekey",
 			overrideKey: "shiftKey",
+			preset: "citekey",
+			template: "@{{key}}",
+			useAsDefault: "preset",
 			useQuickCopy: false,
 			...copy
 		},
