@@ -241,7 +241,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 		// DO NOT request deleted items since X if since = 0 (aka, initial data request)
 		// It's a waste of a call
 		if(since > 0 && modified.length > 0){
-			deleted = await fetchDeleted(...library, since);
+			deleted = await fetchDeleted(library, since);
 
 			emitCustomEvent("update-collections", {
 				success: true,
@@ -293,7 +293,7 @@ async function fetchDeleted(library, since) {
  * @returns {Promise<{data: Object[], lastUpdated: Integer}>}
  */
 async function fetchItems(req, { match = [] } = {}, queryClient) {
-	const { apikey, dataURI, library, since = 0 } = req;
+	const { apikey, dataURI, library: { path }, since = 0 } = req;
 	const paramsQuery = new URLSearchParams("");
 	paramsQuery.set("since", since);
 	paramsQuery.set("start", 0);
@@ -316,9 +316,9 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 		// It's a waste of a call
 		if(since > 0){
 			// Retrieve deleted items, if any
-			deleted = await fetchDeleted({ apikey, path: library }, since);
+			deleted = await fetchDeleted({ apikey, path }, since);
 
-			const tagsQueryKey = ["tags", { apikey, library }];
+			const tagsQueryKey = ["tags", { apikey, library: path }];
 			const { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {};
 			if(modified.length > 0 || Number(latest_tags_version) < Number(lastUpdated)){
 				// Refetch tags data
