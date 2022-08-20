@@ -1,4 +1,4 @@
-import { Children, isValidElement, cloneElement, useCallback, useMemo } from "react";
+import { Children, cloneElement, isValidElement, useCallback, useMemo } from "react";
 import { arrayOf, bool, func, node, object, objectOf, oneOfType, shape, string } from "prop-types";
 
 import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, MenuItem, Switch } from "@blueprintjs/core";
@@ -160,7 +160,7 @@ RoamTagsInput.propTypes = {
 	value: arrayOf(string)
 };
 
-const SingleInput = ({ buttonProps = {}, description= null, menuTitle, onChange, options, title = null, value }) => {
+const SingleInput = ({ buttonProps = {}, description = null, menuTitle, onChange, options, title = null, value }) => {
 
 	const menuProps = useMemo(() => ({
 		title: menuTitle

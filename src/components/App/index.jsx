@@ -1,6 +1,6 @@
 /* istanbul ignore file */
+import { Component, createContext } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createContext, Component } from "react";
 import { bool } from "prop-types";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
