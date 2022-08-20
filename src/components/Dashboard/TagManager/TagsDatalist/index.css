@@ -1,7 +1,7 @@
 .zr-tagmanager--datalist .zr-datalist--item {
     border: 1px var(--zr-border-co) solid;
     border-radius: 5px;
-    box-shadow: 2px 2px 4px 1px #d7dced4d;
+    box-shadow: 2px 2px 4px 1px var(--zr-box-shadow-co);
     display:flex;
     flex-direction: column;
     margin: 10px;
@@ -50,11 +50,3 @@
 .zr-tag-entry .bp4-tag[data-tag-source] {
     margin: 3px 5px;
 }
-
-/* DARK THEME */
-
-[zr-dark-theme="true"] .zr-tagmanager--datalist .zr-datalist--item {
-    box-shadow: 2px 2px 4px 1px #0b0b0c4d;
-}
-
-/* TODO: Set vars for box-shadow for item boxes */

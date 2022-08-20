@@ -10,6 +10,7 @@
     --zr-auxiliary: #5c7080;
     --zr-border-co: #ececec;
     --zr-box-bg: #f8f8f8;
+    --zr-box-shadow-co: #d7dced4d;
     --zr-dialog-bg: #ffffff;
     --zr-input-size: 240px;
     --zr-minimal-bg: #cad1df26;
@@ -34,6 +35,7 @@
     --zr-auxiliary: #95a8b7;
     --zr-border-co: #2f3133;
     --zr-box-bg: #191919;
+    --zr-box-shadow-co: #0b0b0c4d;
     --zr-dialog-bg: #1f1f1f;
     --zr-negative-bg: #332828;
     --zr-positive-bg: #5863582e;
