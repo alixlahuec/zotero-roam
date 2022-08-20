@@ -293,7 +293,7 @@ describe("Fetching mocked items", () => {
 			const itemData = findItems({ type, id, since: 0 });
 
 			const sinceEver = await fetchItems(
-				{ apikey: masterKey, dataURI: `${path}/items`, library: path, since: 0 },
+				{ apikey: masterKey, dataURI: `${path}/items`, library: libraryDetails, since: 0 },
 				{ match: [] },
 				queryClient
 			);
@@ -303,7 +303,7 @@ describe("Fetching mocked items", () => {
 			});
 
 			const sinceLatest = await fetchItems(
-				{ apikey: masterKey, dataURI: `${path}/items`, library: path, since: version },
+				{ apikey: masterKey, dataURI: `${path}/items`, library: libraryDetails, since: version },
 				{ match: itemData },
 				queryClient
 			);
