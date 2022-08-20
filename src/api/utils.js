@@ -39,8 +39,7 @@ function categorizeZoteroTags(z_data, tagMap){
  */
 function cleanBibliographyHTML(bib){
 	// Grab only the string (strip outer divs)
-	// TODO: Support other styles than CSL
-	const bibString = bib.match("csl-entry\">(.+)</div>")[1];
+	const bibString = bib.match("<div.*?>(.+?)</div>")[1];
 	// Use a textarea element to decode HTML
 	const formatter = document.createElement("textarea");
 	formatter.innerHTML = bibString;
