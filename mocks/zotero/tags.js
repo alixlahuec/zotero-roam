@@ -73,7 +73,6 @@ export const handleTags = [
 			const { version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`);
 
 			if(ifUnmodifiedSince < version){
-				// TODO: Simulate this to check response parameters
 				return res(
 					ctx.status(412, "Precondition failed")
 				);

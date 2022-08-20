@@ -44,7 +44,7 @@ const AppWrapper = (props) => {
 	return <App autoload={otherSettings.autoload} requests={requests} shortcuts={shortcuts} {...props} />;
 };
 
-// TODO: make component reactive to changes in dataRequests, shortcuts
+// TODO: make component reactive to changes in shortcuts
 class App extends Component {
 	constructor(props){
 		super(props);

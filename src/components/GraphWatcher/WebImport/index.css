@@ -102,12 +102,3 @@ li.zr-webimport-item {
     flex: 0 0 100%;
     margin-top: 5px;
 }
-
-/* DARK THEME */
-
-/* [zr-dark-theme="true"] .bp4-checkbox.bp4-control.zr-webimport-item--title .bp4-control-indicator {
-    background-color: var(--zr-dark-dialog-bg, #242424);
-    outline-style: solid;
-} */
-
-/* TODO: Test for simplest styling for checkbox appearance, light/dark */

@@ -130,5 +130,3 @@
         --zr-dialog-margin: 2.5vw;
     }
 }
-
-/* TODO: Once accent gradients are available, set styling for .bp4-button.bp4-minimal.bp4-intent-primary, which from what I can tell is specifically the "Add to Zotero" button in SemanticItem. Style was [color: var(--zr-dark-text-co, #76a0cb);background-color: var(--zr-dark-elem-bg, #2B3143);] The .bp4-active version was the opposite */
