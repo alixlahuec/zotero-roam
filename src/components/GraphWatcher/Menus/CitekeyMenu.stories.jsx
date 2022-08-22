@@ -31,7 +31,7 @@ export default {
 			notes: {},
 			pageMenu: {
 				defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
-				trigger: (title) => title.length > 3 || false
+				trigger: "default"
 			},
 			sciteBadge: {},
 			shortcuts: {},

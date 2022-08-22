@@ -189,7 +189,7 @@ function cleanNewlines(text){
 /**
  * @typedef {{
  * authors: String, 
- * authorsLastNames: String,
+ * authorsLastNames: String[],
  * authorsString: String,
  * doi: String, 
  * intent: String[], 
