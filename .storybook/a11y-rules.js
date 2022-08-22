@@ -20,5 +20,10 @@ export const A11Y_RULES = [
         // which is incorrect for <span> elements without a valid aria-role.
         // This currently cannot be configured
         selector: "*:not(.bp4-tag)"
+    },
+    {
+        id: "image-alt",
+        // Scite's logo doesn't provide alt text, resulting in a violation
+        selector: "img:not([src=\"https://cdn.scite.ai/assets/images/logo.svg\"])"
     }
 ];

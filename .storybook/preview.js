@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import { initialize, mswDecorator } from "msw-storybook-addon";
-import { fallbackHandler, roamAssetsHandler, apiHandlers } from "Mocks/handlers";
+import { fallbackHandler, roamAssetsHandler, sciteAssetsHandler, apiHandlers } from "Mocks/handlers";
 import { useEffect, useGlobals } from "@storybook/addons";
 import { rest } from "msw";
 
@@ -68,6 +68,7 @@ export const parameters = {
       handlers: [
           ...apiHandlers,
           roamAssetsHandler,
+          sciteAssetsHandler,
           rest.get("http://localhost:6006/runtime*", (req, _res, _ctx) => req.passthrough()),
           rest.get("http://localhost:6006/main*", (req, _res, _ctx) => req.passthrough()),
           rest.get("http://localhost:6006/vendors*", (req, _res, _ctx) => req.passthrough()),

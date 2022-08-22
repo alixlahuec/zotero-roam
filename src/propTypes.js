@@ -171,7 +171,7 @@ const cleanRelatedItemType = shape({
  */
 const cleanSemanticItem = {
 	authors: string,
-	authorsLastNames: string,
+	authorsLastNames: arrayOf(string),
 	authorsString: string,
 	doi: oneOfType([string, oneOf([false])]),
 	intent: arrayOf(string),
