@@ -5,7 +5,6 @@ import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
 
 import {
-	DEPENDENCIES_SCRIPTS,
 	EXTENSION_PORTAL_ID,
 	EXTENSION_SLOT_ID,
 	TYPEMAP_DEFAULT
@@ -264,25 +263,6 @@ function setupDarkTheme(use_dark = false){
 }
 
 /* istanbul ignore next */
-/** Injects external scripts into the page
- */
-function setupDependencies(){
-	DEPENDENCIES_SCRIPTS.forEach(dep => {
-		const { id, src } = dep;
-		try { 
-			document.getElementById(id).remove(); 
-		} catch(e){
-			// Do nothing
-		}
-		const script = document.createElement("script");
-		script.src = src;
-		script.type = "application/javascript";
-		script.async = true;
-		document.getElementsByTagName("head")[0].appendChild(script);
-	});
-}
-
-/* istanbul ignore next */
 /** Injects DOM elements to be used as React portals by the extension */
 export function setupPortals(){
 
@@ -312,7 +292,6 @@ export function setupSentry(isUserEnabled = false, config = {}){
 /* istanbul ignore next */
 export function setup({ settings }){
 	setupDarkTheme(settings.other.darkTheme);
-	setupDependencies();
 	setDefaultHooks();
 	registerSmartblockCommands();
 }

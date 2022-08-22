@@ -1,10 +1,12 @@
-import { memo, useEffect, useRef } from "react";
 import { bool, number, oneOf, string } from "prop-types";
+import { memo, useEffect, useRef } from "react";
+
+import * as sciteBadge from "scite-badge";
 
 import "./index.css";
 
 
-/** Create a Scite badge element, for manual rendering through window.__SCITE.insertBadges()
+/** Create a Scite badge element, for manual rendering through sciteBadge.insertBadges()
  * @param {string} doi - The DOI for which the badge should be made
  * @param {string} layout - Should the badge be horizontal or vertical ?
  * @param {Boolean} showLabels - Should the badge display category labels ?
@@ -27,7 +29,7 @@ const SciteBadge = memo(function SciteBadge(props) {
 
 	useEffect(() => {
 		divRef?.current?.removeAttribute("data-fetched");
-		window.__SCITE?.insertBadges();
+		sciteBadge.insertBadges();
 	});
 
 	return (

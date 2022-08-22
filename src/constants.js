@@ -9,11 +9,6 @@ export const EXTENSION_PORTAL_ID = "zotero-roam-portal";
 /** @constant {String} The HTML id for the extension's icon's container */
 export const EXTENSION_SLOT_ID = "zotero-roam-slot";
 
-/** @constant {{id: String, src: String}[]} The list of external scripts that cannot be imported, and have to be injected in the page */
-export const DEPENDENCIES_SCRIPTS = [
-	{ id: "scite-badge", src: "https://cdn.scite.ai/badge/scite-badge-latest.min.js" }
-];
-
 export const SENTRY_CONFIG = {
 	autoSessionTracking: false,
 	beforeSend: (event) => {
