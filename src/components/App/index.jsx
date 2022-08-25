@@ -123,7 +123,6 @@ class App extends Component {
 			}));
 		}
 		// In the case of a change in requests, the old requests should become inactive & be eventually cleared
-		// TODO: check if *changed* requests would require an explicit update
 	}
 
 	render() {

@@ -94,7 +94,6 @@ export default class ZoteroRoam {
 		});
 	}
 
-	// TODO: decide whether this should be exposed in its current state, or if it should only require the item's citekey
 	/** Retrieves the children for a given item
      * @param {ZoteroItem} item - The targeted item
      * @returns 
@@ -118,7 +117,6 @@ export default class ZoteroRoam {
 		return _getItemCollections(item, collectionList, { brackets });
 	}
 
-	// TODO: decide whether this should be exposed in its current state, or if it should only require the item / the item's citekey
 	/* istanbul ignore next */
 	/** Formats an item's metadata into Roam blocks
      * @param {ZoteroItem} item - The targeted item
@@ -134,7 +132,6 @@ export default class ZoteroRoam {
 		});
 	}
 
-	// TODO: decide whether this should be exposed in its current state, or if it should only require the item's citekey
 	/** Retrieves the in-library relations for a given item
      * @param {ZoteroItem} item - The targeted item
      * @param {{return_as: ("string"|"raw"|"array"), brackets: Boolean}} config - Optional parameters to use to format the relations
@@ -148,7 +145,6 @@ export default class ZoteroRoam {
 		return _getItemRelated(item, datastore, { return_as, brackets });
 	}
 
-	// TODO: decide whether this should be exposed in its current state, or if it should only require the item's citekey
 	/** Retrieves an item's type
      * @param {ZoteroItem} item - The targeted item
      * @param {{brackets: Boolean}} config - Optional parameters to use to format the type
@@ -175,7 +171,6 @@ export default class ZoteroRoam {
 		});
 	}
 
-	// TODO: add check to verify if the library is part of the requests, if not throw
 	/** Retrieves the map of tags for a given library
      * @example
      * // Returns the map of tags for the library of user ID 123456 
