@@ -445,7 +445,7 @@ function makeTagMap(tags){
 
 /** Compares two datasets and merges the changes. As the match is done on the `data.key` property, both items and collections can be matched.
  *  For items, merging involves an additional step to extract citekeys.
- * @param {{modified: ZoteroItem[]|ZoteroCollection[], deleted: ZoteroItem[]|ZoteroCollection[]}} update - The newer dataset
+ * @param {{modified: (ZoteroItem|ZoteroAnnotation)[]|ZoteroCollection[], deleted: (ZoteroItem|ZoteroAnnotation)[]|ZoteroCollection[]}} update - The newer dataset
  * @param {Object[]} arr - The older dataset
  * @param {{with_citekey?: Boolean}} config - Additional parameters 
  * @returns {Object[]} - The merged dataset

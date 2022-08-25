@@ -41,19 +41,19 @@ const addPageMenus = () => {
  * @param {ZoteroItem} item - The item to format
  * @param {{
  * pdfs: ZoteroItem[],
- * notes: ZoteroItem[]
+ * notes: (ZoteroItem|ZoteroAnnotation)[]
  * }} libraryData - The list of attachments in the library
  * @param {Map} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.  
  * @returns {{
  * abstract: String,
  * added: String,
- * children: {pdfs: Array, notes: Array},
+ * children: {pdfs: Array, notes: (ZoteroItem|ZoteroAnnotation)[] },
  * inGraph: Boolean,
  * itemType: String,
  * key: String,
  * location: String,
  * meta: String,
- * raw: Object,
+ * raw: ZoteroItem,
  * timestamp: String,
  * title: String
  * }[]} The formatted array

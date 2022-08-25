@@ -11,7 +11,7 @@ const events = [
     * @property {({blocks: Array, uid: String}|{new: Boolean, smartblock: Object, uid: String})} args - The configuration used for the import
     * @property {error|null} error - The error thrown during the import, if failed
 	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-    * @property {{item: ZoteroItem, notes: ZoteroItem[], pdfs: ZoteroItem[]}} raw - The raw data provided as input
+    * @property {{item: ZoteroItem, notes: (ZoteroItem|ZoteroAnnotation)[], pdfs: ZoteroItem[]}} raw - The raw data provided as input
     * @property {Boolean|null} success - Indicates if the update was successful
     * @see importItemMetadata
     */
@@ -23,7 +23,7 @@ const events = [
 	* @property {{blocks: Array, uid: String}} args - The configuration used for the import
 	* @property {error|null} error - The error thrown during the import, if failed
 	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-	* @property {{item: ZoteroItem, notes: ZoteroItem[]}} raw - The raw data provided as input
+	* @property {{item: ZoteroItem, notes: (ZoteroItem|ZoteroAnnotation)[]}} raw - The raw data provided as input
 	* @property {Boolean|null} success - Indicates if the update was successful
 	* @see importItemNotes
     */

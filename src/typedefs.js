@@ -54,6 +54,18 @@
 
 /**
  * @typedef {{
+ * data: { annotationColor: String, annotationComment: String, annotationPageLabel: String, annotationPosition: String, annotationSortIndex: String, annotationText: String, annotationType: ("highlight"|"image"), dateAdded: String, dateModified: String, itemType: ("annotation"), key: String, parentItem: String, relations: Object, tags: Object[], version: Integer },
+ * key: String,
+ * library: Object,
+ * links: Object,
+ * meta: Object,
+ * version: Integer
+ * }}
+ * ZoteroAnnotation
+ */
+
+/**
+ * @typedef {{
  * include: String,
  * linkwrap: Boolean,
  * locale: String,

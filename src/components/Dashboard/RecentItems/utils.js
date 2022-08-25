@@ -2,7 +2,7 @@ import { getCitekeyPagesWithEditTime } from "Roam";
 import { identifyChildren } from "../../../utils";
 
 /** Categorizes a list of Zotero items by recent activity
- * @param {{items: ZoteroItem[], pdfs: ZoteroItem[], notes: ZoteroItem[]}} itemList - The list of Zotero items
+ * @param {{items: ZoteroItem[], pdfs: ZoteroItem[], notes: (ZoteroItem|ZoteroAnnotation)[]}} itemList - The list of Zotero items
  * @param {Number} asRecentAs - The number of days up to which activity should be considered recent
  * @returns The categorized list of items
  */

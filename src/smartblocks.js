@@ -101,7 +101,7 @@ function registerSmartblockCommands(){
  * @param {SmartblockConfig} config - The identification for the SmartBlock to be used.
  * @param {{
  * item: ZoteroItem,
- * notes: ZoteroItem[],
+ * notes: (ZoteroItem|ZoteroAnnotation)[],
  * page: {new: Boolean, title: String, uid: String}, 
  * pdfs: ZoteroItem[]}} context - The context variables provided by the extension to the SmartBlock
  * @returns {Promise} If successful, `{success:true}` - otherwise an object containing the error encountered and the arguments with which the function was called.

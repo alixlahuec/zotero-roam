@@ -52,7 +52,7 @@ export default class ZoteroRoam {
 
 
 	/** Formats Zotero notes and annotations, with current user settings
-     * @param {ZoteroItem[]} notes 
+     * @param {(ZoteroItem|ZoteroAnnotation)[]} notes 
      * @returns 
      */
 	formatNotes(notes) {
@@ -121,7 +121,7 @@ export default class ZoteroRoam {
 	/** Formats an item's metadata into Roam blocks
      * @param {ZoteroItem} item - The targeted item
      * @param {ZoteroItem[]} pdfs - The item's linked PDFs, if any
-     * @param {ZoteroItem[]} notes - The item's linked notes, if any
+     * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The item's linked notes, if any
      * @returns 
      */
 	getItemMetadata(item, pdfs, notes) {
@@ -188,7 +188,7 @@ export default class ZoteroRoam {
 
 
 /** Formats Zotero notes/annotations items
-     * @param {ZoteroItem[]} notes - The Array of Zotero notes/annotations
+     * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The Array of Zotero notes/annotations
      * @param {{
      * annotationsSettings: SettingsAnnotations, 
      * notesSettings: SettingsNotes
@@ -305,8 +305,8 @@ function _getItemCollections(item, collectionList, { brackets = true } = {}) {
 /* istanbul ignore next */
 /** Formats an item's and its children's metadata for import to Roam using the default template
  * @param {ZoteroItem} item - The targeted Zotero item
- * @param {ZoteroItem} pdfs - The item's PDFs, if any
- * @param {ZoteroItem} notes - The item's linked notes, if any
+ * @param {ZoteroItem[]} pdfs - The item's PDFs, if any
+ * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The item's linked notes, if any
  * @param {{
  * annotationsSettings: SettingsAnnotations,
  * notesSettings: SettingsNotes,
@@ -355,7 +355,7 @@ function _getItemType(item, { brackets = true } = {}, { typemap }) {
  * @param {("all"|"annotations"|"attachments"|"children"|"items"|"notes"|"pdfs")} select - The type of items to retrieve
  * @param {Object} filters - Optional filters for the item queries
  * @param {{ queryClient: * }} context - The current context for the extension
- * @returns {ZoteroItem[]} - The requested items
+ * @returns {(ZoteroItem|ZoteroAnnotation)[]} - The requested items
  */
 function _getItems(select, filters, { queryClient }) {
 	const items = queryClient.getQueriesData(["items"], filters).map(query => (query[1] || {}).data || []).flat(1);
