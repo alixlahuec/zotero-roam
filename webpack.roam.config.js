@@ -36,6 +36,10 @@ module.exports = merge(baseConfig, {
             },
         },
     },
+    performance: {
+        maxAssetSize: 2000000,
+        maxEntrypointSize: 2000000
+    },
     output: {
         filename: "extension.js",
         path: __dirname,

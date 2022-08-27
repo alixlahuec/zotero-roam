@@ -43,6 +43,9 @@ jobs:
 
       - name: Webpack build (prod)
         run: npm run build:prod
+      
+      - name: Webpack build (Roam Depot)
+        run: npm run build:roam
 
       - name: Commit to repository
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -57,4 +60,6 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
-          sourcemaps: "./dist"
+          sourcemaps: 
+            - "./dist"
+            - "./extension.js.map"
