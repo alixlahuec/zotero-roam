@@ -2,29 +2,31 @@
     "hooks": {
         "before:init": [
             "npm run ci:lint",
-            "npm run ci:test"
+            "npm run ci:test",
+            "chmod +x \"./ci-storybook.sh\"",
+            "./ci-storybook.sh"
         ],
         "after:bump": [
             "npm run build:dev",
             "npm run build:prod",
-            "npm run build:roam"
+            "npm run build:roam",
+            "npx auto-changelog"
         ]
     },
     "git": {
-        "commitArgs": ["-S"],
-        "commitMessage": "chore: release ${version}",
+        "changelog": "npx auto-changelog --stdout",
+        "commitMessage": "release: v${version}",
         "tag": true,
         "tagMatch": "[0-9]*\\.[0-9]*\\.[0-9]*"
     },
     "github": {
         "assets": ["dist/*.js", "extension.css", "extension.js"],
-        "autoGenerate": true,
         "draft": true,
         "release": true,
         "releaseName": "v${version}"
     },
     "npm": {
-        "allowSameVersion": true,
+        "allowSameVersion": false,
         "publish": true
     }
 }

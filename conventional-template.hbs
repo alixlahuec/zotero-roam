@@ -1,0 +1,45 @@
+## Changelog
+
+{{#each releases}}
+    {{#if href}}
+    ##{{#unless major}}#{{/unless}} [{{title}}]({{href}}) - {{#if tag}} {{niceDate}} {{/if}}
+    {{else}}
+    ### {{title}}
+    {{/if}}
+
+    {{#if summary}}
+    {{summary}}
+
+    {{/if}}
+
+  {{! Breaking changes section }}
+    {{#commit-list merges heading='#### Breaking Changes :warning:' message='breaking:' }}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+  {{! Commits list, by type }}
+  {{! feat }}
+    {{#commit-list merges heading='#### New Features' message='^feat[(:]' exclude='breaking:'}}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+  {{! fix }}
+    {{#commit-list merges heading='#### Fixes' message='^fix[(:]' exclude='breaking:'}}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+  {{! docs }}
+    {{#commit-list merges heading='#### Documentation Changes' message='^docs[(:]' exclude='breaking:'}}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+  {{! refactor }}
+    {{#commit-list merges heading='#### Refactoring and Updates' message='^refactor[(:]' exclude='breaking:'}}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+  {{! perf }}
+    {{#commit-list merges heading='#### Performance Improvements' message='^perf[(:]' exclude='[bB]reaking [cC]hange:|[bB]reaking:'}}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+  {{! other changes }}
+    {{#commit-list merges heading='#### General Changes' exclude='breaking:|^(feat|fix|docs|refactor|perf)[(:]'}}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+
+{{/each}}
