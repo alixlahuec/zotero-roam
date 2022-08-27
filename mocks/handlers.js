@@ -23,6 +23,11 @@ export const roamAssetsHandler = rest.get(
 	(req, _res, _ctx) => req.passthrough()
 );
 
+export const sciteApiHandler = rest.post(
+	"https://api.scite.ai/*",
+	(req, _res, _ctx) => req.passthrough()
+);
+
 export const sciteAssetsHandler = rest.get(
 	"https://cdn.scite.ai/assets/*",
 	(req, _res, _ctx) => req.passthrough()
