@@ -6,7 +6,7 @@
 const sbCommands = () => {
 	return {
 		"ZOTERORANDOMCITEKEY": {
-			help: "Return one or more Zotero citekeys, with optional tag query",
+			help: "Returns one or more Zotero citekeys, with optional tag query",
 			handler: (_context) => (nb = "1", query="") => {
 				return window?.zoteroRoam?.getItems?.("items")
 					.filter(it => processQuery(query, it.data.tags.map(t => t.tag)))
@@ -135,7 +135,7 @@ async function use_smartblock_metadata(config, context){
 	};
 
 	Object.keys(context).forEach(k => {
-		obj.variables[`${k}`] = context[`${k}`];
+		obj.variables[k] = context[k];
 	});
 	
 	try {
