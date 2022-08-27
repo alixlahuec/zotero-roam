@@ -44,7 +44,6 @@ const AppWrapper = (props) => {
 	return <App autoload={otherSettings.autoload} requests={requests} shortcuts={shortcuts} {...props} />;
 };
 
-// TODO: make component reactive to changes in shortcuts
 class App extends Component {
 	constructor(props){
 		super(props);
@@ -85,20 +84,6 @@ class App extends Component {
 				onKeyDown: () => this.toggleSettings()
 			}
 		};
-		this.hotkeys = Object.keys(this.shortcutsConfig)
-			.map(cmd => {
-				const combo = this.props.shortcuts[cmd];
-				if(combo !== ""){
-					return {
-						allowInInput: true,
-						combo,
-						global: true,
-						...this.shortcutsConfig[cmd]
-					};
-				} else {
-					return false;
-				}
-			}).filter(Boolean);
 		this.hotkeysOptions = {
 			showDialogKeyCombo: "shift+Z+R"
 		};
@@ -128,9 +113,24 @@ class App extends Component {
 	render() {
 		const { status, isDashboardOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
 		const { extension } = this.props;
+
+		const hotkeys = Object.keys(this.shortcutsConfig)
+			.map(cmd => {
+				const combo = this.props.shortcuts[cmd];
+				if(combo !== ""){
+					return {
+						allowInInput: true,
+						combo,
+						global: true,
+						...this.shortcutsConfig[cmd]
+					};
+				} else {
+					return false;
+				}
+			}).filter(Boolean);
 		
 		return (
-			<HotkeysTarget2 hotkeys={this.hotkeys} options={this.hotkeysOptions}>
+			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>
 				<QueryClientProvider client={queryClient}>
 					<ExtensionContext.Provider value={extension}>
 						<ExtensionIcon
