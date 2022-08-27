@@ -19,18 +19,11 @@ jobs:
       - name: Jest
         run: npm run ci:test
 
-      # Storybook test runner (https://storybook.js.org/docs/react/writing-tests/test-runner#set-up-ci-to-run-tests)
-      - name: Install Playwright
+      - name: Storybook CI
         run: |
-          sudo apt-get update
-          npx playwright install --with-deps
-      - name: Build Storybook
-        run: npm run build-storybook
-      - name: Serve Storybook and run tests
-        run: |
-          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx http-server storybook-static --port 6006 --silent" \
-            "npx wait-on tcp:6006 && npm run ci:test-storybook"
+          chmod +x "./ci-storybook.sh"
+          ./ci-storybook.sh
+        shell: bash
       
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
