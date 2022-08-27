@@ -63,6 +63,5 @@ VisitTabs.play = async ({ canvasElement }) => {
 	});
 
 	await userEvent.click(canvas.getByRole("tab", { name: "PDFs" }));
-	await userEvent.click(canvas.getByRole("tab", { name: "Notes" }));
 
 };
