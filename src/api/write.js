@@ -22,7 +22,7 @@ const useDeleteTags = () => {
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
-					refetchType: "inactive"
+					refetchType: "all"
 				}, {
 					throwOnError: true
 				});
@@ -65,7 +65,7 @@ const useImportCitoids = () => {
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
-					refetchType: "inactive"
+					refetchType: "all"
 				});
 			}
 
@@ -135,7 +135,7 @@ const useModifyTags = () => {
 				// If any item was modified, invalidate item queries for the targeted library
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
-					refetchType: "inactive"
+					refetchType: "all"
 				});
 			}
 
