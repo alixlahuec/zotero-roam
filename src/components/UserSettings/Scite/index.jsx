@@ -3,6 +3,7 @@ import { func, node } from "prop-types";
 
 import * as customPropTypes from "../../../propTypes";
 
+
 const SciteSettings = createContext({});
 
 const SciteProvider = ({ children, init, updater }) => {
