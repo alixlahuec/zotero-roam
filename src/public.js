@@ -26,7 +26,7 @@ function _formatPDFs(pdfs, as = "links"){
 
 /** Retrieves the creators list of a Zotero item, and returns it into a specific format
  * @param {ZoteroItem} item - The targeted Zotero item
- * @param {{return_as: ("array"|"string"|"identity"), brackets: Boolean, use_type: Boolean}} config - Additional configuration
+ * @param {{return_as: ("array"|"string"|"identity"), brackets: (true|false|"existing"), use_type: Boolean}} config - Additional configuration
  * @returns {String|String[]|{name: String, type: String, inGraph: (String|false)}[]} The formatted creators list
  */
 function _getItemCreators(item, { return_as = "string", brackets = true, use_type = true } = {}){
@@ -46,7 +46,9 @@ function _getItemCreators(item, { return_as = "string", brackets = true, use_typ
 	case "string":
 	default:
 		return creatorsInfoList.map(creator => {
-			const creatorTag = (brackets == true ? `[[${creator.name}]]` : creator.name);
+			const creatorTag = (brackets == true || (brackets == "existing" && creator.inGraph))
+				? `[[${creator.name}]]`
+				: creator.name;
 			return (use_type == true ? creatorTag + (creator.type == "author" ? "" : ` (${creator.type})`) : creatorTag);
 		}).join(", ");
 	}
@@ -66,7 +68,7 @@ function _getItemTags(item, { return_as = "string", brackets = true } = {}){
 		return tagList;
 	case "string":
 	default:
-		return tagList.join(", ");
+		return tagList.join(" ");
 	}
 }
 

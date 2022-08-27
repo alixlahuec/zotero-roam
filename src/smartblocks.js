@@ -1,3 +1,6 @@
+import { getLocalLink, getWebLink, makeDNP, parseDOI } from "./utils";
+
+
 /* istanbul ignore next */
 /** Generates the list of custom SmartBlocks commands to register
  * @returns {Object.<string, SmartblockCommand>} The list of commands to register
@@ -15,6 +18,13 @@ const sbCommands = () => {
 					.slice(0, Number(nb) || 1);
 			}
 		},
+		"ZOTEROITEMABSTRACT": {
+			help: "Returns the abstract of a Zotero item, if available.",
+			handler: (context) => () => {
+				const { item } = context.variables;
+				return item.data.abstractNote || "";
+			}
+		},
 		"ZOTEROITEMCOLLECTIONS": {
 			help: "Returns the name(s) of the collection(s) a Zotero item belongs to",
 			handler: (context) => (brackets = true) => {
@@ -23,31 +33,88 @@ const sbCommands = () => {
 			}
 		},
 		"ZOTEROITEMCREATORS": {
-			help: "Returns the creator(s) of a Zotero item",
+			help: "Returns the creator(s) of a Zotero item. Options: brackets (`true`(default)|`false`|`existing`), use_type(`true`(default)|`false`).",
 			handler: (context) => (brackets = true, use_type = true) => {
 				const { item } = context.variables;
 				return window.zoteroRoam.getItemCreators(item, { return_as: "string", brackets, use_type });
 			}
 		},
+		"ZOTEROITEMDATEADDED": {
+			help: "Returns the date on which an item was added to Zotero. Options: brackets (`true`(default)|`false`).",
+			handler: (context) => (brackets = true) => {
+				const { item } = context.variables;
+				return makeDNP(item.data.dateAdded, { brackets });
+			}
+		},
+		"ZOTEROITEMLINK": {
+			help: "Returns the link to a Zotero item (web or local library). Options: type (`local`(default)|`web`).",
+			handler: (context) => (type = "local") => {
+				const { item } = context.variables;
+				return type == "local"
+					? getLocalLink(item, { format: "target" })
+					: getWebLink(item, { format: "target" });
+			}
+		},
+		"ZOTEROITEMMETADATA": {
+			help: "Returns the formatted metadata for a Zotero item and its children (PDFs, notes/annotations), using the extension's default formatter. Use this if you want to use the default metadata template as part of your SmartBlock.",
+			handler: (context) => () => {
+				const { item, pdfs, notes } = context.variables;
+				return window.zoteroRoam.getItemMetadata(item, pdfs, notes);
+			}
+		},
+		"ZOTEROITEMPUBLICATION": {
+			help: "Returns the place of publication for a Zotero item. The command will look for the following fields, in order: `publicationTitle`, `bookTitle`, `university`. If no information is found, it will return an empty string.",
+			handler: (context) => () => {
+				const { item } = context.variables;
+				return item.data.publicationTitle || item.data.bookTitle || item.data.university || "";
+			}
+		},
 		"ZOTEROITEMRELATED": {
-			help: "Returns the relations of a Zotero item",
+			help: "Returns the comma-separated list of the citekeys of a Zotero item's relations, if any. Options: brackets (`true`(default)|`false`).",
 			handler: (context) => (brackets = true) => {
 				const { item } = context.variables;
 				return window.zoteroRoam.getItemRelated(item, { return_as: "string", brackets });
 			}
 		},
 		"ZOTEROITEMTAGS": {
-			help: "Returns the tag(s) of a Zotero item",
+			help: "Returns the space-separated list of the tag(s) of a Zotero item, if any. Options: brackets (`true` (default)|`false`).",
 			handler: (context) => (brackets = true) => {
 				const { item } = context.variables;
 				return window.zoteroRoam.getItemTags(item, { return_as: "string", brackets });
 			}
 		},
+		"ZOTEROITEMTITLE": {
+			help: "Returns the title of a Zotero item.",
+			handler: (context) => () => {
+				const { item } = context.variables;
+				return item.data.title || "";
+			}
+		},
 		"ZOTEROITEMTYPE": {
-			help: "Returns the type of a Zotero item",
+			help: "Returns the formatted type of a Zotero item, according to current user settings. Options: brackets (`true` (default)|`false`).",
 			handler: (context) => (brackets = true) => {
 				const { item } = context.variables;
 				return window.zoteroRoam.getItemType(item, { brackets });
+			}
+		},
+		"ZOTEROITEMURL": {
+			help: "Returns the URL of a Zotero item, if available. If the item has no URL but has a DOI, its DOI URL will be returned.",
+			handler: (context) => () => {
+				const { item } = context.variables;
+				const hasURL = item.data.url;
+				const hasDOI = parseDOI(item.data.DOI);
+				return hasURL || (hasDOI ? ("https://doi/org/" + hasDOI) : "");
+			},
+		},
+		"ZOTEROITEMYEAR": {
+			help: "Returns the year of publication of a Zotero item, if available.",
+			handler: (context) => () => {
+				const { item } = context.variables;
+				return !item.meta.parsedDate
+					? ""
+					: isNaN(new Date(item.meta.parsedDate))
+						? ""
+						: (new Date(item.meta.parsedDate)).getUTCFullYear().toString();
 			}
 		},
 		"ZOTERONOTES": {
