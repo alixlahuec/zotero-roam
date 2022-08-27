@@ -14,6 +14,55 @@ const sbCommands = () => {
 					.sort(() => 0.5 - Math.random())
 					.slice(0, Number(nb) || 1);
 			}
+		},
+		"ZOTEROITEMCOLLECTIONS": {
+			help: "Returns the name(s) of the collection(s) a Zotero item belongs to",
+			handler: (context) => (brackets = true) => {
+				const { item } = context.variables;
+				return window.zoteroRoam.getItemCollections(item, { brackets }).map(", ");
+			}
+		},
+		"ZOTEROITEMCREATORS": {
+			help: "Returns the creator(s) of a Zotero item",
+			handler: (context) => (brackets = true, use_type = true) => {
+				const { item } = context.variables;
+				return window.zoteroRoam.getItemCreators(item, { return_as: "string", brackets, use_type });
+			}
+		},
+		"ZOTEROITEMRELATED": {
+			help: "Returns the relations of a Zotero item",
+			handler: (context) => (brackets = true) => {
+				const { item } = context.variables;
+				return window.zoteroRoam.getItemRelated(item, { return_as: "string", brackets });
+			}
+		},
+		"ZOTEROITEMTAGS": {
+			help: "Returns the tag(s) of a Zotero item",
+			handler: (context) => (brackets = true) => {
+				const { item } = context.variables;
+				return window.zoteroRoam.getItemTags(item, { return_as: "string", brackets });
+			}
+		},
+		"ZOTEROITEMTYPE": {
+			help: "Returns the type of a Zotero item",
+			handler: (context) => (brackets = true) => {
+				const { item } = context.variables;
+				return window.zoteroRoam.getItemType(item, { brackets });
+			}
+		},
+		"ZOTERONOTES": {
+			help: "Formats a list of Zotero notes/annotations, with current user settings",
+			handler: (context) => () => {
+				const { notes = [] } = context.variables;
+				return window.zoteroRoam.formatNotes(notes);
+			}
+		},
+		"ZOTEROPDFS": {
+			help: "Formats a list of Zotero PDFs",
+			handler: (context) => () => {
+				const { pdfs = [] } = context.variables;
+				return window.zoteroRoam.formatPDFs(pdfs, "links");
+			}
 		}
 	};
 };
