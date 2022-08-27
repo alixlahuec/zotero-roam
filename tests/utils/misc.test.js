@@ -1,6 +1,22 @@
-import { executeFunctionByName, hasNodeListChanged } from "../../src/utils";
+import { camelToTitleCase, executeFunctionByName, hasNodeListChanged } from "../../src/utils";
 import { emitCustomEvent } from "../../src/events";
 
+
+describe("Convert camelCase to Title Case", () => {
+	const cases = [
+		["someText", "Some Text"],
+		["toggleDashboard", "Toggle Dashboard"],
+		["copyAsReference", "Copy As Reference"]
+	];
+
+	test.each(cases)(
+		"%# - %s",
+		(input, expectation) => {
+			expect(camelToTitleCase(input))
+				.toBe(expectation);
+		}
+	);
+});
 
 describe("Executing a function by name", () => {
 	it("executes a function attached to the window", () => {
