@@ -125,3 +125,10 @@
 .zr-settings-list .zr-setting--single-input > button:hover {
     background: hsla(var(--zr-accent-1-hsl), 10%);
 }
+
+.zr-settings-list .scite-badge {
+    align-self: center;
+    margin-bottom: 10px;
+    max-width: 100%;
+    width: fit-content;
+}

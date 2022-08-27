@@ -5,13 +5,13 @@ import { MetadataProvider, MetadataWidget } from "./Metadata";
 import { NotesProvider, NotesWidget } from "./Notes";
 import { OtherSettingsProvider, OtherSettingsWidget } from "./Other";
 import { PageMenuProvider, PageMenuWidget } from "./PageMenu";
+import { SciteProvider, SciteWidget } from "./Scite";
 import { ShortcutsProvider, ShortcutsWidget } from "./Shortcuts";
 import { TypemapProvider, TypemapWidget } from "./Typemap";
 import { WebImportProvider, WebImportWidget } from "./WebImport";
 
 import { RequestsProvider } from "./Requests";
 import RequestsWidget from "./Requests/RequestsWidget";
-import { SciteProvider } from "./Scite";
 
 
 export const SETTINGS_CONFIG = [
@@ -52,7 +52,8 @@ export const SETTINGS_CONFIG = [
 	},
 	{
 		component: SciteProvider,
-		id: "sciteBadge"
+		id: "sciteBadge",
+		widget: SciteWidget
 	},
 	{
 		component: ShortcutsProvider,
