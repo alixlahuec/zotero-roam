@@ -75,6 +75,7 @@ describe("Annotations formatting", () => {
 			.toEqual([
 				{
 					string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
+					text: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
 					children: [simplifiedAnnot.comment]
 				}
 			]);
@@ -89,9 +90,11 @@ describe("Annotations formatting", () => {
 			.toEqual([
 				{
 					string: "[[March 18th, 2022]]",
+					text: "[[March 18th, 2022]]",
 					children: [
 						{
 							string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
+							text: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
 							children: [simplifiedAnnot.comment]
 						}
 					]
@@ -104,6 +107,7 @@ describe("Annotations formatting", () => {
 			.toEqual([
 				{
 					string: `${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
+					text: `${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
 					children: [simplifiedAnnot.comment]
 				}
 			]);
@@ -114,6 +118,7 @@ describe("Annotations formatting", () => {
 			.toEqual([
 				{
 					string: `[[>]] ${simplifiedAnnot.text}`,
+					text: `[[>]] ${simplifiedAnnot.text}`,
 					children: [simplifiedAnnot.comment]
 				}
 			]);

@@ -495,6 +495,7 @@ function formatAnnotationWithParams(annotation, { highlight_prefix = "[[>]]", hi
 
 		return {
 			string: highlightBlock,
+			text: highlightBlock,
 			children: comment ? [commentBlock] : []
 		};
 
@@ -531,6 +532,7 @@ function formatItemAnnotations(annotations, { group_by = false, highlight_prefix
 				const sortedAnnots = day_dict[date].sort((a,b) => compareAnnotationIndices(a.sortIndex, b.sortIndex));
 				return {
 					string: makeDNP(new Date(date.split("-")), { brackets: true }),
+					text: makeDNP(new Date(date.split("-")), { brackets: true }),
 					children: sortedAnnots
 						.map(ann => formatAnnotationWithParams(ann,
 							{ 

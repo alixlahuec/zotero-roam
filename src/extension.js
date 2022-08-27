@@ -333,6 +333,7 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 	if (notes.length > 0) {
 		metadata.push({
 			string: "[[Notes]]",
+			text: "[[Notes]]",
 			children: _formatNotes(notes, { annotationsSettings, notesSettings })
 		});
 	}
