@@ -121,15 +121,18 @@ const SemanticPagination = memo(function SemanticPagination(props){
 					title="Search by title, authors (last names), or year"
 					value={query} />
 			</Toolbar>
-			<ListWrapper>
-				{sortedItems.length > 0
-					? sortedItems
-						.slice(...pageLimits)
-						.map(el => 
-							<Item key={[el.doi, el.url, el.title].filter(Boolean).join("-")} 
-								item={el} selectProps={selectProps} type={type} />)
-					: <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No results found" /> }
-			</ListWrapper>
+			<div className="zr-semantic--datalist">
+				{sortedItems.length == 0
+					? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No results found" />
+					: <ListWrapper>
+						{sortedItems
+							.slice(...pageLimits)
+							.map(el => 
+								<Item key={[el.doi, el.url, el.title].filter(Boolean).join("-")} 
+									item={el} selectProps={selectProps} type={type} />)}
+					</ListWrapper>
+				}
+			</div>
 			<Toolbar>
 				<Pagination
 					arrows="first"

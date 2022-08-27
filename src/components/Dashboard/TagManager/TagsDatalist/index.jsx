@@ -75,16 +75,19 @@ const TagsDatalist = memo(function TagsDatalist(props){
 						nbItems={filteredItems.length} 
 						setCurrentPage={setCurrentPage} />
 				</Toolbar>
-				<ListWrapper>
-					{sortedItems.length > 0
-						? sortedItems
-							.slice(...pageLimits)
-							.map(el =>
-								filter == "suggestions" 
-									? <ItemSuggestion key={el.token} entry={el} library={libProps.currentLibrary} /> 
-									: <ItemEntry key={el.token} entry={el} library={libProps.currentLibrary} />)
-						: <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />}
-				</ListWrapper>
+				<div className="zr-tagmanager--datalist--contents">
+					{sortedItems.length == 0
+						? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />
+						: <ListWrapper>
+							{sortedItems
+								.slice(...pageLimits)
+								.map(el =>
+									filter == "suggestions" 
+										? <ItemSuggestion key={el.token} entry={el} library={libProps.currentLibrary} /> 
+										: <ItemEntry key={el.token} entry={el} library={libProps.currentLibrary} />)}
+						</ListWrapper>
+					}
+				</div>
 				{filter == "all" && <Stats stats={stats} />}
 			</div>
 	);

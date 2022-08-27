@@ -22,13 +22,15 @@ function QueryPDFs({ items }){
 	}, [items, setCurrentPage]);
 
 	return <div className="zr-query-builder">
-		<ListWrapper>
-			{items.length > 0
-				? items
-					.slice(...pageLimits)
-					.map((el, i) => <PDFElement key={[el.key, i].join("-")} item={el} />)
-				: <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />}
-		</ListWrapper>
+		<div className="zr-querypdfs--datalist">
+			{items.length == 0
+				? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />
+				: <ListWrapper>
+					{items
+						.slice(...pageLimits)
+						.map((el, i) => <PDFElement key={[el.key, i].join("-")} item={el} />)}
+				</ListWrapper>}
+		</div>
 		<Toolbar>
 			<Pagination
 				arrows="first" 

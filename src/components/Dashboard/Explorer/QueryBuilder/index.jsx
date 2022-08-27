@@ -45,13 +45,15 @@ function QueryBuilder({ items, onClose }){
 		<Toolbar>
 			<QueryFilterList handlers={handlers} terms={queryTerms} useOR={useOR} />
 		</Toolbar>
-		<ListWrapper>
-			{queriedItems.length > 0
-				? queriedItems
-					.slice(...pageLimits)
-					.map(el => <ItemElement key={[el.location, el.key].join("-")} item={el} onClose={onClose} />)
-				: <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />}
-		</ListWrapper>
+		<div className="zr-queryitems--datalist">
+			{queriedItems.length == 0
+				? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />
+				: <ListWrapper>
+					{queriedItems
+						.slice(...pageLimits)
+						.map(el => <ItemElement key={[el.location, el.key].join("-")} item={el} onClose={onClose} />)}
+				</ListWrapper>}
+		</div>
 		<Toolbar>
 			<Pagination
 				arrows="first" 
