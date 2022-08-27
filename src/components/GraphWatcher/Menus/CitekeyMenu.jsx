@@ -269,6 +269,7 @@ const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 							alignText="left"
 							href={getPDFLink(pdf, "href")}
 							icon="paperclip"
+							intent="none"
 							minimal={true}
 							role="menuitem"
 							text={pdf.data.filename || pdf.data.title} />
@@ -290,10 +291,10 @@ const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 		return (
 			<>
 				{defaults.includes("openZoteroLocal")
-					? <ButtonLink icon="application" text="Open in Zotero" href={getLocalLink(item, { format: "target" })} role="menuitem" />
+					? <ButtonLink icon="application" intent="none" text="Open in Zotero" href={getLocalLink(item, { format: "target" })} role="menuitem" />
 					: null}
 				{defaults.includes("openZoteroWeb")
-					? <ButtonLink icon="cloud" text="Open in Zotero [Web library]" href={getWebLink(item, { format: "target" })} role="menuitem" />
+					? <ButtonLink icon="cloud" intent="none" text="Open in Zotero [Web library]" href={getWebLink(item, { format: "target" })} role="menuitem" />
 					: null}
 			</>
 		);
