@@ -49,7 +49,7 @@ const WITH_OPTIONS = [
 	{ label: "Text contents", value: "text" }
 ];
 
-// TODO: switch divider input to be preselect values (inc. \n) vs text
+
 function NotesWidget(){
 	const [
 		{

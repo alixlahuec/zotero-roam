@@ -263,7 +263,6 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 	
 	const { use = "default", func = "", smartblock: { param, paramValue } } = metadataSettings;
 
-	// TODO: Add support or options for passing formatted children (PDFs/notes) to SmartBlock
 	if(use == "smartblock"){
 		const context = { item, notes, page, pdfs };
 		try {
