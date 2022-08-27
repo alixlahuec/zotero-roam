@@ -135,8 +135,8 @@ function RelatedItemsBar(props) {
 		openDialog();
 	}, [title, openDialog]);
 
-	const refCount = data.references?.length || null;
-	const citCount = data.citations?.length || null;
+	const refCount = data.references?.length || 0;
+	const citCount = data.citations?.length || 0;
 
 	const cleanSemanticData = useMemo(() => {
 		if(!data){
@@ -172,8 +172,8 @@ function RelatedItemsBar(props) {
 				:
 				<>
 					<ButtonGroup minimal={true} fill={true}>
-						<Button className={ showClasses.references } loading={isLoading} minimal={true} onClick={showReferences} icon="citation" intent="primary" role="menuitem" aria-haspopup="dialog" title="Show references" >{ pluralize(refCount, "reference") }</Button>
-						<Button className={ showClasses.citations } loading={isLoading} minimal={true} onClick={showCitations} icon="chat" intent="warning" role="menuitem" aria-haspopup="dialog" title="Show citations" >{ pluralize(citCount, "citation") }</Button>
+						<Button aria-disabled={refCount == 0} disabled={refCount == 0} className={ showClasses.references } loading={isLoading} minimal={true} onClick={showReferences} icon="citation" intent="primary" role="menuitem" aria-haspopup="dialog" title="Show references" >{ pluralize(refCount, "reference") }</Button>
+						<Button aria-disabled={citCount == 0} disabled={citCount == 0} className={ showClasses.citations } loading={isLoading} minimal={true} onClick={showCitations} icon="chat" intent="warning" role="menuitem" aria-haspopup="dialog" title="Show citations" >{ pluralize(citCount, "citation") }</Button>
 						<Button className={ showClasses.backlinks } loading={isLoading} minimal={true} onClick={toggleBacklinks} {...showBacklinksButtonProps} role="menuitem" title="Show backlinks" />
 					</ButtonGroup>
 					{refCount + citCount > 0
