@@ -18,7 +18,7 @@ export default {
 			notes: {},
 			pageMenu: {
 				defaults: [],
-				trigger: () => true
+				trigger: true
 			},
 			sciteBadge: {},
 			shortcuts: {},

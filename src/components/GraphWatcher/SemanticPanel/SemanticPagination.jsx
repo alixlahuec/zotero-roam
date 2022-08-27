@@ -1,5 +1,5 @@
-import { memo, useCallback, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape } from "prop-types";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import { InputGroup, NonIdealState } from "@blueprintjs/core";
 

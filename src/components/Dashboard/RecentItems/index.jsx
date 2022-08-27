@@ -1,5 +1,5 @@
-import { memo, useEffect, useMemo, useState } from "react";
 import { arrayOf, bool, func, number, shape, string } from "prop-types";
+import { memo, useEffect, useMemo, useState } from "react";
 
 import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
