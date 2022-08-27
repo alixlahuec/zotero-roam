@@ -131,8 +131,8 @@ const useModifyTags = () => {
 			},{ successful: [], failed: [] });
 
 			/* istanbul ignore if */
-			if(!error && outcome.successful.length > 0){
-				// Invalidate item queries related to the library used
+			if(outcome.successful.length > 0){
+				// If any item was modified, invalidate item queries for the targeted library
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries([ "items", path ], {
 					refetchType: "inactive"
