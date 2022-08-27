@@ -17,6 +17,10 @@
     justify-content: space-between;
 }
 
+.zr-datalist--item.zr-query--result [zr-role="item-header"] > a.bp4-button {
+    flex: 0 0 auto;
+}
+
 .zr-datalist--item.zr-query--result [zr-role="item-title"] {
     display: block;
     font-weight: 500;

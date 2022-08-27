@@ -254,6 +254,10 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
     color: var(--zr-text-co);
 }
 
+[class*="zr"] a.bp4-button:not(.bp4-menu-item) {
+    height: fit-content;
+}
+
 [class*="zr"] a:not(.bp4-menu-item),
 [class*="zr"] .bp4-button.bp4-minimal.bp4-intent-primary,
 [class*="zr"] .bp4-button.bp4-outlined.bp4-intent-primary,

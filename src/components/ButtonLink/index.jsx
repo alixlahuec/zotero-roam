@@ -5,7 +5,7 @@ function ButtonLink(props) {
 	const { children = null, href, minimal = true, ...otherProps } = props;
 	
 	return (
-		<AnchorButton href={href} minimal={minimal} rel="noreferrer" target="_blank" {...otherProps}>
+		<AnchorButton href={href} intent="primary" minimal={minimal} rel="noreferrer" target="_blank" {...otherProps}>
 			{children}
 		</AnchorButton>
 	);
