@@ -1,7 +1,7 @@
 import { Children, cloneElement, isValidElement, useCallback, useMemo } from "react";
-import { arrayOf, bool, func, node, object, objectOf, oneOfType, shape, string } from "prop-types";
+import { arrayOf, bool, func, node, number, object, objectOf, oneOfType, shape, string } from "prop-types";
 
-import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, MenuItem, Switch } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, MenuItem, NumericInput, Switch } from "@blueprintjs/core";
 import { Select2 } from "@blueprintjs/select";
 
 import InputMultiSelect from "../Inputs/InputMultiSelect";
@@ -133,6 +133,25 @@ MultiInput.propTypes = {
 	setValue: func,
 	title: node,
 	value: arrayOf(string)
+};
+
+const NumericSelect = ({ description = null, label, setValue, title = null, value, ...extraProps }) => {
+	const handler = useCallback((num, _numAsString) => setValue(num), [setValue]);
+
+	return <Row>
+		<div>
+			{title && <Title>{title}</Title>}
+			{description && <Description>{description}</Description>}
+		</div>
+		<NumericInput aria-label={label} min={0} minorStepSize={1} onValueChange={handler} selectAllOnFocus={true} selectAllOnIncrement={true} {...extraProps} />
+	</Row>;
+};
+NumericSelect.propTypes = {
+	description: node,
+	label: string,
+	setValue: func,
+	title: node,
+	value: number
 };
 
 const RoamTagsInput = ({ description, onChange, title = null, value }) => {
@@ -334,6 +353,7 @@ Toggle.propTypes = {
 
 export {
 	MultiInput,
+	NumericSelect,
 	RoamTagsInput,
 	RowCol,
 	RowGroup,

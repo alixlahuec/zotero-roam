@@ -115,7 +115,8 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
 
 [class*="zr"] .bp4-input:focus,
 [class*="zr"] .bp4-input.bp4-active,
-[class*="zr"] .bp4-input-group[class*="bp4-intent-"] .bp4-input:focus {
+[class*="zr"] .bp4-input-group[class*="bp4-intent-"] .bp4-input:focus,
+[class*="zr"] .bp4-numeric-input input.bp4-input {
     box-shadow: none;
 }
 
@@ -154,7 +155,8 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
 .zr-text-input input:not(.bp4-input-ghost),
 .zr-date-input input,
 .zr-date-range-input input,
-[class*="zr"] .bp4-multi-select.bp4-input {
+[class*="zr"] .bp4-multi-select.bp4-input,
+[class*="zr"] .bp4-numeric-input input.bp4-input {
     background: var(--zr-dialog-bg);
     box-shadow: none;
     color: var(--zr-text-co);
