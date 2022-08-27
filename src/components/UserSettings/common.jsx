@@ -9,6 +9,7 @@ import TagsSelector from "../Inputs/TagsSelector";
 
 import { CustomClasses } from "../../constants";
 
+
 const popoverProps = {
 	canEscapeKeyClose: false,
 	minimal: true,
@@ -210,7 +211,7 @@ TextInput.propTypes = {
 	children: node
 };
 
-const TextField = ({ description = null, ifEmpty = null, label = null, onChange = null, placeholder = null, title = null, value, ...extraProps }) => {
+const TextField = ({ description = null, ifEmpty = null, label = null, onChange, placeholder = null, title = null, value, ...extraProps }) => {
 	const valueHandler = useCallback((event) => onChange(event.target.value), [onChange]);
 
 	return <Row>
