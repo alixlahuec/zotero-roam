@@ -253,15 +253,13 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 				if(prev_status == null && current_status == "false"){
 					continue;
 				} else if(current_status == "true"){
-					linkElement.textContent = itemsMap.get(citekey).citation;
 					if(render_inline == true){
-						linkElement.addEventListener("contextmenu", openContextMenu);
+						linkElement.textContent = itemsMap.get(citekey).citation;
 					}
+					linkElement.addEventListener("contextmenu", openContextMenu);
 				} else {
 					linkElement.textContent = citekey;
-					if(render_inline == true){
-						linkElement.removeEventListener("contextmenu", openContextMenu);
-					}
+					linkElement.removeEventListener("contextmenu", openContextMenu);
 				}
 			}
 		}
@@ -273,13 +271,11 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 			ck.removeAttribute("data-in-library");
 			const linkElement = ck.getElementsByClassName("rm-page-ref")[0];
 			linkElement.textContent = ck.getAttribute("data-link-title");
-			if(render_inline == true){
-				linkElement.removeEventListener("contextmenu", openContextMenu);   
-			}
+			linkElement.removeEventListener("contextmenu", openContextMenu);   
 		});
-	}, [render_inline, openContextMenu]);
+	}, [openContextMenu]);
 
-	useEffect(() => {		
+	useEffect(() => {
 		const watcher = setInterval(
 			() => {
 				renderCitekeyRefs();
@@ -290,6 +286,19 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 			cleanupCitekeyRefs();
 		};
 	}, [renderCitekeyRefs, cleanupCitekeyRefs]);
+
+	useEffect(() => {
+		const refCitekeys = document.querySelectorAll("span[data-link-title^='@'][data-in-library]");
+
+		refCitekeys.forEach(ck => {
+			const linkElement = ck.getElementsByClassName("rm-page-ref")[0];
+			const citekey = ck.getAttribute("data-link-title");
+			const inLibrary = ck.getAttribute("data-in-library") == "true";
+			linkElement.textContent = inLibrary
+				? itemsMap.get(citekey).citation
+				: citekey;
+		});
+	}, [render_inline, itemsMap]);
 
 	return (
 		createPortal(
