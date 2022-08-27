@@ -199,7 +199,7 @@ function getCitekeyPagesWithEditTime(){
  * @returns {CursorLocation} Information about the cursor's location
  */
 function getCurrentCursorLocation(){
-	const { "block-uid": blockUID, "window-id": windowID } = window.roamAlphaAPI.ui.getFocusedBlock();
+	const { "block-uid": blockUID, "window-id": windowID } = (window.roamAlphaAPI.ui.getFocusedBlock() || {});
 	if(!blockUID || !windowID){ return null; }
 
 	const blockElementID = ["block-input", windowID, blockUID].join("-");

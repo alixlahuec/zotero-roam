@@ -1,5 +1,5 @@
-import { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { bool, func, instanceOf, number, object, shape } from "prop-types";
+import { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
