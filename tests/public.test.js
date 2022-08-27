@@ -29,19 +29,13 @@ describe("Retrieving creators data for an item", () => {
 			return_as: "string",
 			brackets: true,
 			use_type: true
-		})).toEqual([
-			"[[Gary Bloch]]",
-			"[[Linda Rozmovits]]"
-		]);
+		})).toEqual("[[Gary Bloch]], [[Linda Rozmovits]]");
 
 		expect(_getItemCreators(sample_item, {
 			return_as: "string",
 			brackets: false,
 			use_type: true
-		})).toEqual([
-			"Gary Bloch",
-			"Linda Rozmovits"
-		]);
+		})).toEqual("Gary Bloch, Linda Rozmovits");
 	});
 });
 

@@ -48,7 +48,7 @@ function _getItemCreators(item, { return_as = "string", brackets = true, use_typ
 		return creatorsInfoList.map(creator => {
 			const creatorTag = (brackets == true ? `[[${creator.name}]]` : creator.name);
 			return (use_type == true ? creatorTag + (creator.type == "author" ? "" : ` (${creator.type})`) : creatorTag);
-		}).join(" ");
+		}).join(", ");
 	}
 }
 
