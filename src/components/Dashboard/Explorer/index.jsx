@@ -115,9 +115,6 @@ function ExplorerTabs({ itemList, onClose }){
 			<Tab id="pdfs" title="PDFs" 
 				panel={<TabContents itemList={itemList} onClose={onClose} show="pdfs" />} 
 			/>
-			<Tab id="notes" title="Notes"
-				panel={<TabContents itemList={itemList} onClose={onClose} show="notes" />}
-			/>
 		</Tabs>
 	);
 }
