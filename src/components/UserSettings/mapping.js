@@ -6,12 +6,12 @@ import { NotesProvider, NotesWidget } from "./Notes";
 import { OtherSettingsProvider, OtherSettingsWidget } from "./Other";
 import { PageMenuProvider, PageMenuWidget } from "./PageMenu";
 import { ShortcutsProvider, ShortcutsWidget } from "./Shortcuts";
+import { TypemapProvider, TypemapWidget } from "./Typemap";
 import { WebImportProvider, WebImportWidget } from "./WebImport";
 
 import { RequestsProvider } from "./Requests";
 import RequestsWidget from "./Requests/RequestsWidget";
 import { SciteProvider } from "./Scite";
-import { TypemapProvider } from "./Typemap";
 
 
 export const SETTINGS_CONFIG = [
@@ -61,7 +61,8 @@ export const SETTINGS_CONFIG = [
 	},
 	{
 		component: TypemapProvider,
-		id: "typemap"
+		id: "typemap",
+		widget: TypemapWidget
 	},
 	{
 		component: WebImportProvider,
