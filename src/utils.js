@@ -567,11 +567,11 @@ function formatItemAnnotations(annotations, { group_by = false, highlight_prefix
 
 /** Default formatter for notes
  * @param {{ZoteroItem}[]} notes - The (raw) array of notes to be formatted
- * @param {String} split_char - The string on which to split notes into blocks
- * @returns A flat array of strings, separated according to `split_char`, and ready for import into Roam.
+ * @param {String} separator - The string on which to split notes into blocks
+ * @returns A flat array of strings, separated according to `separator`, and ready for import into Roam.
  */
-function formatItemNotes(notes, split_char){
-	return splitNotes(notes, split_char)
+function formatItemNotes(notes, separator){
+	return splitNotes(notes, separator)
 		.flat(1)
 		.map(b => parseNoteBlock(b))
 		.filter(b => b.trim());
@@ -630,13 +630,17 @@ function formatZoteroAnnotations(annotations, { func = "", use = "default", __wi
  * @param {SettingsNotes} config - Additional settings
  * @returns The formatted notes
  */
-function formatZoteroNotes(notes, { func = "", split_char = "\n", use = "default", __with = "raw" } = {}){
+function formatZoteroNotes(notes, { func = "", split_char = "", split_preset = "\n", split_use = "preset", use = "default", __with = "raw" } = {}){
+	const separator = (split_use == "custom")
+		? split_char
+		: split_preset;
+
 	if(use == "function" && func){
 		// If the user has provided a custom function, execute it with the desired input
-		return executeFunctionByName(func, window, __with == "raw" ? notes : splitNotes(notes, split_char));
+		return executeFunctionByName(func, window, __with == "raw" ? notes : splitNotes(notes, separator));
 	} else {
 		// Otherwise use the default formatter
-		return formatItemNotes(notes, split_char);
+		return formatItemNotes(notes, separator);
 	}
 }
 
@@ -1210,11 +1214,11 @@ function sortElems(arr, sort){
 
 /** Splits Zotero notes on a given string
  * @param {Object[]} notes - The raw array of notes to split
- * @param {String} split_char - The string on which to split notes
+ * @param {String} separator - The string on which to split notes
  * @returns {String[][]} A nested array of strings, where each entry contains the splitting results for a given note
  */
-function splitNotes(notes, split_char){
-	return notes.map(n => n.data.note.split(split_char));
+function splitNotes(notes, separator){
+	return notes.map(n => n.data.note.split(separator));
 }
 
 export {

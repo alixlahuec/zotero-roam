@@ -153,7 +153,9 @@ export function setupInitialSettings(settingsObject){
 		},
 		notes: {
 			func: "",
-			split_char: "/n",
+			split_char: "",
+			split_preset: "\n",
+			split_use: "preset",
 			use: "default",
 			__with: "text",
 			...notes

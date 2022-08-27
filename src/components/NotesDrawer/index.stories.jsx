@@ -87,7 +87,9 @@ export default {
 	parameters: {
 		userSettings: {
 			notes: {
-				split_char: "/n",
+				split_char: "",
+				split_preset: "\n",
+				split_use: "preset",
 				__with: "text"
 			}
 		}

@@ -132,6 +132,8 @@
  * @typedef {{
  * func: String,
  * split_char: String,
+ * split_preset: ("\n"|"</p>"),
+ * split_use: ("preset"|"custom")
  * use: ("default"|"function")
  * __with: ("raw"|"text")
  * }}

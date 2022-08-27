@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func as funcType, node } from "prop-types";
 
-import { RowGroup, RowGroupOption, TextField, TextWithSelect } from "../common";
+import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect } from "../common";
 
 import * as customPropTypes from "../../../propTypes";
 
@@ -39,6 +39,16 @@ const useNotesSettings = () => {
 	return context;
 };
 
+const SPLIT_PRESET_OPTIONS = [
+	{ label: "Newline", value: "\n" },
+	{ label: "Paragraph", value: "</p>" }
+];
+
+const SPLIT_USE_OPTIONS = {
+	"preset": "Preset",
+	"custom": "Custom separator"
+};
+
 const USE_OPTIONS = {
 	"default": "Default formatter",
 	"function": "Custom function"
@@ -55,6 +65,8 @@ function NotesWidget(){
 		{
 			func,
 			split_char,
+			split_preset,
+			split_use,
 			use,
 			__with
 		},
@@ -72,6 +84,8 @@ function NotesWidget(){
 		return {
 			updateFuncName: (val) => updateSingleValue("func", val),
 			updateSplitChar: (val) => updateSingleValue("split_char", val),
+			updateSplitPreset: (val) => updateSingleValue("split_preset", val),
+			updateSplitUse: (val) => updateSingleValue("split_use", val),
 			updateUseType: (val) => updateSingleValue("use", val),
 			updateWithFormat: (val) => updateSingleValue("__with", val)
 		};
@@ -82,7 +96,18 @@ function NotesWidget(){
 	}), []);
 
 	return <>
-		<TextField description="The character(s) on which to split up notes into blocks" ifEmpty={true} label="Enter a character or set of characters to use to split notes into blocks" onChange={handlers.updateSplitChar} placeholder="e.g \n, </p>" title="Divider" value={split_char} />
+		<RowGroup title="Divider"
+			description="The character(s) on which to split up notes into blocks"
+			onChange={handlers.updateSplitUse}
+			options={SPLIT_USE_OPTIONS}
+			selected={split_use} >
+			<RowGroupOption id="preset">
+				<SingleInput menuTitle="Select a separator preset" onChange={handlers.updateSplitPreset} options={SPLIT_PRESET_OPTIONS} value={split_preset} />
+			</RowGroupOption>
+			<RowGroupOption id="custom" >
+				<TextField ifEmpty={true} label="Enter a custom separator" onChange={handlers.updateSplitChar} placeholder="e.g </p>" value={split_char} />
+			</RowGroupOption>
+		</RowGroup>
 		<RowGroup title="Formatter"
 			description="Choose a way to format annotations metadata when importing from Zotero." 
 			onChange={handlers.updateUseType}

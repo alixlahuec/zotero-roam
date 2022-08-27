@@ -259,6 +259,8 @@ const metadataSettingsType = shape({
 const notesSettingsType = shape({
 	func: string,
 	split_char: string,
+	split_preset: oneOf(["\n", "</p>"]),
+	split_use: oneOf(["preset", "custom"]),
 	use: oneOf(["default", "function"]),
 	__with: oneOf(["raw", "text"])
 });
