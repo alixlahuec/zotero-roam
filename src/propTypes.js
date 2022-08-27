@@ -284,7 +284,7 @@ const sciteBadgeSettingsType = shape({
 	tooltipSlide: number
 });
 
-const shortcutsSettingsType = objectOf(oneOfType([bool, string]));
+const shortcutsSettingsType = objectOf(string);
 
 const webImportSettingsType = shape({
 	tags: arrayOf(string)

@@ -53,7 +53,7 @@ const SearchInputGroup = memo(function SearchInputGroup(props) {
 		};
 
 		return Object.keys(shortcutsSettings)
-			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] != false)
+			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] !== "")
 			.map(k => {
 				return {
 					...defaultProps,

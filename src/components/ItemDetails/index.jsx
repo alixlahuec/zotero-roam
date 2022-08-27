@@ -70,19 +70,19 @@ function CopyOption(props){
 
 		switch(format){
 		case "page-reference":
-			return pageRefCombo != false
+			return pageRefCombo !== ""
 				? <ShortcutSequence action="copy as page reference" text={pageRefCombo} />
 				: null;
 		case "tag":
-			return tagCombo != false
+			return tagCombo !== ""
 				? <ShortcutSequence action="copy as tag" text={tagCombo} /> 
 				: null;
 		case "citation":
-			return citationCombo != false
+			return citationCombo !== ""
 				? <ShortcutSequence action="copy as citation" text={citationCombo} />
 				: null;
 		case "citekey":
-			return citekeyCombo != false
+			return citekeyCombo !== ""
 				? <ShortcutSequence action="copy as citekey" text={citekeyCombo} />
 				: null;
 		default:
@@ -127,7 +127,7 @@ function CopyButtons(props){
 	}, [citekey, copyAsDefault, copySettings, defaultCopyText, item]);
 
 	const label = useMemo(() => {
-		return shortcutsSettings.copyDefault != false
+		return shortcutsSettings.copyDefault !== ""
 			? <ShortcutSequence action="copy as default" text={shortcutsSettings.copyDefault} />
 			: null;
 	}, [shortcutsSettings]);
@@ -164,7 +164,7 @@ function CopyButtons(props){
 		};
 
 		return Object.keys(shortcutsSettings)
-			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] != false)
+			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] !== "")
 			.map(k => {
 				return {
 					...defaultProps,
@@ -257,7 +257,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 	}, [closeDialog, inGraph]);
 
 	const goToPageButton = useMemo(() => {
-		const label = shortcutsSettings.goToItemPage != false
+		const label = shortcutsSettings.goToItemPage !== ""
 			? <ShortcutSequence action="go to the item's page" text={shortcutsSettings.goToItemPage} />
 			: null;
 		return inGraph 
@@ -283,7 +283,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 		if(children.notes.length == 0){
 			return null;
 		} else {
-			const label = shortcutsSettings.toggleNotes != false
+			const label = shortcutsSettings.toggleNotes !== ""
 				? <ShortcutSequence action="toggle the notes panel" text={shortcutsSettings.toggleNotes} />
 				: null;
 			return <>
@@ -396,7 +396,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 					<MenuDivider className={CustomClasses.DIVIDER_MINIMAL} title="Actions" />
 					{goToPageButton}
 					<MenuItem icon="add" 
-						labelElement={shortcutsSettings.importMetadata != false && <ShortcutSequence action="import the item's metadata" text={shortcutsSettings.importMetadata} />} 
+						labelElement={shortcutsSettings.importMetadata !== "" && <ShortcutSequence action="import the item's metadata" text={shortcutsSettings.importMetadata} />} 
 						onClick={importMetadata} 
 						text="Import metadata" />
 					{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Import notes" />}

@@ -24,8 +24,8 @@ export default {
 				useQuickCopy: false
 			},
 			shortcuts: {
-				copyDefault: false,
-				importMetadata: false
+				copyDefault: "",
+				importMetadata: ""
 			}
 		}
 	}

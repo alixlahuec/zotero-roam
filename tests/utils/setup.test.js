@@ -210,19 +210,19 @@ describe("Parsing initial user settings", () => {
 			tooltipSlide: 0
 		},
 		shortcuts: {
-			"copyDefault": false,
-			"copyCitation": false,
-			"copyCitekey": false,
-			"copyPageRef": false,
-			"copyTag": false,
-			"focusSearchBar": false,
-			"goToItemPage": false,
-			"importMetadata": false,
-			"toggleDashboard": false,
+			"copyDefault": "",
+			"copyCitation": "",
+			"copyCitekey": "",
+			"copyPageRef": "",
+			"copyTag": "",
+			"focusSearchBar": "",
+			"goToItemPage": "",
+			"importMetadata": "",
+			"toggleDashboard": "",
 			"toggleNotes": "alt+N",
 			"toggleSearchPanel": "alt+E",
-			"toggleSettingsPanel": false,
-			"toggleQuickCopy": false
+			"toggleSettingsPanel": "",
+			"toggleQuickCopy": ""
 		},
 		typemap: TYPEMAP_DEFAULT,
 		webimport: {

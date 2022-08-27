@@ -88,7 +88,7 @@ class App extends Component {
 		this.hotkeys = Object.keys(this.shortcutsConfig)
 			.map(cmd => {
 				const combo = this.props.shortcuts[cmd];
-				if(combo != false){
+				if(combo !== ""){
 					return {
 						allowInInput: true,
 						combo,
