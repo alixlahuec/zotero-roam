@@ -19,21 +19,21 @@ const sbCommands = () => {
 			}
 		},
 		"ZOTEROITEMABSTRACT": {
-			help: "Returns the abstract of a Zotero item, if available.",
+			help: "Returns the abstract of a Zotero item.",
 			handler: (context) => () => {
 				const { item } = context.variables;
 				return item.data.abstractNote || "";
 			}
 		},
 		"ZOTEROITEMCOLLECTIONS": {
-			help: "Returns the name(s) of the collection(s) a Zotero item belongs to",
+			help: "Returns the comma-separated list of the collection(s) a Zotero item belongs to.",
 			handler: (context) => (brackets = true) => {
 				const { item } = context.variables;
 				return window.zoteroRoam.getItemCollections(item, { return_as: "string", brackets }).map(", ");
 			}
 		},
 		"ZOTEROITEMCREATORS": {
-			help: "Returns the creator(s) of a Zotero item. Options: brackets (`true`(default)|`false`|`existing`), use_type(`true`(default)|`false`).",
+			help: "Returns the comma-separated list of the creator(s) of a Zotero item. Options: brackets (`true`(default)|`false`|`existing`), use_type(`true`(default)|`false`).",
 			handler: (context) => (brackets = true, use_type = true) => {
 				const { item } = context.variables;
 				return window.zoteroRoam.getItemCreators(item, { return_as: "string", brackets, use_type });
@@ -125,7 +125,7 @@ const sbCommands = () => {
 			}
 		},
 		"ZOTEROPDFS": {
-			help: "Formats a list of Zotero PDFs",
+			help: "Returns the comma-separated links to a list of Zotero PDFs",
 			handler: (context) => () => {
 				const { pdfs = [] } = context.variables;
 				return window.zoteroRoam.formatPDFs(pdfs, "string");
