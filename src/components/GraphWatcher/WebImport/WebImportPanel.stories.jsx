@@ -50,15 +50,17 @@ WithInteractions.play = async({ args, canvasElement }) => {
 		bubbles: true,
 		cancelable: true,
 		detail: {
-			collections: [],
+			args: {
+				collections: [],
+				items,
+				tags: []
+			},
 			data: {
 				successful: [],
 				failed: []
 			},
 			error: null,
-			items,
-			library: userLibrary.path,
-			tags: []
+			library: userLibrary.path
 		}
 	});
 

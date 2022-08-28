@@ -66,6 +66,10 @@ const events = [
     * Signals a write call has terminated
     * @event zotero-roam:write
     * @type {object}
+    * @property {{collections: String[], items: Object[], tags: String[]}} args - The input provided to the writing function
+    * @property {{successful: Object[], failed: Object[]}|null} data - The outcome of the operation
+    * @property {error|null} error - The error thrown during the operation, if any
+    * @property {String} library - The path of the targeted library
     */
 	"write"];
 

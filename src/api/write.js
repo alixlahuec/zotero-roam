@@ -70,12 +70,14 @@ const useImportCitoids = () => {
 			}
 
 			emitCustomEvent("write", {
-				collections,
+				args: {
+					collections,
+					items,
+					tags
+				},
 				data: outcome,
 				error,
-				items,
 				library: path,
-				tags
 			});
 		}
 	});
