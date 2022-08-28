@@ -78,8 +78,8 @@ export default class ZoteroRoam {
      * @param {ConfigBibliography} config - Optional parameters to use to format the bibliography
      * @returns 
      */
-	async getBibliography(item, config = {}) {
-		return await _getBibliography(item, config, {
+	async getItemCitation(item, config = {}) {
+		return await _getItemCitation(item, config, {
 			libraries: this.#libraries
 		});
 	}
@@ -251,7 +251,7 @@ async function _getBibEntries(citekeys, { libraries, queryClient }) {
  * @param {{libraries: ZoteroLibrary[]}} requests - The user's current requests
  * @returns 
  */
-async function _getBibliography(item, config, { libraries }){
+async function _getItemCitation(item, config, { libraries }){
 	const location = item.library.type + "s/" + item.library.id;
 	const library = libraries.find(lib => lib.path == location);
 

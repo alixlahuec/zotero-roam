@@ -199,7 +199,7 @@ describe("Retrieval utils", () => {
 
 			const sample_item = findItems({ type, id, since: 0 }).find(it => it.data.key == itemKey);
 
-			const res = await extension.getBibliography(sample_item, {});
+			const res = await extension.getItemCitation(sample_item, {});
 
 			const { bib } = findBibliographyEntry({ key: itemKey, path });
 
