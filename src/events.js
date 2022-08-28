@@ -42,11 +42,10 @@ const events = [
 	 * Signals a tag modification has terminated
 	 * @event zotero-roam:tags-modified
 	 * @type {object}
-	 * @property {{failed: Object[], successful: Object[]}} data - The outcome of all requests
+     * @property {{into: String, tags: String[]}} args - The input provided to the modifying function
+	 * @property {{successful: Object[], failed: Object[]}} data - The outcome of all requests
 	 * @property {error|null} error - The error thrown during the modification, if failed
-	 * @property {String} into - The string used for the renaming
 	 * @property {String} library - The path of the targeted library
-	 * @property {String[]} tags - The array of targeted tags
 	 * @see useModifyTags
 	 */
 	"tags-modified",

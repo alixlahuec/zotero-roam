@@ -34,14 +34,16 @@ Default.play = async({ args, canvasElement }) => {
 		bubbles: true,
 		cancelable: true,
 		detail: {
+			args: {
+				into,
+				tags: [...args.options.roam, ...args.options.zotero]
+			},
 			data: {
 				successful: [],
 				failed: []
 			},
 			error: null,
-			into,
-			library: userLibrary.path,
-			tags: [...args.options.roam, ...args.options.zotero]
+			library: userLibrary.path
 		}
 	});
 

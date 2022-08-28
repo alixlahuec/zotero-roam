@@ -142,11 +142,13 @@ const useModifyTags = () => {
 			}
 
 			emitCustomEvent("tags-modified", {
+				args: {
+					into,
+					tags
+				},
 				data: outcome,
 				error,
-				into,
-				library: path,
-				tags
+				library: path
 			});
 		}
 	});
