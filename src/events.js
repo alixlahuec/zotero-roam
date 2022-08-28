@@ -32,9 +32,9 @@ const events = [
 	 * Signals a tag deletion has terminated
 	 * @event zotero-roam:tags-deleted
 	 * @type {object}
+     * @property {{tags: String[]}} args - The input provided to the deleting function
 	 * @property {error|null} error - The error thrown during the import, if failed
 	 * @property {String} library - The path of the targeted library
-	 * @property {String[]} tags - The array of targeted tags
 	 * @see useDeleteTags
 	 */
 	"tags-deleted",
@@ -162,7 +162,7 @@ function setDefaultHooks(){
 		}
 	});
 	document.addEventListener("zotero-roam:tags-deleted", (e) => {
-		const { error, library, tags } = e.detail;
+		const { args: { tags }, error, library } = e.detail;
 		if(error){
 			console.error(error);
 			zrToaster.show({

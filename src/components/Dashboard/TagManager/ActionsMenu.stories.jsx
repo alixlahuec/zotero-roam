@@ -51,9 +51,11 @@ Default.play = async ({ canvasElement }) => {
 		bubbles: true,
 		cancelable: true,
 		detail: {
+			args: {
+				tags: ["history", "HISTORY", "History"]
+			},
 			error: null,
-			library: userLibrary.path,
-			tags: ["history", "HISTORY", "History"]
+			library: userLibrary.path
 		}
 	});
 
