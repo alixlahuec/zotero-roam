@@ -8,7 +8,7 @@ const events = [
     * Signals a metadata import has terminated
     * @event zotero-roam:metadata-added
     * @type {object}
-    * @property {({blocks: Array, uid: String}|{new: Boolean, smartblock: Object, uid: String})} args - The configuration used for the import
+    * @property {({blocks: Array, uid: String}|{smartblock: {param: ("srcName"|"srcUid"), paramValue: String}, uid: String})} args - The configuration used for the import
     * @property {error|null} error - The error thrown during the import, if failed
 	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
     * @property {{item: ZoteroItem, notes: (ZoteroItem|ZoteroAnnotation)[], pdfs: ZoteroItem[]}} raw - The raw data provided as input

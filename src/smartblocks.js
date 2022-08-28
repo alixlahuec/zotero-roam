@@ -214,7 +214,7 @@ function registerSmartblockCommands(){
 
 /* istanbul ignore next */
 /** Triggers a given SmartBlock to import an item's metadata
- * @param {SmartblockConfig} config - The identification for the SmartBlock to be used.
+ * @param {SmartblockConfig} config - The configuration of the SmartBlock to use.
  * @param {{
  * item: ZoteroItem,
  * notes: (ZoteroItem|ZoteroAnnotation)[],
@@ -226,13 +226,11 @@ function registerSmartblockCommands(){
 async function use_smartblock_metadata(config, context){
 	const { param: sbProp, paramValue: sbPropValue } = config;
 	const { item, notes, page, pdfs } = context;
-	const { title, uid, ...args } = page;
 
 	const defaultOutcome = {
 		args: {
-			...args,
 			smartblock: config,
-			uid
+			uid: page.uid
 		},
 		error: null,
 		page,
@@ -245,7 +243,7 @@ async function use_smartblock_metadata(config, context){
 	};
 
 	const obj = {
-		targetUid: uid,
+		targetUid: page.uid,
 		variables: {},
 		[sbProp]: sbPropValue
 	};
