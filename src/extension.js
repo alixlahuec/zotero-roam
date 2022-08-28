@@ -109,12 +109,12 @@ export default class ZoteroRoam {
      * @param {{brackets: Boolean}} config - Optional parameters to use to format the collections 
      * @returns 
      */
-	getItemCollections(item, { brackets = true } = {},) {
+	getItemCollections(item, { return_as = "string", brackets = true } = {},) {
 		const location = item.library.type + "s/" + item.library.id;
 		const library = this.#libraries.find(lib => lib.path == location);
 		const collectionList = this.getCollections(library);
 
-		return _getItemCollections(item, collectionList, { brackets });
+		return _getItemCollections(item, collectionList, { return_as, brackets });
 	}
 
 	/* istanbul ignore next */
@@ -287,7 +287,7 @@ function _getItemChildren(item, { queryClient }) {
  * @param {{brackets: Boolean}} config - Additional configuration 
  * @returns {String[]} The Array containing the names of the item's collections, if any
  */
-function _getItemCollections(item, collectionList, { brackets = true } = {}) {
+function _getItemCollections(item, collectionList, { return_as = "string", brackets = true } = {}) {
 	if (item.data.collections.length > 0) {
 		const output = [];
 
@@ -296,7 +296,17 @@ function _getItemCollections(item, collectionList, { brackets = true } = {}) {
 			if (libCollection) { output.push(libCollection.data.name); }
 		});
 
-		return (brackets == true ? output.map(cl => `[[${cl}]]`) : output);
+		const collectionsList = (brackets == true) 
+			? output.map(cl => `[[${cl}]]`) 
+			: output;
+        
+		switch(return_as){
+		case "array":
+			return collectionsList;
+		case "string":
+		default:
+			return collectionsList.join(", ");
+		}
 	} else {
 		return [];
 	}

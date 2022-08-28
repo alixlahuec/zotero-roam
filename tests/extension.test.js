@@ -125,12 +125,16 @@ describe("Retrieval utils", () => {
 		const expectedColls = sample_item.data.collections
 			.map(key => collectionList.find(coll => coll.key == key).data.name);
 
-		expect(extension.getItemCollections(sample_item, { brackets: false }))
+		expect(extension.getItemCollections(sample_item, { return_as: "array", brackets: false }))
 			.toEqual(expectedColls);
-		expect(extension.getItemCollections(sample_item, { brackets: true }))
+		expect(extension.getItemCollections(sample_item, { return_as: "array", brackets: true }))
 			.toEqual(expectedColls.map(cl => `[[${cl}]]`));
+		expect(extension.getItemCollections(sample_item, { return_as: "string", brackets: false }))
+			.toEqual(expectedColls.join(", "));
+		expect(extension.getItemCollections(sample_item, { return_as: "string", brackets: true }))
+			.toEqual(expectedColls.map(cl => `[[${cl}]]`).join(", "));
 		expect(extension.getItemCollections(sample_item, {}))
-			.toEqual(expectedColls.map(cl => `[[${cl}]]`));
+			.toEqual(expectedColls.map(cl => `[[${cl}]]`).join(", "));
         
 		const item_without_collections = items.find(it => it.data.collections.length == 0);
 		expect(extension.getItemCollections(item_without_collections, { brackets: false }))
