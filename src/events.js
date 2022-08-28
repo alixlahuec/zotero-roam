@@ -56,7 +56,7 @@ const events = [
      * @type {object}
      * @property {ZoteroItem[]} [data] - The data contained in the update, if successful
      * @property {error} [error] - The error thrown during the update, if failed
-     * @property {DataRequest} request - The data request that yielded the update
+     * @property {{dataURI: String, library: String, since: Integer}} request - The data request that yielded the update
      * @property {Boolean} success - Indicates if the update was successful
      */
 	"update",
@@ -66,7 +66,7 @@ const events = [
      * @type {object}
      * @property {ZoteroCollection[]|Object[]} [data] - The data contained in the update, if successful
      * @property {error} [error] - The error thrown during the update, if failed
-     * @property {{apikey: String, path: String}} library - The library that yielded the update
+     * @property {String} library - The path of the library that yielded the update
      * @property {Boolean} success - Indicates if the update was successful
      */
 	"update-collections",

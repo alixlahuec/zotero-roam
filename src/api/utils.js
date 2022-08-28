@@ -245,7 +245,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 
 			emitCustomEvent("update-collections", {
 				success: true,
-				library,
+				library: path,
 				data: modified
 			});
 		}
@@ -257,7 +257,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 	} catch(error) /* istanbul ignore next */ {
 		emitCustomEvent("update-collections", {
 			success: false,
-			library,
+			library: path,
 			error
 		});
 		return Promise.reject(error);
@@ -326,7 +326,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 
 				emitCustomEvent("update", {
 					success: true,
-					request: req,
+					request: { dataURI, library: path, since },
 					data: modified
 				});
 			}
@@ -339,7 +339,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 	} catch(error){
 		emitCustomEvent("update", {
 			success: false,
-			request: req,
+			request: { dataURI, library: path, since },
 			error
 		});
 		return Promise.reject(error);
