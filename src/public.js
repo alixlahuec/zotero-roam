@@ -3,23 +3,26 @@ import { getPDFLink } from "./utils";
 
 /** Converts Zotero PDF items into a specific format
  * @param {ZoteroItem[]} pdfs - The Array of Zotero PDFs
- * @param {("links"|"identity")} as - The desired format
+ * @param {("links"|"identity"|"string")} as - The desired format
  * @returns The formatted Array
  */
 function _formatPDFs(pdfs, as = "links"){
 	if(!pdfs){
 		return [];
 	} else {
+		const pdfsIdentity = pdfs.map(file => ({
+			title: file.data.filename || file.data.title, 
+			key: file.key, 
+			link: getPDFLink(file, "href")
+		}));
 		switch(as){
 		case "identity":
-			return pdfs.map(file => ({
-				title: file.data.title, 
-				key: file.key, 
-				link: getPDFLink(file, "href")
-			}));
+			return pdfsIdentity;
+		case "string":
+			return pdfsIdentity.map(entry => `[${entry.title}](${entry.link})`).join(", ");
 		case "links":
 		default:
-			return pdfs.map(file => getPDFLink(file, "markdown"));
+			return pdfsIdentity.map(entry => `[${entry.title}](${entry.link})`);
 		}
 	}
 }

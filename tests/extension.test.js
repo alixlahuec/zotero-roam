@@ -47,6 +47,8 @@ describe("Formatting utils", () => {
 			.toEqual(_formatPDFs([samplePDF], "links"));
 		expect(extension.formatPDFs([samplePDF], "identity"))
 			.toEqual(_formatPDFs([samplePDF], "identity"));
+		expect(extension.formatPDFs([samplePDF], "string"))
+			.toEqual(_formatPDFs([samplePDF], "string"));
 		expect(extension.formatPDFs(false))
 			.toEqual([]);
 	});

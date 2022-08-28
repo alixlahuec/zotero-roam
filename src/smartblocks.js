@@ -128,7 +128,7 @@ const sbCommands = () => {
 			help: "Formats a list of Zotero PDFs",
 			handler: (context) => () => {
 				const { pdfs = [] } = context.variables;
-				return window.zoteroRoam.formatPDFs(pdfs, "links");
+				return window.zoteroRoam.formatPDFs(pdfs, "string");
 			}
 		}
 	};
