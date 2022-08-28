@@ -51,25 +51,17 @@ const events = [
 	 */
 	"tags-modified",
 	/**
-    * Signals a data update for items has terminated
+    * Signals a data update has terminated
      * @event zotero-roam:update
      * @type {object}
-     * @property {ZoteroItem[]} [data] - The data contained in the update, if successful
-     * @property {error} [error] - The error thrown during the update, if failed
-     * @property {{dataURI: String, library: String, since: Integer}} request - The data request that yielded the update
+     * @property {((ZoteroItem|ZoteroAnnotation)[])|(ZoteroCollection[])|null} data - The data contained in the update, if successful
+     * @property {error|null} error - The error thrown during the update, if failed
+     * @property {String} library - The path of the library that yielded the update
+     * @property {Integer} since - The library version since which elements were retrieved
      * @property {Boolean} success - Indicates if the update was successful
+     * @property {("items"|"collections")} type - The data type targeted by the update
      */
 	"update",
-	/**
-     * Signals a data update for collections has terminated
-     * @event zotero-roam:update-collections
-     * @type {object}
-     * @property {ZoteroCollection[]|Object[]} [data] - The data contained in the update, if successful
-     * @property {error} [error] - The error thrown during the update, if failed
-     * @property {String} library - The path of the library that yielded the update
-     * @property {Boolean} success - Indicates if the update was successful
-     */
-	"update-collections",
 	/**
     * Signals a write call has terminated
     * @event zotero-roam:write

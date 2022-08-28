@@ -222,6 +222,15 @@ async function fetchCitoid(query) {
 async function fetchCollections(library, since = 0, { match = [] } = {}) {
 	const { apikey, path } = library;
 
+	const defaultOutcome = {
+		data: null,
+		error: null,
+		library: path,
+		since,
+		success: null,
+		type: "collections"
+	};
+
 	try {
 		const { data: modified, headers } = await zoteroClient.get(
 			`${path}/collections`,
@@ -243,10 +252,10 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 		if(since > 0 && modified.length > 0){
 			deleted = await fetchDeleted(library, since);
 
-			emitCustomEvent("update-collections", {
-				success: true,
-				library: path,
-				data: modified
+			emitCustomEvent("update", {
+				...defaultOutcome,
+				data: modified,
+				success: true
 			});
 		}
 
@@ -255,10 +264,10 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 			lastUpdated: Number(lastUpdated)
 		};
 	} catch(error) /* istanbul ignore next */ {
-		emitCustomEvent("update-collections", {
-			success: false,
-			library: path,
-			error
+		emitCustomEvent("update", {
+			...defaultOutcome,
+			error,
+			success: false
 		});
 		return Promise.reject(error);
 	}
@@ -299,6 +308,15 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 	paramsQuery.set("start", 0);
 	paramsQuery.set("limit", 100);
 
+	const defaultOutcome = {
+		data: null,
+		error: null,
+		library: path,
+		since,
+		success: null,
+		type: "items"
+	};
+
 	try {
 		const { data: modified, headers } = await zoteroClient.get(`${dataURI}?${paramsQuery.toString()}`, 
 			{ 
@@ -325,9 +343,9 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 				queryClient.refetchQueries(tagsQueryKey);
 
 				emitCustomEvent("update", {
-					success: true,
-					request: { dataURI, library: path, since },
-					data: modified
+					...defaultOutcome,
+					data: modified,
+					success: true
 				});
 			}
 		}
@@ -338,9 +356,9 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 		};
 	} catch(error){
 		emitCustomEvent("update", {
-			success: false,
-			request: { dataURI, library: path, since },
-			error
+			...defaultOutcome,
+			error,
+			success: false
 		});
 		return Promise.reject(error);
 	}
