@@ -53,17 +53,30 @@ describe("Formatting utils", () => {
 			.toEqual([]);
 	});
 
-	test("Retrieving and formatting the date-added property of an item", () => {
+	describe("Retrieving and formatting the date-added property of an item", () => {
 		const date = new Date([2022, 1, 1]);
-		expect(extension.getItemDateAdded(
-			{ data: { dateAdded: date } },
-			{}
-		)).toBe("[[January 1st, 2022]]");
+		const cases = [
+			[
+				"with default settings", 
+				{},
+				"[[January 1st, 2022]]"
+			],
+			[
+				"with no brackets",
+				{ brackets: false },
+				"January 1st, 2022"
+			]
+		];
 
-		expect(extension.getItemDateAdded(
-			{ data: { dateAdded: date } },
-			{ brackets: false }
-		)).toBe("January 1st, 2022");
+		test.each(cases)(
+			"%# - %s",
+			(_id, config, expectation) => {
+				expect(extension.getItemDateAdded(
+					{ data: { dateAdded: date } },
+					config
+				)).toBe(expectation);
+			}
+		);
 	});
 
 	test("Retrieving the links to an item", () => {
