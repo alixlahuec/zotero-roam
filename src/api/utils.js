@@ -174,7 +174,7 @@ async function fetchBibEntries(itemKeys, library) {
 async function fetchBibliography(itemKey, library, config = {}) {
 	const { apikey, path } = library;
 	// See https://www.zotero.org/support/dev/web_api/v3/basics#parameters_for_format_bib_includecontent_bib_includecontent_citation
-	const { include = "bib", linkwrap = 0, locale = "en-US", style = "chicago-note-bibliography" } = config;
+	const { linkwrap = 0, locale = "en-US", style = "chicago-note-bibliography" } = config;
 	
 	try {
 		const { data } = await zoteroClient.get(
@@ -182,7 +182,7 @@ async function fetchBibliography(itemKey, library, config = {}) {
 			{
 				headers: { "Zotero-API-Key": apikey },
 				params: {
-					include,
+					include: "bib",
 					linkwrap,
 					locale,
 					style
@@ -190,7 +190,7 @@ async function fetchBibliography(itemKey, library, config = {}) {
 			}
 		);
 
-		return data[include];
+		return data.bib;
 	} catch(error) /* istanbul ignore next */ {
 		return Promise.reject(error);
 	}

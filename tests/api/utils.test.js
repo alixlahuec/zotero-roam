@@ -170,7 +170,7 @@ describe("Fetching mocked bibliography", () => {
 		async(_bibName, entry) => {
 			const path = getLibraryPath(entry.library);
 
-			const bibliography = await fetchBibliography(entry.key, { apikey: masterKey, path }, { include: "bib" });
+			const bibliography = await fetchBibliography(entry.key, { apikey: masterKey, path }, {});
 			const { bib } = findBibliographyEntry({ key: entry.key, path });
 
 			expect(bibliography).toEqual(bib);
