@@ -88,7 +88,8 @@ export default class ZoteroRoam {
      * @param {ZoteroLibrary} library - The targeted library
      * @returns 
      */
-	getCollections(library) {
+	getCollections(path) {
+		const library = this.#libraries.find(lib => lib.path == path);
 		return _getCollections(library, {
 			queryClient: this.#queryClient
 		});
@@ -110,9 +111,8 @@ export default class ZoteroRoam {
      * @returns 
      */
 	getItemCollections(item, { return_as = "string", brackets = true } = {},) {
-		const location = item.library.type + "s/" + item.library.id;
-		const library = this.#libraries.find(lib => lib.path == location);
-		const collectionList = this.getCollections(library);
+		const path = item.library.type + "s/" + item.library.id;
+		const collectionList = this.getCollections(path);
 
 		return _getItemCollections(item, collectionList, { return_as, brackets });
 	}
