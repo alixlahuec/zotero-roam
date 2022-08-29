@@ -52,6 +52,23 @@ describe("Formatting utils", () => {
 		expect(extension.formatPDFs(false))
 			.toEqual([]);
 	});
+
+	test("Retrieving the publication details for an item", () => {
+		expect(extension.getItemPublication(
+			{ data: { publicationTitle: "some publication" } },
+			{}
+		)).toBe("[[some publication]]");
+
+		expect(extension.getItemPublication(
+			{ data: { university: "some university" } },
+			{ brackets: false }
+		)).toBe("some university");
+
+		expect(extension.getItemPublication(
+			{ data: {} },
+			{}
+		)).toBe("");
+	});
     
 	test("Retrieving the formatted type for an item", () => {
 		expect(extension.getItemType(

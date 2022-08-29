@@ -1,4 +1,4 @@
-import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
+import { _formatPDFs, _getItemCreators, _getItemPublication, _getItemRelated, _getItemTags } from "./public";
 import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 
@@ -48,6 +48,7 @@ export default class ZoteroRoam {
 
 	formatPDFs = _formatPDFs;
 	getItemCreators = _getItemCreators;
+	getItemPublication = _getItemPublication;
 	getItemTags = _getItemTags;
 
 
@@ -331,7 +332,7 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 	if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${_getItemCreators(item, { return_as: "string", brackets: true, use_type: true })}`); } // Creators list, if available
 	if (item.data.abstractNote) { metadata.push(`Abstract:: ${item.data.abstractNote}`); } // Abstract, if available
 	if (item.data.itemType) { metadata.push(`Type:: ${_getItemType(item, { brackets: true }, { typemap })}`); } // Item type, according to typemap
-	metadata.push(`Publication:: ${item.data.publicationTitle || item.data.bookTitle || ""}`);
+	metadata.push(`Publication:: ${_getItemPublication(item, { brackets: true })}`);
 	if (item.data.url) { metadata.push(`URL : ${item.data.url}`); }
 	if (item.data.dateAdded) { metadata.push(`Date Added:: ${makeDNP(item.data.dateAdded, { brackets: true })}`); } // Date added, as Daily Notes Page reference
 	metadata.push(`Zotero links:: ${getLocalLink(item, { format: "markdown", text: "Local library" })}, ${getWebLink(item, { format: "markdown", text: "Web library" })}`); // Local + Web links to the item

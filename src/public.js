@@ -57,6 +57,22 @@ function _getItemCreators(item, { return_as = "string", brackets = true, use_typ
 	}
 }
 
+/** Retrieves the publication details for a given item.
+ * The extension will check for the existence of a `publicationTitle`, then a `bookTitle`, then a `university` name.
+ * @param {ZoteroItem} item - The targeted item
+ * @returns {String}
+ */
+function _getItemPublication(item, { brackets = true } = {}){
+	const maybePublication = item.data.publicationTitle || item.data.bookTitle || item.data.university;
+	if(maybePublication){
+		return (brackets == true)
+			? `[[${maybePublication}]]`
+			: maybePublication;
+	} else {
+		return "";
+	}
+}
+
 /** Retrieves the tags of a Zotero item, and returns them into a specific format
  * @param {ZoteroItem} item - The targeted Zotero item
  * @param {{return_as: ("array"|"string"), brackets: Boolean}} config - Additional configuration 
@@ -112,6 +128,7 @@ function _getItemRelated(item, datastore, { return_as = "string", brackets = tru
 export {
 	_formatPDFs,
 	_getItemCreators,
+	_getItemPublication,
 	_getItemTags,
 	_getItemRelated,
 };

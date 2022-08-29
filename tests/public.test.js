@@ -1,4 +1,4 @@
-import { _getItemCreators, _getItemTags } from "../src/public";
+import { _getItemCreators, _getItemPublication, _getItemTags } from "../src/public";
 import { items } from "Mocks/zotero/items";
 
 describe("Retrieving creators data for an item", () => {
@@ -37,6 +37,31 @@ describe("Retrieving creators data for an item", () => {
 			use_type: true
 		})).toEqual("Gary Bloch, Linda Rozmovits");
 	});
+});
+
+describe("Retrieving publication details for an item", () => {
+	const cases = [
+		[{ data: { publicationTitle: "some publication" } }, "some publication"],
+		[{ data: { bookTitle: "some book" } }, "some book"],
+		[{ data: { university: "some university" } }, "some university"],
+		[{ data: {} }, ""]
+	];
+
+	test.each(cases)(
+		"%# - no brackets",
+		(item, expectation) => {
+			expect(_getItemPublication(item, { brackets: false }))
+				.toBe(expectation);
+		}
+	);
+
+	test.each(cases)(
+		"%# - with brackets",
+		(item, expectation) => {
+			expect(_getItemPublication(item))
+				.toBe(expectation ? `[[${expectation}]]` : "");
+		}
+	);
 });
 
 test("Retrieving tags data for an item", () => {
