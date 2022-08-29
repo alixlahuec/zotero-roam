@@ -53,6 +53,19 @@ describe("Formatting utils", () => {
 			.toEqual([]);
 	});
 
+	test("Retrieving and formatting the date-added property of an item", () => {
+		const date = new Date([2022, 1, 1]);
+		expect(extension.getItemDateAdded(
+			{ data: { dateAdded: date } },
+			{}
+		)).toBe("[[January 1st, 2022]]");
+
+		expect(extension.getItemDateAdded(
+			{ data: { dateAdded: date } },
+			{ brackets: false }
+		)).toBe("January 1st, 2022");
+	});
+
 	test("Retrieving the publication details for an item", () => {
 		expect(extension.getItemPublication(
 			{ data: { publicationTitle: "some publication" } },

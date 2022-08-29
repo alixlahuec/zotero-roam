@@ -48,6 +48,7 @@ export default class ZoteroRoam {
 
 	formatPDFs = _formatPDFs;
 	getItemCreators = _getItemCreators;
+	getItemDateAdded = _getItemDateAdded;
 	getItemPublication = _getItemPublication;
 	getItemTags = _getItemTags;
 
@@ -313,6 +314,15 @@ function _getItemCollections(item, collectionList, { return_as = "string", brack
 	}
 }
 
+/** Returns the date on which an item was added to Zotero, in DNP format
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {{brackets: Boolean}} config - Additional configuration
+ * @returns {String}
+ */
+function _getItemDateAdded(item, { brackets = true } = {}){
+	return makeDNP(item.data.dateAdded, { brackets });
+}
+
 /* istanbul ignore next */
 /** Formats an item's and its children's metadata for import to Roam using the default template
  * @param {ZoteroItem} item - The targeted Zotero item
@@ -334,7 +344,7 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 	if (item.data.itemType) { metadata.push(`Type:: ${_getItemType(item, { brackets: true }, { typemap })}`); } // Item type, according to typemap
 	metadata.push(`Publication:: ${_getItemPublication(item, { brackets: true })}`);
 	if (item.data.url) { metadata.push(`URL : ${item.data.url}`); }
-	if (item.data.dateAdded) { metadata.push(`Date Added:: ${makeDNP(item.data.dateAdded, { brackets: true })}`); } // Date added, as Daily Notes Page reference
+	if (item.data.dateAdded) { metadata.push(`Date Added:: ${_getItemDateAdded(item)}`); } // Date added, as Daily Notes Page reference
 	metadata.push(`Zotero links:: ${getLocalLink(item, { format: "markdown", text: "Local library" })}, ${getWebLink(item, { format: "markdown", text: "Web library" })}`); // Local + Web links to the item
 	if (item.data.tags.length > 0) { metadata.push(`Tags:: ${_getItemTags(item, { return_as: "string", brackets: true })}`); } // Tags, if any
 
