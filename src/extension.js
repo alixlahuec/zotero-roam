@@ -49,6 +49,7 @@ export default class ZoteroRoam {
 	formatPDFs = _formatPDFs;
 	getItemCreators = _getItemCreators;
 	getItemDateAdded = _getItemDateAdded;
+	getItemLink = _getItemLink;
 	getItemPublication = _getItemPublication;
 	getItemTags = _getItemTags;
 
@@ -323,6 +324,12 @@ function _getItemDateAdded(item, { brackets = true } = {}){
 	return makeDNP(item.data.dateAdded, { brackets });
 }
 
+function _getItemLink(item, type = "local", config = {}){
+	return (type == "local")
+		? getLocalLink(item, config)
+		: getWebLink(item, config);
+}
+
 /* istanbul ignore next */
 /** Formats an item's and its children's metadata for import to Roam using the default template
  * @param {ZoteroItem} item - The targeted Zotero item
@@ -345,7 +352,7 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 	metadata.push(`Publication:: ${_getItemPublication(item, { brackets: true })}`);
 	if (item.data.url) { metadata.push(`URL : ${item.data.url}`); }
 	if (item.data.dateAdded) { metadata.push(`Date Added:: ${_getItemDateAdded(item)}`); } // Date added, as Daily Notes Page reference
-	metadata.push(`Zotero links:: ${getLocalLink(item, { format: "markdown", text: "Local library" })}, ${getWebLink(item, { format: "markdown", text: "Web library" })}`); // Local + Web links to the item
+	metadata.push(`Zotero links:: ${_getItemLink(item, "local", { format: "markdown", text: "Local library" })}, ${_getItemLink(item, "web", { format: "markdown", text: "Web library" })}`); // Local + Web links to the item
 	if (item.data.tags.length > 0) { metadata.push(`Tags:: ${_getItemTags(item, { return_as: "string", brackets: true })}`); } // Tags, if any
 
 	if (pdfs.length > 0) {

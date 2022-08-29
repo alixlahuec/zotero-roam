@@ -12,7 +12,7 @@ import { tags } from "Mocks/zotero/tags";
 
 import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
 import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
-import { formatItemAnnotations, formatItemNotes } from "../src/utils";
+import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
 
 import ZoteroRoam from "../src/extension";
 
@@ -64,6 +64,14 @@ describe("Formatting utils", () => {
 			{ data: { dateAdded: date } },
 			{ brackets: false }
 		)).toBe("January 1st, 2022");
+	});
+
+	test("Retrieving the links to an item", () => {
+		const sampleItem = items[0];
+		expect(extension.getItemLink(sampleItem, "local"))
+			.toBe(getLocalLink(sampleItem));
+		expect(extension.getItemLink(sampleItem, "web"))
+			.toBe(getWebLink(sampleItem));
 	});
 
 	test("Retrieving the publication details for an item", () => {
