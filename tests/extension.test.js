@@ -74,21 +74,29 @@ describe("Formatting utils", () => {
 			.toBe(getWebLink(sampleItem));
 	});
 
-	test("Retrieving the publication details for an item", () => {
-		expect(extension.getItemPublication(
-			{ data: { publicationTitle: "some publication" } },
-			{}
-		)).toBe("[[some publication]]");
-
-		expect(extension.getItemPublication(
-			{ data: { university: "some university" } },
-			{ brackets: false }
-		)).toBe("some university");
-
-		expect(extension.getItemPublication(
-			{ data: {} },
-			{}
-		)).toBe("");
+	describe("Retrieving publication details for an item", () => {
+		const cases = [
+			[{ data: { publicationTitle: "some publication" } }, "some publication"],
+			[{ data: { bookTitle: "some book" } }, "some book"],
+			[{ data: { university: "some university" } }, "some university"],
+			[{ data: {} }, ""]
+		];
+    
+		test.each(cases)(
+			"%# - no brackets",
+			(item, expectation) => {
+				expect(extension.getItemPublication(item, { brackets: false }))
+					.toBe(expectation);
+			}
+		);
+    
+		test.each(cases)(
+			"%# - with brackets",
+			(item, expectation) => {
+				expect(extension.getItemPublication(item))
+					.toBe(expectation ? `[[${expectation}]]` : "");
+			}
+		);
 	});
     
 	test("Retrieving the formatted type for an item", () => {

@@ -1,4 +1,4 @@
-import { _formatPDFs, _getItemCreators, _getItemPublication, _getItemRelated, _getItemTags } from "./public";
+import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
 import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 
@@ -367,6 +367,22 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 	}
 
 	return metadata;
+}
+
+/** Retrieves the publication details for a given item.
+ * The extension will check for the existence of a `publicationTitle`, then a `bookTitle`, then a `university` name.
+ * @param {ZoteroItem} item - The targeted item
+ * @returns {String}
+ */
+function _getItemPublication(item, { brackets = true } = {}){
+	const maybePublication = item.data.publicationTitle || item.data.bookTitle || item.data.university;
+	if(maybePublication){
+		return (brackets == true)
+			? `[[${maybePublication}]]`
+			: maybePublication;
+	} else {
+		return "";
+	}
 }
 
 /** Retrieves the type of a Zotero item, according to a given typemap
