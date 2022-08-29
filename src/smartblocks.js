@@ -25,6 +25,13 @@ const sbCommands = () => {
 				return item.data.abstractNote || "";
 			}
 		},
+		"ZOTEROITEMCITATION": {
+			help: "Returns a formatted citation for a Zotero item. Options: style (default: 'chicago-note-bibliography'), locale (default: en-US), linkwrap (default: 0).",
+			handler: (context) => async(style = "chicago-note-bibliography", locale = "en-US", linkwrap = 0) => {
+				const { item } = context.variables;
+				return await window.zoteroRoam.getItemCitation(item, { style, locale, linkwrap });
+			}
+		},
 		"ZOTEROITEMCOLLECTIONS": {
 			help: "Returns the comma-separated list of the collection(s) a Zotero item belongs to.",
 			handler: (context) => (brackets = true) => {
