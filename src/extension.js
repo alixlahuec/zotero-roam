@@ -7,6 +7,9 @@ import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, m
  * Creates a new public API instance for the extension. This is meant to make available an interface for users as well as other plugins to consume some of the extension's data and functionalities, in a controlled manner. Updates to settings are done by the relevant widgets.
  * @borrows _formatPDFs as ZoteroRoam#formatPDFs
  * @borrows _getItemCreators as ZoteroRoam#getItemCreators
+ * @borrows _getItemDateAdded as ZoteroRoam#getItemDateAdded
+ * @borrows _getItemLink as ZoteroRoam#getItemLink
+ * @borrows _getItemPublication as ZoteroRoam#getItemPublication
  * @borrows _getItemTags as ZoteroRoam#getItemTags
  */
 export default class ZoteroRoam {
@@ -110,7 +113,7 @@ export default class ZoteroRoam {
 
 	/** Retrieves the list of collections for a given item
      * @param {ZoteroItem} item - The targeted library
-     * @param {{brackets: Boolean}} config - Optional parameters to use to format the collections 
+     * @param {{return_as: ("string"|"array"), brackets: Boolean}} config - Optional parameters to use to format the collections 
      * @returns 
      */
 	getItemCollections(item, { return_as = "string", brackets = true } = {},) {
@@ -287,7 +290,7 @@ function _getItemChildren(item, { queryClient }) {
 /** Retrieves an item's collections' names, from a given list of collections
  * @param {ZoteroItem} item - The targeted Zotero item
  * @param {ZoteroCollection[]} collectionList - The list of library collections to match data to
- * @param {{brackets: Boolean}} config - Additional configuration 
+ * @param {{return_as: ("string"|"array"), brackets: Boolean}} config - Additional configuration 
  * @returns {String[]} The Array containing the names of the item's collections, if any
  */
 function _getItemCollections(item, collectionList, { return_as = "string", brackets = true } = {}) {
