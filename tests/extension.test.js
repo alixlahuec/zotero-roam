@@ -50,7 +50,7 @@ describe("Formatting utils", () => {
 		expect(extension.formatPDFs([samplePDF], "string"))
 			.toEqual(_formatPDFs([samplePDF], "string"));
 		expect(extension.formatPDFs(false))
-			.toEqual([]);
+			.toEqual("");
 	});
 
 	describe("Retrieving and formatting the date-added property of an item", () => {

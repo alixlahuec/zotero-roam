@@ -6,9 +6,16 @@ import { getPDFLink } from "./utils";
  * @param {("links"|"identity"|"string")} as - The desired format
  * @returns The formatted Array
  */
-function _formatPDFs(pdfs, as = "links"){
+function _formatPDFs(pdfs, as = "string"){
 	if(!pdfs){
-		return [];
+		switch(as){
+		case "identity":
+		case "links":
+			return [];
+		case "string":
+		default:
+			return "";
+		}
 	} else {
 		const pdfsIdentity = pdfs.map(file => ({
 			title: file.data.filename || file.data.title, 
@@ -18,11 +25,11 @@ function _formatPDFs(pdfs, as = "links"){
 		switch(as){
 		case "identity":
 			return pdfsIdentity;
-		case "string":
-			return pdfsIdentity.map(entry => `[${entry.title}](${entry.link})`).join(", ");
 		case "links":
-		default:
 			return pdfsIdentity.map(entry => `[${entry.title}](${entry.link})`);
+		case "string":
+		default:
+			return pdfsIdentity.map(entry => `[${entry.title}](${entry.link})`).join(", ");
 		}
 	}
 }
