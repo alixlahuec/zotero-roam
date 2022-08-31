@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 function findRoamPage(_title){
 	return false;
 }
