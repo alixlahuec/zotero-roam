@@ -101,26 +101,4 @@ describe("Annotations formatting", () => {
 				}
 			]);
 	});
-	
-	it("formats with no highlight prefix", () => {
-		expect(formatZoteroAnnotations([sampleAnnot], { highlight_prefix: "" }))
-			.toEqual([
-				{
-					string: `${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
-					text: `${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
-					children: [simplifiedAnnot.comment]
-				}
-			]);
-	});
-	
-	it("formats with no highlight suffix", () => {
-		expect(formatZoteroAnnotations([sampleAnnot], { highlight_suffix: "" }))
-			.toEqual([
-				{
-					string: `[[>]] ${simplifiedAnnot.text}`,
-					text: `[[>]] ${simplifiedAnnot.text}`,
-					children: [simplifiedAnnot.comment]
-				}
-			]);
-	});
 });

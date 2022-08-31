@@ -472,34 +472,28 @@ function executeFunctionByName(functionName, context /*, args */) {
 
 /** Formats a single Zotero annotation with params
  * @param {ZoteroAnnotation} annotation - The (raw) annotation to be formatted
- * @param {{highlight_prefix: string, highlight_suffix: string, comment_prefix: string, comment_suffix: string}} config - Additional configuration 
+ * @param {{template_comment: string, template_highlight: string}} config - Additional configuration 
  * @returns A block object, ready for import into Roam
  */
-function formatAnnotationWithParams(annotation, { highlight_prefix = "[[>]]", highlight_suffix = "([p. {{page_label}}]({{link_page}})) {{tags_string}}", comment_prefix = "", comment_suffix = "" } = {}){
+function formatAnnotationWithParams(annotation, { template_comment = "{{comment}}", template_highlight = "[[>]] {{highlight}} ([p. {{page_label}}]({{link_page}})) {{tags_string}}" } = {}){
 	if(annotation.type == "highlight"){
 		const { comment, page_label, link_page, tags_string, text } = annotation;
 
-		const elems = {
-			highlightPre: highlight_prefix,
-			highlightSuff: highlight_suffix,
-			commentPre: comment_prefix,
-			commentSuff: comment_suffix
-		};
+		let commentBlock = template_comment;
+		let highlightBlock = template_highlight;
 
 		const specs = {
+			comment,
+			highlight: text,
 			page_label,
 			link_page,
 			tags_string
 		};
 
 		for(const prop in specs){
-			for(const el in elems){
-				elems[el] = elems[el].replaceAll(`{{${prop}}}`, `${specs[prop]}`);
-			}
+			commentBlock = commentBlock.replaceAll(`{{${prop}}}`, `${specs[prop]}`);
+			highlightBlock = highlightBlock.replaceAll(`{{${prop}}}`, `${specs[prop]}`);
 		}
-
-		const highlightBlock = [elems.highlightPre, text, elems.highlightSuff].filter(Boolean).join(" ");
-		const commentBlock = comment ? [elems.commentPre, comment, elems.commentSuff].filter(Boolean).join(" ") : false;
 
 		return {
 			string: highlightBlock,
@@ -516,10 +510,10 @@ function formatAnnotationWithParams(annotation, { highlight_prefix = "[[>]]", hi
 
 /** Default formatter for annotations
  * @param {ZoteroAnnotation[]} annotations - The (raw) array of annotations to be formatted 
- * @param {{group_by: ("day_added"|false), highlight_prefix: string, highlight_suffix: string, comment_prefix: string, comment_suffix: string}} config - Additional configuration
+ * @param {{group_by: ("day_added"|false), template_comment: string, template_highlight: string}} config - Additional configuration
  * @returns An array of block objects, ready for import into Roam.
  */
-function formatItemAnnotations(annotations, { group_by = false, highlight_prefix, highlight_suffix, comment_prefix, comment_suffix } = {}){
+function formatItemAnnotations(annotations, { group_by = false, template_comment, template_highlight } = {}){
 	const annots = simplifyZoteroAnnotations(annotations);
 
 	if(group_by == "day_added"){
@@ -544,10 +538,8 @@ function formatItemAnnotations(annotations, { group_by = false, highlight_prefix
 					children: sortedAnnots
 						.map(ann => formatAnnotationWithParams(ann,
 							{ 
-								highlight_prefix, 
-								highlight_suffix, 
-								comment_prefix, 
-								comment_suffix 
+								template_comment, 
+								template_highlight
 							}
 						))
 						.filter(Boolean)
@@ -557,10 +549,8 @@ function formatItemAnnotations(annotations, { group_by = false, highlight_prefix
 	} else {
 		return annots
 			.map(ann => formatAnnotationWithParams(ann, { 
-				highlight_prefix, 
-				highlight_suffix, 
-				comment_prefix, 
-				comment_suffix }))
+				template_comment, 
+				template_highlight }))
 			.filter(Boolean);
 	}
 }

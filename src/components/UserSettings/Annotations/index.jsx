@@ -57,12 +57,10 @@ const WITH_OPTIONS = [
 function AnnotationsWidget(){
 	const [
 		{
-			comment_prefix,
-			comment_suffix,
 			func,
 			group_by,
-			highlight_prefix,
-			highlight_suffix,
+			template_comment,
+			template_highlight,
 			use,
 			__with
 		},
@@ -78,12 +76,10 @@ function AnnotationsWidget(){
 		}
 
 		return {
-			updateCommentPrefix: (val) => updateSingleValue("comment_prefix", val),
-			updateCommentSuffix: (val) => updateSingleValue("comment_suffix", val),
 			updateFuncName: (val) => updateSingleValue("func", val),
 			updateGroupBy: (val) => updateSingleValue("group_by", val),
-			updateHighlightPrefix: (val) => updateSingleValue("highlight_prefix", val),
-			updateHighlightSuffix: (val) => updateSingleValue("highlight_suffix", val),
+			updateTemplateComment: (val) => updateSingleValue("template_comment", val),
+			updateTemplateHighlight: (val) => updateSingleValue("template_highlight", val),
 			updateUseType: (val) => updateSingleValue("__with", val),
 			updateWithFormat: (val) => updateSingleValue("use", val)
 		};
@@ -94,10 +90,8 @@ function AnnotationsWidget(){
 	}), []);
 
 	return <>
-		<TextField description="Content to insert at the beginning of a comment block (default: '')" ifEmpty={true} label="Enter a prefix value for comment blocks" onChange={handlers.updateCommentPrefix} title="Comment Prefix" value={comment_prefix} />
-		<TextField description="Content to insert at the end of a comment block (default: '')" ifEmpty={true} label="Enter a suffix value for comment blocks" onChange={handlers.updateCommentSuffix} title="Comment Suffix" value={comment_suffix} />
-		<TextField description="Content to insert at the beginning of a highlight block (default: '[[>]]')" ifEmpty={true} label="Enter a prefix value for highlight blocks" onChange={handlers.updateHighlightPrefix} title="Highlight Prefix" value={highlight_prefix} />
-		<TextField description="Content to insert at the end of a highlight block (default: '([p. {{page_label}}]({{link_page}})) {{tags_string}}')" ifEmpty={true} label="Enter a suffix value for highlight blocks" onChange={handlers.updateHighlightSuffix} title="Highlight Suffix" value={highlight_suffix} />
+		<TextField description="Template for comment blocks. Replacements available: {{comment}} (comment's text)." ifEmpty={true} label="Enter a template for comment blocks" onChange={handlers.updateTemplateComment} title="Comment Template" value={template_comment} />
+		<TextField description="Template for highlight blocks. Replacements available: {{highlight}} (highlighted text), {{page_label}} (page number), {{link_page}} (the link to the specific page of the PDF), {{tags_string}} (the string of tags associated with the highlight)." ifEmpty={true} label="Enter a template for highlight blocks" onChange={handlers.updateTemplateHighlight} title="Highlight Template" value={template_highlight} />
 		<RowGroup title="Formatter"
 			description="Choose a way to format annotations metadata when importing from Zotero."
 			onChange={handlers.updateUseType} 

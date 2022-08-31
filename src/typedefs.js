@@ -95,12 +95,10 @@
 
 /**
  * @typedef {{
- * comment_prefix: String,
- * comment_suffix: String,
  * func: String,
  * group_by: ("day_added"|false),
- * highlight_prefix: String,
- * highlight_suffix: String,
+ * template_comment: String,
+ * template_highlight: String,
  * use: ("default"|"function"),
  * __with: ("formatted"|"raw")
  * }}

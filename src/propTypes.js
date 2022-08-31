@@ -247,12 +247,10 @@ const extensionType = shape({
 });
 
 const annotationsSettingsType = shape({
-	comment_prefix: string,
-	comment_suffix: string,
 	func: string,
 	group_by: oneOf(["day_added", false]),
-	highlight_prefix: string,
-	highlight_suffix: string,
+	template_comment: string,
+	template_highlight: string,
 	use: oneOf(["default", "function"]),
 	__with: oneOf(["formatted", "raw"])
 });

@@ -155,12 +155,10 @@ describe("Parsing mock data requests", () => {
 describe("Parsing initial user settings", () => {
 	const defaults = {
 		annotations: {
-			comment_prefix: "",
-			comment_suffix: "",
 			func: "",
 			group_by: false,
-			highlight_prefix: "[[>]]",
-			highlight_suffix: "([p. {{page_label}}]({{link_page}})) {{tags_string}}",
+			template_comment: "{{comment}}",
+			template_highlight: "[[>]] {{highlight}} ([p. {{page_label}}]({{link_page}})) {{tags_string}}",
 			use: "default",
 			__with: "formatted"
 		},
