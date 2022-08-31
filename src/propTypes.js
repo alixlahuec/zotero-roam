@@ -1,5 +1,30 @@
 import { arrayOf, bool, instanceOf, number, object, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
 
+const zoteroAnnotationType = shape({
+	data: shape({
+		annotationColor: string,
+		annotationComment: string,
+		annotationPageLabel: string,
+		annotationPosition: string,
+		annotationSortIndex: string,
+		annotationText: string,
+		annotationType: oneOf(["highlight", "image"]),
+		dateAdded: string,
+		dateModified: String,
+		itemType: oneOf(["annotation"]),
+		key: string,
+		parentItem: string,
+		relations: object,
+		tags: arrayOf(object),
+		version: number
+	}),
+	key: string,
+	library: object,
+	links: object,
+	meta: object,
+	version: number
+});
+
 const zoteroCollectionType = shape({
 	data: object,
 	key: string,
@@ -76,7 +101,7 @@ const cleanLibraryItemType = shape({
 	authorsRoles: arrayOf(string),
 	children: shape({
 		pdfs: arrayOf(zoteroItemType),
-		notes: arrayOf(oneOfType([zoteroItemType, object])),
+		notes: arrayOf(oneOfType([zoteroItemType, zoteroAnnotationType])),
 	}),
 	createdByUser: oneOfType([string, oneOf([null])]),
 	inGraph: oneOfType([string, oneOf([false])]),
@@ -103,7 +128,7 @@ const cleanLibraryReturnArrayType = arrayOf(cleanLibraryItemType);
  * @see cleanLibraryPDF
  */
 const cleanLibraryPDFType = shape({
-	annotations: arrayOf(object),
+	annotations: arrayOf(zoteroAnnotationType),
 	key: string,
 	link: string,
 	parent: zoteroItemType,
@@ -133,7 +158,7 @@ const cleanRecentItemType = shape({
 	abstract: string,
 	children: shape({
 		pdfs: arrayOf(zoteroItemType),
-		notes: arrayOf(zoteroItemType)
+		notes: arrayOf(oneOfType([zoteroItemType, zoteroAnnotationType]))
 	}),
 	edited: instanceOf(Date),
 	inGraph: oneOfType([string, oneOf([false])]),
@@ -154,7 +179,7 @@ const cleanRelatedItemType = shape({
 	added: string,
 	children: shape({
 		pdfs: arrayOf(zoteroItemType),
-		notes: arrayOf(zoteroItemType)
+		notes: arrayOf(oneOfType([zoteroItemType, zoteroAnnotationType]))
 	}),
 	inGraph: oneOfType([string, oneOf([false])]),
 	itemType: string,
@@ -194,7 +219,7 @@ const cleanSemanticReturnType = shape({
 		shape({
 			children: {
 				pdfs: arrayOf(zoteroItemType),
-				notes: arrayOf(zoteroItemType)
+				notes: arrayOf(oneOfType([zoteroItemType, zoteroAnnotationType]))
 			},
 			raw: zoteroItemType
 		}),
@@ -335,6 +360,7 @@ const initSettingsType = shape({
 });
 
 export {
+	zoteroAnnotationType,
 	zoteroCollectionType,
 	zoteroItemType,
 	zoteroLibraryType,

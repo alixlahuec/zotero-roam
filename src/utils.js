@@ -162,7 +162,7 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 /** Formats a Zotero PDF's metadata into a clean format, with parent & annotations data
  * @param {ZoteroItem|Object} pdf - The Zotero PDF entry
  * @param {ZoteroItem|Object} parent - The Zotero PDF's parent item
- * @param {Object[]} annotations - The Zotero PDF's linked annotations
+ * @param {ZoteroAnnotation[]} annotations - The Zotero PDF's linked annotations
  * @returns {Object} The simplified PDF entry
  * @see cleanLibraryPDFType
  */

@@ -1,5 +1,5 @@
+import { arrayOf, bool, func, object, oneOfType } from "prop-types";
 import { memo, useMemo } from "react";
-import { arrayOf, bool, func, object } from "prop-types";
 
 import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tab, Tabs, Tag } from "@blueprintjs/core";
 
@@ -100,7 +100,7 @@ function PanelAnnotations({ annots }){
 	return clean_annotations.map(annot => <Annotation key={annot.key} annot={annot} /> );
 }
 PanelAnnotations.propTypes = {
-	annots: arrayOf(object)
+	annots: arrayOf(customPropTypes.zoteroAnnotationType)
 };
 
 function PanelNotes({ notes }){
@@ -140,7 +140,7 @@ const NotesDrawer = memo(function NotesDrawer(props){
 });
 NotesDrawer.propTypes = {
 	isOpen: bool,
-	notes: arrayOf(object),
+	notes: arrayOf(oneOfType([customPropTypes.zoteroAnnotationType, customPropTypes.zoteroItemType])),
 	onClose: func
 };
 
