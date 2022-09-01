@@ -425,6 +425,9 @@ textarea.zr-text-input,
 /* Popovers & Menus */
 
 .zr-popover:not(.zr-date-picker) {
+    box-shadow: none;
+    border: 1px var(--zr-border-co) solid;
+    font-size: var(--zr-text-small);
     max-width: 300px;
 }
 
@@ -442,9 +445,16 @@ textarea.zr-text-input,
     fill: var(--zr-box-bg);
 }
 
+.zr-popover .bp4-menu-item.bp4-selected,
+.zr-popover .bp4-menu-item.bp4-selected:hover,
+.zr-popover .bp4-menu-item.bp4-selected:active,
+.zr-popover .bp4-menu-item:hover {
+    color: hsla(var(--zr-accent-1-hsl), 97%);
+}
+
+
 .zr-popover .bp4-menu-item:hover {
     background: var(--zr-dialog-bg);
-    color: var(--zr-text-co);
 }
 
 [class*="zr-drawer--"].bp4-drawer {

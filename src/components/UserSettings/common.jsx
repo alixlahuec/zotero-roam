@@ -17,12 +17,6 @@ const popoverProps = {
 	popoverClassName: CustomClasses.POPOVER
 };
 
-function renderAsMenuItem(item, itemProps) {
-	const { handleClick/*, modifiers: { active }*/ } = itemProps;
-
-	return <MenuItem key={item.value} onClick={handleClick} text={item.label} />;
-}
-
 const Row = ({ children }) => <div zr-role="settings-row">{children}</div>;
 Row.propTypes = {
 	children: node
@@ -180,6 +174,39 @@ RoamTagsInput.propTypes = {
 	value: arrayOf(string)
 };
 
+const BetterSelect = ({ buttonProps = {}, menuProps, onSelect, options, popoverTargetProps, selectedValue, ...extraProps }) => {
+
+	const selectHandler = useCallback((item) => onSelect(item.value), [onSelect]);
+
+	const itemRenderer = useCallback((item, itemProps) => {
+		const { handleClick/*, modifiers: { active }*/ } = itemProps;
+		return <MenuItem key={item.value} onClick={handleClick} selected={item.value == selectedValue} text={item.label} />;
+	}, [selectedValue]);
+	
+	return <Select2
+		className={["zr-setting--single-input", CustomClasses.TEXT_SMALL].join(" ")}
+		filterable={false}
+		itemRenderer={itemRenderer}
+		itemsEqual="value"
+		items={options}
+		menuProps={menuProps}
+		onItemSelect={selectHandler}
+		placement="bottom"
+		popoverProps={popoverProps}
+		popoverTargetProps={popoverTargetProps}
+		{...extraProps} >
+		<Button alignText="right" intent="primary" minimal={true} rightIcon="caret-down" text={options.find(op => op.value == selectedValue).label} {...buttonProps} />
+	</Select2>;
+};
+BetterSelect.propTypes = {
+	buttonProps: object,
+	menuProps: object,
+	onSelect: func,
+	options: arrayOf(shape({ label: string, value: oneOfType([string, bool]) })),
+	popoverTargetProps: object,
+	selectedValue: oneOfType([string, bool])
+};
+
 const SingleInput = ({ buttonProps = {}, description = null, menuTitle, onChange, options, title = null, value }) => {
 
 	const menuProps = useMemo(() => ({
@@ -191,28 +218,12 @@ const SingleInput = ({ buttonProps = {}, description = null, menuTitle, onChange
 		title: menuTitle
 	}), [menuTitle]);
 
-	const selectValue = useCallback((item) => {
-		onChange(item.value);
-	}, [onChange]);
-
 	return <Row>
 		<div>
 			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
-		<Select2
-			className={["zr-setting--single-input", CustomClasses.TEXT_SMALL].join(" ")}
-			filterable={false}
-			itemRenderer={renderAsMenuItem}
-			itemsEqual="value"
-			items={options}
-			menuProps={menuProps}
-			onItemSelect={selectValue}
-			placement="bottom"
-			popoverProps={popoverProps}
-			popoverTargetProps={popoverTargetProps} >
-			<Button alignText="right" intent="primary" minimal={true} rightIcon="caret-down" text={options.find(op => op.value == value).label} {...buttonProps} />
-		</Select2>
+		<BetterSelect buttonProps={buttonProps} options={options} menuProps={menuProps} onSelect={onChange} popoverTargetProps={popoverTargetProps} selectedValue={value} />
 	</Row>;
 };
 SingleInput.propTypes = {
@@ -289,7 +300,6 @@ TextField.propTypes = {
 
 const TextWithSelect = ({ description = null, onSelectChange, onValueChange, placeholder = null, selectOptions, selectValue, textValue, title = null, inputGroupProps = {}, inputLabel, selectButtonProps = {}, selectProps = {}, selectLabel }) => {
 	const { menuProps, popoverTargetProps, ...otherProps } = selectProps;
-	const selectHandler = useCallback((item) => onSelectChange(item.value), [onSelectChange]);
     
 	const mergedMenuProps = useMemo(() => ({
 		title: selectLabel,
@@ -301,6 +311,11 @@ const TextWithSelect = ({ description = null, onSelectChange, onValueChange, pla
 		...popoverTargetProps
 	}), [selectLabel, popoverTargetProps]);
 
+	const mergedSelectButtonProps = useMemo(() => ({
+		active: true,
+		...selectButtonProps
+	}), [selectButtonProps]);
+
 	const valueHandler = useCallback((event) => onValueChange(event.target.value), [onValueChange]);
 
 	return <Row>
@@ -309,21 +324,15 @@ const TextWithSelect = ({ description = null, onSelectChange, onValueChange, pla
 			{description && <Description>{description}</Description>}
 		</div>
 		<ControlGroup className="zr-text-select-group">
-			<Select2
-				className={CustomClasses.TEXT_SMALL}
-				fill={false}
-				filterable={false}
-				itemRenderer={renderAsMenuItem}
-				itemsEqual="value"
-				items={selectOptions}
-				menuProps={mergedMenuProps} 
-				onItemSelect={selectHandler}
-				placement="bottom"
-				popoverProps={popoverProps}
+			<BetterSelect
+				buttonProps={mergedSelectButtonProps}
+				menuProps={mergedMenuProps}
+				onSelect={onSelectChange}
+				options={selectOptions}
 				popoverTargetProps={mergedPopoverTargetProps}
-				{...otherProps} >
-				<Button active={true} alignText="right" minimal={true} rightIcon="caret-down" text={selectOptions.find(op => op.value == selectValue).label} {...selectButtonProps} />
-			</Select2>
+				selectedValue={selectValue}
+				{...otherProps}
+			/>
 			<InputGroup
 				aria-label={inputLabel}
 				autoComplete="off"
