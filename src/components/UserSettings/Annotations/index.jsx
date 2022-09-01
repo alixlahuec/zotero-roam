@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useMemo, useState } from "react
 import { func as funcType, node } from "prop-types";
 
 import * as customPropTypes from "../../../propTypes";
-import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect } from "../common";
+import { RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect } from "../common";
 
 
 const AnnotationsSettings = createContext({});
@@ -90,8 +90,12 @@ function AnnotationsWidget(){
 	}), []);
 
 	return <>
-		<TextField description="Template for comment blocks. Replacements available: {{comment}} (comment's text)." ifEmpty={true} label="Enter a template for comment blocks" onChange={handlers.updateTemplateComment} title="Comment Template" value={template_comment} />
-		<TextField description="Template for highlight blocks. Replacements available: {{highlight}} (highlighted text), {{page_label}} (page number), {{link_page}} (the link to the specific page of the PDF), {{tags_string}} (the string of tags associated with the highlight)." ifEmpty={true} label="Enter a template for highlight blocks" onChange={handlers.updateTemplateHighlight} title="Highlight Template" value={template_highlight} />
+		<RowCol title="Comment Template" description="Template for comment blocks. Replacements available: {{comment}} (comment's text)." >
+			<TextAreaInput label="Enter a template for comment blocks" onChange={handlers.updateTemplateComment} value={template_comment} />
+		</RowCol>
+		<RowCol title="Highlight Template" description="Template for highlight blocks. Replacements available: {{highlight}} (highlighted text), {{page_label}} (page number), {{link_page}} (the link to the specific page of the PDF), {{tags_string}} (the string of tags associated with the highlight)." >
+			<TextAreaInput label="Enter a template for highlight blocks" onChange={handlers.updateTemplateHighlight} value={template_highlight} />
+		</RowCol>
 		<RowGroup title="Formatter"
 			description="Choose a way to format annotations metadata when importing from Zotero."
 			onChange={handlers.updateUseType} 

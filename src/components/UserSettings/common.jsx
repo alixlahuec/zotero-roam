@@ -1,7 +1,7 @@
 import { Children, cloneElement, isValidElement, useCallback, useMemo } from "react";
 import { arrayOf, bool, func, node, number, object, objectOf, oneOfType, shape, string } from "prop-types";
 
-import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, MenuItem, NumericInput, Switch } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select2 } from "@blueprintjs/select";
 
 import InputMultiSelect from "../Inputs/InputMultiSelect";
@@ -225,6 +225,27 @@ SingleInput.propTypes = {
 	value: oneOfType([string, bool])
 };
 
+const TextAreaInput = ({ label = null, onChange, value, ...extraProps }) => {
+	const valueHandler = useCallback((event) => onChange(event.target.value), [onChange]);
+
+	return <TextArea 
+		aria-label={label}
+		autoComplete="off" 
+		className={["zr-text-input", CustomClasses.TEXT_SMALL, Classes.INPUT].join(" ")}
+		fill={true}
+		growVertically={true}
+		onChange={valueHandler}
+		spellCheck="false" 
+		title={label}
+		value={value}
+		{...extraProps} />;
+};
+TextAreaInput.propTypes = {
+	label: string,
+	onChange: func,
+	value: string
+};
+
 const TextInput = ({ children }) => <div className="zr-text-input" zr-role="input-text">{children}</div>;
 TextInput.propTypes = {
 	children: node
@@ -249,7 +270,7 @@ const TextField = ({ description = null, ifEmpty = null, label = null, onChange,
 					spellCheck="false" 
 					title={label}
 					type="text"
-					value={String(value)}
+					value={value}
 					{...extraProps} />
 				: ifEmpty
 			}
@@ -359,6 +380,7 @@ export {
 	RowGroup,
 	RowGroupOption,
 	SingleInput,
+	TextAreaInput,
 	TextField,
 	TextWithSelect,
 	Toggle

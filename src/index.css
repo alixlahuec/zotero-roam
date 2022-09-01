@@ -153,6 +153,7 @@ button.bp4-button.zr-secondary:not(.bp4-disabled) {
 }
 
 .zr-text-input input:not(.bp4-input-ghost),
+textarea.zr-text-input,
 .zr-date-input input,
 .zr-date-range-input input,
 [class*="zr"] .bp4-multi-select.bp4-input,
