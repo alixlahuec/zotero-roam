@@ -55,8 +55,8 @@ const USE_OPTIONS = {
 };
 
 const WITH_OPTIONS = [
-	{ label: "Raw metadata", value: "raw" },
-	{ label: "Text contents", value: "text" }
+	{ label: "Use raw metadata", value: "raw" },
+	{ label: "Use HTML blocks HTML", value: "text" }
 ];
 
 
@@ -105,11 +105,11 @@ function NotesWidget(){
 				<SingleInput menuTitle="Select a separator preset" onChange={handlers.updateSplitPreset} options={SPLIT_PRESET_OPTIONS} value={split_preset} />
 			</RowGroupOption>
 			<RowGroupOption id="custom" >
-				<TextField ifEmpty={true} label="Enter a custom separator" onChange={handlers.updateSplitChar} placeholder="e.g </p>" value={split_char} />
+				<TextField ifEmpty={true} label="Enter a custom separator" onChange={handlers.updateSplitChar} placeholder="e.g, </p>" value={split_char} />
 			</RowGroupOption>
 		</RowGroup>
 		<RowGroup title="Formatter"
-			description="Choose a way to format annotations metadata when importing from Zotero." 
+			description="Choose a way to format notes when importing from Zotero." 
 			onChange={handlers.updateUseType}
 			options={USE_OPTIONS}
 			selected={use}>

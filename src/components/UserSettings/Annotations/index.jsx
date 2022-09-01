@@ -50,8 +50,8 @@ const USE_OPTIONS = {
 };
 
 const WITH_OPTIONS = [
-	{ label: "Raw metadata", value: "raw" },
-	{ label: "Formatted contents", value: "formatted" }
+	{ label: "Use raw metadata", value: "raw" },
+	{ label: "Use simplified metadata", value: "formatted" }
 ];
 
 function AnnotationsWidget(){

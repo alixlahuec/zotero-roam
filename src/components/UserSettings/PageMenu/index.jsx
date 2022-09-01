@@ -82,7 +82,7 @@ function PageMenuWidget(){
 
 	return <>
 		<MultiInput description="Choose which elements to display in citekey page menus" options={ELEM_OPTIONS} setValue={handlers.updateMenuElems} title="Elements" value={defaults} />
-		<SingleInput description="Select when contextual menus should be shown. Default : show only when the page title is longer than 5 characters." menuTitle="Select whether to show the page menu" onChange={handlers.updateMenuTrigger} options={TRIGGER_OPTIONS} title="Show menus" value={trigger} />
+		<SingleInput description="Select when contextual menus should be shown. By default, menus are displayed if the page title is longer than 5 characters." menuTitle="Select whether to show the page menu" onChange={handlers.updateMenuTrigger} options={TRIGGER_OPTIONS} title="Show menus" value={trigger} />
 	</>;
 }
 
