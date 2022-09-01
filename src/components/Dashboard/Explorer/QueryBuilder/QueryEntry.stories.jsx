@@ -1,5 +1,7 @@
 import { useState } from "react";
+
 import QueryEntry from "./QueryEntry";
+
 
 export default {
 	component: QueryEntry,

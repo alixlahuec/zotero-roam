@@ -1,6 +1,6 @@
 /* istanbul ignore file */
-import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { arrayOf, object, string } from "prop-types";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Button } from "@blueprintjs/core";

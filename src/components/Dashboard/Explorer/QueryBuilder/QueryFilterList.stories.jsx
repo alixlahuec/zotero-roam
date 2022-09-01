@@ -1,7 +1,9 @@
 import { useState } from "react";
+
 import QueryFilterList from "./QueryFilterList";
 
 import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "./utils";
+
 
 export default {
 	component: QueryFilterList,

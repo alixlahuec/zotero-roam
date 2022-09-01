@@ -5,6 +5,7 @@ import { SETTINGS_CONFIG } from "./mapping";
 
 import * as customPropTypes from "../../propTypes";
 
+
 // https://stackoverflow.com/questions/51504506/too-many-react-context-providers
 function UserSettingsProvider({ extensionAPI = {}, children, init }){
 	const updater = useCallback((id, val) => {

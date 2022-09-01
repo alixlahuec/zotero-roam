@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag, UL } from "@blueprintjs/core";
 
@@ -8,6 +8,7 @@ import { useModifyTags } from "../../../api/write";
 import useText from "../../../hooks/useText";
 
 import * as customPropTypes from "../../../propTypes";
+
 
 function CustomInput({ handleChange, status, value }){
 	const inputField = useRef();

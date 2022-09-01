@@ -1,11 +1,12 @@
 import { Menu } from "@blueprintjs/core";
-import MergeAsOptions from "./MergeAsOptions";
 
-import { apiKeys } from "Mocks/zotero/keys";
-import { libraries } from "Mocks/zotero/libraries";
+import MergeAsOptions from "./MergeAsOptions";
 
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { apiKeys } from "Mocks/zotero/keys";
+import { libraries } from "Mocks/zotero/libraries";
+
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary } = libraries;

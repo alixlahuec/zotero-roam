@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
 import { array, bool, func, object, shape } from "prop-types";
+import { useCallback, useMemo, useState } from "react";
 
 import { Button, Classes, Dialog, Tag } from "@blueprintjs/core";
 import QueryBox from "./QueryBox";
@@ -10,6 +10,7 @@ import { makeDNP } from "../../../../utils";
 import useBool from "../../../../hooks/useBool";
 
 import { CustomClasses } from "../../../../constants";
+
 
 function makeValueString(value){
 	if(value == null){

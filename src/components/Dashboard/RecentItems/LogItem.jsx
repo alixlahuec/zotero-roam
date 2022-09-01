@@ -1,5 +1,5 @@
-import { memo, useEffect } from "react";
 import { bool, func, string } from "prop-types";
+import { memo, useEffect } from "react";
 import { Button } from "@blueprintjs/core";
 
 import CitekeyPopover from "../../CitekeyPopover";
@@ -9,6 +9,7 @@ import useBool from "../../../hooks/useBool";
 import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
+
 
 function Abstract({ abstract, allAbstractsShown }){
 	const [isVisible, { set: setVisible, toggle: toggleAbstract }] = useBool(allAbstractsShown);

@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 
+
 /** @constant {String} The extension's current version (from package.json) */
 export const EXTENSION_VERSION = require("../package.json").version;
 

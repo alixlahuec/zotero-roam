@@ -14,11 +14,11 @@ import { useRequestsSettings } from "../../UserSettings/Requests";
 import { categorizeLibraryItems } from "../../../utils";
 import { makeLogFromItems } from "./utils";
 
+import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
 
-import * as customPropTypes from "../../../propTypes";
-
 import "./index.css";
+
 
 const sliderHandleProps = {
 	"aria-label": "Select how many days to include in the list"

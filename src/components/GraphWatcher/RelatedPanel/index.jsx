@@ -1,5 +1,5 @@
-import { memo, useEffect, useMemo } from "react";
 import { arrayOf, bool, func, oneOf, oneOfType, shape, string } from "prop-types";
+import { memo, useEffect, useMemo } from "react";
 
 import { Button, Classes } from "@blueprintjs/core";
 
@@ -11,11 +11,11 @@ import useBool from "../../../hooks/useBool";
 
 import { pluralize, sortElems } from "../../../utils";
 
+import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
 
-import * as customPropTypes from "../../../propTypes";
-
 import "./index.css";
+
 
 const labelId = "zr-related-panel-label";
 

@@ -174,7 +174,7 @@ describe("Hook for single selection state", () => {
 		expect(result.current[0]).toBe(null);
 
 		act(() => {
-			result.current[1]({ currentTarget: { value: "Some value" }});
+			result.current[1]({ currentTarget: { value: "Some value" } });
 		});
 
 		expect(result.current[0]).toBe("Some value");
@@ -192,7 +192,7 @@ describe("Hook for single selection state", () => {
 		expect(result.current[0]).toBe(null);
 
 		act(() => {
-			result.current[1]({ currentTarget: { value: "TEXT" }});
+			result.current[1]({ currentTarget: { value: "TEXT" } });
 		});
 
 		expect(result.current[0]).toEqual({
@@ -207,7 +207,7 @@ test("Hook for text state", () => {
 	expect(result.current[0]).toBe("");
 
 	act(() => {
-		result.current[1]({ target: { value: "query" }});
+		result.current[1]({ target: { value: "query" } });
 	});
 
 	expect(result.current[0]).toBe("query");

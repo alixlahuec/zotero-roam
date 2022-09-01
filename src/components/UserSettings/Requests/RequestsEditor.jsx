@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { any, arrayOf, func, number, shape } from "prop-types";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button, Classes, ControlGroup, FormGroup, H6, InputGroup, MenuItem } from "@blueprintjs/core";
-import ErrorCallout from "../../Errors/ErrorCallout";
 import { Select2 } from "@blueprintjs/select";
+
+import ErrorCallout from "../../Errors/ErrorCallout";
 
 import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../../Dashboard/Explorer/QueryBuilder/utils";
 import { analyzeUserRequests } from "../../../setup";
 
-import "./index.css";
 import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
+
+import "./index.css";
 
 
 const popoverProps = {

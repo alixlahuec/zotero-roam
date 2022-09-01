@@ -11,11 +11,11 @@ import { useModifyTags } from "../../../../api/write";
 
 import { makeSuggestionFor } from "../utils";
 
+import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
 
-import * as customPropTypes from "../../../../propTypes";
-
 import "./index.css";
+
 
 function AutoMerge({ library, suggestion }){
 	const { recommend, use } = suggestion;

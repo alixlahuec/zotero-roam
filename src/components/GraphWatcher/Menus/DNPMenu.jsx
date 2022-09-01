@@ -1,12 +1,16 @@
-import { useMemo } from "react";
 import { arrayOf, string } from "prop-types";
+import { useMemo } from "react";
+
 import { Button } from "@blueprintjs/core";
 
 import RelatedPanel from "../RelatedPanel";
-import { pluralize } from "../../../utils";
+
 import useBool from "../../../hooks/useBool";
 
+import { pluralize } from "../../../utils";
+
 import * as customPropTypes from "../../../propTypes";
+
 
 /* istanbul ignore next */
 function DNPMenu({ added, date, title }){

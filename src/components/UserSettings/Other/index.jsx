@@ -5,6 +5,7 @@ import { Toggle } from "../common";
 
 import * as customPropTypes from "../../../propTypes";
 
+
 const OtherSettings = createContext({});
 
 const OtherSettingsProvider = ({ children, init, updater }) => {

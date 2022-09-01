@@ -1,5 +1,7 @@
 import { useState } from "react";
+
 import InputText from "./InputText";
+
 
 export default {
 	component: InputText

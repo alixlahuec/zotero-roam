@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 import { useCallback, useRef } from "react";
 
+
 // Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
 export default function useDebounceCallback(callback, timeout) {
 	const timeoutRef = useRef(undefined);
@@ -12,16 +13,13 @@ export default function useDebounceCallback(callback, timeout) {
 		}
 	};
 
-	const debounceCallback = useCallback(
-		value => {
-			cancel();
-			timeoutRef.current = setTimeout(() => {
-				timeoutRef.current = null;
-				callback(value);
-			}, timeout);
-		},
-		[callback, timeout]
-	);
+	const debounceCallback = useCallback((value) => {
+		cancel();
+		timeoutRef.current = setTimeout(() => {
+			timeoutRef.current = null;
+			callback(value);
+		}, timeout);
+	}, [callback, timeout]);
 
 	return [debounceCallback, cancel];
 }

@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from "react";
 import { any, array, func, oneOf, string } from "prop-types";
+import { useCallback, useMemo } from "react";
 
 import { useTypemapSettings } from "../../../UserSettings/Typemap";
 
@@ -9,6 +9,7 @@ import InputText from "../../../Inputs/InputText";
 import TagsSelector from "../../../Inputs/TagsSelector";
 
 import { queries, types } from "./queries";
+
 
 function ItemType({ inputType, value, setValue }){
 	const [typemap] = useTypemapSettings();

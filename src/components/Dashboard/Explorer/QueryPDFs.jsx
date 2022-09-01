@@ -8,9 +8,9 @@ import PDFElement from "./PDFElement";
 
 import usePagination from "../../../hooks/usePagination";
 
+import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
 
-import * as customPropTypes from "../../../propTypes";
 
 const itemsPerPage = 20;
 

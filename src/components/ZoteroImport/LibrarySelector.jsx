@@ -1,5 +1,5 @@
-import { memo, useMemo } from "react";
 import { arrayOf, func } from "prop-types";
+import { memo, useMemo } from "react";
 import { RadioGroup } from "@blueprintjs/core";
 
 import { CustomClasses } from "../../constants";

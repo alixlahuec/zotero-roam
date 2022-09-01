@@ -7,16 +7,16 @@ import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
 import ItemElement from "./ItemElement";
 import QueryFilterList from "./QueryFilterList";
 
+import usePagination from "../../../../hooks/usePagination";
+
 import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "./utils";
 import { runQuerySet } from "./queries";
 
-import usePagination from "../../../../hooks/usePagination";
-
+import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
 
-import * as customPropTypes from "../../../../propTypes";
-
 import "./index.css";
+
 
 const itemsPerPage = 20;
 

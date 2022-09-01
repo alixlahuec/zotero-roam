@@ -1,5 +1,5 @@
-import { memo, useCallback, useMemo, useState } from "react";
 import { arrayOf, func, objectOf, shape, string } from "prop-types";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
@@ -11,11 +11,11 @@ import TagsDatalist from "./TagsDatalist";
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 import { useRequestsSettings } from "../../UserSettings/Requests";
 
+import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
 
-import * as customPropTypes from "../../../propTypes";
-
 import "./index.css";
+
 
 function TagLists({ items, libProps }){
 	const [activeTab, setActiveTab] = useState("suggestions");

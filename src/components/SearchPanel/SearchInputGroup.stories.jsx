@@ -1,10 +1,14 @@
 import { useRef } from "react";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+
 import { HotkeysProvider } from "@blueprintjs/core";
-import { expect } from "@storybook/jest";
 
 import SearchInputGroup from "./SearchInputGroup";
+
 import useBool from "../../hooks/useBool";
+
+import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
+
 
 export default {
 	component: SearchInputGroup,

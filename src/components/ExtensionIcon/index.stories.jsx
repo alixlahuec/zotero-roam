@@ -1,10 +1,10 @@
 import ExtensionIcon from ".";
 
+import useToggle from "../../hooks/useToggle";
+
 import { screen, userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-
 import { sleep } from "../../../.storybook/utils";
-import useToggle from "../../hooks/useToggle";
 
 
 export default {

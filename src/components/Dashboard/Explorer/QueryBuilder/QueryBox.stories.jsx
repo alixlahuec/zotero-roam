@@ -1,5 +1,7 @@
 import { useState } from "react";
+
 import QueryBox from "./QueryBox";
+
 
 export default {
 	component: QueryBox,

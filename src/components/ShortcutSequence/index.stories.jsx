@@ -1,5 +1,6 @@
 import ShortcutSequence from ".";
 
+
 export default { 
 	component: ShortcutSequence,
 };

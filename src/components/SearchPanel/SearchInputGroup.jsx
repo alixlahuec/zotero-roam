@@ -1,5 +1,5 @@
-import { memo, useMemo } from "react";
 import { bool, func, object, shape } from "prop-types";
+import { memo, useMemo } from "react";
 
 import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprintjs/core";
 
@@ -8,6 +8,7 @@ import { useShortcutsSettings } from "../UserSettings/Shortcuts";
 import { dialogLabel } from "./classes";
 
 import { CustomClasses } from "../../constants";
+
 
 const SearchInputGroup = memo(function SearchInputGroup(props) {
 	const { handleClose, 

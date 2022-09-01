@@ -1,13 +1,13 @@
-import { memo, useCallback, useMemo } from "react";
 import { bool, func, oneOf, oneOfType, string } from "prop-types";
+import { memo, useCallback, useMemo } from "react";
 
 import { Button, Classes, Icon, Tag } from "@blueprintjs/core";
 
 import CitekeyPopover from "../../CitekeyPopover";
 
+import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
 
-import * as customPropTypes from "../../../propTypes";
 
 const SemanticItem = memo(function SemanticItem(props) {
 	const { handleRemove, handleSelect, inGraph, isSelected, item, type } = props;

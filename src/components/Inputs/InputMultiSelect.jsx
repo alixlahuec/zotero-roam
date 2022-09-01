@@ -1,11 +1,12 @@
-import { useCallback, useMemo } from "react";
 import { arrayOf, func, shape, string } from "prop-types";
+import { useCallback, useMemo } from "react";
 import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect2 } from "@blueprintjs/select";
 
 import { searchEngine } from "../../utils";
 
 import { CustomClasses } from "../../constants";
+
 
 const popoverProps = {
 	canEscapeKeyClose: false,

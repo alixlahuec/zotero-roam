@@ -1,12 +1,16 @@
-import { useCallback, useMemo, useState } from "react";
 import { arrayOf, string } from "prop-types";
+import { useCallback, useMemo, useState } from "react";
+
 import { Button } from "@blueprintjs/core";
 
 import RelatedPanel from "../RelatedPanel";
-import { pluralize } from "../../../utils";
+
 import useBool from "../../../hooks/useBool";
 
+import { pluralize } from "../../../utils";
+
 import * as customPropTypes from "../../../propTypes";
+
 
 /* istanbul ignore next */
 function TagMenu(props){

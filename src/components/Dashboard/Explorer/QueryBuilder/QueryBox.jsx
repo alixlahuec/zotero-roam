@@ -9,6 +9,7 @@ import { defaultQueryTerm } from "./queries";
 
 import { CustomClasses } from "../../../../constants";
 
+
 function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = true }){
 	const { removeSelf, updateSelf } = handlers;
 
@@ -44,12 +45,12 @@ function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = tru
 					};
 
 					return (
-                        <Fragment key={index}>
-                            {tm.constructor === Array
-                                ? <QueryBox terms={tm} {...termProps} />
-                                : <QueryEntry term={tm} {...termProps} />}
-                        </Fragment>
-                    );
+						<Fragment key={index}>
+							{tm.constructor === Array
+								? <QueryBox terms={tm} {...termProps} />
+								: <QueryEntry term={tm} {...termProps} />}
+						</Fragment>
+					);
 
 				})}
 			</div>

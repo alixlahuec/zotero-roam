@@ -5,6 +5,7 @@ import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect } from
 
 import * as customPropTypes from "../../../propTypes";
 
+
 const NotesSettings = createContext({});
 
 const NotesProvider = ({ children, init, updater }) => {

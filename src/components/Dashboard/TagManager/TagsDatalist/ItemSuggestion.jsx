@@ -7,9 +7,8 @@ import Suggest from "../Suggest";
 
 import { pluralize } from "../../../../utils";
 
-import { CustomClasses } from "../../../../constants";
-
 import * as customPropTypes from "../../../../propTypes";
+import { CustomClasses } from "../../../../constants";
 
 
 const ItemSuggestion = memo(function ItemSuggestion({ entry, library }){

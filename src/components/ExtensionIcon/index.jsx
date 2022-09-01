@@ -1,5 +1,5 @@
-import { memo, useCallback, useContext, useEffect, useMemo } from "react";
 import { array, func, objectOf, oneOf } from "prop-types";
+import { memo, useCallback, useContext, useEffect, useMemo } from "react";
 
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
@@ -14,6 +14,7 @@ import { useRequestsSettings } from "../UserSettings/Requests";
 import { makeTimestamp } from "../../utils";
 
 import "./index.css";
+
 
 const betaTag = <Tag intent="primary" minimal={true}>Beta</Tag>;
 

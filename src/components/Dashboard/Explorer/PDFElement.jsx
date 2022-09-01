@@ -5,12 +5,14 @@ import DataDrawer from "../../DataDrawer";
 import { ListItem } from "../../DataList";
 import NotesDrawer from "../../NotesDrawer";
 
-import { pluralize } from "../../../utils";
 import useBool from "../../../hooks/useBool";
 
-import { CustomClasses } from "../../../constants";
+import { pluralize } from "../../../utils";
 
 import * as customPropTypes from "../../../propTypes";
+import { CustomClasses } from "../../../constants";
+
+
 function PDFElement({ item }){
 	const [isDataDrawerOpen, { on: openDataDrawer, off: closeDataDrawer }] = useBool(false);
 	const [isNotesDrawerOpen, { on: openNotesDrawer, off: closeNotesDrawer }] = useBool(false);

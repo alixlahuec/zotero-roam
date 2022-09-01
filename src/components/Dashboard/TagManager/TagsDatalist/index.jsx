@@ -12,11 +12,11 @@ import Stats from "../Stats";
 import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
 import usePagination from "../../../../hooks/usePagination";
 
+import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
 
-import * as customPropTypes from "../../../../propTypes";
-
 import "./index.css";
+
 
 const itemsPerPage = 30;
 

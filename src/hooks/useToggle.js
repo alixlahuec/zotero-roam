@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 
+
 /** Custom hook for working with component state that toggles between two non-Boolean values
  * @param {{start: any, options: any[]}} config 
  * @returns {[any, function]}

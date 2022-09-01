@@ -16,6 +16,7 @@ import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
 
+
 const itemsPerPage = 30;
 
 function search(query, items){

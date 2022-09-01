@@ -17,6 +17,7 @@ import { cleanRelatedItem } from "./utils";
 
 import "./index.css";
 
+
 function CitekeyMenuFactory({ menus }){
 	const [{ trigger }] = usePageMenuSettings();
 	const [{ dataRequests }] = useRequestsSettings();

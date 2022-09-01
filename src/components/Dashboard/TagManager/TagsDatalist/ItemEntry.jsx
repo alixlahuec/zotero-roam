@@ -10,9 +10,9 @@ import ZoteroTag from "./ZoteroTag";
 import { getTagUsage, isSingleton, makeSuggestionFor } from "../utils";
 import { pluralize } from "../../../../utils";
 
+import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
 
-import * as customPropTypes from "../../../../propTypes";
 
 const ItemEntry = memo(function ItemEntry({ entry, library }){
 	const is_singleton = isSingleton(entry);

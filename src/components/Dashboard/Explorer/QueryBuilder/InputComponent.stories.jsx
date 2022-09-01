@@ -1,5 +1,7 @@
 import { useState } from "react";
+
 import InputComponent from "./InputComponent";
+
 
 export default {
 	component: InputComponent,

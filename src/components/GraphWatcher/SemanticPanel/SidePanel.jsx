@@ -1,13 +1,13 @@
-import { memo, useCallback, useMemo } from "react";
 import { arrayOf, func, shape } from "prop-types";
+import { memo, useCallback, useMemo } from "react";
 
 import { Button, ButtonGroup, Classes } from "@blueprintjs/core";
 
 import ZoteroImport from "../../ZoteroImport";
 
+import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
 
-import * as customPropTypes from "../../../propTypes";
 
 const SelectedImportItem = memo(function SelectedImportItem(props) {
 	const { handleRemove, item } = props;

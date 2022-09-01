@@ -1,5 +1,5 @@
-import { memo, useCallback, useMemo } from "react";
 import { arrayOf, bool, func, shape, string } from "prop-types";
+import { memo, useCallback, useMemo } from "react";
 
 import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 
@@ -17,9 +17,8 @@ import useSelect from "../../hooks/useSelect";
 
 import { sortCollections } from "../../utils";
 
-import { CustomClasses } from "../../constants";
-
 import * as customPropTypes from "../../propTypes";
+import { CustomClasses } from "../../constants";
 
 import "./index.css";
 

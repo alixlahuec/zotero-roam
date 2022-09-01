@@ -1,5 +1,5 @@
-import { memo, useCallback } from "react";
 import { array, bool, func, object } from "prop-types";
+import { memo, useCallback } from "react";
 
 import { Checkbox, Spinner } from "@blueprintjs/core";
 

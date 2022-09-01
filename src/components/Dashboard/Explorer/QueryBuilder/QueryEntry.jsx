@@ -1,5 +1,5 @@
-import { useCallback } from "react";
 import { any, bool, func, oneOf, shape, string } from "prop-types";
+import { useCallback } from "react";
 
 import { Button, MenuItem } from "@blueprintjs/core";
 import { Select2 } from "@blueprintjs/select";
@@ -10,6 +10,7 @@ import { defaultQueryTerm, queries } from "./queries";
 import { returnSiblingArray } from "./utils";
 
 import { CustomClasses } from "../../../../constants";
+
 
 const propertyProps = {
 	title: "Select a property to query"

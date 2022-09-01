@@ -1,5 +1,5 @@
-import { memo, useCallback, useState } from "react";
 import { arrayOf, func, string } from "prop-types";
+import { memo, useCallback, useState } from "react";
 import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect2 } from "@blueprintjs/select";
 
@@ -7,6 +7,7 @@ import { getAllPages } from "Roam";
 import { searchEngine } from "../../utils";
 
 import { CustomClasses } from "../../constants";
+
 
 const results_limit = 30;
 const popoverProps = {

@@ -14,6 +14,7 @@ import { CustomClasses } from "../../../../constants";
 
 import * as customPropTypes from "../../../../propTypes";
 
+
 function ItemElement({ item, onClose }){
 	const { children, inGraph, itemType, meta, publication, raw, title } = item;
 	const [isDataDrawerOpen, { on: openDataDrawer, off: closeDataDrawer }] = useBool(false);

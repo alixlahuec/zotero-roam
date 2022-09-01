@@ -1,5 +1,5 @@
-import { memo, useCallback, useEffect, useState } from "react";
 import { bool, func, oneOf } from "prop-types";
+import { memo, useCallback, useEffect, useState } from "react";
 
 import { Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
@@ -11,6 +11,7 @@ import TagManager from "./TagManager";
 import { CustomClasses } from "../../constants";
 
 import "./index.css";
+
 
 const TabList = memo(function TabList(props){
 	const { defaultTab, onClose } = props;

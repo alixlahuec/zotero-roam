@@ -2,6 +2,7 @@ import { Tag } from "@blueprintjs/core";
 
 import * as customPropTypes from "../../../../propTypes";
 
+
 function ZoteroTag({ tagElement }){
 	const { tag, meta: { numItems, type = 0 } } = tagElement;
 

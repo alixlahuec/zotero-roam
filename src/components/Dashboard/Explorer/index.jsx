@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { arrayOf, func, oneOf, shape } from "prop-types";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
@@ -14,11 +14,11 @@ import { useRoamCitekeys } from "../../RoamCitekeysContext";
 
 import { categorizeLibraryItems, cleanLibraryItem, cleanLibraryPDF, identifyChildren, identifyPDFConnections } from "../../../utils";
 
+import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
 
-import * as customPropTypes from "../../../propTypes";
-
 import "./index.css";
+
 
 function cleanLibraryData(itemList, roamCitekeys){
 	return new Promise((resolve) => {

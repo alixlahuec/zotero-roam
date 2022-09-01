@@ -7,6 +7,7 @@ import { CustomClasses } from "../../../../constants";
 
 import "./index.css";
 
+
 const Stats = memo(function Stats({ stats }){
 	if(!stats){
 		return null;
