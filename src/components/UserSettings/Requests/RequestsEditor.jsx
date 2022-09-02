@@ -2,7 +2,7 @@ import { any, arrayOf, func, number, shape } from "prop-types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button, Classes, ControlGroup, FormGroup, H6, InputGroup, MenuItem } from "@blueprintjs/core";
-import { Select2 } from "@blueprintjs/select";
+import { Select } from "@blueprintjs/select";
 
 import ErrorCallout from "../../Errors/ErrorCallout";
 
@@ -18,8 +18,11 @@ import "./index.css";
 const popoverProps = {
 	canEscapeKeyClose: false,
 	minimal: true,
-	placement: "bottom",
-	popoverClassName: CustomClasses.POPOVER
+	placement: "bottom-right",
+	popoverClassName: CustomClasses.POPOVER,
+	targetProps: {
+		title: "Select the type of library you want to use"
+	}
 };
 
 function renderAsMenuItem(item, itemProps) {
@@ -32,10 +35,6 @@ const LIB_TYPE_OPTIONS = [
 	{ label: "User library", value: "users" },
 	{ label: "Group library", value: "groups" }
 ];
-
-const libTypeMenuProps = {
-	title: "Select the type of library you want to use"
-};
 
 function DataRequestForm({ inputRef = null, pos, req, updateReq }){
 	const { apikey, library: { type, id }, name } = req;
@@ -69,15 +68,12 @@ function DataRequestForm({ inputRef = null, pos, req, updateReq }){
 	return <>
 		<FormGroup label="Library" labelFor={"req-library" + pos}>
 			<ControlGroup>
-				<Select2 
+				<Select
 					filterable={false}
 					itemRenderer={renderAsMenuItem}
-					items={LIB_TYPE_OPTIONS} 
-					menuProps={libTypeMenuProps}
+					items={LIB_TYPE_OPTIONS}
 					onItemSelect={changeHandlers.updateLibraryType} 
-					placement="bottom-right"
-					popoverProps={popoverProps}
-					popoverTargetProps={libTypeMenuProps} >
+					popoverProps={popoverProps} >
 					<Button 
 						active={true}
 						className={CustomClasses.TEXT_SMALL} 
@@ -86,7 +82,7 @@ function DataRequestForm({ inputRef = null, pos, req, updateReq }){
 						minimal={true}
 						rightIcon="caret-down"
 						text={type} />
-				</Select2>
+				</Select>
 				<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-library" + pos} inputRef={inputRef} onChange={changeHandlers.updateLibraryID} placeholder="e.g, 123456" value={id} />
 			</ControlGroup>
 		</FormGroup>

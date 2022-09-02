@@ -2,7 +2,7 @@ import { Children, cloneElement, isValidElement, useCallback, useMemo } from "re
 import { arrayOf, bool, func, node, number, object, objectOf, oneOfType, shape, string } from "prop-types";
 
 import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
-import { Select2 } from "@blueprintjs/select";
+import { Select } from "@blueprintjs/select";
 
 import InputMultiSelect from "../Inputs/InputMultiSelect";
 import TagsSelector from "../Inputs/TagsSelector";
@@ -182,21 +182,23 @@ const BetterSelect = ({ buttonProps = {}, menuProps, onSelect, options, popoverT
 		const { handleClick/*, modifiers: { active }*/ } = itemProps;
 		return <MenuItem key={item.value} onClick={handleClick} selected={item.value == selectedValue} text={item.label} />;
 	}, [selectedValue]);
+
+	const mergedPopoverProps = useMemo(() => ({
+		...popoverProps,
+		targetProps: popoverTargetProps
+	}), [popoverTargetProps]);
 	
-	return <Select2
+	return <Select
 		className={["zr-setting--single-input", CustomClasses.TEXT_SMALL].join(" ")}
 		filterable={false}
 		itemRenderer={itemRenderer}
 		itemsEqual="value"
 		items={options}
-		menuProps={menuProps}
 		onItemSelect={selectHandler}
-		placement="bottom"
-		popoverProps={popoverProps}
-		popoverTargetProps={popoverTargetProps}
+		popoverProps={mergedPopoverProps}
 		{...extraProps} >
 		<Button alignText="right" intent="primary" minimal={true} rightIcon="caret-down" text={options.find(op => op.value == selectedValue).label} {...buttonProps} />
-	</Select2>;
+	</Select>;
 };
 BetterSelect.propTypes = {
 	buttonProps: object,

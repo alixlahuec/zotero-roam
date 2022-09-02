@@ -2,7 +2,7 @@ import { any, bool, func, oneOf, shape, string } from "prop-types";
 import { useCallback } from "react";
 
 import { Button, MenuItem } from "@blueprintjs/core";
-import { Select2 } from "@blueprintjs/select";
+import { Select } from "@blueprintjs/select";
 
 import InputComponent from "./InputComponent";
 
@@ -12,17 +12,24 @@ import { returnSiblingArray } from "./utils";
 import { CustomClasses } from "../../../../constants";
 
 
-const propertyProps = {
-	title: "Select a property to query"
-};
-
-const relationshipProps = {
-	title: "Select a relationship to test for the property"
-};
-
 const popoverProps = {
 	minimal: true,
+	placement: "bottom",
 	popoverClassName: CustomClasses.POPOVER
+};
+
+const propertyPopoverProps = {
+	...popoverProps,
+	targetProps: {
+		title: "Select a property to query"
+	}
+};
+
+const relationshipPopoverProps = {
+	...popoverProps,
+	targetProps: {
+		title: "Select a relationship to test for the property"
+	}
 };
 
 function itemRenderer(item, itemProps) {
@@ -62,28 +69,22 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 	return <div className="zr-query-entry">
 		{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}
 		<div>
-			<Select2 
+			<Select 
 				filterable={false} 
 				itemRenderer={itemRenderer}
 				items={Object.keys(queries)}
-				menuProps={propertyProps}
 				onItemSelect={handlePropertyChange}
-				placement="bottom"
-				popoverProps={popoverProps}
-				popoverTargetProps={propertyProps} >
+				popoverProps={propertyPopoverProps} >
 				<Button minimal={true} rightIcon="caret-down" text={property} />
-			</Select2>
-			<Select2 
+			</Select>
+			<Select 
 				filterable={false} 
 				itemRenderer={itemRenderer}
 				items={Object.keys(queries[property])}
-				menuProps={relationshipProps}
 				onItemSelect={handleRelationshipChange}
-				placement="bottom"
-				popoverProps={popoverProps}
-				popoverTargetProps={relationshipProps} >
+				popoverProps={relationshipPopoverProps} >
 				<Button minimal={true} rightIcon="caret-down" text={relationship} />
-			</Select2>
+			</Select>
 			<InputComponent property={property} relationship={relationship} value={value} setValue={handleValueChange} />
 		</div>
 		{isOnlyChild

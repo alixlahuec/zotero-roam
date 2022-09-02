@@ -2,7 +2,7 @@ import { arrayOf, func, shape, string } from "prop-types";
 import { memo } from "react";
 
 import { Button, MenuItem } from "@blueprintjs/core";
-import { Select2 } from "@blueprintjs/select";
+import { Select } from "@blueprintjs/select";
 
 import { CustomClasses } from "../../constants";
 
@@ -10,6 +10,7 @@ import * as customPropTypes from "../../propTypes";
 
 const popoverProps = {
 	minimal: true,
+	placement: "bottom-right",
 	popoverClassName: CustomClasses.POPOVER
 };
 
@@ -23,19 +24,18 @@ const LibrarySelect = memo(function LibrarySelect({ libProps }){
 	const { currentLibrary: { path }, onSelect, options } = libProps;
 
 	return (
-		<Select2 
+		<Select
 			filterable={false}
 			itemRenderer={itemRenderer}
 			items={options} 
-			onItemSelect={onSelect} 
-			placement="bottom-right"
+			onItemSelect={onSelect}
 			popoverProps={popoverProps}>
 			<Button 
 				className={["zr-dashboard--library-select", CustomClasses.TEXT_AUXILIARY, CustomClasses.TEXT_SMALL].join(" ")} 
 				icon="folder-open"
 				minimal={true} 
 				text={path} />
-		</Select2>
+		</Select>
 	);
 });
 LibrarySelect.propTypes = {
