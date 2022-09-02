@@ -13,13 +13,9 @@ import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION, SENTRY_CONFI
 import ZoteroRoam from "./src/extension";
 
 
-// TODO: remove once revert to Blueprint v3 is completed
-import "@blueprintjs/core/lib/css/blueprint.css";
-import "@blueprintjs/select/lib/css/blueprint-select.css";
-import "@blueprintjs/datetime/lib/css/blueprint-datetime.css";
-
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./src/index.css";
+
 
 function onload({ extensionAPI }){
 
