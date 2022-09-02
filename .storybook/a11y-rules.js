@@ -12,14 +12,14 @@ export const A11Y_RULES = [
         id: "aria-progressbar-name",
         // The loading state for Blueprint's Button doesn't provide a title to the spinner.
         // This currently cannot be configured
-        selector: "[role=\"progressbar\"]:not(.bp4-button-spinner)"
+        selector: "[role=\"progressbar\"]:not(.bp3-button-spinner)"
     },
     {
         id: "aria-allowed-attr",
         // Blueprint's Tag sets an aria-labelledby attribute to the span wrapper,
         // which is incorrect for <span> elements without a valid aria-role.
         // This currently cannot be configured
-        selector: "*:not(.bp4-tag)"
+        selector: "*:not(.bp3-tag)"
     },
     {
         id: "image-alt",

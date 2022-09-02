@@ -1,4 +1,4 @@
-.zr-explorer .bp4-tab-panel {
+.zr-explorer .bp3-tab-panel {
     flex: 0 1 100%;
     margin-top: 10px;
 }
@@ -17,7 +17,7 @@
     justify-content: space-between;
 }
 
-.zr-datalist--item.zr-query--result [zr-role="item-header"] > a.bp4-button {
+.zr-datalist--item.zr-query--result [zr-role="item-header"] > a.bp3-button {
     flex: 0 0 auto;
 }
 

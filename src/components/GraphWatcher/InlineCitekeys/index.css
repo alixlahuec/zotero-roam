@@ -2,6 +2,6 @@
     max-width: 300px;
 }
 
-.zr-context-menu .bp4-menu-item.bp4-intent-primary {
+.zr-context-menu .bp3-menu-item.bp3-intent-primary {
     color: hsla(var(--zr-accent-1-hsl), 95%);
 }

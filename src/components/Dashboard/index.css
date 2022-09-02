@@ -1,22 +1,22 @@
-.zr-auxiliary-dialog--dashboard.bp4-dialog {
+.zr-auxiliary-dialog--dashboard.bp3-dialog {
     --zr-dialog-gutter: 2.5%;
     --zr-dialog-margin: 15vw;
     height: 90vh;
     overflow-y: scroll;
 }
 
-.zr-dashboard--main > .bp4-tabs > .bp4-tab-list,
-.zr-dashboard--main > .bp4-tabs > .bp4-tab-panel {
+.zr-dashboard--main > .bp3-tabs > .bp3-tab-list,
+.zr-dashboard--main > .bp3-tabs > .bp3-tab-panel {
     padding: 3px;
 }
 
-.zr-dashboard--main > .bp4-tabs > .bp4-tab-list {
+.zr-dashboard--main > .bp3-tabs > .bp3-tab-list {
     background: var(--zr-box-bg);
     border-right: 1px var(--zr-border-co) solid;
     height: 90vh;
 }
 
-.zr-dashboard--main > .bp4-tabs > .bp4-tab-panel {
+.zr-dashboard--main > .bp3-tabs > .bp3-tab-panel {
     max-height: 90vh;
     overflow-y: scroll;
     padding-left: 15px;
@@ -24,7 +24,7 @@
     width: 100%;
 }
 
-.zr-dashboard--main > .bp4-tabs > .bp4-tab-panel::-webkit-scrollbar {
+.zr-dashboard--main > .bp3-tabs > .bp3-tab-panel::-webkit-scrollbar {
     width: 0px;
 }
 
@@ -32,7 +32,7 @@
     max-height: none;
 }
 
-.zr-dashboard--library-select.bp4-button.bp4-minimal {
+.zr-dashboard--library-select.bp3-button.bp3-minimal {
     background: var(--zr-box-bg);
     border: 1px var(--zr-border-co) solid;
     color: var(--zr-text-co);

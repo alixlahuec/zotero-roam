@@ -4,7 +4,7 @@
     padding-bottom: 20px;
 }
 
-.zr-settings-list > h3.bp4-heading {
+.zr-settings-list > h3.bp3-heading {
     border-top: 1px var(--zr-border-co) solid;
     color: var(--zr-text-co);
     font-size: 1.15rem;
@@ -14,28 +14,28 @@
     padding-top: 10px;
 }
 
-.zr-settings-list > h3.bp4-heading:first-child {
+.zr-settings-list > h3.bp3-heading:first-child {
     margin-top: 0px;
 }
 
-.zr-settings-list h4.bp4-heading {
+.zr-settings-list h4.bp3-heading {
     color: var(--zr-accent-1);
     font-size: 1.05rem;
     font-weight: 400;
     margin: 0px;
 }
 
-.zr-settings-list h5.bp4-heading {
+.zr-settings-list h5.bp3-heading {
     color: var(--zr-auxiliary);
     margin: 0px;
 }
 
-.zr-settings-list h5.bp4-heading,
-.zr-settings-list .zr-settings-rowgroup--option > .bp4-control-indicator {
+.zr-settings-list h5.bp3-heading,
+.zr-settings-list .zr-settings-rowgroup--option > .bp3-control-indicator {
     font-size: 0.95rem;
 }
 
-.zr-settings-list [zr-row-option-selected="true"] h5.bp4-heading {
+.zr-settings-list [zr-row-option-selected="true"] h5.bp3-heading {
     color: var(--zr-text-co);
 }
 
@@ -85,7 +85,7 @@
 }
 
 .zr-settings-list .zr-settings-rowgroup--option > input[type="checkbox"],
-.zr-settings-list .zr-settings-rowgroup--option > .bp4-control-indicator {
+.zr-settings-list .zr-settings-rowgroup--option > .bp3-control-indicator {
     flex: 0 0 auto;
 }
 
@@ -103,7 +103,7 @@
     justify-content: space-between;
 }
 
-.zr-settings-list [zr-role="settings-row-col"] > button.bp4-button {
+.zr-settings-list [zr-role="settings-row-col"] > button.bp3-button {
     height: fit-content;
 }
 

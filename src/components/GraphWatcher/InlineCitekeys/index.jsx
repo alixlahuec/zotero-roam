@@ -101,7 +101,7 @@ const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 		setTimeout(() => {
 			try{
 				// Hide default Roam context menu
-				document.querySelector("body > .bp4-context-menu+.bp4-portal").style.display = "none";
+				document.querySelector("body > .bp3-context-menu+.bp3-portal").style.display = "none";
 			} catch(e){
 				// Do nothing
 			}

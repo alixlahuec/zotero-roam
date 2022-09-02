@@ -1,4 +1,4 @@
-.zr-guide-popover .bp4-popover2-content {
+.zr-guide-popover .bp3-popover2-content {
     font-size: var(--zr-text-small, 0.85rem);
     padding: 10px;
 }
@@ -7,6 +7,6 @@
     line-height: 14px;
 }
 
-.zr-guide-popover--target .bp4-icon {
+.zr-guide-popover--target .bp3-icon {
     color: hsla(var(--zr-accent-1-hsl), 60%);
 }

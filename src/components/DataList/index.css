@@ -18,21 +18,21 @@ ul.zr-datalist--listwrapper::-webkit-scrollbar {
     width: 0px;
 }
 
-.zr-datalist--toolbar .bp4-button.bp4-minimal, .zr-datalist--toolbar .bp4-button.bp4-minimal .bp4-icon {
+.zr-datalist--toolbar .bp3-button.bp3-minimal, .zr-datalist--toolbar .bp3-button.bp3-minimal .bp3-icon {
     color: var(--zr-text-co);
 }
 
-.zr-datalist--toolbar > .bp4-form-group,
-.zr-datalist--toolbar > .bp4-switch {
+.zr-datalist--toolbar > .bp3-form-group,
+.zr-datalist--toolbar > .bp3-switch {
     margin-bottom: 0px;
 }
 
-.zr-datalist--toolbar > label.bp4-switch {
+.zr-datalist--toolbar > label.bp3-switch {
     color: var(--zr-text-co);
     font-weight: normal;
 }
 
-.zr-datalist--toolbar > .bp4-slider {
+.zr-datalist--toolbar > .bp3-slider {
     flex: 0 1 33%;
     margin-top: 20px;
 }

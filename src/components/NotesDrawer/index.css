@@ -18,12 +18,12 @@
     justify-content: space-between;
 }
 
-.zr-drawer--notes-card [zr-role="card-header"] .bp4-button,
-.zr-drawer--notes-card [zr-role="card-header"] .bp4-tag.bp4-minimal {
+.zr-drawer--notes-card [zr-role="card-header"] .bp3-button,
+.zr-drawer--notes-card [zr-role="card-header"] .bp3-tag.bp3-minimal {
     color: var(--zr-text-co);
 }
 
-.zr-drawer--notes-card [zr-role="card-header"] .bp4-tag {
+.zr-drawer--notes-card [zr-role="card-header"] .bp3-tag {
     margin-right: 5px;
 }
 
@@ -35,7 +35,7 @@
     padding: 10px;
 }
 
-.zr-annotation--comment .bp4-icon {
+.zr-annotation--comment .bp3-icon {
     margin-right: 5px;
 }
 

@@ -43,10 +43,10 @@
     flex: 1 1 33%;
 }
 
-.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] > .bp4-menu {
+.zr-tagmanager--datalist .zr-datalist--item [zr-role="item-actions"] > .bp3-menu {
     min-width: auto;
 }
 
-.zr-tag-entry .bp4-tag[data-tag-source] {
+.zr-tag-entry .bp3-tag[data-tag-source] {
     margin: 3px 5px;
 }

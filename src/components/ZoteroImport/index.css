@@ -3,11 +3,11 @@
     margin-top:5px;
 }
 
-.zr-semantic-panel--side .bp4-button-group button.bp4-intent-primary.zr-import--trigger {
+.zr-semantic-panel--side .bp3-button-group button.bp3-intent-primary.zr-import--trigger {
     color: hsla(var(--zr-accent-1-hsl), 90%);
 }
 
-.zr-semantic-panel--side .bp4-button-group button.bp4-intent-warning.zr-import--cancel {
+.zr-semantic-panel--side .bp3-button-group button.bp3-intent-warning.zr-import--cancel {
     color: hsla(var(--zr-accent-2-hsl), 90%);
 }
 
@@ -46,11 +46,11 @@
     margin-left:20px;
 }
 
-.zr-webimport-panel--side .zr-input-tags.bp4-popover2-target {
+.zr-webimport-panel--side .zr-input-tags.bp3-popover2-target {
     width: 100%;
 }
 
-.import-options .bp4-input.bp4-multi-select {
+.import-options .bp3-input.bp3-multi-select {
     background: var(--zr-dialog-bg);
     border: 1px var(--zr-border-co) solid;
     box-shadow: none;

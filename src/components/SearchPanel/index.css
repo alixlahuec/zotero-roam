@@ -20,29 +20,29 @@ label.zr-quick-copy {
 
 /* QueryList */
 
-.zr-library-search-input-group.bp4-input {
+.zr-library-search-input-group.bp3-input {
     background: none;
     box-shadow: none;
     padding: unset;
 }
 
-.zr-library-search-input-group .bp4-input-left-container > * {
+.zr-library-search-input-group .bp3-input-left-container > * {
     margin-right: 10px;
 }
 
-.zr-library-search-input-group .bp4-input-action {
+.zr-library-search-input-group .bp3-input-action {
     display: flex;
     align-items: center;
 }
 
-#zotero-roam-library-rendered .bp4-menu {
+#zotero-roam-library-rendered .bp3-menu {
     max-height: 70vh;
     overflow-y: scroll;
     background: unset;
     padding: 0px;
 }
 
-#zotero-roam-library-rendered .bp4-menu::-webkit-scrollbar {
+#zotero-roam-library-rendered .bp3-menu::-webkit-scrollbar {
   width: 0px;
 }
 
