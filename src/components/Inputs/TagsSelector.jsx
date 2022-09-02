@@ -1,7 +1,8 @@
 import { arrayOf, func, string } from "prop-types";
 import { memo, useCallback, useState } from "react";
+
 import { MenuItem } from "@blueprintjs/core";
-import { MultiSelect2 } from "@blueprintjs/select";
+import { MultiSelect } from "@blueprintjs/select";
 
 import { getAllPages } from "Roam";
 import { searchEngine } from "../../utils";
@@ -66,7 +67,7 @@ const TagsSelector = memo(function TagsSelector({ selectedTags, onRemove, onSele
 	}, [onRemove]);
 
 	return (
-		<MultiSelect2
+		<MultiSelect
 			createNewItemFromQuery={createNewItemFromQuery}
 			createNewItemPosition="first"
 			createNewItemRenderer={createNewItemRenderer}

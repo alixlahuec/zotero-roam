@@ -1,7 +1,7 @@
 import { arrayOf, func, shape, string } from "prop-types";
 import { useCallback, useMemo } from "react";
 import { MenuItem } from "@blueprintjs/core";
-import { MultiSelect2 } from "@blueprintjs/select";
+import { MultiSelect } from "@blueprintjs/select";
 
 import { searchEngine } from "../../utils";
 
@@ -47,7 +47,7 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }){
 	const onItemSelect = useCallback((item, _event) => setValue([...value, item.value]), [setValue, value]);
 	const onRemove = useCallback((item, _index) => setValue(value.filter(val => val != item.value)), [setValue, value]);
 
-	return <MultiSelect2
+	return <MultiSelect
 		initialContent={null}
 		itemPredicate={itemPredicate}
 		itemRenderer={itemRenderer}
