@@ -52,6 +52,7 @@ function MergeAsCustom({ disabled, library, tags }){
 		<>
 			<MenuItem
 				disabled={disabled}
+				htmlTitle="Choose custom value..."
 				intent="primary"
 				multiline={true}
 				onClick={openDialog}

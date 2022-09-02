@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import TagsSelector from "./TagsSelector";
 
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 
 
@@ -27,13 +27,9 @@ WithInteractions.play = async({ canvasElement }) => {
 
 	await userEvent.type(canvas.getByLabelText("Add tags from Roam"), "new tag");
 
-	await waitFor(() => expect(
-		frame.getAllByRole("menuitem").length
-	).toBe(1));
+	const createNewTagOption = frame.getByTitle("Add tag, 'new tag'");
 
-	const createNewTagOption = frame.getByRole("menuitem");
-
-	await expect(createNewTagOption.text).toBe("new tag");
+	await expect(createNewTagOption).toBeInTheDocument();
 
 	await userEvent.click(createNewTagOption);
 };

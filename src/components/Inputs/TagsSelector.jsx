@@ -34,7 +34,7 @@ const createNewItemFromQuery = (tag) => tag;
 const tagRenderer = (tag) => tag;
 
 function createNewItemRenderer(query, active, handleClick){
-	return <MenuItem active={active} icon="small-plus" onClick={handleClick} text={query} />;
+	return <MenuItem active={active} htmlTitle={"Add tag, " + `'${query}'`} icon="small-plus" onClick={handleClick} text={query} />;
 }
 
 function itemRenderer(item, itemProps) {

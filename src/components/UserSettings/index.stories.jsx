@@ -106,27 +106,26 @@ WithInteractions.play = async({ canvasElement, parameters }) => {
 		.toBe(";;");
     
 
-	const qcOverrideKey = canvas.getByRole("combobox", { name: "Select an override key for Quick Copy" });
+	const qcOverrideKey = canvas.getByTitle("Select an override key for Quick Copy");
 
 	await expect(qcOverrideKey.innerText)
 		.toBe(OVERRIDE_KEY_OPTIONS.find(op => op.value == userSettings.copy.overrideKey).label);
 
 	await userEvent.click(qcOverrideKey);
 
-	const overrideMenu = frame.getByRole("listbox", { name: "selectable options" });
+	const overrideMenu = frame.getByRole("list", { name: "Select an override key for Quick Copy" });
 
-	await expect(overrideMenu.title)
-		.toBe("Select an override key for Quick Copy");
+	await expect(overrideMenu).toBeInTheDocument();
     
-	const overrideOptions = within(overrideMenu).getAllByRole("menuitem");
+	const overrideOptions = within(overrideMenu).getAllByRole("listitem");
 
 	await expect(overrideOptions.length)
 		.toBe(OVERRIDE_KEY_OPTIONS.length);
     
-	await userEvent.click(overrideOptions[overrideOptions.length - 1]);
+	await userEvent.click(within(overrideMenu).getByTitle("Shift"));
 
 	await expect(qcOverrideKey.innerText)
-		.toBe(OVERRIDE_KEY_OPTIONS[OVERRIDE_KEY_OPTIONS.length - 1].label);
+		.toBe("Shift");
 
 };
 

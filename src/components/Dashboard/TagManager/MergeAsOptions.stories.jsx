@@ -51,7 +51,7 @@ Default.play = async({ args, canvasElement }) => {
 	const canvas = within(canvasElement);
 	const frame = within(canvasElement.parentElement);
 
-	await userEvent.click(canvas.getByRole("menuitem", { name: "Choose custom value..." }));
+	await userEvent.click(canvas.getByTitle("Choose custom value..."));
 
 	const inputBar = frame.getByPlaceholderText("Enter a value");
 

@@ -1,7 +1,7 @@
 import { Children, cloneElement, isValidElement, useCallback, useMemo } from "react";
 import { arrayOf, bool, func, node, number, object, objectOf, oneOfType, shape, string } from "prop-types";
 
-import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
 import InputMultiSelect from "../Inputs/InputMultiSelect";
@@ -180,8 +180,17 @@ const BetterSelect = ({ buttonProps = {}, menuProps, onSelect, options, popoverT
 
 	const itemRenderer = useCallback((item, itemProps) => {
 		const { handleClick/*, modifiers: { active }*/ } = itemProps;
-		return <MenuItem key={item.value} onClick={handleClick} selected={item.value == selectedValue} text={item.label} />;
+		return <MenuItem key={item.value} htmlTitle={item.label} onClick={handleClick} selected={item.value == selectedValue} text={item.label} />;
 	}, [selectedValue]);
+
+	const menuRenderer =  useCallback(({ items, itemsParentRef, renderItem }) => {
+		const renderedItems = items.map(renderItem).filter(item => item != null);
+		return (
+			<Menu ulRef={itemsParentRef} {...popoverTargetProps}>
+				{renderedItems}
+			</Menu>
+		);
+	}, [popoverTargetProps]);
 
 	const mergedPopoverProps = useMemo(() => ({
 		...popoverProps,
@@ -191,6 +200,7 @@ const BetterSelect = ({ buttonProps = {}, menuProps, onSelect, options, popoverT
 	return <Select
 		className={["zr-setting--single-input", CustomClasses.TEXT_SMALL].join(" ")}
 		filterable={false}
+		itemListRenderer={menuRenderer}
 		itemRenderer={itemRenderer}
 		itemsEqual="value"
 		items={options}

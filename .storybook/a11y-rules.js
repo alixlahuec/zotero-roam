@@ -12,7 +12,7 @@ export const A11Y_RULES = [
         id: "aria-progressbar-name",
         // The loading state for Blueprint's Button doesn't provide a title to the spinner.
         // This currently cannot be configured
-        selector: "[role=\"progressbar\"]:not(.bp3-button-spinner)"
+        selector: "[role=\"progressbar\"]:not(.bp3-button-spinner):not(.bp3-spinner)"
     },
     {
         id: "aria-allowed-attr",
