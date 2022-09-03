@@ -17,9 +17,11 @@
     flex-wrap: wrap;
     justify-content: space-between;
 }
+
 .options-library-list, 
 .options-collections-list{
     flex:1 0 50%;
+    word-break: break-word;
 }
 
 .options-library-list label{

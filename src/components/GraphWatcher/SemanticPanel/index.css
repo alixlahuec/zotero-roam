@@ -123,8 +123,8 @@ li.import-items_selected {
     .zr-related-item-contents--actions {
         flex: 0 1 auto;
     }
-    .zr-semantic-panel--side .import-header > .bp3-button-group {
-        flex-direction: column;
+    .zr-auxiliary-dialog--citations.bp3-dialog.has-selected-items .zr-semantic-panel--side {
+        flex: 1 0 calc(2.5*var(--zr-dialog-margin));
     }
     .zr-semantic-panel--side .import-options > * {
         max-width: 100%;

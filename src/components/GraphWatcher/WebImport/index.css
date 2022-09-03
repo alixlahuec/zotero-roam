@@ -34,7 +34,7 @@
 .zr-auxiliary-dialog--webimport.bp3-dialog.has-selected-items .zr-webimport-panel--side {
     flex: 1 0 var(--zr-dialog-margin);
     display: block;
-    padding: 0px 15px;
+    padding: 0px 8px;
 }
 
 li.zr-webimport-item {
@@ -101,4 +101,17 @@ li.zr-webimport-item {
     display: block;
     flex: 0 0 100%;
     margin-top: 5px;
+}
+
+@media (max-width: 1000px){
+    .zr-auxiliary-dialog--webimport.bp3-dialog {
+        --zr-dialog-gutter: 1.5%;
+        --zr-dialog-margin: 11vw;
+    }
+    .zr-auxiliary-dialog--webimport.bp3-dialog.has-selected-items .zr-webimport-panel--side {
+        flex: 1 0 calc(2.5*var(--zr-dialog-margin));
+    }
+    .zr-webimport-panel--side .import-options > * {
+        max-width: 100%;
+    }
 }

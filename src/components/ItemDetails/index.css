@@ -8,6 +8,10 @@
     overflow-y: scroll;
 }
 
+#zr-item-details > *::-webkit-scrollbar {
+    width: 0px;
+}
+
 #zr-item-details [zr-role="item-metadata"] {
     border-bottom-left-radius: 6px;
     color: var(--zr-text-co);
@@ -61,10 +65,6 @@
 
 #zr-item-details [zr-role="item-actions"] .bp3-overlay {
     font-weight: normal;
-}
-
-#zr-item-details [zr-role="item-actions"] .bp3-menu-item:hover {
-    background: var(--zr-dialog-bg);
 }
 
 #zr-item-details [zr-role="item-actions"] .bp3-menu-item > .bp3-icon:first-child {
