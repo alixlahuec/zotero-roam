@@ -190,8 +190,8 @@ const ExtensionIcon = memo(function ExtensionIcon(props) {
 		<Tooltip2 popoverClassName="zr-icon-tooltip" 
 			usePortal={false} 
 			content={tooltipContent}
-			placement='auto'
-			interactionKind='hover' 
+			placement="auto"
+			interactionKind="hover" 
 			hoverOpenDelay={450} 
 			hoverCloseDelay={450} 
 		>

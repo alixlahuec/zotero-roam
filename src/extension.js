@@ -24,7 +24,7 @@ export default class ZoteroRoam {
      * @param {{
      * queryClient: *,
      * requests: ConfigRequests,
-     * settings: {annotations: SettingsAnnotations, notes: SettingsNotes, typemap: SettingsTypemap}
+     * settings: Object
      * }} context - The context in which the instance is being created
      */
 	constructor({ queryClient, requests, settings }) {
