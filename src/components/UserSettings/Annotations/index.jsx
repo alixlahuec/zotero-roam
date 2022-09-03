@@ -80,8 +80,8 @@ function AnnotationsWidget(){
 			updateGroupBy: (val) => updateSingleValue("group_by", val),
 			updateTemplateComment: (val) => updateSingleValue("template_comment", val),
 			updateTemplateHighlight: (val) => updateSingleValue("template_highlight", val),
-			updateUseType: (val) => updateSingleValue("__with", val),
-			updateWithFormat: (val) => updateSingleValue("use", val)
+			updateUseType: (val) => updateSingleValue("use", val),
+			updateWithFormat: (val) => updateSingleValue("__with", val)
 		};
 	}, [setOpts]);
 
