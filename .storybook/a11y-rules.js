@@ -25,5 +25,12 @@ export const A11Y_RULES = [
         id: "image-alt",
         // Scite's logo doesn't provide alt text, resulting in a violation
         selector: "img:not([src=\"https://cdn.scite.ai/assets/images/logo.svg\"])"
+    },
+    {
+        id: "aria-hidden-focus",
+        // Blueprint's Button component adds an aria-hidden attribute to its child Icon,
+        // which is incorrect because the Icon is focusable.
+        // This currently cannot be configured
+        selector: "[aria-hidden=\"true\"]:not(.bp3-icon)"
     }
 ];
