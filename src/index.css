@@ -81,12 +81,9 @@ button.bp3-button.zr-auxiliary:not(.bp3-disabled) {
 }
 
 [class*="zr"] li[aria-selected="true"],
-[class*="zr"] li [aria-selected="true"],
+[class*="zr"] li [aria-selected="true"]:not(.bp3-menu-item),
 [class*="zr"] li[aria-selected="false"]:hover,
-[class*="zr"] li [aria-selected="false"]:hover,
-[class*="zr"] .bp3-menu-item.bp3-selected,
-[class*="zr"] .bp3-menu-item.bp3-selected:hover,
-[class*="zr"] .bp3-menu-item.bp3-selected:active {
+[class*="zr"] li [aria-selected="false"]:not(.bp3-menu-item):hover {
     background: hsla(var(--zr-accent-1-hsl), 8%);
     color: inherit;
 }
@@ -426,9 +423,12 @@ textarea.zr-text-input,
 
 .zr-popover:not(.zr-date-picker) {
     box-shadow: none;
-    border: 1px var(--zr-border-co) solid;
     font-size: var(--zr-text-small);
     max-width: 300px;
+}
+
+.zr-popover:not(.zr-date-picker):not(.bp3-submenu) {
+    border: 2px var(--zr-border-co) solid;
 }
 
 .zr-popover.bp3-popover2 .bp3-popover2-content,
@@ -437,7 +437,7 @@ textarea.zr-text-input,
 .zr-popover .bp3-datepicker,
 [class*="zr"] .bp3-menu,
 [zr-role] .bp3-menu {
-    background: var(--zr-box-bg);
+    background: var(--zr-dialog-bg);
     color: var(--zr-text-co);
 }
 
@@ -445,16 +445,16 @@ textarea.zr-text-input,
     fill: var(--zr-box-bg);
 }
 
-.zr-popover .bp3-menu-item.bp3-selected,
-.zr-popover .bp3-menu-item.bp3-selected:hover,
-.zr-popover .bp3-menu-item.bp3-selected:active,
-.zr-popover .bp3-menu-item:hover {
-    color: hsla(var(--zr-accent-1-hsl), 97%);
+.zr-popover .bp3-menu .bp3-menu-item[aria-selected="true"],
+.zr-popover .bp3-menu .bp3-menu-item[aria-selected="true"] .bp3-icon,
+.zr-popover .bp3-menu .bp3-menu-item[aria-selected="true"]:hover {
+    background-color: inherit;
+    color: hsla(var(--zr-accent-1-hsl), 95%);
 }
 
-
-.zr-popover .bp3-menu-item:hover {
-    background: var(--zr-dialog-bg);
+.zr-popover .bp3-menu .bp3-menu-item[aria-selected="false"]:hover {
+    background: var(--zr-box-bg);
+    color: hsla(var(--zr-accent-1-hsl), 95%);
 }
 
 [class*="zr-drawer--"].bp3-drawer {

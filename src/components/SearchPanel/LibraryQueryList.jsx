@@ -88,7 +88,7 @@ const SearchResult = memo(function SearchResult(props) {
 		htmlTitle={title}
 		labelElement={"@" + key}
 		labelClassName={resultKeyClass}
-		selected={modifiers.active}
+		aria-selected={modifiers.active}
 		tagName="div"
 		text={
 			<>

@@ -1,7 +1,7 @@
 import { Children, cloneElement, isValidElement, useCallback, useMemo } from "react";
 import { arrayOf, bool, func, node, number, object, objectOf, oneOfType, shape, string } from "prop-types";
 
-import { Button, Checkbox, Classes, ControlGroup, H4, H5, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
 import InputMultiSelect from "../Inputs/InputMultiSelect";
@@ -180,7 +180,9 @@ const BetterSelect = ({ buttonProps = {}, menuProps, onSelect, options, popoverT
 
 	const itemRenderer = useCallback((item, itemProps) => {
 		const { handleClick/*, modifiers: { active }*/ } = itemProps;
-		return <MenuItem key={item.value} htmlTitle={item.label} onClick={handleClick} selected={item.value == selectedValue} text={item.label} />;
+		const isSelected = item.value == selectedValue;
+
+		return <MenuItem key={item.value} htmlTitle={item.label} labelElement={isSelected ? <Icon icon="small-tick" /> : null} onClick={handleClick} aria-selected={isSelected} text={item.label} />;
 	}, [selectedValue]);
 
 	const menuRenderer =  useCallback(({ items, itemsParentRef, renderItem }) => {
@@ -204,6 +206,7 @@ const BetterSelect = ({ buttonProps = {}, menuProps, onSelect, options, popoverT
 		itemRenderer={itemRenderer}
 		itemsEqual="value"
 		items={options}
+		matchTargetWidth={false}
 		onItemSelect={selectHandler}
 		popoverProps={mergedPopoverProps}
 		{...extraProps} >
@@ -219,14 +222,9 @@ BetterSelect.propTypes = {
 	selectedValue: oneOfType([string, bool])
 };
 
-const SingleInput = ({ buttonProps = {}, description = null, menuTitle, onChange, options, title = null, value }) => {
+const SingleInput = ({ buttonProps = {}, description = null, menuTitle, onChange, options, selectProps = {}, title = null, value }) => {
 
-	const menuProps = useMemo(() => ({
-		title: menuTitle
-	}), [menuTitle]);
-
-	const popoverTargetProps = useMemo(() => ({
-		style: { textAlign: "right" },
+	const suppProps = useMemo(() => ({
 		title: menuTitle
 	}), [menuTitle]);
 
@@ -235,7 +233,7 @@ const SingleInput = ({ buttonProps = {}, description = null, menuTitle, onChange
 			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
-		<BetterSelect buttonProps={buttonProps} options={options} menuProps={menuProps} onSelect={onChange} popoverTargetProps={popoverTargetProps} selectedValue={value} />
+		<BetterSelect buttonProps={buttonProps} options={options} menuProps={suppProps} onSelect={onChange} popoverTargetProps={suppProps} selectedValue={value} {...selectProps} />
 	</Row>;
 };
 SingleInput.propTypes = {
@@ -244,6 +242,7 @@ SingleInput.propTypes = {
 	menuTitle: string,
 	onChange: func,
 	options: arrayOf(shape({ label: string, value: oneOfType([string, bool]) })),
+	selectProps: object,
 	title: node,
 	value: oneOfType([string, bool])
 };
@@ -324,7 +323,6 @@ const TextWithSelect = ({ description = null, onSelectChange, onValueChange, pla
 	}), [selectLabel, popoverTargetProps]);
 
 	const mergedSelectButtonProps = useMemo(() => ({
-		active: true,
 		...selectButtonProps
 	}), [selectButtonProps]);
 

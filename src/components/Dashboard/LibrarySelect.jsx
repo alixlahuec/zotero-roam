@@ -28,6 +28,7 @@ const LibrarySelect = memo(function LibrarySelect({ libProps }){
 			filterable={false}
 			itemRenderer={itemRenderer}
 			items={options} 
+			matchTargetWidth={true}
 			onItemSelect={onSelect}
 			popoverProps={popoverProps}>
 			<Button 
