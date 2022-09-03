@@ -118,12 +118,20 @@
     text-align: right;
 }
 
-.zr-settings-list .zr-setting--single-input > button {
-    background: hsla(var(--zr-accent-1-hsl), 7%);
+.zr-settings-list .zr-setting--single-input button {
+    background: hsla(var(--zr-accent-1-hsl), 5%);
 }
 
-.zr-settings-list .zr-setting--single-input > button:hover {
+.zr-settings-list .zr-setting--single-input button:hover {
     background: hsla(var(--zr-accent-1-hsl), 10%);
+}
+
+.zr-text-select-group > .zr-setting--single-input {
+    padding: 0px 10px;
+}
+
+.zr-text-select-group > .zr-text-input {
+    flex: 1;
 }
 
 .zr-settings-list .scite-badge {
