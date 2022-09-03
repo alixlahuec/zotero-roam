@@ -113,7 +113,7 @@ function MetadataWidget(){
 					onValueChange={handlers.updateSmartblockParamValue} 
 					placeholder="Enter a value" 
 					selectButtonProps={smartblockButtonProps} 
-					selectOptions={PARAM_OPTIONS} 
+					selectOptions={PARAM_OPTIONS}
 					selectValue={param} 
 					textValue={paramValue} 
 					inputLabel={"Enter the SmartBlock's" + (param == "srcName" ? "name" : "UID")} 

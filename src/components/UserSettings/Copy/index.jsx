@@ -113,7 +113,7 @@ function CopyWidget(){
 			<RowGroupOption id="preset">
 				<SingleInput menuTitle="Select a formatting preset" onChange={handlers.updatePresetFormat} options={PRESET_OPTIONS} value={preset} />
 			</RowGroupOption>
-			<RowGroupOption id="template" description="Available replacements: {{key}} will insert the item's citekey (without @) ; {{authors}} = the item's creators summary (e.g Author et al.) ; {{title}} = the item's title ; {{year}} = the item's year of publication." >
+			<RowGroupOption id="template" description="Available replacements: {{key}} ; {{authors}} ; {{title}} ; {{year}}." >
 				<TextField ifEmpty={true} label="Enter a custom formatting template" onChange={handlers.updateTemplate} value={template} />
 			</RowGroupOption>
 		</RowGroup>

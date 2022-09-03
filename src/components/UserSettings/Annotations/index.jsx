@@ -51,7 +51,7 @@ const USE_OPTIONS = {
 
 const WITH_OPTIONS = [
 	{ label: "Use raw metadata", value: "raw" },
-	{ label: "Use simplified metadata", value: "formatted" }
+	{ label: "Use simplified data", value: "formatted" }
 ];
 
 function AnnotationsWidget(){
@@ -104,7 +104,7 @@ function AnnotationsWidget(){
 			<RowGroupOption id="default">
 				<SingleInput menuTitle="Select whether annotations should be grouped" onChange={handlers.updateGroupBy} options={GROUP_BY_OPTIONS} value={group_by} />
 			</RowGroupOption>
-			<RowGroupOption id="function" description="Enter the name of a custom function">
+			<RowGroupOption id="function" description="Enter the name of a custom function, and choose the type of input it should receive.">
 				<TextWithSelect 
 					onSelectChange={handlers.updateWithFormat} 
 					onValueChange={handlers.updateFuncName} 

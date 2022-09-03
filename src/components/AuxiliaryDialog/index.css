@@ -33,8 +33,6 @@
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div > ul {
     max-height: 70vh;
     overflow-y: scroll;
-    scrollbar-width: 5px;
-    scrollbar-color: #8c8c8c #ececec;
 }
 
 .bp3-dialog[class*="zr-auxiliary-dialog--"] .rendered-div ul.bp3-menu::-webkit-scrollbar,

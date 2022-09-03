@@ -57,7 +57,7 @@ const USE_OPTIONS = {
 
 const WITH_OPTIONS = [
 	{ label: "Use raw metadata", value: "raw" },
-	{ label: "Use HTML blocks HTML", value: "text" }
+	{ label: "Use HTML blocks", value: "text" }
 ];
 
 
@@ -105,7 +105,7 @@ function NotesWidget(){
 			<RowGroupOption id="preset">
 				<SingleInput menuTitle="Select a separator preset" onChange={handlers.updateSplitPreset} options={SPLIT_PRESET_OPTIONS} value={split_preset} />
 			</RowGroupOption>
-			<RowGroupOption id="custom" >
+			<RowGroupOption id="custom" description="Special characters, like \n are not allowed." >
 				<TextField ifEmpty={true} label="Enter a custom separator" onChange={handlers.updateSplitChar} placeholder="e.g, </p>" value={split_char} />
 			</RowGroupOption>
 		</RowGroup>
@@ -115,7 +115,7 @@ function NotesWidget(){
 			options={USE_OPTIONS}
 			selected={use}>
 			<RowGroupOption id="default" />
-			<RowGroupOption id="function" description="Enter the name of a custom function">
+			<RowGroupOption id="function" description="Enter the name of a custom function, and choose the type of input it should receive.">
 				<TextWithSelect 
 					onSelectChange={handlers.updateWithFormat} 
 					onValueChange={handlers.updateFuncName} 
