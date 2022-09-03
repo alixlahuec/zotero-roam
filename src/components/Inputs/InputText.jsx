@@ -1,7 +1,7 @@
 import { func, string } from "prop-types";
 import { useCallback } from "react";
 
-import { Icon, InputGroup } from "@blueprintjs/core";
+import { InputGroup } from "@blueprintjs/core";
 
 
 function InputText({ value, setValue }){
@@ -9,8 +9,7 @@ function InputText({ value, setValue }){
 	return <InputGroup 
 		className="zr-text-input"
 		onChange={handleValueChange} 
-		placeholder="Enter text" 
-		rightElement={<Icon icon="paragraph" />} 
+		placeholder="Enter text"
 		value={value} />;
 }
 InputText.propTypes = {

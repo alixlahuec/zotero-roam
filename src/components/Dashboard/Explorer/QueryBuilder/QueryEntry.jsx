@@ -73,7 +73,6 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 				filterable={false} 
 				itemRenderer={itemRenderer}
 				items={Object.keys(queries)}
-				matchTargetWidth={true}
 				onItemSelect={handlePropertyChange}
 				popoverProps={propertyPopoverProps} >
 				<Button minimal={true} rightIcon="caret-down" text={property} />
@@ -82,7 +81,6 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 				filterable={false} 
 				itemRenderer={itemRenderer}
 				items={Object.keys(queries[property])}
-				matchTargetWidth={true}
 				onItemSelect={handleRelationshipChange}
 				popoverProps={relationshipPopoverProps} >
 				<Button minimal={true} rightIcon="caret-down" text={relationship} />
