@@ -14,7 +14,7 @@ const TypemapProvider = ({ children, init, updater }) => {
 		_setTypemap((prevState) => {
 			const update = updateFn(prevState);
 			updater(update);
-			window?.zoteroRoam?.updateSetting?.("annotations", update);
+			window?.zoteroRoam?.updateSetting?.("typemap", update);
 			return update;
 		});
 	}, [updater]);
