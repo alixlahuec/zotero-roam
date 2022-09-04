@@ -433,6 +433,7 @@ textarea.zr-text-input,
 }
 
 .zr-popover:not(.zr-date-picker):not(.bp3-submenu):not(.zr-guide-popover) {
+    background-color: var(--zr-dialog-bg);
     border: 2px var(--zr-border-co) solid;
 }
 

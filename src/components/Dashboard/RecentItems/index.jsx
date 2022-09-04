@@ -32,7 +32,7 @@ const LogViewSublist = memo(function LogViewSublist({ allAbstractsShown, items, 
 	return items.length == 0
 		? null
 		: <>
-			<h5 className={CustomClasses.TEXT_AUXILIARY}>{label}</h5>
+			<h5>{label}</h5>
 			{items.map(it => <LogItem key={[it.location, it.key].join("/")} allAbstractsShown={allAbstractsShown} item={it} onClose={onClose} />)}
 		</>;
 });

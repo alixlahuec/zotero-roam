@@ -30,3 +30,8 @@
     font-weight: 500;
     white-space: normal;
 }
+
+.zr-recentitems--datalist h5 {
+    font-weight: bold;
+    margin: 15px 10px;
+}

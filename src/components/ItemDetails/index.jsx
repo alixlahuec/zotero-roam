@@ -28,7 +28,7 @@ import * as customPropTypes from "../../propTypes";
 import "./index.css";
 
 
-const copyPopoverProps = {
+const popoverProps = {
 	popoverClassName: CustomClasses.POPOVER
 };
 
@@ -182,7 +182,7 @@ function CopyButtons(props){
 		labelElement={label}
 		multiline={true} 
 		onClick={copyAsDefault} 
-		popoverProps={copyPopoverProps}
+		popoverProps={popoverProps}
 		text="Copy reference" >
 		{optionsMenu}
 	</MenuItem>;
