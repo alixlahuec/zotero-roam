@@ -136,6 +136,11 @@ button.bp3-button.zr-secondary:not(.bp3-disabled) {
     max-width: calc(2 * var(--zr-input-size));
 }
 
+/* BP3 only */
+[class*="zr"] .bp3-control-group.bp3-numeric-input > .bp3-input-group {
+    margin: 0px 5px;
+}
+
 [class*="zr"] .bp3-numeric-input input.bp3-input {
     max-width: calc(0.20 * var(--zr-input-size));
 }
@@ -316,6 +321,7 @@ textarea.zr-text-input,
 [class*="zr"] .bp3-button-group.bp3-minimal button[class*="bp3-intent-"]:not(.bp3-disabled):not(.bp3-outlined):hover {
     background-color: hsla(var(--zr-base-tone), 5%);
     color: hsla(var(--zr-base-tone), 97%);
+    transition: 0.3s;
 }
 
 [class*="zr"] a:not(.bp3-menu-item) .bp3-icon {
