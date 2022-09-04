@@ -18,10 +18,6 @@ export const SENTRY_CONFIG = {
 			event.request.url = event.request.url.split("#")[0];
 		}
 
-		if(!event.exception.values.some(val => val.stacktrace.frames.some(frame => frame.module.includes("zotero-roam/./src")))){
-			return null;
-		}
-
 		return event;
 	},
 	dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
