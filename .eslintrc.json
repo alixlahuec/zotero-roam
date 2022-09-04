@@ -6,6 +6,7 @@
     },
     "extends": [
         "eslint:recommended",
+        "plugin:import/recommended",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:storybook/recommended"
@@ -31,7 +32,8 @@
     },
     "plugins": [
         "react",
-        "jest"
+        "jest",
+        "import"
     ],
     "rules": {
         "arrow-spacing": "error",
@@ -87,7 +89,8 @@
             { "allowSeparatedGroups": true }
         ],
         "react/jsx-uses-react": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "import/newline-after-import": ["error", { "count": 2 }]
     },
     "settings": {
         "react": {
@@ -98,6 +101,9 @@
                 "name": "ButtonLink",
                 "linkAttribute": "href"
             }
-        ]
+        ],
+        "import/resolver": {
+            "webpack": "webpack.roam.config.js"
+        }
     }
 }
