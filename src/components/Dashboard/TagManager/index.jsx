@@ -1,5 +1,5 @@
 import { arrayOf, func, objectOf, shape, string } from "prop-types";
-import { memo, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
@@ -50,7 +50,7 @@ TagLists.propTypes = {
 	onClose: func
 };
 
-const TabContents = memo(function TabContents({ libraries }){
+function TabContents({ libraries }){
 	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);
 
 	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
@@ -73,12 +73,12 @@ const TabContents = memo(function TabContents({ libraries }){
 			? <Spinner title="Loading tags..." />
 			: <TagLists items={data} libProps={libProps} /> }
 	</div>;
-});
+}
 TabContents.propTypes = {
 	libraries: arrayOf(customPropTypes.zoteroLibraryType)
 };
 
-const TagManager = memo(function TagManager(){
+function TagManager(){
 	const [{ libraries }] = useRequestsSettings();
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
 
@@ -89,6 +89,6 @@ const TagManager = memo(function TagManager(){
 				? <NoWriteableLibraries />
 				: <TabContents libraries={writeableLibraries} />}
 	</SentryBoundary>;
-});
+}
 
 export default TagManager;
