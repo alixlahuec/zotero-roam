@@ -965,13 +965,13 @@ function searchEngine_string(str, text, { any_case = true, match = "partial", se
 		}
 		// Then carry on with the search op
 		if(match == "partial"){
-			const searchReg = new RegExp(searchString, "g");
+			const searchReg = new RegExp(searchString);
 			return searchReg.test(target);
 		} else if(match == "exact"){
-			const searchReg = new RegExp("^" + searchString + "$", "g");
+			const searchReg = new RegExp("^" + searchString + "$");
 			return searchReg.test(target);
 		} else if(match == "word") {
-			const searchReg = new RegExp("(?:\\W|^)" + searchString + "(?:\\W|$)", "g");
+			const searchReg = new RegExp("(?:\\W|^)" + searchString + "(?:\\W|$)");
 			return searchReg.test(target);
 		}
 	} else {
@@ -997,25 +997,25 @@ function searchEngine_string(str, text, { any_case = true, match = "partial", se
 			if(match == "word"){
 				const searchArrayReg = searchArray.map(t => "(?:\\W|^)" + t + "(?:\\W|$)");
 				return searchArrayReg.every(exp => {
-					const regex = new RegExp(exp, "g");
+					const regex = new RegExp(exp);
 					return regex.test(target);
 				});
 			} else {
 				// Partial matching
 				return searchArray.every(exp => {
-					const regex = new RegExp(exp, "g");
+					const regex = new RegExp(exp);
 					return regex.test(target);
 				});
 			}
 		} else {
 			if(match == "partial"){
-				const searchReg = new RegExp(searchArray.join(" "), "g");
+				const searchReg = new RegExp(searchArray.join(" "));
 				return searchReg.test(target);
 			} else if(match == "exact"){
-				const searchReg = new RegExp("^" + searchArray.join(" ") + "$", "g");
+				const searchReg = new RegExp("^" + searchArray.join(" ") + "$");
 				return searchReg.test(target);
 			} else {
-				const searchReg = new RegExp("(?:\\W|^)" + searchArray.join(" ") + "(?:\\W|$)", "g");
+				const searchReg = new RegExp("(?:\\W|^)" + searchArray.join(" ") + "(?:\\W|$)");
 				return searchReg.test(target);
 			}
 		}
