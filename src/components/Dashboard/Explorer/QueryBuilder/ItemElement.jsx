@@ -35,7 +35,7 @@ function ItemElement({ item, onClose }){
 				<CitekeyPopover closeDialog={onClose} inGraph={inGraph} item={raw} notes={children.notes} pdfs={children.pdfs} />
 			</div>
 		</ListItem>
-		<DataDrawer item={item} isOpen={isDataDrawerOpen} onClose={closeDataDrawer} />
+		<DataDrawer item={raw} isOpen={isDataDrawerOpen} onClose={closeDataDrawer} />
 		{children.notes.length > 0 && <NotesDrawer notes={children.notes} isOpen={isNotesDrawerOpen} onClose={closeNotesDrawer} />}
 	</>;
 }
