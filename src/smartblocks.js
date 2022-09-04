@@ -11,7 +11,7 @@ const sbCommands = () => {
 		"ZOTERORANDOMCITEKEY": {
 			help: "Returns one or more Zotero citekeys, with optional tag query",
 			handler: (_context) => (nb = "1", query="") => {
-				return window?.zoteroRoam?.getItems?.("items")
+				return window.zoteroRoam.getItems("items")
 					.filter(it => processQuery(query, it.data.tags.map(t => t.tag)))
 					.map(it => "@" + it.key)
 					.sort(() => 0.5 - Math.random())
