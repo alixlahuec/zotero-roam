@@ -1,5 +1,6 @@
 import { getTagStats, getTagUsage, isSingleton, makeSuggestionFor, matchTagData, sortTags } from "./utils";
 
+
 jest.mock("Roam", () => ({
 	getInitialedPages: () => [
 		{ title: "culture", uid: "abcdef" },

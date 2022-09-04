@@ -2,6 +2,7 @@
 import { matchArrays } from "../../../utils";
 import { webimportClass } from "../classes";
 
+
 const findWebimportDivs = () => {
 	return Array.from(document.querySelectorAll(`[class="${webimportClass}"]`));
 };

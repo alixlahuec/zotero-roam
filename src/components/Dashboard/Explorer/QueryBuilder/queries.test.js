@@ -1,5 +1,6 @@
 import { queries, runQuerySet } from "./queries";
 
+
 describe("Input checks", () => {
 	const date = new Date([2022,1,1]);
 	const inputs = [

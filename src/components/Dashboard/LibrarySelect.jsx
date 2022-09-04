@@ -8,6 +8,7 @@ import { CustomClasses } from "../../constants";
 
 import * as customPropTypes from "../../propTypes";
 
+
 const popoverProps = {
 	minimal: true,
 	placement: "bottom-right",

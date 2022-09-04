@@ -1,5 +1,6 @@
 import { Classes } from "@blueprintjs/core";
 
+
 const dialogClass="search-library";
 const dialogLabel="zr-library-search-dialogtitle";
 const resultClass = [Classes.TEXT_OVERFLOW_ELLIPSIS, "zr-library-item--contents"].join(" ");

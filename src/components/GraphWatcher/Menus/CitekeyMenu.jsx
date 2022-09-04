@@ -31,6 +31,7 @@ import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
 
+
 function BacklinksItem({ entry }) {
 	const { _type, inLibrary, inGraph } = entry;
 	const { children: { pdfs, notes }, raw: item } = inLibrary;

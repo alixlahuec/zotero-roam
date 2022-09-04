@@ -2,7 +2,8 @@
     "env": {
         "browser": true,
         "es2021": true,
-        "jest/globals": true
+        "jest/globals": true,
+        "node": true
     },
     "extends": [
         "eslint:recommended",
@@ -14,7 +15,7 @@
     "globals": {
         "PACKAGE_VERSION": "readonly"
     },
-    "ignorePatterns": ["webpack.*config.js"],
+    "ignorePatterns": ["webpack.*config.js", "*.css"],
     "overrides": [
         {
           "files": ["tests/**"],
@@ -90,7 +91,8 @@
         ],
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
-        "import/newline-after-import": ["error", { "count": 2 }]
+        "import/newline-after-import": ["error", { "count": 2 }],
+        "import/no-unresolved": ["warn", { "amd": true, "commonjs": true }]
     },
     "settings": {
         "react": {

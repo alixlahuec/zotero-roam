@@ -3,6 +3,7 @@ import { array, node, object, oneOfType, string } from "prop-types";
 import { ErrorBoundary } from "@sentry/react";
 import ErrorCallout from "./ErrorCallout";
 
+
 function SentryBoundary(props){
 	const { feature = null, extra = null } = props;
 	return <ErrorBoundary 

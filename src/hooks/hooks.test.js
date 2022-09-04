@@ -7,6 +7,7 @@ import useSelect from "./useSelect";
 import useText from "./useText";
 import useToggle from "./useToggle";
 
+
 describe("Hook for boolean state", () => {
 	test("Toggle method", () => {
 		const { result } = renderHook(() => useBool());

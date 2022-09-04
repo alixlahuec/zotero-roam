@@ -1,5 +1,6 @@
 import { searchEngine } from "../../../../utils";
 
+
 const defaultQueryTerm = { property: "Citekey", relationship: "exists", value: null };
 
 const types = ["date", "date-range", "multiselect", "select", "text", null];

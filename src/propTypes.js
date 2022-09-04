@@ -1,5 +1,6 @@
 import { arrayOf, bool, instanceOf, number, object, objectOf, oneOf, oneOfType, shape, string } from "prop-types";
 
+
 const zoteroAnnotationType = shape({
 	data: shape({
 		annotationColor: string,
