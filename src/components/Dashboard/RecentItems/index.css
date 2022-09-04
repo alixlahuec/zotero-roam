@@ -32,6 +32,7 @@
 }
 
 .zr-recentitems--datalist h5 {
+    color: var(--zr-text-co);
     font-weight: bold;
     margin: 15px 10px;
 }

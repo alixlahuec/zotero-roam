@@ -10,12 +10,7 @@
 }
 
 .zr-auxiliary-dialog--related [zr-role="toggle-abstracts"] {
-    color: var(--zr-text-co);
     margin: 0px 15px;
-}
-
-.zr-auxiliary-dialog--related [zr-role="abstract-toggle"] {
-    background: none;
 }
 
 .zr-auxiliary-dialog--related [zr-role="abstract-text"] {
@@ -32,8 +27,6 @@
     padding: 0px 6px;}
 
 .zr-related-item--abstract {
-    background: var(--zr-box-bg);
-    border: 1px var(--zr-border-co) solid;
     display: inline-block;
     border-radius: 6px;
     margin-top: 5px;

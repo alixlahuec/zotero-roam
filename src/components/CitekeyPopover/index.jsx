@@ -144,7 +144,7 @@ const CitekeyPopover = memo(function CitekeyPopover(props) {
 
 	return (
 		<Popover2 {...popoverProps} content={actionsMenu}>
-			<Button data-in-graph={(inGraph != false).toString()} minimal={true} rightIcon="chevron-right" small={true} text={"@" + item.key} {...buttonProps} />
+			<Button intent={(inGraph != false) ? "success" : null} minimal={true} rightIcon="chevron-right" small={true} text={"@" + item.key} {...buttonProps} />
 		</Popover2>
 	);
 });

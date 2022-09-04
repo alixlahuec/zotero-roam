@@ -244,6 +244,11 @@ textarea.zr-text-input,
     text-decoration: none;
 }
 
+[class*="zr"] .bp3-button.bp3-minimal:not([class*="bp3-intent-"]),
+[class*="zr"] .bp3-button.bp3-minimal:not([class*="bp3-intent-"]) .bp3-icon {
+    color: var(--zr-text-co);
+}
+
 [class*="zr"] .bp3-button.bp3-minimal:hover {
     background: var(--zr-box-bg);
     color: var(--zr-text-co);
@@ -262,6 +267,7 @@ textarea.zr-text-input,
 }
 
 [class*="zr"] a:not(.bp3-menu-item),
+[class*="zr"] .bp3-menu-item.bp3-intent-primary,
 [class*="zr"] .bp3-button.bp3-minimal.bp3-intent-primary,
 [class*="zr"] .bp3-button.bp3-outlined.bp3-intent-primary,
 [class*="zr"] .bp3-button.bp3-minimal.bp3-intent-primary:hover,
@@ -270,6 +276,7 @@ textarea.zr-text-input,
     color: hsla(var(--zr-accent-1-hsl), 95%);
 }
 
+[class*="zr"] .bp3-menu-item.bp3-intent-warning,
 [class*="zr"] .bp3-button.bp3-minimal.bp3-intent-warning,
 [class*="zr"] .bp3-button.bp3-outlined.bp3-intent-warning,
 [class*="zr"] .bp3-button.bp3-minimal.bp3-intent-warning:hover,
@@ -278,6 +285,7 @@ textarea.zr-text-input,
     color: hsla(var(--zr-accent-2-hsl), 95%);
 }
 
+[class*="zr"] .bp3-menu-item.bp3-intent-success,
 [class*="zr"] .bp3-button.bp3-minimal.bp3-intent-success,
 [class*="zr"] .bp3-button.bp3-outlined.bp3-intent-success,
 [class*="zr"] .bp3-button.bp3-minimal.bp3-intent-success:hover,
@@ -286,6 +294,7 @@ textarea.zr-text-input,
     color: hsla(var(--zr-positive-hsl), 95%);
 }
 
+[class*="zr"] .bp3-menu-item.bp3-intent-danger,
 [class*="zr"] .bp3-button.bp3-minimal.bp3-intent-danger,
 [class*="zr"] .bp3-button.bp3-outlined.bp3-intent-danger,
 [class*="zr"] .bp3-button.bp3-minimal.bp3-intent-danger:hover,
@@ -294,6 +303,7 @@ textarea.zr-text-input,
     color: hsla(var(--zr-negative-hsl), 95%);
 }
 
+[class*="zr"] .bp3-menu-item[class*="bp3-intent-"]:hover,
 [class*="zr"] .bp3-button.bp3-minimal[class*="bp3-intent-"]:hover {
     background: hsla(var(--zr-base-tone), 10%);
 }
