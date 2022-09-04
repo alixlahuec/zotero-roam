@@ -11,8 +11,8 @@
     padding-left: 5px;
 }
 
-[data-in-graph="true"].zr-library-item-popover button.bp3-button,
-[data-in-graph="true"].zr-library-item-popover button.bp3-button:hover {
+.zr-library-item-popover button.bp3-button[data-in-graph="true"],
+.zr-library-item-popover button.bp3-button[data-in-graph="true"]:hover {
     background: var(--zr-positive-bg);
     color: var(--zr-positive-co);
 }

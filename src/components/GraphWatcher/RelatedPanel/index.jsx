@@ -180,8 +180,7 @@ const RelatedPanel = memo(function RelatedPanel(props) {
 					<div className="header-content">
 						<div className="header-left">
 							{panelLabel}
-							<Button className={CustomClasses.TEXT_SMALL} 
-								icon="vertical-inbetween" 
+							<Button className={CustomClasses.TEXT_SMALL}
 								minimal={true} 
 								onClick={toggleAbstracts}
 								zr-role="toggle-abstracts" >
