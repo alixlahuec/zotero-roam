@@ -39,23 +39,16 @@ const useAutocompleteSettings = () => {
 };
 
 const DISPLAY_OPTIONS = [
-	{ label: "Citation", value: "citation" },
 	{ label: "Citekey", value: "citekey" },
-	{ label: "Inline", value: "inline" },
-	{ label: "Page reference", value: "pageref" },
-	{ label: "Popover", value: "popover" },
-	{ label: "Tag", value: "tag" },
 	{ label: "Zettlr", value: "zettlr" }
 ];
 
 const FORMAT_OPTIONS = [
 	{ label: "Citation", value: "citation" },
 	{ label: "Citekey", value: "citekey" },
-	{ label: "Inline", value: "inline" },
 	{ label: "Page reference", value: "pageref" },
 	{ label: "Popover", value: "popover" },
-	{ label: "Tag", value: "tag" },
-	{ label: "Zettlr", value: "zettlr" }
+	{ label: "Tag", value: "tag" }
 ];
 
 function AutocompleteWidget(){
