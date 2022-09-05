@@ -1,0 +1,47 @@
+name: Automated pre-release
+on:
+  push:
+    branches: 
+      - beta
+jobs:
+  release:
+    name: Make release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+
+      - name: NPM authentication
+        run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+      
+      - name: git config
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Install packages
+        run: npm ci --legacy-peer-deps
+      
+      - name: Release as beta
+        run: npm run release:beta
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./coverage/
+          verbose: true
+
+      - name: Sentry Release
+        uses: getsentry/action-release@v1.1.6
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          sourcemaps: "./dist ./extension.js.map"

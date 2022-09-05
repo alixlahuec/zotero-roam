@@ -1,0 +1,13 @@
+{
+  "startingVersion": "0.7.0",
+  "commitLimit": false,
+  "hideCredit": true,
+  "ignoreCommitPattern": "^(auto-commit|chore|ci|infra|release|tests)[(:]",
+  "releaseSummary": true,
+  "tagPattern": "^[0\\d]+\\.[0\\d]+\\.[0\\d]+$",
+  "template": "conventional-template.hbs",
+  "replaceText": {
+    "(^(feat|fix|docs|refactor|breaking):)": "",
+    "(^(feat|fix|docs|refactor|)\\()": "\\("
+  }
+}
