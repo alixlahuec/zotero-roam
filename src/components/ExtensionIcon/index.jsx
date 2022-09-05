@@ -47,9 +47,8 @@ const IconTooltipFooter = memo(function IconTooltipFooter() {
 	
 	return <div className="zr-icon-tooltip-footer">
 		<DarkThemeToggle />
-		<a href="https://alix-lahuec.gitbook.io/zotero-roam/" target="_blank" rel="noreferrer">Docs</a>
 		<span className="zr-icon-tooltip-footer--row">
-			<a href="https://alix-lahuec.gitbook.io/zotero-roam/changelog" target="_blank" rel="noreferrer">Changelog</a>
+			<a href="https://alix-lahuec.gitbook.io/zotero-roam/" target="_blank" rel="noreferrer">Docs</a>
 			<Tag className="zr-version-tag">v{version}</Tag>
 		</span>
 	</div>;
