@@ -31,8 +31,8 @@
         "build-storybook": "build-storybook --quiet",
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage",
-        "release": "release-it minor --git.requireBranch=main",
-        "release:beta": "release-it minor --git.requireBranch=beta major --preRelease=beta",
+        "release:latest": "release-it --ci --git.requireBranch=main --github.autoGenerate --npm.skipChecks",
+        "release:beta": "release-it --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\" --npm.skipChecks",
         "release:preview": "release-it --dry-run"
     },
     "devDependencies": {
