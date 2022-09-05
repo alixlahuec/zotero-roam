@@ -1,6 +1,6 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.6.99-beta.2",
+    "version": "0.6.99-beta.3",
     "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
@@ -23,7 +23,7 @@
         "build:dev": "webpack --config webpack.dev.config.js",
         "build:prod": "webpack",
         "build:roam": "webpack --config webpack.roam.config.js",
-		"build:sandbox": "webpack --config webpack.sandbox.config.js",
+        "build:sandbox": "webpack --config webpack.sandbox.config.js",
         "lint": "eslint --fix",
         "ci:lint": "eslint src/**",
         "test": "jest",
