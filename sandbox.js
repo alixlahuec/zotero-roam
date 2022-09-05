@@ -16,6 +16,9 @@ import { initialize } from "./src/setup";
 const { keyWithFullAccess: masterKey } = apiKeys;
 const { userLibrary } = libraries;
 
+/**
+ * Creates a public API instance for sandbox environments (e.g Observable). Data is accessed via cache, and any methods that involve live API calls are overwritten.
+ */
 class ZoteroRoamSandbox extends ZoteroRoam {
 	constructor(){
 		const INSTALL_CONTEXT = "sandbox";
@@ -89,6 +92,10 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 	}
 }
 
+/** Wraps contents of a block object inside of a `<li>` tag.
+ * @param {{string: String, text: String, children?: Array}} object - The block object to process
+ * @returns
+ */
 function blockObjectToHTML(object){
 	let objectHTML = "";
 	
@@ -107,6 +114,10 @@ function blockObjectToHTML(object){
 	return objectHTML;
 }
 
+/** Generates HTML list from metadata blocks.
+ * @param {(String|{string: String, text: String, children?: Array})[]} arr - The list of metadata blocks
+ * @returns 
+ */
 function arrayToHTML(arr){
 	let renderedHTML = "<ul>";
 	arr.forEach((el) => {
