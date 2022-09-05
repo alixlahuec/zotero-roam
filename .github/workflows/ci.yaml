@@ -43,6 +43,9 @@ jobs:
       
       - name: Webpack build (Roam Depot)
         run: npm run build:roam
+      
+      - name: Webpack build (sandbox)
+        run: npm run build:sandbox
 
       - name: Commit to repository
         uses: stefanzweifel/git-auto-commit-action@v4
