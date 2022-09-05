@@ -29,7 +29,7 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 					{ 
 						apikey: masterKey,
 						library: {
-							type: userLibrary.type,
+							type: userLibrary.type + "s",
 							id: userLibrary.id
 						}
 					}
@@ -133,7 +133,7 @@ function arrayToHTML(arr){
 	return renderedHTML;
 }
 
-export default {
+export {
 	arrayToHTML,
 	ZoteroRoamSandbox
 };
