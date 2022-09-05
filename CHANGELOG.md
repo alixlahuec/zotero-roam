@@ -1,3 +1,5 @@
+## Changelog
+
 <!-- auto-changelog-above -->
 ## v0.7.0
 
