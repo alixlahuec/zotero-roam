@@ -1,5 +1,9 @@
 name: CI
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - main
+      - beta
 jobs:
   commit-checks:
     name: Lint, test, and build
