@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/react";
+import { getCurrentHub as getSentryHub, setContext as setSentryContext } from "@sentry/react";
 import { unmountComponentAtNode } from "react-dom";
 
 import { registerSmartblockCommands } from "./smartblocks";
@@ -282,10 +282,10 @@ export function setupPortals(){
 export function setupSentry(isUserEnabled = false, config = {}){
 	// https://github.com/getsentry/sentry-javascript/issues/2039
 	if(isUserEnabled){
-		Sentry.getCurrentHub().getClient().getOptions().enabled = true;
-		Sentry.setContext("config", config);
+		getSentryHub().getClient().getOptions().enabled = true;
+		setSentryContext("config", config);
 	} else {
-		Sentry.getCurrentHub().getClient().getOptions().enabled = false;
+		getSentryHub().getClient().getOptions().enabled = false;
 	}
 }
 

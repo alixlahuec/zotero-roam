@@ -1,7 +1,8 @@
 /* istanbul ignore file */
-import * as Sentry from "@sentry/react";
-import { HotkeysProvider } from "@blueprintjs/core";
 import { render } from "react-dom";
+
+import { HotkeysProvider } from "@blueprintjs/core";
+import { init as SentryInit } from "@sentry/react";
 
 import { AppWrapper, queryClient } from "./components/App";
 import { UserSettingsProvider } from "./components/UserSettings";
@@ -19,7 +20,7 @@ import "./index.css";
 
 	const INSTALL_CONTEXT = "roam/js";
 
-	Sentry.init(SENTRY_CONFIG);
+	SentryInit(SENTRY_CONFIG);
 
 	setupPortals();
 

@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { render } from "react-dom";
 
-import * as Sentry from "@sentry/react";
+import { init as SentryInit, getCurrentHub as getSentryHub } from "@sentry/react";
 import { HotkeysProvider } from "@blueprintjs/core";
 
 import { AppWrapper, queryClient } from "./src/components/App";
@@ -21,7 +21,7 @@ function onload({ extensionAPI }){
 
 	const INSTALL_CONTEXT = "roam/depot";
 	
-	Sentry.init(SENTRY_CONFIG);
+	SentryInit(SENTRY_CONFIG);
 
 	setupPortals();
 
@@ -57,7 +57,7 @@ function onload({ extensionAPI }){
 }
 
 function offload(){
-	Sentry.getCurrentHub().getClient().close();
+	getSentryHub().getClient().close();
 	unmountExtensionIfExists();
 	delete window.zoteroRoam;
 }
