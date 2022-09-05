@@ -247,9 +247,9 @@ function configRoamJS({ manualSettings }){
 
 /* istanbul ignore next */
 export function initialize(context = "roam/js", { extensionAPI, manualSettings }){
-	const { requests, settings } = context == "roam/js"
-		? configRoamJS({ manualSettings })
-		: configRoamDepot({ extensionAPI });
+	const { requests, settings } = (context == "roam/depot")
+		? configRoamDepot({ extensionAPI })
+		: configRoamJS({ manualSettings });
     
 	return { requests, settings };
 }
