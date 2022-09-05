@@ -35,6 +35,7 @@
         "release:beta": "release-it --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\" --npm.skipChecks",
         "release:preview": "release-it --dry-run"
     },
+	"sideEffects": false,
     "devDependencies": {
         "@babel/core": "^7.18.13",
         "@babel/preset-env": "^7.18.10",
