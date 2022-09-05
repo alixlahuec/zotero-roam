@@ -49,7 +49,7 @@ WithInteractions.play = async({ canvasElement }) => {
 
 	await userEvent.hover(icon);
 
-	await waitFor(() => expect(canvas.getByText("Changelog"))
+	await waitFor(() => expect(canvas.getByText("Docs"))
 		.toBeInTheDocument());
     
 	await sleep(1000);
