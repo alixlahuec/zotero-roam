@@ -29,7 +29,7 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 					{ 
 						apikey: masterKey,
 						library: {
-							type: userLibrary.type,
+							type: userLibrary.type + "s",
 							id: userLibrary.id
 						}
 					}
