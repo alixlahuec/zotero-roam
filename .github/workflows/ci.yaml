@@ -1,5 +1,9 @@
 name: CI
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - main
+      - beta
 jobs:
   commit-checks:
     name: Lint, test, and build
@@ -44,5 +48,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "auto-commit: lint, test, build"
-          file_pattern: dist extension.*
         continue-on-error: true # See https://github.com/stefanzweifel/git-auto-commit-action/issues/204
