@@ -35,6 +35,10 @@
         "release:beta": "release-it --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\" --npm.skipChecks",
         "release:preview": "release-it --dry-run"
     },
+	"sideEffects": [
+		"*.css",
+		"src/index.js"
+	],
     "devDependencies": {
         "@babel/core": "^7.18.13",
         "@babel/preset-env": "^7.18.10",
