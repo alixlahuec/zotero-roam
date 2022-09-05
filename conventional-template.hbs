@@ -2,7 +2,7 @@
 
 {{#each releases}}
     {{#if href}}
-    ##{{#unless major}}#{{/unless}} [{{title}}]({{href}}) - {{#if tag}} {{niceDate}} {{/if}}
+    ##{{#unless major}}#{{/unless}} [{{title}}]({{href}}) - {{#if tag}} {{isoDate}} {{/if}}
     {{else}}
     ### {{title}}
     {{/if}}
