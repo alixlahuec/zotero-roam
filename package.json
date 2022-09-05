@@ -1,6 +1,6 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.6.99-beta.1",
+    "version": "0.6.99-beta.2",
     "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
@@ -36,10 +36,10 @@
         "release:beta": "release-it --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\" --npm.skipChecks",
         "release:preview": "release-it --dry-run"
     },
-	"sideEffects": [
-		"*.css",
-		"src/index.js"
-	],
+    "sideEffects": [
+        "*.css",
+        "src/index.js"
+    ],
     "devDependencies": {
         "@babel/core": "^7.18.13",
         "@babel/preset-env": "^7.18.10",
