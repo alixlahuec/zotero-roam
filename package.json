@@ -13,7 +13,7 @@
         "url": "https://github.com/alixlahuec/zotero-roam/issues",
         "email": "alix.lahuec@mail.mcgill.ca"
     },
-    "main": ".src/index.js",
+    "main": "src/index.js",
     "browser": "dist/zoteroRoam.min.js",
     "unpkg": "dist/zoteroRoam.min.js",
     "msw": {
@@ -36,6 +36,10 @@
         "release:beta": "release-it --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\" --npm.skipChecks",
         "release:preview": "release-it --dry-run"
     },
+	"sideEffects": [
+		"*.css",
+		"src/index.js"
+	],
     "devDependencies": {
         "@babel/core": "^7.18.13",
         "@babel/preset-env": "^7.18.10",
