@@ -1,7 +1,7 @@
 import { bool, number, oneOf, string } from "prop-types";
 import { memo, useEffect, useRef } from "react";
 
-import * as sciteBadge from "scite-badge";
+import { insertBadges } from "scite-badge";
 
 import "./index.css";
 
@@ -29,7 +29,7 @@ const SciteBadge = memo(function SciteBadge(props) {
 
 	useEffect(() => {
 		divRef?.current?.removeAttribute("data-fetched");
-		sciteBadge.insertBadges();
+		insertBadges();
 	});
 
 	return (

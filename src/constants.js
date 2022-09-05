@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
+import { Integrations } from "@sentry/react";
 
 
 /** @constant {String} The extension's current version (from package.json) */
@@ -23,7 +23,7 @@ export const SENTRY_CONFIG = {
 	dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
 	integrations: [
 		new BrowserTracing(), 
-		new Sentry.Integrations.GlobalHandlers({
+		new Integrations.GlobalHandlers({
 			onunhandledrejection: false
 		})
 	],
