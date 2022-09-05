@@ -133,7 +133,7 @@ function arrayToHTML(arr){
 	return renderedHTML;
 }
 
-export default {
+export {
 	arrayToHTML,
 	ZoteroRoamSandbox
 };
