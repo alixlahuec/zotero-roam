@@ -54,7 +54,7 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 			["items", { apikey: masterKey, dataURI: userLibrary.path + "/items", library: userLibrary.path }],
 			(_prev) => ({
 				data: [
-					...findItems({ type: userLibrary.type, id: userLibrary.id }),
+					...findItems({ type: userLibrary.type, id: userLibrary.id, since: 0 }),
 					sampleAnnot,
 					sampleImageAnnot,
 					sampleNote,
