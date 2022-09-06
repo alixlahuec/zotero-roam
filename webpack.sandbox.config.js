@@ -15,5 +15,12 @@ module.exports = merge(baseConfig, {
 			type: "module"
 		},
 		sourceMapFilename: "zoteroRoam.sandbox.js.map"
+	},
+	resolve: {
+		alias: {
+			"Mocks": path.resolve(__dirname, "mocks/"),
+			"Roam": path.resolve(__dirname, "mocks/roam.js")
+		},
+		extensions: [".js", ".jsx", ".css"]
 	}
 });
