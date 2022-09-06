@@ -18,23 +18,11 @@
     {{/commit-list}}
   {{! Commits list, by type }}
   {{! feat }}
-    {{#commit-list merges heading='#### New Features' message='^feat[(:]' exclude='breaking:'}}
+    {{#commit-list merges heading='#### Features' message='^feat[(:]' exclude='breaking:'}}
     - {{message}} ([`#{{id}}`]({{href}}))
     {{/commit-list}}
   {{! fix }}
-    {{#commit-list merges heading='#### Fixes' message='^fix[(:]' exclude='breaking:'}}
-    - {{message}} ([`#{{id}}`]({{href}}))
-    {{/commit-list}}
-  {{! docs }}
-    {{#commit-list merges heading='#### Documentation Changes' message='^docs[(:]' exclude='breaking:'}}
-    - {{message}} ([`#{{id}}`]({{href}}))
-    {{/commit-list}}
-  {{! refactor }}
-    {{#commit-list merges heading='#### Refactoring and Updates' message='^refactor[(:]' exclude='breaking:'}}
-    - {{message}} ([`#{{id}}`]({{href}}))
-    {{/commit-list}}
-  {{! perf }}
-    {{#commit-list merges heading='#### Performance Improvements' message='^perf[(:]' exclude='[bB]reaking [cC]hange:|[bB]reaking:'}}
+    {{#commit-list merges heading='#### Bug Fixes' message='^fix[(:]' exclude='breaking:'}}
     - {{message}} ([`#{{id}}`]({{href}}))
     {{/commit-list}}
   {{! other changes }}
