@@ -11,7 +11,7 @@
     "repository": "alixlahuec/zotero-roam",
     "bugs": {
         "url": "https://github.com/alixlahuec/zotero-roam/issues",
-        "email": "alix.lahuec@mail.mcgill.ca"
+        "email": "alix.lahuec@onmail.com"
     },
     "main": "src/index.js",
     "browser": "dist/zoteroRoam.min.js",
