@@ -40,6 +40,17 @@
         "*.css",
         "src/index.js"
     ],
+	"babel": {
+		"presets": [
+			"@babel/preset-env", 
+			[
+				"@babel/preset-react",
+				{
+					"runtime": "automatic"
+				}
+			]
+		]
+	},
     "devDependencies": {
         "@babel/core": "^7.18.13",
         "@babel/preset-env": "^7.18.10",
