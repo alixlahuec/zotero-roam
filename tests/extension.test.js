@@ -230,6 +230,15 @@ describe("Retrieval utils", () => {
 			.toEqual(relatedItem.key);
 		expect(extension.getItemRelated(semanticItem, { return_as: "string", brackets: true }))
 			.toEqual(`[[@${relatedItem.key}]]`);
+		
+		// No relations
+		const noRelationsItem = items.find(it => JSON.stringify(it.data.relations) == "{}");
+		expect(extension.getItemRelated(noRelationsItem, { return_as: "array" }))
+			.toEqual([]);
+		expect(extension.getItemRelated(noRelationsItem, { return_as: "raw" }))
+			.toEqual([]);
+		expect(extension.getItemRelated(noRelationsItem, { return_as: "string" }))
+			.toEqual("");
 	});
 
 	test("Retrieving tags data for an item", () => {

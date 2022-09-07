@@ -112,7 +112,14 @@ function _getItemRelated(item, datastore, { return_as = "string", brackets = tru
 			return (brackets == true ? output.map(el => `[[@${el.key}]]`) : output.map(el => el.key)).join(", ");
 		}
 	} else {
-		return [];
+		switch(return_as){
+		case "raw":
+		case "array":
+			return [];
+		case "string":
+		default:
+			return "";
+		}
 	}
 }
 
