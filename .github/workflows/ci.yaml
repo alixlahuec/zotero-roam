@@ -25,8 +25,8 @@ jobs:
 
       - name: Storybook CI
         run: |
-          chmod +x "./ci-storybook.sh"
-          ./ci-storybook.sh
+          chmod +x "./dev/ci-storybook.sh"
+          ./dev/ci-storybook.sh
         shell: bash
       
       - name: Upload coverage reports to Codecov
