@@ -5,15 +5,15 @@ import { bool } from "prop-types";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
-import Dashboard from "../Dashboard";
-import ExtensionIcon from "../ExtensionIcon";
-import GraphWatcher from "../GraphWatcher";
-import SearchPanel from "../SearchPanel";
+import Dashboard from "Components/Dashboard";
+import ExtensionIcon from "Components/ExtensionIcon";
+import GraphWatcher from "Components/GraphWatcher";
+import SearchPanel from "Components/SearchPanel";
 
-import { RoamCitekeysProvider } from "../RoamCitekeysContext";
-import { useOtherSettings } from "../UserSettings/Other";
-import { useRequestsSettings } from "../UserSettings/Requests";
-import { useShortcutsSettings } from "../UserSettings/Shortcuts";
+import { RoamCitekeysProvider } from "Components/RoamCitekeysContext";
+import { useOtherSettings } from "Components/UserSettings/Other";
+import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace } from "Roam";
 

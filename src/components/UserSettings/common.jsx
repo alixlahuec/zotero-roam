@@ -4,8 +4,8 @@ import { arrayOf, bool, func, node, number, object, objectOf, oneOfType, shape, 
 import { Button, Checkbox, Classes, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
-import InputMultiSelect from "../Inputs/InputMultiSelect";
-import TagsSelector from "../Inputs/TagsSelector";
+import InputMultiSelect from "Components/Inputs/InputMultiSelect";
+import TagsSelector from "Components/Inputs/TagsSelector";
 
 import { CustomClasses } from "../../constants";
 

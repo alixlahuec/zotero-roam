@@ -3,14 +3,14 @@ import { memo, useCallback } from "react";
 
 import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../../AuxiliaryDialog";
-import { CitoidGuide } from "../../Guide";
-import SentryBoundary from "../../Errors/SentryBoundary";
-import ZoteroImport from "../../ZoteroImport";
+import AuxiliaryDialog from "Components/AuxiliaryDialog";
+import { CitoidGuide } from "Components/Guide";
+import SentryBoundary from "Components/Errors/SentryBoundary";
+import ZoteroImport from "Components/ZoteroImport";
 
 import useMulti from "../../../hooks/useMulti";
 import { useQuery_Citoid } from "../../../api/queries";
-import { useTypemapSettings } from "../../UserSettings/Typemap";
+import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import { pluralize } from "../../../utils";
 

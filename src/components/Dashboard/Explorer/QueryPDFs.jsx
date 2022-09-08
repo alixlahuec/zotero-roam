@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 import { NonIdealState } from "@blueprintjs/core";
 
-import { ListWrapper, Pagination, Toolbar } from "../../DataList";
+import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import PDFElement from "./PDFElement";
 
 import usePagination from "../../../hooks/usePagination";

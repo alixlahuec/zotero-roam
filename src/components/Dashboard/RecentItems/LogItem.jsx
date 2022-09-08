@@ -2,8 +2,8 @@ import { bool, func, string } from "prop-types";
 import { memo, useEffect } from "react";
 import { Button } from "@blueprintjs/core";
 
-import CitekeyPopover from "../../CitekeyPopover";
-import { ListItem } from "../../DataList";
+import CitekeyPopover from "Components/CitekeyPopover";
+import { ListItem } from "Components/DataList";
 import useBool from "../../../hooks/useBool";
 
 import { CustomClasses } from "../../../constants";

@@ -1,9 +1,9 @@
 import { Button } from "@blueprintjs/core";
 
-import ButtonLink from "../../ButtonLink";
-import DataDrawer from "../../DataDrawer";
-import { ListItem } from "../../DataList";
-import NotesDrawer from "../../NotesDrawer";
+import ButtonLink from "Components/ButtonLink";
+import DataDrawer from "Components/DataDrawer";
+import { ListItem } from "Components/DataList";
+import NotesDrawer from "Components/NotesDrawer";
 
 import useBool from "../../../hooks/useBool";
 

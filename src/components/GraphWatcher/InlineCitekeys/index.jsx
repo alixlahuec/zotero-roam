@@ -4,14 +4,14 @@ import { createPortal } from "react-dom";
 
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
-import { ExtensionContext } from "../../App";
-import NotesDrawer from "../../NotesDrawer";
-import { useAnnotationsSettings } from "../../UserSettings/Annotations";
-import { useMetadataSettings } from "../../UserSettings/Metadata";
-import { useNotesSettings } from "../../UserSettings/Notes";
-import { useOtherSettings } from "../../UserSettings/Other";
-import { useRequestsSettings } from "../../UserSettings/Requests";
-import { useTypemapSettings } from "../../UserSettings/Typemap";
+import { ExtensionContext } from "Components/App";
+import NotesDrawer from "Components/NotesDrawer";
+import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
+import { useMetadataSettings } from "Components/UserSettings/Metadata";
+import { useNotesSettings } from "Components/UserSettings/Notes";
+import { useOtherSettings } from "Components/UserSettings/Other";
+import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import useBool from "../../../hooks/useBool";
 import { useQuery_Items } from "../../../api/queries";

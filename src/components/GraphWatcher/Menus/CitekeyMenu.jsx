@@ -3,24 +3,24 @@ import { memo, useCallback, useMemo, useState } from "react";
 
 import { Button, ButtonGroup, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../../AuxiliaryDialog";
-import ButtonLink from "../../ButtonLink";
-import CitekeyPopover from "../../CitekeyPopover";
-import ErrorCallout from "../../Errors/ErrorCallout";
-import ItemDetails from "../../ItemDetails";
-import SciteBadge from "../../SciteBadge";
+import AuxiliaryDialog from "Components/AuxiliaryDialog";
+import ButtonLink from "Components/ButtonLink";
+import CitekeyPopover from "Components/CitekeyPopover";
+import ErrorCallout from "Components/Errors/ErrorCallout";
+import ItemDetails from "Components/ItemDetails";
+import SciteBadge from "Components/SciteBadge";
 import SemanticPanel from "../SemanticPanel";
-import SentryBoundary from "../../Errors/SentryBoundary";
+import SentryBoundary from "Components/Errors/SentryBoundary";
 
-import { useAnnotationsSettings } from "../../UserSettings/Annotations";
+import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
 import useBool from "../../../hooks/useBool";
-import { useMetadataSettings } from "../../UserSettings/Metadata";
-import { useNotesSettings } from "../../UserSettings/Notes";
-import { usePageMenuSettings } from "../../UserSettings/PageMenu";
+import { useMetadataSettings } from "Components/UserSettings/Metadata";
+import { useNotesSettings } from "Components/UserSettings/Notes";
+import { usePageMenuSettings } from "Components/UserSettings/PageMenu";
 import { useQuery_Semantic } from "../../../api/queries";
-import { useRoamCitekeys } from "../../RoamCitekeysContext";
-import { useSciteSettings } from "../../UserSettings/Scite";
-import { useTypemapSettings } from "../../UserSettings/Typemap";
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
+import { useSciteSettings } from "Components/UserSettings/Scite";
+import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import { showClasses } from "../classes";
 

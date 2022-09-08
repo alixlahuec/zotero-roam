@@ -3,7 +3,7 @@ import { memo, useCallback, useMemo } from "react";
 
 import { Button, Classes, Icon, Tag } from "@blueprintjs/core";
 
-import CitekeyPopover from "../../CitekeyPopover";
+import CitekeyPopover from "Components/CitekeyPopover";
 
 import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";

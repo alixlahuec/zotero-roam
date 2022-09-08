@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 
 import { Classes, Dialog } from "@blueprintjs/core";
 
-import { ExtensionContext } from "../App";
+import { ExtensionContext } from "Components/App";
 
 import { CustomClasses } from "../../constants";
 

@@ -3,7 +3,7 @@ import { memo } from "react";
 import { Icon } from "@blueprintjs/core";
 
 import ActionsMenu from "../ActionsMenu";
-import { ListItem } from "../../../DataList";
+import { ListItem } from "Components/DataList";
 import RoamTag from "./RoamTag";
 import ZoteroTag from "./ZoteroTag";
 

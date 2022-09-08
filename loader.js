@@ -4,8 +4,8 @@ import { render } from "react-dom";
 import { init as SentryInit, getCurrentHub as getSentryHub } from "@sentry/react";
 import { HotkeysProvider } from "@blueprintjs/core";
 
-import { AppWrapper, queryClient } from "./src/components/App";
-import { UserSettingsProvider } from "./src/components/UserSettings";
+import { AppWrapper, queryClient } from "Components/App";
+import { UserSettingsProvider } from "Components/UserSettings";
 
 import { initialize, setup, setupPortals, setupSentry, unmountExtensionIfExists } from "./src/setup";
 

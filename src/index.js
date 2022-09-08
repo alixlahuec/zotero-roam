@@ -4,9 +4,9 @@ import { render } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 import { init as SentryInit } from "@sentry/react";
 
-import { AppWrapper, queryClient } from "./components/App";
-import { UserSettingsProvider } from "./components/UserSettings";
-import zrToaster from "./components/ExtensionToaster";
+import { AppWrapper, queryClient } from "Components/App";
+import { UserSettingsProvider } from "Components/UserSettings";
+import zrToaster from "Components/ExtensionToaster";
 
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION, SENTRY_CONFIG } from "./constants";
 import { initialize, setup, setupPortals, setupSentry  } from "./setup";

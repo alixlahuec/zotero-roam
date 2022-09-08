@@ -1,7 +1,7 @@
 import { bool, func, object } from "prop-types";
 
 import { Button, Classes, Drawer, Tab, Tabs } from "@blueprintjs/core";
-import SentryBoundary from "../Errors/SentryBoundary";
+import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import { CustomClasses } from "../../constants";
 

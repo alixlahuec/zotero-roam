@@ -18,7 +18,8 @@ module.exports = {
                 ...config.resolve,
                 alias: {
                     "Mocks": path.resolve(__dirname, "..", "mocks"),
-                    "Roam": require.resolve("../mocks/roam.js")
+                    "Roam": path.resolve(__dirname, "..", "mocks", "roam.js"),
+					"Components": path.resolve(__dirname, "..", "src", "components")
                 }
             }
         }

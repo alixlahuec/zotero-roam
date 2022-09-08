@@ -1,4 +1,4 @@
-import { UserSettingsProvider} from "../src/components/UserSettings";
+import { UserSettingsProvider} from "Components/UserSettings";
 
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";

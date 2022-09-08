@@ -1,4 +1,4 @@
-import { ExtensionContext } from "../src/components/App";
+import { ExtensionContext } from "Components/App";
 
 const defaultContext = {
     portalId: "root",

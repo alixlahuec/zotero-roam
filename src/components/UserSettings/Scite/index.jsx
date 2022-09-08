@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useMemo, useState } from "react
 import { func, node } from "prop-types";
 
 import { NumericSelect, SingleInput, Toggle } from "../common";
-import SciteBadge from "../../SciteBadge";
+import SciteBadge from "Components/SciteBadge";
 
 import * as customPropTypes from "../../../propTypes";
 

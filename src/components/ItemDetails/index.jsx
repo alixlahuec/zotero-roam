@@ -3,23 +3,23 @@ import { memo, useCallback, useMemo } from "react";
 
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
-import DataDrawer from "../DataDrawer";
-import NotesDrawer from "../NotesDrawer";
-import SentryBoundary from "../Errors/SentryBoundary";
-import ShortcutSequence from "../ShortcutSequence";
+import DataDrawer from "Components/DataDrawer";
+import NotesDrawer from "Components/NotesDrawer";
+import SentryBoundary from "Components/Errors/SentryBoundary";
+import ShortcutSequence from "Components/ShortcutSequence";
 
 import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
-import { formatItemReferenceWithDefault } from "../SearchPanel/utils";
+import { formatItemReferenceWithDefault } from "Components/SearchPanel/utils";
 
-import { useAnnotationsSettings } from "../UserSettings/Annotations";
+import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
 import useBool from "../../hooks/useBool";
-import { useCopySettings } from "../UserSettings/Copy";
-import { useMetadataSettings } from "../UserSettings/Metadata";
-import { useNotesSettings } from "../UserSettings/Notes";
-import { useRoamCitekeys } from "../RoamCitekeysContext";
-import { useShortcutsSettings } from "../UserSettings/Shortcuts";
-import { useTypemapSettings } from "../UserSettings/Typemap";
+import { useCopySettings } from "Components/UserSettings/Copy";
+import { useMetadataSettings } from "Components/UserSettings/Metadata";
+import { useNotesSettings } from "Components/UserSettings/Notes";
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
+import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
+import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import { CustomClasses } from "../../constants";
 

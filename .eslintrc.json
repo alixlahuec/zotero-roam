@@ -105,7 +105,8 @@
             "alias": {
 				"map": [
 					["Mocks", "./mocks"],
-					["Roam", "./src/roam.js"]
+					["Roam", "./src/roam.js"],
+					["Components", "./src/components"]
 				],
 				"extensions": [".js", ".jsx", ".css"]
 			  }

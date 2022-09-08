@@ -3,7 +3,7 @@ import { memo, useMemo } from "react";
 
 import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprintjs/core";
 
-import { useShortcutsSettings } from "../UserSettings/Shortcuts";
+import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { dialogLabel } from "./classes";
 

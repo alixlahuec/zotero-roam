@@ -3,9 +3,9 @@ import { memo, useEffect, useMemo } from "react";
 
 import { Button, Classes } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../../AuxiliaryDialog";
-import CitekeyPopover from "../../CitekeyPopover";
-import SentryBoundary from "../../Errors/SentryBoundary";
+import AuxiliaryDialog from "Components/AuxiliaryDialog";
+import CitekeyPopover from "Components/CitekeyPopover";
+import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import useBool from "../../../hooks/useBool";
 
