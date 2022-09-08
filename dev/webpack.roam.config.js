@@ -18,13 +18,6 @@ module.exports = merge(baseConfig, {
     },
     externalsType: "window",
     entry: path.resolve("loader.js"),
-	resolve: {
-        alias: {
-            "Mocks": path.resolve("mocks"),
-            "Roam": path.resolve("src", "roam.js")
-        },
-		extensions: [".js", ".jsx", ".css"]
-	},
     optimization: {
         minimizer: [
             `...`,
