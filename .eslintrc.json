@@ -102,7 +102,13 @@
             }
         ],
         "import/resolver": {
-            "webpack": "dev/webpack.roam.config.js"
+            "alias": {
+				"map": [
+					["Mocks", "./mocks"],
+					["Roam", "./src/roam.js"]
+				],
+				"extensions": [".js", ".jsx", ".css"]
+			  }
         }
     }
 }
