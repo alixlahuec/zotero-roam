@@ -11,17 +11,17 @@
             "npm run build:prod",
             "npm run build:roam",
 			"npm run build:sandbox",
-            "npx auto-changelog"
+            "npx auto-changelog --config dev/.auto-changelog"
         ]
     },
     "git": {
-        "changelog": "npx auto-changelog --stdout",
+        "changelog": "npx auto-changelog --stdout --config dev/.auto-changelog",
         "commitMessage": "release: v${version}",
         "tag": true,
         "tagMatch": "[0-9]*\\.[0-9]*\\.[0-9]*"
     },
     "github": {
-        "assets": ["dist/*.js", "extension.css", "extension.js"],
+        "assets": ["dist/*.js", "dist/extension.css"],
         "draft": true,
         "release": true,
         "releaseName": "v${version}"

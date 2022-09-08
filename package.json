@@ -32,9 +32,9 @@
         "build-storybook": "build-storybook --quiet",
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage",
-        "release:latest": "release-it --ci --git.requireBranch=main --github.autoGenerate --npm.skipChecks",
-        "release:beta": "release-it --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\" --npm.skipChecks",
-        "release:preview": "release-it --dry-run"
+        "release:latest": "release-it --config dev/.release-it.json --ci --git.requireBranch=main --github.autoGenerate --npm.skipChecks",
+        "release:beta": "release-it --config dev/.release-it.json --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\" --npm.skipChecks",
+        "release:preview": "release-it --config dev/.release-it.json --dry-run"
     },
     "sideEffects": [
         "*.css",
