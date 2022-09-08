@@ -1,18 +1,18 @@
 const path = require("path");
 
 module.exports = {
-	context: __dirname,
+	context: path.resolve(__dirname, '../'),
 	devtool: "source-map",
-	entry: path.resolve(__dirname, "src", "index.js"),
+	entry: path.resolve("src", "index.js"),
 	output: {
-		path: path.resolve(__dirname, "dist"),
+		path: path.resolve("dist"),
 		filename: "zoteroRoam.min.js",
 		sourceMapFilename: "zoteroRoam.min.js.map"
 	},
 	resolve: {
         alias: {
-            "Mocks": path.resolve(__dirname, "mocks/"),
-            "Roam": path.resolve(__dirname, "src/roam.js")
+            "Mocks": path.resolve("mocks"),
+            "Roam": path.resolve("src", "roam.js")
         },
 		extensions: [".js", ".jsx", ".css"]
 	},
@@ -21,7 +21,7 @@ module.exports = {
 		rules: [
 			{
 				test: /\.(js|jsx)$/,
-				include: path.resolve(__dirname, "src"),
+				include: path.resolve("src"),
 				use: {
 					loader: "babel-loader",
 					options: {

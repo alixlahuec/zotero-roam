@@ -15,7 +15,7 @@
     "globals": {
         "PACKAGE_VERSION": "readonly"
     },
-    "ignorePatterns": ["webpack.*config.js", "*.css"],
+    "ignorePatterns": ["webpack.*config.js", "*.css", "dist/**"],
     "overrides": [
         {
           "files": ["tests/**"],
@@ -102,7 +102,7 @@
             }
         ],
         "import/resolver": {
-            "webpack": "webpack.roam.config.js"
+            "webpack": "dev/webpack.roam.config.js"
         }
     }
 }

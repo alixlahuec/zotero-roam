@@ -4,12 +4,12 @@ const baseConfig = require("./webpack.config");
 
 module.exports = merge(baseConfig, {
 	devtool: false,
-	entry: "./sandbox.js",
+	entry: path.resolve("sandbox.js"),
 	experiments: {
         outputModule: true,
     },
 	output: {
-		path: path.resolve(__dirname, "dist"),
+		path: path.resolve("dist"),
 		filename: "zoteroRoam.sandbox.js",
 		library: {
 			type: "module"
@@ -18,8 +18,8 @@ module.exports = merge(baseConfig, {
 	},
 	resolve: {
 		alias: {
-			"Mocks": path.resolve(__dirname, "mocks/"),
-			"Roam": path.resolve(__dirname, "mocks/roam.js")
+			"Mocks": path.resolve("mocks"),
+			"Roam": path.resolve("mocks", "roam.js")
 		},
 		extensions: [".js", ".jsx", ".css"]
 	}

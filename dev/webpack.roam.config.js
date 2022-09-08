@@ -5,7 +5,6 @@ const { merge } = require("webpack-merge");
 const baseConfig = require("./webpack.config");
 
 module.exports = merge(baseConfig, {
-    context: __dirname,
     devtool: "source-map",
     experiments: {
         outputModule: true,
@@ -18,7 +17,14 @@ module.exports = merge(baseConfig, {
         "react-dom": "ReactDOM",
     },
     externalsType: "window",
-    entry: "./loader.js",
+    entry: path.resolve("loader.js"),
+	resolve: {
+        alias: {
+            "Mocks": path.resolve("mocks"),
+            "Roam": path.resolve("src", "roam.js")
+        },
+		extensions: [".js", ".jsx", ".css"]
+	},
     optimization: {
         minimizer: [
             `...`,
@@ -40,8 +46,8 @@ module.exports = merge(baseConfig, {
         maxEntrypointSize: 2000000
     },
     output: {
-        filename: "extension.js",
-        path: __dirname,
+		path: path.resolve("dist"),
+		filename: "extension.js",
         library: {
             type: "module",
         },
@@ -56,7 +62,7 @@ module.exports = merge(baseConfig, {
         rules: [
             {
 				test: /\.(js|jsx)$/,
-				include: [path.resolve(__dirname, "src"), path.resolve(__dirname, "loader.js")],
+				include: [path.resolve("src"), path.resolve("loader.js")],
 				use: {
 					loader: "babel-loader",
 					options: {
