@@ -1,248 +1,440 @@
-;(()=>{
-    zoteroRoam.extension = {
+import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
+import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
+import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 
-        /** Turns the extension 'on'
-         * @fires zotero-roam:ready */
-        async load(){
-            zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
-            let requestReturns = await zoteroRoam.handlers.requestData(zoteroRoam.config.requests);
-            if (!requestReturns.success) {
-                zoteroRoam.interface.icon.style = `background-color:#f9a3a3 !important`;
-                zoteroRoam.interface.popToast(message = "There was a problem with the Zotero data request. Please check your specification !", intent = "danger");
-                throw new Error("The API request encountered a problem. Please check your request specification, and the console for any registered errors.");
-            } else {
-                try{
-                    let keyCalls = [];
-                    Array.from(new Set(zoteroRoam.config.requests.map(req => req.apikey))).forEach(key => {
-                        keyCalls.push(fetch(`https://api.zotero.org/keys/${key}`, {method: 'GET', headers: {'Zotero-API-Version': 3, 'Zotero-API-Key': key}}));
-                    })
-                    let keyResults = await Promise.all(keyCalls);
-                    keyResults = await Promise.all(keyResults.map(res => res.json()));
-                    keyResults = keyResults.flat(1);
-                    zoteroRoam.data.keys = keyResults;
-                } catch(e){ console.error(e) };
 
-                zoteroRoam.data.items = requestReturns.data.items;
-                zoteroRoam.data.collections = requestReturns.data.collections;
-                zoteroRoam.interface.icon.setAttribute("status", "on");
+/**
+ * Creates a new public API instance for the extension. This is meant to make available an interface for users as well as other plugins to consume some of the extension's data and functionalities, in a controlled manner. Updates to settings are done by the relevant widgets.
+ * @borrows _formatPDFs as ZoteroRoam#formatPDFs
+ * @borrows _getItemCreators as ZoteroRoam#getItemCreators
+ * @borrows _getItemDateAdded as ZoteroRoam#getItemDateAdded
+ * @borrows _getItemLink as ZoteroRoam#getItemLink
+ * @borrows _getItemPublication as ZoteroRoam#getItemPublication
+ * @borrows _getItemTags as ZoteroRoam#getItemTags
+ */
+export default class ZoteroRoam {
+	/** @private */
+	#libraries;
+	/** @private */
+	#queryClient;
+	/** @private */
+	#settings;
 
-                // Setup the checking of citekey page references :
-                zoteroRoam.inPage.checkReferences(); // initial
-                document.addEventListener('blur', zoteroRoam.inPage.checkReferences, true); // on blur
-                window.addEventListener('locationchange', zoteroRoam.inPage.checkReferences, true); // URL change
-                zoteroRoam.config.ref_checking = setInterval(zoteroRoam.inPage.checkReferences, 1000); // continuous
+	/**
+     * @param {{
+     * queryClient: *,
+     * requests: ConfigRequests,
+     * settings: Object
+     * }} context - The context in which the instance is being created
+     */
+	constructor({ queryClient, requests, settings }) {
+		const { libraries } = requests;
+		const { annotations, notes, typemap } = settings;
 
-                // Setup page menus :
-                zoteroRoam.utils.sleep(100);
-                zoteroRoam.inPage.addPageMenus(wait = 0); // initial
-                window.addEventListener('locationchange', zoteroRoam.inPage.addPageMenus, true); // URL change
-                zoteroRoam.config.page_checking = setInterval(function(){zoteroRoam.inPage.addPageMenus(wait = 0)}, 1000); // continuous
+		this.#libraries = libraries;
+		this.#queryClient = queryClient;
+		this.#settings = { annotations, notes, typemap };
 
-                // Setup exploratory search buttons :
-                if(zoteroRoam.config.userSettings.webimport){
-                    zoteroRoam.config.tag_checking = setInterval(function(){zoteroRoam.inPage.addWebImport()}, 1000); // continuous
-                }
+	}
 
-                // Auto-update ?
-                if(zoteroRoam.config.userSettings.autoupdate){
-                    zoteroRoam.config.auto_update = setInterval(function(){zoteroRoam.extension.update(popup = false)}, 60000); // Update every 60s
-                }
+	// To be called in the RequestsWidget
+	/* istanbul ignore next */
+	updateLibraries(val) {
+		this.#libraries = val;
+	}
 
-                // Render citekey refs as inline citations ?
-                if(zoteroRoam.config.userSettings.render_inline){
-                    zoteroRoam.config.render_inline = setInterval(function(){ zoteroRoam.inPage.renderCitekeyRefs()}, 1000); // continuous
-                }
+	/* istanbul ignore next */
+	updateSetting(op, val) {
+		this.#settings[op] = val;
+	}
 
-                // Setup the search autoComplete object
-                if(zoteroRoam.librarySearch.autocomplete == null){
-                    zoteroRoam.librarySearch.autocomplete = new autoComplete(zoteroRoam.config.autoComplete);
-                } else {
-                    zoteroRoam.librarySearch.autocomplete.init();
-                }
-                // Setup observer for autocompletion tribute
-                if(zoteroRoam.config.params.autocomplete.enabled == true){
-                    zoteroRoam.config.editingObserver = new MutationObserver(zoteroRoam.interface.checkEditingMode);
-                    zoteroRoam.config.editingObserver.observe(document, { childList: true, subtree: true});
-                }
-                // Setup the tag selection autoComplete (citations panel)
-                if(zoteroRoam.tagSelection.cit_panel == null){
-                    zoteroRoam.tagSelection.cit_panel = zoteroRoam.config.tagSelection(selector = "#zotero-roam-tagselector_citations", index = "cit_panel");
-                } else {
-                    zoteroRoam.tagSelection.cit_panel.init();
-                }
-                // Setup the tag selection autoComplete (auxiliary panel)
-                if(zoteroRoam.tagSelection.aux_panel == null){
-                    zoteroRoam.tagSelection.aux_panel = zoteroRoam.config.tagSelection(selector = "#zotero-roam-tagselector_auxiliary", index = "aux_panel");
-                } else {
-                    zoteroRoam.tagSelection.aux_panel.init();
-                }
-                // Setup contextmenu event for the extension's icon
-                zoteroRoam.interface.icon.addEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
-                // Setup keypress listeners to detect shortcuts
-                window.addEventListener("keyup", zoteroRoam.shortcuts.verify);
-                window.addEventListener("keydown", zoteroRoam.shortcuts.verify);
 
-                // Adding search panel to Roam Palette
-                roamAlphaAPI.ui.commandPalette.addCommand({
-                    label: 'zoteroRoam : Open the search panel', 
-                    callback: () => {
-                        zoteroRoam.interface.toggleSearchOverlay("show");
-                    }
-                });
+	formatPDFs = _formatPDFs;
+	getItemCreators = _getItemCreators;
+	getItemDateAdded = _getItemDateAdded;
+	getItemLink = _getItemLink;
+	getItemPublication = _getItemPublication;
+	getItemTags = _getItemTags;
 
-                // Adding SmartBlocks commands
-                zoteroRoam.smartblocks.registerCommands();
 
-                /**
-                 * Ready event
-                 * 
-                 * @event zotero-roam:ready
-                 * @type {object}
-                 */
-                zoteroRoam.events.emit('ready', detail = zoteroRoam.data);
-                zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
-                zoteroRoam.interface.popToast(message = "Zotero data successfully loaded !", intent = "success");
-                console.log('The results of the API request have been received ; you can check them by inspecting the value of the zoteroRoam.data object. Data import context menu should now be available.');
+	/** Formats Zotero notes and annotations, with current user settings
+     * @param {(ZoteroItem|ZoteroAnnotation)[]} notes 
+     * @returns 
+     */
+	formatNotes(notes) {
+		return _formatNotes(notes, {
+			annotationsSettings: this.#settings.annotations,
+			notesSettings: this.#settings.notes
+		});
+	}
 
-            }
-        },
+	/** Retrieves the bibliographic entries for a list of items
+     * @param {String[]} citekeys - The targeted items' citekeys
+     * @returns 
+     */
+	async getBibEntries(citekeys) {
+		return await _getBibEntries(citekeys, {
+			libraries: this.#libraries,
+			queryClient: this.#queryClient
+		});
+	}
 
-        /** Turns the extension 'off' */
-        unload(){
-            zoteroRoam.interface.icon.setAttribute("status", "off");
-            zoteroRoam.data.items = [];
-            zoteroRoam.data.collections = [];
-            zoteroRoam.data.semantic.clear();
-            zoteroRoam.data.keys = [];
-            for(lib of zoteroRoam.data.libraries.keys()){
-                zoteroRoam.data.libraries.get(lib).version = "0";
-            }
+	/** Retrieves the formatted bibliography for a given item, with optional config
+     * @param {ZoteroItem} item - The targeted item
+     * @param {ConfigBibliography} config - Optional parameters to use to format the bibliography
+     * @returns 
+     */
+	async getItemCitation(item, config = {}) {
+		return await _getItemCitation(item, config, {
+			libraries: this.#libraries
+		});
+	}
 
-            if(zoteroRoam.librarySearch.autocomplete !== null){
-                zoteroRoam.librarySearch.autocomplete.unInit();
-            }
-            if(zoteroRoam.citations.autocomplete !== null){
-                zoteroRoam.citations.autocomplete.unInit();
-            }
-            if(zoteroRoam.tagSelection.cit_panel !== null){
-                zoteroRoam.tagSelection.cit_panel.unInit();
-            }
-            if(zoteroRoam.tagSelection.aux_panel !== null){
-                zoteroRoam.tagSelection.aux_panel.unInit();
-            }
+	/** Retrieves the list of collections for a given library
+     * @param {ZoteroLibrary} library - The targeted library
+     * @returns 
+     */
+	getCollections(path) {
+		const library = this.#libraries.find(lib => lib.path == path);
+		return _getCollections(library, {
+			queryClient: this.#queryClient
+		});
+	}
 
-            // Remove in-page menus
-            Array.from(document.querySelectorAll(".zotero-roam-page-div")).forEach(div => div.remove());
+	/** Retrieves the children for a given item
+     * @param {ZoteroItem} item - The targeted item
+     * @returns 
+     */
+	getItemChildren(item) {
+		return _getItemChildren(item, {
+			queryClient: this.#queryClient
+		});
+	}
 
-            // Remove request results
-            let refCitekeys = document.querySelectorAll("ref-citekey");
-            refCitekeys.forEach(ck => { 
-                ck.removeAttribute("data-zotero-bib"); 
-                ck.querySelector(".rm-page-ref").removeEventListener("contextmenu", zoteroRoam.interface.popContextMenu)});
-            zoteroRoam.interface.icon.removeEventListener("contextmenu", zoteroRoam.interface.popIconContextMenu);
+	/** Retrieves the list of collections for a given item
+     * @param {ZoteroItem} item - The targeted library
+     * @param {{return_as: ("string"|"array"), brackets: Boolean}} config - Optional parameters to use to format the collections 
+     * @returns 
+     */
+	getItemCollections(item, { return_as = "string", brackets = true } = {},) {
+		const path = item.library.type + "s/" + item.library.id;
+		const collectionList = this.getCollections(path);
 
-            document.removeEventListener('blur', zoteroRoam.inPage.checkReferences, true);
-            window.removeEventListener('locationchange', zoteroRoam.inPage.checkReferences, true);
-            try { clearInterval(zoteroRoam.config.ref_checking) } catch(e){};
-            try { clearInterval(zoteroRoam.config.page_checking) } catch(e){};
-            try { clearInterval(zoteroRoam.config.tag_checking) } catch(e){};
-            try { clearInterval(zoteroRoam.config.auto_update) } catch(e){};
-            try { clearInterval(zoteroRoam.config.render_inline) } catch(e){};
-            // Clean up ref citekeys rendering once more
-            zoteroRoam.inPage.renderCitekeyRefs();
-            try { zoteroRoam.config.editingObserver.disconnect() } catch(e){};
-            window.removeEventListener("keyup", zoteroRoam.shortcuts.verify);
-            window.removeEventListener("keydown", zoteroRoam.shortcuts.verify);
+		return _getItemCollections(item, collectionList, { return_as, brackets });
+	}
 
-            // Removing search panel opening from Roam Palette
-            roamAlphaAPI.ui.commandPalette.removeCommand({
-                label: 'zoteroRoam : Open the search panel'
-            });
+	/* istanbul ignore next */
+	/** Formats an item's metadata into Roam blocks
+     * @param {ZoteroItem} item - The targeted item
+     * @param {ZoteroItem[]} pdfs - The item's linked PDFs, if any
+     * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The item's linked notes, if any
+     * @returns 
+     */
+	getItemMetadata(item, pdfs, notes) {
+		return _getItemMetadata(item, pdfs, notes, {
+			annotationsSettings: this.#settings.annotations,
+			notesSettings: this.#settings.notes,
+			typemap: this.#settings.typemap
+		});
+	}
 
-            zoteroRoam.interface.icon.removeAttribute("style");
-            zoteroRoam.interface.popToast(message = "All Zotero data was cleared. Bye for now !", intent = "success");
-            console.log('Data and request outputs have been removed');
-        },
+	/** Retrieves the in-library relations for a given item
+     * @param {ZoteroItem} item - The targeted item
+     * @param {{return_as: ("string"|"raw"|"array"), brackets: Boolean}} config - Optional parameters to use to format the relations
+     * @returns 
+     */
+	getItemRelated(item, { return_as = "string", brackets = true } = {}) {
+		const { type: libType, id: libID } = item.library;
+		const datastore = this.getItems("items")
+			.filter(it => it.library.id == libID && it.library.type == libType);
+
+		return _getItemRelated(item, datastore, { return_as, brackets });
+	}
+
+	/** Retrieves an item's type
+     * @param {ZoteroItem} item - The targeted item
+     * @param {{brackets: Boolean}} config - Optional parameters to use to format the type
+     * @returns 
+     */
+	getItemType(item, { brackets = true } = {}) {
+		return _getItemType(item, { brackets }, {
+			typemap: this.#settings.typemap
+		});
+	}
+
+	/** Retrieves all / a subset of all items currently available to the extension 
+     * @example
+     * // Returns the full list of items currently loaded
+     * .getItems("all")
+     * // Returns all items currently loaded, except for annotations, notes, and attachments
+     * .getItems("items")
+     * @param {("all"|"annotations"|"attachments"|"children"|"items"|"notes"|"pdfs")} select - The targeted set of items
+     * @returns 
+     */
+	getItems(select = "all") {
+		return _getItems(select, {}, {
+			queryClient: this.#queryClient
+		});
+	}
+
+	/** Retrieves the map of tags for a given library
+     * @example
+     * // Returns the map of tags for the library of user ID 123456 
+     * .getTags("users/123456")
+     * @param {String} path - The path of the targeted library 
+     * @returns 
+     */
+	getTags(path) {
+		return _getTags(path, {
+			libraries: this.#libraries,
+			queryClient: this.#queryClient
+		});
+	}
+}
+
+
+/** Formats Zotero notes/annotations items
+     * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The Array of Zotero notes/annotations
+     * @param {{
+     * annotationsSettings: SettingsAnnotations, 
+     * notesSettings: SettingsNotes
+     * }} settings - The user's current settings
+     * @returns The formatted Array
+     */
+function _formatNotes(notes, { annotationsSettings, notesSettings }) {
+	if (!notes) {
+		return [];
+	} else {
+		const annotItems = notes.filter(n => n.data.itemType == "annotation");
+		const noteItems = notes.filter(n => n.data.itemType == "note");
+
+		return [
+			...formatZoteroAnnotations(annotItems, annotationsSettings),
+			...formatZoteroNotes(noteItems, notesSettings)
+		];
+	}
+}
+
+/** Compiles a bibliography for a list of items
+ * @param {String[]} citekeys - The targeted items' citekeys
+ * @param {{ libraries: ZoteroLibrary[], queryClient: * }} context - The current context for the extension
+ * @returns The compiled bibliography
+ */
+async function _getBibEntries(citekeys, { libraries, queryClient }) {
+	const libraryItems = _getItems("items", {}, { queryClient });
+	const groupedList = citekeys.reduce((obj, citekey) => {
+		const libItem = libraryItems.find(it => it.key == citekey);
+		if (libItem) {
+			const location = libItem.library.type + "s/" + libItem.library.id;
+			if (Object.keys(obj).includes(location)) {
+				obj[location].push(libItem.data.key);
+			} else {
+				obj[location] = [libItem.data.key];
+			}
+		}
+		return obj;
+	}, {});
+
+	const bibEntries = [];
+
+	Object.keys(groupedList)
+		.forEach(libPath => {
+			const library = libraries.find(lib => lib.path == libPath);
+			if (library) {
+				bibEntries.push(fetchBibEntries(groupedList[libPath], library));
+			}
+		});
+
+	const bibOutput = await Promise.all(bibEntries);
+
+	return bibOutput.join("\n");
+
+}
+
+/** Returns an item's formatted bibliography as returned by the Zotero API
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {ConfigBibliography} config - Optional parameters to use in the API call
+ * @param {{libraries: ZoteroLibrary[]}} requests - The user's current requests
+ * @returns 
+ */
+async function _getItemCitation(item, config, { libraries }){
+	const location = item.library.type + "s/" + item.library.id;
+	const library = libraries.find(lib => lib.path == location);
+
+	const bib = await fetchBibliography(item.data.key, library, config);
+	return cleanBibliographyHTML(bib);
+}
+
+/** Retrieves the (cached) list of collections for a given library
+ * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @param {{ queryClient: * }} context - The current context for the extension
+ * @returns The library's collections
+ */
+function _getCollections(library, { queryClient }) {
+	const { apikey, path } = library;
+	const datastore = queryClient.getQueryData(["collections", { apikey, library: path }]);
+	return datastore.data;
+}
+
+/** Returns the (cached) children for a given item
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {{ queryClient: * }} context - The current context for the extension
+ * @returns The item's children
+ */
+function _getItemChildren(item, { queryClient }) {
+	const location = item.library.type + "s/" + item.library.id;
+	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, { queryClient })
+		.filter(el => el.data.parentItem == item.data.key);
+}
+
+/** Retrieves an item's collections' names, from a given list of collections
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {ZoteroCollection[]} collectionList - The list of library collections to match data to
+ * @param {{return_as: ("string"|"array"), brackets: Boolean}} config - Additional configuration 
+ * @returns {String[]} The Array containing the names of the item's collections, if any
+ */
+function _getItemCollections(item, collectionList, { return_as = "string", brackets = true } = {}) {
+	if (item.data.collections.length > 0) {
+		const output = [];
+
+		item.data.collections.forEach(cl => {
+			const libCollection = collectionList.find(el => el.key == cl);
+			if (libCollection) { output.push(libCollection.data.name); }
+		});
+
+		const collectionsList = (brackets == true) 
+			? output.map(cl => `[[${cl}]]`) 
+			: output;
         
-        /** Toggles the state of the extension (on/off) */
-        toggle(){
-            if(zoteroRoam.interface.icon.getAttribute('status') == "off"){
-                zoteroRoam.extension.load();
-            } else {
-                zoteroRoam.extension.unload();
-            }
-        },
+		switch(return_as){
+		case "array":
+			return collectionsList;
+		case "string":
+		default:
+			return collectionsList.join(", ");
+		}
+	} else {
+		return [];
+	}
+}
 
-        /** Checks for data updates for an Array of requests
-         * @fires zotero-roam:update
-         * @param {string} popup - Specifies if a toast should display the update's outcome
-         * @param {{apikey: string, dataURI: string, library: string, name: string, params: string}[]} reqs - The data requests to retrieve updates for
-         */
-        async update(popup = "true", reqs = zoteroRoam.config.requests){
-            // Turn the icon background to orange while we're updating the data
-            zoteroRoam.interface.icon.style = "background-color: #fd9d0d63!important;";
-            // For each request, get the latest version of any item that belongs to it
-            let updateRequests = reqs.map(rq => {
-                let latest = zoteroRoam.data.libraries.get(rq.library).version;
-                let {apikey, dataURI, params: setParams, name, library} = rq;
-                let paramsQuery = new URLSearchParams(setParams);
-                paramsQuery.set('since', latest);
-                setParams = paramsQuery.toString();
-                return {
-                    apikey: apikey,
-                    dataURI: dataURI,
-                    params: setParams,
-                    name: name,
-                    library: library
-                };
-            });
-            let updateResults = await zoteroRoam.handlers.requestData(updateRequests, update = true, collections = true);
-            if(updateResults.success == true){
-                updateResults.data.collections.forEach(collection => {
-                    let inStore = zoteroRoam.data.collections.findIndex(cl => cl.key == collection.key);
-                    if(inStore == -1){
-                        zoteroRoam.data.collections.push(collection);
-                    } else {
-                        zoteroRoam.data.collections[inStore] = collection;
-                    }
-                });
-                
-                let updatedItems = updateResults.data.items;
-                if(updatedItems.length == 0){
-                    if(popup) {
-                        zoteroRoam.interface.popToast(`No new items were found since the data was last loaded. Data on collections was refreshed.`, "primary");
-                    };
-                    zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
-                } else {
-                    let updateStats = zoteroRoam.handlers.incorporateUpdates(updatedItems);
-                    zoteroRoam.inPage.checkCitekeys(update = true);
-                    if(popup) {
-                        zoteroRoam.interface.popToast(`${updateStats.new} new items and ${updateStats.modified} modified items were added.`, "primary");
-                    } else{
-                        console.log(`${updateStats.new} new items and ${updateStats.modified} modified items were added.`);
-                    };
-                    zoteroRoam.interface.icon.style = "background-color: #60f06042!important;";
-                }
+/** Returns the date on which an item was added to Zotero, in DNP format
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {{brackets: Boolean}} config - Additional configuration
+ * @returns {String}
+ */
+function _getItemDateAdded(item, { brackets = true } = {}){
+	return makeDNP(item.data.dateAdded, { brackets });
+}
 
-            } else {
-                if(popup){
-                    zoteroRoam.interface.popToast("Something went wrong when updating the data. Check the console for any errors.", "warning");
-                } else{
-                    console.log("Something went wrong when updating the data. Check the console for any errors.");
-                };
-            }
-            /** Update event
-             * @event zotero-roam:update
-             * @type {object}
-             * @property {?boolean} success - Indicates if the update was successful
-             * @property {array} requests - The data requests that were part of the update
-             * @property {object} data - The updated data, if any
-             */
-            zoteroRoam.events.emit('update', {
-                success: updateResults.success,
-                requests: updateRequests,
-                data: updateResults.data
-            })
-        }
-    };
-})();
+function _getItemLink(item, type = "local", config = {}){
+	return (type == "local")
+		? getLocalLink(item, config)
+		: getWebLink(item, config);
+}
+
+/* istanbul ignore next */
+/** Formats an item's and its children's metadata for import to Roam using the default template
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {ZoteroItem[]} pdfs - The item's PDFs, if any
+ * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The item's linked notes, if any
+ * @param {{
+ * annotationsSettings: SettingsAnnotations,
+ * notesSettings: SettingsNotes,
+ * typemap: SettingsTypemap
+ * }} settings - The user's current settings
+ * @returns The formatted metadata output
+ */
+export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap }) {
+	const metadata = [];
+
+	if (item.data.title) { metadata.push(`Title:: ${item.data.title}`); } // Title, if available
+	if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${_getItemCreators(item, { return_as: "string", brackets: true, use_type: true })}`); } // Creators list, if available
+	if (item.data.abstractNote) { metadata.push(`Abstract:: ${item.data.abstractNote}`); } // Abstract, if available
+	if (item.data.itemType) { metadata.push(`Type:: ${_getItemType(item, { brackets: true }, { typemap })}`); } // Item type, according to typemap
+	metadata.push(`Publication:: ${_getItemPublication(item, { brackets: true })}`);
+	if (item.data.url) { metadata.push(`URL : ${item.data.url}`); }
+	if (item.data.dateAdded) { metadata.push(`Date Added:: ${_getItemDateAdded(item)}`); } // Date added, as Daily Notes Page reference
+	metadata.push(`Zotero links:: ${_getItemLink(item, "local", { format: "markdown", text: "Local library" })}, ${_getItemLink(item, "web", { format: "markdown", text: "Web library" })}`); // Local + Web links to the item
+	if (item.data.tags.length > 0) { metadata.push(`Tags:: ${_getItemTags(item, { return_as: "string", brackets: true })}`); } // Tags, if any
+
+	if (pdfs.length > 0) {
+		metadata.push(`PDF links : ${_formatPDFs(pdfs, "links").join(", ")}`);
+	}
+	if (notes.length > 0) {
+		metadata.push({
+			string: "[[Notes]]",
+			text: "[[Notes]]",
+			children: _formatNotes(notes, { annotationsSettings, notesSettings })
+		});
+	}
+
+	return metadata;
+}
+
+/** Retrieves the publication details for a given item.
+ * The extension will check for the existence of a `publicationTitle`, then a `bookTitle`, then a `university` name.
+ * @param {ZoteroItem} item - The targeted item
+ * @returns {String}
+ */
+function _getItemPublication(item, { brackets = true } = {}){
+	const maybePublication = item.data.publicationTitle || item.data.bookTitle || item.data.university;
+	if(maybePublication){
+		return (brackets == true)
+			? `[[${maybePublication}]]`
+			: maybePublication;
+	} else {
+		return "";
+	}
+}
+
+/** Retrieves the type of a Zotero item, according to a given typemap
+ * @param {ZoteroItem} item - The targeted Zotero item
+ * @param {{brackets: Boolean}} config - Additional configuration
+ * @param {SettingsTypemap} typemap - The typemap to be used
+ * @returns {String} The clean type for the item
+ */
+function _getItemType(item, { brackets = true } = {}, { typemap }) {
+	const type = typemap[item.data.itemType] || item.data.itemType;
+	return (brackets == true ? `[[${type}]]` : type);
+}
+
+/** Returns the current items in the query cache, with optional configuration
+ * @param {("all"|"annotations"|"attachments"|"children"|"items"|"notes"|"pdfs")} select - The type of items to retrieve
+ * @param {Object} filters - Optional filters for the item queries
+ * @param {{ queryClient: * }} context - The current context for the extension
+ * @returns {(ZoteroItem|ZoteroAnnotation)[]} - The requested items
+ */
+function _getItems(select, filters, { queryClient }) {
+	const items = queryClient.getQueriesData(["items"], filters).map(query => (query[1] || {}).data || []).flat(1);
+
+	switch (select) {
+	case "items":
+		return items.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType));
+	case "attachments":
+		return items.filter(it => it.data.itemType == "attachment");
+	case "children":
+		return items.filter(it => ["note", "annotation"].includes(it.data.itemType) || (it.data.itemType == "attachment" && it.data.contentType == "application/pdf"));
+	case "annotations":
+		return items.filter(it => it.data.itemType == "annotation");
+	case "notes":
+		return items.filter(it => it.data.itemType == "note");
+	case "pdfs":
+		return items.filter(it => it.data.itemType == "attachment" && it.data.contentType == "application/pdf");
+	case "all":
+	default:
+		return items;
+	}
+}
+
+/** Returns the (cached) map of tags for a given library
+ * @param {String} location - The path of the targeted Zotero library
+ * @param {{ libraries: ZoteroLibrary[], queryClient: * }} context - The current context for the extension
+ * @returns The library's tags map
+ */
+function _getTags(location, { libraries, queryClient }) {
+	const library = libraries.find(lib => lib.path == location);
+	const { apikey, path } = library;
+	const datastore = queryClient.getQueryData(["tags", { apikey, library: path }]);
+	return datastore.data;
+}

@@ -1,0 +1,14 @@
+.zr-auxiliary-dialog--settings.bp3-dialog {
+    --zr-dialog-gutter: 2.5%;
+    --zr-dialog-margin: 15vw;
+    height: 90vh;
+    overflow-y: scroll;
+}
+
+.zr-auxiliary-dialog--settings.bp3-dialog::-webkit-scrollbar {
+    width: 5px;
+}
+
+.zr-auxiliary-dialog--settings.bp3-dialog h5.panel-tt {
+    color: var(--zr-secondary-co);
+}

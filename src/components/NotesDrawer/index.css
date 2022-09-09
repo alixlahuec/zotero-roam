@@ -1,0 +1,52 @@
+.zr-drawer--notes-card {
+    flex: 0 0 auto;
+    margin: 10px;
+    padding: 20px;
+}
+
+.zr-drawer--notes-card:not(:first-child) {
+    border-top: 2px var(--zr-border-co) dotted;
+}
+
+.zr-drawer--notes-card [zr-role="card-header"], 
+.zr-drawer--notes-card [zr-role="card-footer"] {
+    align-items: center;
+    display: flex;
+}
+
+.zr-drawer--notes-card [zr-role="card-header"] {
+    justify-content: space-between;
+}
+
+.zr-drawer--notes-card [zr-role="card-header"] .bp3-button,
+.zr-drawer--notes-card [zr-role="card-header"] .bp3-tag.bp3-minimal {
+    color: var(--zr-text-co);
+}
+
+.zr-drawer--notes-card [zr-role="card-header"] .bp3-tag {
+    margin-right: 5px;
+}
+
+.zr-drawer--notes-card [zr-role="card-footer"] {
+    justify-content: end;
+}
+
+.zr-annotation--highlight, .zr-annotation--comment, .zr-note--contents {
+    padding: 10px;
+}
+
+.zr-annotation--comment .bp3-icon {
+    margin-right: 5px;
+}
+
+.zr-annotation--highlight > span {
+    background-repeat: no-repeat;
+    background-size: 100% 95%;
+    font-family: monospace;
+}
+
+/* DARK THEME */
+
+[zr-dark-theme="true"] .zr-drawer--notes-card {
+    background-color: none;
+}

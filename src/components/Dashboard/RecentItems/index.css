@@ -1,0 +1,38 @@
+.zr-recentitems--datalist {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--zr-text-small);
+    min-height: 100%;
+}
+
+.zr-recentitems--datalist > * {
+    flex: 1 1 auto;
+}
+
+.zr-recentitems--datalist > .zr-datalist--toolbar {
+    flex: 0 1 auto;
+}
+
+.zr-recentitems--datalist .zr-datalist--item {
+    border: 1px var(--zr-border-co) solid;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 10px;
+}
+
+.zr-recentitems--datalist .zr-datalist--item [zr-role="item-header"] {
+    display: flex;
+    justify-content: space-between;
+}
+
+.zr-recentitems--datalist .zr-datalist--item [zr-role="item-title"] {
+    display: block;
+    font-weight: 500;
+    white-space: normal;
+}
+
+.zr-recentitems--datalist h5 {
+    color: var(--zr-text-co);
+    font-weight: bold;
+    margin: 15px 10px;
+}
