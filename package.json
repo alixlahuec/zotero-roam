@@ -1,6 +1,6 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.6.99-beta.7",
+    "version": "0.6.99-beta.8",
     "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
@@ -32,7 +32,7 @@
         "build-storybook": "build-storybook --quiet",
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage",
-		"release": "release-it --config dev/.release-it.json --npm.skipChecks",
+        "release": "release-it --config dev/.release-it.json --npm.skipChecks",
         "release:latest": "npm run release -- --ci --git.requireBranch=main --github.autoGenerate",
         "release:beta": "npm run release -- --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\"",
         "release:preview": "npm run release -- --dry-run"
@@ -41,17 +41,17 @@
         "*.css",
         "src/index.js"
     ],
-	"babel": {
-		"presets": [
-			"@babel/preset-env", 
-			[
-				"@babel/preset-react",
-				{
-					"runtime": "automatic"
-				}
-			]
-		]
-	},
+    "babel": {
+        "presets": [
+            "@babel/preset-env",
+            [
+                "@babel/preset-react",
+                {
+                    "runtime": "automatic"
+                }
+            ]
+        ]
+    },
     "devDependencies": {
         "@babel/core": "^7.18.13",
         "@babel/preset-env": "^7.18.10",
