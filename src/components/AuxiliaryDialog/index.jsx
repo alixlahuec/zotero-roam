@@ -3,7 +3,7 @@ import { memo, useContext, useMemo } from "react";
 import { createPortal } from "react-dom";
 
 import { Dialog, H5 } from "@blueprintjs/core";
-import { ExtensionContext } from "../App";
+import { ExtensionContext } from "Components/App";
 
 import { CustomClasses } from "../../constants";
 

@@ -3,7 +3,7 @@ import { func } from "prop-types";
 
 import { NonIdealState } from "@blueprintjs/core";
 
-import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
+import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import ItemElement from "./ItemElement";
 import QueryFilterList from "./QueryFilterList";
 

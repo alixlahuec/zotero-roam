@@ -3,10 +3,10 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { NonIdealState, Spinner } from "@blueprintjs/core";
 
-import { ListWrapper, Pagination, Toolbar } from "../../../DataList";
+import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import ItemEntry from "./ItemEntry";
 import ItemSuggestion from "./ItemSuggestion";
-import SortButtons from "../../../SortButtons";
+import SortButtons from "Components/SortButtons";
 import Stats from "../Stats";
 
 import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";

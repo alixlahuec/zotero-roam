@@ -2,7 +2,7 @@ import { memo } from "react";
 
 import { Icon, Tag } from "@blueprintjs/core";
 
-import { ListItem } from "../../../DataList";
+import { ListItem } from "Components/DataList";
 import Suggest from "../Suggest";
 
 import { pluralize } from "../../../../utils";

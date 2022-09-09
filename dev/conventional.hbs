@@ -1,0 +1,33 @@
+## Changelog
+
+{{#each releases}}
+    {{#if href}}
+    ##{{#unless major}}#{{/unless}} [{{title}}]({{href}}) - {{#if tag}} {{isoDate}} {{/if}}
+    {{else}}
+    ### {{title}}
+    {{/if}}
+
+    {{#if summary}}
+    {{summary}}
+
+    {{/if}}
+
+  {{! Breaking changes section }}
+    {{#commit-list merges heading='#### Breaking Changes :warning:' message='breaking:' }}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+  {{! Commits list, by type }}
+  {{! feat }}
+    {{#commit-list merges heading='#### Features' message='^feat[(:]' exclude='breaking:'}}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+  {{! fix }}
+    {{#commit-list merges heading='#### Bug Fixes' message='^fix[(:]' exclude='breaking:'}}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+  {{! other changes }}
+    {{#commit-list merges heading='#### General Changes' exclude='breaking:|^(feat|fix)[(:]'}}
+    - {{message}} ([`#{{id}}`]({{href}}))
+    {{/commit-list}}
+
+{{/each}}

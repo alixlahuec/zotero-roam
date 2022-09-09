@@ -1,4 +1,4 @@
-import zrToaster from "./components/ExtensionToaster";
+import zrToaster from "Components/ExtensionToaster";
 
 import { pluralize } from "./utils";
 

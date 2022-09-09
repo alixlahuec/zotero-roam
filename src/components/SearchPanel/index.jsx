@@ -1,15 +1,15 @@
 import { bool, func, oneOf } from "prop-types";
 import { memo } from "react";
 
-import DialogOverlay from "../DialogOverlay";
+import DialogOverlay from "Components/DialogOverlay";
 import LibraryQueryList from "./LibraryQueryList";
-import SentryBoundary from "../Errors/SentryBoundary";
+import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import useBool from "../../hooks/useBool";
-import { useCopySettings } from "../UserSettings/Copy";
+import { useCopySettings } from "Components/UserSettings/Copy";
 import { useQuery_Items } from "../../api/queries";
-import { useRequestsSettings } from "../UserSettings/Requests";
-import { useRoamCitekeys } from "../RoamCitekeysContext";
+import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
 import { cleanLibrary } from "../../utils";
 

@@ -3,11 +3,11 @@ import { memo, useMemo } from "react";
 
 import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tab, Tabs, Tag } from "@blueprintjs/core";
 
-import ButtonLink from "../ButtonLink";
-import SentryBoundary from "../Errors/SentryBoundary";
+import ButtonLink from "Components/ButtonLink";
+import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import useBool from "../../hooks/useBool";
-import { useNotesSettings } from "../UserSettings/Notes";
+import { useNotesSettings } from "Components/UserSettings/Notes";
 
 import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
 

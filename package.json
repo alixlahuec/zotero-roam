@@ -20,10 +20,10 @@
         "workerDirectory": "public"
     },
     "scripts": {
-        "build:dev": "webpack --config webpack.dev.config.js",
-        "build:prod": "webpack",
-        "build:roam": "webpack --config webpack.roam.config.js",
-        "build:sandbox": "webpack --config webpack.sandbox.config.js",
+        "build:dev": "webpack --config dev/webpack.dev.config.js",
+        "build:prod": "webpack --config dev/webpack.config.js",
+        "build:roam": "webpack --config dev/webpack.roam.config.js",
+        "build:sandbox": "webpack --config dev/webpack.sandbox.config.js",
         "lint": "eslint --fix",
         "ci:lint": "eslint src/**",
         "test": "jest",
@@ -32,14 +32,26 @@
         "build-storybook": "build-storybook --quiet",
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage",
-        "release:latest": "release-it --ci --git.requireBranch=main --github.autoGenerate --npm.skipChecks",
-        "release:beta": "release-it --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\" --npm.skipChecks",
-        "release:preview": "release-it --dry-run"
+		"release": "release-it --config dev/.release-it.json --npm.skipChecks",
+        "release:latest": "npm run release -- --ci --git.requireBranch=main --github.autoGenerate",
+        "release:beta": "npm run release -- --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\"",
+        "release:preview": "npm run release -- --dry-run"
     },
     "sideEffects": [
         "*.css",
         "src/index.js"
     ],
+	"babel": {
+		"presets": [
+			"@babel/preset-env", 
+			[
+				"@babel/preset-react",
+				{
+					"runtime": "automatic"
+				}
+			]
+		]
+	},
     "devDependencies": {
         "@babel/core": "^7.18.13",
         "@babel/preset-env": "^7.18.10",
@@ -67,7 +79,7 @@
         "css-loader": "^6.7.1",
         "css-minimizer-webpack-plugin": "^4.0.0",
         "eslint": "^8.23.0",
-        "eslint-import-resolver-webpack": "^0.13.2",
+        "eslint-import-resolver-alias": "^1.1.2",
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-jest": "^26.9.0",
         "eslint-plugin-react": "^7.31.1",

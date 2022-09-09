@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+		  "Mocks/*": ["./mocks/*"],
+		  "Roam": ["./src/roam.js"],
+		  "Components/*": ["./src/components/*"]
+		}
+	},
+	"exclude": ["node_modules", "dist"]
+}

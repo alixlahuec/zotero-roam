@@ -5,14 +5,14 @@ import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
-import NoWriteableLibraries from "../Errors/NoWriteableLibraries";
-import SentryBoundary from "../Errors/SentryBoundary";
-import TagsSelector from "../Inputs/TagsSelector";
+import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
+import SentryBoundary from "Components/Errors/SentryBoundary";
+import TagsSelector from "Components/Inputs/TagsSelector";
 
 import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
 import useMulti from "../../hooks/useMulti";
-import { useRequestsSettings } from "../UserSettings/Requests";
+import { useRequestsSettings } from "Components/UserSettings/Requests";
 import useSelect from "../../hooks/useSelect";
 
 import { sortCollections } from "../../utils";

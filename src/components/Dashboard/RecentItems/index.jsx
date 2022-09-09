@@ -3,13 +3,13 @@ import { memo, useEffect, useMemo, useState } from "react";
 
 import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
-import { ListWrapper, Toolbar } from "../../DataList";
+import { ListWrapper, Toolbar } from "Components/DataList";
 import LogItem from "./LogItem";
-import SentryBoundary from "../../Errors/SentryBoundary";
+import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import useBool from "../../../hooks/useBool";
 import { useQuery_Items } from "../../../api/queries";
-import { useRequestsSettings } from "../../UserSettings/Requests";
+import { useRequestsSettings } from "Components/UserSettings/Requests";
 
 import { categorizeLibraryItems } from "../../../utils";
 import { makeLogFromItems } from "./utils";

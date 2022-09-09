@@ -2,8 +2,8 @@ import { bool, func } from "prop-types";
 
 import { Button, Classes } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../AuxiliaryDialog";
-import SentryBoundary from "../Errors/SentryBoundary";
+import AuxiliaryDialog from "Components/AuxiliaryDialog";
+import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import SettingsPanel from "./Panel";
 import UserSettingsProvider from "./Provider";

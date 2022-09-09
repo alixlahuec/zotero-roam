@@ -4,10 +4,10 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Menu, MenuItem } from "@blueprintjs/core";
 import { QueryList, renderFilteredItems } from "@blueprintjs/select";
 
-import ItemDetails from "../ItemDetails";
+import ItemDetails from "Components/ItemDetails";
 import SearchInputGroup from "./SearchInputGroup";
 
-import { useCopySettings } from "../UserSettings/Copy";
+import { useCopySettings } from "Components/UserSettings/Copy";
 import useDebounceCallback from "../../hooks/useDebounceCallback";
 
 import { copyToClipboard, pluralize, searchEngine } from "../../utils";

@@ -7,10 +7,10 @@ import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
-import { usePageMenuSettings } from "../../UserSettings/PageMenu";
+import { usePageMenuSettings } from "Components/UserSettings/PageMenu";
 import { useQuery_Items } from "../../../api/queries";
-import { useRequestsSettings } from "../../UserSettings/Requests";
-import { useRoamCitekeys } from "../../RoamCitekeysContext";
+import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
 import { categorizeLibraryItems } from "../../../utils";
 import { cleanRelatedItem } from "./utils";

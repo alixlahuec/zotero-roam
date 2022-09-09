@@ -2,10 +2,10 @@ import { func } from "prop-types";
 
 import { Button } from "@blueprintjs/core";
 
-import CitekeyPopover from "../../../CitekeyPopover";
-import DataDrawer from "../../../DataDrawer";
-import { ListItem } from "../../../DataList";
-import NotesDrawer from "../../../NotesDrawer";
+import CitekeyPopover from "Components/CitekeyPopover";
+import DataDrawer from "Components/DataDrawer";
+import { ListItem } from "Components/DataList";
+import NotesDrawer from "Components/NotesDrawer";
 
 import { pluralize } from "../../../../utils";
 import useBool from "../../../../hooks/useBool";

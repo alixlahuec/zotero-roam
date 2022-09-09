@@ -4,12 +4,12 @@ import { memo, useCallback, useContext, useEffect, useMemo } from "react";
 import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 
-import { ExtensionContext } from "../App";
+import { ExtensionContext } from "Components/App";
 
 import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/queries";
 import useBool from "../../hooks/useBool";
-import { useOtherSettings } from "../UserSettings/Other";
-import { useRequestsSettings } from "../UserSettings/Requests";
+import { useOtherSettings } from "Components/UserSettings/Other";
+import { useRequestsSettings } from "Components/UserSettings/Requests";
 
 import { makeTimestamp } from "../../utils";
 

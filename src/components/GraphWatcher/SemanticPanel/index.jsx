@@ -3,9 +3,9 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../../AuxiliaryDialog";
+import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import SemanticPagination from "./SemanticPagination";
-import SentryBoundary from "../../Errors/SentryBoundary";
+import SentryBoundary from "Components/Errors/SentryBoundary";
 import SidePanel from "./SidePanel";
 
 import { pluralize, sortElems } from "../../../utils";

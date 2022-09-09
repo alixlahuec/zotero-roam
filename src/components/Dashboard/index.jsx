@@ -3,7 +3,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 
 import { Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
-import AuxiliaryDialog from "../AuxiliaryDialog";
+import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import Explorer from "./Explorer";
 import RecentItems from "./RecentItems";
 import TagManager from "./TagManager";

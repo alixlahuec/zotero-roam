@@ -1,0 +1,33 @@
+{
+    "hooks": {
+        "before:init": [
+            "npm run ci:lint",
+            "npm run ci:test",
+            "chmod +x \"./dev/ci-storybook.sh\"",
+            "./dev/ci-storybook.sh"
+        ],
+        "after:bump": [
+            "npm run build:dev",
+            "npm run build:prod",
+            "npm run build:roam",
+			"npm run build:sandbox",
+            "npx auto-changelog --config dev/.auto-changelog"
+        ]
+    },
+    "git": {
+        "changelog": "npx auto-changelog --stdout --config dev/.auto-changelog",
+        "commitMessage": "release: v${version}",
+        "tag": true,
+        "tagMatch": "[0-9]*\\.[0-9]*\\.[0-9]*"
+    },
+    "github": {
+        "assets": ["dist/*.js", "dist/extension.css"],
+        "draft": true,
+        "release": true,
+        "releaseName": "v${version}"
+    },
+    "npm": {
+        "allowSameVersion": false,
+        "publish": true
+    }
+}

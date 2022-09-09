@@ -3,7 +3,7 @@ import { memo, useCallback, useMemo } from "react";
 
 import { Button, ButtonGroup, Classes } from "@blueprintjs/core";
 
-import ZoteroImport from "../../ZoteroImport";
+import ZoteroImport from "Components/ZoteroImport";
 
 import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
