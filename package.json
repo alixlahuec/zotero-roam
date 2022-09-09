@@ -33,7 +33,7 @@
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage",
         "release": "release-it --config dev/.release-it.json --npm.skipChecks",
-        "release:latest": "npm run release -- --ci --git.requireBranch=main --github.autoGenerate",
+        "release:latest": "npm run release -- --ci --git.requireBranch=main",
         "release:beta": "npm run release -- --ci --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\"",
         "release:preview": "npm run release -- --dry-run"
     },
