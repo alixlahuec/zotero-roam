@@ -5,7 +5,7 @@
   "ignoreCommitPattern": "^(auto-commit|chore|ci|infra|release|tests)[(:]",
   "releaseSummary": true,
   "tagPattern": "^[0\\d]+\\.[0\\d]+\\.[0\\d]+$",
-  "template": "conventional.hbs",
+  "template": "./dev/conventional.hbs",
   "replaceText": {
     "(^(feat|fix|docs|refactor|breaking):)": "",
     "(^(feat|fix|docs|refactor|)\\()": "\\("
