@@ -1,6 +1,15 @@
 import { searchEngine } from "../../../../utils";
 
 
+/**
+ * @typedef{{
+ * property: String,
+ * relationship: String,
+ * value: String|String[]|Date|Date[]|null
+ * }}
+ * QueryTerm
+ */
+
 const defaultQueryTerm = { property: "Citekey", relationship: "exists", value: null };
 
 const types = ["date", "date-range", "multiselect", "select", "text", null];
@@ -181,7 +190,6 @@ const queries = {
 			testItem: (item) => item.inGraph == false
 		}
 	},
-	// published: {},
 	"Tags": {
 		"include": {
 			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
@@ -226,8 +234,13 @@ const queries = {
 	}
 };
 
-/* Evaluation */
 
+/** Evaluates a query term (predicate or group) against an item
+ * @param {QueryTerm|QueryTerm[]} term - The term to evaluate
+ * @param {Boolean} useOR - If the term is a group, is it an `OR` group? If `false`, it is treated as an `AND` group.
+ * @param {ZoteroItem} item - The item against which to evaluate the term
+ * @returns {Boolean} The result of the term evaluation for the item
+ */
 function runQueryTerm(term, useOR = false, item){
 	if(term.constructor === Array){
 		return runQuerySet(term, useOR, item);
@@ -248,7 +261,7 @@ function runQueryTerm(term, useOR = false, item){
  * @param {Array} terms - The terms of the query
  * @param {Boolean} useOR - If the top-level operator is "or"
  * @param {Object} item - The target item (of type `cleanLibraryItemType`)
- * @returns {Boolean} The result of the query for this item
+ * @returns {Boolean} The result of the query evaluation for the item
  */
 function runQuerySet(terms = [], useOR = true, item){
 	if(terms.length == 0){
