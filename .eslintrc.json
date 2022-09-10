@@ -82,14 +82,62 @@
             "error",
             "always"
         ],
-        "sort-imports": [
-            "warn",
-            { "allowSeparatedGroups": true }
-        ],
+        "sort-imports": "off",
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
         "import/newline-after-import": ["error", { "count": 2 }],
-        "import/no-unresolved": ["warn", { "amd": true, "commonjs": true }]
+        "import/no-unresolved": ["warn", { "amd": true, "commonjs": true }],
+		"import/order": [
+			"warn",
+			{
+				"groups": [
+					"builtin",
+					"external",
+					["parent", "sibling", "index"],
+					"internal"
+				],
+				"pathGroups": [
+					{
+						"pattern": "prop-types",
+						"group": "builtin",
+						"position": "before"
+					},
+					{
+						"pattern": "react",
+						"group": "builtin"
+					},
+					{
+						"pattern": "react-dom",
+						"group": "builtin"
+					},
+					{
+						"pattern": "*/constants",
+						"group": "internal"
+					},
+					{
+						"pattern": "*/propTypes",
+						"group": "internal"
+					},
+					{
+						"pattern": "Mocks/*",
+						"group": "internal"
+					},
+					{
+						"pattern": "@blueprintjs/**",
+						"group": "external"
+					},
+					{
+						"pattern": "Components/**",
+						"group": "parent"
+					},
+					{
+						"pattern": "Roam",
+						"group": "parent"
+					}
+				],
+				"pathGroupsExcludedImportTypes": ["react", "react-dom", "@blueprintjs/*", "Components/*", "Roam", "*/constants", "*/propTypes"]
+			}
+		]
     },
     "settings": {
         "react": {
