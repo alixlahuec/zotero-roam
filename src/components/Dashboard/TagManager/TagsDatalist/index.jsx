@@ -6,7 +6,7 @@ import { NonIdealState, Spinner } from "@blueprintjs/core";
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import ItemEntry from "./ItemEntry";
 import ItemSuggestion from "./ItemSuggestion";
-import SortButtons from "Components/SortButtons";
+import SortButtons from "Components/DataList/SortButtons";
 import Stats from "../Stats";
 
 import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
