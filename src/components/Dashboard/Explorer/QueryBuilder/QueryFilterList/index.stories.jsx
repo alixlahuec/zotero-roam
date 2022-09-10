@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import QueryFilterList from "./QueryFilterList";
+import QueryFilterList from ".";
 
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "./utils";
+import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../utils";
 
 
 export default {

@@ -5,12 +5,12 @@ import DataDrawer from "Components/DataDrawer";
 import { ListItem } from "Components/DataList";
 import NotesDrawer from "Components/NotesDrawer";
 
-import useBool from "../../../hooks/useBool";
+import useBool from "../../../../hooks/useBool";
 
-import { pluralize } from "../../../utils";
+import { pluralize } from "../../../../utils";
 
-import * as customPropTypes from "../../../propTypes";
-import { CustomClasses } from "../../../constants";
+import * as customPropTypes from "../../../../propTypes";
+import { CustomClasses } from "../../../../constants";
 
 
 function PDFElement({ item }){
