@@ -6,7 +6,7 @@ import { InputGroup, NonIdealState } from "@blueprintjs/core";
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import { SemanticGuide } from "Components/Guide";
 import SemanticItem from "./SemanticItem";
-import SortButtons from "Components/SortButtons";
+import SortButtons from "Components/DataList/SortButtons";
 
 import { searchEngine } from "../../../utils";
 import usePagination from "../../../hooks/usePagination";

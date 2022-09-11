@@ -244,9 +244,9 @@ function getInitialedPages(keys){
  * @param {{item: ZoteroItem, pdfs: ZoteroItem[], notes: (ZoteroItem|ZoteroAnnotation)[]}} itemData - The item's Zotero data and its children, if any
  * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
  * @param {SettingsMetadata} metadataSettings - The user's `metadata` settings 
- * @param {SettingsTypemap} typemap
- * @param {SettingsNotes} notesSettings
- * @param {SettingsAnnotations} annotationsSettings
+ * @param {SettingsTypemap} typemap - The user's `typemap` settings
+ * @param {SettingsNotes} notesSettings - The user's `notes` settings
+ * @param {SettingsAnnotations} annotationsSettings - The user's `annotations` settings
  * @returns If successful, a detailed outcome of the import ; otherwise, the first error encountered.
  */
 async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, metadataSettings, typemap, notesSettings, annotationsSettings){

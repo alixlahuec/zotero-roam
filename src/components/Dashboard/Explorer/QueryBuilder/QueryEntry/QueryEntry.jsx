@@ -4,12 +4,12 @@ import { useCallback } from "react";
 import { Button, MenuItem } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
-import InputComponent from "./InputComponent";
+import InputComponent from "../InputComponent";
 
-import { defaultQueryTerm, queries } from "./queries";
-import { returnSiblingArray } from "./utils";
+import { defaultQueryTerm, queries } from "../queries";
+import { returnSiblingArray } from "../utils";
 
-import { CustomClasses } from "../../../../constants";
+import { CustomClasses } from "../../../../../constants";
 
 
 const popoverProps = {

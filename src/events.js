@@ -105,8 +105,7 @@ function setDefaultHooks(){
 				message: "Metadata added to " + title
 			});
 		} else {
-			// ? For testing
-			console.log(e);
+			console.error(e);
 		}
 	});
 	document.addEventListener("zotero-roam:notes-added", (e) => {
@@ -123,13 +122,10 @@ function setDefaultHooks(){
 				message: "Notes added to " + title + ` (${notes.length})`
 			});
 		} else {
-			// ? For testing
-			console.log(e);
+			console.error(e);
 		}
 	});
 	document.addEventListener("zotero-roam:write", (e) => {
-		// ! For debugging:
-		console.log(e.detail);
 		const { data: { failed, successful }, error, library } = e.detail;
 		if(error){ console.error(error); }
 		if(failed.length > 0){ console.log(failed); }
@@ -144,8 +140,7 @@ function setDefaultHooks(){
 				counts.success += Object.keys(res.data.successful).length;
 				counts.error += Object.keys(res.data.failed).length;
 			}, { error: 0, success: 0 });
-			// ! For debugging:
-			console.log(itemsOutcome);
+
 			const isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
 
 			if(isFullSuccess){

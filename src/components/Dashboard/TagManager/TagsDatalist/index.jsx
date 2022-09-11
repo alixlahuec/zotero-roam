@@ -6,7 +6,7 @@ import { NonIdealState, Spinner } from "@blueprintjs/core";
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import ItemEntry from "./ItemEntry";
 import ItemSuggestion from "./ItemSuggestion";
-import SortButtons from "Components/SortButtons";
+import SortButtons from "Components/DataList/SortButtons";
 import Stats from "../Stats";
 
 import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
@@ -20,8 +20,7 @@ import "./index.css";
 
 const itemsPerPage = 30;
 
-const TagsDatalist = memo(function TagsDatalist(props){
-	const { filter, items, libProps } = props;
+const TagsDatalist = memo(function TagsDatalist({ filter, items, libProps }){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [sortBy, setSortBy] = useState("usage");
 	const [matchedTags, setMatchedTags] = useState(null);

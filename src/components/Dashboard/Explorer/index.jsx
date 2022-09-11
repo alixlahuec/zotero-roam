@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
 import { ListItem, ListWrapper } from "Components/DataList";
-import QueryBuilder from "./QueryBuilder";
+import QueryItems from "./QueryItems";
 import QueryPDFs from "./QueryPDFs";
 import SentryBoundary from "Components/Errors/SentryBoundary";
 
@@ -82,7 +82,7 @@ function TabContents({ itemList, onClose, show }){
 	return filteredData == null
 		? <Spinner size={15} title="Loading items..." />
 		: show == "items" 
-			? <QueryBuilder items={filteredData} onClose={onClose} />
+			? <QueryItems items={filteredData} onClose={onClose} />
 			: show == "pdfs"
 				? <QueryPDFs items={filteredData} />
 				: <ListWrapper>{filteredData.slice(0,20).map((it, i) => <ListItem key={it.key + "-" + i}>{it.key}</ListItem>)}</ListWrapper>;

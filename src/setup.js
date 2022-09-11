@@ -1,5 +1,5 @@
-import { getCurrentHub as getSentryHub, setContext as setSentryContext } from "@sentry/react";
 import { unmountComponentAtNode } from "react-dom";
+import { getCurrentHub as getSentryHub, setContext as setSentryContext } from "@sentry/react";
 
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
@@ -98,6 +98,10 @@ export function analyzeUserRequests(reqs){
 	}
 }
 
+/** Generates a merged settings object, combining user settings and defaults.
+ * @param {Object} settingsObject - The user's settings object
+ * @returns The merged object
+ */
 export function setupInitialSettings(settingsObject){
 	const {
 		annotations = {},
@@ -207,6 +211,10 @@ export function setupInitialSettings(settingsObject){
 }
 
 /* istanbul ignore next */
+/** Initializes the extension, from a Roam Depot install
+ * @param {{extensionAPI: Object}} config - The install parameters 
+ * @returns The user's setup configuration
+ */
 function configRoamDepot({ extensionAPI }){
 	const current = extensionAPI.settings.getAll();
 	const settings = setupInitialSettings(current || {});
@@ -232,6 +240,10 @@ function configRoamDepot({ extensionAPI }){
 }
 
 /* istanbul ignore next */
+/** Initializes the extension, from a roam/js install
+ * @param {{manualSettings: Object}} config - The install parameters 
+ * @returns The user's setup configuration
+ */
 function configRoamJS({ manualSettings }){
 	const { dataRequests } = manualSettings;
 
@@ -246,6 +258,11 @@ function configRoamJS({ manualSettings }){
 }
 
 /* istanbul ignore next */
+/** Initializes the extension, given an installation environment and parameters
+ * @param {("roam/depot"|"roam/js"|"sandbox")} context - The install environment
+ * @param {{extensionAPI?: Object, manualSettings?: Object}} config - The install parameters 
+ * @returns 
+ */
 export function initialize(context = "roam/js", { extensionAPI, manualSettings }){
 	const { requests, settings } = (context == "roam/depot")
 		? configRoamDepot({ extensionAPI })
@@ -279,6 +296,10 @@ export function setupPortals(){
 }
 
 /* istanbul ignore next */
+/** Initializes Sentry from current user settings
+ * @param {Boolean} isUserEnabled - Has the user opted in?
+ * @param {Object} config - The Sentry context to use
+ */
 export function setupSentry(isUserEnabled = false, config = {}){
 	// https://github.com/getsentry/sentry-javascript/issues/2039
 	if(isUserEnabled){
@@ -290,6 +311,9 @@ export function setupSentry(isUserEnabled = false, config = {}){
 }
 
 /* istanbul ignore next */
+/** Sets up secondary functions that are needed by the extension
+ * @param {{settings: Object}} config - The user's current settings
+ */
 export function setup({ settings }){
 	setupDarkTheme(settings.other.darkTheme);
 	setDefaultHooks();
@@ -297,6 +321,7 @@ export function setup({ settings }){
 }
 
 /* istanbul ignore next */
+/** Teardown the extension's React tree, if it currently exists */
 export function unmountExtensionIfExists(){
 	const existingSlot = document.getElementById(EXTENSION_SLOT_ID);
 	if(existingSlot){

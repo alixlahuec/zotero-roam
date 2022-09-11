@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { func } from "prop-types";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import ItemElement from "./ItemElement";
-import QueryFilterList from "./QueryFilterList";
+import QueryFilterList from "../QueryBuilder/QueryFilterList";
 
 import usePagination from "../../../../hooks/usePagination";
 
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "./utils";
-import { runQuerySet } from "./queries";
+import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../QueryBuilder/utils";
+import { runQuerySet } from "../QueryBuilder/queries";
 
 import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
@@ -20,7 +20,7 @@ import "./index.css";
 
 const itemsPerPage = 20;
 
-function QueryBuilder({ items, onClose }){
+function QueryItems({ items, onClose }){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [useOR, /*setUseOR*/] = useState(true);
 	const [queryTerms, setQueryTerms] = useState([]);
@@ -65,9 +65,9 @@ function QueryBuilder({ items, onClose }){
 		</Toolbar>
 	</div>;
 }
-QueryBuilder.propTypes = {
+QueryItems.propTypes = {
 	items: customPropTypes.cleanLibraryReturnArrayType,
 	onClose: func
 };
 
-export default QueryBuilder;
+export default QueryItems;
