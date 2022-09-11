@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { getCurrentHub as getSentryHub } from "@sentry/react";
 
 import { Toggle } from "../common";
 
@@ -59,11 +60,23 @@ function OtherSettingsWidget() {
 			}));
 		}
 
+		function toggleErrorSharing(){
+			setOpts(prevState => {
+				const isNowSharing = !prevState.shareErrors;
+				getSentryHub().getClient().getOptions().enabled = isNowSharing;
+
+				return {
+					...prevState,
+					shareErrors: isNowSharing
+				};
+			});
+		}
+
 		return {
 			toggleAutoload: () => toggleBool("autoload"),
 			toggleDarkTheme: () => toggleBool("darkTheme"),
 			toggleRenderInline: () => toggleBool("render_inline"),
-			toggleShareErrors: () => toggleBool("shareErrors"),
+			toggleShareErrors: () => toggleErrorSharing(),
 		};
 	}, [setOpts]);
 
