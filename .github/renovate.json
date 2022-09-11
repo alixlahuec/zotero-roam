@@ -1,0 +1,65 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "assignees": ["alixlahuec"],
+  "baseBranches": ["beta"],
+  "rangeStrategy": "bump",
+  "packageRules": [
+	{
+		"matchDepTypes": ["action"],
+		"enabled": false
+	},
+	{
+		"groupName": "Blueprint",
+		"matchPackagePrefixes": [
+			"@blueprintjs/"
+		],
+		"enabled": false
+	},
+	{
+		"groupName": "Jest Core",
+		"matchPackageNames": [
+			"jest",
+			"jest-environment-jsdom"
+		],
+		"enabled": false
+	},
+	{
+		"groupName": "React",
+		"matchPackageNames": [
+			"react",
+			"react-dom"
+		],
+		"enabled": false
+	},
+	{
+		"matchPackageNames": [
+			"scite-badge"
+		],
+		"enabled": false
+	},
+	{
+		"groupName": "Sentry",
+		"matchPackagePrefixes": [
+			"@sentry/"
+		]
+	},
+	{
+		"groupName": "Storybook Core",
+		"matchPackageNames": [
+			"@storybook/addon-a11y",
+			"@storybook/addon-actions",
+			"@storybook/addon-controls",
+			"@storybook/addon-essentials",
+			"@storybook/addon-interactions",
+			"@storybook/addon-links",
+			"@storybook/builder-webpack5",
+			"@storybook/cli",
+			"@storybook/manager-webpack5",
+			"@storybook/react"
+		]
+	}
+  ]
+}
