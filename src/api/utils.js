@@ -1,12 +1,34 @@
-
 import { citoidClient, semanticClient, zoteroClient } from "./clients";
 import { makeDictionary, parseDOI, searchEngine } from "../utils";
 import { emitCustomEvent } from "../events";
 
+
+/**
+ * @typedef{{
+ * title: String,
+ * uid: String
+ * }}
+ * RoamPage
+ */
+
+/**
+ * @typedef{Map<String, (ZoteroTag|ZoteroTag[])>}
+ * TagMap
+ */
+
+/**
+ * @typedef{{
+ * token: String,
+ * zotero: ZoteroTag[],
+ * roam: RoamPage[]
+ * }}
+ * TagEntry
+ */
+
 /** Categorizes Zotero tags into tokens, based on similar spellings
  * @param {String[]} z_data - The tags to be categorized, as Strings
- * @param {Map<String,Object>} tagMap - The map of Zotero tags
- * @returns {{token: String, roam: [], zotero: Object[]}[]} The Array of tokenized tags, sorted alphabetically
+ * @param {TagMap} tagMap - The map of Zotero tags
+ * @returns {TagEntry[]} The Array of tokenized tags, sorted alphabetically
  */
 function categorizeZoteroTags(z_data, tagMap){
 	const output = [];
@@ -56,7 +78,7 @@ function cleanBibliographyHTML(bib){
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
  * @param {String[]} tags - The names of the tags to be deleted
  * @param {ZoteroLibrary} library - The targeted Zotero library
- * @param {Number} version - The last known version of the Zotero library
+ * @param {Integer} version - The last known version of the Zotero library
  * @returns The outcome of the Axios API call
  */
 async function deleteTags(tags, library, version){
@@ -86,7 +108,7 @@ async function deleteTags(tags, library, version){
 
 /** Extracts pinned citekeys from a dataset
  * @param {ZoteroItem[]} arr - The dataset of Zotero items to scan
- * @returns {Object[]} The processed dataset : each item gains a `has_citekey` property, and its `key` property is assigned its citekey 
+ * @returns {ZoteroItem[]} The processed dataset : each item gains a `has_citekey` property, and its `key` property is assigned its citekey 
  */
 function extractCitekeys(arr){
 	const itemList = [...arr];
@@ -136,6 +158,11 @@ async function fetchAdditionalData(req, totalResults) {
 	}
 }
 
+/** Retrieves the bibliography for a list of Zotero items.
+ * @param {String[]} itemKeys - The Zotero keys of the targeted items
+ * @param {ZoteroLibrary} library - The library of the targeted items
+ * @returns The generated bibliography
+ */
 async function fetchBibEntries(itemKeys, library) {
 	const { apikey, path } = library;
 
@@ -213,7 +240,7 @@ async function fetchCitoid(query) {
 }
 
 /** Requests data from the `/[library]/collections` endpoint of the Zotero API
- * @fires zotero-roam:update-collections
+ * @fires zotero-roam:update
  * @param {ZoteroLibrary} library - The targeted Zotero library
  * @param {Integer} since - A library version
  * @param {{match: Object[]}} config - Additional parameters
@@ -420,7 +447,7 @@ async function fetchTags(library) {
 
 /** Converts Zotero tags data into a categorized list
  * @param {ZoteroTag[]} tags - The tags data from Zotero to categorize
- * @returns The list of categorized tags
+ * @returns {Object.<string, TagEntry[]>} The list of categorized tags
  */
 function makeTagList(tags){
 	const tagMap = makeTagMap(tags);
@@ -436,7 +463,7 @@ function makeTagList(tags){
 
 /** Converts Zotero tags data into a Map
  * @param {ZoteroTag[]} tags - The tags data from Zotero from which to create the Map
- * @returns {Map} A Map where each entry groups together Zotero tags with the exact same spelling, but a different type
+ * @returns {TagMap} A Map where each entry groups together Zotero tags with the exact same spelling, but a different type
  */
 function makeTagMap(tags){
 	return tags.reduce(

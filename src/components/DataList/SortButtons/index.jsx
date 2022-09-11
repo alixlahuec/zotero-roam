@@ -3,7 +3,7 @@ import { memo, useCallback } from "react";
 
 import { ButtonGroup, Icon } from "@blueprintjs/core";
 
-import { CustomClasses } from "../../constants";
+import { CustomClasses } from "../../../constants";
 
 import "./index.css";
 

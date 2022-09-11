@@ -2,14 +2,14 @@ import { array, bool, func, object, shape } from "prop-types";
 import { useCallback, useMemo, useState } from "react";
 
 import { Button, Classes, Dialog, Tag } from "@blueprintjs/core";
-import QueryBox from "./QueryBox";
+import QueryBox from "../QueryBox";
 
-import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
-import { defaultQueryTerm } from "./queries";
-import { makeDNP } from "../../../../utils";
-import useBool from "../../../../hooks/useBool";
+import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "../utils";
+import { defaultQueryTerm } from "../queries";
+import { makeDNP } from "../../../../../utils";
+import useBool from "../../../../../hooks/useBool";
 
-import { CustomClasses } from "../../../../constants";
+import { CustomClasses } from "../../../../../constants";
 
 
 function makeValueString(value){

@@ -1,13 +1,13 @@
-import { Fragment, useCallback } from "react";
 import { array, bool, func, shape } from "prop-types";
+import { Fragment, useCallback } from "react";
 import { Button } from "@blueprintjs/core";
 
-import QueryEntry from "./QueryEntry";
+import QueryEntry from "../QueryEntry/QueryEntry";
 
-import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "./utils";
-import { defaultQueryTerm } from "./queries";
+import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "../utils";
+import { defaultQueryTerm } from "../queries";
 
-import { CustomClasses } from "../../../../constants";
+import { CustomClasses } from "../../../../../constants";
 
 
 function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = true }){

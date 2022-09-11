@@ -119,6 +119,18 @@
 
 /**
  * @typedef {{
+ * always: Boolean,
+ * overrideKey: ("altKey"|"ctrlKey"|"metaKey"|"shiftKey"),
+ * preset: ("citation"|"citekey"|"page-reference"|"raw"|"tag"),
+ * template: String,
+ * useAsDefault: ("preset"|"template"),
+ * useQuickCopy: Boolean
+ * }}
+ * SettingsCopy
+ */
+
+/**
+ * @typedef {{
  * func: String,
  * smartblock: {SmartblockConfig},
  * use: ("default"|"function"|"smartblock")

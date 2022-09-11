@@ -3,7 +3,11 @@ import zrToaster from "Components/ExtensionToaster";
 import "./typedefs";
 
 
-// https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-title-case-text
+/** Converts a string from camelCase to Title Case
+ * From https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-title-case-text
+ * @param {String} text - The text to be transformed
+ * @returns The text in title case
+ */
 function camelToTitleCase(text){
 	const result = text.replace(/([A-Z])/g, " $1");
 	const finalResult = result.charAt(0).toUpperCase() + result.slice(1);
@@ -12,7 +16,7 @@ function camelToTitleCase(text){
 }
 
 /** Categorizes library items according to their type (items, PDFs attachments, notes)
- * @param {Object[]} datastore - The items to categorize 
+ * @param {(ZoteroItem|ZoteroAnnotation)[]} datastore - The items to categorize 
  * @returns {{items: ZoteroItem[], pdfs: ZoteroItem[], notes: (ZoteroItem|ZoteroAnnotation)[]}} The categorized object
  */
 function categorizeLibraryItems(datastore){
@@ -85,7 +89,7 @@ function cleanLibrary(arr, roamCitekeys){
 }
 
 /** Formats a Zotero item's metadata into a clean format, with Roam & children data
- * @param {ZoteroItem|Object} item - The Zotero item
+ * @param {ZoteroItem} item - The Zotero item
  * @param {ZoteroItem[]} pdfs - The Zotero item's attached PDFs
  * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The Zotero item's notes and annotations
  * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
@@ -160,8 +164,8 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 }
 
 /** Formats a Zotero PDF's metadata into a clean format, with parent & annotations data
- * @param {ZoteroItem|Object} pdf - The Zotero PDF entry
- * @param {ZoteroItem|Object} parent - The Zotero PDF's parent item
+ * @param {ZoteroItem} pdf - The Zotero PDF entry
+ * @param {ZoteroItem} parent - The Zotero PDF's parent item
  * @param {ZoteroAnnotation[]} annotations - The Zotero PDF's linked annotations
  * @returns {Object} The simplified PDF entry
  * @see cleanLibraryPDFType

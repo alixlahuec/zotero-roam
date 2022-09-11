@@ -38,18 +38,12 @@ const addPageMenus = () => {
 	}
 };
 
-/** Formats an item for display in AuxiliaryDialog
- * @param {ZoteroItem} item - The item to format
- * @param {{
- * pdfs: ZoteroItem[],
- * notes: (ZoteroItem|ZoteroAnnotation)[]
- * }} libraryData - The list of attachments in the library
- * @param {Map} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.  
- * @returns {{
+/**
+ * @typedef {{
  * abstract: String,
  * added: String,
- * children: {pdfs: Array, notes: (ZoteroItem|ZoteroAnnotation)[] },
- * inGraph: Boolean,
+ * children: {pdfs: ZoteroItem[], notes: (ZoteroItem|ZoteroAnnotation)[]},
+ * inGraph: Boolean|String,
  * itemType: String,
  * key: String,
  * location: String,
@@ -57,7 +51,16 @@ const addPageMenus = () => {
  * raw: ZoteroItem,
  * timestamp: String,
  * title: String
- * }[]} The formatted array
+ * }}
+ * CleanRelatedItem
+ * @see cleanRelatedItemType
+ */
+
+/** Formats an item for display in AuxiliaryDialog
+ * @param {ZoteroItem} item - The item to format
+ * @param {{pdfs: ZoteroItem[], notes: (ZoteroItem|ZoteroAnnotation)[]}} libraryData - The list of attachments in the library
+ * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.  
+ * @returns {CleanRelatedItem[]} The formatted array
  * @see cleanRelatedItemType
  */
 function cleanRelatedItem(item, { pdfs = [], notes = [] } = {}, roamCitekeys){

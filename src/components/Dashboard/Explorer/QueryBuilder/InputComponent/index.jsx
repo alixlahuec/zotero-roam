@@ -1,14 +1,14 @@
 import { any, array, func, oneOf, string } from "prop-types";
 import { useCallback, useMemo } from "react";
 
-import { useTypemapSettings } from "Components/UserSettings/Typemap";
-
 import { InputDateRange, InputDateSingle } from "Components/Inputs/InputDate";
 import InputMultiSelect from "Components/Inputs/InputMultiSelect";
 import InputText from "Components/Inputs/InputText";
 import TagsSelector from "Components/Inputs/TagsSelector";
 
-import { queries, types } from "./queries";
+import { useTypemapSettings } from "Components/UserSettings/Typemap";
+
+import { queries, types } from "../queries";
 
 
 function ItemType({ inputType, value, setValue }){

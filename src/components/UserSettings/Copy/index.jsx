@@ -43,7 +43,7 @@ const PRESET_OPTIONS = [
 	{ label: "Citation", value: "citation" },
 	{ label: "Citekey", value: "citekey" },
 	{ label: "Page reference", value: "page-reference" },
-	{ label: "Raw", value: "raw" },
+	{ label: "Key", value: "raw" },
 	{ label: "Tag", value: "tag" }
 ];
 
@@ -127,3 +127,4 @@ export {
 	CopyWidget,
 	useCopySettings
 };
+
