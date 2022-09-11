@@ -31,7 +31,7 @@
 	},
 	{
 		"matchPackageNames": [
-			"github:scitedotai/scite-badge"
+			"scite-badge"
 		],
 		"enabled": false
 	},
