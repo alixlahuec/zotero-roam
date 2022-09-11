@@ -1,0 +1,31 @@
+import { node } from "prop-types";
+import { Component } from "react";
+
+import ErrorCallout from "./ErrorCallout";
+
+
+class ErrorBoundary extends Component {
+	constructor(props) {
+		super(props);
+		this.state = { error: null, errorInfo: null };
+	}
+
+	componentDidCatch(error, errorInfo) {
+		this.setState({
+			error: error,
+			errorInfo: errorInfo
+		});
+	}
+   
+	// This will render this component wherever called
+	render() {
+		return this.state.error
+			? <ErrorCallout error={this.state.error} />
+			: this.props.children;
+	}
+}
+ErrorBoundary.propTypes = {
+	children: node
+};
+
+export default ErrorBoundary;
