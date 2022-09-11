@@ -24,7 +24,6 @@ Latest public version is distributed as @0.6, the new version should strictly be
 - **Other**
    + User settings are editable directly via the interface - no more `roam/js` code.
    + Theming is now done through CSS variables.
-   + Errors can be automatically shared to facilitate debugging.
 
 #### General Changes
 

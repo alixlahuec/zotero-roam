@@ -1,5 +1,5 @@
 {
-  "startingVersion": "0.7.0",
+  "startingVersion": "0.7.2",
   "commitLimit": false,
   "hideCredit": true,
   "ignoreCommitPattern": "^(auto-commit|chore|ci|infra|release|tests)[(:]",
