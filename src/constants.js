@@ -1,7 +1,3 @@
-import { BrowserTracing } from "@sentry/tracing";
-import { Integrations } from "@sentry/react";
-
-
 /** @constant {String} The extension's current version (from package.json) */
 export const EXTENSION_VERSION = require("../package.json").version;
 
@@ -12,21 +8,9 @@ export const EXTENSION_SLOT_ID = "zotero-roam-slot";
 
 export const SENTRY_CONFIG = {
 	autoSessionTracking: false,
-	beforeSend: (event) => {
-		// https://romain-clement.net/articles/sentry-url-fragments/
-		if(event.request?.url) {
-			event.request.url = event.request.url.split("#")[0];
-		}
-
-		return event;
-	},
 	dsn: "https://8ff22f45be0a49c3a884f9ad2da4bd20@o1285244.ingest.sentry.io/6496372",
-	integrations: [
-		new BrowserTracing(), 
-		new Integrations.GlobalHandlers({
-			onunhandledrejection: false
-		})
-	],
+	// See https://github.com/getsentry/sentry-javascript/issues/1652
+	defaultIntegrations: false,
   
 	// Set tracesSampleRate to 1.0 to capture 100%
 	// of transactions for performance monitoring.
