@@ -8,6 +8,10 @@
   "rangeStrategy": "bump",
   "packageRules": [
 	{
+		"matchDepTypes": ["action"],
+		"enabled": false
+	},
+	{
 		"groupName": "Blueprint",
 		"matchPackagePrefixes": [
 			"@blueprintjs/"
@@ -19,7 +23,8 @@
 		"matchPackageNames": [
 			"jest",
 			"jest-environment-jsdom"
-		]
+		],
+		"enabled": false
 	},
 	{
 		"groupName": "React",
