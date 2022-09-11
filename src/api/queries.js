@@ -1,12 +1,12 @@
-import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
 
-/** Uses a React query to retrieve Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity` and `staleTime = 10min`.
+/** React Query custom hook for retrieving Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity` and `staleTime = 10min`.
  *  There is no refetch scheduled, since the data should not change over the course of a session.
  *  Requests are retried only once (except for 404 errors, which should never be retried).
  * @param {String[]} urls - The targeted URLs 
  * @param {Object} opts - Optional configuration to use with the queries
- * @returns The React query that corresponds to the URLs' Wikipedia metadata
+ * @returns The React Queries for the given URLs' Wikipedia metadata
  */
 const useQuery_Citoid = (urls, opts = {}) => {
 	// Defaults for this query
@@ -34,10 +34,10 @@ const useQuery_Citoid = (urls, opts = {}) => {
 	});
 };
 
-/** Uses collection React queries for specific libraries. By default, `staleTime = 5 min` and `refetchInterval = 5 min`.
+/** React Query custom hook for retrieving Zotero collections. By default, `staleTime = 5 min` and `refetchInterval = 5 min`.
  * @param {ZoteroLibrary[]} libraries - The targeted Zotero libraries 
  * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The collection React queries that correspond to the libraries
+ * @returns The React Queries for the given libraries' collections
  */
 const useQuery_Collections = (libraries, opts = {}) => {
 	// Defaults for this query
@@ -61,15 +61,14 @@ const useQuery_Collections = (libraries, opts = {}) => {
 	});
 };
 
-/** Uses item React queries for specific data requests. By default, `staleTime = 1 min` and `refetchInterval = 1 min`.
+/** React Query custom hook for retrieving Zotero items. By default, `staleTime = 1 min` and `refetchInterval = 1 min`.
  * @param {DataRequest[]} reqs - The targeted data requests
  * @param {Object} opts - Optional configuration to use with the queries
- * @returns The item React queries that correspond to the data requests
+ * @returns The React Queries for the given data requests
  */
 const useQuery_Items = (reqs, opts = {}) => {
 	// Defaults for this query
 	const { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest } = opts;
-	
 	// Factory
 	const client = useQueryClient();
 	const queriesDefs = reqs.map((req) => {
@@ -89,10 +88,10 @@ const useQuery_Items = (reqs, opts = {}) => {
 	});
 };
 
-/** Uses permission React queries for specific API keys. By default, `staleTime = 1 hour` and `refetchInterval = 1 hour`.
+/** React Query custom hook for retrieving permissions for Zotero API keys. By default, `staleTime = 1 hour` and `refetchInterval = 1 hour`.
  * @param {String[]} keys - The targeted Zotero API keys 
  * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The permission React queries that correspond to the API keys
+ * @returns The React Queries for the given API keys' permissions
  */
 const useQuery_Permissions = (keys, opts = {}) => {
 	// Defaults for this query
@@ -113,11 +112,11 @@ const useQuery_Permissions = (keys, opts = {}) => {
 	});
 };
 
-/** Uses a React query to retrieve Semantic Scholar citation data for a specific DOI. By default, `cacheTime = Infinity`.
+/** React Query custom hook for retrieving Semantic Scholar citation data by DOI. By default, `cacheTime = Infinity`.
  *  There is no refetch scheduled, since the data should not change over the course of a session.
  * @param {String} doi - The targeted DOI 
  * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The React query that correspond to the DOI's Semantic Scholar data
+ * @returns The React Query for the given DOI's Semantic Scholar data
  */
 const useQuery_Semantic = (doi, opts = {}) => {
 	// Defaults for this query
@@ -132,11 +131,11 @@ const useQuery_Semantic = (doi, opts = {}) => {
 	});
 };
 
-/** Uses tag React queries for specific libraries. By default, `staleTime = 3 min`.
+/** React Query custom hook for retrieving Zotero tags. By default, `staleTime = 3 min`.
  *  Refetching is managed by {@link useQuery_Items}.
  * @param {ZoteroLibrary[]} libraries - The targeted Zotero libraries 
  * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The tag React queries that correspond to the libraries
+ * @returns The React Queries for the given libraries' tags
  */
 const useQuery_Tags = (libraries, opts = {}) => {
 	// Defaults for this query
@@ -157,6 +156,10 @@ const useQuery_Tags = (libraries, opts = {}) => {
 	});
 };
 
+/** Custom hook for retrieving the list of Zotero libraries with `write` permissions.
+ * @param {ZoteroLibrary[]} libraries - The targeted Zotero libraries
+ * @returns {{data: ZoteroLibrary[], isLoading: Boolean}} The operation's status and outcome
+ */
 const useWriteableLibraries = (libraries) => {
 	const apiKeys = Array.from(new Set(libraries.map(lib => lib.apikey)));
 	const permissionQueries = useQuery_Permissions(apiKeys, {

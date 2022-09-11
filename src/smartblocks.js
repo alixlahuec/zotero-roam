@@ -184,7 +184,7 @@ function eval_or(terms, props){
 
 /** Evaluates how a query term should be handled. If the term is a (grouping), the outer parentheses are stripped and the contents are evaluated against the props array that was provided. If the term is a -negation, verify that the props *do not* include it ; otherwise, verify that the props include the term.
  * @param {String} term - The query term to evaluate 
- * @param {*} props - The props that are being tested
+ * @param {String[]} props - The props that are being tested
  * @returns {Boolean} The outcome of the term's evaluation against the props
  */
 function eval_term(term, props){

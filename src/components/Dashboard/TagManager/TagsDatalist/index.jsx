@@ -20,8 +20,7 @@ import "./index.css";
 
 const itemsPerPage = 30;
 
-const TagsDatalist = memo(function TagsDatalist(props){
-	const { filter, items, libProps } = props;
+const TagsDatalist = memo(function TagsDatalist({ filter, items, libProps }){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [sortBy, setSortBy] = useState("usage");
 	const [matchedTags, setMatchedTags] = useState(null);
