@@ -1,6 +1,5 @@
 import { func, node } from "prop-types";
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import { getCurrentHub as getSentryHub } from "@sentry/react";
 
 import { Toggle } from "../common";
 
@@ -45,8 +44,7 @@ function OtherSettingsWidget() {
 		{
 			autoload,
 			darkTheme,
-			render_inline,
-			shareErrors
+			render_inline
 		},
 		setOpts
 	] = useOtherSettings();
@@ -60,23 +58,10 @@ function OtherSettingsWidget() {
 			}));
 		}
 
-		function toggleErrorSharing(){
-			setOpts(prevState => {
-				const isNowSharing = !prevState.shareErrors;
-				getSentryHub().getClient().getOptions().enabled = isNowSharing;
-
-				return {
-					...prevState,
-					shareErrors: isNowSharing
-				};
-			});
-		}
-
 		return {
 			toggleAutoload: () => toggleBool("autoload"),
 			toggleDarkTheme: () => toggleBool("darkTheme"),
-			toggleRenderInline: () => toggleBool("render_inline"),
-			toggleShareErrors: () => toggleErrorSharing(),
+			toggleRenderInline: () => toggleBool("render_inline")
 		};
 	}, [setOpts]);
 
@@ -84,7 +69,6 @@ function OtherSettingsWidget() {
 		<Toggle description="Activate the extension on graph load" isChecked={autoload} label="Toggle 'autoload' setting" onChange={handlers.toggleAutoload} title="Autoload" />
 		<Toggle description="Should dark theme be used by default?" isChecked={darkTheme} label="Toggle 'dark theme' setting" onChange={handlers.toggleDarkTheme} title="Use Dark Theme by default" />
 		<Toggle description="This will display [[@citekey]] references as a formatted citation, like Scott et al. (2003). Block content will not be affected." isChecked={render_inline} label="Toggle 'render inline' setting" onChange={handlers.toggleRenderInline} title="Display references as citations" />
-		<Toggle description="Automatically share error reports" isChecked={shareErrors} label="Toggle 'share errors' setting" onChange={handlers.toggleShareErrors} title="Share Errors" />
 	</>;
 
 }

@@ -5,7 +5,7 @@ import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import CitekeyPopover from "Components/CitekeyPopover";
-import SentryBoundary from "Components/Errors/SentryBoundary";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 
 import useBool from "../../../hooks/useBool";
 
@@ -176,7 +176,7 @@ const RelatedPanel = memo(function RelatedPanel(props) {
 			onClose={onClose}
 		>
 			<div className={ Classes.DIALOG_BODY }>
-				<SentryBoundary feature="dialog-related" extra={show}>
+				<ErrorBoundary>
 					<div className="header-content">
 						<div className="header-left">
 							{panelLabel}
@@ -197,7 +197,7 @@ const RelatedPanel = memo(function RelatedPanel(props) {
 							type={show.type}
 						/>
 					</div>	
-				</SentryBoundary>
+				</ErrorBoundary>
 			</div>
 		</AuxiliaryDialog>
 	);

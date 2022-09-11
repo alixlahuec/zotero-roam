@@ -41,12 +41,6 @@
 		"enabled": false
 	},
 	{
-		"groupName": "Sentry",
-		"matchPackagePrefixes": [
-			"@sentry/"
-		]
-	},
-	{
 		"groupName": "Storybook Core",
 		"matchPackageNames": [
 			"@storybook/addon-a11y",

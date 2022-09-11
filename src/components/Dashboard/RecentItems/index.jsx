@@ -3,9 +3,9 @@ import { memo, useEffect, useMemo, useState } from "react";
 
 import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import { ListWrapper, Toolbar } from "Components/DataList";
 import LogItem from "./LogItem";
-import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import useBool from "../../../hooks/useBool";
 import { useQuery_Items } from "../../../api/queries";
@@ -94,13 +94,13 @@ const RecentItems = memo(function RecentItems({ onClose }){
 	const data = itemQueries.map(q => q.data || []).flat(1);
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 	
-	return <SentryBoundary feature="recent-items">
+	return <ErrorBoundary>
 		<div style={{ height: "100%" }}>
 			{isLoading
 				? <Spinner title="Loading library items..." />
 				: <LogView itemList={itemList} onClose={onClose} /> }
 		</div>
-	</SentryBoundary>;
+	</ErrorBoundary>;
 });
 RecentItems.propTypes = {
 	onClose: func
