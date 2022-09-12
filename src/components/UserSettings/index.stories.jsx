@@ -1,7 +1,7 @@
-import { SettingsDialog } from ".";
 
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
+import { SettingsDialog } from ".";
 
 import { OVERRIDE_KEY_OPTIONS } from "./Copy";
 
@@ -54,8 +54,7 @@ export default {
 			other: {
 				autoload: true,
 				darkTheme: false,
-				render_inline: true,
-				shareErrors: true
+				render_inline: true
 			},
 			pageMenu: {
 				defaults: [],

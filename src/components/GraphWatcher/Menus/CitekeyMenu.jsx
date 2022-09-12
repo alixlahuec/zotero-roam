@@ -6,11 +6,11 @@ import { Button, ButtonGroup, Card, Classes, Collapse, Tag } from "@blueprintjs/
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import ButtonLink from "Components/ButtonLink";
 import CitekeyPopover from "Components/CitekeyPopover";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import ErrorCallout from "Components/Errors/ErrorCallout";
 import ItemDetails from "Components/ItemDetails";
 import SciteBadge from "Components/SciteBadge";
 import SemanticPanel from "../SemanticPanel";
-import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
 import useBool from "../../../hooks/useBool";
@@ -340,7 +340,7 @@ const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 	}, [children, item, roamCitekeys]);
 
 	return (
-		<SentryBoundary feature="menu-citekey" extra={item}>
+		<ErrorBoundary>
 			{doiHeader}
 			<Card elevation={0} className="zr-citekey-menu" role="menubar" aria-label={"Citekey menu for" + item.key}>
 				<div className="zr-citekey-menu--header" role="group">
@@ -360,7 +360,7 @@ const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 				</div>
 				{relatedBar}
 			</Card>
-		</SentryBoundary>
+		</ErrorBoundary>
 	);
 });
 CitekeyMenu.propTypes = {

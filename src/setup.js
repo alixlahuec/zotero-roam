@@ -1,5 +1,4 @@
 import { unmountComponentAtNode } from "react-dom";
-import { getCurrentHub as getSentryHub, setContext as setSentryContext } from "@sentry/react";
 
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
@@ -166,7 +165,6 @@ export function setupInitialSettings(settingsObject){
 			autoload: false,
 			darkTheme: false,
 			render_inline: false,
-			shareErrors: false,
 			...other
 		},
 		pageMenu: {
@@ -293,21 +291,6 @@ export function setupPortals(){
 	const zrPortal = document.createElement("div");
 	zrPortal.id = EXTENSION_PORTAL_ID;
 	document.getElementById("app").appendChild(zrPortal);
-}
-
-/* istanbul ignore next */
-/** Initializes Sentry from current user settings
- * @param {Boolean} isUserEnabled - Has the user opted in?
- * @param {Object} config - The Sentry context to use
- */
-export function setupSentry(isUserEnabled = false, config = {}){
-	// https://github.com/getsentry/sentry-javascript/issues/2039
-	if(isUserEnabled){
-		getSentryHub().getClient().getOptions().enabled = true;
-		setSentryContext("config", config);
-	} else {
-		getSentryHub().getClient().getOptions().enabled = false;
-	}
 }
 
 /* istanbul ignore next */
