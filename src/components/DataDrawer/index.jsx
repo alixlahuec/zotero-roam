@@ -1,7 +1,7 @@
 import { bool, func, object } from "prop-types";
 
 import { Button, Classes, Drawer, Tab, Tabs } from "@blueprintjs/core";
-import SentryBoundary from "Components/Errors/SentryBoundary";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 
 import { CustomClasses } from "../../constants";
 
@@ -25,13 +25,13 @@ function DataDrawer({ item, isOpen, onClose }){
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
-			<SentryBoundary feature="drawer-data" extra={item}>
+			<ErrorBoundary>
 				<Tabs animate={false} className={CustomClasses.TABS_MINIMAL} id="zr-drawer--data" >
 					<Tab id="item" panel={<RawItem item={item} />} title="Item" />
 					<Tabs.Expander />
 					<Button icon="cross" minimal={true} onClick={onClose} />
 				</Tabs>
-			</SentryBoundary>
+			</ErrorBoundary>
 		</Drawer>
 	);
 }

@@ -4,7 +4,7 @@ import { memo, useMemo } from "react";
 import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tab, Tabs, Tag } from "@blueprintjs/core";
 
 import ButtonLink from "Components/ButtonLink";
-import SentryBoundary from "Components/Errors/SentryBoundary";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 
 import useBool from "../../hooks/useBool";
 import { useNotesSettings } from "Components/UserSettings/Notes";
@@ -127,14 +127,14 @@ const NotesDrawer = memo(function NotesDrawer(props){
 			lazy={false}
 			onClose={onClose}
 			size="40%" >
-			<SentryBoundary feature="drawer-notes" extra={notes}>
+			<ErrorBoundary>
 				<Tabs animate={false} className={CustomClasses.TABS_MINIMAL} id="zr-drawer--notes" >
 					{annots.length > 0 && <Tab id="annotations" panel={<PanelAnnotations annots={annots} />} title="Annotations" />}
 					{noteItems.length > 0 && <Tab id="notes" panel={<PanelNotes notes={noteItems} />} title="Notes" />}
 					<Tabs.Expander />
 					<Button icon="cross" minimal={true} onClick={onClose} />
 				</Tabs>
-			</SentryBoundary>
+			</ErrorBoundary>
 		</Drawer>
 	);
 });

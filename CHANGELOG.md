@@ -2,10 +2,6 @@
 
 ### [0.7.2](https://github.com/alixlahuec/zotero-roam/compare/0.7.1...0.7.2) -  2022-09-11 
 
-### [0.7.1](https://github.com/alixlahuec/zotero-roam/compare/0.6.100...0.7.1) -  2022-09-09 
-
-Latest public version is distributed as @0.6, the new version should strictly be released under 0.7.x when releasing as latest
-
 <!-- auto-changelog-above -->
 ## v0.7.0
 
@@ -24,7 +20,6 @@ Latest public version is distributed as @0.6, the new version should strictly be
 - **Other**
    + User settings are editable directly via the interface - no more `roam/js` code.
    + Theming is now done through CSS variables.
-   + Errors can be automatically shared to facilitate debugging.
 
 #### General Changes
 

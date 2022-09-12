@@ -2,8 +2,8 @@ import { bool, func, oneOf } from "prop-types";
 import { memo } from "react";
 
 import DialogOverlay from "Components/DialogOverlay";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import LibraryQueryList from "./LibraryQueryList";
-import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import useBool from "../../hooks/useBool";
 import { useCopySettings } from "Components/UserSettings/Copy";
@@ -48,13 +48,13 @@ const SearchPanel = memo(function SearchPanel({ isOpen, onClose, status }) {
 			isOpen={isOpen}
 			lazy={false}
 			onClose={onClose} >
-			<SentryBoundary feature="dialog-search">
+			<ErrorBoundary>
 				<LibraryQueryList 
 					handleClose={onClose}
 					isOpen={isOpen}
 					items={items}
 					quickCopyProps={{ isActive: quickCopyActive, toggle: toggleQuickCopy }} />
-			</SentryBoundary>
+			</ErrorBoundary>
 		</DialogOverlay>
 	);
 
