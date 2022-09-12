@@ -4,8 +4,8 @@ import { memo, useCallback, useMemo } from "react";
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
 import DataDrawer from "Components/DataDrawer";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import NotesDrawer from "Components/NotesDrawer";
-import SentryBoundary from "Components/Errors/SentryBoundary";
 import ShortcutSequence from "Components/ShortcutSequence";
 
 import { copyToClipboard, makeDateFromAgo } from "../../utils";
@@ -348,7 +348,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 	useHotkeys(hotkeys, { showDialogKeyCombo: "shift+Z+R" });
 
 	return <div id="zr-item-details">
-		<SentryBoundary feature="dialog-item" extra={item}>
+		<ErrorBoundary>
 			<div zr-role="item-metadata">
 				<div zr-role="item-metadata--header">
 					<h5>{title}</h5>
@@ -408,7 +408,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 					{notes}
 				</Menu>
 			</div>
-		</SentryBoundary>
+		</ErrorBoundary>
 	</div>;
 });
 ItemDetails.propTypes = {

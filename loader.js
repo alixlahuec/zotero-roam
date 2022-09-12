@@ -1,15 +1,13 @@
 /* istanbul ignore file */
 import { render } from "react-dom";
-
-import { init as SentryInit, getCurrentHub as getSentryHub } from "@sentry/react";
 import { HotkeysProvider } from "@blueprintjs/core";
 
 import { AppWrapper, queryClient } from "Components/App";
 import { UserSettingsProvider } from "Components/UserSettings";
 
-import { initialize, setup, setupPortals, setupSentry, unmountExtensionIfExists } from "./src/setup";
+import { initialize, setup, setupPortals, unmountExtensionIfExists } from "./src/setup";
 
-import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION, SENTRY_CONFIG } from "./src/constants";
+import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./src/constants";
 import ZoteroRoam from "./src/extension";
 
 
@@ -20,8 +18,6 @@ import "./src/index.css";
 function onload({ extensionAPI }){
 
 	const INSTALL_CONTEXT = "roam/depot";
-	
-	SentryInit(SENTRY_CONFIG);
 
 	setupPortals();
 
@@ -31,12 +27,6 @@ function onload({ extensionAPI }){
 		queryClient,
 		requests,
 		settings
-	});
-
-	// https://github.com/getsentry/sentry-javascript/issues/2039
-	setupSentry(settings.other.shareErrors, {
-		install: INSTALL_CONTEXT,
-		version: EXTENSION_VERSION
 	});
 
 	setup({ settings });
@@ -57,7 +47,6 @@ function onload({ extensionAPI }){
 }
 
 function offload(){
-	getSentryHub().getClient().close();
 	unmountExtensionIfExists();
 	delete window.zoteroRoam;
 }

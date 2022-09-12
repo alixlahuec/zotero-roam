@@ -292,8 +292,7 @@ const notesSettingsType = shape({
 const otherSettingsType = shape({
 	autoload: bool,
 	darkTheme: bool,
-	render_inline: bool,
-	shareErrors: bool
+	render_inline: bool
 });
 
 const pageMenuSettingsType = shape({

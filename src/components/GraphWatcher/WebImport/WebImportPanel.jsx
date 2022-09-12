@@ -5,7 +5,7 @@ import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import { CitoidGuide } from "Components/Guide";
-import SentryBoundary from "Components/Errors/SentryBoundary";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import ZoteroImport from "Components/ZoteroImport";
 
 import useMulti from "../../../hooks/useMulti";
@@ -105,7 +105,7 @@ const WebImportPanel = memo(function WebImportPanel(props){
 			isOpen={isOpen}
 			onClose={handleClose} >
 			<div className={ Classes.DIALOG_BODY }>
-				<SentryBoundary feature="dialog-webimport" extra={urls}>
+				<ErrorBoundary>
 					<div className="zr-webimport-panel--main">
 						<div className="header-content">
 							<div className="header-left">
@@ -129,7 +129,7 @@ const WebImportPanel = memo(function WebImportPanel(props){
 					<div className="zr-webimport-panel--side" tabIndex={0}>
 						<ZoteroImport identifiers={selected} isActive={has_selected_items} resetImport={setSelected} />
 					</div>
-				</SentryBoundary>
+				</ErrorBoundary>
 			</div>
 		</AuxiliaryDialog>
 	);

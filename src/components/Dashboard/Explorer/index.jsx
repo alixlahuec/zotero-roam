@@ -3,10 +3,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import { ListItem, ListWrapper } from "Components/DataList";
 import QueryItems from "./QueryItems";
 import QueryPDFs from "./QueryPDFs";
-import SentryBoundary from "Components/Errors/SentryBoundary";
 
 import { useQuery_Items } from "../../../api/queries";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
@@ -138,13 +138,13 @@ function Explorer({ onClose }){
 	const data = itemQueries.map(q => q.data || []).flat(1);
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 
-	return <SentryBoundary feature="data-explorer">
+	return <ErrorBoundary>
 		<div>
 			{isLoading
 				? <Spinner title="Loading libraries..." />
 				: <ExplorerTabs itemList={itemList} onClose={onClose} /> }
 		</div>
-	</SentryBoundary>;
+	</ErrorBoundary>;
 }
 Explorer.propTypes = {
 	onClose: func
