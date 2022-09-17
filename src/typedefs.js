@@ -76,10 +76,11 @@
 
 /**
  * @typedef {{
- * apikey: String,
+ * apikey?: String,
  * dataURI: String,
- * library: { id: String, path: String, type: ("groups"|"users"), uri: String },
- * name: String
+ * library?: { id: String, path: String, type: ("groups"|"users"), uri: String },
+ * name?: String,
+ * params?: String
  * }}
  * DataRequest
  */

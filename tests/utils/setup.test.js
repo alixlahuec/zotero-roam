@@ -61,6 +61,27 @@ describe("Parsing user data requests", () => {
 		expect(() => analyzeUserRequests(reqs))
 			.toThrow("A library type is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 	});
+
+	/* This is needed to support manual install via roam/js when the user has specified their dataRequests as an Object */
+	it("accepts an Object as input", () => {
+		const reqs = {
+			apikey: "XXXXXXXXXX",
+			dataURI: "users/12345/items"
+		};
+
+		const expected = {
+			dataRequests: [
+				{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", name: "", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } }
+			],
+			apiKeys: ["XXXXXXXXXX"],
+			libraries: [
+				{ path: "users/12345", apikey: "XXXXXXXXXX" }
+			]
+		};
+
+		expect(analyzeUserRequests(reqs))
+			.toEqual(expected);
+	});
 	
 	it("returns proper configuration when given correct input", () => {
 		const reqs = [
