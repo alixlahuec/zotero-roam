@@ -6,6 +6,8 @@
   "assignees": ["alixlahuec"],
   "baseBranches": ["beta"],
   "rangeStrategy": "bump",
+  "schedule": "every weekend",
+  "timezone": "America/Toronto",
   "packageRules": [
 	{
 		"matchDepTypes": ["action"],
