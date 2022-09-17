@@ -1,5 +1,12 @@
 ## Changelog
 
+### [0.7.3](https://github.com/alixlahuec/zotero-roam/compare/0.7.2...0.7.3) -  2022-09-17 
+
+#### Bug Fixes
+
+-  dataRequests not processed in manual setup when specified as an Object ([`#61`](https://github.com/alixlahuec/zotero-roam/pull/61))
+- \(deps): update sentry to ^7.12.1 ([`#44`](https://github.com/alixlahuec/zotero-roam/pull/44))
+
 ### [0.7.2](https://github.com/alixlahuec/zotero-roam/compare/0.7.1...0.7.2) -  2022-09-11 
 
 <!-- auto-changelog-above -->
