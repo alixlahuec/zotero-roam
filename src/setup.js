@@ -11,10 +11,14 @@ import {
 
 
 /** Generates a data requests configuration object
- * @param {Array} reqs - Data requests provided by the user
+ * @param {DataRequest|DataRequest[]} requests - Data requests provided by the user
  * @returns {ConfigRequests} A configuration object for the extension to use
  */
-export function analyzeUserRequests(reqs){
+export function analyzeUserRequests(requests){
+	const reqs = (requests.constructor === Array)
+		? requests
+		: [requests];
+
 	if(reqs.length == 0){
 		console.warn("At least one data request must be specified for the extension to function. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 		return {
