@@ -1,6 +1,6 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.7.3-beta.0",
+    "version": "0.7.3",
     "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
