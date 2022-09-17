@@ -1,15 +1,13 @@
 /* istanbul ignore file */
 import { render } from "react-dom";
-
 import { HotkeysProvider } from "@blueprintjs/core";
-import { init as SentryInit } from "@sentry/react";
 
 import { AppWrapper, queryClient } from "Components/App";
 import { UserSettingsProvider } from "Components/UserSettings";
 import zrToaster from "Components/ExtensionToaster";
 
-import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION, SENTRY_CONFIG } from "./constants";
-import { initialize, setup, setupPortals, setupSentry  } from "./setup";
+import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./constants";
+import { initialize, setup, setupPortals  } from "./setup";
 import ZoteroRoam from "./extension";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
@@ -19,8 +17,6 @@ import "./index.css";
 (() => {
 
 	const INSTALL_CONTEXT = "roam/js";
-
-	SentryInit(SENTRY_CONFIG);
 
 	setupPortals();
 
@@ -34,12 +30,6 @@ import "./index.css";
 			queryClient,
 			requests,
 			settings,
-		});
-
-		// https://github.com/getsentry/sentry-javascript/issues/2039
-		setupSentry(settings.other.shareErrors, {
-			install: INSTALL_CONTEXT,
-			version: EXTENSION_VERSION
 		});
 
 		setup({ settings });

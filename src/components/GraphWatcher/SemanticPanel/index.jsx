@@ -4,8 +4,8 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import SemanticPagination from "./SemanticPagination";
-import SentryBoundary from "Components/Errors/SentryBoundary";
 import SidePanel from "./SidePanel";
 
 import { pluralize, sortElems } from "../../../utils";
@@ -123,7 +123,7 @@ const SemanticPanel = memo(function SemanticPanel(props){
 			onClose={handleClose}
 		>
 			<div className={ Classes.DIALOG_BODY }>
-				<SentryBoundary feature="dialog-semantic">
+				<ErrorBoundary>
 					<div className="zr-semantic-panel--main">
 						<SemanticTabList 
 							defaultTab={show.type}
@@ -134,7 +134,7 @@ const SemanticPanel = memo(function SemanticPanel(props){
 						/>
 					</div>
 					<SidePanel selectProps={selectProps} />
-				</SentryBoundary>
+				</ErrorBoundary>
 			</div>
 		</AuxiliaryDialog>
 	);

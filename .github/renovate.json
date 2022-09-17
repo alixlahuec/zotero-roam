@@ -6,6 +6,8 @@
   "assignees": ["alixlahuec"],
   "baseBranches": ["beta"],
   "rangeStrategy": "bump",
+  "schedule": "every weekend",
+  "timezone": "America/Toronto",
   "packageRules": [
 	{
 		"matchDepTypes": ["action"],
@@ -22,7 +24,8 @@
 		"groupName": "Jest Core",
 		"matchPackageNames": [
 			"jest",
-			"jest-environment-jsdom"
+			"jest-environment-jsdom",
+			"babel-jest"
 		],
 		"enabled": false
 	},
@@ -39,12 +42,6 @@
 			"scite-badge"
 		],
 		"enabled": false
-	},
-	{
-		"groupName": "Sentry",
-		"matchPackagePrefixes": [
-			"@sentry/"
-		]
 	},
 	{
 		"groupName": "Storybook Core",

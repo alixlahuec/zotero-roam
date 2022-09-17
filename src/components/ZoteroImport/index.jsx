@@ -4,9 +4,9 @@ import { memo, useCallback, useMemo } from "react";
 import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 
 import CollectionsSelector from "./CollectionsSelector";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import LibrarySelector from "./LibrarySelector";
 import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
-import SentryBoundary from "Components/Errors/SentryBoundary";
 import TagsSelector from "Components/Inputs/TagsSelector";
 
 import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
@@ -124,7 +124,7 @@ const ImportPanel = memo(function ImportPanel(props) {
 	}, [selectedColls, selectedLib, selectedTags]);
 
 	return (
-		<SentryBoundary feature="zotero-import" extra={{ identifiers }}>
+		<ErrorBoundary>
 			<div className="import-header">
 				<ButtonGroup fill={true} minimal={true}>
 					<Button className={[CustomClasses.TEXT_SMALL, "zr-import--cancel"].join(" ")} icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
@@ -151,7 +151,7 @@ const ImportPanel = memo(function ImportPanel(props) {
 					onSelect={onTagSelect}
 					selectedTags={selectedTags} />
 			</div>
-		</SentryBoundary>
+		</ErrorBoundary>
 	);
 
 });

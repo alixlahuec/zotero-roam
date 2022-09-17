@@ -1,8 +1,8 @@
 import { TYPEMAP_DEFAULT } from "../../src/constants";
+import { analyzeUserRequests, setupInitialSettings } from "../../src/setup";
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 
-import { analyzeUserRequests, setupInitialSettings } from "../../src/setup";
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { id: userLibID, path: userPath }, groupLibrary: { id: groupLibID, path: groupPath } } = libraries;
@@ -60,6 +60,27 @@ describe("Parsing user data requests", () => {
 		];
 		expect(() => analyzeUserRequests(reqs))
 			.toThrow("A library type is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+	});
+
+	/* This is needed to support manual install via roam/js when the user has specified their dataRequests as an Object */
+	it("accepts an Object as input", () => {
+		const reqs = {
+			apikey: "XXXXXXXXXX",
+			dataURI: "users/12345/items"
+		};
+
+		const expected = {
+			dataRequests: [
+				{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", name: "", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } }
+			],
+			apiKeys: ["XXXXXXXXXX"],
+			libraries: [
+				{ path: "users/12345", apikey: "XXXXXXXXXX" }
+			]
+		};
+
+		expect(analyzeUserRequests(reqs))
+			.toEqual(expected);
 	});
 	
 	it("returns proper configuration when given correct input", () => {
@@ -194,8 +215,7 @@ describe("Parsing initial user settings", () => {
 		other: {
 			autoload: false,
 			darkTheme: false,
-			render_inline: false,
-			shareErrors: false
+			render_inline: false
 		},
 		pageMenu: {
 			defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],

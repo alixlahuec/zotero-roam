@@ -3,7 +3,7 @@ import { bool, func } from "prop-types";
 import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
-import SentryBoundary from "Components/Errors/SentryBoundary";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 
 import SettingsPanel from "./Panel";
 import UserSettingsProvider from "./Provider";
@@ -16,7 +16,7 @@ import "./index.css";
 function SettingsDialog({ isOpen, onClose }){
 	return <AuxiliaryDialog ariaLabelledBy="zr-settings-dialog--title" className="settings" isOpen={isOpen} onClose={onClose}>
 		<div className={ Classes.DIALOG_BODY }>
-			<SentryBoundary feature="dialog-settings">
+			<ErrorBoundary>
 				<div className="header-content">
 					<div className="header-left">
 						<h5 id="zr-settings-dialog--title" className="panel-tt">
@@ -30,7 +30,7 @@ function SettingsDialog({ isOpen, onClose }){
 				<div className="rendered-div">
 					<SettingsPanel />
 				</div>	
-			</SentryBoundary>
+			</ErrorBoundary>
 		</div>
 	</AuxiliaryDialog>;
 }

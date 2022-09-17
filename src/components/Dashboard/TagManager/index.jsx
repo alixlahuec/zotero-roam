@@ -3,9 +3,9 @@ import { useCallback, useMemo, useState } from "react";
 
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import LibrarySelect from "../LibrarySelect";
 import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
-import SentryBoundary from "Components/Errors/SentryBoundary";
 import TagsDatalist from "./TagsDatalist";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
@@ -82,13 +82,13 @@ function TagManager(){
 	const [{ libraries }] = useRequestsSettings();
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
 
-	return <SentryBoundary feature="tag-manager">
+	return <ErrorBoundary>
 		{isLoading
 			? <Spinner title="Loading libraries..." />
 			: writeableLibraries.length == 0
 				? <NoWriteableLibraries />
 				: <TabContents libraries={writeableLibraries} />}
-	</SentryBoundary>;
+	</ErrorBoundary>;
 }
 
 export default TagManager;
