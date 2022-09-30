@@ -22,17 +22,6 @@ PERFORMANCE OF THIS SOFTWARE.
 /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
 
 /**
-   * query-core
-   *
-   * Copyright (c) TanStack
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE.md file in the root directory of this source tree.
-   *
-   * @license MIT
-   */
-
-/**
  * @license React
  * use-sync-external-store-shim.production.min.js
  *
@@ -40,15 +29,4 @@ PERFORMANCE OF THIS SOFTWARE.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */
-
-/**
- * react-query
- *
- * Copyright (c) TanStack
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.md file in the root directory of this source tree.
- *
- * @license MIT
  */
