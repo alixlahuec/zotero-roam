@@ -1,0 +1,33 @@
+name: Bump version in PRs
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  release:
+    name: Make release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+
+      - name: git config
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+  
+      - name: Run release-it only for the version bump
+        run: npx release-it --ci --no-npm --no-git      
+
+      - name: Generate changelog
+        run: npx auto-changelog --config dev/.auto-changelog --package --unreleased
+
+      - name: Commit to repository
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "auto-commit: version bump"
+        continue-on-error: true # See https://github.com/stefanzweifel/git-auto-commit-action/issues/204
