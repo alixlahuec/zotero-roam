@@ -89,7 +89,7 @@
         "jest-environment-jsdom": "^28.1.3",
         "jest-transform-css": "^5.0.0",
         "mini-css-extract-plugin": "^2.6.1",
-        "msw": "^0.47.3",
+        "msw": "^0.47.4",
         "msw-storybook-addon": "^1.6.3",
         "release-it": "^15.4.2",
         "style-loader": "^3.3.1",
