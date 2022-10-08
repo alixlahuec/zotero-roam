@@ -78,7 +78,7 @@
         "babel-loader": "^8.2.5",
         "css-loader": "^6.7.1",
         "css-minimizer-webpack-plugin": "^4.1.0",
-        "eslint": "^8.24.0",
+        "eslint": "^8.25.0",
         "eslint-import-resolver-alias": "^1.1.2",
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-jest": "^27.0.4",
