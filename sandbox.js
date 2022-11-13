@@ -11,6 +11,7 @@ import { samplePDF } from "./mocks/zotero/pdfs";
 
 import ZoteroRoam from "./src/extension";
 import { initialize } from "./src/setup";
+import { simplifyZoteroAnnotations } from "./src/utils";
 
 
 const { keyWithFullAccess: masterKey } = apiKeys;
@@ -20,7 +21,7 @@ const { userLibrary } = libraries;
  * Creates a public API instance for sandbox environments (e.g Observable). Data is accessed via cache, and any methods that involve live API calls are overwritten.
  */
 class ZoteroRoamSandbox extends ZoteroRoam {
-	constructor(){
+	constructor({ annotations = {}, metadata = {} }){
 		const INSTALL_CONTEXT = "sandbox";
 
 		const { requests, settings } = initialize(INSTALL_CONTEXT, {
@@ -34,9 +35,15 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 						}
 					}
 				],
+				annotations: {
+					func: "customAnnotsFunction",
+					use: "function",
+					...annotations
+				},
 				metadata: {
 					func: "customFunction",
 					use: "function",
+					...metadata
 				}
 			}
 		});
@@ -135,5 +142,6 @@ function arrayToHTML(arr){
 
 export {
 	arrayToHTML,
+	simplifyZoteroAnnotations,
 	ZoteroRoamSandbox
 };
