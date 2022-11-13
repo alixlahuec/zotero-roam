@@ -4,6 +4,8 @@ on:
     branches-ignore:
       - main
       - beta
+      - release/latest
+      - release/beta
 jobs:
   commit-checks:
     name: Lint, test, and build
