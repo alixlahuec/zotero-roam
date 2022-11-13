@@ -1,5 +1,11 @@
 ## Changelog
 
+### [0.7.4](https://github.com/alixlahuec/zotero-roam/compare/0.7.3...0.7.4) -  2022-09-30 
+
+#### Bug Fixes
+
+- \(deps): update dependency @tanstack/react-query to ^4.7.1 ([`#64`](https://github.com/alixlahuec/zotero-roam/pull/64))
+
 ### [0.7.3](https://github.com/alixlahuec/zotero-roam/compare/0.7.2...0.7.3) -  2022-09-17 
 
 #### Bug Fixes
