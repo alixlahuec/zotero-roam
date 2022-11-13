@@ -52,7 +52,7 @@ jobs:
       - name: Get changelog
         id: changelog
         run: |
-          changelog=$(npx auto-changelog --stdout --unreleased-only)
+          changelog=$(npx auto-changelog --stdout --unreleased-only --config dev/.auto-changelog)
           echo $changelog
           echo "::set-output name=changelog::$changelog"
 
@@ -62,7 +62,7 @@ jobs:
 
       - name: Update changelog
         run: |
-          npx auto-changelog -p
+          npx auto-changelog -p --config dev/.auto-changelog
           git add CHANGELOG.md
           git commit -m "📝 Update CHANGELOG"
           git push origin ${{ env.RELEASE_BRANCH }} --progress --porcelain
