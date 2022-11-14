@@ -1,6 +1,6 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.7.4",
+    "version": "0.7.5-beta.0",
     "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
@@ -32,7 +32,7 @@
         "build-storybook": "build-storybook --quiet",
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage",
-		"version-release": "release-it --config dev/.release-it.json --ci --no-git.tag --no-npm.publish --no-github.release",
+        "version-release": "release-it --config dev/.release-it.json --ci --no-git.tag --no-npm.publish --no-github.release",
         "version-release:latest": "npm run version-release",
         "version-release:beta": "npm run version-release -- --preRelease=beta",
         "publish-release": "release-it --config dev/.release-it.json --ci --npm.skipChecks --no-increment",
