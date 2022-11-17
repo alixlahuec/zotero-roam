@@ -376,6 +376,14 @@ async function openPageByUID(uid){
 	await window.roamAlphaAPI.ui.mainWindow.openPage({ page: { uid } });
 }
 
+/** Removes an entry from Roam's Command Palette
+ * @param {String} label - The label for the menu option
+ * @see https://roamresearch.com/#/app/developer-documentation/page/eG9ulEdWq
+ */
+function removePaletteCommand(label){
+	window.roamAlphaAPI.ui.commandPalette.removeCommand({ label });
+}
+
 export {
 	addBlocksArray,
 	addPaletteCommand,
@@ -389,5 +397,6 @@ export {
 	importItemNotes,
 	maybeReturnCursorToPlace,
 	openInSidebarByUID,
-	openPageByUID
+	openPageByUID,
+	removePaletteCommand
 };

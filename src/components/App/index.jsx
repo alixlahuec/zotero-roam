@@ -1,7 +1,7 @@
 /* istanbul ignore file */
+import { bool } from "prop-types";
 import { Component, createContext } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { bool } from "prop-types";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
@@ -15,11 +15,14 @@ import { useOtherSettings } from "Components/UserSettings/Other";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
-import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace } from "Roam";
+import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
 
 import * as customPropTypes from "../../propTypes";
 import { SettingsDialog } from "../UserSettings";
 
+
+const openSearchCommand = "zoteroRoam : Open Search Panel";
+const openDashboardCommand = "zoteroRoam : Open Dashboard";
 
 const ExtensionContext = createContext();
 
@@ -90,8 +93,8 @@ class App extends Component {
 	}
 
 	componentDidMount(){
-		addPaletteCommand("zoteroRoam : Open Search Panel", this.openSearchPanel);
-		addPaletteCommand("zoteroRoam : Open Dashboard", this.openDashboard);
+		addPaletteCommand(openSearchCommand, this.openSearchPanel);
+		addPaletteCommand(openDashboardCommand, this.openDashboard);
 	}
 
 	componentDidUpdate(prevProps){
@@ -108,6 +111,11 @@ class App extends Component {
 			}));
 		}
 		// In the case of a change in requests, the old requests should become inactive & be eventually cleared
+	}
+
+	componentWillUnmount(){
+		removePaletteCommand(openSearchCommand);
+		removePaletteCommand(openDashboardCommand);
 	}
 
 	render() {
