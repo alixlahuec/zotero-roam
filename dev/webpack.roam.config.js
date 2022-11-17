@@ -5,7 +5,7 @@ const { merge } = require("webpack-merge");
 const baseConfig = require("./webpack.config");
 
 module.exports = merge(baseConfig, {
-    devtool: "source-map",
+    devtool: false,
     experiments: {
         outputModule: true,
     },
@@ -39,12 +39,11 @@ module.exports = merge(baseConfig, {
         maxEntrypointSize: 2000000
     },
     output: {
-		path: path.resolve("dist"),
+		path: path.resolve("."),
 		filename: "extension.js",
         library: {
             type: "module",
-        },
-        sourceMapFilename: "extension.js.map"
+        }
     },
     plugins: [
         new MiniCssExtractPlugin({
