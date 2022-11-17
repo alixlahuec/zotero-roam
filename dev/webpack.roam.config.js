@@ -39,7 +39,7 @@ module.exports = merge(baseConfig, {
         maxEntrypointSize: 2000000
     },
     output: {
-		path: path.resolve("dist"),
+		path: path.resolve("."),
 		filename: "extension.js",
         library: {
             type: "module",
