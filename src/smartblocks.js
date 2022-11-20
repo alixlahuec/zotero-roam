@@ -204,17 +204,49 @@ function eval_term(term, props){
 /* istanbul ignore next */
 /** Register the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
+ * @see https://github.com/dvargas92495/roamjs-components/blob/7aeae1482714a4c829c8141667eb1d459403b4ec/src/util/registerSmartBlocksCommand.ts
  */
 function registerSmartblockCommands(){
 	const commands = sbCommands();
-	Object.keys(commands).forEach(k => {
-		const { help, handler } = commands[k];
-		window.roamjs?.extension?.smartblocks?.registerCommand({
-			text: k,
-			help: help,
-			handler: handler
+
+	const register = () => {
+		if(window.roamjs?.extension?.smartblocks){
+			try {
+				unregisterSmartblockCommands();
+			} catch(e) {
+				// Do nothing
+			}
+
+			Object.keys(commands).forEach(cmd => {
+				const { help, handler } = commands[cmd];
+				window.roamjs.extension.smartblocks.registerCommand({
+					text: cmd,
+					help: help,
+					handler: handler
+				});
+			});
+		}
+	};
+
+	if (window.roamjs?.loaded?.has("smartblocks")) {
+		register();
+	} else {
+		document.body.addEventListener("roamjs:smartblocks:loaded", register);
+	}
+}
+
+/* istanbul ignore next */
+/** Unregister the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
+ * @see https://github.com/dvargas92495/roamjs-components/blob/7aeae1482714a4c829c8141667eb1d459403b4ec/src/util/registerSmartBlocksCommand.ts
+ */
+function unregisterSmartblockCommands(){
+	const commands = sbCommands();
+
+	if(window.roamjs?.extension?.smartblocks){
+		Object.keys(commands).forEach(cmd => {
+			window.roamjs.extension.smartblocks.unregisterCommand(cmd);
 		});
-	});
+	}
 }
 
 // Extension-triggered SmartBlocks
@@ -276,5 +308,6 @@ async function use_smartblock_metadata(config, context){
 export {
 	eval_term,
 	registerSmartblockCommands,
+	unregisterSmartblockCommands,
 	use_smartblock_metadata
 };
