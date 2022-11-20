@@ -1,12 +1,23 @@
+import { expect, jest } from "@storybook/jest";
 import ItemDetails from ".";
 import zrToaster from "../ExtensionToaster";
 
-import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import { cleanLibraryItem } from "../../utils";
 import { items } from "Mocks/zotero/items";
 
+
+const sampleShortcuts = {
+	"copyDefault": "alt+D",
+	"copyCitation": "alt+C+T",
+	"copyCitekey": "alt+C+K",
+	"copyPageRef": "alt+P",
+	"copyTag": "alt+T",
+	"goToItemPage": "alt+G",
+	"importMetadata": "alt+M",
+	"toggleNotes": "alt+N",
+};
 
 export default {
 	component: ItemDetails,
@@ -24,16 +35,7 @@ export default {
 			copy: {},
 			metadata: {},
 			notes: {},
-			shortcuts: {
-				"copyDefault": "alt+D",
-				"copyCitation": "alt+C+T",
-				"copyCitekey": "alt+C+K",
-				"copyPageRef": "alt+P",
-				"copyTag": "alt+T",
-				"goToItemPage": "alt+G",
-				"importMetadata": "alt+M",
-				"toggleNotes": "alt+N",
-			},
+			shortcuts: sampleShortcuts,
 			typemap: {}
 		}
 	}
@@ -88,4 +90,19 @@ WithCopyHotkeys.play = async() => {
 
 	await waitFor(() => expect(showToasterFn)
 		.toHaveBeenCalled());
+};
+
+export const WithInvalidHotkey = Template.bind({});
+WithInvalidHotkey.parameters = {
+	userSettings: {
+		annotations: {},
+		copy: {},
+		metadata: {},
+		notes: {},
+		shortcuts: {
+			...sampleShortcuts,
+			"importMetadata": "alt+ +"
+		},
+		typemap: {}
+	}
 };
