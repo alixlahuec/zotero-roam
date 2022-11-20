@@ -46,6 +46,7 @@ const AppWrapper = (props) => {
 	const [shortcuts] = useShortcutsSettings();
 
 	// Only pass valid hotkey combos
+	// TODO: move validation step upstream
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	return <App autoload={otherSettings.autoload} requests={requests} shortcuts={sanitizedShortcuts} {...props} />;

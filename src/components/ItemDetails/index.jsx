@@ -58,6 +58,7 @@ function CopyOption(props){
 	const { citekey, format, item } = props;
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
+	// TODO: move validation step upstream
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const textOutput = useMemo(() => makeItemReference(citekey, format, item), [citekey, format, item]);
@@ -107,6 +108,7 @@ function CopyButtons(props){
 	const [copySettings] = useCopySettings();
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
+	// TODO: move validation step upstream
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const defaultCopyText = useMemo(() => {
@@ -242,6 +244,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 	const [notesSettings] = useNotesSettings();
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
+	// TODO: move validation step upstream
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 	const [typemap] = useTypemapSettings();
 

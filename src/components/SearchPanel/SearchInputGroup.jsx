@@ -18,6 +18,7 @@ const SearchInputGroup = memo(function SearchInputGroup(props) {
 		searchbar } = props;
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
+	// TODO: move validation step upstream
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const searchbarLeftElement = useMemo(() => 
