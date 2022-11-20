@@ -1,6 +1,13 @@
 ## Changelog
 
-### [0.7.5](https://github.com/alixlahuec/zotero-roam/compare/0.7.4...0.7.5) - 
+### [0.7.6](https://github.com/alixlahuec/zotero-roam/compare/0.7.5...0.7.6) - 
+
+#### Bug Fixes
+
+-  race condition with Smartblocks ([`#97`](https://github.com/alixlahuec/zotero-roam/pull/97))
+-  fatal crash due to invalid shortcuts ([`#96`](https://github.com/alixlahuec/zotero-roam/pull/96))
+
+### [0.7.5](https://github.com/alixlahuec/zotero-roam/compare/0.7.4...0.7.5) -  2022-11-17 
 
 #### Features
 
