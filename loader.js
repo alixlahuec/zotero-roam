@@ -13,7 +13,7 @@ import ZoteroRoam from "./src/extension";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./src/index.css";
-import { unregisterSmartblockCommands } from "src/smartblocks";
+import { unregisterSmartblockCommands } from "./src/smartblocks";
 
 
 function onload({ extensionAPI }){
