@@ -1,5 +1,6 @@
 import { unmountComponentAtNode } from "react-dom";
 
+import { parseKeyCombo } from "@blueprintjs/core";
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
 
@@ -199,7 +200,7 @@ export function setupInitialSettings(settingsObject){
 			"toggleSearchPanel": "alt+E",
 			"toggleSettingsPanel": "",
 			"toggleQuickCopy": "",
-			...shortcuts
+			...(validateShortcuts(shortcuts))
 		},
 		typemap: {
 			...TYPEMAP_DEFAULT,
@@ -326,4 +327,19 @@ export function unmountExtensionIfExists(){
 	} catch(e){
 		// Do nothing
 	}
+}
+
+export function validateShortcuts(shortcuts){
+	const output = {};
+
+	Object.keys(shortcuts).forEach((key) => {
+		try {
+			parseKeyCombo(shortcuts[key]);
+			output[key] = shortcuts[key];
+		} catch(e) {
+			console.error(e);
+		}
+	});
+
+	return output;
 }

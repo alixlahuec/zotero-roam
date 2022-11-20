@@ -1,9 +1,10 @@
-import { Children, cloneElement, isValidElement, useCallback, useMemo } from "react";
 import { arrayOf, bool, func, node, number, object, objectOf, oneOfType, shape, string } from "prop-types";
+import { Children, cloneElement, isValidElement, useCallback, useMemo } from "react";
 
 import { Button, Checkbox, Classes, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
+import useBool from "../../hooks/useBool";
 import InputMultiSelect from "Components/Inputs/InputMultiSelect";
 import TagsSelector from "Components/Inputs/TagsSelector";
 
@@ -273,8 +274,13 @@ TextInput.propTypes = {
 	children: node
 };
 
-const TextField = ({ description = null, ifEmpty = null, label = null, onChange, placeholder = null, title = null, value, ...extraProps }) => {
-	const valueHandler = useCallback((event) => onChange(event.target.value), [onChange]);
+const defaultValidator = (_text) => true;
+const TextField = ({ description = null, ifEmpty = null, label = null, onChange, placeholder = null, title = null, validate = defaultValidator, value, ...extraProps }) => {
+	const [isValid, { set: setIsValid }] = useBool(() => validate(value));
+	const valueHandler = useCallback((event) => {
+		onChange(event.target.value);
+		setIsValid(() => validate(event.target.value));
+	}, [onChange, setIsValid, validate]);
 
 	return <Row>
 		<div>
@@ -284,6 +290,7 @@ const TextField = ({ description = null, ifEmpty = null, label = null, onChange,
 		<TextInput>
 			{value || ifEmpty == true
 				? <input 
+					aria-invalid={(!isValid).toString()}
 					aria-label={label}
 					autoComplete="off" 
 					className={["zr-text-input", CustomClasses.TEXT_SMALL, Classes.INPUT].join(" ")}
@@ -306,6 +313,7 @@ TextField.propTypes = {
 	onChange: func,
 	placeholder: string,
 	title: node,
+	validate: func,
 	value: string
 };
 

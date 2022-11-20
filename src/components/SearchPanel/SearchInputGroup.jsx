@@ -3,6 +3,7 @@ import { memo, useMemo } from "react";
 
 import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprintjs/core";
 
+import { validateShortcuts } from "../../setup";
 import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { dialogLabel } from "./classes";
@@ -15,7 +16,10 @@ const SearchInputGroup = memo(function SearchInputGroup(props) {
 		handleKeyDown, handleKeyUp, handleQueryChange, 
 		quickCopyProps: { isActive: isQCActive, toggle: toggleQC }, 
 		searchbar } = props;
-	const [shortcutsSettings] = useShortcutsSettings();
+	const [shortcuts] = useShortcutsSettings();
+	// Only pass valid hotkey combos
+	// TODO: move validation step upstream
+	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const searchbarLeftElement = useMemo(() => 
 		<Icon id={dialogLabel} 
@@ -53,17 +57,21 @@ const SearchInputGroup = memo(function SearchInputGroup(props) {
 			}
 		};
 
-		return Object.keys(shortcutsSettings)
-			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] !== "")
-			.map(k => {
-				return {
-					...defaultProps,
-					...configs[k],
-					combo: shortcutsSettings[k]
-				};
-			});
+		return Object.keys(configs)
+			.map(cmd => {
+				const combo = sanitizedShortcuts[cmd] || "";
+				if(combo !== ""){
+					return {
+						...defaultProps,
+						...configs[cmd],
+						combo
+					};
+				} else {
+					return false;
+				}
+			}).filter(Boolean);
 		
-	}, [searchbar, shortcutsSettings, toggleQC]);
+	}, [searchbar, sanitizedShortcuts, toggleQC]);
 
 	useHotkeys(hotkeys, { showDialogKeyCombo: "shift+Z+R" });
 

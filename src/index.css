@@ -180,12 +180,14 @@ textarea.zr-text-input,
 
 .zr-date-input .bp3-input-group.bp3-intent-danger input,
 .zr-date-input .bp3-input-group.bp3-intent-danger .bp3-input-action .bp3-icon,
-.zr-date-range-input .bp3-input-group.bp3-intent-danger input {
+.zr-date-range-input .bp3-input-group.bp3-intent-danger input,
+.zr-text-input input[aria-invalid="true"] {
     color: var(--zr-negative-co);
 }
 
 .zr-date-input .bp3-input-group.bp3-intent-danger input,
-.zr-date-range-input .bp3-input-group.bp3-intent-danger input {
+.zr-date-range-input .bp3-input-group.bp3-intent-danger input,
+.zr-text-input input[aria-invalid="true"] {
     box-shadow: none;
     outline: 1px var(--zr-negative-co) solid;
 }
