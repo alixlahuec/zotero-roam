@@ -1,10 +1,11 @@
 /* istanbul ignore file */
 import { bool } from "prop-types";
-import { Component, createContext } from "react";
+import { Component, createContext, useMemo } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
+import { validateShortcuts } from "../../../src/setup";
 import Dashboard from "Components/Dashboard";
 import ExtensionIcon from "Components/ExtensionIcon";
 import GraphWatcher from "Components/GraphWatcher";
@@ -44,7 +45,10 @@ const AppWrapper = (props) => {
 	const [requests] = useRequestsSettings();
 	const [shortcuts] = useShortcutsSettings();
 
-	return <App autoload={otherSettings.autoload} requests={requests} shortcuts={shortcuts} {...props} />;
+	// Only pass valid hotkey combos
+	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
+
+	return <App autoload={otherSettings.autoload} requests={requests} shortcuts={sanitizedShortcuts} {...props} />;
 };
 
 class App extends Component {
