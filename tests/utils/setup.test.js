@@ -1,5 +1,5 @@
 import { TYPEMAP_DEFAULT } from "../../src/constants";
-import { analyzeUserRequests, setupInitialSettings } from "../../src/setup";
+import { analyzeUserRequests, setupInitialSettings, validateShortcuts } from "../../src/setup";
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 
@@ -254,4 +254,19 @@ describe("Parsing initial user settings", () => {
 		expect(JSON.stringify(setupInitialSettings({ dataRequests: [] })))
 			.toEqual(JSON.stringify(defaults));
 	});
+});
+
+describe("Parsing user shortcuts", () => {
+	const cases = [
+		[{}, {}],
+		[{ "copyDefault": "alt+E" }, { "copyDefault": "alt+E" }],
+		[{ "toggleDashboard": "alt+ +" }, {}]
+	];
+	test.each(cases)(
+		"%# - %s",
+		(input, expectation) => {
+			expect(validateShortcuts(input))
+				.toEqual(expectation);
+		}
+	);
 });

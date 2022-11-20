@@ -3,6 +3,7 @@ import { memo, useCallback, useMemo } from "react";
 
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
+import { validateShortcuts } from "../../setup";
 import DataDrawer from "Components/DataDrawer";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import NotesDrawer from "Components/NotesDrawer";
@@ -55,40 +56,44 @@ const makeItemReference = (citekey, format, item) => {
 
 function CopyOption(props){
 	const { citekey, format, item } = props;
-	const [shortcutsSettings] = useShortcutsSettings();
+	const [shortcuts] = useShortcutsSettings();
+	// Only pass valid hotkey combos
+	// TODO: move validation step upstream
+	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const textOutput = useMemo(() => makeItemReference(citekey, format, item), [citekey, format, item]);
 	const formatCitekey = useCallback(() => copyToClipboard(textOutput), [textOutput]);
 
 	const label = useMemo(() => {
-		const {
-			copyCitation: citationCombo,
-			copyCitekey: citekeyCombo,
-			copyPageRef: pageRefCombo,
-			copyTag: tagCombo
-		} = shortcutsSettings;
+		const mapping = {
+			"citation": {
+				action: "copy as citation",
+				command: "copyCitation"
+			},
+			"citekey": {
+				action: "copy as citekey",
+				command: "copyCitekey"
+			},
+			"page-reference": {
+				action: "copy as page reference",
+				command: "copyPageRef"
+			},
+			"tag": {
+				action: "copy as tag",
+				command: "copyTag"
+			}
+		};
 
-		switch(format){
-		case "page-reference":
-			return pageRefCombo !== ""
-				? <ShortcutSequence action="copy as page reference" text={pageRefCombo} />
-				: null;
-		case "tag":
-			return tagCombo !== ""
-				? <ShortcutSequence action="copy as tag" text={tagCombo} /> 
-				: null;
-		case "citation":
-			return citationCombo !== ""
-				? <ShortcutSequence action="copy as citation" text={citationCombo} />
-				: null;
-		case "citekey":
-			return citekeyCombo !== ""
-				? <ShortcutSequence action="copy as citekey" text={citekeyCombo} />
-				: null;
-		default:
-			return null;
+		if(mapping[format]){
+			const { action, command } = mapping[format];
+			if(sanitizedShortcuts[command] !== ""){
+				return <ShortcutSequence action={action} text={sanitizedShortcuts[command]} />;
+			}
 		}
-	}, [format, shortcutsSettings]);
+
+		return null;
+
+	}, [format, sanitizedShortcuts]);
   
 	return <MenuItem htmlTitle={textOutput} labelElement={label} onClick={formatCitekey} text={textOutput} />;
 }
@@ -101,7 +106,10 @@ CopyOption.propTypes = {
 function CopyButtons(props){
 	const { citekey, item } = props;
 	const [copySettings] = useCopySettings();
-	const [shortcutsSettings] = useShortcutsSettings();
+	const [shortcuts] = useShortcutsSettings();
+	// Only pass valid hotkey combos
+	// TODO: move validation step upstream
+	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const defaultCopyText = useMemo(() => {
 		return formatItemReferenceWithDefault(item, copySettings);
@@ -127,10 +135,11 @@ function CopyButtons(props){
 	}, [citekey, copyAsDefault, copySettings, defaultCopyText, item]);
 
 	const label = useMemo(() => {
-		return shortcutsSettings.copyDefault !== ""
-			? <ShortcutSequence action="copy as default" text={shortcutsSettings.copyDefault} />
+		const combo = sanitizedShortcuts.copyDefault || "";
+		return (combo !== "")
+			? <ShortcutSequence action="copy as default" text={combo} />
 			: null;
-	}, [shortcutsSettings]);
+	}, [sanitizedShortcuts]);
 
 	const hotkeys = useMemo(() => {
 		const defaultProps = {
@@ -163,17 +172,21 @@ function CopyButtons(props){
 			}
 		};
 
-		return Object.keys(shortcutsSettings)
-			.filter(k => Object.keys(configs).includes(k) && shortcutsSettings[k] !== "")
-			.map(k => {
-				return {
-					...defaultProps,
-					...configs[k],
-					combo: shortcutsSettings[k]
-				};
-			});
+		return Object.keys(configs)
+			.map(cmd => {
+				const combo = sanitizedShortcuts[cmd] || "";
+				if(combo !== ""){
+					return {
+						...defaultProps,
+						...configs[cmd],
+						combo
+					};
+				} else {
+					return false;
+				}
+			}).filter(Boolean);
 
-	}, [citekey, copyAsDefault, item, shortcutsSettings]);
+	}, [citekey, copyAsDefault, item, sanitizedShortcuts]);
 
 	useHotkeys(hotkeys, { showDialogKeyCombo: "shift+Z+R" });
 
@@ -227,7 +240,10 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 	const [annotationsSettings] = useAnnotationsSettings();
 	const [metadataSettings] = useMetadataSettings();
 	const [notesSettings] = useNotesSettings();
-	const [shortcutsSettings] = useShortcutsSettings();
+	const [shortcuts] = useShortcutsSettings();
+	// Only pass valid hotkey combos
+	// TODO: move validation step upstream
+	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 	const [typemap] = useTypemapSettings();
 
 	const [, updateRoamCitekeys] = useRoamCitekeys();
@@ -257,13 +273,22 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 	}, [closeDialog, inGraph]);
 
 	const goToPageButton = useMemo(() => {
-		const label = shortcutsSettings.goToItemPage !== ""
-			? <ShortcutSequence action="go to the item's page" text={shortcutsSettings.goToItemPage} />
+		const combo = sanitizedShortcuts.goToItemPage || "";
+		const label = (combo !== "")
+			? <ShortcutSequence action="go to the item's page" text={combo} />
 			: null;
 		return inGraph 
 			? <MenuItem icon="arrow-right" labelElement={label} onClick={navigateToPage} text="Go to Roam page" />
 			: null;
-	}, [inGraph, navigateToPage, shortcutsSettings]);
+	}, [inGraph, navigateToPage, sanitizedShortcuts]);
+
+	const importMetadataButton = useMemo(() => {
+		const combo = sanitizedShortcuts.importMetadata || "";
+		const label = (combo !== "")
+			? <ShortcutSequence action="import the item's metadata" text={combo} />
+			: null;
+		return <MenuItem icon="add" labelElement={label} onClick={importMetadata} text="Import metadata" />;
+	}, [importMetadata, sanitizedShortcuts]);
 
 	const pdfs = useMemo(() => {
 		if(children.pdfs.length == 0){
@@ -283,15 +308,16 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 		if(children.notes.length == 0){
 			return null;
 		} else {
-			const label = shortcutsSettings.toggleNotes !== ""
-				? <ShortcutSequence action="toggle the notes panel" text={shortcutsSettings.toggleNotes} />
+			const combo = sanitizedShortcuts.toggleNotes || "";
+			const label = (combo !== "")
+				? <ShortcutSequence action="toggle the notes panel" text={combo} />
 				: null;
 			return <>
 				<MenuItem icon="highlight" labelElement={label} onClick={showNotes} text="Highlights & Notes" />
 				<NotesDrawer isOpen={isNotesDrawerOpen} notes={children.notes} onClose={closeNotes} />
 			</>;
 		}
-	}, [children.notes, closeNotes, isNotesDrawerOpen, shortcutsSettings, showNotes]);
+	}, [children.notes, closeNotes, isNotesDrawerOpen, sanitizedShortcuts, showNotes]);
 
 	// * The data drawer here could show additional metadata (formatted ; PDFs ; notes)
 	const rawData = useMemo(() => {
@@ -302,7 +328,6 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 	}, [closeData, item.raw, isDataDrawerOpen, showData]);
 
 	const hotkeys = useMemo(() => {
-		const { goToItemPage: pageCombo, importMetadata: metadataCombo, toggleNotes: notesCombo } = shortcutsSettings;
 		const defaultProps = {
 			allowInInput: false,
 			global: true,
@@ -310,40 +335,38 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 			stopPropagation: true
 		};
 
-		const shortcutsList = [];
-
-		if(pageCombo){
-			shortcutsList.push({
-				...defaultProps,
-				combo: pageCombo,
+		const configs = {
+			"goToItemPage": {
 				disabled: !inGraph,
 				label: "Go to the item's Roam page",
 				onKeyDown: () => navigateToPage()
-			});
-		}
-
-		if(metadataCombo){
-			shortcutsList.push({
-				...defaultProps,
-				combo: metadataCombo,
+			},
+			"importMetadata": {
 				label: "Import the item's metadata to Roam",
 				onKeyDown: () => importMetadata()
-			});
-		}
-
-		if(notesCombo){
-			shortcutsList.push({
-				...defaultProps,
-				combo: notesCombo,
+			},
+			"toggleNotes": {
 				disabled: children.notes.length == 0,
 				label: "Show the item's linked notes",
 				onKeyDown: () => toggleNotes()
-			});
-		}
+			}
+		};
 
-		return shortcutsList;
+		return Object.keys(configs)
+			.map(cmd => {
+				const combo = sanitizedShortcuts[cmd] || "";
+				if(combo !== ""){
+					return {
+						...defaultProps,
+						...configs[cmd],
+						combo
+					};
+				} else {
+					return false;
+				}
+			}).filter(Boolean);
 
-	}, [children.notes, importMetadata, inGraph, navigateToPage, shortcutsSettings, toggleNotes]);
+	}, [children.notes, importMetadata, inGraph, navigateToPage, sanitizedShortcuts, toggleNotes]);
 
 	useHotkeys(hotkeys, { showDialogKeyCombo: "shift+Z+R" });
 
@@ -395,10 +418,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 					{navigator.clipboard && <CopyButtons citekey={key} item={item} />}
 					<MenuDivider className={CustomClasses.DIVIDER_MINIMAL} title="Actions" />
 					{goToPageButton}
-					<MenuItem icon="add" 
-						labelElement={shortcutsSettings.importMetadata !== "" && <ShortcutSequence action="import the item's metadata" text={shortcutsSettings.importMetadata} />} 
-						onClick={importMetadata} 
-						text="Import metadata" />
+					{importMetadataButton}
 					{children.notes.length > 0 && <MenuItem icon="chat" onClick={importNotes} text="Import notes" />}
 					<MenuItem href={zotero.local} icon="application" rel="noreferrer" target="_blank" text="Open in Zotero" />
 					<MenuItem href={zotero.web} icon="cloud" rel="noreferrer" target="_blank" text="Open in Zotero (web)" />

@@ -1,6 +1,7 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
+import { parseKeyCombo } from "@blueprintjs/core";
 import { TextField } from "../common";
 import { camelToTitleCase } from "../../../utils";
 
@@ -40,6 +41,17 @@ const useShortcutsSettings = () => {
 	return context;
 };
 
+const validateUserInput = (input) => {
+	if(input == ""){ return true; }
+
+	try {
+		parseKeyCombo(input);
+		return true;
+	} catch(e) {
+		return false;
+	}
+};
+
 function ShortcutsWidget(){
 	const [
 		shortcuts,
@@ -54,7 +66,7 @@ function ShortcutsWidget(){
 	}, [setOpts]);
 
 	return Object.keys(shortcuts).map(cmd => (
-		<TextField key={cmd} ifEmpty={true} label={"Enter a keyboard shortcut to use to" + camelToTitleCase(cmd)} onChange={(val) => updateValue(cmd, val)} title={camelToTitleCase(cmd)} value={shortcuts[cmd]} />
+		<TextField key={cmd} ifEmpty={true} label={"Enter a keyboard shortcut to use to" + camelToTitleCase(cmd)} onChange={(val) => updateValue(cmd, val)} title={camelToTitleCase(cmd)} validate={validateUserInput} value={shortcuts[cmd]} />
 	));
 }
 
