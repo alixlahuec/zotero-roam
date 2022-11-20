@@ -135,12 +135,10 @@ function CopyButtons(props){
 	}, [citekey, copyAsDefault, copySettings, defaultCopyText, item]);
 
 	const label = useMemo(() => {
-		if(sanitizedShortcuts.copyDefault && sanitizedShortcuts.copyDefault !== ""){
-			return <ShortcutSequence action="copy as default" text={sanitizedShortcuts.copyDefault} />;
-		}
-
-		return null;
-
+		const combo = sanitizedShortcuts.copyDefault || "";
+		return (combo !== "")
+			? <ShortcutSequence action="copy as default" text={combo} />
+			: null;
 	}, [sanitizedShortcuts]);
 
 	const hotkeys = useMemo(() => {
@@ -276,7 +274,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 
 	const goToPageButton = useMemo(() => {
 		const combo = sanitizedShortcuts.goToItemPage || "";
-		const label = combo !== ""
+		const label = (combo !== "")
 			? <ShortcutSequence action="go to the item's page" text={combo} />
 			: null;
 		return inGraph 
@@ -286,7 +284,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 
 	const importMetadataButton = useMemo(() => {
 		const combo = sanitizedShortcuts.importMetadata || "";
-		const label = combo !== ""
+		const label = (combo !== "")
 			? <ShortcutSequence action="import the item's metadata" text={combo} />
 			: null;
 		return <MenuItem icon="add" labelElement={label} onClick={importMetadata} text="Import metadata" />;
@@ -311,7 +309,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 			return null;
 		} else {
 			const combo = sanitizedShortcuts.toggleNotes || "";
-			const label = combo !== ""
+			const label = (combo !== "")
 				? <ShortcutSequence action="toggle the notes panel" text={combo} />
 				: null;
 			return <>
