@@ -64,7 +64,7 @@ const SearchInputGroup = memo(function SearchInputGroup(props) {
 					return {
 						...defaultProps,
 						...configs[cmd],
-						combo: sanitizedShortcuts[cmd]
+						combo
 					};
 				} else {
 					return false;
