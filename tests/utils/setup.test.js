@@ -260,7 +260,8 @@ describe("Parsing user shortcuts", () => {
 	const cases = [
 		[{}, {}],
 		[{ "copyDefault": "alt+E" }, { "copyDefault": "alt+E" }],
-		[{ "toggleDashboard": "alt+ +" }, {}]
+		[{ "toggleDashboard": "alt+ +" }, {}],
+		[{ "goToItemPage": "" }, { "goToItemPage": "" }]
 	];
 	test.each(cases)(
 		"%# - %s",

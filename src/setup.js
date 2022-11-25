@@ -333,11 +333,16 @@ export function validateShortcuts(shortcuts){
 	const output = {};
 
 	Object.keys(shortcuts).forEach((key) => {
-		try {
-			parseKeyCombo(shortcuts[key]);
-			output[key] = shortcuts[key];
-		} catch(e) {
-			console.error(e);
+		const combo = shortcuts[key];
+		if(combo == ""){
+			output[key] = combo;
+		} else {
+			try {
+				parseKeyCombo(shortcuts[key]);
+				output[key] = shortcuts[key];
+			} catch(e) {
+				console.log(e);
+			}
 		}
 	});
 
