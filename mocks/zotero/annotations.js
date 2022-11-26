@@ -1,6 +1,7 @@
 import { makeEntityLinks, makeLibraryMetadata } from "./common";
 import { libraries } from "./libraries";
 
+
 const { userLibrary } = libraries;
 
 const makeAnnot = ({ key, library, parentItem, version, data }) => {
@@ -52,5 +53,31 @@ export const sampleAnnot = makeAnnot({
 		annotationText: "Digital health literacy may have an impact on the use of digital health services such as virtual visits.",
 		annotationType: "highlight",
 		tags: [{ tag: "Important" },{ tag: "TODO" }]
+	}
+});
+
+export const sampleAnnotPrevPage = makeAnnot({
+	key: "__PREV_PAGE_ANNOT__",
+	library: userLibrary,
+	parentItem: "__SOME_PARENT__",
+	version: 1279,
+	data: {
+		annotationComment: "This is a comment from a previous page",
+		annotationSortIndex: "00001|00002|00003",
+		annotationText: "some previous page's text",
+		annotationType: "highlight"
+	}
+});
+
+export const sampleAnnotLaterPage = makeAnnot({
+	key: "__LATER_PAGE_ANNOT__",
+	library: userLibrary,
+	parentItem: "__SOME_PARENT__",
+	version: 1280,
+	data: {
+		annotationComment: "This is a comment from a later page",
+		annotationSortIndex: "00004|00005|00006",
+		annotationText: "some later page's text",
+		annotationType: "highlight"
 	}
 });

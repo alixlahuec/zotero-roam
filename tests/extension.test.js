@@ -1,20 +1,20 @@
 import { QueryClient } from "@tanstack/query-core";
 
-import { bibs, findBibliographyEntry } from "../mocks/zotero/bib";
-import { entries, findItems, items } from "Mocks/zotero/items";
-import { apiKeys } from "Mocks/zotero/keys";
-import { findCollections } from "Mocks/zotero/collections";
-import { libraries } from "Mocks/zotero/libraries";
-import { sampleAnnot } from "Mocks/zotero/annotations";
-import { sampleNote } from "Mocks/zotero/notes";
-import { samplePDF } from "Mocks/zotero/pdfs";
-import { tags } from "Mocks/zotero/tags";
-
 import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
 import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
 
 import ZoteroRoam from "../src/extension";
+
+import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
+import { entries, findItems, items } from "Mocks/zotero/items";
+import { apiKeys } from "Mocks/zotero/keys";
+import { findCollections } from "Mocks/zotero/collections";
+import { libraries } from "Mocks/zotero/libraries";
+import { sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage } from "Mocks/zotero/annotations";
+import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
+import { samplePDF } from "Mocks/zotero/pdfs";
+import { tags } from "Mocks/zotero/tags";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -36,10 +36,22 @@ describe("Formatting utils", () => {
 		expect(extension.formatNotes([sampleNote, sampleAnnot]))
 			.toEqual([
 				...formatItemAnnotations([sampleAnnot]),
-				...formatItemNotes([sampleNote]),
+				...formatItemNotes([sampleNote])
 			]);
 		expect(extension.formatNotes(false))
 			.toEqual([]);
+
+		expect(extension.formatNotes([sampleAnnotLaterPage, sampleAnnotPrevPage]))
+			.toEqual([
+				...formatItemAnnotations([sampleAnnotPrevPage]),
+				...formatItemAnnotations([sampleAnnotLaterPage])
+			]);
+		
+		expect(extension.formatNotes([sampleNote, sampleOlderNote]))
+			.toEqual([
+				...formatItemNotes([sampleOlderNote]),
+				...formatItemNotes([sampleNote])
+			]);
 	});
 
 	test("PDFs formatting", () => {

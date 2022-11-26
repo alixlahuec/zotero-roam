@@ -1,6 +1,6 @@
 import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
 import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
-import { formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
+import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 
 
 /**
@@ -205,8 +205,12 @@ function _formatNotes(notes, { annotationsSettings, notesSettings }) {
 	if (!notes) {
 		return [];
 	} else {
-		const annotItems = notes.filter(n => n.data.itemType == "annotation");
-		const noteItems = notes.filter(n => n.data.itemType == "note");
+		const annotItems = notes
+			.filter(n => n.data.itemType == "annotation")
+			.sort((a,b) => compareAnnotationRawIndices(a.data.annotationSortIndex, b.data.annotationSortIndex));
+		const noteItems = notes
+			.filter(n => n.data.itemType == "note")
+			.sort((a, b) => a.data.dateAdded < b.data.dateAdded ? -1 : 1);
 
 		return [
 			...formatZoteroAnnotations(annotItems, annotationsSettings),
