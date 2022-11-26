@@ -355,7 +355,7 @@ function cleanSemantic(datastore, semantic, roamCitekeys){
 /** Orders the indices of two Zotero annotations
  * @param {Number[]} a - The first index to compare
  * @param {Number[]} b - The second index to compare
- * @returns {(0|1)} The comparison outcome
+ * @returns {(-1|1)} The comparison outcome
  */
 function compareAnnotationIndices(a, b){
 	const [pageA = 0, lineA = 0, colA = 0] = a;
@@ -378,6 +378,18 @@ function compareAnnotationIndices(a, b){
 	} else {
 		return 1;
 	}
+}
+
+/** Orders the (raw) indices of two Zotero annotations
+ * @param {String} a - The first string index to compare
+ * @param {String} b - The second string index to compare
+ * @returns {(-1|1)} The comparison outcome
+ */
+function compareAnnotationRawIndices(a, b){
+	return compareAnnotationIndices(
+		extractSortIndex(a),
+		extractSortIndex(b)
+	);
 }
 
 /** Compares two Zotero items by publication year then alphabetically, to determine sort order
@@ -406,6 +418,14 @@ function compareItemsByYear(a, b) {
 			}
 		}
 	}
+}
+
+/** Extracts the numerical index of a Zotero annotation, from its string origin
+ * @param {String} str - The string index
+ * @returns The index in numerical Array form
+ */
+function extractSortIndex(str){
+	return str.split("|").map(ind => Number(ind));
 }
 
 /** Copies a portion of text to the user's clipboard
@@ -1093,7 +1113,7 @@ function simplifyZoteroAnnotations(annotations){
 			parent_item,
 			position,
 			raw: annot,
-			sortIndex: annotationSortIndex.split("|").map(ind => Number(ind)),
+			sortIndex: extractSortIndex(annotationSortIndex),
 			tags: tags.map(t => t.tag),
 			tags_string: tags.map(t => `#[[${t.tag}]]`).join(", "),
 			text,
@@ -1227,9 +1247,11 @@ export {
 	cleanSemanticItem,
 	compareItemsByYear,
 	compareAnnotationIndices,
+	compareAnnotationRawIndices,
 	copyToClipboard,
 	escapeRegExp,
 	executeFunctionByName,
+	extractSortIndex,
 	formatItemAnnotations,
 	formatItemNotes,
 	formatItemReference,

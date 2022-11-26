@@ -1,16 +1,57 @@
+import {
+	compareAnnotationIndices,
+	compareAnnotationRawIndices,
+	extractSortIndex,
+	formatZoteroAnnotations,
+	simplifyZoteroAnnotations } from "../../src/utils";
+
 import { sampleAnnot, sampleImageAnnot } from "Mocks/zotero/annotations";
 import { libraries } from "Mocks/zotero/libraries";
 
-import {
-	compareAnnotationIndices,
-	formatZoteroAnnotations,
-	simplifyZoteroAnnotations } from "../../src/utils";
 
 const { userLibrary } = libraries;
 
 const simplifiedAnnot = simplifyZoteroAnnotations([sampleAnnot])[0];
 
 const offset = new Date().getTimezoneOffset();
+
+describe("Extracts annotation indices from string", () => {
+	const indices = [
+		["00001|00002|00003", [1, 2, 3]],
+		["00045|00056|00067", [45, 56, 67]]
+	];
+
+	test.each(indices)(
+		"%# - %s",
+		(str, index) => {
+			expect(extractSortIndex(str))
+				.toEqual(index);
+		}
+	);
+});
+
+test("Sorts raw annotation indices", () => {
+	const indices = [
+		"00003|00014|00009",
+		"00005|00010|00007",
+		"00002|00022|00007",
+		"00002|00022|00030",
+		"00002|00024|00010",
+		"00003|00014|00007",
+		"00005|00009|00009"
+	];
+
+	expect(indices.sort(compareAnnotationRawIndices))
+		.toEqual([
+			"00002|00022|00007",
+			"00002|00022|00030",
+			"00002|00024|00010",
+			"00003|00014|00007",
+			"00003|00014|00009",
+			"00005|00009|00009",
+			"00005|00010|00007",
+		]);
+});
 
 test("Sorts annotation indices", () => {
 	const indices = [

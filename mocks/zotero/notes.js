@@ -1,6 +1,7 @@
 import { makeEntityLinks, makeLibraryMetadata } from "./common";
 import { libraries } from "./libraries";
 
+
 const { userLibrary } = libraries;
 
 const makeNote = ({ key, library, data, note, numChildren = 0, parentItem, version = 1 }) => {
@@ -35,6 +36,17 @@ export const sampleNote = makeNote({
 	parentItem: "P34QRSTU",
 	data: {
 		tags: [{ tag: "toRead" }]
+	},
+	version: 1234
+});
+
+export const sampleOlderNote = makeNote({
+	key: "__OLDER_NOTE__",
+	library: userLibrary,
+	note: "<div>an older note</div>",
+	parentItem: "P34QRSTU",
+	data: {
+		dateAdded: "1996-04-06T22:00:00Z"
 	},
 	version: 1234
 });
