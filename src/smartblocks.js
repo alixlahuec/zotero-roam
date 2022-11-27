@@ -1,7 +1,6 @@
 import { getLocalLink, getWebLink, makeDNP, parseDOI } from "./utils";
 
 
-/* istanbul ignore next */
 /** Generates the list of custom SmartBlocks commands to register
  * @returns {Object.<string, SmartblockCommand>} The list of commands to register
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
@@ -308,6 +307,7 @@ async function use_smartblock_metadata(config, context){
 export {
 	eval_term,
 	registerSmartblockCommands,
+	sbCommands,
 	unregisterSmartblockCommands,
 	use_smartblock_metadata
 };
