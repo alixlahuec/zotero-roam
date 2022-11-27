@@ -36,7 +36,7 @@ const sbCommands = () => {
 			help: "Returns the comma-separated list of the collection(s) a Zotero item belongs to.",
 			handler: (context) => (brackets = true) => {
 				const { item } = context.variables;
-				return window.zoteroRoam.getItemCollections(item, { return_as: "string", brackets }).map(", ");
+				return window.zoteroRoam.getItemCollections(item, { return_as: "string", brackets });
 			}
 		},
 		"ZOTEROITEMCREATORS": {
