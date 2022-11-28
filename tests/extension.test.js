@@ -62,9 +62,58 @@ describe("Formatting utils", () => {
 					...formatItemNotes([sampleOlderNote]),
 					...formatItemNotes([sampleNote])
 				]);
+			
+			expect(extension.formatNotes([sampleNote, sampleAnnotLaterPage, sampleAnnotPrevPage]))
+				.toEqual([
+					...formatItemAnnotations([sampleAnnotPrevPage]),
+					...formatItemAnnotations([sampleAnnotLaterPage]),
+					...formatItemNotes([sampleNote])
+				]);
 		});
 
-		// TODO: Write tests for _formatNotes (nesting)
+		test("Util returns nested output - with preset", () => {
+			const preset_string = "[[Notes]]";
+
+			extension.updateSetting("notes", {
+				nest_preset: preset_string,
+				nest_use: "preset"
+			});
+
+			expect(extension.formatNotes([sampleNote, sampleOlderNote]))
+				.toEqual([
+					{
+						string: preset_string,
+						text: preset_string,
+						children: [
+							...formatItemNotes([sampleOlderNote]),
+							...formatItemNotes([sampleNote])
+						]
+					}
+				]);
+		});
+
+		test("Util returns nested output - with custom string", () => {
+			const custom_string = "[[My Notes]]";
+
+			extension.updateSetting("notes", {
+				nest_char: custom_string,
+				nest_use: "custom"
+			});
+
+			expect(extension.formatNotes([sampleNote, sampleOlderNote]))
+				.toEqual([
+					{
+						string: custom_string,
+						text: custom_string,
+						children: [
+							...formatItemNotes([sampleOlderNote]),
+							...formatItemNotes([sampleNote])
+						]
+					}
+				]);
+		});
+
+		// TODO: Write tests for the existing block logic in _formatNotes
 
 	});
 
