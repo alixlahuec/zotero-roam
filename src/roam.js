@@ -346,7 +346,7 @@ async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, an
 	}
 
 	try {
-		const formattedOutput = _formatNotes(notes, { annotationsSettings, notesSettings });
+		const formattedOutput = _formatNotes(notes, pageUID, { annotationsSettings, notesSettings });
 		const { args, error, success } = await addBlocksArray(pageUID, formattedOutput);
 
 		const outcome = {

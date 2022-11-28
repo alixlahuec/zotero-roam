@@ -1,6 +1,7 @@
 import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
 import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
+import { findRoamBlock } from "Roam";
 
 
 /**
@@ -195,13 +196,14 @@ export default class ZoteroRoam {
 
 /** Formats Zotero notes/annotations items
  * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The Array of Zotero notes/annotations
+ * @param {String} pageUID - The UID of the parent item's Roam page (optional)
  * @param {{
  * annotationsSettings: SettingsAnnotations, 
  * notesSettings: SettingsNotes
  * }} settings - The user's current settings
  * @returns The formatted Array
  */
-export function _formatNotes(notes, { annotationsSettings, notesSettings }) {
+export function _formatNotes(notes, pageUID = null, { annotationsSettings, notesSettings }) {
 	if (!notes) {
 		return [];
 	} else {
@@ -211,11 +213,49 @@ export function _formatNotes(notes, { annotationsSettings, notesSettings }) {
 		const noteItems = notes
 			.filter(n => n.data.itemType == "note")
 			.sort((a, b) => a.data.dateAdded < b.data.dateAdded ? -1 : 1);
-
-		return [
+		const formattedOutput = [
 			...formatZoteroAnnotations(annotItems, annotationsSettings),
 			...formatZoteroNotes(noteItems, notesSettings)
 		];
+
+		const { nest_char, nest_preset, nest_use } = notesSettings;
+
+		// If nesting is disabled, simply return the array of blocks
+		if(nest_use == "preset" && !nest_preset){
+			return formattedOutput;
+		}
+
+		// Else if the page UID was provided, check if the page already has a block with the same content
+		// If yes, set that block as the parent for all the outputted blocks
+		if(pageUID){
+			const blockString = ((nest_use == "custom") ? nest_char : nest_preset) || "";
+			const existingBlock = findRoamBlock(blockString, pageUID);
+
+			if(existingBlock){
+				return formattedOutput.map(blck => {
+					if(blck.constructor === String){
+						return {
+							string: blck,
+							text: blck,
+							parentUID: existingBlock
+						};
+					} else {
+						return {
+							...blck,
+							parentUID: existingBlock
+						};
+					}
+				});
+			}
+		}
+
+		const blockString = (nest_use == "custom" ? nest_char : nest_preset) || "";
+		return {
+			string: blockString,
+			text: blockString,
+			children: formattedOutput
+		};
+
 	}
 }
 
@@ -366,11 +406,8 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 		metadata.push(`PDF links : ${_formatPDFs(pdfs, "links").join(", ")}`);
 	}
 	if (notes.length > 0) {
-		metadata.push({
-			string: "[[Notes]]",
-			text: "[[Notes]]",
-			children: _formatNotes(notes, { annotationsSettings, notesSettings })
-		});
+		const formattedOutput = _formatNotes(notes, { annotationsSettings, notesSettings });
+		metadata.push(formattedOutput);
 	}
 
 	return metadata;
