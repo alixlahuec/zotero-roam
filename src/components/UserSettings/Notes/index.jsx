@@ -1,5 +1,5 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func as funcType, node } from "prop-types";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect } from "../common";
 
@@ -40,6 +40,16 @@ const useNotesSettings = () => {
 	return context;
 };
 
+const NEST_PRESET_OPTIONS = [
+	{ label: "Don't nest", value: false },
+	{ label: "[[Notes]]", value: "[[Notes]]" }
+];
+
+const NEST_USE_OPTIONS = {
+	"preset": "Preset",
+	"custom": "Custom content"
+};
+
 const SPLIT_PRESET_OPTIONS = [
 	{ label: "Newline", value: "\n" },
 	{ label: "Paragraph", value: "</p>" }
@@ -65,6 +75,9 @@ function NotesWidget(){
 	const [
 		{
 			func,
+			nest_char,
+			nest_preset,
+			nest_use,
 			split_char,
 			split_preset,
 			split_use,
@@ -84,6 +97,9 @@ function NotesWidget(){
 
 		return {
 			updateFuncName: (val) => updateSingleValue("func", val),
+			updateNestChar: (val) => updateSingleValue("nest_char", val),
+			updateNestPreset: (val) => updateSingleValue("nest_preset", val),
+			updateNestUse: (val) => updateSingleValue("nest_use", val),
 			updateSplitChar: (val) => updateSingleValue("split_char", val),
 			updateSplitPreset: (val) => updateSingleValue("split_preset", val),
 			updateSplitUse: (val) => updateSingleValue("split_use", val),
@@ -126,6 +142,18 @@ function NotesWidget(){
 					textValue={func} 
 					inputLabel="Enter the name of the function to use for formatting notes" 
 					selectLabel="Select an input format for your custom function" />
+			</RowGroupOption>
+		</RowGroup>
+		<RowGroup title="Nesting"
+			description="Pick how to add notes to the Roam page." 
+			onChange={handlers.updateNestUse}
+			options={NEST_USE_OPTIONS}
+			selected={nest_use}>
+			<RowGroupOption id="preset">
+				<SingleInput menuTitle="Select a nesting preset" onChange={handlers.updateNestPreset} options={NEST_PRESET_OPTIONS} value={nest_preset} />
+			</RowGroupOption>
+			<RowGroupOption id="custom" description="Enter the contents of the block under which notes should be nested">
+				<TextField ifEmpty={true} label="Enter the block's contents" onChange={handlers.updateNestChar} placeholder="e.g, [[Notes]]" value={nest_char} />
 			</RowGroupOption>
 		</RowGroup>
 	</>;
