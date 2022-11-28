@@ -88,6 +88,7 @@ function NotesWidget(){
 	] = useNotesSettings();
 
 	const handlers = useMemo(() => {
+		/* istanbul ignore next */
 		function updateSingleValue(op, val){
 			setOpts(prevState => ({
 				...prevState,
