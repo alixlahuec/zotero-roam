@@ -4,7 +4,7 @@ import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
 import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
 
-import ZoteroRoam from "../src/extension";
+import ZoteroRoam, { _formatNotes } from "../src/extension";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { entries, findItems, items } from "Mocks/zotero/items";
@@ -32,26 +32,40 @@ describe("Formatting utils", () => {
 		}
 	});
     
-	test("Notes & Annotations formatting", () => {
-		expect(extension.formatNotes([sampleNote, sampleAnnot]))
-			.toEqual([
-				...formatItemAnnotations([sampleAnnot]),
-				...formatItemNotes([sampleNote])
-			]);
-		expect(extension.formatNotes(false))
-			.toEqual([]);
+	describe("Notes & Annotations formatting", () => {
+		afterEach(() => {
+			// Reset the notes settings each time
+			extension.updateSetting("notes", {});
+		});
 
-		expect(extension.formatNotes([sampleAnnotLaterPage, sampleAnnotPrevPage]))
-			.toEqual([
-				...formatItemAnnotations([sampleAnnotPrevPage]),
-				...formatItemAnnotations([sampleAnnotLaterPage])
-			]);
+		test("Class method returns correct output", () => {
+			expect(extension.formatNotes([sampleNote, sampleAnnot]))
+				.toEqual(_formatNotes([sampleNote, sampleAnnot], null, { annotationsSettings: {}, notesSettings: {} }));
+			expect(extension.formatNotes(false))
+				.toEqual([]);
+		});
+
+		test("Util returns sorted output", () => {
+			extension.updateSetting("notes", {
+				nest_preset: false,
+				nest_use: "preset"
+			});
+
+			expect(extension.formatNotes([sampleAnnotLaterPage, sampleAnnotPrevPage]))
+				.toEqual([
+					...formatItemAnnotations([sampleAnnotPrevPage]),
+					...formatItemAnnotations([sampleAnnotLaterPage])
+				]);
 		
-		expect(extension.formatNotes([sampleNote, sampleOlderNote]))
-			.toEqual([
-				...formatItemNotes([sampleOlderNote]),
-				...formatItemNotes([sampleNote])
-			]);
+			expect(extension.formatNotes([sampleNote, sampleOlderNote]))
+				.toEqual([
+					...formatItemNotes([sampleOlderNote]),
+					...formatItemNotes([sampleNote])
+				]);
+		});
+
+		// TODO: Write tests for _formatNotes (nesting)
+
 	});
 
 	test("PDFs formatting", () => {

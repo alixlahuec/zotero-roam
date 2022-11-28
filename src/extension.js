@@ -63,7 +63,7 @@ export default class ZoteroRoam {
      * @returns 
      */
 	formatNotes(notes) {
-		return _formatNotes(notes, {
+		return _formatNotes(notes, null, {
 			annotationsSettings: this.#settings.annotations,
 			notesSettings: this.#settings.notes
 		});
@@ -406,7 +406,7 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 		metadata.push(`PDF links : ${_formatPDFs(pdfs, "links").join(", ")}`);
 	}
 	if (notes.length > 0) {
-		const formattedOutput = _formatNotes(notes, { annotationsSettings, notesSettings });
+		const formattedOutput = _formatNotes(notes, null, { annotationsSettings, notesSettings });
 		metadata.push(formattedOutput);
 	}
 
