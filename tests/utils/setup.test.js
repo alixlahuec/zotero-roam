@@ -206,6 +206,9 @@ describe("Parsing initial user settings", () => {
 		},
 		notes: {
 			func: "",
+			nest_char: "",
+			nest_preset: "[[Notes]]",
+			nest_use: "preset",
 			split_char: "",
 			split_preset: "\n",
 			split_use: "preset",
