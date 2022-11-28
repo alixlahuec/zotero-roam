@@ -15,7 +15,7 @@ import { sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage } from "Mocks/zo
 import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
 import { samplePDF } from "Mocks/zotero/pdfs";
 import { tags } from "Mocks/zotero/tags";
-import { existing_block_uid, uid_with_existing_block } from "Mocks/roam";
+import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -132,7 +132,20 @@ describe("Formatting utils", () => {
 				formattedOutput.map(blck => ({
 					string: blck,
 					text: blck,
+					order: 0,
 					parentUID: existing_block_uid
+				}))
+			);
+			
+			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					order: 0,
+					parentUID: existing_block_uid_with_children
 				}))
 			);
 
@@ -147,6 +160,42 @@ describe("Formatting utils", () => {
 				}
 			]);
 
+		});
+
+		test("Util returns nested output - with block checking, with position", () => {
+			const custom_string = "[[My Notes]]";
+			const notesSettings = {
+				nest_char: custom_string,
+				nest_position: "bottom",
+				nest_preset: false,
+				nest_use: "custom"
+			};
+
+			const formattedOutput = formatItemNotes([sampleNote]);
+
+			expect(_formatNotes([sampleNote], uid_with_existing_block, {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					order: 0,
+					parentUID: existing_block_uid
+				}))
+			);
+
+			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					order: 2,
+					parentUID: existing_block_uid_with_children
+				}))
+			);
 		});
 
 	});

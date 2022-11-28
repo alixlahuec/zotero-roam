@@ -1,12 +1,24 @@
 /* istanbul ignore file */
 
 export const uid_with_existing_block = "__UID_WITH_EXISTING_BLOCK__";
+export const uid_with_existing_block_with_children = "__UID_WITH_EXISTING_BLOCK_WITH_CHILDREN__";
 export const existing_block_uid = "__SOME_UID__";
+export const existing_block_uid_with_children = "__SOME_UID_WITH_CHILDREN__";
 
 function findRoamBlock(_string, pageUID){
-	return (pageUID == uid_with_existing_block)
-		? existing_block_uid
-		: false;
+	switch(pageUID){
+	case uid_with_existing_block:
+		return {
+			uid: existing_block_uid
+		};
+	case uid_with_existing_block_with_children:
+		return {
+			uid: existing_block_uid_with_children,
+			children: [{ id: 123 }, { id: 456 }]
+		};
+	default:
+		return false;
+	}
 }
 
 function findRoamPage(_title){

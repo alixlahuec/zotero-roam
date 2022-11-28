@@ -8,14 +8,19 @@ import { use_smartblock_metadata } from "./smartblocks";
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
  * @param {RoamImportableBlock} object - The block Object to use as template 
  */
-async function addBlockObject(parentUID, object) {
+async function addBlockObject(parentUID, object, order = 0) {
 	const { string: blockString, children = [], ...opts } = object;
 	
 	if(typeof(blockString) === "undefined"){
 		console.log(object);
 		throw new Error("All blocks passed as an Object must have a string property.");
 	} else {
-		const blockUID = await createRoamBlock(opts.parentUID || parentUID, blockString, 0, opts);
+		const blockUID = await createRoamBlock(
+			opts.parentUID || parentUID,
+			blockString,
+			// Order parameter from the block itself takes precedence over the arg
+			opts.order || order,
+			opts);
 		// If the Object has a `children` property
 		if(children.constructor === Array){
 			// Go through each child element, starting by the last
@@ -23,10 +28,10 @@ async function addBlockObject(parentUID, object) {
 			for(let j = children.length - 1; j >= 0; j--){
 				if(children[j].constructor === Object){
 					// eslint-disable-next-line no-await-in-loop
-					await addBlockObject(blockUID, children[j]);
+					await addBlockObject(blockUID, children[j], order);
 				} else if(children[j].constructor === String){
 					// eslint-disable-next-line no-await-in-loop
-					await createRoamBlock(blockUID, children[j], 0, {});
+					await createRoamBlock(blockUID, children[j], order, {});
 				} else {
 					console.log(children[j]);
 					throw new Error(`All children array items should be of type String or Object, not ${children[j].constructor}`);
@@ -44,7 +49,7 @@ async function addBlockObject(parentUID, object) {
  * @param {(String|RoamImportableBlock)[]} arr - The array to use as template
  * @returns The outcome of the operation
  */
-async function addBlocksArray(parentUID, arr){
+async function addBlocksArray(parentUID, arr, order = 0){
 	const defaultOutcome = {
 		args: {
 			blocks: arr,
@@ -56,16 +61,16 @@ async function addBlocksArray(parentUID, arr){
 
 	if(arr.length > 0){
 		try{
-			// Go through the array items in reverse order, because each block gets added to the top so have to start with the 'last' block
+			// Go through the array items in reverse order, so that each block gets added to the "same" position
 			for(let k = arr.length - 1; k >= 0; k--){
 				// If the element is an Object, pass it to addBlockObject to recursively process its contents
 				if(arr[k].constructor === Object){
 					// eslint-disable-next-line no-await-in-loop
-					await addBlockObject(parentUID, arr[k]);
+					await addBlockObject(parentUID, arr[k], order);
 				} else if(arr[k].constructor === String) {
 					// If the element is a simple String, add the corresponding block & move on
 					// eslint-disable-next-line no-await-in-loop
-					await createRoamBlock(parentUID, arr[k], 0, {});
+					await createRoamBlock(parentUID, arr[k], order, {});
 				} else {
 					console.log(arr[k]);
 					throw new Error(`All array items should be of type String or Object, not ${arr[k].constructor}`);
@@ -131,7 +136,7 @@ async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
 */
 function findRoamBlock(string, parentUID){
 	const blockSearch = window.roamAlphaAPI.q(`[
-		:find ?uid
+		:find (pull ?b [:block/uid :block/children])
 		:in $ ?string ?parentUID
 		:where
 			[?par :block/uid ?parentUID]
@@ -407,7 +412,6 @@ function removePaletteCommand(label){
 }
 
 export {
-	addBlocksArray,
 	addPaletteCommand,
 	findRoamBlock,
 	findRoamPage,

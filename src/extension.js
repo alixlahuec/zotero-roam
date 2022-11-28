@@ -218,7 +218,7 @@ export function _formatNotes(notes, pageUID = null, { annotationsSettings, notes
 			...formatZoteroNotes(noteItems, notesSettings)
 		];
 
-		const { nest_char, nest_preset, nest_use } = notesSettings;
+		const { nest_char, nest_position, nest_preset, nest_use } = notesSettings;
 
 		// If nesting is disabled, simply return the array of blocks
 		if(nest_use == "preset" && !nest_preset){
@@ -232,17 +232,22 @@ export function _formatNotes(notes, pageUID = null, { annotationsSettings, notes
 			const existingBlock = findRoamBlock(blockString, pageUID);
 
 			if(existingBlock){
+				const { uid, children = [] } = existingBlock;
+				const pos = (nest_position == "bottom") ? children.length : 0;
+
 				return formattedOutput.map(blck => {
 					if(blck.constructor === String){
 						return {
 							string: blck,
 							text: blck,
-							parentUID: existingBlock
+							order: pos,
+							parentUID: uid
 						};
 					} else {
 						return {
 							...blck,
-							parentUID: existingBlock
+							order: pos,
+							parentUID: uid
 						};
 					}
 				});
