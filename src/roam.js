@@ -124,6 +124,29 @@ async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
 	return blockUID;
 }
 
+/** Searches for a Roam block by its contents, under a given parent
+ * @param {String} string - The block's contents
+ * @param {String} parentUID - The UID of the targeted parent (Roam block or page)
+ * @returns {String|false} The UID of the Roam block (if it exists), otherwise `false`
+*/
+function findRoamBlock(string, parentUID){
+	const blockSearch = window.roamAlphaAPI.q(`[
+		:find ?uid
+		:in $ ?string ?parentUID
+		:where
+			[?par :block/uid ?parentUID]
+			[?par :block/children ?b]
+			[?b :block/uid ?uid]
+			[?b :block/string ?string]
+	]`, string, parentUID);
+
+	if(blockSearch.length > 0){
+		return blockSearch[0][0];
+	} else {
+		return false;
+	}
+}
+
 /** Searches a Roam page by its title
  * @param {String} title - The title to be searched
  * @returns {String|false} The UID of the Roam page (if it exists), otherwise `false`
@@ -386,6 +409,7 @@ function removePaletteCommand(label){
 export {
 	addBlocksArray,
 	addPaletteCommand,
+	findRoamBlock,
 	findRoamPage,
 	getAllPages,
 	getCitekeyPages,
