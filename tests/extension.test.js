@@ -15,6 +15,7 @@ import { sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage } from "Mocks/zo
 import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
 import { samplePDF } from "Mocks/zotero/pdfs";
 import { tags } from "Mocks/zotero/tags";
+import { existing_block_uid, uid_with_existing_block } from "Mocks/roam";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -45,7 +46,7 @@ describe("Formatting utils", () => {
 				.toEqual([]);
 		});
 
-		test("Util returns sorted output", () => {
+		test("Sorted output", () => {
 			extension.updateSetting("notes", {
 				nest_preset: false,
 				nest_use: "preset"
@@ -71,7 +72,7 @@ describe("Formatting utils", () => {
 				]);
 		});
 
-		test("Util returns nested output - with preset", () => {
+		test("Nested output - with preset", () => {
 			const preset_string = "[[Notes]]";
 
 			extension.updateSetting("notes", {
@@ -92,7 +93,7 @@ describe("Formatting utils", () => {
 				]);
 		});
 
-		test("Util returns nested output - with custom string", () => {
+		test("Nested output - with custom string", () => {
 			const custom_string = "[[My Notes]]";
 
 			extension.updateSetting("notes", {
@@ -113,7 +114,39 @@ describe("Formatting utils", () => {
 				]);
 		});
 
-		// TODO: Write tests for the existing block logic in _formatNotes
+		test("Util returns nested output - with block checking", () => {
+			const custom_string = "[[My Notes]]";
+			const notesSettings = {
+				nest_char: custom_string,
+				nest_preset: false,
+				nest_use: "custom"
+			};
+
+			const formattedOutput = formatItemNotes([sampleNote]);
+
+			expect(_formatNotes([sampleNote], uid_with_existing_block, {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					parentUID: existing_block_uid
+				}))
+			);
+
+			expect(_formatNotes([sampleNote], "uid without existing block", {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual([
+				{
+					string: custom_string,
+					text: custom_string,
+					children: formattedOutput
+				}
+			]);
+
+		});
 
 	});
 

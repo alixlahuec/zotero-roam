@@ -1,4 +1,14 @@
 /* istanbul ignore file */
+
+export const uid_with_existing_block = "__UID_WITH_EXISTING_BLOCK__";
+export const existing_block_uid = "__SOME_UID__";
+
+function findRoamBlock(_string, pageUID){
+	return (pageUID == uid_with_existing_block)
+		? existing_block_uid
+		: false;
+}
+
 function findRoamPage(_title){
 	return false;
 }
@@ -16,6 +26,7 @@ function getInitialedPages(_keys){
 }
 
 export {
+	findRoamBlock,
 	findRoamPage,
 	getAllPages,
 	getCitekeyPagesWithEditTime,
