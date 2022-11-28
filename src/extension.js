@@ -201,7 +201,7 @@ export default class ZoteroRoam {
  * annotationsSettings: SettingsAnnotations, 
  * notesSettings: SettingsNotes
  * }} settings - The user's current settings
- * @returns The formatted Array
+ * @returns {(String|RoamImportableBlock)[]} The formatted Array
  */
 export function _formatNotes(notes, pageUID = null, { annotationsSettings, notesSettings }) {
 	if (!notes) {
@@ -250,11 +250,11 @@ export function _formatNotes(notes, pageUID = null, { annotationsSettings, notes
 		}
 
 		const blockString = (nest_use == "custom" ? nest_char : nest_preset) || "";
-		return {
+		return [{
 			string: blockString,
 			text: blockString,
 			children: formattedOutput
-		};
+		}];
 
 	}
 }
@@ -407,7 +407,7 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 	}
 	if (notes.length > 0) {
 		const formattedOutput = _formatNotes(notes, null, { annotationsSettings, notesSettings });
-		metadata.push(formattedOutput);
+		metadata.push(...formattedOutput);
 	}
 
 	return metadata;
