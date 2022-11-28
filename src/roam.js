@@ -6,7 +6,7 @@ import { use_smartblock_metadata } from "./smartblocks";
 
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
- * @param {{string: String, children?: Array}} object - The block Object to use as template 
+ * @param {RoamImportableBlock} object - The block Object to use as template 
  */
 async function addBlockObject(parentUID, object) {
 	const { string: blockString, children = [], ...opts } = object;
@@ -41,7 +41,7 @@ async function addBlockObject(parentUID, object) {
 
 /** Adds Roam blocks to a parent UID, based on an array input.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
- * @param {Array<String|{string: String, children?: Array}>} arr - The array to use as template
+ * @param {(String|RoamImportableBlock)[]} arr - The array to use as template
  * @returns The outcome of the operation
  */
 async function addBlocksArray(parentUID, arr){

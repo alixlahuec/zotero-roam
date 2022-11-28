@@ -177,3 +177,15 @@
  * }}
  * SmartblockCommand
  */
+
+// ---------------------------------------
+
+/**
+ * @typedef {{
+ * children?: (String|RoamImportableBlock)[],
+ * parentUID?: String,
+ * string: String,
+ * text: String,
+ * }}
+ * RoamImportableBlock
+ */
