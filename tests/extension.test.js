@@ -118,6 +118,7 @@ describe("Formatting utils", () => {
 			const custom_string = "[[My Notes]]";
 			const notesSettings = {
 				nest_char: custom_string,
+				nest_position: "top",
 				nest_preset: false,
 				nest_use: "custom"
 			};

@@ -143,6 +143,7 @@
  * @typedef {{
  * func: String,
  * nest_char: String,
+ * nest_position: ("top"|"bottom"),
  * nest_preset: (false|"[[Notes]]"),
  * nest_use: ("preset"|"custom"),
  * split_char: String,

@@ -46,6 +46,7 @@ export default {
 			notes: {
 				func: "",
 				nest_char: "",
+				nest_position: "top",
 				nest_preset: "[[Notes]]",
 				nest_use: "preset",
 				split_char: "",

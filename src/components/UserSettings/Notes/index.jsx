@@ -40,6 +40,11 @@ const useNotesSettings = () => {
 	return context;
 };
 
+const NEST_POSITION_OPTIONS = [
+	{ label: "At the top", value: "top" },
+	{ label: "At the bottom", value: "bottom" }
+];
+
 const NEST_PRESET_OPTIONS = [
 	{ label: "Don't nest", value: false },
 	{ label: "[[Notes]]", value: "[[Notes]]" }
@@ -76,6 +81,7 @@ function NotesWidget(){
 		{
 			func,
 			nest_char,
+			nest_position,
 			nest_preset,
 			nest_use,
 			split_char,
@@ -99,6 +105,7 @@ function NotesWidget(){
 		return {
 			updateFuncName: (val) => updateSingleValue("func", val),
 			updateNestChar: (val) => updateSingleValue("nest_char", val),
+			updateNestPosition: (val) => updateSingleValue("nest_position", val),
 			updateNestPreset: (val) => updateSingleValue("nest_preset", val),
 			updateNestUse: (val) => updateSingleValue("nest_use", val),
 			updateSplitChar: (val) => updateSingleValue("split_char", val),
@@ -157,6 +164,7 @@ function NotesWidget(){
 				<TextField ifEmpty={true} label="Enter the block's contents" onChange={handlers.updateNestChar} placeholder="e.g, [[Notes]]" value={nest_char} />
 			</RowGroupOption>
 		</RowGroup>
+		<SingleInput description="The position at which to insert the blocks" menuTitle="Select a position" onChange={handlers.updateNestPosition} options={NEST_POSITION_OPTIONS} title="Position" value={nest_position} />
 	</>;
 }
 

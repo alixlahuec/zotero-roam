@@ -283,6 +283,7 @@ const metadataSettingsType = shape({
 const notesSettingsType = shape({
 	func: string,
 	nest_char: string,
+	nest_position: oneOf(["top", "bottom"]),
 	nest_preset: oneOf([false, "[[Notes]]"]),
 	nest_use: oneOf(["preset", "custom"]),
 	split_char: string,
