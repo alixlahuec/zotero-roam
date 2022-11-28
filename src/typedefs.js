@@ -142,6 +142,9 @@
 /**
  * @typedef {{
  * func: String,
+ * nest_char: String,
+ * nest_preset: (false|"[[Notes]]"),
+ * nest_use: ("preset"|"custom"),
  * split_char: String,
  * split_preset: ("\n"|"</p>"),
  * split_use: ("preset"|"custom")
