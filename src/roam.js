@@ -15,7 +15,7 @@ async function addBlockObject(parentUID, object) {
 		console.log(object);
 		throw new Error("All blocks passed as an Object must have a string property.");
 	} else {
-		const blockUID = await createRoamBlock(parentUID, blockString, 0, opts);
+		const blockUID = await createRoamBlock(opts.parentUID || parentUID, blockString, 0, opts);
 		// If the Object has a `children` property
 		if(children.constructor === Array){
 			// Go through each child element, starting by the last
