@@ -1,6 +1,6 @@
 /* istanbul ignore file */
-import { executeFunctionByName, formatZoteroAnnotations, formatZoteroNotes } from "./utils";
-import { _getItemMetadata } from "./extension";
+import { executeFunctionByName } from "./utils";
+import { _formatNotes, _getItemMetadata } from "./extension";
 import { emitCustomEvent } from "./events";
 import { use_smartblock_metadata } from "./smartblocks";
 
@@ -323,9 +323,8 @@ async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, an
 	}
 
 	try {
-		const formattedAnnots = formatZoteroAnnotations(notes.filter(n => n.data.itemType == "annotation"), annotationsSettings);
-		const formattedNotes = formatZoteroNotes(notes.filter(n => n.data.itemType == "note"), notesSettings);
-		const { args, error, success } = await addBlocksArray(pageUID, [...formattedAnnots, ...formattedNotes]);
+		const formattedOutput = _formatNotes(notes, { annotationsSettings, notesSettings });
+		const { args, error, success } = await addBlocksArray(pageUID, formattedOutput);
 
 		const outcome = {
 			args,

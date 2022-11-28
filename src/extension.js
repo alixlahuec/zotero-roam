@@ -194,14 +194,14 @@ export default class ZoteroRoam {
 
 
 /** Formats Zotero notes/annotations items
-     * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The Array of Zotero notes/annotations
-     * @param {{
-     * annotationsSettings: SettingsAnnotations, 
-     * notesSettings: SettingsNotes
-     * }} settings - The user's current settings
-     * @returns The formatted Array
-     */
-function _formatNotes(notes, { annotationsSettings, notesSettings }) {
+ * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The Array of Zotero notes/annotations
+ * @param {{
+ * annotationsSettings: SettingsAnnotations, 
+ * notesSettings: SettingsNotes
+ * }} settings - The user's current settings
+ * @returns The formatted Array
+ */
+export function _formatNotes(notes, { annotationsSettings, notesSettings }) {
 	if (!notes) {
 		return [];
 	} else {
