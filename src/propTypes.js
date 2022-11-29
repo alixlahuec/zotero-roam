@@ -258,8 +258,14 @@ const annotationsSettingsType = shape({
 
 const autocompleteSettingsType = shape({
 	trigger: string,
-	display: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),
-	format: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"])
+	display_char: string,
+	display_use: oneOf(["preset", "custom"]),
+	// legacy - should be display_preset
+	display: oneOf(["citekey", "inline", "key", "tag", "pageref", "citation", "popover", "zettlr"]),
+	format_char: string,
+	format_use: oneOf(["preset", "custom"]),
+	// legacy - should be format_preset
+	format: oneOf(["citekey", "inline", "key", "tag", "pageref", "citation", "popover", "zettlr"])
 });
 
 const copySettingsType = shape({

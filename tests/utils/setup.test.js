@@ -184,7 +184,11 @@ describe("Parsing initial user settings", () => {
 			__with: "formatted"
 		},
 		autocomplete: {
+			display_char: "",
+			display_use: "preset",
 			display: "citekey",
+			format_char: "",
+			format_use: "preset",
 			format: "citation",
 			trigger: "",
 		},

@@ -13,6 +13,7 @@ import {
 
 import { CustomClasses } from "../../src/constants";
 
+
 const date = new Date([2022, 1, 1]);
 const offset = date.getTimezoneOffset();
 
@@ -196,6 +197,10 @@ describe("Formatting Zotero item references", () => {
 		expect(formatItemReference(item, "citekey")).toBe("@scottOrganizationalCulture2003");
 	});
 
+	it("formats as key", () => {
+		expect(formatItemReference(item, "key")).toBe("scottOrganizationalCulture2003");
+	});
+
 	it("formats as page reference", () => {
 		expect(formatItemReference(item, "pageref")).toBe("[[@scottOrganizationalCulture2003]]");
 	});
@@ -208,8 +213,16 @@ describe("Formatting Zotero item references", () => {
 		expect(formatItemReference(item, "tag")).toBe("#[[@scottOrganizationalCulture2003]]");
 	});
 
-	it("formas as Zettlr-like reference", () => {
+	it("formats as Zettlr-like reference", () => {
 		expect(formatItemReference(item, "zettlr")).toBe(`<span class="${CustomClasses.TEXT_ACCENT_1}">Scott et al (2003)</span> The Quantitative Measurement of Organizational Culture in Health Care: A Review of the Available Instruments`);
+	});
+
+	it("formats with a custom template", () => {
+		expect(formatItemReference(item, "<b>{{citekey}}</b>")).toBe("<b>@scottOrganizationalCulture2003</b>");
+	});
+
+	it("uses the citekey format as fallback", () => {
+		expect(formatItemReference(item, false)).toBe("@scottOrganizationalCulture2003");
 	});
 });
 

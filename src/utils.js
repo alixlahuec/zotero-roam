@@ -598,31 +598,47 @@ function formatItemNotes(notes, separator){
  * @returns {String} The formatted reference
  */
 function formatItemReference(item, format, { accent_class = "zr-accent-1" } = {}){
-	const citekey = "@" + item.key;
-	const pub_year = !item.meta.parsedDate 
+	const key = item.key;
+	const title = item.data.title;
+	const authors = item.meta.creatorSummary || "";
+	const year = !item.meta.parsedDate 
 		? ""
 		: isNaN(new Date(item.meta.parsedDate))
 			? ""
 			: (new Date(item.meta.parsedDate)).getUTCFullYear();
-	const pub_summary = [item.meta.creatorSummary || "", pub_year ? `(${pub_year})` : ""].filter(Boolean).join(" ");
+	const summary = [authors, year ? `(${year})` : ""].filter(Boolean).join(" ");
+	const citekey = "@" + key;
+	const summary_or_key = summary || key;
 
-	switch(format){
-	case "inline":
-		return pub_summary;
-	case "tag":
-		return `#[[${citekey}]]`;
-	case "pageref":
-		return `[[${citekey}]]`;
-	case "citation":
-		return `[${pub_summary || item.key}]([[${citekey}]])`;
-	case "popover":
-		return `{{=: ${pub_summary || item.key} | {{embed: [[${citekey}]]}} }}`;
-	case "zettlr":
-		return [`<span class="${accent_class}">${pub_summary || item.key}</span>`, item.data.title].filter(Boolean).join(" ");
-	case "citekey":
-	default:
-		return citekey;
+	const TEMPLATES_MAPPING = {
+		"citation": "[{{summary_or_key}}]([[{{citekey}}]])",
+		"citekey": "{{citekey}}",
+		"inline": "{{summary}}",
+		"key": "{{key}}",
+		"pageref": "[[{{citekey}}]]",
+		"popover": "{{=: {{summary_or_key}} | {{embed: [[{{citekey}}]]}} }}",
+		"tag": "#[[{{citekey}}]]",
+		"zettlr": `<span class="${accent_class}">{{summary_or_key}}</span> {{title}}`
+	};
+
+	const specs = {
+		authors,
+		citekey,
+		key,
+		summary,
+		summary_or_key,
+		title,
+		year
+	};
+
+	let output = TEMPLATES_MAPPING[format] || format || "{{citekey}}";
+
+	for(const prop in specs){
+		output = output.replaceAll(`{{${prop}}}`, `${specs[prop]}`);
 	}
+
+	return output;
+
 }
 
 /** Formats an array of Zotero annotations into Roam blocks, with optional configuration
