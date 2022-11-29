@@ -184,6 +184,7 @@
 /**
  * @typedef {{
  * children?: (String|RoamImportableBlock)[],
+ * order?: Integer,
  * parentUID?: String,
  * string: String,
  * text: String,

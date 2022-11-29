@@ -132,7 +132,7 @@ async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
 /** Searches for a Roam block by its contents, under a given parent
  * @param {String} string - The block's contents
  * @param {String} parentUID - The UID of the targeted parent (Roam block or page)
- * @returns {String|false} The UID of the Roam block (if it exists), otherwise `false`
+ * @returns {{uid: String, children?: Array}|false} The details of the Roam block (if it exists), otherwise `false`
 */
 function findRoamBlock(string, parentUID){
 	const blockSearch = window.roamAlphaAPI.q(`[

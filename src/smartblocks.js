@@ -204,6 +204,10 @@ function eval_term(term, props){
 	}
 }
 
+/** Enforces the block-object format (recursively) for an array of importable blocks. This is needed for correctly importing nested blocks with SmartBlocks.
+ * @param {RoamImportableBlock[]} arr - The array of importable blocks to reformat
+ * @returns {RoamImportableBlock[]} - The reformatted array, where all elements are in the block-object format
+ */
 function reformatImportableBlocks(arr){
 	if(!arr){
 		return [];
