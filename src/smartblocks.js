@@ -65,7 +65,9 @@ const sbCommands = () => {
 			help: "Returns the formatted metadata for a Zotero item and its children (PDFs, notes/annotations), using the extension's default formatter. Use this if you want to use the default metadata template as part of your SmartBlock.",
 			handler: (context) => () => {
 				const { item, pdfs, notes } = context.variables;
-				return window.zoteroRoam.getItemMetadata(item, pdfs, notes);
+				const output = window.zoteroRoam.getItemMetadata(item, pdfs, notes);
+
+				return reformatImportableBlocks(output);
 			}
 		},
 		"ZOTEROITEMPUBLICATION": {
@@ -127,7 +129,9 @@ const sbCommands = () => {
 			help: "Formats a list of Zotero notes/annotations, with current user settings",
 			handler: (context) => () => {
 				const { notes = [] } = context.variables;
-				return window.zoteroRoam.formatNotes(notes);
+				const output = window.zoteroRoam.formatNotes(notes);
+
+				return reformatImportableBlocks(output);
 			}
 		},
 		"ZOTEROPDFS": {
@@ -197,6 +201,30 @@ function eval_term(term, props){
 		} else {
 			return props.includes(term);
 		}
+	}
+}
+
+function reformatImportableBlocks(arr){
+	if(!arr){
+		return [];
+	} else {
+		return arr.map(blck => {
+			if(blck.constructor === String){
+				return {
+					string: blck,
+					text: blck,
+					children: []
+				};
+			} else if(blck.constructor === Object) {
+				return {
+					...blck,
+					children: reformatImportableBlocks(blck.children)
+				};
+			} else {
+				console.log(blck);
+				throw new Error(`All array items should be of type String or Object, not ${blck.constructor}`);
+			}
+		});
 	}
 }
 
@@ -306,6 +334,7 @@ async function use_smartblock_metadata(config, context){
 
 export {
 	eval_term,
+	reformatImportableBlocks,
 	registerSmartblockCommands,
 	sbCommands,
 	unregisterSmartblockCommands,

@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/query-core";
 
 import ZoteroRoam from "../src/extension";
-import { eval_term, sbCommands } from "../src/smartblocks";
+import { eval_term, reformatImportableBlocks, sbCommands } from "../src/smartblocks";
 import { getLocalLink, getWebLink, makeDNP } from "../src/utils";
 
 import { bibs } from "Mocks/zotero/bib";
@@ -30,6 +30,49 @@ test("Simple grouping evals correctly", () => {
 	expect(eval_term("(systems&software)", props)).toBe(false);
 	expect(eval_term("(software|TODO)", props)).toBe(false);
 	expect(eval_term("(PKM&culture)", props)).toBe(true);
+});
+
+// Utils
+
+describe("Enforcing a block-object format returns correct output", () => {
+	const cases = [
+		[
+			[],
+			[]
+		],
+		[
+			["some", "block"],
+			[
+				{ string: "some", text: "some", children: [] },
+				{ string: "block", text: "block", children: [] }
+			]
+		],
+		[
+			["some", { string: "object", text: "object", children: [] }],
+			[
+				{ string: "some", text: "some", children: [] },
+				{ string: "object", text: "object", children: [] }
+			]
+		],
+		[
+			["some", { string: "object", text: "object", children: ["child", "string"] }],
+			[
+				{ string: "some", text: "some", children: [] },
+				{ string: "object", text: "object", children: [
+					{ string: "child", text: "child", children: [] },
+					{ string: "string", text: "string", children: [] }
+				] }
+			]
+		],
+	];
+
+	test.each(cases)(
+		"%# - %s",
+		(arr, expectation) => {
+			expect(reformatImportableBlocks(arr))
+				.toEqual(expectation);
+		}
+	);
 });
 
 // Commands
@@ -203,7 +246,9 @@ describe("All commands return correct output", () => {
 		const context = makeSbContext({ item: sample_item, notes: [sampleNote], pdfs: [samplePDF] });
 
 		expect(commands.ZOTEROITEMMETADATA.handler(context)())
-			.toEqual(window.zoteroRoam.getItemMetadata(sample_item, [samplePDF], [sampleNote]));
+			.toEqual(reformatImportableBlocks(
+				window.zoteroRoam.getItemMetadata(sample_item, [samplePDF], [sampleNote])
+			));
 	});
 
 	test("ZOTEROITEMPUBLICATION", () => {
@@ -292,9 +337,13 @@ describe("All commands return correct output", () => {
 		const empty_context = makeSbContext({});
 
 		expect(commands.ZOTERONOTES.handler(context)())
-			.toEqual(window.zoteroRoam.formatNotes(sample_notes));
+			.toEqual(reformatImportableBlocks(
+				window.zoteroRoam.formatNotes(sample_notes)
+			));
 		expect(commands.ZOTERONOTES.handler(empty_context)())
-			.toEqual(window.zoteroRoam.formatNotes([]));
+			.toEqual(reformatImportableBlocks(
+				window.zoteroRoam.formatNotes([])
+			));
 	});
 
 	test("ZOTEROPDFS", () => {
