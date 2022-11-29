@@ -107,12 +107,16 @@
  */
 
 /**
- * @typedef {("citekey"|"inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr")} AutocompleteItemFormat
+ * @typedef {("citekey"|"key"|"inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr")} AutocompleteItemFormat
  */
 /**
  * @typedef {{
  * trigger: String,
+ * display_char: String,
+ * display_use: ("preset"|"custom"),
  * display: AutocompleteItemFormat,
+ * format_char: String,
+ * format_use: ("preset"|"custom"),
  * format: AutocompleteItemFormat
  * }}
  * SettingsAutocomplete

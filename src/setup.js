@@ -134,7 +134,13 @@ export function setupInitialSettings(settingsObject){
 			...annotations
 		},
 		autocomplete: {
+			display_char: "",
+			display_use: "preset",
+			// legacy - should be display_preset
 			display: "citekey",
+			format_char: "",
+			format_use: "preset",
+			// legacy - should be format_preset
 			format: "citation",
 			trigger: "",
 			...autocomplete

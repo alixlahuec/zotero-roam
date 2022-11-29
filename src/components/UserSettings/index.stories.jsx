@@ -24,7 +24,11 @@ export default {
 			},
 			autocomplete: {
 				trigger: "@",
+				display_char: "",
+				display_use: "preset",
 				display: "citekey",
+				format_char: "",
+				format_use: "preset",
 				format: "citekey"
 			},
 			copy: {
