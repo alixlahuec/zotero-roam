@@ -1,21 +1,26 @@
 /* istanbul ignore file */
-import { executeFunctionByName, formatZoteroAnnotations, formatZoteroNotes } from "./utils";
-import { _getItemMetadata } from "./extension";
+import { executeFunctionByName } from "./utils";
+import { _formatNotes, _getItemMetadata } from "./extension";
 import { emitCustomEvent } from "./events";
 import { use_smartblock_metadata } from "./smartblocks";
 
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
- * @param {{string: String, children?: Array}} object - The block Object to use as template 
+ * @param {RoamImportableBlock} object - The block Object to use as template 
  */
-async function addBlockObject(parentUID, object) {
+async function addBlockObject(parentUID, object, order = 0) {
 	const { string: blockString, children = [], ...opts } = object;
 	
 	if(typeof(blockString) === "undefined"){
 		console.log(object);
 		throw new Error("All blocks passed as an Object must have a string property.");
 	} else {
-		const blockUID = await createRoamBlock(parentUID, blockString, 0, opts);
+		const blockUID = await createRoamBlock(
+			opts.parentUID || parentUID,
+			blockString,
+			// Order parameter from the block itself takes precedence over the arg
+			opts.order || order,
+			opts);
 		// If the Object has a `children` property
 		if(children.constructor === Array){
 			// Go through each child element, starting by the last
@@ -23,10 +28,10 @@ async function addBlockObject(parentUID, object) {
 			for(let j = children.length - 1; j >= 0; j--){
 				if(children[j].constructor === Object){
 					// eslint-disable-next-line no-await-in-loop
-					await addBlockObject(blockUID, children[j]);
+					await addBlockObject(blockUID, children[j], order);
 				} else if(children[j].constructor === String){
 					// eslint-disable-next-line no-await-in-loop
-					await createRoamBlock(blockUID, children[j], 0, {});
+					await createRoamBlock(blockUID, children[j], order, {});
 				} else {
 					console.log(children[j]);
 					throw new Error(`All children array items should be of type String or Object, not ${children[j].constructor}`);
@@ -41,10 +46,10 @@ async function addBlockObject(parentUID, object) {
 
 /** Adds Roam blocks to a parent UID, based on an array input.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
- * @param {Array<String|{string: String, children?: Array}>} arr - The array to use as template
+ * @param {(String|RoamImportableBlock)[]} arr - The array to use as template
  * @returns The outcome of the operation
  */
-async function addBlocksArray(parentUID, arr){
+async function addBlocksArray(parentUID, arr, order = 0){
 	const defaultOutcome = {
 		args: {
 			blocks: arr,
@@ -56,16 +61,16 @@ async function addBlocksArray(parentUID, arr){
 
 	if(arr.length > 0){
 		try{
-			// Go through the array items in reverse order, because each block gets added to the top so have to start with the 'last' block
+			// Go through the array items in reverse order, so that each block gets added to the "same" position
 			for(let k = arr.length - 1; k >= 0; k--){
 				// If the element is an Object, pass it to addBlockObject to recursively process its contents
 				if(arr[k].constructor === Object){
 					// eslint-disable-next-line no-await-in-loop
-					await addBlockObject(parentUID, arr[k]);
+					await addBlockObject(parentUID, arr[k], order);
 				} else if(arr[k].constructor === String) {
 					// If the element is a simple String, add the corresponding block & move on
 					// eslint-disable-next-line no-await-in-loop
-					await createRoamBlock(parentUID, arr[k], 0, {});
+					await createRoamBlock(parentUID, arr[k], order, {});
 				} else {
 					console.log(arr[k]);
 					throw new Error(`All array items should be of type String or Object, not ${arr[k].constructor}`);
@@ -122,6 +127,29 @@ async function createRoamBlock(parentUID, string, order = 0, opts = {}) {
 	}
 	await window.roamAlphaAPI.createBlock({ location: { "parent-uid": parentUID, order }, "block": blockContents });
 	return blockUID;
+}
+
+/** Searches for a Roam block by its contents, under a given parent
+ * @param {String} string - The block's contents
+ * @param {String} parentUID - The UID of the targeted parent (Roam block or page)
+ * @returns {{uid: String, children?: Array}|false} The details of the Roam block (if it exists), otherwise `false`
+*/
+function findRoamBlock(string, parentUID){
+	const blockSearch = window.roamAlphaAPI.q(`[
+		:find (pull ?b [:block/uid :block/children])
+		:in $ ?string ?parentUID
+		:where
+			[?par :block/uid ?parentUID]
+			[?par :block/children ?b]
+			[?b :block/uid ?uid]
+			[?b :block/string ?string]
+	]`, string, parentUID);
+
+	if(blockSearch.length > 0){
+		return blockSearch[0][0];
+	} else {
+		return false;
+	}
 }
 
 /** Searches a Roam page by its title
@@ -323,9 +351,8 @@ async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, an
 	}
 
 	try {
-		const formattedAnnots = formatZoteroAnnotations(notes.filter(n => n.data.itemType == "annotation"), annotationsSettings);
-		const formattedNotes = formatZoteroNotes(notes.filter(n => n.data.itemType == "note"), notesSettings);
-		const { args, error, success } = await addBlocksArray(pageUID, [...formattedAnnots, ...formattedNotes]);
+		const formattedOutput = _formatNotes(notes, pageUID, { annotationsSettings, notesSettings });
+		const { args, error, success } = await addBlocksArray(pageUID, formattedOutput);
 
 		const outcome = {
 			args,
@@ -385,8 +412,8 @@ function removePaletteCommand(label){
 }
 
 export {
-	addBlocksArray,
 	addPaletteCommand,
+	findRoamBlock,
 	findRoamPage,
 	getAllPages,
 	getCitekeyPages,
