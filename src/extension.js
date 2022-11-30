@@ -21,6 +21,8 @@ export default class ZoteroRoam {
 	/** @private */
 	#settings;
 
+	logs = [];
+
 	/**
      * @param {{
      * queryClient: *,
@@ -49,6 +51,21 @@ export default class ZoteroRoam {
 		this.#settings[op] = val;
 	}
 
+	send(obj, level = "info"){
+		this.logs.push(new ZoteroRoamLog(obj, level));
+	}
+
+	error(obj){
+		this.send(obj, "error");
+	}
+
+	info(obj){
+		this.send(obj, "info");
+	}
+
+	warn(obj){
+		this.send(obj, "warning");
+	}
 
 	formatPDFs = _formatPDFs;
 	getItemCreators = _getItemCreators;
@@ -190,6 +207,23 @@ export default class ZoteroRoam {
 			libraries: this.#libraries,
 			queryClient: this.#queryClient
 		});
+	}
+}
+
+export class ZoteroRoamLog {
+	level;
+	origin;
+	message;
+	context;
+	timestamp;
+
+	constructor(obj = {}, level = "info"){
+		const { origin = "", message = "", context = {} } = obj;
+		this.level = level;
+		this.origin = origin;
+		this.message = message;
+		this.context = context;
+		this.timestamp = new Date();
 	}
 }
 

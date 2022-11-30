@@ -4,7 +4,7 @@ import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
 import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
 
-import ZoteroRoam, { _formatNotes } from "../src/extension";
+import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from "../src/extension";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { entries, findItems, items } from "Mocks/zotero/items";
@@ -516,4 +516,125 @@ describe("Retrieval utils", () => {
 
 	});
 
+});
+
+describe("Logger utils", () => {
+	let extension = null;
+	const client = new QueryClient();
+
+	beforeAll(() => {
+		jest.useFakeTimers()
+			.setSystemTime(new Date([2022, 4, 6]));
+	});
+
+	afterAll(() => {
+		jest.useRealTimers();
+	});
+
+	beforeEach(() => {
+		extension = new ZoteroRoam({
+			queryClient: client,
+			requests: {
+				libraries: Object.values(libraries).map(lib => ({ apikey: masterKey, path: lib.path })),
+			},
+			settings: {
+				annotations: {},
+				notes: {},
+				typemap: {}
+			}
+		}); 
+	});
+
+	const log_details = {
+		origin: "API",
+		message: "Some log",
+		context: {
+			text: "string"
+		}
+	};
+
+	test("Logging error", () => {
+		extension.error(log_details);
+		expect(extension.logs)
+			.toEqual([
+				{
+					...log_details,
+					level: "error",
+					timestamp: new Date([2022, 4, 6])
+				}
+			]);
+	});
+
+	test("Logging info", () => {
+		extension.info(log_details);
+		expect(extension.logs)
+			.toEqual([
+				{
+					...log_details,
+					level: "info",
+					timestamp: new Date([2022, 4, 6])
+				}
+			]);
+	});
+
+	test("Logging warning", () => {
+		extension.warn(log_details);
+		expect(extension.logs)
+			.toEqual([
+				{
+					...log_details,
+					level: "warning",
+					timestamp: new Date([2022, 4, 6])
+				}
+			]);
+	});
+
+});
+
+describe("Custom class for logs", () => {
+	beforeAll(() => {
+		jest.useFakeTimers()
+			.setSystemTime(new Date([2022, 4, 6]));
+	});
+
+	afterAll(() => {
+		jest.useRealTimers();
+	});
+
+	test("It uses fallback values", () => {
+		const sample_log = new ZoteroRoamLog();
+
+		expect(sample_log)
+			.toEqual({
+				context: {},
+				level: "info",
+				message: "",
+				origin: "",
+				timestamp: new Date([2022, 4, 6])
+			});
+	});
+
+	test("It initializes with values provided", () => {
+		const sample_log = new ZoteroRoamLog(
+			{
+				origin: "API",
+				message: "Failed to fetch",
+				context: {
+					text: "some text"
+				}
+			},
+			"error"
+		);
+
+		expect(sample_log)
+			.toEqual({
+				context: {
+					text: "some text"
+				},
+				level: "error",
+				message: "Failed to fetch",
+				origin: "API",
+				timestamp: new Date([2022, 4, 6])
+			});
+	});
 });
