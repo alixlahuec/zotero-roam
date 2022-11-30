@@ -70,6 +70,18 @@ const taglistEntry = shape({
 });
 
 /**
+ * @see ZoteroRoamLog
+ */
+
+const logEntry = shape({
+	context: object,
+	level: oneOf(["error", "info", "warning"]),
+	message: string,
+	origin: string,
+	timestamp: instanceOf(Date)
+});
+
+/**
  * @see simplifyZoteroAnnotations
  */
 const cleanAnnotationItemType = shape({
@@ -374,6 +386,7 @@ export {
 	zoteroLibraryType,
 	zoteroTagType,
 	taglistEntry,
+	logEntry,
 	cleanAnnotationItemType,
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,
