@@ -351,7 +351,10 @@ export function validateShortcuts(shortcuts){
 				parseKeyCombo(shortcuts[key]);
 				output[key] = shortcuts[key];
 			} catch(e) {
-				console.log(e);
+				window.zoteroRoam?.warn({
+					origin: "Shortcuts",
+					message: "Invalid hotkey: " + shortcuts[key]
+				});
 			}
 		}
 	});

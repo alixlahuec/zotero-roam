@@ -446,7 +446,14 @@ function copyToClipboard(text){
 				};
 			})
 			.catch((error) => {
-				console.error(error);
+				window.zoteroRoam?.error({
+					origin: "Copy",
+					message: "Failed copying text to clipboard",
+					context: {
+						error,
+						text
+					}
+				});
 				zrToaster.show({
 					intent: "danger",
 					message: `Clipboard copy failed for: ${text}`,
