@@ -75,6 +75,28 @@ function cleanBibliographyHTML(bib){
 	return formattedBib;
 }
 
+/* istanbul ignore next */
+function cleanErrorIfAxios(error){
+	try {
+		const origin = error.name || "";
+		if(origin == "AxiosError"){
+			const { code, message, status, config: { url } } = error;
+			return {
+				code,
+				message,
+				status,
+				config: {
+					url
+				}
+			};
+		}
+	} catch(e){
+		// Do nothing
+	}
+
+	return error;
+}
+
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
  * @param {String[]} tags - The names of the tags to be deleted
  * @param {ZoteroLibrary} library - The targeted Zotero library
@@ -161,7 +183,7 @@ async function fetchAdditionalData(req, totalResults) {
 			message: "Failed to fetch additional data",
 			context: {
 				dataURI,
-				error,
+				error: cleanErrorIfAxios(error),
 				responses,
 				totalResults
 			}
@@ -240,7 +262,7 @@ async function fetchBibliography(itemKey, library, config = {}) {
 			context: {
 				config,
 				dataURI,
-				error,
+				error: cleanErrorIfAxios(error),
 				response
 			}
 		});
@@ -265,7 +287,7 @@ async function fetchCitoid(query) {
 			origin: "API",
 			message: "Failed to fetch metadata from Wikipedia",
 			context: {
-				error,
+				error: cleanErrorIfAxios(error),
 				query,
 				response
 			}
@@ -340,7 +362,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 			context: {
 				data: modified,
 				deleted,
-				error,
+				error: cleanErrorIfAxios(error),
 				response
 			}
 		});
@@ -377,7 +399,7 @@ async function fetchDeleted(library, since) {
 			origin: "API",
 			message: "Failed to fetch deleted data",
 			context: {
-				error,
+				error: cleanErrorIfAxios(error),
 				response
 			}
 		});
@@ -459,7 +481,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			context: {
 				data: modified,
 				deleted,
-				error,
+				error: cleanErrorIfAxios(error),
 				response
 			}
 		});
@@ -483,10 +505,7 @@ async function fetchPermissions(apikey) {
 	} catch(error) /* istanbul ignore next */ {
 		window.zoteroRoam?.error?.({
 			origin: "API",
-			message: "Failed to fetch permissions",
-			context: {
-				error
-			}
+			message: "Failed to fetch permissions"
 		});
 		return Promise.reject(error);
 	}
@@ -512,7 +531,7 @@ async function fetchSemantic(doi) {
 			origin: "API",
 			message: "Failed to fetch data from SemanticScholar",
 			context: {
-				error,
+				error: cleanErrorIfAxios(error),
 				response
 			}
 		});
@@ -552,7 +571,7 @@ async function fetchTags(library) {
 			origin: "API",
 			message: "Failed to fetch tags",
 			context: {
-				error,
+				error: cleanErrorIfAxios(error),
 				path,
 				tags
 			}
@@ -711,6 +730,7 @@ function writeItems(dataList, library){
 
 export {
 	cleanBibliographyHTML,
+	cleanErrorIfAxios,
 	deleteTags,
 	extractCitekeys,
 	fetchAdditionalData,

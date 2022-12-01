@@ -3,6 +3,8 @@ import { Component } from "react";
 
 import ErrorCallout from "./ErrorCallout";
 
+import { cleanErrorIfAxios } from "../../../src/api/utils";
+
 
 class ErrorBoundary extends Component {
 	constructor(props) {
@@ -19,7 +21,7 @@ class ErrorBoundary extends Component {
 			origin: "Interface",
 			message: "Failed to render",
 			context: {
-				error,
+				error: cleanErrorIfAxios(error),
 				errorInfo
 			}
 		});
