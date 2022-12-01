@@ -15,7 +15,7 @@ class ErrorBoundary extends Component {
 			error: error,
 			errorInfo: errorInfo
 		});
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "Interface",
 			message: "Failed to render",
 			context: {

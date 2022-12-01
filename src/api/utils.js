@@ -156,7 +156,7 @@ async function fetchAdditionalData(req, totalResults) {
 		responses = await Promise.all(apiCalls);
 		return responses.map(res => res.data).flat(1);
 	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "API",
 			message: "Failed to fetch additional data",
 			context: {
@@ -234,7 +234,7 @@ async function fetchBibliography(itemKey, library, config = {}) {
 
 		return response.data.bib;
 	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "API",
 			message: "Failed to fetch bibliography",
 			context: {
@@ -261,7 +261,7 @@ async function fetchCitoid(query) {
 			query
 		};
 	} catch(error){
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "API",
 			message: "Failed to fetch metadata from Wikipedia",
 			context: {
@@ -334,7 +334,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 			lastUpdated: Number(lastUpdated)
 		};
 	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "API",
 			message: "Failed to fetch collections",
 			context: {
@@ -373,7 +373,7 @@ async function fetchDeleted(library, since) {
 		);
 		return response.data;
 	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "API",
 			message: "Failed to fetch deleted data",
 			context: {
@@ -453,7 +453,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			lastUpdated: Number(lastUpdated)
 		};
 	} catch(error){
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "API",
 			message: "Failed to fetch items",
 			context: {
@@ -481,7 +481,7 @@ async function fetchPermissions(apikey) {
 		const { data } = await zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } });
 		return data;
 	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "API",
 			message: "Failed to fetch permissions",
 			context: {
@@ -508,7 +508,7 @@ async function fetchSemantic(doi) {
 			references: parseSemanticDOIs(references) 
 		};
 	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "API",
 			message: "Failed to fetch data from SemanticScholar",
 			context: {
@@ -548,7 +548,7 @@ async function fetchTags(library) {
 			lastUpdated: Number(lastUpdated)
 		};
 	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error({
+		window.zoteroRoam?.error?.({
 			origin: "API",
 			message: "Failed to fetch tags",
 			context: {
