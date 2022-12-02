@@ -20,6 +20,7 @@ import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, 
 
 import * as customPropTypes from "../../propTypes";
 import { SettingsDialog } from "../UserSettings";
+import Logger from "Components/Logger";
 
 
 const openSearchCommand = "zoteroRoam : Open Search Panel";
@@ -57,6 +58,7 @@ class App extends Component {
 		super(props);
 		this.state = {
 			isDashboardOpen: false,
+			isLoggerOpen: false,
 			isSearchPanelOpen: false,
 			isSettingsPanelOpen: false,
 			lastCursorLocation: null,
@@ -77,6 +79,8 @@ class App extends Component {
 		this.closeSettings = this.closeSettings.bind(this);
 		this.openSettings = this.openSettings.bind(this);
 		this.toggleSettings = this.toggleSettings.bind(this);
+		this.closeLogger = this.closeLogger.bind(this);
+		this.openLogger = this.openLogger.bind(this);
 
 		this.shortcutsConfig = {
 			"toggleDashboard": {
@@ -124,7 +128,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { status, isDashboardOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
+		const { status, isDashboardOpen, isLoggerOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
 		const { extension } = this.props;
 
 		const hotkeys = Object.keys(this.shortcutsConfig)
@@ -148,10 +152,12 @@ class App extends Component {
 					<ExtensionContext.Provider value={extension}>
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
+							openLogger={this.openLogger}
 							openSearchPanel={this.openSearchPanel}
 							openSettingsPanel={this.openSettings}
 							status={status} 
 							toggleExtension={this.toggleExtension} />
+						<Logger isOpen={isLoggerOpen} onClose={this.closeLogger} />
 						<SettingsDialog isOpen={isSettingsPanelOpen} onClose={this.closeSettings} />
 						<RoamCitekeysProvider>
 							{status == "on" ? <GraphWatcher /> : null}
@@ -224,6 +230,14 @@ class App extends Component {
 
 	toggleSettings() {
 		this.setState((prev) => ({ isSettingsPanelOpen: !prev.isSettingsPanelOpen }));
+	}
+
+	closeLogger() {
+		this.setState((_prev) => ({ isLoggerOpen: false }));
+	}
+
+	openLogger() {
+		this.setState((_prev) => ({ isLoggerOpen: true }));
 	}
 
 }

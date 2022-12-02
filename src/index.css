@@ -444,6 +444,11 @@ textarea.zr-text-input,
     color: var(--zr-positive-co);
 }
 
+[class*="zr"] .bp3-tag.bp3-minimal.bp3-intent-danger {
+    background-color: var(--zr-negative-bg);
+    color: var(--zr-negative-co);
+}
+
 /* Popovers & Menus */
 
 .zr-popover:not(.zr-date-picker) {

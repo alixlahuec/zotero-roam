@@ -245,7 +245,10 @@ function registerSmartblockCommands(){
 			try {
 				unregisterSmartblockCommands();
 			} catch(e) {
-				// Do nothing
+				window.zoteroRoam?.error?.({
+					origin: "SmartBlocks",
+					message: "Failed to unregister commands"
+				});
 			}
 
 			Object.keys(commands).forEach(cmd => {
@@ -328,7 +331,14 @@ async function use_smartblock_metadata(config, context){
 			...defaultOutcome, 
 			success: true });
 	} catch(e){
-		console.error(e);
+		window.zoteroRoam?.error?.({
+			origin: "SmartBlocks",
+			message: "Failed to trigger SmartBlock",
+			context: {
+				...obj
+			}
+		});
+
 		return Promise.resolve({
 			...defaultOutcome,
 			error: e,

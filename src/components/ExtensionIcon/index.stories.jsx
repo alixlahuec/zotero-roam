@@ -1,8 +1,8 @@
+import { screen, userEvent, waitFor, within } from "@storybook/testing-library";
 import ExtensionIcon from ".";
 
 import useToggle from "../../hooks/useToggle";
 
-import { screen, userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import { sleep } from "../../../.storybook/utils";
 
@@ -11,11 +11,13 @@ export default {
 	component: ExtensionIcon,
 	args: {
 		openDashboard: () => {},
+		openLogger: () => {},
 		openSearchPanel: () => {},
 		openSettingsPanel: () => {}
 	},
 	argTypes: {
 		openDashboard: { action: true },
+		openLogger: { action: true },
 		openSearchPanel: { action: true },
 		openSettingsPanel: { action: true }
 	},
