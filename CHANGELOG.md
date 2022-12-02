@@ -1,6 +1,18 @@
 ## Changelog
 
-### [0.7.7](https://github.com/alixlahuec/zotero-roam/compare/0.7.6...0.7.7) - 
+### [0.7.8](https://github.com/alixlahuec/zotero-roam/compare/0.7.7...0.7.8) - 
+
+#### Features
+
+-  add interface to view logs ([`#115`](https://github.com/alixlahuec/zotero-roam/pull/115))
+-  expand formatting options for autocomplete ([`#114`](https://github.com/alixlahuec/zotero-roam/pull/114))
+-  add custom nesting options for notes ([`#112`](https://github.com/alixlahuec/zotero-roam/pull/112))
+-  sort annotations and notes for import ([`#102`](https://github.com/alixlahuec/zotero-roam/pull/102))
+#### Bug Fixes
+
+-  ZOTEROITEMCOLLECTIONS doesn't return output ([`#110`](https://github.com/alixlahuec/zotero-roam/pull/110))
+
+### [0.7.7](https://github.com/alixlahuec/zotero-roam/compare/0.7.6...0.7.7) -  2022-11-25 
 
 ### [0.7.6](https://github.com/alixlahuec/zotero-roam/compare/0.7.5...0.7.6) -  2022-11-20 
 
