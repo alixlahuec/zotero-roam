@@ -27,6 +27,10 @@ function LoggerList({ items }){
 			: items.filter(it => it.level == "error");
 	}, [items, showAllEntries]);
 
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [items, visibleItems, setCurrentPage]);
+
 	return <div className="zr-logger--datalist">
 		{visibleItems.length == 0
 			? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />
