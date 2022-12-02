@@ -4,7 +4,7 @@ import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
 import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
 
-import ZoteroRoam from "../src/extension";
+import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from "../src/extension";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { entries, findItems, items } from "Mocks/zotero/items";
@@ -15,6 +15,7 @@ import { sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage } from "Mocks/zo
 import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
 import { samplePDF } from "Mocks/zotero/pdfs";
 import { tags } from "Mocks/zotero/tags";
+import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -32,26 +33,171 @@ describe("Formatting utils", () => {
 		}
 	});
     
-	test("Notes & Annotations formatting", () => {
-		expect(extension.formatNotes([sampleNote, sampleAnnot]))
-			.toEqual([
-				...formatItemAnnotations([sampleAnnot]),
-				...formatItemNotes([sampleNote])
-			]);
-		expect(extension.formatNotes(false))
-			.toEqual([]);
+	describe("Notes & Annotations formatting", () => {
+		afterEach(() => {
+			// Reset the notes settings each time
+			extension.updateSetting("notes", {});
+		});
 
-		expect(extension.formatNotes([sampleAnnotLaterPage, sampleAnnotPrevPage]))
-			.toEqual([
-				...formatItemAnnotations([sampleAnnotPrevPage]),
-				...formatItemAnnotations([sampleAnnotLaterPage])
-			]);
+		test("Class method returns correct output", () => {
+			expect(extension.formatNotes([sampleNote, sampleAnnot]))
+				.toEqual(_formatNotes([sampleNote, sampleAnnot], null, { annotationsSettings: {}, notesSettings: {} }));
+			expect(extension.formatNotes(false))
+				.toEqual([]);
+		});
+
+		test("Sorted output", () => {
+			extension.updateSetting("notes", {
+				nest_preset: false,
+				nest_use: "preset"
+			});
+
+			expect(extension.formatNotes([sampleAnnotLaterPage, sampleAnnotPrevPage]))
+				.toEqual([
+					...formatItemAnnotations([sampleAnnotPrevPage]),
+					...formatItemAnnotations([sampleAnnotLaterPage])
+				]);
 		
-		expect(extension.formatNotes([sampleNote, sampleOlderNote]))
-			.toEqual([
-				...formatItemNotes([sampleOlderNote]),
-				...formatItemNotes([sampleNote])
+			expect(extension.formatNotes([sampleNote, sampleOlderNote]))
+				.toEqual([
+					...formatItemNotes([sampleOlderNote]),
+					...formatItemNotes([sampleNote])
+				]);
+			
+			expect(extension.formatNotes([sampleNote, sampleAnnotLaterPage, sampleAnnotPrevPage]))
+				.toEqual([
+					...formatItemAnnotations([sampleAnnotPrevPage]),
+					...formatItemAnnotations([sampleAnnotLaterPage]),
+					...formatItemNotes([sampleNote])
+				]);
+		});
+
+		test("Nested output - with preset", () => {
+			const preset_string = "[[Notes]]";
+
+			extension.updateSetting("notes", {
+				nest_preset: preset_string,
+				nest_use: "preset"
+			});
+
+			expect(extension.formatNotes([sampleNote, sampleOlderNote]))
+				.toEqual([
+					{
+						string: preset_string,
+						text: preset_string,
+						children: [
+							...formatItemNotes([sampleOlderNote]),
+							...formatItemNotes([sampleNote])
+						]
+					}
+				]);
+		});
+
+		test("Nested output - with custom string", () => {
+			const custom_string = "[[My Notes]]";
+
+			extension.updateSetting("notes", {
+				nest_char: custom_string,
+				nest_use: "custom"
+			});
+
+			expect(extension.formatNotes([sampleNote, sampleOlderNote]))
+				.toEqual([
+					{
+						string: custom_string,
+						text: custom_string,
+						children: [
+							...formatItemNotes([sampleOlderNote]),
+							...formatItemNotes([sampleNote])
+						]
+					}
+				]);
+		});
+
+		test("Util returns nested output - with block checking", () => {
+			const custom_string = "[[My Notes]]";
+			const notesSettings = {
+				nest_char: custom_string,
+				nest_position: "top",
+				nest_preset: false,
+				nest_use: "custom"
+			};
+
+			const formattedOutput = formatItemNotes([sampleNote]);
+
+			expect(_formatNotes([sampleNote], uid_with_existing_block, {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					order: 0,
+					parentUID: existing_block_uid
+				}))
+			);
+			
+			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					order: 0,
+					parentUID: existing_block_uid_with_children
+				}))
+			);
+
+			expect(_formatNotes([sampleNote], "uid without existing block", {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual([
+				{
+					string: custom_string,
+					text: custom_string,
+					children: formattedOutput
+				}
 			]);
+
+		});
+
+		test("Util returns nested output - with block checking, with position", () => {
+			const custom_string = "[[My Notes]]";
+			const notesSettings = {
+				nest_char: custom_string,
+				nest_position: "bottom",
+				nest_preset: false,
+				nest_use: "custom"
+			};
+
+			const formattedOutput = formatItemNotes([sampleNote]);
+
+			expect(_formatNotes([sampleNote], uid_with_existing_block, {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					order: 0,
+					parentUID: existing_block_uid
+				}))
+			);
+
+			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, {
+				annotationsSettings: {},
+				notesSettings
+			})).toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					order: 2,
+					parentUID: existing_block_uid_with_children
+				}))
+			);
+		});
+
 	});
 
 	test("PDFs formatting", () => {
@@ -370,4 +516,125 @@ describe("Retrieval utils", () => {
 
 	});
 
+});
+
+describe("Logger utils", () => {
+	let extension = null;
+	const client = new QueryClient();
+
+	beforeAll(() => {
+		jest.useFakeTimers()
+			.setSystemTime(new Date([2022, 4, 6]));
+	});
+
+	afterAll(() => {
+		jest.useRealTimers();
+	});
+
+	beforeEach(() => {
+		extension = new ZoteroRoam({
+			queryClient: client,
+			requests: {
+				libraries: Object.values(libraries).map(lib => ({ apikey: masterKey, path: lib.path })),
+			},
+			settings: {
+				annotations: {},
+				notes: {},
+				typemap: {}
+			}
+		}); 
+	});
+
+	const log_details = {
+		origin: "API",
+		message: "Some log",
+		context: {
+			text: "string"
+		}
+	};
+
+	test("Logging error", () => {
+		extension.error(log_details);
+		expect(extension.logs)
+			.toEqual([
+				{
+					...log_details,
+					level: "error",
+					timestamp: new Date([2022, 4, 6])
+				}
+			]);
+	});
+
+	test("Logging info", () => {
+		extension.info(log_details);
+		expect(extension.logs)
+			.toEqual([
+				{
+					...log_details,
+					level: "info",
+					timestamp: new Date([2022, 4, 6])
+				}
+			]);
+	});
+
+	test("Logging warning", () => {
+		extension.warn(log_details);
+		expect(extension.logs)
+			.toEqual([
+				{
+					...log_details,
+					level: "warning",
+					timestamp: new Date([2022, 4, 6])
+				}
+			]);
+	});
+
+});
+
+describe("Custom class for logs", () => {
+	beforeAll(() => {
+		jest.useFakeTimers()
+			.setSystemTime(new Date([2022, 4, 6]));
+	});
+
+	afterAll(() => {
+		jest.useRealTimers();
+	});
+
+	test("It uses fallback values", () => {
+		const sample_log = new ZoteroRoamLog();
+
+		expect(sample_log)
+			.toEqual({
+				context: {},
+				level: "info",
+				message: "",
+				origin: "",
+				timestamp: new Date([2022, 4, 6])
+			});
+	});
+
+	test("It initializes with values provided", () => {
+		const sample_log = new ZoteroRoamLog(
+			{
+				origin: "API",
+				message: "Failed to fetch",
+				context: {
+					text: "some text"
+				}
+			},
+			"error"
+		);
+
+		expect(sample_log)
+			.toEqual({
+				context: {
+					text: "some text"
+				},
+				level: "error",
+				message: "Failed to fetch",
+				origin: "API",
+				timestamp: new Date([2022, 4, 6])
+			});
+	});
 });

@@ -1,6 +1,7 @@
 import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
 import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
+import { findRoamBlock } from "Roam";
 
 
 /**
@@ -19,6 +20,8 @@ export default class ZoteroRoam {
 	#queryClient;
 	/** @private */
 	#settings;
+
+	logs = [];
 
 	/**
      * @param {{
@@ -48,6 +51,21 @@ export default class ZoteroRoam {
 		this.#settings[op] = val;
 	}
 
+	send(obj, level = "info"){
+		this.logs.push(new ZoteroRoamLog(obj, level));
+	}
+
+	error(obj){
+		this.send(obj, "error");
+	}
+
+	info(obj){
+		this.send(obj, "info");
+	}
+
+	warn(obj){
+		this.send(obj, "warning");
+	}
 
 	formatPDFs = _formatPDFs;
 	getItemCreators = _getItemCreators;
@@ -62,7 +80,7 @@ export default class ZoteroRoam {
      * @returns 
      */
 	formatNotes(notes) {
-		return _formatNotes(notes, {
+		return _formatNotes(notes, null, {
 			annotationsSettings: this.#settings.annotations,
 			notesSettings: this.#settings.notes
 		});
@@ -192,16 +210,34 @@ export default class ZoteroRoam {
 	}
 }
 
+export class ZoteroRoamLog {
+	level;
+	origin;
+	message;
+	context;
+	timestamp;
+
+	constructor(obj = {}, level = "info"){
+		const { origin = "", message = "", context = {} } = obj;
+		this.level = level;
+		this.origin = origin;
+		this.message = message;
+		this.context = context;
+		this.timestamp = new Date();
+	}
+}
+
 
 /** Formats Zotero notes/annotations items
-     * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The Array of Zotero notes/annotations
-     * @param {{
-     * annotationsSettings: SettingsAnnotations, 
-     * notesSettings: SettingsNotes
-     * }} settings - The user's current settings
-     * @returns The formatted Array
-     */
-function _formatNotes(notes, { annotationsSettings, notesSettings }) {
+ * @param {(ZoteroItem|ZoteroAnnotation)[]} notes - The Array of Zotero notes/annotations
+ * @param {String} pageUID - The UID of the parent item's Roam page (optional)
+ * @param {{
+ * annotationsSettings: SettingsAnnotations, 
+ * notesSettings: SettingsNotes
+ * }} settings - The user's current settings
+ * @returns {(String|RoamImportableBlock)[]} The formatted Array
+ */
+export function _formatNotes(notes, pageUID = null, { annotationsSettings, notesSettings }) {
 	if (!notes) {
 		return [];
 	} else {
@@ -211,11 +247,54 @@ function _formatNotes(notes, { annotationsSettings, notesSettings }) {
 		const noteItems = notes
 			.filter(n => n.data.itemType == "note")
 			.sort((a, b) => a.data.dateAdded < b.data.dateAdded ? -1 : 1);
-
-		return [
+		const formattedOutput = [
 			...formatZoteroAnnotations(annotItems, annotationsSettings),
 			...formatZoteroNotes(noteItems, notesSettings)
 		];
+
+		const { nest_char, nest_position, nest_preset, nest_use } = notesSettings;
+
+		// If nesting is disabled, simply return the array of blocks
+		if(nest_use == "preset" && !nest_preset){
+			return formattedOutput;
+		}
+
+		// Else if the page UID was provided, check if the page already has a block with the same content
+		// If yes, set that block as the parent for all the outputted blocks
+		if(pageUID){
+			const blockString = ((nest_use == "custom") ? nest_char : nest_preset) || "";
+			const existingBlock = findRoamBlock(blockString, pageUID);
+
+			if(existingBlock){
+				const { uid, children = [] } = existingBlock;
+				const pos = (nest_position == "bottom") ? children.length : 0;
+
+				return formattedOutput.map(blck => {
+					if(blck.constructor === String){
+						return {
+							string: blck,
+							text: blck,
+							order: pos,
+							parentUID: uid
+						};
+					} else {
+						return {
+							...blck,
+							order: pos,
+							parentUID: uid
+						};
+					}
+				});
+			}
+		}
+
+		const blockString = (nest_use == "custom" ? nest_char : nest_preset) || "";
+		return [{
+			string: blockString,
+			text: blockString,
+			children: formattedOutput
+		}];
+
 	}
 }
 
@@ -366,11 +445,8 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 		metadata.push(`PDF links : ${_formatPDFs(pdfs, "links").join(", ")}`);
 	}
 	if (notes.length > 0) {
-		metadata.push({
-			string: "[[Notes]]",
-			text: "[[Notes]]",
-			children: _formatNotes(notes, { annotationsSettings, notesSettings })
-		});
+		const formattedOutput = _formatNotes(notes, null, { annotationsSettings, notesSettings });
+		metadata.push(...formattedOutput);
 	}
 
 	return metadata;

@@ -87,6 +87,10 @@ export default {
 	parameters: {
 		userSettings: {
 			notes: {
+				nest_char: "",
+				nest_position: "top",
+				nest_preset: "[[Notes]]",
+				nest_use: "preset",
 				split_char: "",
 				split_preset: "\n",
 				split_use: "preset",

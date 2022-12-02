@@ -107,12 +107,16 @@
  */
 
 /**
- * @typedef {("citekey"|"inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr")} AutocompleteItemFormat
+ * @typedef {("citekey"|"key"|"inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr")} AutocompleteItemFormat
  */
 /**
  * @typedef {{
  * trigger: String,
+ * display_char: String,
+ * display_use: ("preset"|"custom"),
  * display: AutocompleteItemFormat,
+ * format_char: String,
+ * format_use: ("preset"|"custom"),
  * format: AutocompleteItemFormat
  * }}
  * SettingsAutocomplete
@@ -142,6 +146,10 @@
 /**
  * @typedef {{
  * func: String,
+ * nest_char: String,
+ * nest_position: ("top"|"bottom"),
+ * nest_preset: (false|"[[Notes]]"),
+ * nest_use: ("preset"|"custom"),
  * split_char: String,
  * split_preset: ("\n"|"</p>"),
  * split_use: ("preset"|"custom")
@@ -173,4 +181,17 @@
  * handler: Function
  * }}
  * SmartblockCommand
+ */
+
+// ---------------------------------------
+
+/**
+ * @typedef {{
+ * children?: (String|RoamImportableBlock)[],
+ * order?: Integer,
+ * parentUID?: String,
+ * string: String,
+ * text: String,
+ * }}
+ * RoamImportableBlock
  */

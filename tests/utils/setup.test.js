@@ -184,7 +184,11 @@ describe("Parsing initial user settings", () => {
 			__with: "formatted"
 		},
 		autocomplete: {
+			display_char: "",
+			display_use: "preset",
 			display: "citekey",
+			format_char: "",
+			format_use: "preset",
 			format: "citation",
 			trigger: "",
 		},
@@ -206,6 +210,10 @@ describe("Parsing initial user settings", () => {
 		},
 		notes: {
 			func: "",
+			nest_char: "",
+			nest_position: "top",
+			nest_preset: "[[Notes]]",
+			nest_use: "preset",
 			split_char: "",
 			split_preset: "\n",
 			split_use: "preset",

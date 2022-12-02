@@ -126,7 +126,7 @@ QueriesStatusList.propTypes = {
 };
 
 const ExtensionIcon = memo(function ExtensionIcon(props) {
-	const { openDashboard, openSearchPanel, openSettingsPanel, status, toggleExtension } = props;
+	const { openDashboard, openLogger, openSearchPanel, openSettingsPanel, status, toggleExtension } = props;
 	const [{ apiKeys, dataRequests, libraries }] = useRequestsSettings();
     
 	const queryOpts = useMemo(() => {
@@ -181,9 +181,10 @@ const ExtensionIcon = memo(function ExtensionIcon(props) {
 				<MenuItem text="Settings" icon="settings" onClick={openSettingsPanel} />
 				<MenuItem disabled={!allowContext} text="Dashboard" icon="dashboard" labelElement={betaTag} onClick={openDashboard} />
 				<MenuItem disabled={!allowContext} text="Search in library" icon="search" onClick={openSearchPanel} />
+				<MenuItem text="View logs" icon="console" onClick={openLogger} />
 			</Menu>
 		);
-	}, [allowContext, openDashboard, openSearchPanel, openSettingsPanel]);
+	}, [allowContext, openDashboard, openLogger, openSearchPanel, openSettingsPanel]);
 
 	return (
 		<Tooltip2 popoverClassName="zr-icon-tooltip" 
@@ -213,6 +214,7 @@ const ExtensionIcon = memo(function ExtensionIcon(props) {
 });
 ExtensionIcon.propTypes = {
 	openDashboard: func,
+	openLogger: func,
 	openSearchPanel: func,
 	openSettingsPanel: func,
 	status: oneOf(["on", "off", "disabled"]),

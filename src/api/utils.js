@@ -75,6 +75,28 @@ function cleanBibliographyHTML(bib){
 	return formattedBib;
 }
 
+/* istanbul ignore next */
+function cleanErrorIfAxios(error){
+	try {
+		const origin = error.name || "";
+		if(origin == "AxiosError"){
+			const { code, message, status, config: { url } } = error;
+			return {
+				code,
+				message,
+				status,
+				config: {
+					url
+				}
+			};
+		}
+	} catch(e){
+		// Do nothing
+	}
+
+	return error;
+}
+
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
  * @param {String[]} tags - The names of the tags to be deleted
  * @param {ZoteroLibrary} library - The targeted Zotero library
@@ -150,10 +172,22 @@ async function fetchAdditionalData(req, totalResults) {
 		);
 	}
 
+	let responses = null;
+
 	try {
-		const responses = await Promise.all(apiCalls);
+		responses = await Promise.all(apiCalls);
 		return responses.map(res => res.data).flat(1);
 	} catch(error) /* istanbul ignore next */ {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch additional data",
+			context: {
+				dataURI,
+				error: cleanErrorIfAxios(error),
+				responses,
+				totalResults
+			}
+		});
 		return Promise.reject(error);
 	}
 }
@@ -200,12 +234,15 @@ async function fetchBibEntries(itemKeys, library) {
  */
 async function fetchBibliography(itemKey, library, config = {}) {
 	const { apikey, path } = library;
+	const dataURI = `${path}/items/${itemKey}`;
 	// See https://www.zotero.org/support/dev/web_api/v3/basics#parameters_for_format_bib_includecontent_bib_includecontent_citation
 	const { linkwrap = 0, locale = "en-US", style = "chicago-note-bibliography" } = config;
-	
+
+	let response = null;
+
 	try {
-		const { data } = await zoteroClient.get(
-			`${path}/items/${itemKey}`, 
+		response = await zoteroClient.get(
+			dataURI,
 			{
 				headers: { "Zotero-API-Key": apikey },
 				params: {
@@ -217,8 +254,18 @@ async function fetchBibliography(itemKey, library, config = {}) {
 			}
 		);
 
-		return data.bib;
+		return response.data.bib;
 	} catch(error) /* istanbul ignore next */ {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch bibliography",
+			context: {
+				config,
+				dataURI,
+				error: cleanErrorIfAxios(error),
+				response
+			}
+		});
 		return Promise.reject(error);
 	}
 }
@@ -228,13 +275,23 @@ async function fetchBibliography(itemKey, library, config = {}) {
  * @returns {Promise<{item: Object, query: String}>} The metadata for the URL
  */
 async function fetchCitoid(query) {
+	let response = null;
 	try {
-		const { data } = await citoidClient.get(encodeURIComponent(query));
+		response = await citoidClient.get(encodeURIComponent(query));
 		return {
-			item: data[0],
+			item: response.data[0],
 			query
 		};
 	} catch(error){
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch metadata from Wikipedia",
+			context: {
+				error: cleanErrorIfAxios(error),
+				query,
+				response
+			}
+		});
 		return Promise.reject(error);
 	}
 }
@@ -258,21 +315,29 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 		type: "collections"
 	};
 
+	let response = null;
+	let modified = null;
+	let deleted = null;
+
 	try {
-		const { data: modified, headers } = await zoteroClient.get(
+		response = await zoteroClient.get(
 			`${path}/collections`,
 			{ 
 				headers: { "Zotero-API-Key": apikey },
 				params: { since }
 			});
+		const { data, headers } = response;
+		modified = data;
+
 		const { "last-modified-version": lastUpdated, "total-results": totalResultsStr } = headers;
 		const totalResults = Number(totalResultsStr);
+
 		if(totalResults > 100){
 			const additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since }, totalResults);
 			modified.push(...additional);
 		}
 
-		let deleted = { collections: [] };
+		deleted = { collections: [] };
 
 		// DO NOT request deleted items since X if since = 0 (aka, initial data request)
 		// It's a waste of a call
@@ -291,6 +356,16 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 			lastUpdated: Number(lastUpdated)
 		};
 	} catch(error) /* istanbul ignore next */ {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch collections",
+			context: {
+				data: modified,
+				deleted,
+				error: cleanErrorIfAxios(error),
+				response
+			}
+		});
 		emitCustomEvent("update", {
 			...defaultOutcome,
 			error,
@@ -308,16 +383,26 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 async function fetchDeleted(library, since) {
 	const { apikey, path } = library;
 
+	let response = null;
+
 	try {
-		const { data } = await zoteroClient.get(
+		response = await zoteroClient.get(
 			`${path}/deleted`, 
 			{ 
 				headers: { "Zotero-API-Key": apikey },
 				params: { since } 
 			}
 		);
-		return data;
+		return response.data;
 	} catch(error) /* istanbul ignore next */ {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch deleted data",
+			context: {
+				error: cleanErrorIfAxios(error),
+				response
+			}
+		});
 		return Promise.reject(error);
 	}
 }
@@ -344,19 +429,27 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 		type: "items"
 	};
 
+	let response = null;
+	let modified = null;
+	let deleted = null;
+
 	try {
-		const { data: modified, headers } = await zoteroClient.get(`${dataURI}?${paramsQuery.toString()}`, 
+		response = await zoteroClient.get(`${dataURI}?${paramsQuery.toString()}`, 
 			{ 
 				headers: { "Zotero-API-Key": apikey } 
 			});
+		const { data, headers } = response;
+		modified = data;
+
 		const { "last-modified-version": lastUpdated, "total-results": totalResultsStr } = headers;
 		const totalResults = Number(totalResultsStr);
+
 		if(totalResults > 100){
 			const additional = await fetchAdditionalData({ dataURI, apikey, since }, totalResults);
 			modified.push(...additional);
 		}
 
-		let deleted = { items: [] };
+		deleted = { items: [] };
 		// DO NOT request deleted items since X if since = 0 (aka, initial data request)
 		// It's a waste of a call
 		if(since > 0){
@@ -382,6 +475,16 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			lastUpdated: Number(lastUpdated)
 		};
 	} catch(error){
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch items",
+			context: {
+				data: modified,
+				deleted,
+				error: cleanErrorIfAxios(error),
+				response
+			}
+		});
 		emitCustomEvent("update", {
 			...defaultOutcome,
 			error,
@@ -400,6 +503,10 @@ async function fetchPermissions(apikey) {
 		const { data } = await zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } });
 		return data;
 	} catch(error) /* istanbul ignore next */ {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch permissions"
+		});
 		return Promise.reject(error);
 	}
 }
@@ -409,14 +516,25 @@ async function fetchPermissions(apikey) {
  * @returns {Promise<{doi: String, citations: Object[], references: Object[]}>} Citation data for the item
 **/
 async function fetchSemantic(doi) {
+	let response = null;
+
 	try {
-		const { data: { citations, references } } = await semanticClient.get(`${doi}`);
+		response = await semanticClient.get(`${doi}`);
+		const { data: { citations, references } } = response;
 		return { 
 			doi, 
 			citations: parseSemanticDOIs(citations), 
 			references: parseSemanticDOIs(references) 
 		};
 	} catch(error) /* istanbul ignore next */ {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch data from SemanticScholar",
+			context: {
+				error: cleanErrorIfAxios(error),
+				response
+			}
+		});
 		return Promise.reject(error);
 	}
 }
@@ -428,19 +546,36 @@ async function fetchSemantic(doi) {
 async function fetchTags(library) {
 	const { apikey, path } = library;
 
+	let response = null;
+	let tags = null;
+
 	try {
-		const { data, headers } = await zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } });
+		response = await zoteroClient.get(`${path}/tags?limit=100`, { headers: { "Zotero-API-Key": apikey } });
+		const { data, headers } = response;
+		tags = data;
+
 		const { "last-modified-version": lastUpdated, "total-results": totalResultsStr } = headers;
 		const totalResults = Number(totalResultsStr);
+
 		if(totalResults > 100){
 			const additional = await fetchAdditionalData({ dataURI: `${path}/tags`, apikey }, totalResults);
-			data.push(...additional);
+			tags.push(...additional);
 		}
+
 		return { 
-			data: makeTagList(data), 
+			data: makeTagList(tags), 
 			lastUpdated: Number(lastUpdated)
 		};
 	} catch(error) /* istanbul ignore next */ {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch tags",
+			context: {
+				error: cleanErrorIfAxios(error),
+				path,
+				tags
+			}
+		});
 		return Promise.reject(error);
 	}
 }
@@ -595,6 +730,7 @@ function writeItems(dataList, library){
 
 export {
 	cleanBibliographyHTML,
+	cleanErrorIfAxios,
 	deleteTags,
 	extractCitekeys,
 	fetchAdditionalData,

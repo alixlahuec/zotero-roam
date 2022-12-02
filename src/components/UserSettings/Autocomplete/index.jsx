@@ -1,8 +1,8 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func, node } from "prop-types";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 import * as customPropTypes from "../../../propTypes";
-import { SingleInput, TextField } from "../common";
+import { RowGroup, RowGroupOption, SingleInput, TextField } from "../common";
 
 
 const AutocompleteSettings = createContext({});
@@ -43,18 +43,33 @@ const DISPLAY_OPTIONS = [
 	{ label: "Zettlr", value: "zettlr" }
 ];
 
+const DISPLAY_USE_OPTIONS = {
+	"preset": "Preset",
+	"custom": "Custom template"
+};
+
 const FORMAT_OPTIONS = [
 	{ label: "Citation", value: "citation" },
 	{ label: "Citekey", value: "citekey" },
+	{ label: "Citekey (raw)", value: "key" },
 	{ label: "Page reference", value: "pageref" },
 	{ label: "Popover", value: "popover" },
 	{ label: "Tag", value: "tag" }
 ];
 
+const FORMAT_USE_OPTIONS = {
+	"preset": "Preset",
+	"custom": "Custom template"
+};
+
 function AutocompleteWidget(){
 	const [
 		{
+			display_char,
+			display_use,
 			display,
+			format_char,
+			format_use,
 			format,
 			trigger
 		}, 
@@ -62,8 +77,8 @@ function AutocompleteWidget(){
 	] = useAutocompleteSettings();
 
 	const handlers = useMemo(() => {
-
-		function updateText(op, val){
+		/* istanbul ignore next */
+		function updateSingleValue(op, val){
 			setOpts(prevState => ({
 				...prevState,
 				[op]: val
@@ -71,15 +86,41 @@ function AutocompleteWidget(){
 		}
 
 		return {
-			updateDisplay: (val) => updateText("display", val),
-			updateFormat: (val) => updateText("format", val),
-			updateTrigger: (val) => updateText("trigger", val)
+			updateDisplayChar: (val) => updateSingleValue("display_char", val),
+			updateDisplayUse: (val) => updateSingleValue("display_use", val),
+			updateDisplay: (val) => updateSingleValue("display", val),
+			updateFormatChar: (val) => updateSingleValue("format_char", val),
+			updateFormatUse: (val) => updateSingleValue("format_use", val),
+			updateFormat: (val) => updateSingleValue("format", val),
+			updateTrigger: (val) => updateSingleValue("trigger", val)
 		};
 	}, [setOpts]);
 
 	return <>
-		<SingleInput description="The format in which to display suggestions" menuTitle="Select a display format" onChange={handlers.updateDisplay} options={DISPLAY_OPTIONS} title="Display" value={display} />
-		<SingleInput description="The format in which to insert the reference" menuTitle="Select a formatting option" onChange={handlers.updateFormat} options={FORMAT_OPTIONS} title="Format" value={format} />
+		<RowGroup title="Display"
+			description="How suggestions should be displayed in the autocomplete menu"
+			onChange={handlers.updateDisplayUse}
+			options={DISPLAY_USE_OPTIONS}
+			selected={display_use} >
+			<RowGroupOption id="preset">
+				<SingleInput menuTitle="Select a display preset" onChange={handlers.updateDisplay} options={DISPLAY_OPTIONS} value={display} />
+			</RowGroupOption>
+			<RowGroupOption id="custom" description="Available replacements: {{authors}} ; {{citekey}} ; {{key}} ; {{summary}} ; {{summary_or_key}} ; {{title}} ; {{year}}." >
+				<TextField ifEmpty={true} label="Enter a custom template" onChange={handlers.updateDisplayChar} placeholder="e.g, {{key}}" value={display_char} />
+			</RowGroupOption>
+		</RowGroup>
+		<RowGroup title="Format"
+			description="How references should be inserted into the current Roam block"
+			onChange={handlers.updateFormatUse}
+			options={FORMAT_USE_OPTIONS}
+			selected={format_use} >
+			<RowGroupOption id="preset">
+				<SingleInput menuTitle="Select a format preset" onChange={handlers.updateFormat} options={FORMAT_OPTIONS} value={format} />
+			</RowGroupOption>
+			<RowGroupOption id="custom" description="Available replacements: {{authors}} ; {{citekey}} ; {{key}} ; {{summary}} ; {{summary_or_key}} ; {{title}} ; {{year}}." >
+				<TextField ifEmpty={true} label="Enter a custom template" onChange={handlers.updateFormatChar} placeholder="e.g, {{key}}" value={format_char} />
+			</RowGroupOption>
+		</RowGroup>
 		<TextField description="The character(s) that should trigger the autocomplete. If no value is provided, the feature will be disabled." ifEmpty={true} label="Enter a trigger for the 'autocomplete' feature" onChange={handlers.updateTrigger} placeholder="e.g, @" title="Trigger" value={trigger} />
 	</>;
 }

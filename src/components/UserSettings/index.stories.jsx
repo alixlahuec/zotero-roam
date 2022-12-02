@@ -24,7 +24,11 @@ export default {
 			},
 			autocomplete: {
 				trigger: "@",
+				display_char: "",
+				display_use: "preset",
 				display: "citekey",
+				format_char: "",
+				format_use: "preset",
 				format: "citekey"
 			},
 			copy: {
@@ -45,6 +49,10 @@ export default {
 			},
 			notes: {
 				func: "",
+				nest_char: "",
+				nest_position: "top",
+				nest_preset: "[[Notes]]",
+				nest_use: "preset",
 				split_char: "",
 				split_preset: "\n",
 				split_use: "preset",

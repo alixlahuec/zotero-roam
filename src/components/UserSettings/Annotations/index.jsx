@@ -1,5 +1,5 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { func as funcType, node } from "prop-types";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 import * as customPropTypes from "../../../propTypes";
 import { RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect } from "../common";
@@ -68,6 +68,7 @@ function AnnotationsWidget(){
 	] = useAnnotationsSettings();
 
 	const handlers = useMemo(() => {
+		/* istanbul ignore next */
 		function updateSingleValue(op, val){
 			setOpts(prevState => ({
 				...prevState,

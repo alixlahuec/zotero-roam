@@ -1,7 +1,6 @@
 import { getLocalLink, getWebLink, makeDNP, parseDOI } from "./utils";
 
 
-/* istanbul ignore next */
 /** Generates the list of custom SmartBlocks commands to register
  * @returns {Object.<string, SmartblockCommand>} The list of commands to register
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
@@ -36,7 +35,7 @@ const sbCommands = () => {
 			help: "Returns the comma-separated list of the collection(s) a Zotero item belongs to.",
 			handler: (context) => (brackets = true) => {
 				const { item } = context.variables;
-				return window.zoteroRoam.getItemCollections(item, { return_as: "string", brackets }).map(", ");
+				return window.zoteroRoam.getItemCollections(item, { return_as: "string", brackets });
 			}
 		},
 		"ZOTEROITEMCREATORS": {
@@ -66,7 +65,9 @@ const sbCommands = () => {
 			help: "Returns the formatted metadata for a Zotero item and its children (PDFs, notes/annotations), using the extension's default formatter. Use this if you want to use the default metadata template as part of your SmartBlock.",
 			handler: (context) => () => {
 				const { item, pdfs, notes } = context.variables;
-				return window.zoteroRoam.getItemMetadata(item, pdfs, notes);
+				const output = window.zoteroRoam.getItemMetadata(item, pdfs, notes);
+
+				return reformatImportableBlocks(output);
 			}
 		},
 		"ZOTEROITEMPUBLICATION": {
@@ -128,7 +129,9 @@ const sbCommands = () => {
 			help: "Formats a list of Zotero notes/annotations, with current user settings",
 			handler: (context) => () => {
 				const { notes = [] } = context.variables;
-				return window.zoteroRoam.formatNotes(notes);
+				const output = window.zoteroRoam.formatNotes(notes);
+
+				return reformatImportableBlocks(output);
 			}
 		},
 		"ZOTEROPDFS": {
@@ -201,6 +204,34 @@ function eval_term(term, props){
 	}
 }
 
+/** Enforces the block-object format (recursively) for an array of importable blocks. This is needed for correctly importing nested blocks with SmartBlocks.
+ * @param {RoamImportableBlock[]} arr - The array of importable blocks to reformat
+ * @returns {RoamImportableBlock[]} - The reformatted array, where all elements are in the block-object format
+ */
+function reformatImportableBlocks(arr){
+	if(!arr){
+		return [];
+	} else {
+		return arr.map(blck => {
+			if(blck.constructor === String){
+				return {
+					string: blck,
+					text: blck,
+					children: []
+				};
+			} else if(blck.constructor === Object) {
+				return {
+					...blck,
+					children: reformatImportableBlocks(blck.children)
+				};
+			} else {
+				console.log(blck);
+				throw new Error(`All array items should be of type String or Object, not ${blck.constructor}`);
+			}
+		});
+	}
+}
+
 /* istanbul ignore next */
 /** Register the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
@@ -214,7 +245,10 @@ function registerSmartblockCommands(){
 			try {
 				unregisterSmartblockCommands();
 			} catch(e) {
-				// Do nothing
+				window.zoteroRoam?.error?.({
+					origin: "SmartBlocks",
+					message: "Failed to unregister commands"
+				});
 			}
 
 			Object.keys(commands).forEach(cmd => {
@@ -297,7 +331,14 @@ async function use_smartblock_metadata(config, context){
 			...defaultOutcome, 
 			success: true });
 	} catch(e){
-		console.error(e);
+		window.zoteroRoam?.error?.({
+			origin: "SmartBlocks",
+			message: "Failed to trigger SmartBlock",
+			context: {
+				...obj
+			}
+		});
+
 		return Promise.resolve({
 			...defaultOutcome,
 			error: e,
@@ -307,7 +348,9 @@ async function use_smartblock_metadata(config, context){
 
 export {
 	eval_term,
+	reformatImportableBlocks,
 	registerSmartblockCommands,
+	sbCommands,
 	unregisterSmartblockCommands,
 	use_smartblock_metadata
 };

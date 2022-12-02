@@ -134,7 +134,13 @@ export function setupInitialSettings(settingsObject){
 			...annotations
 		},
 		autocomplete: {
+			display_char: "",
+			display_use: "preset",
+			// legacy - should be display_preset
 			display: "citekey",
+			format_char: "",
+			format_use: "preset",
+			// legacy - should be format_preset
 			format: "citation",
 			trigger: "",
 			...autocomplete
@@ -159,6 +165,10 @@ export function setupInitialSettings(settingsObject){
 		},
 		notes: {
 			func: "",
+			nest_char: "",
+			nest_position: "top",
+			nest_preset: "[[Notes]]",
+			nest_use: "preset",
 			split_char: "",
 			split_preset: "\n",
 			split_use: "preset",
@@ -341,7 +351,10 @@ export function validateShortcuts(shortcuts){
 				parseKeyCombo(shortcuts[key]);
 				output[key] = shortcuts[key];
 			} catch(e) {
-				console.log(e);
+				window.zoteroRoam?.warn?.({
+					origin: "Shortcuts",
+					message: "Invalid hotkey: " + shortcuts[key]
+				});
 			}
 		}
 	});

@@ -71,11 +71,14 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 
 const Autocomplete = memo(function Autocomplete() {
 	const [{ dataRequests }] = useRequestsSettings();
-	const [{ trigger, display = "citekey", format = "citation" }] = useAutocompleteSettings();
+	const [{ trigger, display_char, display_use = "preset", display = "citekey", format_char, format_use = "preset", format = "citation" }] = useAutocompleteSettings();
+
+	const display_as = useMemo(() => (display_use == "preset") ? display : display_char, [display, display_char, display_use]);
+	const format_as = useMemo(() => (format_use == "preset") ? format : format_char, [format, format_char, format_use]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const formattedLib = useGetItems(dataRequests, format, display) || [];
-	
+	const formattedLib = useGetItems(dataRequests, format_as, display_as) || [];
+
 	const tributeFactory = useMemo(() => {
 		return {
 			trigger,

@@ -70,6 +70,18 @@ const taglistEntry = shape({
 });
 
 /**
+ * @see ZoteroRoamLog
+ */
+
+const logEntry = shape({
+	context: object,
+	level: oneOf(["error", "info", "warning"]),
+	message: string,
+	origin: string,
+	timestamp: instanceOf(Date)
+});
+
+/**
  * @see simplifyZoteroAnnotations
  */
 const cleanAnnotationItemType = shape({
@@ -258,8 +270,14 @@ const annotationsSettingsType = shape({
 
 const autocompleteSettingsType = shape({
 	trigger: string,
-	display: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"]),
-	format: oneOf(["citekey", "inline", "tag", "pageref", "citation", "popover", "zettlr"])
+	display_char: string,
+	display_use: oneOf(["preset", "custom"]),
+	// legacy - should be display_preset
+	display: oneOf(["citekey", "inline", "key", "tag", "pageref", "citation", "popover", "zettlr"]),
+	format_char: string,
+	format_use: oneOf(["preset", "custom"]),
+	// legacy - should be format_preset
+	format: oneOf(["citekey", "inline", "key", "tag", "pageref", "citation", "popover", "zettlr"])
 });
 
 const copySettingsType = shape({
@@ -282,6 +300,10 @@ const metadataSettingsType = shape({
 
 const notesSettingsType = shape({
 	func: string,
+	nest_char: string,
+	nest_position: oneOf(["top", "bottom"]),
+	nest_preset: oneOf([false, "[[Notes]]"]),
+	nest_use: oneOf(["preset", "custom"]),
 	split_char: string,
 	split_preset: oneOf(["\n", "</p>"]),
 	split_use: oneOf(["preset", "custom"]),
@@ -364,6 +386,7 @@ export {
 	zoteroLibraryType,
 	zoteroTagType,
 	taglistEntry,
+	logEntry,
 	cleanAnnotationItemType,
 	cleanLibraryItemType,
 	cleanLibraryReturnArrayType,
