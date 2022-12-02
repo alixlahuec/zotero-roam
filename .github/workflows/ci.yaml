@@ -22,6 +22,14 @@ jobs:
       - name: ESLint
         run: npm run ci:lint
 
+      - name: Upload linter reports
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: ESLint
+          path: reports/eslint-junit.xml
+          reporter: jest-junit
+
       - name: Jest
         run: npm run ci:test
 
