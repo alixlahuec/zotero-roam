@@ -1,9 +1,9 @@
-import RelatedPanel from ".";
-
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 
+import RelatedPanel from ".";
 import { cleanRelatedItem } from "../Menus/utils";
+
 import { items } from "Mocks/zotero/items";
 
 

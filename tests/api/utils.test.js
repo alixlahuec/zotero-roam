@@ -1,8 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
+import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems, items } from "Mocks/zotero/items";
 import { findTags, tags } from "Mocks/zotero/tags";
 import { apiKeys } from "Mocks/zotero/keys";

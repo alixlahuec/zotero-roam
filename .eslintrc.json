@@ -15,14 +15,30 @@
     "globals": {
         "PACKAGE_VERSION": "readonly"
     },
-    "ignorePatterns": ["webpack.*config.js", "*.css", "dist/**"],
+    "ignorePatterns": ["*.css", "dist/**", "dev/**", "*.html", "/extension.js"],
     "overrides": [
         {
           "files": ["tests/**"],
           "plugins": ["jest"],
           "extends": ["plugin:jest/recommended"],
           "rules": { "jest/prefer-expect-assertions": "off" }
-        }
+        },
+		{
+			"files": [".storybook/**"],
+			"plugins": ["react", "import"],
+			"extends": ["plugin:import/recommended", "plugin:react/recommended"],
+			"rules": {
+				"react/react-in-jsx-scope": "off",
+				"react-hooks/rules-of-hooks": "off"
+			},
+			"parserOptions": {
+				"ecmaFeatures": {
+					"jsx": true
+				},
+				"ecmaVersion": 13,
+				"sourceType": "module"
+			}
+		}
       ],
     "parserOptions": {
         "ecmaFeatures": {
@@ -84,6 +100,7 @@
         ],
         "sort-imports": "off",
         "react/jsx-uses-react": "off",
+		"react/no-unknown-property": "off",
         "react/react-in-jsx-scope": "off",
         "import/newline-after-import": ["error", { "count": 2 }],
         "import/no-unresolved": ["warn", { "amd": true, "commonjs": true }],

@@ -1,7 +1,8 @@
 import { Backlinks } from "./CitekeyMenu";
 
-import { citoids, semanticIdentifier } from "Mocks/citoid";
 import { cleanSemanticItem } from "../../../utils";
+
+import { citoids, semanticIdentifier } from "Mocks/citoid";
 import { items } from "Mocks/zotero/items";
 import { semantics } from "Mocks/semantic-scholar";
 

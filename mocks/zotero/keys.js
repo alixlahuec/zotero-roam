@@ -3,6 +3,7 @@ import { zotero } from "./common";
 
 import { libraries } from "./libraries";
 
+
 const { userLibrary, groupLibrary } = libraries;
 const addUserInfo = () => ({ userID: userLibrary.id, username: userLibrary.username, displayName: "" });
 

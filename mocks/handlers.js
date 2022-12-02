@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import { rest } from "msw";
 import { handleAPIKey } from "./zotero/keys";
 import { handleBibliography } from "./zotero/bib";
 import { handleCitoid } from "./citoid";
@@ -7,7 +8,7 @@ import { handleDeleted } from "./zotero/deleted";
 import { handleItems } from "./zotero/items";
 import { handleSemantic } from "./semantic-scholar";
 import { handleTags } from "./zotero/tags";
-import { rest } from "msw";
+
 
 export const fallbackHandler = rest.get(
 	"*", 
