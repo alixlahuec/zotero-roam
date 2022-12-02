@@ -1,8 +1,8 @@
 import { expect, jest } from "@storybook/jest";
+import { userEvent, waitFor, within } from "@storybook/testing-library";
 import ItemDetails from ".";
 import zrToaster from "../ExtensionToaster";
 
-import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import { cleanLibraryItem } from "../../utils";
 import { items } from "Mocks/zotero/items";

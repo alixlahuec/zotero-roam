@@ -1,8 +1,7 @@
-import SearchPanel from ".";
-
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
+import SearchPanel from ".";
 import zrToaster from "../ExtensionToaster";
 
 import { items } from "Mocks/zotero/items";
