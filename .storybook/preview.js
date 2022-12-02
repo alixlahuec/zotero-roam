@@ -11,79 +11,79 @@ import "../node_modules/@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 import "../src/index.css";
 
 import { withExtensionContext } from "./withExtensionContext";
-import { withHotkeysProvider } from './withHotkeysProvider';
+import { withHotkeysProvider } from "./withHotkeysProvider";
 import { withQueryClient } from "./withQueryClient";
-import { withRoamCitekeys } from './withRoamCitekeys';
+import { withRoamCitekeys } from "./withRoamCitekeys";
 import { withUserSettings } from "./withUserSettings";
 
 import { A11Y_RULES } from "./a11y-rules";
 
 // Initialize MSW
 initialize({
-    onUnhandledRequest: ({ method, url }) => {
-        console.error(`Unhandled ${method} request to ${url}.`)
-    },
+	onUnhandledRequest: ({ method, url }) => {
+		console.error(`Unhandled ${method} request to ${url}.`);
+	},
 });
 
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
 const withTheme = (Story, context) => {
-    const [{ theme }, /* updateGlobals */] = useGlobals();
+	const [{ theme }, /* updateGlobals */] = useGlobals();
 
-  useEffect(() => {
-    document.getElementById("root").parentElement.setAttribute("zr-dark-theme", (theme == "dark").toString());
-  }, [theme]);
+	useEffect(() => {
+		document.getElementById("root").parentElement.setAttribute("zr-dark-theme", (theme == "dark").toString());
+	}, [theme]);
 
-  return <div className="zr-" 
-    style={{ backgroundColor: "var(--zr-dialog-bg)", margin: "50px", padding: "20px", height: "1000px" }}>
-    <Story {...context} />
-  </div>;
-}
+	return <div className="zr-" 
+		style={{ backgroundColor: "var(--zr-dialog-bg)", margin: "50px", padding: "20px", height: "1000px" }}>
+		<Story {...context} />
+	</div>;
+};
 
 export const globalTypes = {
-  theme: {
-    name: 'Theme',
-    description: 'Global theme for components',
-    defaultValue: 'light',
-    toolbar: {
-      icon: 'circlehollow',
-      // Array of plain string values or MenuItem shape (see below)
-      items: ['light', 'dark'],
-      // Property that specifies if the name of the item will be displayed
-      showName: true,
-      // Change title based on selected value
-      dynamicTitle: true,
-    },
-  },
+	theme: {
+		name: "Theme",
+		description: "Global theme for components",
+		defaultValue: "light",
+		toolbar: {
+			icon: "circlehollow",
+			// Array of plain string values or MenuItem shape (see below)
+			items: ["light", "dark"],
+			// Property that specifies if the name of the item will be displayed
+			showName: true,
+			// Change title based on selected value
+			dynamicTitle: true,
+		},
+	},
 };
 
 export const parameters = {
-  actions: { argTypesRegex: "^on[A-Z].*" },
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/,
-    },
-  },
-  msw: {
-      handlers: [
-          ...apiHandlers,
-          roamAssetsHandler,
-          sciteApiHandler,
-          sciteAssetsHandler,
-          rest.get("http://localhost:6006/runtime*", (req, _res, _ctx) => req.passthrough()),
-          rest.get("http://localhost:6006/main*", (req, _res, _ctx) => req.passthrough()),
-          rest.get("http://localhost:6006/vendors*", (req, _res, _ctx) => req.passthrough()),
-          rest.get("http://localhost:6006/*", (req, res, ctx) => {
-              return res(ctx.status(312, "Check if this request should be allowed : " + req.url))
-          }),
-          fallbackHandler
-        ]
-    },
-    a11y: {
-        config: {
-            rules: A11Y_RULES
-        }
-    }
-}
+	actions: { argTypesRegex: "^on[A-Z].*" },
+	controls: {
+		matchers: {
+			color: /(background|color)$/i,
+			date: /Date$/,
+		},
+	},
+	msw: {
+		handlers: [
+			...apiHandlers,
+			roamAssetsHandler,
+			sciteApiHandler,
+			sciteAssetsHandler,
+			rest.get("http://localhost:6006/runtime*", (req, _res, _ctx) => req.passthrough()),
+			rest.get("http://localhost:6006/main*", (req, _res, _ctx) => req.passthrough()),
+			rest.get("http://localhost:6006/vendors*", (req, _res, _ctx) => req.passthrough()),
+			rest.get("http://localhost:6006/*", (req, res, ctx) => {
+				return res(ctx.status(312, "Check if this request should be allowed : " + req.url));
+			}),
+			fallbackHandler
+		]
+	},
+	a11y: {
+		config: {
+			rules: A11Y_RULES
+		}
+	}
+};
 
 export const decorators = [mswDecorator, withTheme, withHotkeysProvider, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys];

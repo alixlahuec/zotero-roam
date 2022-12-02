@@ -1,5 +1,6 @@
 import { searchEngine } from "../../src/utils";
 
+
 describe("Search engine inputs", () => {
 	it("rejects invalid search inputs", () => {
 		expect(() => searchEngine("query", { text: "" }))

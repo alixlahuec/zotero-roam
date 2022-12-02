@@ -2,6 +2,7 @@ import { formatItemNotes, formatZoteroNotes, simplifyZoteroNotes } from "../../s
 import { libraries } from "Mocks/zotero/libraries";
 import { sampleNote } from "Mocks/zotero/notes";
 
+
 const { userLibrary } = libraries;
 
 test("Simplifies notes", () => {
