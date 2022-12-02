@@ -12,6 +12,7 @@ module.exports = {
 		builder: "webpack5"
 	},
 	staticDirs: ["../public"],
+	/* eslint-disable-next-line require-await */
 	webpackFinal: async (config) => {
 		return {
 			...config,

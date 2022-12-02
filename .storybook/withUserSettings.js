@@ -1,6 +1,7 @@
 import { UserSettingsProvider } from "Components/UserSettings";
 
 import { analyzeUserRequests, setupInitialSettings } from "../src/setup";
+
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 

@@ -1,7 +1,6 @@
 /* istanbul ignore file */
-import { initialize, mswDecorator } from "msw-storybook-addon";
-import { fallbackHandler, roamAssetsHandler, sciteApiHandler, sciteAssetsHandler, apiHandlers } from "Mocks/handlers";
 import { useEffect, useGlobals } from "@storybook/addons";
+import { initialize, mswDecorator } from "msw-storybook-addon";
 import { rest } from "msw";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
@@ -17,6 +16,8 @@ import { withRoamCitekeys } from "./withRoamCitekeys";
 import { withUserSettings } from "./withUserSettings";
 
 import { A11Y_RULES } from "./a11y-rules";
+import { fallbackHandler, roamAssetsHandler, sciteApiHandler, sciteAssetsHandler, apiHandlers } from "Mocks/handlers";
+
 
 // Initialize MSW
 initialize({
