@@ -16,6 +16,14 @@ jobs:
       - name: Jest
         run: npm run ci:test
 
+      - name: Upload test reports
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Jest
+          path: reports/jest-junit.xml
+          reporter: jest-junit
+
       - name: Storybook CI
         run: |
           chmod +x "./dev/ci-storybook.sh"
