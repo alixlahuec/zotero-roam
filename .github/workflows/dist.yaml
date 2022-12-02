@@ -30,6 +30,14 @@ jobs:
           ./dev/ci-storybook.sh
         shell: bash
 
+      - name: Upload test reports (Storybook)
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Storybook
+          path: reports/storybook-junit.xml
+          reporter: jest-junit
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
