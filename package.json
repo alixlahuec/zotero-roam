@@ -27,7 +27,7 @@
         "lint": "eslint --fix .",
         "ci:lint": "eslint .",
         "test": "jest",
-        "ci:test": "jest --ci --collectCoverage",
+        "ci:test": "jest --ci --collectCoverage --reporters=default --reporters=jest-junit",
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook --quiet",
         "test-storybook": "test-storybook",
@@ -55,6 +55,10 @@
             ]
         ]
     },
+	"jest-junit": {
+		"outputDirectory": "reports",
+		"outputName": "jest-junit.xml"
+	},
     "devDependencies": {
         "@babel/core": "^7.20.2",
         "@babel/preset-env": "^7.20.2",
@@ -90,6 +94,7 @@
         "eslint-plugin-storybook": "^0.6.7",
         "jest": "^28.1.3",
         "jest-environment-jsdom": "^28.1.3",
+        "jest-junit": "^15.0.0",
         "jest-transform-css": "^6.0.0",
         "mini-css-extract-plugin": "^2.7.0",
         "msw": "^0.47.3",

@@ -10,6 +10,9 @@ lerna-debug.log*
 coverage
 *.lcov
 
+# Test reports directory
+reports
+
 # Dependency directories
 node_modules/
 
