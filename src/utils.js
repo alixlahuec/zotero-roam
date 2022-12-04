@@ -498,6 +498,11 @@ function executeFunctionByName(functionName, context /*, args */) {
 	for (let i = 0; i < namespaces.length; i++) {
 		ctx = ctx[namespaces[i]];
 	}
+
+	if(!ctx[func]){
+		throw new Error(`Function ${func} doesn't exist`);
+	}
+
 	return ctx[func].apply(ctx, args);
 }
 
