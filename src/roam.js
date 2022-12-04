@@ -307,16 +307,10 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 				context: {
 					error: e,
 					page,
-					raw: {
-						item,
-						notes,
-						pdfs
-					},
 					settings: {
 						annotations: annotationsSettings,
 						metadata: metadataSettings,
-						notes: notesSettings,
-						typemap
+						notes: notesSettings
 					}
 				},
 				showToaster: 1000
@@ -352,16 +346,10 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 				context: {
 					error: e,
 					page,
-					raw: {
-						item,
-						pdfs,
-						notes
-					},
 					settings: {
 						annotations: annotationsSettings,
 						metadata: metadataSettings,
-						notes: notesSettings,
-						typemap
+						notes: notesSettings
 					}
 				},
 				showToaster: 1000
@@ -416,10 +404,6 @@ async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, an
 			context: {
 				error: e,
 				page,
-				raw: {
-					item,
-					notes
-				},
 				settings: {
 					annotations: annotationsSettings,
 					notes: notesSettings
