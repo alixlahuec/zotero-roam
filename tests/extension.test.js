@@ -661,6 +661,7 @@ describe("Custom class for logs", () => {
 		new ZoteroRoamLog({ ...log_contents, showToaster: 1500 }, "error");
 		expect(showToasterFn).toHaveBeenCalled();
 		expect(showToasterFn).toHaveBeenCalledWith({
+			icon: "warning-sign",
 			intent: "danger",
 			message: log_contents.message,
 			timeout: 1500
@@ -669,6 +670,7 @@ describe("Custom class for logs", () => {
 		new ZoteroRoamLog({ ...log_contents, showToaster: true }, "warning");
 		expect(showToasterFn).toHaveBeenCalledTimes(2);
 		expect(showToasterFn).toHaveBeenNthCalledWith(2, {
+			icon: "warning-sign",
 			intent: "warning",
 			message: log_contents.message,
 			timeout: 1000

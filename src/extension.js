@@ -230,6 +230,13 @@ export class ZoteroRoamLog {
 		"warning": "warning"
 	};
 
+	/** @private */
+	#ICONS_MAPPING = {
+		"error": "warning-sign",
+		"info": "info-sign",
+		"warning": "warning-sign"
+	};
+
 	/**
 	 * @param {{
 	 * obj: {
@@ -252,6 +259,7 @@ export class ZoteroRoamLog {
 
 		if(showToaster){
 			zrToaster.show({
+				icon: this.#ICONS_MAPPING[level] || null,
 				intent: this.intent,
 				message: this.message,
 				timeout: showToaster.constructor === Number ? showToaster : 1000
