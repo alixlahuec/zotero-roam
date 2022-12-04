@@ -75,6 +75,7 @@ const taglistEntry = shape({
 
 const logEntry = shape({
 	context: object,
+	detail: string,
 	intent: oneOf(["primary", "warning", "danger", "success", null]),
 	level: oneOf(["error", "info", "warning"]),
 	message: string,

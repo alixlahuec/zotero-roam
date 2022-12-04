@@ -304,8 +304,8 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 			window.zoteroRoam?.error?.({
 				origin: "Metadata",
 				message: "Failed to import metadata via SmartBlock for: " + title,
+				detail: e.message,
 				context: {
-					error: e.message,
 					page,
 					settings: {
 						annotations: annotationsSettings,
@@ -343,8 +343,8 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 			window.zoteroRoam?.error?.({
 				origin: "Metadata",
 				message: "Failed to import metadata for: " + title,
+				detail: e.message,
 				context: {
-					error: e.message,
 					page,
 					settings: {
 						annotations: annotationsSettings,
@@ -401,8 +401,8 @@ async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, an
 		window.zoteroRoam?.error?.({
 			origin: "Notes",
 			message: "Failed to import notes for: " + title,
+			detail: e.message,
 			context: {
-				error: e.message,
 				page,
 				settings: {
 					annotations: annotationsSettings,

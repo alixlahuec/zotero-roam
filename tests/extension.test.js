@@ -1,5 +1,6 @@
 import { QueryClient } from "@tanstack/query-core";
 
+import { H5 } from "@blueprintjs/core";
 import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
 import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
@@ -549,6 +550,7 @@ describe("Logger utils", () => {
 	const log_details = {
 		origin: "API",
 		message: "Some log",
+		detail: "",
 		context: {
 			text: "string"
 		}
@@ -611,6 +613,7 @@ describe("Custom class for logs", () => {
 		expect(sample_log)
 			.toEqual({
 				context: {},
+				detail: "",
 				intent: "primary",
 				level: "info",
 				message: "",
@@ -636,6 +639,7 @@ describe("Custom class for logs", () => {
 				context: {
 					text: "some text"
 				},
+				detail: "",
 				intent: "danger",
 				level: "error",
 				message: "Failed to fetch",
@@ -661,6 +665,7 @@ describe("Custom class for logs", () => {
 		new ZoteroRoamLog({ ...log_contents, showToaster: 1500 }, "error");
 		expect(showToasterFn).toHaveBeenCalled();
 		expect(showToasterFn).toHaveBeenCalledWith({
+			icon: "warning-sign",
 			intent: "danger",
 			message: log_contents.message,
 			timeout: 1500
@@ -669,8 +674,34 @@ describe("Custom class for logs", () => {
 		new ZoteroRoamLog({ ...log_contents, showToaster: true }, "warning");
 		expect(showToasterFn).toHaveBeenCalledTimes(2);
 		expect(showToasterFn).toHaveBeenNthCalledWith(2, {
+			icon: "warning-sign",
 			intent: "warning",
 			message: log_contents.message,
+			timeout: 1000
+		});
+	});
+
+	test("It creates the right message for the toaster", () => {
+		const showToasterFn = jest.spyOn(zrToaster, "show");
+
+		new ZoteroRoamLog({
+			origin: "Metadata",
+			message: "Failed to import metadata for @someCitekey",
+			detail: "Function customFunc doesn't exist",
+			context: {},
+			showToaster: 1000
+		}, "error");
+
+		expect(showToasterFn).toHaveBeenCalled();
+		expect(showToasterFn).toHaveBeenCalledWith({
+			icon: "warning-sign",
+			intent: "danger",
+			message: (
+				<>
+					<H5>Failed to import metadata for @someCitekey</H5>
+					<p>{"Function customFunc doesn't exist"}</p>
+				</>
+			),
 			timeout: 1000
 		});
 	});
