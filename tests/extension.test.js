@@ -559,6 +559,7 @@ describe("Logger utils", () => {
 			.toEqual([
 				{
 					...log_details,
+					intent: "danger",
 					level: "error",
 					timestamp: new Date([2022, 4, 6])
 				}
@@ -571,6 +572,7 @@ describe("Logger utils", () => {
 			.toEqual([
 				{
 					...log_details,
+					intent: "primary",
 					level: "info",
 					timestamp: new Date([2022, 4, 6])
 				}
@@ -583,6 +585,7 @@ describe("Logger utils", () => {
 			.toEqual([
 				{
 					...log_details,
+					intent: "warning",
 					level: "warning",
 					timestamp: new Date([2022, 4, 6])
 				}
@@ -607,6 +610,7 @@ describe("Custom class for logs", () => {
 		expect(sample_log)
 			.toEqual({
 				context: {},
+				intent: "primary",
 				level: "info",
 				message: "",
 				origin: "",
@@ -631,6 +635,7 @@ describe("Custom class for logs", () => {
 				context: {
 					text: "some text"
 				},
+				intent: "danger",
 				level: "error",
 				message: "Failed to fetch",
 				origin: "API",

@@ -210,19 +210,41 @@ export default class ZoteroRoam {
 	}
 }
 
+/**
+ * Creates a log entry for the extension. This is meant to provide users with information about different events (e.g errors when fetching data), through an optional toast and more detailed logs.
+ */
 export class ZoteroRoamLog {
 	level;
 	origin;
 	message;
 	context;
+	intent;
 	timestamp;
 
+	/** @private */
+	#LEVELS_MAPPING = {
+		"error": "danger",
+		"info": "primary",
+		"warning": "warning"
+	};
+
+	/**
+	 * @param {{
+	 * obj: {
+	 * origin?: String,
+	 * message?: String,
+	 * context?: Object,
+	 * },
+	 * level: ("error"|"info"|"warning")
+	 * }} config - The details of the log entry
+	 */
 	constructor(obj = {}, level = "info"){
 		const { origin = "", message = "", context = {} } = obj;
 		this.level = level;
 		this.origin = origin;
 		this.message = message;
 		this.context = context;
+		this.intent = this.#LEVELS_MAPPING[level] || null;
 		this.timestamp = new Date();
 	}
 }
