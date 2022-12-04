@@ -1,3 +1,5 @@
+import zrToaster from "Components/ExtensionToaster";
+
 import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
 import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
@@ -234,18 +236,27 @@ export class ZoteroRoamLog {
 	 * origin?: String,
 	 * message?: String,
 	 * context?: Object,
+	 * showToaster?: Number|Boolean
 	 * },
 	 * level: ("error"|"info"|"warning")
 	 * }} config - The details of the log entry
 	 */
 	constructor(obj = {}, level = "info"){
-		const { origin = "", message = "", context = {} } = obj;
+		const { origin = "", message = "", context = {}, showToaster = false } = obj;
 		this.level = level;
 		this.origin = origin;
 		this.message = message;
 		this.context = context;
 		this.intent = this.#LEVELS_MAPPING[level] || null;
 		this.timestamp = new Date();
+
+		if(showToaster){
+			zrToaster.show({
+				intent: this.intent,
+				message: this.message,
+				timeout: showToaster.constructor === Number ? showToaster : 1000
+			});
+		}
 	}
 }
 
