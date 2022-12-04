@@ -452,12 +452,8 @@ function copyToClipboard(text){
 					context: {
 						error,
 						text
-					}
-				});
-				zrToaster.show({
-					intent: "danger",
-					message: `Clipboard copy failed for: ${text}`,
-					timeout: 1000
+					},
+					showToaster: 1000
 				});
 				return {
 					success: false
