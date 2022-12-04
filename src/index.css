@@ -248,6 +248,10 @@ textarea.zr-text-input,
     color: var(--zr-co-tone);
 }
 
+[class*="zr"] .bp3-toast[class*="bp3-intent"] .bp3-heading {
+	color: white;
+}
+
 [class*="zr"] a:focus {
     color: var(--zr-text-co);
     text-decoration: none;
