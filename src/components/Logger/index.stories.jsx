@@ -12,9 +12,7 @@ window.zoteroRoam = {
 			message: "Failed to fetch",
 			context: {
 				dataURI: "users/123456/items",
-				error: {
-					message: "Some error message"
-				}
+				error: "Some error message"
 			}
 		}, "error"),
 		new ZoteroRoamLog({

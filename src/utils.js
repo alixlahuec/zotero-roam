@@ -445,19 +445,15 @@ function copyToClipboard(text){
 					success: true
 				};
 			})
-			.catch((error) => {
+			.catch((e) => {
 				window.zoteroRoam?.error?.({
 					origin: "Copy",
 					message: "Failed copying text to clipboard",
 					context: {
-						error,
+						error: e.message,
 						text
-					}
-				});
-				zrToaster.show({
-					intent: "danger",
-					message: `Clipboard copy failed for: ${text}`,
-					timeout: 1000
+					},
+					showToaster: 1000
 				});
 				return {
 					success: false
@@ -498,6 +494,11 @@ function executeFunctionByName(functionName, context /*, args */) {
 	for (let i = 0; i < namespaces.length; i++) {
 		ctx = ctx[namespaces[i]];
 	}
+
+	if(!ctx[func]){
+		throw new Error(`Function ${func} doesn't exist`);
+	}
+
 	return ctx[func].apply(ctx, args);
 }
 

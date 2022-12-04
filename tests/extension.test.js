@@ -5,6 +5,7 @@ import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
 
 import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from "../src/extension";
+import zrToaster from "Components/ExtensionToaster";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { entries, findItems, items } from "Mocks/zotero/items";
@@ -559,6 +560,7 @@ describe("Logger utils", () => {
 			.toEqual([
 				{
 					...log_details,
+					intent: "danger",
 					level: "error",
 					timestamp: new Date([2022, 4, 6])
 				}
@@ -571,6 +573,7 @@ describe("Logger utils", () => {
 			.toEqual([
 				{
 					...log_details,
+					intent: "primary",
 					level: "info",
 					timestamp: new Date([2022, 4, 6])
 				}
@@ -583,6 +586,7 @@ describe("Logger utils", () => {
 			.toEqual([
 				{
 					...log_details,
+					intent: "warning",
 					level: "warning",
 					timestamp: new Date([2022, 4, 6])
 				}
@@ -607,6 +611,7 @@ describe("Custom class for logs", () => {
 		expect(sample_log)
 			.toEqual({
 				context: {},
+				intent: "primary",
 				level: "info",
 				message: "",
 				origin: "",
@@ -631,10 +636,42 @@ describe("Custom class for logs", () => {
 				context: {
 					text: "some text"
 				},
+				intent: "danger",
 				level: "error",
 				message: "Failed to fetch",
 				origin: "API",
 				timestamp: new Date([2022, 4, 6])
 			});
+	});
+
+	test("It calls the toaster when showToaster is provided", () => {
+		const showToasterFn = jest.spyOn(zrToaster, "show");
+
+		const log_contents = {
+			origin: "Metadata",
+			message: "Failed to import metadata for @someCitekey",
+			context: {
+				text: "some text"
+			}
+		};
+
+		new ZoteroRoamLog({ ...log_contents }, "error");
+		expect(showToasterFn).not.toHaveBeenCalled();
+
+		new ZoteroRoamLog({ ...log_contents, showToaster: 1500 }, "error");
+		expect(showToasterFn).toHaveBeenCalled();
+		expect(showToasterFn).toHaveBeenCalledWith({
+			intent: "danger",
+			message: log_contents.message,
+			timeout: 1500
+		});
+
+		new ZoteroRoamLog({ ...log_contents, showToaster: true }, "warning");
+		expect(showToasterFn).toHaveBeenCalledTimes(2);
+		expect(showToasterFn).toHaveBeenNthCalledWith(2, {
+			intent: "warning",
+			message: log_contents.message,
+			timeout: 1000
+		});
 	});
 });
