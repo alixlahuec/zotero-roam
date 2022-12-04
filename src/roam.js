@@ -305,7 +305,7 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 				origin: "Metadata",
 				message: "Failed to import metadata via SmartBlock for: " + title,
 				context: {
-					error: e,
+					error: e.message,
 					page,
 					settings: {
 						annotations: annotationsSettings,
@@ -344,7 +344,7 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 				origin: "Metadata",
 				message: "Failed to import metadata for: " + title,
 				context: {
-					error: e,
+					error: e.message,
 					page,
 					settings: {
 						annotations: annotationsSettings,
@@ -402,7 +402,7 @@ async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, an
 			origin: "Notes",
 			message: "Failed to import notes for: " + title,
 			context: {
-				error: e,
+				error: e.message,
 				page,
 				settings: {
 					annotations: annotationsSettings,

@@ -445,12 +445,12 @@ function copyToClipboard(text){
 					success: true
 				};
 			})
-			.catch((error) => {
+			.catch((e) => {
 				window.zoteroRoam?.error?.({
 					origin: "Copy",
 					message: "Failed copying text to clipboard",
 					context: {
-						error,
+						error: e.message,
 						text
 					},
 					showToaster: 1000

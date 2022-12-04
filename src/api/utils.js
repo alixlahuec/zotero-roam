@@ -94,7 +94,7 @@ function cleanErrorIfAxios(error){
 		// Do nothing
 	}
 
-	return error;
+	return error.message;
 }
 
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
