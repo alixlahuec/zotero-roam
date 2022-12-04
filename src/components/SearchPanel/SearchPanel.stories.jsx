@@ -1,8 +1,7 @@
-import { expect, jest } from "@storybook/jest";
+import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import SearchPanel from ".";
-import zrToaster from "../ExtensionToaster";
 
 import { items } from "Mocks/zotero/items";
 
@@ -44,7 +43,6 @@ WithRoamCitekey.args = {
 export const WithLookup = Template.bind({});
 WithLookup.play = async ({ canvasElement }) => {
 	const canvas = within(canvasElement);
-	const showToasterFn = jest.spyOn(zrToaster, "show");
 
 	await userEvent.type(canvas.getByPlaceholderText("Search in abstract, title, authors (last names), year, tags, or citekey"), items[0].key);
 
@@ -63,7 +61,5 @@ WithLookup.play = async ({ canvasElement }) => {
 		canvas.getByText(items[0].data.title)
 	)
 		.toBeInTheDocument());
-    
-	await waitFor(() => expect(showToasterFn)
-		.toHaveBeenCalled());
+
 };

@@ -1,8 +1,6 @@
-import { expect, jest } from "@storybook/jest";
+import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import ItemDetails from ".";
-import zrToaster from "../ExtensionToaster";
-
 
 import { cleanLibraryItem } from "../../utils";
 import { items } from "Mocks/zotero/items";
@@ -47,7 +45,6 @@ export const Default = Template.bind({});
 
 export const ShowCopyOptions = Template.bind({});
 ShowCopyOptions.play = async({ args, canvasElement }) => {
-	const showToasterFn = jest.spyOn(zrToaster, "show");
 	const canvas = within(canvasElement);
 	const copyMenu = canvas.getByText("Copy reference");
 
@@ -58,38 +55,20 @@ ShowCopyOptions.play = async({ args, canvasElement }) => {
     
 	await userEvent.click(canvas.getByText(`#[[@${args.item.key}]]`));
 
-	await waitFor(() => expect(showToasterFn)
-		.toHaveBeenCalled());
 };
 
 export const WithCopyHotkeys = Template.bind({});
 WithCopyHotkeys.play = async() => {
-	const showToasterFn = jest.spyOn(zrToaster, "show");
-
 	await userEvent.keyboard("{Alt>}D{/Alt}");
-
-	await waitFor(() => expect(showToasterFn)
-		.toHaveBeenCalled());
     
 	await userEvent.keyboard("{Alt>}C>T/{/Alt}");
-
-	await waitFor(() => expect(showToasterFn)
-		.toHaveBeenCalled());
     
 	await userEvent.keyboard("{Alt>}C>K{/Alt}");
 
-	await waitFor(() => expect(showToasterFn)
-		.toHaveBeenCalled());
-
 	await userEvent.keyboard("{Alt>}P{/Alt}");
-
-	await waitFor(() => expect(showToasterFn)
-		.toHaveBeenCalled());
 
 	await userEvent.keyboard("{Alt>}T{/Alt}");
 
-	await waitFor(() => expect(showToasterFn)
-		.toHaveBeenCalled());
 };
 
 export const WithInvalidHotkey = Template.bind({});
