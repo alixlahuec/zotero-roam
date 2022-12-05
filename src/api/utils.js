@@ -25,6 +25,24 @@ import { emitCustomEvent } from "../events";
  * TagEntry
  */
 
+/** Compares two Zotero tags based on tag string and type, to determine if they are duplicates
+ * @param {ZoteroTag} tag1 - The first tag to compare
+ * @param {ZoteroTag} tag2 - The second tag to compare
+ * @returns {Boolean} The result of the comparison - `true` if the tags are duplicates of each other, `false` otherwise
+ */
+function areTagsDuplicate(tag1, tag2){
+	[tag1, tag2].forEach(tag => {
+		if(tag.constructor !== Object || !tag.tag || !tag.meta){
+			throw new Error(`Received bad input: ${JSON.stringify(tag)}, expected a Zotero tag`);
+		}
+		if(tag.meta.type === undefined){
+			throw new Error(`Received bad input: ${JSON.stringify(tag)}, expected the tag to have a type`);
+		}
+	});
+
+	return tag1.meta.type == tag2.meta.type && tag1.tag == tag2.tag;
+}
+
 /** Categorizes Zotero tags into tokens, based on similar spellings
  * @param {String[]} z_data - The tags to be categorized, as Strings
  * @param {TagMap} tagMap - The map of Zotero tags
@@ -602,25 +620,9 @@ function makeTagList(tags){
  */
 function makeTagMap(tags){
 	return tags.reduce(
-		function(map,t){
-			const { tag, meta: { type } } = t;
-			if(map.has(tag)){
-				const entry = map.get(tag);
-				if(entry.constructor === Array){
-					if(entry.every(el => el.tag != tag || el.meta.type != type)){
-						map.set(tag, [...entry, t]);
-					}
-				} else if(entry.constructor === Object) {
-					if(entry.tag != tag || entry.meta.type != type){
-						map.set(tag, [entry, t]);
-					}
-				}
-			} else{
-				map.set(tag,t);
-			} 
-			return map;
-		}, 
-		new Map());
+		(map, tag) => updateTagMap(map, tag),
+		new Map()
+	);
 }
 
 /** Compares two datasets and merges the changes. As the match is done on the `data.key` property, both items and collections can be matched.
@@ -676,6 +678,37 @@ function parseSemanticDOIs(arr){
 	}).filter(elem => elem.doi);
 }
 
+/** Adds a new entry to a tag map, if it doesn't already exist
+ * @param {Map<String,(ZoteroTag|ZoteroTag[])>} map - The targeted tag map
+ * @param {ZoteroTag} tagEntry - The entry to be added
+ * @returns The updated tag map
+ */
+function updateTagMap(map, tagEntry){
+	const { tag } = tagEntry;
+
+	// If the map already has an entry for the tag, try to append the new entry
+	if(map.has(tag)) {
+		const entry = map.get(tag);
+
+		if(entry.constructor === Array) {
+			// Only append if no duplicate exists
+			if(entry.every(el => !areTagsDuplicate(tagEntry, el))) {
+				map.set(tag, [...entry, tagEntry]);
+			}
+		} else if(entry.constructor === Object) {
+			if(!areTagsDuplicate(tagEntry, entry)) {
+				map.set(tag, [entry, tagEntry]);
+			}
+		} else {
+			throw new Error(`Map entry is of unexpected type ${entry.constructor.name}, expected Array or Object`);
+		}
+	// Else add the entry to the map
+	} else {
+		map.set(tag, tagEntry);
+	}
+	return map;
+}
+
 /** Adds new items to a Zotero library, with optional collections & tags.
  * @param {Object[]} citoids -  The items to be added to Zotero.
  * @param {{library: ZoteroLibrary, collections: String[], tags: String[]}} config - The options to be used for the import. 
@@ -729,6 +762,7 @@ function writeItems(dataList, library){
 }
 
 export {
+	areTagsDuplicate,
 	cleanBibliographyHTML,
 	cleanErrorIfAxios,
 	deleteTags,
@@ -746,6 +780,7 @@ export {
 	makeTagList,
 	matchWithCurrentData,
 	parseSemanticDOIs,
+	updateTagMap,
 	writeCitoids,
 	writeItems
 };
