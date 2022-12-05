@@ -603,15 +603,19 @@ async function fetchTags(library) {
  * @returns {Object.<string, TagEntry[]>} The list of categorized tags
  */
 function makeTagList(tags){
-	const tagMap = makeTagMap(tags);
-	const zdict = makeDictionary(Array.from(tagMap.keys()));
-	const zkeys = Object.keys(zdict).sort((a,b) => a < b ? -1 : 1);
+	try {
+		const tagMap = makeTagMap(tags);
+		const zdict = makeDictionary(Array.from(tagMap.keys()));
+		const zkeys = Object.keys(zdict).sort((a, b) => a < b ? -1 : 1);
 
-	const output = {};
-	zkeys.forEach(key => {
-		output[key] = categorizeZoteroTags(zdict[key], tagMap);
-	});
-	return output;
+		const output = {};
+		zkeys.forEach(key => {
+			output[key] = categorizeZoteroTags(zdict[key], tagMap);
+		});
+		return output;
+	} catch(e) {
+		throw new Error("Could not create tag list : " + e.message);
+	}
 }
 
 /** Converts Zotero tags data into a Map
