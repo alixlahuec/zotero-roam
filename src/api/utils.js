@@ -53,20 +53,24 @@ function categorizeZoteroTags(z_data, tagMap){
 	const zdata = Array.from(z_data).sort((a,b) => a > b ? -1 : 1);
 	
 	for(const elem of zdata){
-		const in_table = output.findIndex(tk => searchEngine(elem, tk.token, { any_case: true, match: "exact", search_compounds: true }));
-		const z_item = tagMap.get(elem);
-		if(in_table == -1){
-			output.push({
-				token: elem.toLowerCase(), 
-				roam: [],
-				zotero: z_item.constructor === Array ? z_item : [z_item]
-			});
-		} else {
-			if(z_item.constructor === Array){
-				output[in_table].zotero.push(...z_item);
+		try {
+			const in_table = output.findIndex(tk => searchEngine(elem, tk.token, { any_case: true, match: "exact", search_compounds: true }));
+			const z_item = tagMap.get(elem);
+			if(in_table == -1){
+				output.push({
+					token: elem.toLowerCase(), 
+					roam: [],
+					zotero: z_item.constructor === Array ? z_item : [z_item]
+				});
 			} else {
-				output[in_table].zotero.push(z_item);
+				if(z_item.constructor === Array){
+					output[in_table].zotero.push(...z_item);
+				} else {
+					output[in_table].zotero.push(z_item);
+				}
 			}
+		} catch(e) {
+			throw new Error(`Failed to categorize ${elem}: ` + e.message);
 		}
 	}
   
