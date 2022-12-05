@@ -975,7 +975,7 @@ function searchEngine(query, target, { any_case = true, match = "partial", searc
 	} else if(target.constructor === Array){
 		return target.some(el => searchEngine_string(query, el, { any_case, match, search_compounds, word_order }));
 	} else {
-		throw new Error(`Unexpected input type ${target.constructor} : target should be a String or an Array`);
+		throw new Error(`Unexpected input type ${target.constructor.name} : target should be a String or an Array`);
 	}
 }
 

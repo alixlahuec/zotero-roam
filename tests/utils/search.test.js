@@ -4,7 +4,7 @@ import { searchEngine } from "../../src/utils";
 describe("Search engine inputs", () => {
 	it("rejects invalid search inputs", () => {
 		expect(() => searchEngine("query", { text: "" }))
-			.toThrow();
+			.toThrow("Unexpected input type Object : target should be a String or an Array");
 	});
 	
 	it("applies search to an array", () => {
