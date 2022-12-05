@@ -233,13 +233,22 @@ test("Pluralizes tokens", () => {
 	expect(pluralize(3, "item", " added")).toBe("3 items added");
 });
 
-test("Creates dictionary from string Array", () => {
-	const arr = ["amble", "bereft", "cedar", "Arbiter", "Beforehand", "Callously", "*Important*", "12th century"];
-	expect(makeDictionary(arr)).toEqual({
-		"*": ["*Important*"],
-		"1": ["12th century"],
-		"a": ["amble", "Arbiter"],
-		"b": ["bereft", "Beforehand"],
-		"c": ["cedar", "Callously"]
+describe("Creating a dictionary", () => {
+	test("Creates dictionary from string Array", () => {
+		const arr = ["amble", "bereft", "cedar", "Arbiter", "Beforehand", "Callously", "*Important*", "12th century", "🔥"];
+		expect(makeDictionary(arr)).toEqual({
+			"*": ["*Important*"],
+			"1": ["12th century"],
+			"a": ["amble", "Arbiter"],
+			"b": ["bereft", "Beforehand"],
+			"c": ["cedar", "Callously"],
+			"\uD83D": ["🔥"]
+		});
+	});
+
+	test("Bad inputs are detected", () => {
+		const arr = [{ some: "prop" }];
+		expect(() => makeDictionary(arr))
+			.toThrow("Could not add {\"some\":\"prop\"} to dictionary");
 	});
 });

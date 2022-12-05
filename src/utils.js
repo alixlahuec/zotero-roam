@@ -791,11 +791,15 @@ function identifyPDFConnections(itemKey, parentKey, location, { items = [], note
  */
 function makeDictionary(arr){
 	return arr.reduce((dict, elem) => {
-		const initial = elem.charAt(0).toLowerCase();
-		if(dict[initial]){
-			dict[initial].push(elem);
-		} else {
-			dict[initial] = [elem];
+		try {
+			const initial = elem.charAt(0).toLowerCase();
+			if(dict[initial]){
+				dict[initial].push(elem);
+			} else {
+				dict[initial] = [elem];
+			}
+		} catch(e){
+			throw new Error(`Could not add ${JSON.stringify(elem)} to dictionary`);
 		}
 		return dict;
 	}, {});
@@ -975,7 +979,7 @@ function searchEngine(query, target, { any_case = true, match = "partial", searc
 	} else if(target.constructor === Array){
 		return target.some(el => searchEngine_string(query, el, { any_case, match, search_compounds, word_order }));
 	} else {
-		throw new Error(`Unexpected input type ${target.constructor} : target should be a String or an Array`);
+		throw new Error(`Unexpected input type ${target.constructor.name} : target should be a String or an Array`);
 	}
 }
 
