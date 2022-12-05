@@ -73,7 +73,7 @@ function categorizeZoteroTags(z_data, tagMap){
 			throw new Error(`Failed to categorize ${elem}: ` + e.message);
 		}
 	}
-  
+
 	return output.sort((a,b) => a.token < b.token ? -1 : 1);
 }
 
@@ -687,7 +687,7 @@ function parseSemanticDOIs(arr){
 }
 
 /** Adds a new entry to a tag map, if it doesn't already exist
- * @param {Map<String,(ZoteroTag|ZoteroTag[])>} map - The targeted tag map
+ * @param {TagMap} map - The targeted tag map
  * @param {ZoteroTag} tagEntry - The entry to be added
  * @returns The updated tag map
  */
