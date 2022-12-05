@@ -791,11 +791,15 @@ function identifyPDFConnections(itemKey, parentKey, location, { items = [], note
  */
 function makeDictionary(arr){
 	return arr.reduce((dict, elem) => {
-		const initial = elem.charAt(0).toLowerCase();
-		if(dict[initial]){
-			dict[initial].push(elem);
-		} else {
-			dict[initial] = [elem];
+		try {
+			const initial = elem.charAt(0).toLowerCase();
+			if(dict[initial]){
+				dict[initial].push(elem);
+			} else {
+				dict[initial] = [elem];
+			}
+		} catch(e){
+			throw new Error(`Could not add ${JSON.stringify(elem)} to dictionary`);
 		}
 		return dict;
 	}, {});
