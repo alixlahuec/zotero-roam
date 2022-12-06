@@ -1,4 +1,4 @@
-import { formatItemNotes, formatZoteroNotes, simplifyZoteroNotes } from "../../src/utils";
+import { formatItemNotes, formatZoteroNotes, simplifyZoteroNotes, splitNotes } from "../../src/utils";
 import { libraries } from "Mocks/zotero/libraries";
 import { sampleNote } from "Mocks/zotero/notes";
 
@@ -20,6 +20,52 @@ test("Simplifies notes", () => {
 				tags: ["toRead"]
 			}
 		]);
+});
+
+describe("Splitting HTML notes", () => {
+	const notes = [
+		{ data: { note: "<div>Some text</div>\n<div>Some other text</div>" } },
+		{ data: { note: "<p>Some paragraph</p><ul><li>Some element</li></ul><p>Another paragraph</p>" } }
+	];
+
+	test("No separator provided - function throws", () => {
+		expect(() => splitNotes([notes[0]]))
+			.toThrow();
+	});
+
+	test("Incorrect type of separator provided - function throws", () => {
+		expect(() => splitNotes([notes[0]], ["abc"]))
+			.toThrow("Input is of type Array, expected String");
+	});
+
+	test("Simple separator", () => {
+		expect(splitNotes([notes[0]], "\n"))
+			.toEqual([
+				[
+					"<div>Some text</div>",
+					"<div>Some other text</div>"
+				]
+			]);
+	});
+
+	test("HTML tag separator", () => {
+		expect(splitNotes([notes[0]], "</div>"))
+			.toEqual([
+				[
+					"Some text",
+					"\n",
+					"Some other text"
+				]
+			]);
+		expect(splitNotes([notes[1]], "</p>"))
+			.toEqual([
+				[
+					"Some paragraph",
+					"<ul><li>Some element</li></ul>",
+					"Another paragraph"
+				]
+			]);
+	});
 });
 
 describe("Parsing HTML notes", () => {
@@ -68,7 +114,8 @@ describe("Parsing HTML notes", () => {
 		expect(formatItemNotes([notes[5]], "</p>"))
 			.toEqual([
 				"Some text",
-				"Some element\nAnother element\nA third element\nSome content"
+				"Some element\nAnother element\nA third element",
+				"Some content"
 			]);
 	});
 });

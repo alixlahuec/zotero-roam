@@ -787,6 +787,24 @@ function identifyPDFConnections(itemKey, parentKey, location, { items = [], note
 	};
 }
 
+/** Checks if a string input is an HTML tag
+ * @param {String} input - The targeted string
+ * @returns The outcome of the test
+ */
+function isHTMLTag(input){
+	if(input.constructor !== String){
+		throw new Error(`Input is of type ${input.constructor.name}, expected String`);
+	}
+
+	const pattern = new RegExp(/^<\/?(.+?)>|<(.+?)>$/);
+	const result = pattern.test(input);
+
+	return {
+		result,
+		htmlTag: (result && input.match(pattern)[1]) || null
+	};
+}
+
 /** Creates a dictionary from a String Array
  * @param {String[]} arr - The array from which to make the dictionary
  * @returns {Object.<string, string[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
@@ -1264,7 +1282,15 @@ function sortElems(arr, sort){
  * @returns {String[][]} A nested array of strings, where each entry contains the splitting results for a given note
  */
 function splitNotes(notes, separator){
-	return notes.map(n => n.data.note.split(separator));
+	const { result, htmlTag } = isHTMLTag(separator);
+
+	if(result && htmlTag){
+		// eslint-disable-next-line no-useless-escape
+		const tagRegex = new RegExp(`<\/?${htmlTag}>|<${htmlTag} .+?>`, "g");
+		return notes.map(n => n.data.note.split(tagRegex).filter(Boolean));
+	} else {
+		return notes.map(n => n.data.note.split(separator).filter(Boolean));
+	}
 }
 
 export {
@@ -1307,5 +1333,6 @@ export {
 	simplifyZoteroAnnotations,
 	simplifyZoteroNotes,
 	sortCollections,
-	sortElems
+	sortElems,
+	splitNotes
 };
