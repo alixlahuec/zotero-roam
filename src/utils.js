@@ -591,7 +591,7 @@ function formatItemAnnotations(annotations, { group_by = false, template_comment
  * @param {String} separator - The string on which to split notes into blocks
  * @returns A flat array of strings, separated according to `separator`, and ready for import into Roam.
  */
-function formatItemNotes(notes, separator){
+function formatItemNotes(notes, separator = "\n"){
 	return splitNotes(notes, separator)
 		.flat(1)
 		.map(b => parseNoteBlock(b))
