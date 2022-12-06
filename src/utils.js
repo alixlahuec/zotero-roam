@@ -195,6 +195,8 @@ function cleanNewlines(text){
 		cleanText = cleanNewlines(cleanText);
 	}
 
+	cleanText = cleanText.replaceAll(/\n{2}/g, "\n");
+
 	return cleanText;
 }
 
