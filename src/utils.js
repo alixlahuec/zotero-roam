@@ -920,7 +920,12 @@ function parseNoteBlock(block){
 		"<br/>": "\n",
 		"<br>": "\n",
 		"<u>": "",
-		"</u>": ""
+		"</u>": "",
+		"<ul>": "",
+		"</ul>": "",
+		"</li><li>": " ",
+		"<li>": "",
+		"</li>": ""
 	};
 	for(const prop in formattingSpecs){
 		cleanBlock = cleanBlock.replaceAll(`${prop}`, `${formattingSpecs[prop]}`);
