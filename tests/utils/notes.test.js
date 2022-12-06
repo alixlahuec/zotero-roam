@@ -27,7 +27,9 @@ describe("Parsing HTML notes", () => {
 		{ data: { note: "<h1>Note Title</h1><div class=\"div-class\"><span>Lorem ipsum</span></div>" } },
 		{ data: { note: "Click <a href=\"https://example.com\">here</a> to open a link" } },
 		{ data: { note: "See <a class=\"link-class\" href=\"https://example.com\">there</a> for a link with attributes" } },
-		{ data: { note: "\n\nSome text\n" } }
+		{ data: { note: "\n\nSome text\n" } },
+		{ data: { note: "<ul><li>Some element</li></ul>\n\n<div>A paragraph</div>" } },
+		{ data: { note: "<p>Some text</p>\n<ul>\n<li>\nSome element\n</li>\n<li>\nAnother element\n</li>\n<li>\nA third element\n</li>\n</ul>\n<p>Some content</p>\n" } }
 	];	
 
 	it("cleans markup from rich tags", () => {
@@ -47,6 +49,26 @@ describe("Parsing HTML notes", () => {
 		expect(formatItemNotes([notes[3]], "</p>"))
 			.toEqual([
 				"Some text"
+			]);
+		expect(formatItemNotes([notes[4]], "</p>"))
+			.toEqual([
+				"Some element\nA paragraph"
+			]);
+	});
+
+	it("cleans list markup", () => {
+		expect(formatZoteroNotes([notes[5]]))
+			.toEqual([
+				"Some text",
+				"Some element",
+				"Another element",
+				"A third element",
+				"Some content"
+			]);
+		expect(formatItemNotes([notes[5]], "</p>"))
+			.toEqual([
+				"Some text",
+				"Some element\nAnother element\nA third element\nSome content"
 			]);
 	});
 });
