@@ -71,23 +71,23 @@ function Note({ note }){
 
 	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings), [notesSettings, raw]);
 
-	return notesList.map((nt, i) => {
-		return <div key={i} className={["zr-drawer--notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
-			<div zr-role="card-header">
-				<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
-				<ButtonGroup minimal={true}>
-					<ShowRaw item={raw} />
-					<ButtonLink className={CustomClasses.TEXT_SMALL} href={link_note} icon="comment">View in Zotero</ButtonLink>
-				</ButtonGroup>
-			</div>
-			<div className="zr-note--contents">
+	return <div className={["zr-drawer--notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
+		<div zr-role="card-header">
+			<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
+			<ButtonGroup minimal={true}>
+				<ShowRaw item={raw} />
+				<ButtonLink className={CustomClasses.TEXT_SMALL} href={link_note} icon="comment">View in Zotero</ButtonLink>
+			</ButtonGroup>
+		</div>
+		{notesList.map((nt, i) => (
+			<div key={i} className="zr-note--contents">
 				{nt}
 			</div>
-			<div zr-role="card-footer">
-				<span className={CustomClasses.TEXT_SECONDARY}>{makeDateFromAgo(date_modified)}</span>
-			</div>
-		</div>;
-	});
+		))}
+		<div zr-role="card-footer">
+			<span className={CustomClasses.TEXT_SECONDARY}>{makeDateFromAgo(date_modified)}</span>
+		</div>
+	</div>;
 }
 Note.propTypes = {
 	note: customPropTypes.cleanNoteItemType
