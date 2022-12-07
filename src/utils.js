@@ -943,6 +943,8 @@ function parseNoteBlock(block){
 		"</u>": "",
 		"<ul>": "",
 		"</ul>": "",
+		"<ol>": "",
+		"</ol>": "",
 		"</li><li>": " ",
 		"<li>": "",
 		"</li>": ""
