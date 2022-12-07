@@ -591,7 +591,7 @@ function formatItemAnnotations(annotations, { group_by = false, template_comment
  * @param {String} separator - The string on which to split notes into blocks
  * @returns A flat array of strings, separated according to `separator`, and ready for import into Roam.
  */
-function formatItemNotes(notes, separator){
+function formatItemNotes(notes, separator = "\n"){
 	return splitNotes(notes, separator)
 		.flat(1)
 		.map(b => parseNoteBlock(b))
@@ -784,6 +784,24 @@ function identifyPDFConnections(itemKey, parentKey, location, { items = [], note
 	return {
 		parent: parentItem,
 		annotations: annotationItems
+	};
+}
+
+/** Checks if a string input is an HTML tag
+ * @param {String} input - The targeted string
+ * @returns The outcome of the test
+ */
+function isHTMLTag(input){
+	if(input.constructor !== String){
+		throw new Error(`Input is of type ${input.constructor.name}, expected String`);
+	}
+
+	const pattern = new RegExp(/^<\/?(.+?)>|<(.+?)>$/);
+	const result = pattern.test(input);
+
+	return {
+		result,
+		htmlTag: (result && input.match(pattern)[1]) || null
 	};
 }
 
@@ -1264,7 +1282,15 @@ function sortElems(arr, sort){
  * @returns {String[][]} A nested array of strings, where each entry contains the splitting results for a given note
  */
 function splitNotes(notes, separator){
-	return notes.map(n => n.data.note.split(separator));
+	const { result, htmlTag } = isHTMLTag(separator);
+
+	if(result && htmlTag){
+		// eslint-disable-next-line no-useless-escape
+		const tagRegex = new RegExp(`<\/?${htmlTag}>|<${htmlTag} .+?>`, "g");
+		return notes.map(n => n.data.note.split(tagRegex).filter(Boolean));
+	} else {
+		return notes.map(n => n.data.note.split(separator).filter(Boolean));
+	}
 }
 
 export {
@@ -1307,5 +1333,6 @@ export {
 	simplifyZoteroAnnotations,
 	simplifyZoteroNotes,
 	sortCollections,
-	sortElems
+	sortElems,
+	splitNotes
 };
