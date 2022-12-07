@@ -7,7 +7,7 @@ const note1 = {
 		dateModified: "2022-01-01T12:00:00Z",
 		itemType: "note",
 		parentItem: "ABCDEF",
-		note: "<p>Lorem ipsum</p>",
+		note: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quam odio, tempus at quam nec, porttitor lobortis purus. Nam non viverra sem. Cras consequat massa eu erat vestibulum rhoncus.</p>\n<ul><li>Some element</li>\n<li>Another element</li></ul>\n<p>Mauris consectetur purus ac venenatis elementum. Sed tortor ex, vehicula in lacinia in, eleifend vel tellus. Ut posuere est nec tortor aliquet placerat. Suspendisse nec condimentum dolor, vel ultrices purus. Nulla efficitur id sapien quis consectetur. Donec enim felis, tincidunt in dui vitae, consectetur pharetra arcu.</p>",
 		tags: []
 	},
 	key: "JKLMN",
@@ -92,7 +92,7 @@ export default {
 				nest_preset: "[[Notes]]",
 				nest_use: "preset",
 				split_char: "",
-				split_preset: "\n",
+				split_preset: "</p>",
 				split_use: "preset",
 				__with: "text"
 			}
