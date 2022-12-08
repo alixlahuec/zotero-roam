@@ -1,6 +1,6 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.7.8",
+    "version": "0.7.9",
     "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
@@ -23,12 +23,12 @@
         "build:dev": "webpack --config dev/webpack.dev.config.js",
         "build:prod": "webpack --config dev/webpack.config.js",
         "build:roam": "webpack --config dev/webpack.roam.config.js",
-		"build:dev-roam": "webpack --config dev/webpack.dev.roam.config.js",
+        "build:dev-roam": "webpack --config dev/webpack.dev.roam.config.js",
         "build:sandbox": "webpack --config dev/webpack.sandbox.config.js",
-		"lint": "eslint loader.js sandbox.js .storybook/** src/** stories/** tests/**",
-		"lint:fix": "npm run lint -- --fix",
-		"ci:lint": "npm run lint -- --format junit -o reports/eslint-junit.xml",
-		"test": "jest",
+        "lint": "eslint loader.js sandbox.js .storybook/** src/** stories/** tests/**",
+        "lint:fix": "npm run lint -- --fix",
+        "ci:lint": "npm run lint -- --format junit -o reports/eslint-junit.xml",
+        "test": "jest",
         "ci:test": "jest --ci --collectCoverage",
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook --quiet",
@@ -57,11 +57,11 @@
             ]
         ]
     },
-	"jest-junit": {
-		"includeConsoleOutput": true,
-		"outputDirectory": "reports",
-		"outputName": "storybook-junit.xml"
-	},
+    "jest-junit": {
+        "includeConsoleOutput": true,
+        "outputDirectory": "reports",
+        "outputName": "storybook-junit.xml"
+    },
     "devDependencies": {
         "@babel/core": "^7.20.5",
         "@babel/preset-env": "^7.20.2",
