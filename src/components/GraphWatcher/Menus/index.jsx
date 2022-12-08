@@ -27,7 +27,7 @@ function CitekeyMenuFactory({ menus }){
 		notifyOnChangeProps: ["data"] 
 	});
 
-	const data = itemQueries.map(q => q.data || []).flat(1);
+	const data = useMemo(() => itemQueries.map(q => q.data || []).flat(1), [itemQueries]);
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 
 	const citekeyItems = useMemo(() => itemList.items.filter(it => it.has_citekey), [itemList]);
