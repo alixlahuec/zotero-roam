@@ -1,6 +1,16 @@
 ## Changelog
 
-### [0.7.8](https://github.com/alixlahuec/zotero-roam/compare/0.7.7...0.7.8) - 
+### [0.7.9](https://github.com/alixlahuec/zotero-roam/compare/0.7.8...0.7.9) - 
+
+#### Features
+
+-  improve performance when opening the Search Panel ([`#131`](https://github.com/alixlahuec/zotero-roam/pull/131))
+-  improve display of Zotero notes in drawer ([`#129`](https://github.com/alixlahuec/zotero-roam/pull/129))
+-  improve parsing of Zotero notes ([`#127`](https://github.com/alixlahuec/zotero-roam/pull/127))
+-  improve toaster and logs ([`#125`](https://github.com/alixlahuec/zotero-roam/pull/125))
+-  give visual feedback on import errors ([`#124`](https://github.com/alixlahuec/zotero-roam/pull/124))
+
+### [0.7.8](https://github.com/alixlahuec/zotero-roam/compare/0.7.7...0.7.8) -  2022-12-02 
 
 #### Features
 
