@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
 
@@ -67,22 +68,27 @@ const useQuery_Collections = (libraries, opts = {}) => {
  * @returns The React Queries for the given data requests
  */
 const useQuery_Items = (reqs, opts = {}) => {
-	// Defaults for this query
-	const { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest } = opts;
-	// Factory
 	const client = useQueryClient();
-	const queriesDefs = reqs.map((req) => {
-		const { library: { path }, ...identifiers } = req;
-		const queryKey = ["items", path,  { ...identifiers }];
-		const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchItems({ ...req,  since }, { match }, client),
-			staleTime,
-			refetchInterval,
-			...rest
-		};
-	});
+
+	const queriesDefs = useMemo(() => {
+		// Defaults for this query
+		const { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest } = opts;
+
+		// Factory
+		return reqs.map((req) => {
+			const { library: { path }, ...identifiers } = req;
+			const queryKey = ["items", path, { ...identifiers }];
+			const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
+			return {
+				queryKey: queryKey,
+				queryFn: (_queryKey) => fetchItems({ ...req, since }, { match }, client),
+				staleTime,
+				refetchInterval,
+				...rest
+			};
+		});
+	}, [reqs, client, opts]);
+
 	return useQueries({
 		queries: queriesDefs
 	});
