@@ -135,7 +135,7 @@ function Explorer({ onClose }){
 	});
 
 	const isLoading = itemQueries.some(q => q.isLoading);
-	const data = itemQueries.map(q => q.data || []).flat(1);
+	const data = useMemo(() => itemQueries.map(q => q.data || []).flat(1), [itemQueries]);
 	const itemList = useMemo(() => categorizeLibraryItems(data), [data]);
 
 	return <ErrorBoundary>

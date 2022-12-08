@@ -19,6 +19,12 @@ describe("Convert camelCase to Title Case", () => {
 });
 
 describe("Executing a function by name", () => {
+	afterEach(() => {
+		if(window.customFunc){
+			delete window.customFunc;
+		}
+	});
+
 	it("executes a function attached to the window", () => {
 		window.customFunc = jest.fn();
 		executeFunctionByName("customFunc", window);
@@ -29,6 +35,12 @@ describe("Executing a function by name", () => {
 		window.customFunc = jest.fn();
 		executeFunctionByName("customFunc", window, "my arg");
 		expect(window.customFunc).toHaveBeenCalledWith("my arg");
+	});
+
+	it("throws a custom error if the function doesn't exist", () => {
+		expect(() => {
+			executeFunctionByName("customFunc", window);
+		}).toThrow("Function customFunc doesn't exist");
 	});
 });
 

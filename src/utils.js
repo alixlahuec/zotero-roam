@@ -195,6 +195,8 @@ function cleanNewlines(text){
 		cleanText = cleanNewlines(cleanText);
 	}
 
+	cleanText = cleanText.replaceAll(/\n{2}/g, "\n");
+
 	return cleanText;
 }
 
@@ -445,19 +447,12 @@ function copyToClipboard(text){
 					success: true
 				};
 			})
-			.catch((error) => {
+			.catch((e) => {
 				window.zoteroRoam?.error?.({
 					origin: "Copy",
-					message: "Failed copying text to clipboard",
-					context: {
-						error,
-						text
-					}
-				});
-				zrToaster.show({
-					intent: "danger",
-					message: `Clipboard copy failed for: ${text}`,
-					timeout: 1000
+					message: `Failed to copy to clipboard: ${text}`,
+					detail: e.message,
+					showToaster: 1000
 				});
 				return {
 					success: false
@@ -498,6 +493,11 @@ function executeFunctionByName(functionName, context /*, args */) {
 	for (let i = 0; i < namespaces.length; i++) {
 		ctx = ctx[namespaces[i]];
 	}
+
+	if(!ctx[func]){
+		throw new Error(`Function ${func} doesn't exist`);
+	}
+
 	return ctx[func].apply(ctx, args);
 }
 
@@ -591,7 +591,7 @@ function formatItemAnnotations(annotations, { group_by = false, template_comment
  * @param {String} separator - The string on which to split notes into blocks
  * @returns A flat array of strings, separated according to `separator`, and ready for import into Roam.
  */
-function formatItemNotes(notes, separator){
+function formatItemNotes(notes, separator = "\n"){
 	return splitNotes(notes, separator)
 		.flat(1)
 		.map(b => parseNoteBlock(b))
@@ -787,17 +787,39 @@ function identifyPDFConnections(itemKey, parentKey, location, { items = [], note
 	};
 }
 
+/** Checks if a string input is an HTML tag
+ * @param {String} input - The targeted string
+ * @returns The outcome of the test
+ */
+function isHTMLTag(input){
+	if(input.constructor !== String){
+		throw new Error(`Input is of type ${input.constructor.name}, expected String`);
+	}
+
+	const pattern = new RegExp(/^<\/?(.+?)>|<(.+?)>$/);
+	const result = pattern.test(input);
+
+	return {
+		result,
+		htmlTag: (result && input.match(pattern)[1]) || null
+	};
+}
+
 /** Creates a dictionary from a String Array
  * @param {String[]} arr - The array from which to make the dictionary
  * @returns {Object.<string, string[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
  */
 function makeDictionary(arr){
 	return arr.reduce((dict, elem) => {
-		const initial = elem.charAt(0).toLowerCase();
-		if(dict[initial]){
-			dict[initial].push(elem);
-		} else {
-			dict[initial] = [elem];
+		try {
+			const initial = elem.charAt(0).toLowerCase();
+			if(dict[initial]){
+				dict[initial].push(elem);
+			} else {
+				dict[initial] = [elem];
+			}
+		} catch(e){
+			throw new Error(`Could not add ${JSON.stringify(elem)} to dictionary`);
 		}
 		return dict;
 	}, {});
@@ -918,7 +940,14 @@ function parseNoteBlock(block){
 		"<br/>": "\n",
 		"<br>": "\n",
 		"<u>": "",
-		"</u>": ""
+		"</u>": "",
+		"<ul>": "",
+		"</ul>": "",
+		"<ol>": "",
+		"</ol>": "",
+		"</li><li>": " ",
+		"<li>": "",
+		"</li>": ""
 	};
 	for(const prop in formattingSpecs){
 		cleanBlock = cleanBlock.replaceAll(`${prop}`, `${formattingSpecs[prop]}`);
@@ -977,7 +1006,7 @@ function searchEngine(query, target, { any_case = true, match = "partial", searc
 	} else if(target.constructor === Array){
 		return target.some(el => searchEngine_string(query, el, { any_case, match, search_compounds, word_order }));
 	} else {
-		throw new Error(`Unexpected input type ${target.constructor} : target should be a String or an Array`);
+		throw new Error(`Unexpected input type ${target.constructor.name} : target should be a String or an Array`);
 	}
 }
 
@@ -1255,7 +1284,15 @@ function sortElems(arr, sort){
  * @returns {String[][]} A nested array of strings, where each entry contains the splitting results for a given note
  */
 function splitNotes(notes, separator){
-	return notes.map(n => n.data.note.split(separator));
+	const { result, htmlTag } = isHTMLTag(separator);
+
+	if(result && htmlTag){
+		// eslint-disable-next-line no-useless-escape
+		const tagRegex = new RegExp(`<\/?${htmlTag}>|<${htmlTag} .+?>`, "g");
+		return notes.map(n => n.data.note.split(tagRegex).filter(Boolean));
+	} else {
+		return notes.map(n => n.data.note.split(separator).filter(Boolean));
+	}
 }
 
 export {
@@ -1298,5 +1335,6 @@ export {
 	simplifyZoteroAnnotations,
 	simplifyZoteroNotes,
 	sortCollections,
-	sortElems
+	sortElems,
+	splitNotes
 };

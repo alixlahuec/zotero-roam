@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
 
@@ -67,22 +68,27 @@ const useQuery_Collections = (libraries, opts = {}) => {
  * @returns The React Queries for the given data requests
  */
 const useQuery_Items = (reqs, opts = {}) => {
-	// Defaults for this query
-	const { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest } = opts;
-	// Factory
 	const client = useQueryClient();
-	const queriesDefs = reqs.map((req) => {
-		const { library: { path }, ...identifiers } = req;
-		const queryKey = ["items", path,  { ...identifiers }];
-		const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchItems({ ...req,  since }, { match }, client),
-			staleTime,
-			refetchInterval,
-			...rest
-		};
-	});
+
+	const queriesDefs = useMemo(() => {
+		// Defaults for this query
+		const { staleTime = 1000 * 60, refetchInterval = 1000 * 60, ...rest } = opts;
+
+		// Factory
+		return reqs.map((req) => {
+			const { library: { path }, ...identifiers } = req;
+			const queryKey = ["items", path, { ...identifiers }];
+			const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
+			return {
+				queryKey: queryKey,
+				queryFn: (_queryKey) => fetchItems({ ...req, since }, { match }, client),
+				staleTime,
+				refetchInterval,
+				...rest
+			};
+		});
+	}, [reqs, client, opts]);
+
 	return useQueries({
 		queries: queriesDefs
 	});
@@ -138,19 +144,22 @@ const useQuery_Semantic = (doi, opts = {}) => {
  * @returns The React Queries for the given libraries' tags
  */
 const useQuery_Tags = (libraries, opts = {}) => {
-	// Defaults for this query
-	const { staleTime = 1000 * 60 * 3, ...rest } = opts;
-	// Factory
-	const queriesDefs = libraries.map((lib) => {
-		const { apikey, path } = lib;
-		const queryKey = ["tags", { apikey, library: path }];
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchTags({ apikey, path }),
-			staleTime,
-			...rest
-		};
-	});
+	const queriesDefs = useMemo(() => {
+		// Defaults for this query
+		const { staleTime = 1000 * 60 * 3, ...rest } = opts;
+		// Factory
+		return libraries.map((lib) => {
+			const { apikey, path } = lib;
+			const queryKey = ["tags", { apikey, library: path }];
+			return {
+				queryKey: queryKey,
+				queryFn: (_queryKey) => fetchTags({ apikey, path }),
+				staleTime,
+				...rest
+			};
+		});
+	}, [libraries, opts]);
+
 	return useQueries({
 		queries: queriesDefs
 	});
@@ -161,25 +170,28 @@ const useQuery_Tags = (libraries, opts = {}) => {
  * @returns {{data: ZoteroLibrary[], isLoading: Boolean}} The operation's status and outcome
  */
 const useWriteableLibraries = (libraries) => {
-	const apiKeys = Array.from(new Set(libraries.map(lib => lib.apikey)));
+	const apiKeys = useMemo(() => Array.from(new Set(libraries.map(lib => lib.apikey))), [libraries]);
 	const permissionQueries = useQuery_Permissions(apiKeys, {
 		notifyOnChangeProps: ["data", "isLoading"]
 	});
-	const isLoading = permissionQueries.some(q => q.isLoading);
-	const permissions = permissionQueries.map(q => q.data || []).flat(1);
 
-	const data = libraries
-		.filter(lib => {
-			const keyData = permissions.find(k => k.key == lib.apikey);
-			if(!keyData){
-				return false;
-			} else {
-				const { access } = keyData;
-				const [libType, libId] = lib.path.split("/");
-				const permissionsList = libType == "users" ? (access.user || {}) : (access.groups[libId] || access.groups.all);
-				return permissionsList?.write || false;
-			}
-		});
+	const isLoading = permissionQueries.some(q => q.isLoading);
+	const permissions = useMemo(() => permissionQueries.map(q => q.data || []).flat(1), [permissionQueries]);
+
+	const data = useMemo(() => {
+		return libraries
+			.filter(lib => {
+				const keyData = permissions.find(k => k.key == lib.apikey);
+				if (!keyData) {
+					return false;
+				} else {
+					const { access } = keyData;
+					const [libType, libId] = lib.path.split("/");
+					const permissionsList = libType == "users" ? (access.user || {}) : (access.groups[libId] || access.groups.all);
+					return permissionsList?.write || false;
+				}
+			});
+	}, [libraries, permissions]);
 	
 	return {
 		data,

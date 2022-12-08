@@ -33,47 +33,50 @@ import "./index.css";
  * zotero: {local: String, web: String}}}>} The map of current library items
  */
 const useGetItems = (reqs) => {
-	const itemQueries = useQuery_Items(reqs, { 
-		notifyOnChangeProps: ["data"],
-		select: (datastore) => {
-			if(datastore.data){
-				const lib = categorizeLibraryItems(datastore.data);
+	const select = useCallback((datastore) => {
+		if (datastore.data) {
+			const lib = categorizeLibraryItems(datastore.data);
 
-				return lib.items.map(item => {
-					const hasURL = item.data.url;
-					const hasDOI = parseDOI(item.data.DOI);
-					const weblink = hasURL
-						? { href: hasURL, title: hasURL }
-						: hasDOI
-							? { href: "https://doi/org/" + hasDOI, title: hasDOI }
-							: false;
-					const location = item.library.type + "s/" + item.library.id;
+			return lib.items.map(item => {
+				const hasURL = item.data.url;
+				const hasDOI = parseDOI(item.data.DOI);
+				const weblink = hasURL
+					? { href: hasURL, title: hasURL }
+					: hasDOI
+						? { href: "https://doi/org/" + hasDOI, title: hasDOI }
+						: false;
+				const location = item.library.type + "s/" + item.library.id;
 
-					const children = identifyChildren(item.data.key, location, { pdfs: lib.pdfs, notes: lib.notes });
+				const children = identifyChildren(item.data.key, location, { pdfs: lib.pdfs, notes: lib.notes });
 
-					return [
-						"@" + item.key,
-						{
-							citation: formatItemReference(item, "inline") || "@" + item.key,
-							data: {
-								children,
-								location,
-								raw: item,
-								weblink,
-								zotero: {
-									local: getLocalLink(item, { format: "target" }),
-									web: getWebLink(item, { format: "target" })
-								}
+				return [
+					"@" + item.key,
+					{
+						citation: formatItemReference(item, "inline") || "@" + item.key,
+						data: {
+							children,
+							location,
+							raw: item,
+							weblink,
+							zotero: {
+								local: getLocalLink(item, { format: "target" }),
+								web: getWebLink(item, { format: "target" })
 							}
 						}
-					];
-				});
-			} else {
-				return [];
-			}
-		} 
+					}
+				];
+			});
+		} else {
+			return [];
+		}
+	}, []);
+
+	const itemQueries = useQuery_Items(reqs, { 
+		notifyOnChangeProps: ["data"],
+		select
 	});
-	const data = itemQueries.map(q => q.data || []).flat(1);
+
+	const data = useMemo(() => itemQueries.map(q => q.data || []).flat(1), [itemQueries]);
     
 	return new Map(data);
 };

@@ -1,8 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
+import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
-import { cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, writeCitoids, writeItems } from "../../src/api/utils";
 import { findBibEntry, findItems, items } from "Mocks/zotero/items";
 import { findTags, tags } from "Mocks/zotero/tags";
 import { apiKeys } from "Mocks/zotero/keys";
@@ -52,6 +52,106 @@ test("Extracting citekeys for Zotero items", () => {
 	expect(extractCitekeys(cases)).toEqual(expectations);
 	expect(extractCitekeys(items)).toEqual(items);
 
+});
+
+describe("Comparing tag entries", () => {
+	const tag1 = { tag: "some_tag", meta: { numItems: 3, type: 0 } };
+	const tag2 = { tag: "some_tag", meta: { numItems: 2, type: 0 } };
+	const tag3 = { tag: "some_tag", meta: { numItems: 6, type: 1 } };
+	const tag4 = { tag: "other_tag", meta: { numItems: 4, type: 1 } };
+
+	const cases = [
+		[[tag1, tag2], true],
+		[[tag1, tag3], false],
+		[[tag2, tag3], false],
+		[[tag1, tag4], false],
+		[[tag2, tag4], false],
+		[[tag3, tag4], false]
+	];
+
+	test.each(cases)(
+		"Tag comparison %#",
+		(tags_to_compare, are_duplicates) => {
+			expect(areTagsDuplicate(...tags_to_compare)).toBe(are_duplicates);
+		}
+	);
+
+	test("Inputs with incorrect format are detected", () => {
+		expect(() => areTagsDuplicate(tag1, "some_text"))
+			.toThrow("Received bad input: \"some_text\", expected a Zotero tag");
+		
+		const tag_with_error = { tag: "some_tag", meta: { numItems: 4 } };
+		expect(() => areTagsDuplicate(tag1, tag_with_error))
+			.toThrow(`Received bad input: ${JSON.stringify(tag_with_error)}, expected the tag to have a type`);
+	});
+
+});
+
+describe("Building tag maps", () => {
+	let tagMap = new Map();
+
+	beforeEach(() => {
+		tagMap = new Map([
+			["some_tag", { tag: "some_tag", meta: { numItems: 4, type: 0 } }],
+			[
+				"other_tag",
+				[
+					{ tag: "other_tag", meta: { numItems: 3, type: 0 } },
+					{ tag: "other_tag", meta: { numItems: 11, type: 1 } }
+				]
+			]
+		]);
+	});
+
+	test("New entries are added correctly", () => {
+		updateTagMap(tagMap, { tag: "a_new_tag", meta: { numItems: 2, type: 1 } });
+		expect(tagMap.has("a_new_tag"))
+			.toBe(true);
+		expect(tagMap.get("a_new_tag"))
+			.toEqual({ tag: "a_new_tag", meta: { numItems: 2, type: 1 } });
+	});
+
+	test("New entries are appended correctly - Object entries", () => {
+		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 1 } });
+		expect(tagMap.get("some_tag")).toBeInstanceOf(Array);
+		expect(tagMap.get("some_tag").length).toBe(2);
+		expect(tagMap.get("some_tag"))
+			.toEqual([
+				{ tag: "some_tag", meta: { numItems: 4, type: 0 } },
+				{ tag: "some_tag", meta: { numItems: 4, type: 1 } }
+			]);
+	});
+
+	test("New entries are appended correctly - Array entries", () => {
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 7, type: 2 } });
+		expect(tagMap.get("other_tag").length).toBe(3);
+	});
+
+	test("Duplicates are prevented - Object entries", () => {
+		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 0 } });
+		expect(tagMap.get("some_tag"))
+			.toEqual({ tag: "some_tag", meta: { numItems: 4, type: 0 } });
+	});
+
+	test("Duplicates are prevented - Array entries", () => {
+		expect(tagMap.get("other_tag").length).toBe(2);
+
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 3, type: 0 } });
+		expect(tagMap.get("other_tag").length).toBe(2);
+
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 11, type: 1 } });
+		expect(tagMap.get("other_tag").length).toBe(2);
+	});
+
+	test("Badly constructed maps are detected", () => {
+		const map_with_error = new Map([
+			["some_tag", "some text"],
+			["other_tag", { tag: "other_tag", meta: { numItems: 3, type: 0 } }]
+		]);
+
+		expect(() => updateTagMap(map_with_error, { tag: "some_tag", meta: { numItems: 8, type: 1 } }))
+			.toThrow("Map entry is of unexpected type String, expected Array or Object");
+	});
 });
 
 describe("Creating formatted tag lists", () => {

@@ -19,6 +19,7 @@ Error.args = {
 	log: new ZoteroRoamLog({
 		origin: "API",
 		message: "Failed to fetch",
+		detail: "404 Error - Not Found",
 		context: {
 			dataURI: "users/123456/items",
 			error: {

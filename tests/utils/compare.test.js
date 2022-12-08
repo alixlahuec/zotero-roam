@@ -4,6 +4,7 @@ import {
 	sortCollections,
 	sortElems } from "../../src/utils";
 
+
 test("Sorts Zotero items by publication year & creators", () => {
 	const a = { meta: { creatorSummary: "Smith et al.", parsedDate: "" } };
 	const b = { meta: { creatorSummary: "Scott et al.", parsedDate: "" } };

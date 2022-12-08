@@ -1,18 +1,17 @@
 import { useEffect } from "react";
+
 import { useQueryClient } from "@tanstack/react-query";
-
-import CitekeyMenu from "./CitekeyMenu";
-
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 
-import { items } from "Mocks/zotero/items";
+import CitekeyMenu from "./CitekeyMenu";
 import { parseDOI } from "../../../utils";
 import { parseSemanticDOIs } from "../../../api/utils";
+import { sleep } from "../../../../.storybook/utils";
+import { items } from "Mocks/zotero/items";
 import { sampleNote } from "Mocks/zotero/notes";
 import { samplePDF } from "Mocks/zotero/pdfs";
 import { semantics } from "Mocks/semantic-scholar";
-import { sleep } from "../../../../.storybook/utils";
 
 
 export default {

@@ -45,26 +45,29 @@ const tributeConfig = {
  * @returns {{key: String, itemType: String, source: ("zotero"), value: String, display: String}[]} The array of Tribute entries
  */
 const useGetItems = (reqs, format = "citekey", display = "citekey") => {
+	const select = useCallback((datastore) => {
+		return datastore.data
+			? datastore.data
+				.filter(item => !["attachment", "note", "annotation"].includes(item.data.itemType))
+				.sort((a, b) => a.data.dateModified > b.data.dateModified ? -1 : 1)
+				.map(item => {
+					return {
+						key: item.key,
+						itemType: item.data.itemType,
+						source: "zotero",
+						value: formatItemReference(item, format, { accent_class: CustomClasses.TEXT_ACCENT_1 }) || item.key,
+						display: formatItemReference(item, display, { accent_class: CustomClasses.TEXT_ACCENT_1 }) || item.key
+					};
+				})
+			: [];
+	}, [display, format]);
+
 	const itemQueries = useQuery_Items(reqs, { 
-		select: (datastore) => {
-			return datastore.data
-				? datastore.data
-					.filter(item => !["attachment", "note", "annotation"].includes(item.data.itemType))
-					.sort((a,b) => a.data.dateModified > b.data.dateModified ? -1 : 1)
-					.map(item => {
-						return {
-							key: item.key,
-							itemType: item.data.itemType,
-							source: "zotero",
-							value: formatItemReference(item, format, { accent_class: CustomClasses.TEXT_ACCENT_1 }) || item.key,
-							display: formatItemReference(item, display, { accent_class: CustomClasses.TEXT_ACCENT_1 }) || item.key
-						};
-					})
-				: [];
-		},
+		select,
 		notifyOnChangeProps: ["data"] 
 	});
-	const data = itemQueries.map(q => q.data || []).flat(1);
+
+	const data = useMemo(() => itemQueries.map(q => q.data || []).flat(1), [itemQueries]);
     
 	return data;
 };

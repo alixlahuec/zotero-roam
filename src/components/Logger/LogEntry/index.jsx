@@ -7,14 +7,9 @@ import useBool from "../../../../src/hooks/useBool";
 import { ListItem } from "Components/DataList";
 
 import * as customPropTypes from "../../../propTypes";
+import { CustomClasses } from "../../../../src/constants";
 import "./index.css";
 
-
-const LEVELS_MAPPING = {
-	"error": "danger",
-	"info": "primary",
-	"warning": "warning"
-};
 
 const LogEntry = memo(function LogEntry({ log }){
 	const [isContextOpen, { toggle: toggleContext }] = useBool(false);
@@ -24,14 +19,17 @@ const LogEntry = memo(function LogEntry({ log }){
 		<div className="zr-log--header">
 			<div className={["zr-log--metadata", Classes.MONOSPACE_TEXT].join(" ")}>
 				<span className="zr-log--timestamp">{makeTimestamp(log.timestamp)}</span>
-				<Tag className="zr-log--level" intent={LEVELS_MAPPING[log.level]} minimal={true} >
+				<Tag className="zr-log--level" intent={log.intent} minimal={true} >
 					{log.level}
 				</Tag>
 				<Tag minimal={true}>{log.origin}</Tag>
 			</div>
-			<div className={["zr-log--summary", "zr-text-small"].join(" ")}>
-				<span className={Classes.MONOSPACE_TEXT}>{log.message}</span>
-				{hasContext && <Button className="zr-secondary" rightIcon={isContextOpen ? "chevron-up" : "chevron-down"} minimal={true} onClick={toggleContext} small={true} text={isContextOpen ? "Hide" : "View"} title="Show details" />}
+			<div className={["zr-log--summary", CustomClasses.TEXT_SMALL].join(" ")}>
+				<div>
+					<span className={Classes.MONOSPACE_TEXT}>{log.message}</span>
+					{log.detail && <span className={[Classes.MONOSPACE_TEXT, CustomClasses.TEXT_SECONDARY, CustomClasses.TEXT_SMALL].join(" ")}>{log.detail}</span>}
+				</div>
+				{hasContext && <Button className={CustomClasses.TEXT_SECONDARY} rightIcon={isContextOpen ? "chevron-up" : "chevron-down"} minimal={true} onClick={toggleContext} small={true} text={isContextOpen ? "Hide" : "View"} title="Show details" />}
 			</div>
 		</div>
 		<div className="zr-log--details">

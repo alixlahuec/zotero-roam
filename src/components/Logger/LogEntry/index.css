@@ -34,3 +34,7 @@
 	flex: 0 2 66%;
 	justify-content: space-between;
 }
+
+.zr-log--summary > div > * {
+    margin-right: 10px;
+}

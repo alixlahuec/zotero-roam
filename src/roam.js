@@ -4,6 +4,7 @@ import { _formatNotes, _getItemMetadata } from "./extension";
 import { emitCustomEvent } from "./events";
 import { use_smartblock_metadata } from "./smartblocks";
 
+
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
  * @param {RoamImportableBlock} object - The block Object to use as template 
@@ -300,6 +301,20 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 			return outcome;
 
 		} catch(e) {
+			window.zoteroRoam?.error?.({
+				origin: "Metadata",
+				message: "Failed to import metadata via SmartBlock for: " + title,
+				detail: e.message,
+				context: {
+					page,
+					settings: {
+						annotations: annotationsSettings,
+						metadata: metadataSettings,
+						notes: notesSettings
+					}
+				},
+				showToaster: 1000
+			});
 			return await Promise.reject(e);
 		}
 	} else {
@@ -325,6 +340,20 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 			return outcome;
 
 		} catch(e) {
+			window.zoteroRoam?.error?.({
+				origin: "Metadata",
+				message: "Failed to import metadata for: " + title,
+				detail: e.message,
+				context: {
+					page,
+					settings: {
+						annotations: annotationsSettings,
+						metadata: metadataSettings,
+						notes: notesSettings
+					}
+				},
+				showToaster: 1000
+			});
 			return await Promise.reject(e);
 		}
 	}
@@ -369,6 +398,19 @@ async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, an
 		return outcome;
 
 	} catch(e) {
+		window.zoteroRoam?.error?.({
+			origin: "Notes",
+			message: "Failed to import notes for: " + title,
+			detail: e.message,
+			context: {
+				page,
+				settings: {
+					annotations: annotationsSettings,
+					notes: notesSettings
+				}
+			},
+			showToaster: 1000
+		});
 		return await Promise.reject(e);
 	}
 }
