@@ -144,19 +144,22 @@ const useQuery_Semantic = (doi, opts = {}) => {
  * @returns The React Queries for the given libraries' tags
  */
 const useQuery_Tags = (libraries, opts = {}) => {
-	// Defaults for this query
-	const { staleTime = 1000 * 60 * 3, ...rest } = opts;
-	// Factory
-	const queriesDefs = libraries.map((lib) => {
-		const { apikey, path } = lib;
-		const queryKey = ["tags", { apikey, library: path }];
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchTags({ apikey, path }),
-			staleTime,
-			...rest
-		};
-	});
+	const queriesDefs = useMemo(() => {
+		// Defaults for this query
+		const { staleTime = 1000 * 60 * 3, ...rest } = opts;
+		// Factory
+		return libraries.map((lib) => {
+			const { apikey, path } = lib;
+			const queryKey = ["tags", { apikey, library: path }];
+			return {
+				queryKey: queryKey,
+				queryFn: (_queryKey) => fetchTags({ apikey, path }),
+				staleTime,
+				...rest
+			};
+		});
+	}, [libraries, opts]);
+
 	return useQueries({
 		queries: queriesDefs
 	});
