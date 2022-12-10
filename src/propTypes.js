@@ -11,7 +11,7 @@ const zoteroAnnotationType = shape({
 		annotationText: string,
 		annotationType: oneOf(["highlight", "image"]),
 		dateAdded: string,
-		dateModified: String,
+		dateModified: string,
 		itemType: oneOf(["annotation"]),
 		key: string,
 		parentItem: string,
