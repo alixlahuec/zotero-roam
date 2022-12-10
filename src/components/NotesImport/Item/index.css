@@ -41,8 +41,17 @@ li.zr-notesimport-item {
     flex-wrap: wrap;
 }
 
-.zr-notesimport-item--contents > * {
-    display: block;
+.zr-notesimport-item--contents > div {
     flex: 0 0 100%;
-    margin-top: 5px;
+	padding: 5px;
+}
+
+.zr-notesimport-item--contents > p {
+	margin-bottom: 0px;
+	max-height: 7em;
+	overflow: hidden;
+	-webkit-mask-image: linear-gradient(grey, var(--zr-box-shadow-co));
+    -webkit-mask-size: 100% 85%;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: left top,left bottom;
 }

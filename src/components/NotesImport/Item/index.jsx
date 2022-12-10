@@ -66,7 +66,7 @@ function NotesImportItem({ note, isSelected, isSingleChild, onToggle }) {
 			}
 		</div>
 		<div className={["zr-notesimport-item--contents", CustomClasses.TEXT_SMALL].join(" ")} >
-			<span>{note.data.tags.map((t, i) => <Tag key={i} minimal={true} >{t.tag}</Tag>)}</span>
+			<div>{note.data.tags.map((t, i) => <Tag key={i} minimal={true} >{t.tag}</Tag>)}</div>
 		</div>
 	</ListItem>;
 }
