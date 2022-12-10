@@ -1,6 +1,11 @@
 import { useCallback, useState } from "react";
+
+import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
+
 import DayList from "Components/NotesImport/DayList";
 import { ListWrapper } from "Components/DataList";
+
 import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
 
 
@@ -31,3 +36,20 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+
+export const WithInteractions = Template.bind({});
+WithInteractions.play = async({ args, canvasElement }) => {
+	const canvas = within(canvasElement);
+
+	await expect(canvas.getAllByRole("checkbox").every(box => !box.checked)).toBe(true);
+
+	const dayCheckbox = canvas.getByRole("checkbox", { name: args.date });
+
+	await userEvent.click(dayCheckbox);
+
+	await expect(canvas.getAllByRole("checkbox").every(box => box.checked)).toBe(true);
+
+	await userEvent.click(dayCheckbox);
+
+	await expect(canvas.getAllByRole("checkbox").every(box => !box.checked)).toBe(true);
+};
