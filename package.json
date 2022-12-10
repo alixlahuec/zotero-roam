@@ -99,7 +99,7 @@
         "jest-environment-jsdom": "^28.1.3",
         "jest-junit": "^15.0.0",
         "jest-transform-css": "^6.0.0",
-        "mini-css-extract-plugin": "^2.7.1",
+        "mini-css-extract-plugin": "^2.7.2",
         "msw": "^0.47.3",
         "msw-storybook-addon": "^1.6.3",
         "release-it": "^15.5.1",
