@@ -19,6 +19,7 @@ li.zr-notesimport-item {
 }
 
 .bp3-checkbox.bp3-control.zr-notesimport-item--title {
+	flex: 0 0 100%;
     font-weight: normal;
     margin-bottom: 0px;
 }
