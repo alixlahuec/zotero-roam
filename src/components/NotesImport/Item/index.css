@@ -43,10 +43,10 @@ li.zr-notesimport-item {
 
 .zr-notesimport-item--contents > div {
     flex: 0 0 100%;
-	padding: 5px;
+	padding: 5px 15px;
 }
 
-.zr-notesimport-item--contents > p {
+.zr-notesimport-item .bp3-checkbox [zr-role="note-contents"] > p {
 	margin-bottom: 0px;
 	max-height: 7em;
 	overflow: hidden;
