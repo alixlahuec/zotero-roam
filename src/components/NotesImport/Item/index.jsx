@@ -21,9 +21,9 @@ function Annotation({ annotation }){
 	}), [color]);
 
 	return <div className={CustomClasses.TEXT_SMALL} zr-role="note-contents">
-		{text && <span className={[CustomClasses.TEXT_AUXILIARY, Classes.TEXT_OVERFLOW_ELLIPSIS].join(" ")} style={highlightStyle}>{text}</span>}
+		{text && <span title={text} className={[CustomClasses.TEXT_AUXILIARY, Classes.TEXT_OVERFLOW_ELLIPSIS].join(" ")} style={highlightStyle}>{text}</span>}
 		{type == "image" && <code className={Classes.CODE}>Images are currently not supported</code>}
-		{comment && <div className={[CustomClasses.TEXT_SECONDARY, Classes.TEXT_OVERFLOW_ELLIPSIS].join(" ")}>{comment}</div>}
+		{comment && <div title={comment} className={[CustomClasses.TEXT_SECONDARY, Classes.TEXT_OVERFLOW_ELLIPSIS].join(" ")}>{comment}</div>}
 	</div>;
 }
 Annotation.propTypes = {
@@ -31,10 +31,10 @@ Annotation.propTypes = {
 };
 
 function Note({ note }){
-	const notesList = useMemo(() => formatItemNotes([note]), [note]);
+	const notesContent = useMemo(() => formatItemNotes([note]).join(" "), [note]);
 	
 	return <div className={[CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")} zr-role="note-contents">
-		<p>{notesList.join(" ")}</p>
+		<p title={notesContent}>{notesContent}</p>
 	</div>;
 }
 Note.propTypes = {
