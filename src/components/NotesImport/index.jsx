@@ -86,10 +86,12 @@ function NotesImport({ closeDialog, item, notes, pageUID }){
 
 	const triggerImport = useCallback(async() => {
 		const selectedNotes = notes.filter(nt => selectedKeys.includes(nt.data.key));
-
-		// TODO: add error handling
-		await importItemNotes({ item, notes: selectedNotes }, pageUID, notesSettings, annotationsSettings);
-		closeDialog();
+		try {
+			await importItemNotes({ item, notes: selectedNotes }, pageUID, notesSettings, annotationsSettings);
+			closeDialog();
+		} catch(e){
+			//
+		}
 	}, [annotationsSettings, closeDialog, item, notes, notesSettings, pageUID, selectedKeys]);
 
 	const selectProps = useMemo(() => ({
