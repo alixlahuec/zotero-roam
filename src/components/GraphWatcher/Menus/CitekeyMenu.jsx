@@ -25,11 +25,12 @@ import { useTypemapSettings } from "Components/UserSettings/Typemap";
 import { showClasses } from "../classes";
 
 import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
-import { findRoamPage, importItemMetadata, importItemNotes } from "Roam";
+import { findRoamPage, importItemMetadata } from "Roam";
 
 import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
+import NotesImport from "Components/NotesImport";
 
 
 function BacklinksItem({ entry }) {
@@ -223,6 +224,26 @@ ViewItem.propTypes = {
 	item: customPropTypes.cleanLibraryItemType
 };
 
+function ViewNotes({ item, notes, pageUID }){
+	const [isPanelOpen, { on: openPanel, off: closePanel }] = useBool(false);
+
+	return <>
+		<Button icon="comment" onClick={openPanel} role="menuitem" aria-haspopup="dialog" >Import notes</Button>
+		<AuxiliaryDialog
+			className="import-item-notes"
+			isOpen={isPanelOpen}
+			label="Import notes"
+			onClose={closePanel} >
+			<NotesImport closeDialog={closePanel} item={item} notes={notes} pageUID={pageUID} />
+		</AuxiliaryDialog>
+	</>;
+}
+ViewNotes.propTypes = {
+	item: customPropTypes.zoteroItemType,
+	notes: arrayOf(customPropTypes.zoteroItemType),
+	pageUID: string
+};
+
 const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 	const [annotationsSettings] = useAnnotationsSettings();
 	const [metadataSettings] = useMetadataSettings();
@@ -254,10 +275,6 @@ const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 		const { pdfs, notes } = children;
 		return await importItemMetadata({ item, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings, annotationsSettings);
 	}, [annotationsSettings, children, item, metadataSettings, notesSettings, pageUID, typemap]);
-    
-	const importNotes = useCallback(async() => {
-		return await importItemNotes({ item, notes: children.notes }, pageUID, notesSettings, annotationsSettings);
-	}, [annotationsSettings, children.notes, item, notesSettings, pageUID]);
 
 	const pdfLinks = useMemo(() => {
 		if(children.pdfs.length == 0 || !defaults.includes("pdfLinks")) {
@@ -284,9 +301,9 @@ const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 		if(children.notes.length == 0 || !defaults.includes("importNotes")){
 			return null;
 		} else {
-			return <Button icon="comment" onClick={importNotes} role="menuitem">Import notes</Button>;
+			return <ViewNotes item={item} notes={children.notes} pageUID={pageUID} />;
 		}
-	}, [defaults, importNotes, children.notes.length]);
+	}, [defaults, children.notes, item, pageUID]);
     
 	const open_zotero = useMemo(() => {
 		return (
