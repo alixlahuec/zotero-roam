@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react-hooks";
+import useFilterList from "./useFilterList";
 import useBool from "./useBool";
 import useMulti from "./useMulti";
 import useNumeric from "./useNumeric";
@@ -55,6 +56,41 @@ describe("Hook for boolean state", () => {
 		});
 
 		expect(result.current[0]).toBe(false);
+	});
+});
+
+describe("Hook for filters list", () => {
+	const initialList = [
+		{ active: false, label: "Some filter", value: "some_filter" },
+		{ active: true, label: "Another filter", value: "another_filter" }
+	];
+
+	test("Toggle filter on", () => {
+		const { result } = renderHook(() => useFilterList(initialList));
+
+		act(() => {
+			result.current[1]("some_filter");
+		});
+
+		expect(result.current[0])
+			.toEqual([
+				{ active: true, label: "Some filter", value: "some_filter" },
+				{ active: true, label: "Another filter", value: "another_filter" }
+			]);
+	});
+
+	test("Toggle filter off", () => {
+		const { result } = renderHook(() => useFilterList(initialList));
+
+		act(() => {
+			result.current[1]("another_filter");
+		});
+
+		expect(result.current[0])
+			.toEqual([
+				{ active: false, label: "Some filter", value: "some_filter" },
+				{ active: false, label: "Another filter", value: "another_filter" }
+			]);
 	});
 });
 
