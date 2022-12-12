@@ -1275,7 +1275,7 @@ function sortCollections(arr){
  * @returns {Object[]} The sorted array
  */
 function sortElems(arr, sort){
-	return arr.sort((a,b) => (a[`${sort}`].toLowerCase() < b[`${sort}`].toLowerCase() ? -1 : 1));
+	return arr.sort((a,b) => (`${a[sort]}`.toLowerCase() < `${b[sort]}`.toLowerCase()) ? -1 : 1);
 }
 
 /** Splits Zotero notes on a given string
