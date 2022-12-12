@@ -40,11 +40,17 @@ export const Default = Template.bind({});
 export const WithInteractions = Template.bind({});
 WithInteractions.play = async({ canvasElement }) => {
 	const canvas = within(canvasElement);
+	const frame = within(canvasElement.parentElement);
 
 	await expect(canvas.queryByText("No results found")).not.toBeInTheDocument();
 
-	const filterBtn = canvas.getByRole("button", { name: "Highly Influential" });
+	const filterBtn = canvas.getByRole("button", { name: "Filter" });
+
 	await userEvent.click(filterBtn);
+
+	const filterOption = frame.getByTitle("Highly Influential").parentElement;
+
+	await userEvent.click(filterOption);
 
 	await expect(canvas.queryByText("No results found")).toBeInTheDocument();
 

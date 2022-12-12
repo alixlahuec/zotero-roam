@@ -15,7 +15,7 @@ import useText from "../../../hooks/useText";
 import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
-import FilterButtons from "Components/DataList/FilterButtons";
+import FilterButtons from "Components/DataList/FilterSelect";
 
 
 const itemsPerPage = 30;

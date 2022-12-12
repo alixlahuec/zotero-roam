@@ -54,6 +54,10 @@
     color: var(--zr-auxiliary);
 }
 
+.zr-semantic--datalist {
+	min-height: 60vh;
+}
+
 .zr-semantic-panel--main .zr-related-item[data-in-library="true"] .zr-related-item--timestamp {
     background: var(--zr-positive-bg);
     color: var(--zr-positive-co);
