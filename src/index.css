@@ -91,7 +91,8 @@ button.bp3-button.zr-auxiliary:not(.bp3-disabled) {
 }
 
 .zr-secondary,
-button.bp3-button.zr-secondary:not(.bp3-disabled) {
+button.bp3-button.zr-secondary:not(.bp3-disabled),
+button.bp3-button.bp3-minimal.zr-secondary:not([class*="bp3-intent-"]) .bp3-icon {
     color: var(--zr-secondary-co);
     font-weight: var(--zr-secondary-fw);
 }
@@ -262,7 +263,9 @@ textarea.zr-text-input,
     color: var(--zr-text-co);
 }
 
-[class*="zr"] .bp3-button.bp3-minimal:hover {
+[class*="zr"] .bp3-button.bp3-minimal:hover,
+[class*="zr"] .bp3-button-group.bp3-minimal .bp3-button:not([class*="bp3-intent-"]):active,
+[class*="zr"] .bp3-button-group.bp3-minimal .bp3-button.bp3-active:not([class*="bp3-intent-"]) {
     background: var(--zr-box-bg);
     color: var(--zr-text-co);
 }

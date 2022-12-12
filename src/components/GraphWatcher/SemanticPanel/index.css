@@ -12,6 +12,10 @@
     display: flex;
 }
 
+.zr-semantic-panel--main {
+	flex: 0 1 100%;
+}
+
 .zr-semantic-panel--main .bp3-tab-list {
     margin-left: 15px;
     align-items: start;
