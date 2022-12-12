@@ -49,13 +49,15 @@ const Pagination = memo(function Pagination({ arrows = "last", currentPage, item
 		</ControlGroup>
 	);
 	
-	return nbItems > 0
-		? <div className={CustomClasses.DATALIST_PAGINATION}>
-			{arrows == "first" && controls}
-			{itemsCount}
-			{arrows == "last" && controls}
-		</div>
-		: null;
+	return <div className={CustomClasses.DATALIST_PAGINATION}>
+		{nbItems > 0
+			? <>
+				{arrows == "first" && controls}
+				{itemsCount}
+				{arrows == "last" && controls}
+			</>
+			: null}
+	</div>;
 });
 Pagination.propTypes = {
 	arrows: oneOf(["first", "last"]),
