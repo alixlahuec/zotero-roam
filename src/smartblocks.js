@@ -243,7 +243,7 @@ function reformatImportableBlocks(arr){
 				};
 			} else {
 				console.log(blck);
-				throw new Error(`All array items should be of type String or Object, not ${blck.constructor.name}`);
+				throw new Error(`All array items should be of type String or Object, not ${blck.constructor}`);
 			}
 		});
 	}
