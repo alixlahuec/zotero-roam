@@ -37,6 +37,10 @@ test("Simple grouping evals correctly", () => {
 describe("Enforcing a block-object format returns correct output", () => {
 	const cases = [
 		[
+			null,
+			[]
+		],
+		[
 			[],
 			[]
 		],
@@ -73,6 +77,11 @@ describe("Enforcing a block-object format returns correct output", () => {
 				.toEqual(expectation);
 		}
 	);
+
+	test("Passing an invalid element throws", () => {
+		expect(() => reformatImportableBlocks([23]))
+			.toThrow("All array items should be of type String or Object, not Number");
+	});
 });
 
 // Commands
