@@ -31,6 +31,16 @@ const sbCommands = () => {
 				return await window.zoteroRoam.getItemCitation(item, { style, locale, linkwrap });
 			}
 		},
+		"ZOTEROITEMCITEKEY": {
+			help: "Returns the citekey for a Zotero item, with the '@' prefix. If the item doesn't have a citekey, its Zotero key will be used. Options: brackets (`true` (default)|`false`).",
+			handler: (context) => (brackets = true) => {
+				const { item } = context.variables;
+				const citekey = "@" + item.key;
+				return brackets
+					? `[[${citekey}]]`
+					: citekey;
+			}
+		},
 		"ZOTEROITEMCOLLECTIONS": {
 			help: "Returns the comma-separated list of the collection(s) a Zotero item belongs to.",
 			handler: (context) => (brackets = true) => {
@@ -50,6 +60,13 @@ const sbCommands = () => {
 			handler: (context) => (brackets = true) => {
 				const { item } = context.variables;
 				return makeDNP(item.data.dateAdded, { brackets });
+			}
+		},
+		"ZOTEROITEMKEY": {
+			help: "Returns the citekey for a Zotero item, without the '@' prefix. If the item doesn't have a citekey, its Zotero key will be used.",
+			handler: (context) => () => {
+				const { item } = context.variables;
+				return item.key;
 			}
 		},
 		"ZOTEROITEMLINK": {
