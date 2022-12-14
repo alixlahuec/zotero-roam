@@ -22,7 +22,8 @@ const itemsPerPage = 30;
 
 const SEMANTIC_FILTER_OPTIONS = [
 	{ active: false, label: "In Library", value: "library" },
-	{ active: false, label: "Highly Influential", value: "influential" }
+	{ active: false, label: "Highly Influential", value: "influential" },
+	{ active: false, label: "Has DOI", value: "doi" }
 ];
 function filter(items, filterList){
 	let arr = [...items];
@@ -35,6 +36,9 @@ function filter(items, filterList){
 			break;
 		case "influential":
 			arr = arr.filter(item => item.isInfluential);
+			break;
+		case "doi":
+			arr = arr.filter(item => item.doi);
 			break;
 		default:
 			console.warning("Filter not recognized: " + op.value);
@@ -61,7 +65,7 @@ function Item({ item, selectProps, type }){
 	const { handleRemove, handleSelect, items: selectedItems } = selectProps;
 	const isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
 
-	return <SemanticItem key={item.doi} 
+	return <SemanticItem
 		handleRemove={handleRemove} 
 		handleSelect={handleSelect} 
 		inGraph={item.inGraph} 

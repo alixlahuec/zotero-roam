@@ -38,7 +38,7 @@ const Template = (args) => <SemanticPanel {...args} />;
 export const Default = Template.bind({});
 
 export const WithInteractions = Template.bind({});
-WithInteractions.play = async({ canvasElement }) => {
+WithInteractions.play = async({ args, canvasElement }) => {
 	const canvas = within(canvasElement);
 	const frame = within(canvasElement.parentElement);
 
@@ -51,6 +51,18 @@ WithInteractions.play = async({ canvasElement }) => {
 	const filterOption = frame.getByTitle("Highly Influential").parentElement;
 
 	await userEvent.click(filterOption);
+
+	await expect(canvas.queryByText("No results found")).not.toBeInTheDocument();
+
+	await userEvent.click(filterBtn);
+
+	const doiFilterOption = frame.getByTitle("Has DOI").parentElement;
+
+	await userEvent.click(doiFilterOption);
+
+	const searchbar = canvasElement.querySelector(`#semantic-search--${args.show.type}`);
+
+	await userEvent.type(searchbar, "some text");
 
 	await expect(canvas.queryByText("No results found")).toBeInTheDocument();
 
