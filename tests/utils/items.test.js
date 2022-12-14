@@ -218,6 +218,7 @@ test("Simplifies SemanticScholar item metadata", () => {
 					inGraph: false,
 					inLibrary: false,
 					links: {
+						"arxiv": "https://arxiv.org/abs/arXiv:1501.00001",
 						"semantic-scholar": "https://www.semanticscholar.org/paper/__some_paper_id__",
 						"connected-papers": "https://www.connectedpapers.com/search?q=" + encodeURIComponent("DOI-less paper: an influential work"),
 						"google-scholar": "https://scholar.google.com/scholar?q=" + encodeURIComponent("DOI-less paper: an influential work")

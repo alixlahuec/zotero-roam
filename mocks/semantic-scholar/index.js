@@ -128,7 +128,7 @@ const data = {
 						name: "Jane Doe"
 					}
 				],
-				doi: null,
+				doi: false,
 				intent: ["background"],
 				isInfluential: true,
 				paperId: "__some_paper_id__",
