@@ -15,6 +15,7 @@ const popoverProps = {
 	canEscapeKeyClose: false,
 	className: "zr-input-tags",
 	fill: true,
+	matchTargetWidth: true,
 	minimal: true,
 	popoverClassName: CustomClasses.POPOVER
 };
@@ -34,12 +35,12 @@ const createNewItemFromQuery = (tag) => tag;
 const tagRenderer = (tag) => tag;
 
 function createNewItemRenderer(query, active, handleClick){
-	return <MenuItem active={active} htmlTitle={"Add tag, " + `'${query}'`} icon="small-plus" onClick={handleClick} text={query} />;
+	return <MenuItem aria-selected={active} htmlTitle={"Add tag, " + `'${query}'`} icon="small-plus" onClick={handleClick} text={query} />;
 }
 
 function itemRenderer(item, itemProps) {
 	const { handleClick, modifiers: { active } } = itemProps;
-	return <MenuItem active={active} key={item} onClick={handleClick} text={item} />;
+	return <MenuItem aria-selected={active} key={item} onClick={handleClick} text={item} />;
 }
 
 function itemListPredicate(query, items) {
