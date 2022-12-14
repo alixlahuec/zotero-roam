@@ -65,7 +65,7 @@ function Item({ item, selectProps, type }){
 	const { handleRemove, handleSelect, items: selectedItems } = selectProps;
 	const isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
 
-	return <SemanticItem key={item.doi} 
+	return <SemanticItem
 		handleRemove={handleRemove} 
 		handleSelect={handleSelect} 
 		inGraph={item.inGraph} 

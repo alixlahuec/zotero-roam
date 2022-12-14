@@ -225,7 +225,8 @@ function cleanNewlines(text){
 function cleanSemanticItem(item){
 	const clean_item = {
 		authors: "",
-		doi: parseDOI(item.doi),
+		//* Note: SemanticScholar DOIs are sanitized on fetch
+		doi: item.doi,
 		intent: item.intent,
 		isInfluential: item.isInfluential,
 		links: {},
