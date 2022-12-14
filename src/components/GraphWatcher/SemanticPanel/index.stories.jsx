@@ -52,7 +52,7 @@ WithInteractions.play = async({ canvasElement }) => {
 
 	await userEvent.click(filterOption);
 
-	await expect(canvas.queryByText("No results found")).toBeInTheDocument();
+	await expect(canvas.queryByText("No results found")).not.toBeInTheDocument();
 
 	await userEvent.click(filterBtn);
 
@@ -63,5 +63,7 @@ WithInteractions.play = async({ canvasElement }) => {
 	const searchbar = canvas.getByPlaceholderText("Search items");
 
 	await userEvent.type(searchbar, "some text");
+
+	await expect(canvas.queryByText("No results found")).toBeInTheDocument();
 
 };
