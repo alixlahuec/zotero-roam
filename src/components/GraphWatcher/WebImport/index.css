@@ -104,7 +104,7 @@ li.zr-webimport-item {
 }
 
 @media (max-width: 1000px){
-    .zr-auxiliary-dialog--webimport.bp3-dialog {
+    .bp3-dialog-container > .zr-auxiliary-dialog--webimport.bp3-dialog {
         --zr-dialog-gutter: 1.5%;
         --zr-dialog-margin: 11vw;
     }
