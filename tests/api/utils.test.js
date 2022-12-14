@@ -247,6 +247,8 @@ test("Selecting and formatting Semantic DOIs", () => {
 
 	expect(parseSemanticDOIs(testItems))
 		.toEqual([
+			{ doi: false },
+			{ doi: false },
 			{ doi: "10.1186/s40985-018-0094-7" },
 			{ doi: "10.1370/afm.1918" }
 		]);
