@@ -54,4 +54,14 @@ WithInteractions.play = async({ canvasElement }) => {
 
 	await expect(canvas.queryByText("No results found")).toBeInTheDocument();
 
+	await userEvent.click(filterBtn);
+
+	const doiFilterOption = frame.getByTitle("Has DOI").parentElement;
+
+	await userEvent.click(doiFilterOption);
+
+	const searchbar = canvas.getByPlaceholderText("Search items");
+
+	await userEvent.type(searchbar, "some text");
+
 };

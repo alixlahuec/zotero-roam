@@ -119,6 +119,23 @@ const data = {
 				url: "https://www.semanticscholar.org/paper/f090bb04877612278bd614b951a8d753eb6b8b5b",
 				venue: "Public Health Reviews",
 				year: 2018
+			},
+			{
+				arxivId: "arXiv:1501.00001",
+				authors: [
+					{
+						authorId: "123456",
+						name: "Jane Doe"
+					}
+				],
+				doi: false,
+				intent: ["background"],
+				isInfluential: true,
+				paperId: "__some_paper_id__",
+				title: "DOI-less paper: an influential work",
+				url: "",
+				venue: "Nature",
+				year: 2013
 			}
 		],
 		s2FieldsOfStudy: [
