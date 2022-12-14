@@ -1,7 +1,7 @@
 import { arrayOf, bool, func, object, shape, string } from "prop-types";
 import { useCallback, useMemo } from "react";
 
-import { Button, Icon, Menu, MenuItem } from "@blueprintjs/core";
+import { Button, Icon, Menu, MenuItem, Tag } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
 import { CustomClasses } from "../../../constants";
@@ -15,6 +15,7 @@ const popoverProps = {
 };
 
 function FilterSelect({ options, popoverTargetProps = {}, toggleFilter }){
+	const nbSelectedFilters = useMemo(() => options.filter(op => op.active).length, [options]);
 	const selectHandler = useCallback((filter) => toggleFilter(filter.value), [toggleFilter]);
 
 	const itemRenderer = useCallback((filter, itemProps) => {
@@ -47,7 +48,7 @@ function FilterSelect({ options, popoverTargetProps = {}, toggleFilter }){
 		onItemSelect={selectHandler}
 		popoverProps={mergedPopoverProps}
 	>
-		<Button active={options.some(op => op.active)} className={CustomClasses.TEXT_SECONDARY} intent="primary" minimal={true} rightIcon="caret-down" text="Filter" />
+		<Button active={options.some(op => op.active)} className={CustomClasses.TEXT_SECONDARY} intent="primary" minimal={true} rightIcon={nbSelectedFilters > 0 ? <Tag intent="primary">{nbSelectedFilters}</Tag> : "caret-down"} text="Filter" />
 	</Select>;
 }
 FilterSelect.propTypes = {
