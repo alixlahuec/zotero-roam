@@ -248,9 +248,9 @@ function cleanSemanticItem(item){
 	if(item.arxivId){
 		clean_item.links.arxiv = `https://arxiv.org/abs/${item.arxivId}`;
 	}
-	if(item.doi){
-		clean_item.links["connected-papers"] = `https://www.connectedpapers.com/api/redirect/doi/${item.doi}`;
-		clean_item.links["google-scholar"] = `https://scholar.google.com/scholar?q=${item.doi}`;
+	if(item.doi || item.title){
+		clean_item.links["connected-papers"] = "https://www.connectedpapers.com/" + (item.doi ? "api/redirect/doi/" + item.doi : "search?q=" + encodeURIComponent(item.title));
+		clean_item.links["google-scholar"] = "https://scholar.google.com/scholar?q=" + (item.doi || encodeURIComponent(item.title));
 	}
 
 	// Set multifield property for search
