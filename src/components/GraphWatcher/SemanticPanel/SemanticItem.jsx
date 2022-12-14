@@ -30,14 +30,16 @@ const SemanticItem = memo(function SemanticItem(props) {
 							{item.doi || "Semantic Scholar"}
 						</a>
 						: null}
-					<Button text={!isSelected ? "Add to Zotero" : "Remove"} 
-						active={isSelected}
-						className={CustomClasses.TEXT_SMALL} 
-						icon={isSelected ? "small-cross" : "small-plus"} 
-						intent="primary" 
-						minimal={true} 
-						onClick={handleClick}
-						small={true} />
+					{item.doi
+						? <Button text={!isSelected ? "Add to Zotero" : "Remove"}
+							active={isSelected}
+							className={CustomClasses.TEXT_SMALL}
+							icon={isSelected ? "small-cross" : "small-plus"}
+							intent="primary"
+							minimal={true}
+							onClick={handleClick}
+							small={true} />
+						: null}
 				</>
 			);
 		} else {
