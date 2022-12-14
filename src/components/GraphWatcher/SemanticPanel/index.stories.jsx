@@ -38,7 +38,7 @@ const Template = (args) => <SemanticPanel {...args} />;
 export const Default = Template.bind({});
 
 export const WithInteractions = Template.bind({});
-WithInteractions.play = async({ canvasElement }) => {
+WithInteractions.play = async({ args, canvasElement }) => {
 	const canvas = within(canvasElement);
 	const frame = within(canvasElement.parentElement);
 
@@ -60,7 +60,7 @@ WithInteractions.play = async({ canvasElement }) => {
 
 	await userEvent.click(doiFilterOption);
 
-	const searchbar = canvas.getByPlaceholderText("Search items");
+	const searchbar = canvasElement.querySelector(`#semantic-search--${args.show.type}`);
 
 	await userEvent.type(searchbar, "some text");
 
