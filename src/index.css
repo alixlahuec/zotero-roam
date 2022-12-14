@@ -52,6 +52,10 @@
     /* Required to adequately position contextual buttons */
 }
 
+#zotero-roam-portal > * {
+	z-index: 1000;
+}
+
 #zotero-roam-portal .bp3-overlay-backdrop {
     opacity: 0.4;
 }
