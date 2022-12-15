@@ -1,6 +1,19 @@
 ## Changelog
 
-### [0.7.9](https://github.com/alixlahuec/zotero-roam/compare/0.7.8...0.7.9) - 
+### [0.7.10](https://github.com/alixlahuec/zotero-roam/compare/0.7.9...0.7.10) - 
+
+#### Features
+
+-  show SemanticScholar items that don't have a DOI ([`#142`](https://github.com/alixlahuec/zotero-roam/pull/142))
+-  add SmartBlocks commands for key and citekey ([`#140`](https://github.com/alixlahuec/zotero-roam/pull/140))
+-  improve sorting and filtering in SemanticScholar panel ([`#139`](https://github.com/alixlahuec/zotero-roam/pull/139))
+-  enable importing specific notes ([`#135`](https://github.com/alixlahuec/zotero-roam/pull/135))
+#### Bug Fixes
+
+-  styling issues in tags selector ([`#144`](https://github.com/alixlahuec/zotero-roam/pull/144))
+-  sizing and positioning of dialogs on smaller displays ([`#143`](https://github.com/alixlahuec/zotero-roam/pull/143))
+
+### [0.7.9](https://github.com/alixlahuec/zotero-roam/compare/0.7.8...0.7.9) -  2022-12-08 
 
 #### Features
 
