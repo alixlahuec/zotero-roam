@@ -442,7 +442,8 @@ textarea.zr-text-input,
     background-image: none;
 }
 
-[class*="zr"] .bp3-tag.bp3-minimal.bp3-intent-primary {
+[class*="zr"] .bp3-tag.bp3-minimal.bp3-intent-primary,
+[class*="zr"] .bp3-tag:not(.bp3-minimal).bp3-intent-primary {
     background: hsla(var(--zr-accent-1-hsl), 10%);
     color: var(--zr-accent-1);
 }
@@ -452,7 +453,8 @@ textarea.zr-text-input,
     color: var(--zr-accent-2);
 }
 
-[class*="zr"] .bp3-tag.bp3-minimal.bp3-intent-success {
+[class*="zr"] .bp3-tag.bp3-minimal.bp3-intent-success,
+[class*="zr"] .bp3-tag:not(.bp3-minimal).bp3-intent-success {
     background-color: var(--zr-positive-bg);
     color: var(--zr-positive-co);
 }
@@ -460,11 +462,6 @@ textarea.zr-text-input,
 [class*="zr"] .bp3-tag.bp3-minimal.bp3-intent-danger {
     background-color: var(--zr-negative-bg);
     color: var(--zr-negative-co);
-}
-
-[class*="zr"] .bp3-tag:not(.bp3-minimal).bp3-intent-success {
-	background-color: var(--zr-positive-bg);
-	color: var(--zr-positive-co);
 }
 
 /* Popovers & Menus */

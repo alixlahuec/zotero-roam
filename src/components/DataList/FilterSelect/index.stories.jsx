@@ -38,7 +38,7 @@ Default.play = async({ canvasElement }) => {
 	const canvas = within(canvasElement);
 	const frame = within(canvasElement.parentElement);
 
-	const filterBtn = canvas.getByRole("button", { name: "Filter" });
+	const filterBtn = canvas.getByRole("button", { name: "Filter 1" });
 
 	await userEvent.click(filterBtn);
 
