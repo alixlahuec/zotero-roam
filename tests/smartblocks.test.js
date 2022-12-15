@@ -37,6 +37,10 @@ test("Simple grouping evals correctly", () => {
 describe("Enforcing a block-object format returns correct output", () => {
 	const cases = [
 		[
+			null,
+			[]
+		],
+		[
 			[],
 			[]
 		],
@@ -73,6 +77,11 @@ describe("Enforcing a block-object format returns correct output", () => {
 				.toEqual(expectation);
 		}
 	);
+
+	test("Passing an invalid element throws", () => {
+		expect(() => reformatImportableBlocks([23]))
+			.toThrow("All array items should be of type String or Object, not Number");
+	});
 });
 
 // Commands
@@ -178,6 +187,16 @@ describe("All commands return correct output", () => {
 		});
 	});
 
+	test("ZOTEROITEMCITEKEY", () => {
+		const sample_item = items.find(it => it.key);
+		const context = makeSbContext({ item: sample_item });
+
+		expect(commands.ZOTEROITEMCITEKEY.handler(context)())
+			.toEqual(`[[@${sample_item.key}]]`);
+		expect(commands.ZOTEROITEMCITEKEY.handler(context)(false))
+			.toEqual("@" + sample_item.key);
+	});
+
 	test("ZOTEROITEMCOLLECTIONS", () => {
 		Object.values(libraries).forEach(lib => {
 			const { path, version } = lib;
@@ -227,6 +246,14 @@ describe("All commands return correct output", () => {
 			.toEqual(makeDNP(sample_item.data.dateAdded, { brackets: true }));
 		expect(commands.ZOTEROITEMDATEADDED.handler(context)(false))
 			.toEqual(makeDNP(sample_item.data.dateAdded, { brackets: false }));
+	});
+
+	test("ZOTEROITEMKEY", () => {
+		const sample_item = items.find(it => it.key);
+		const context = makeSbContext({ item: sample_item });
+
+		expect(commands.ZOTEROITEMKEY.handler(context)())
+			.toEqual(sample_item.key);
 	});
 
 	test("ZOTEROITEMLINK", () => {

@@ -35,12 +35,12 @@ async function addBlockObject(parentUID, object, order = 0) {
 					await createRoamBlock(blockUID, children[j], order, {});
 				} else {
 					console.log(children[j]);
-					throw new Error(`All children array items should be of type String or Object, not ${children[j].constructor}`);
+					throw new Error(`All children array items should be of type String or Object, not ${children[j].constructor.name}`);
 				}
 			}
 		} else {
 			console.log(object);
-			throw new Error(`If provided, the 'children' property of a block should be an Array, not ${children.constructor}`);
+			throw new Error(`If provided, the 'children' property of a block should be an Array, not ${children.constructor.name}`);
 		}
 	}
 }
@@ -74,7 +74,7 @@ async function addBlocksArray(parentUID, arr, order = 0){
 					await createRoamBlock(parentUID, arr[k], order, {});
 				} else {
 					console.log(arr[k]);
-					throw new Error(`All array items should be of type String or Object, not ${arr[k].constructor}`);
+					throw new Error(`All array items should be of type String or Object, not ${arr[k].constructor.name}`);
 				}
 			}
 			return Promise.resolve({ 

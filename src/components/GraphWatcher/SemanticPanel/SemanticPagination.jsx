@@ -1,23 +1,52 @@
 import { arrayOf, func, oneOf, shape } from "prop-types";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
 
 import { InputGroup, NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import { SemanticGuide } from "Components/Guide";
 import SemanticItem from "./SemanticItem";
-import SortButtons from "Components/DataList/SortButtons";
 
 import { searchEngine } from "../../../utils";
+import useFilterList from "../../../hooks/useFilterList";
 import usePagination from "../../../hooks/usePagination";
 import useText from "../../../hooks/useText";
 
 import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
+import FilterButtons from "Components/DataList/FilterSelect";
 
 
 const itemsPerPage = 30;
+
+const SEMANTIC_FILTER_OPTIONS = [
+	{ active: false, label: "In Library", value: "library" },
+	{ active: false, label: "Highly Influential", value: "influential" },
+	{ active: false, label: "Has DOI", value: "doi" }
+];
+function filter(items, filterList){
+	let arr = [...items];
+	const activeFilters = filterList.filter(op => op.active == true);
+
+	activeFilters.forEach(op => {
+		switch(op.value){
+		case "library":
+			arr = arr.filter(item => item.inLibrary);
+			break;
+		case "influential":
+			arr = arr.filter(item => item.isInfluential);
+			break;
+		case "doi":
+			arr = arr.filter(item => item.doi);
+			break;
+		default:
+			console.warning("Filter not recognized: " + op.value);
+		}
+	});
+
+	return arr;
+}
 
 function search(query, items){
 	return items.filter(it => searchEngine(
@@ -32,42 +61,11 @@ function search(query, items){
 	));
 }
 
-function sort(items, sortBy){
-	const arr = [...items];
-	switch(sortBy){
-	case "library": {
-		const categorized = arr.reduce((obj, elem) => {
-			if(elem.inLibrary == false){
-				obj.notLibrary.push(elem);
-			} else {
-				obj.library.push(elem);
-			}
-			return obj;
-		}, { library: [], notLibrary: [] });
-		return [...categorized.library, ...categorized.notLibrary];
-	}
-	case "influential": {
-		const categorized = arr.reduce((obj, elem) => {
-			if(elem.isInfluential){
-				obj.influential.push(elem);
-			} else {
-				obj.notInfluential.push(elem);
-			}
-			return obj;
-		}, { influential: [], notInfluential: [] });
-		return [...categorized.influential, ...categorized.notInfluential];
-	}
-	case "year":
-	default:
-		return arr;
-	}
-}
-
 function Item({ item, selectProps, type }){
 	const { handleRemove, handleSelect, items: selectedItems } = selectProps;
 	const isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
 
-	return <SemanticItem key={item.doi} 
+	return <SemanticItem
 		handleRemove={handleRemove} 
 		handleSelect={handleSelect} 
 		inGraph={item.inGraph} 
@@ -90,27 +88,21 @@ const SemanticPagination = memo(function SemanticPagination(props){
 	const { items, selectProps, type } = props;
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [query, onQueryChange] = useText("");
-	const [sortBy, setSortBy] = useState("year");
+	const [filterList, toggleFilter] = useFilterList(SEMANTIC_FILTER_OPTIONS);
 
-	const filteredItems = useMemo(() => !query ? items : search(query, items), [items, query]);
-
-	const handleSort = useCallback((value) => {
-		setSortBy(() => value);
+	const handleFilter = useCallback((value) => {
+		toggleFilter(value);
 		setCurrentPage(1);
-	}, [setCurrentPage]);
+	}, [setCurrentPage, toggleFilter]);
 
-	const sortOptions = useMemo(() => [
-		{ icon: "sort", label: "Publication Year", value: "year" },
-		{ icon: "graph", label: "In Library", value: "library" },
-		{ icon: "trending-up", label: "Highly Influential", value: "influential" }
-	], []);
+	const filteredItems = useMemo(() => filter(items, filterList), [filterList, items]);
 
-	const sortedItems = useMemo(() => sort(filteredItems, sortBy), [filteredItems, sortBy]);
+	const queriedItems = useMemo(() => !query ? filteredItems : search(query, filteredItems), [filteredItems, query]);
 
 	return (
 		<div className="rendered-div">
 			<Toolbar>
-				<SortButtons name={"zr-semantic-sort--" + type} onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
+				<FilterButtons options={filterList} toggleFilter={handleFilter} />
 				<InputGroup
 					aria-label="Search by title, authors (last names), or year"
 					autoComplete="off"
@@ -123,10 +115,10 @@ const SemanticPagination = memo(function SemanticPagination(props){
 					value={query} />
 			</Toolbar>
 			<div className="zr-semantic--datalist">
-				{sortedItems.length == 0
+				{queriedItems.length == 0
 					? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No results found" />
 					: <ListWrapper>
-						{sortedItems
+						{queriedItems
 							.slice(...pageLimits)
 							.map(el => 
 								<Item key={[el.doi, el.url, el.title].filter(Boolean).join("-")} 
@@ -139,7 +131,7 @@ const SemanticPagination = memo(function SemanticPagination(props){
 					arrows="first"
 					currentPage={currentPage} 
 					itemsPerPage={itemsPerPage}
-					nbItems={sortedItems.length} 
+					nbItems={queriedItems.length} 
 					setCurrentPage={setCurrentPage} />
 				<SemanticGuide />
 			</Toolbar>

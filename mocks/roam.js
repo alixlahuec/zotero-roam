@@ -1,5 +1,8 @@
 /* istanbul ignore file */
 
+import { jest } from "@storybook/jest";
+
+
 export const uid_with_existing_block = "__UID_WITH_EXISTING_BLOCK__";
 export const uid_with_existing_block_with_children = "__UID_WITH_EXISTING_BLOCK_WITH_CHILDREN__";
 export const existing_block_uid = "__SOME_UID__";
@@ -37,10 +40,13 @@ function getInitialedPages(_keys){
 	return [];
 }
 
+const importItemNotes = jest.fn(() => {});
+
 export {
 	findRoamBlock,
 	findRoamPage,
 	getAllPages,
 	getCitekeyPagesWithEditTime,
-	getInitialedPages
+	getInitialedPages,
+	importItemNotes
 };

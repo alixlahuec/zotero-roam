@@ -30,14 +30,16 @@ const SemanticItem = memo(function SemanticItem(props) {
 							{item.doi || "Semantic Scholar"}
 						</a>
 						: null}
-					<Button text={!isSelected ? "Add to Zotero" : "Remove"} 
-						active={isSelected}
-						className={CustomClasses.TEXT_SMALL} 
-						icon={isSelected ? "small-cross" : "small-plus"} 
-						intent="primary" 
-						minimal={true} 
-						onClick={handleClick}
-						small={true} />
+					{item.doi
+						? <Button text={!isSelected ? "Add to Zotero" : "Remove"}
+							active={isSelected}
+							className={CustomClasses.TEXT_SMALL}
+							icon={isSelected ? "small-cross" : "small-plus"}
+							intent="primary"
+							minimal={true}
+							onClick={handleClick}
+							small={true} />
+						: null}
 				</>
 			);
 		} else {
@@ -83,8 +85,8 @@ const SemanticItem = memo(function SemanticItem(props) {
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{ display: "flex" }}>
 						<div className="zr-related-item-contents--metadata">
-							<span className={type == "is_reference" ? CustomClasses.TEXT_ACCENT_1 : CustomClasses.TEXT_ACCENT_2}>{item.authors}</span>
-							<span className={CustomClasses.TEXT_SECONDARY}>{item.meta}</span>
+							{item.authors && <span className={type == "is_reference" ? CustomClasses.TEXT_ACCENT_1 : CustomClasses.TEXT_ACCENT_2}>{item.authors}</span>}
+							{item.meta && <span className={CustomClasses.TEXT_SECONDARY}>{item.meta}</span>}
 							{item.isInfluential
 								? <Icon className="zr-related-item--decorating-icon" color="#f8c63a" htmlTitle="This item was classified as influential by Semantic Scholar" icon="trending-up" />
 								: null}

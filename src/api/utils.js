@@ -683,7 +683,7 @@ function parseSemanticDOIs(arr){
 			doi: parseDOI(doi),
 			...rest
 		};
-	}).filter(elem => elem.doi);
+	});
 }
 
 /** Adds a new entry to a tag map, if it doesn't already exist

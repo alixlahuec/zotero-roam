@@ -116,15 +116,15 @@
 /* SMALLER DISPLAYS */
 
 @media (max-width: 1000px){
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] {
+    .bp3-dialog-container > .bp3-dialog[class*="zr-auxiliary-dialog--"] {
         --zr-dialog-gutter: 1.5%;
         --zr-dialog-margin: 5vw;
     }
 }
 
 @media (max-width: 700px){
-    .bp3-dialog[class*="zr-auxiliary-dialog--"] {
-        --zr-dialog-gutter: 1.5%;
-        --zr-dialog-margin: 2.5vw;
+    .bp3-dialog-container > .bp3-dialog[class*="zr-auxiliary-dialog--"] {
+        --zr-dialog-gutter: 1.5%!important;
+        --zr-dialog-margin: 2.5vw!important;
     }
 }

@@ -207,6 +207,28 @@ test("Simplifies SemanticScholar item metadata", () => {
 					year: "2018",
 					_type: "cited",
 					_multiField: "Andermann 2018 Screening for social determinants of health in clinical care: moving from the margins to the mainstream"
+				},
+				{
+					authors: "Doe",
+					authorsLastNames: ["Doe"],
+					authorsString: "Doe",
+					doi: false,
+					intent: ["background"],
+					isInfluential: true,
+					inGraph: false,
+					inLibrary: false,
+					links: {
+						"arxiv": "https://arxiv.org/abs/arXiv:1501.00001",
+						"semantic-scholar": "https://www.semanticscholar.org/paper/__some_paper_id__",
+						"connected-papers": "https://www.connectedpapers.com/search?q=" + encodeURIComponent("DOI-less paper: an influential work"),
+						"google-scholar": "https://scholar.google.com/scholar?q=" + encodeURIComponent("DOI-less paper: an influential work")
+					},
+					meta: "Nature",
+					title: "DOI-less paper: an influential work",
+					url: "",
+					year: "2013",
+					_type: "cited",
+					_multiField: "Doe 2013 DOI-less paper: an influential work"
 				}
 			],
 			backlinks: []
