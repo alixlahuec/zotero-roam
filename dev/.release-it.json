@@ -14,7 +14,7 @@
         "tagMatch": "[0-9]*\\.[0-9]*\\.[0-9]*"
     },
     "github": {
-        "assets": ["dist/*.js", "dist/extension.css"],
+        "assets": ["dist/*.js", "./extension.css", "./extension.js"],
         "draft": true,
         "release": true,
         "releaseName": "v${version}"
