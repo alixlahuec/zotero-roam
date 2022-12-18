@@ -1,7 +1,9 @@
 /* istanbul ignore file */
 import { bool } from "prop-types";
 import { Component, createContext, useMemo } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { QueryClient } from "@tanstack/react-query";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
@@ -31,6 +33,7 @@ const ExtensionContext = createContext();
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
+			cacheTime: Infinity,
 			refetchOnWindowFocus: false,
 			refetchOnMount: false,
 			refetchIntervalInBackground: true,
@@ -39,6 +42,29 @@ const queryClient = new QueryClient({
 		}
 	}
 });
+
+const persister = createSyncStoragePersister({
+	key: "ZOTERO_ROAM_REACT_QUERY_CACHE",
+	retry: ({ /*persistedClient,*/ error, errorCount }) => {
+		window?.zoteroRoam?.error?.({
+			origin: "Cache",
+			message: "Failed to persist data to local storage",
+			detail: error.message,
+			context: {
+				errorCount
+			},
+			showToaster: 3000
+		});
+		return undefined;
+	},
+	storage: window.localStorage,
+	throttleTime: 1000 * 60 * 60
+});
+
+const persistOptions = {
+	maxAge: 1000 * 60 * 60 * 24,
+	persister
+};
 
 // https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component
 const AppWrapper = (props) => {
@@ -148,7 +174,7 @@ class App extends Component {
 		
 		return (
 			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>
-				<QueryClientProvider client={queryClient}>
+				<PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
 					<ExtensionContext.Provider value={extension}>
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
@@ -168,7 +194,7 @@ class App extends Component {
 							<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
 						</RoamCitekeysProvider>
 					</ExtensionContext.Provider>
-				</QueryClientProvider>
+				</PersistQueryClientProvider>
 			</HotkeysTarget2>
 		);
 	}
