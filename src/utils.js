@@ -1033,12 +1033,10 @@ function searchEngine_string(str, text, { any_case = true, match = "partial", se
 
 	if(queryWords.length == 1){
 		// Single-word query
-		let searchString = query;
+		let searchString = escapeRegExp(query);
 		if(isHyphenated && search_compounds == true){
 			// Replace hyphen by inclusive match (hyphen, space, nothing)
-			searchString = query.replace("-", "(?: |-)?");
-		} else {
-			searchString = escapeRegExp(searchString);
+			searchString = searchString.replace("-", "(?: |-)?");
 		}
 		// Then carry on with the search op
 		if(match == "partial"){
