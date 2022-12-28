@@ -16,6 +16,23 @@ describe("Search engine inputs", () => {
 		expect(searchEngine("ipsum", targets))
 			.toBe(true);
 	});
+
+	describe("escapes strings with special characters", () => {
+		const cases = [
+			"In-text *asterisks*",
+			"*Self-Management"
+		];
+
+		test.each(cases)(
+			"%# - %s",
+			(target) => {
+				expect(searchEngine("*", target))
+					.toBe(true);
+				expect(searchEngine(target, target))
+					.toBe(true);
+			}
+		);
+	});
 });
 
 test("Case-sensitive search", () => {
