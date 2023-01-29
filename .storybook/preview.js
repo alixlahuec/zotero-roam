@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import { useEffect, useGlobals } from "@storybook/addons";
-import { initialize, mswDecorator } from "msw-storybook-addon";
+import { initialize, mswLoader } from "msw-storybook-addon";
 import { rest } from "msw";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
@@ -87,4 +87,6 @@ export const parameters = {
 	}
 };
 
-export const decorators = [mswDecorator, withTheme, withHotkeysProvider, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys];
+export const decorators = [withTheme, withHotkeysProvider, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys];
+
+export const loaders = [mswLoader];
