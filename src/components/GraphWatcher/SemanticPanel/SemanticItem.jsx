@@ -78,7 +78,7 @@ const SemanticItem = memo(function SemanticItem(props) {
 
 	return (
 		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
-			<div className={ Classes.MENU_ITEM } label={item.doi}>
+			<div className={ Classes.MENU_ITEM } label={item.doi || item.title}>
 				<span className={[Classes.MENU_ITEM_LABEL, CustomClasses.TEXT_SMALL, "zr-related-item--timestamp"].join(" ")}>
 					{item.year}
 				</span>
