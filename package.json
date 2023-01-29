@@ -100,7 +100,7 @@
         "jest-junit": "^15.0.0",
         "jest-transform-css": "^6.0.1",
         "mini-css-extract-plugin": "^2.7.2",
-        "msw": "^0.47.3",
+        "msw": "^1.0.0",
         "msw-storybook-addon": "^1.7.0",
         "release-it": "^15.6.0",
         "style-loader": "^3.3.1",
