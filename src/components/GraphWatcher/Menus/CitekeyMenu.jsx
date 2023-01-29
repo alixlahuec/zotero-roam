@@ -168,12 +168,12 @@ function RelatedItemsBar(props) {
 	}, [cleanSemanticData.backlinks.length, isBacklinksListOpen]);
 
 	return (
-		<div className="zotero-roam-page-menu-citations" role="group">
+		<div className="zotero-roam-page-menu-citations">
 			{isError
 				? <ErrorCallout error={error} />
 				:
 				<>
-					<ButtonGroup minimal={true} fill={true}>
+					<ButtonGroup minimal={true} fill={true} role="menubar">
 						<Button aria-disabled={refCount == 0} disabled={refCount == 0} className={ showClasses.references } loading={isLoading} minimal={true} onClick={showReferences} icon="citation" intent="primary" role="menuitem" aria-haspopup="dialog" title="Show references" >{ pluralize(refCount, "reference") }</Button>
 						<Button aria-disabled={citCount == 0} disabled={citCount == 0} className={ showClasses.citations } loading={isLoading} minimal={true} onClick={showCitations} icon="chat" intent="warning" role="menuitem" aria-haspopup="dialog" title="Show citations" >{ pluralize(citCount, "citation") }</Button>
 						<Button className={ showClasses.backlinks } loading={isLoading} minimal={true} onClick={toggleBacklinks} {...showBacklinksButtonProps} role="menuitem" title="Show backlinks" />
@@ -359,9 +359,9 @@ const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 	return (
 		<ErrorBoundary>
 			{doiHeader}
-			<Card elevation={0} className="zr-citekey-menu" role="menubar" aria-label={"Citekey menu for" + item.key}>
-				<div className="zr-citekey-menu--header" role="group">
-					<ButtonGroup className="zr-citekey-menu--actions" minimal={true}>
+			<Card elevation={0} className="zr-citekey-menu" label={"Citekey menu for" + item.key}>
+				<div className="zr-citekey-menu--header">
+					<ButtonGroup className="zr-citekey-menu--actions" minimal={true} role="menubar">
 						{defaults.includes("addMetadata")
 							? <Button icon="add" onClick={importMetadata} role="menuitem" >Add metadata</Button>
 							: null}
