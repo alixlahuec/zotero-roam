@@ -1,6 +1,7 @@
 import { arrayOf, func, shape, string } from "prop-types";
 import { useCallback, useMemo } from "react";
-import { MenuItem } from "@blueprintjs/core";
+
+import { Icon, MenuItem } from "@blueprintjs/core";
 import { MultiSelect } from "@blueprintjs/select";
 
 import { searchEngine } from "../../utils";
@@ -36,17 +37,19 @@ function itemPredicate(query, item) {
 	);
 }
 
-function itemRenderer(item, itemProps) {
-	const { handleClick, modifiers: { active } } = itemProps;
-	return <MenuItem aria-selected={active} key={item.value} onClick={handleClick} text={item.label} />;
-}
-
 function tagRenderer(item){ return item.label; }
 
 function InputMultiSelect({ options = [], value = [], setValue, ...props }){
 	const selectedItems = useMemo(() => options.filter(op => value.includes(op.value)), [options, value]);
 	const onItemSelect = useCallback((item, _event) => setValue([...value, item.value]), [setValue, value]);
 	const onRemove = useCallback((item, _index) => setValue(value.filter(val => val != item.value)), [setValue, value]);
+
+	const itemRenderer = useCallback((item, itemProps) => {
+		const { handleClick, /*modifiers: { active }*/ } = itemProps;
+		const isSelected = value.includes(item.value);
+
+		return <MenuItem aria-selected={isSelected} key={item.value} labelElement={isSelected ? <Icon icon="small-tick" /> : null} onClick={handleClick} text={item.label} />;
+	}, [value]);
 
 	return <MultiSelect
 		initialContent={null}
@@ -56,7 +59,7 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }){
 		items={options}
 		onItemSelect={onItemSelect}
 		onRemove={onRemove}
-		openOnKeyDown={false}
+		openOnKeyDown={true}
 		popoverProps={popoverProps}
 		resetOnSelect={true}
 		selectedItems={selectedItems}
