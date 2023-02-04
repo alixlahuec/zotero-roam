@@ -11,6 +11,7 @@ import { CustomClasses } from "../../constants";
 const popoverProps = {
 	canEscapeKeyClose: false,
 	fill: true,
+	matchTargetWidth: true,
 	minimal: true,
 	popoverClassName: CustomClasses.POPOVER
 };
@@ -37,7 +38,7 @@ function itemPredicate(query, item) {
 
 function itemRenderer(item, itemProps) {
 	const { handleClick, modifiers: { active } } = itemProps;
-	return <MenuItem active={active} key={item.value} onClick={handleClick} text={item.label} />;
+	return <MenuItem aria-selected={active} key={item.value} onClick={handleClick} text={item.label} />;
 }
 
 function tagRenderer(item){ return item.label; }
