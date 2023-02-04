@@ -58,6 +58,7 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }){
 		onRemove={onRemove}
 		openOnKeyDown={false}
 		popoverProps={popoverProps}
+		resetOnSelect={true}
 		selectedItems={selectedItems}
 		tagInputProps={tagInputProps}
 		tagRenderer={tagRenderer}
