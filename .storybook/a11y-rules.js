@@ -32,5 +32,11 @@ export const A11Y_RULES = [
 		// which is incorrect because the Icon is focusable.
 		// This currently cannot be configured
 		selector: "[aria-hidden=\"true\"]:not(.bp3-icon)"
+	},
+	{
+		id: "aria-required-children",
+		// Blueprint's Tabs component allows arbitrary children,
+		// which doesn't enforce restrictions on their `role`
+		selector: "[role]:not(.bp3-tab-list)"
 	}
 ];

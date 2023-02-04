@@ -231,6 +231,10 @@ textarea.zr-text-input,
     width: auto;
 }
 
+[class*="zr"] .bp3-callout a {
+	border-bottom: 1px solid;
+}
+
 [class*="zr"] .bp3-callout[class*="bp3-intent"] {
     background: var(--zr-bg-tone);
 }

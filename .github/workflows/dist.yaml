@@ -68,11 +68,11 @@ jobs:
           echo "GitHub ref name is ${{ github.ref_name }}"
 
       - name: Publish release @beta
-        if: ${{ github.ref_name == 'beta' }}
+        if: ${{ github.ref_name == 'beta' && contains(github.event.head_commit.message, '-beta.') }}
         run: |
           npm run publish-release:beta
 
       - name: Publish release @latest
-        if: ${{ github.ref_name == 'main' }}
+        if: ${{ github.ref_name == 'main' && !contains(github.event.head_commit.message, '-beta.') }}
         run: |
           npm run publish-release:latest
