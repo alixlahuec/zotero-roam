@@ -78,7 +78,7 @@
         "@storybook/jest": "^0.0.10",
         "@storybook/manager-webpack5": "^6.5.16",
         "@storybook/react": "^6.5.16",
-        "@storybook/test-runner": "^0.9.3",
+        "@storybook/test-runner": "^0.9.4",
         "@storybook/testing-library": "^0.0.13",
         "@testing-library/react": "^12.1.5",
         "@testing-library/react-hooks": "^8.0.1",
