@@ -2,6 +2,20 @@ import { useMemo } from "react";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
 
+
+/** Wrapper for retrieving items data, based on contents of the query cache.
+ * @param {DataRequest} req - The parameters of the request
+ * @param {*} queryClient - The current React Query client
+ * @returns 
+ */
+async function wrappedFetchItems(req, queryClient) {
+	const { library: { path }, ...identifiers } = req;
+	const queryKey = ["items", path, { ...identifiers }];
+	const { data: match, lastUpdated: since } = queryClient.getQueryData(queryKey) || {};
+
+	return await fetchItems({ ...req, since }, { match }, queryClient);
+}
+
 /** React Query custom hook for retrieving Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity` and `staleTime = 10min`.
  *  There is no refetch scheduled, since the data should not change over the course of a session.
  *  Requests are retried only once (except for 404 errors, which should never be retried).
@@ -78,10 +92,9 @@ const useQuery_Items = (reqs, opts = {}) => {
 		return reqs.map((req) => {
 			const { library: { path }, ...identifiers } = req;
 			const queryKey = ["items", path, { ...identifiers }];
-			const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
 			return {
 				queryKey: queryKey,
-				queryFn: (_queryKey) => fetchItems({ ...req, since }, { match }, client),
+				queryFn: (_queryKey) => wrappedFetchItems(req, client),
 				staleTime,
 				refetchInterval,
 				...rest

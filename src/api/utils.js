@@ -433,6 +433,7 @@ async function fetchDeleted(library, since) {
  * @fires zotero-roam:update
  * @param {DataRequest} req - The parameters of the request 
  * @param {{match: Object[]}} config - Additional parameters
+ * @param {*} queryClient - The current React Query client
  * @returns {Promise<{data: Object[], lastUpdated: Integer}>}
  */
 async function fetchItems(req, { match = [] } = {}, queryClient) {
