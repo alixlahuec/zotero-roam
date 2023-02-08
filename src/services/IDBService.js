@@ -13,7 +13,7 @@ class IDBService {
 	 * dbVersion: Number
 	 * }} context - The context in which the instance is being created
 	 */
-	constructor({ dbName = "ZOTEROROAM_REACT_QUERY_CACHE", dbVersion = 1, storeName = "keyval" }){
+	constructor({ dbName, dbVersion, storeName }){
 		this.#storeName = storeName;
 		this.#db = openDB(dbName, dbVersion, {
 			upgrade: (database, _oldVersion, _newVersion, _transaction) => {
