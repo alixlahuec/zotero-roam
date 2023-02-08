@@ -13,6 +13,7 @@ module.exports = merge(baseConfig, {
         "@blueprintjs/core": ["Blueprint", "Core"],
         "@blueprintjs/datetime": ["Blueprint", "DateTime"],
         "@blueprintjs/select": ["Blueprint", "Select"],
+		"idb": "idb",
         react: "React",
         "react-dom": "ReactDOM",
     },
