@@ -6,6 +6,13 @@ export const EXTENSION_PORTAL_ID = "zotero-roam-portal";
 /** @constant {String} The HTML id for the extension's icon's container */
 export const EXTENSION_SLOT_ID = "zotero-roam-slot";
 
+/** @constant {String} The name for the extension's idb database */
+export const IDB_DATABASE_NAME = "ZOTERO_ROAM";
+/** @constant {Number} The current version for the extension's idb database */
+export const IDB_DATABASE_VERSION = 1;
+/** @constant {String} The name for the React Query store in the extension's idb database */
+export const IDB_REACT_QUERY_STORE_NAME = "REACT_QUERY";
+
 /* istanbul ignore file */
 export const TYPEMAP_DEFAULT = {
 	artwork: "Illustration",

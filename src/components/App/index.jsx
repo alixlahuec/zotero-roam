@@ -1,15 +1,19 @@
 /* istanbul ignore file */
 import { bool } from "prop-types";
 import { Component, createContext, useMemo } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
+import IDBService from "../../../src/services/IDBService";
 import { validateShortcuts } from "../../../src/setup";
 import Dashboard from "Components/Dashboard";
 import ExtensionIcon from "Components/ExtensionIcon";
 import GraphWatcher from "Components/GraphWatcher";
+import Logger from "Components/Logger";
 import SearchPanel from "Components/SearchPanel";
+import { SettingsDialog } from "Components/UserSettings";
 
 import { RoamCitekeysProvider } from "Components/RoamCitekeysContext";
 import { useOtherSettings } from "Components/UserSettings/Other";
@@ -18,9 +22,8 @@ import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
 
+import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../../../src/constants";
 import * as customPropTypes from "../../propTypes";
-import { SettingsDialog } from "../UserSettings";
-import Logger from "Components/Logger";
 
 
 const openSearchCommand = "zoteroRoam : Open Search Panel";
@@ -31,6 +34,7 @@ const ExtensionContext = createContext();
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
+			cacheTime: Infinity,
 			refetchOnWindowFocus: false,
 			refetchOnMount: false,
 			refetchIntervalInBackground: true,
@@ -39,6 +43,39 @@ const queryClient = new QueryClient({
 		}
 	}
 });
+
+const createPersisterWithIDB = () => {
+	const indexedDbKey = "REACT_QUERY_CLIENT";
+	const dbPromise = new IDBService({
+		dbName: IDB_DATABASE_NAME,
+		dbVersion: IDB_DATABASE_VERSION,
+		storeName: IDB_REACT_QUERY_STORE_NAME
+	});
+
+	return {
+		persistClient: async(client) => {
+			return await dbPromise.set(indexedDbKey, client);
+		},
+		removeClient: async () => {
+			return await dbPromise.delete(indexedDbKey);
+		},
+		restoreClient: async() => {
+			return await dbPromise.get(indexedDbKey);
+		}
+	};
+};
+
+const persistOptions = {
+	maxAge: 1000 * 60 * 60 * 24 * 3,
+	persister: createPersisterWithIDB()
+};
+
+const onRestoreSuccess = () => {
+	window.zoteroRoam?.error?.({
+		origin: "Database",
+		message: "Successfully retrieved data from cache"
+	});
+};
 
 // https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component
 const AppWrapper = (props) => {
@@ -148,7 +185,7 @@ class App extends Component {
 		
 		return (
 			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>
-				<QueryClientProvider client={queryClient}>
+				<PersistQueryClientProvider client={queryClient} onSuccess={onRestoreSuccess} persistOptions={persistOptions}>
 					<ExtensionContext.Provider value={extension}>
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
@@ -168,7 +205,7 @@ class App extends Component {
 							<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
 						</RoamCitekeysProvider>
 					</ExtensionContext.Provider>
-				</QueryClientProvider>
+				</PersistQueryClientProvider>
 			</HotkeysTarget2>
 		);
 	}
