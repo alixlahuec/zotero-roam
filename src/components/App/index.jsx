@@ -72,9 +72,10 @@ const persistOptions = {
 };
 
 const onRestoreSuccess = () => {
-	window.zoteroRoam?.error?.({
+	window.zoteroRoam?.info?.({
 		origin: "Database",
-		message: "Successfully retrieved data from cache"
+		message: "Successfully retrieved data from cache",
+		showToaster: 1000
 	});
 };
 
