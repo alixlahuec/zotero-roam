@@ -213,6 +213,7 @@ const useWriteableLibraries = (libraries) => {
 };
 
 export {
+	wrappedFetchItems,
 	useQuery_Citoid,
 	useQuery_Collections,
 	useQuery_Items,
