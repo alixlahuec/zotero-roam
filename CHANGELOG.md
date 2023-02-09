@@ -1,6 +1,15 @@
 ## Changelog
 
-### [0.7.10](https://github.com/alixlahuec/zotero-roam/compare/0.7.9...0.7.10) - 
+### [0.7.11](https://github.com/alixlahuec/zotero-roam/compare/0.7.10...0.7.11) - 
+
+#### Bug Fixes
+
+-  excessive API calls due to broken `since` param ([`#176`](https://github.com/alixlahuec/zotero-roam/pull/176))
+-  styling of multiselect input in Explorer ([`#173`](https://github.com/alixlahuec/zotero-roam/pull/173))
+- \(deps): update dependency axios-retry to ^3.4.0 ([`#169`](https://github.com/alixlahuec/zotero-roam/pull/169))
+-  tags with hyphen and special characters aren't processed correctly ([`#153`](https://github.com/alixlahuec/zotero-roam/pull/153))
+
+### [0.7.10](https://github.com/alixlahuec/zotero-roam/compare/0.7.9...0.7.10) -  2022-12-15 
 
 #### Features
 
