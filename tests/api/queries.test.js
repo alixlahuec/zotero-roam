@@ -1,17 +1,19 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react-hooks";
 
-import { makeTagList, parseSemanticDOIs } from "../../src/api/utils";
-import { useQuery_Citoid, useQuery_Collections, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
+import * as apiUtils from "../../src/api/utils";
+import { wrappedFetchItems, useQuery_Citoid, useQuery_Collections, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
+
 import { badIdentifier, goodIdentifier } from "Mocks/citoid";
 import { apiKeys } from "Mocks/zotero/keys";
 import { findCollections } from "Mocks/zotero/collections";
-import { findItems } from "Mocks/zotero/items";
+import { findItems, items } from "Mocks/zotero/items";
 import { libraries } from "Mocks/zotero/libraries";
 import { semantics } from "Mocks/semantic-scholar";
 import { tags } from "Mocks/zotero/tags";
 
 
+const { makeTagList, parseSemanticDOIs } = apiUtils;
 
 const { 
 	keyWithFullAccess: { key: masterKey },
@@ -196,5 +198,43 @@ describe("Hook for writeable libraries", () => {
 				{ apikey: userOnlyKey, path: userPath }
 			]);
 
+	});
+});
+
+describe("Wrapper for fetching items", () => {
+	let client = null;
+	const sample_req = {
+		library: {
+			path: userPath
+		},
+		apikey: masterKey,
+		dataURI: userPath + "/items"
+	};
+	const { library, ...identifiers } = sample_req;
+	const fetchItemsSpy = jest.spyOn(apiUtils, "fetchItems");
+
+	beforeEach(() => {
+		client = new QueryClient();
+	});
+
+	test("Fetching items when query cache is empty", async() => {
+		await wrappedFetchItems(sample_req, client);
+
+		expect(fetchItemsSpy).toHaveBeenCalledWith({ ...sample_req, since: undefined }, { match: undefined }, client);
+	});
+
+	test("Fetching items when query cache has version data", async() => {
+		const cachedData = {
+			data: [items[0]],
+			lastUpdated: 13
+		};
+		client.setQueryData(
+			["items", library.path, { ...identifiers }],
+			(_prev) => cachedData
+		);
+
+		await wrappedFetchItems(sample_req, client);
+
+		expect(fetchItemsSpy).toHaveBeenCalledWith({ ...sample_req, since: cachedData.lastUpdated }, { match: cachedData.data }, client);
 	});
 });
