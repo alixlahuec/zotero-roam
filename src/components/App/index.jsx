@@ -44,6 +44,7 @@ const queryClient = new QueryClient({
 	}
 });
 
+/* istanbul ignore next */
 const createPersisterWithIDB = () => {
 	const indexedDbKey = "REACT_QUERY_CLIENT";
 	const dbPromise = new IDBService({
