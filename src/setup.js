@@ -1,12 +1,15 @@
 import { unmountComponentAtNode } from "react-dom";
 
 import { parseKeyCombo } from "@blueprintjs/core";
+import { deleteDB } from "idb";
+
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
 
 import {
 	EXTENSION_PORTAL_ID,
 	EXTENSION_SLOT_ID,
+	IDB_DATABASE_NAME,
 	IDB_REACT_QUERY_STORE_NAME,
 	TYPEMAP_DEFAULT
 } from "./constants";
@@ -123,6 +126,15 @@ export function createPersisterWithIDB(database){
 			return await reactQueryStore.get(indexedDbKey);
 		}
 	};
+}
+
+/* istanbul ignore next */
+export async function deleteIDBIfExists(){
+	try {
+		await deleteDB(IDB_DATABASE_NAME);
+	} catch(e){
+		// Do nothing
+	}
 }
 
 /** Generates a merged settings object, combining user settings and defaults.

@@ -5,7 +5,7 @@ import { HotkeysProvider } from "@blueprintjs/core";
 import { AppWrapper, idbDatabase, queryClient } from "Components/App";
 import { UserSettingsProvider } from "Components/UserSettings";
 
-import { initialize, setup, setupPortals, unmountExtensionIfExists } from "./src/setup";
+import { deleteIDBIfExists, initialize, setup, setupPortals, unmountExtensionIfExists } from "./src/setup";
 
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./src/constants";
 import ZoteroRoam from "./src/extension";
@@ -51,6 +51,7 @@ function onload({ extensionAPI }){
 function offload(){
 	unregisterSmartblockCommands();
 	unmountExtensionIfExists();
+	deleteIDBIfExists();
 	delete window.zoteroRoam;
 }
 
