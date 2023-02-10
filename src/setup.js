@@ -3,7 +3,6 @@ import { unmountComponentAtNode } from "react-dom";
 import { parseKeyCombo } from "@blueprintjs/core";
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
-import IDBService from "./services/IDBService";
 
 import {
 	EXTENSION_PORTAL_ID,
@@ -105,22 +104,23 @@ export function analyzeUserRequests(requests){
 }
 
 /* istanbul ignore next */
-export function createPersisterWithIDB(){
+/** Creates a persister that can be used for writing a React Query client to the IndexedDB cache.
+ * @param {*} database - The targeted IDBDatabase
+ * @returns 
+ */
+export function createPersisterWithIDB(database){
 	const indexedDbKey = "REACT_QUERY_CLIENT";
-	const dbPromise = new IDBService({ storeName: IDB_REACT_QUERY_STORE_NAME });
+	const reactQueryStore = database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 
 	return {
 		persistClient: async (client) => {
-			return await dbPromise.set(indexedDbKey, client);
+			return await reactQueryStore.set(indexedDbKey, client);
 		},
 		removeClient: async () => {
-			return await dbPromise.delete(indexedDbKey);
+			return await reactQueryStore.delete(indexedDbKey);
 		},
 		restoreClient: async () => {
-			return await dbPromise.get(indexedDbKey);
-		},
-		__clear: async () => {
-			return await dbPromise.clear();
+			return await reactQueryStore.get(indexedDbKey);
 		}
 	};
 }

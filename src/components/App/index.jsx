@@ -19,6 +19,7 @@ import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
+import IDBDatabase from "../../services/idb";
 import { createPersisterWithIDB, validateShortcuts } from "../../setup";
 
 import * as customPropTypes from "../../propTypes";
@@ -42,8 +43,7 @@ const queryClient = new QueryClient({
 	}
 });
 
-const reactQueryPersister = createPersisterWithIDB();
-
+const idbDatabase = new IDBDatabase();
 const persistProviderProps = {
 	client: queryClient,
 	onSuccess: () => {
@@ -56,7 +56,7 @@ const persistProviderProps = {
 	persistOptions: {
 		buster: "v1.0",
 		maxAge: 1000 * 60 * 60 * 24 * 3,
-		persister: reactQueryPersister
+		persister: createPersisterWithIDB(idbDatabase)
 	}
 };
 
@@ -271,6 +271,6 @@ App.propTypes = {
 export {
 	AppWrapper,
 	ExtensionContext,
-	queryClient,
-	reactQueryPersister
+	idbDatabase,
+	queryClient
 };
