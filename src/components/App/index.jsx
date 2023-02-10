@@ -6,8 +6,6 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
 
-import IDBService from "../../../src/services/IDBService";
-import { validateShortcuts } from "../../../src/setup";
 import Dashboard from "Components/Dashboard";
 import ExtensionIcon from "Components/ExtensionIcon";
 import GraphWatcher from "Components/GraphWatcher";
@@ -21,8 +19,8 @@ import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
+import { createPersisterWithIDB, validateShortcuts } from "../../setup";
 
-import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../../../src/constants";
 import * as customPropTypes from "../../propTypes";
 
 
@@ -44,39 +42,22 @@ const queryClient = new QueryClient({
 	}
 });
 
-/* istanbul ignore next */
-const createPersisterWithIDB = () => {
-	const indexedDbKey = "REACT_QUERY_CLIENT";
-	const dbPromise = new IDBService({
-		dbName: IDB_DATABASE_NAME,
-		dbVersion: IDB_DATABASE_VERSION,
-		storeName: IDB_REACT_QUERY_STORE_NAME
-	});
+const reactQueryPersister = createPersisterWithIDB();
 
-	return {
-		persistClient: async(client) => {
-			return await dbPromise.set(indexedDbKey, client);
-		},
-		removeClient: async () => {
-			return await dbPromise.delete(indexedDbKey);
-		},
-		restoreClient: async() => {
-			return await dbPromise.get(indexedDbKey);
-		}
-	};
-};
-
-const persistOptions = {
-	maxAge: 1000 * 60 * 60 * 24 * 3,
-	persister: createPersisterWithIDB()
-};
-
-const onRestoreSuccess = () => {
-	window.zoteroRoam?.info?.({
-		origin: "Database",
-		message: "Successfully retrieved data from cache",
-		showToaster: 1000
-	});
+const persistProviderProps = {
+	client: queryClient,
+	onSuccess: () => {
+		window.zoteroRoam?.info?.({
+			origin: "Database",
+			message: "Successfully restored data from cache",
+			showToaster: 1000
+		});
+	},
+	persistOptions: {
+		buster: "v1.0",
+		maxAge: 1000 * 60 * 60 * 24 * 3,
+		persister: reactQueryPersister
+	}
 };
 
 // https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component
@@ -187,7 +168,7 @@ class App extends Component {
 		
 		return (
 			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>
-				<PersistQueryClientProvider client={queryClient} onSuccess={onRestoreSuccess} persistOptions={persistOptions}>
+				<PersistQueryClientProvider {...persistProviderProps}>
 					<ExtensionContext.Provider value={extension}>
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
@@ -290,5 +271,6 @@ App.propTypes = {
 export {
 	AppWrapper,
 	ExtensionContext,
-	queryClient
+	queryClient,
+	reactQueryPersister
 };

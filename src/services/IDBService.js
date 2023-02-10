@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 import { openDB } from "idb";
+import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION } from "../constants";
 
 
 class IDBService {
@@ -14,9 +15,9 @@ class IDBService {
 	 * dbVersion: Number
 	 * }} context - The context in which the instance is being created
 	 */
-	constructor({ dbName, dbVersion, storeName }){
+	constructor({ storeName }){
 		this.#storeName = storeName;
-		this.#db = openDB(dbName, dbVersion, {
+		this.#db = openDB(IDB_DATABASE_NAME, IDB_DATABASE_VERSION, {
 			upgrade: (database, _oldVersion, _newVersion, _transaction) => {
 				database.createObjectStore(this.#storeName);
 			}

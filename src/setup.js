@@ -3,10 +3,12 @@ import { unmountComponentAtNode } from "react-dom";
 import { parseKeyCombo } from "@blueprintjs/core";
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
+import IDBService from "./services/IDBService";
 
 import {
 	EXTENSION_PORTAL_ID,
 	EXTENSION_SLOT_ID,
+	IDB_REACT_QUERY_STORE_NAME,
 	TYPEMAP_DEFAULT
 } from "./constants";
 
@@ -100,6 +102,27 @@ export function analyzeUserRequests(requests){
 			};
 		}
 	}
+}
+
+/* istanbul ignore next */
+export function createPersisterWithIDB(){
+	const indexedDbKey = "REACT_QUERY_CLIENT";
+	const dbPromise = new IDBService({ storeName: IDB_REACT_QUERY_STORE_NAME });
+
+	return {
+		persistClient: async (client) => {
+			return await dbPromise.set(indexedDbKey, client);
+		},
+		removeClient: async () => {
+			return await dbPromise.delete(indexedDbKey);
+		},
+		restoreClient: async () => {
+			return await dbPromise.get(indexedDbKey);
+		},
+		__clear: async () => {
+			return await dbPromise.clear();
+		}
+	};
 }
 
 /** Generates a merged settings object, combining user settings and defaults.
