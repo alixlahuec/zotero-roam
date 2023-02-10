@@ -37,7 +37,7 @@ export default class ZoteroRoam {
      * settings: Object
      * }} context - The context in which the instance is being created
      */
-	constructor({ idbDatabase, queryClient, requests, settings }) {
+	constructor({ idbDatabase = null, queryClient, requests, settings }) {
 		const { libraries } = requests;
 		const { annotations, notes, typemap } = settings;
 
@@ -50,12 +50,14 @@ export default class ZoteroRoam {
 
 	/* istanbul ignore next */
 	async clearDataCache(){
-		await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).clear();
-		this.info({
-			origin: "Database",
-			message: "Successfully cleared data from cache",
-			showToaster: 1000
-		});
+		if(this.#db){
+			await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).clear();
+			this.info({
+				origin: "Database",
+				message: "Successfully cleared data from cache",
+				showToaster: 1000
+			});
+		}
 	}
 
 	// To be called in the RequestsWidget
