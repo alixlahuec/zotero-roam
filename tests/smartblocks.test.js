@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/query-core";
 
 import ZoteroRoam from "../src/extension";
+import IDBDatabase from "../src/services/idb";
 import { eval_term, reformatImportableBlocks, sbCommands } from "../src/smartblocks";
 import { getLocalLink, getWebLink, makeDNP } from "../src/utils";
 
@@ -90,10 +91,12 @@ describe("All commands return correct output", () => {
 	let client = null;
 	let commands = null;
 	window.zoteroRoam = null;
+	const idbDatabase = new IDBDatabase();
 
 	beforeEach(() => {
 		client = new QueryClient();
 		window.zoteroRoam = new ZoteroRoam({
+			idbDatabase,
 			queryClient: client,
 			requests: {
 				libraries: Object.values(libraries).map(lib => ({ apikey: masterKey, path: lib.path })),

@@ -6,6 +6,7 @@ import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
 
 import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from "../src/extension";
+import IDBDatabase from "../src/services/idb";
 import zrToaster from "Components/ExtensionToaster";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
@@ -24,6 +25,7 @@ const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 
 describe("Formatting utils", () => {
 	const extension = new ZoteroRoam({
+		idbDatabase: new IDBDatabase(),
 		queryClient: new QueryClient(),
 		requests: {
 			libraries: []
@@ -293,10 +295,12 @@ describe("Formatting utils", () => {
 describe("Retrieval utils", () => {
 	let client = null;
 	let extension = null;
+	const idbDatabase = new IDBDatabase();
 
 	beforeEach(() => {
 		client = new QueryClient();
 		extension = new ZoteroRoam({
+			idbDatabase,
 			queryClient: client,
 			requests: {
 				libraries: Object.values(libraries).map(lib => ({ apikey: masterKey, path: lib.path })),
@@ -523,6 +527,7 @@ describe("Retrieval utils", () => {
 describe("Logger utils", () => {
 	let extension = null;
 	const client = new QueryClient();
+	const idbDatabase = new IDBDatabase();
 
 	beforeAll(() => {
 		jest.useFakeTimers()
@@ -535,6 +540,7 @@ describe("Logger utils", () => {
 
 	beforeEach(() => {
 		extension = new ZoteroRoam({
+			idbDatabase,
 			queryClient: client,
 			requests: {
 				libraries: Object.values(libraries).map(lib => ({ apikey: masterKey, path: lib.path })),

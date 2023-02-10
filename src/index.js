@@ -2,7 +2,7 @@
 import { render } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
-import { AppWrapper, queryClient } from "Components/App";
+import { AppWrapper, idbDatabase, queryClient } from "Components/App";
 import { UserSettingsProvider } from "Components/UserSettings";
 import zrToaster from "Components/ExtensionToaster";
 
@@ -27,6 +27,7 @@ import "./index.css";
 		const { requests, settings } = initialize(INSTALL_CONTEXT, { manualSettings });
 
 		window.zoteroRoam = new ZoteroRoam({
+			idbDatabase,
 			queryClient,
 			requests,
 			settings,

@@ -6,6 +6,8 @@ import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api
 import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 import { findRoamBlock } from "Roam";
 
+import { IDB_REACT_QUERY_STORE_NAME } from "./constants";
+
 
 /**
  * Creates a new public API instance for the extension. This is meant to make available an interface for users as well as other plugins to consume some of the extension's data and functionalities, in a controlled manner. Updates to settings are done by the relevant widgets.
@@ -17,6 +19,8 @@ import { findRoamBlock } from "Roam";
  * @borrows _getItemTags as ZoteroRoam#getItemTags
  */
 export default class ZoteroRoam {
+	/** @private */
+	#db;
 	/** @private */
 	#libraries;
 	/** @private */
@@ -33,14 +37,25 @@ export default class ZoteroRoam {
      * settings: Object
      * }} context - The context in which the instance is being created
      */
-	constructor({ queryClient, requests, settings }) {
+	constructor({ idbDatabase, queryClient, requests, settings }) {
 		const { libraries } = requests;
 		const { annotations, notes, typemap } = settings;
 
+		this.#db = idbDatabase;
 		this.#libraries = libraries;
 		this.#queryClient = queryClient;
 		this.#settings = { annotations, notes, typemap };
 
+	}
+
+	/* istanbul ignore next */
+	async clearDataCache(){
+		await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).clear();
+		this.info({
+			origin: "Database",
+			message: "Successfully cleared data from cache",
+			showToaster: 1000
+		});
 	}
 
 	// To be called in the RequestsWidget

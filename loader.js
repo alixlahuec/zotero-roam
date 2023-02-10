@@ -2,7 +2,7 @@
 import { render } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
-import { AppWrapper, queryClient } from "Components/App";
+import { AppWrapper, idbDatabase, queryClient } from "Components/App";
 import { UserSettingsProvider } from "Components/UserSettings";
 
 import { initialize, setup, setupPortals, unmountExtensionIfExists } from "./src/setup";
@@ -25,6 +25,7 @@ function onload({ extensionAPI }){
 	const { requests, settings } = initialize(INSTALL_CONTEXT, { extensionAPI });
 
 	window.zoteroRoam = new ZoteroRoam({
+		idbDatabase,
 		queryClient,
 		requests,
 		settings
