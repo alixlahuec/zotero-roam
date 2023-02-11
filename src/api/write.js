@@ -11,7 +11,7 @@ const useDeleteTags = () => {
 
 	return useMutation((variables) => {
 		const { library: { apikey, path }, tags } = variables;
-		const { lastUpdated: version } = client.getQueryData(["tags", { apikey, library: path }]);
+		const { lastUpdated: version } = client.getQueryData(["tags", { library: path }]);
 
 		return deleteTags(tags, { apikey, path }, version);
 	}, {

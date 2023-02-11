@@ -315,7 +315,7 @@ describe("Retrieval utils", () => {
 		// getItemChildren() retrieves queries data by matching the data URI,
 		// so no need to reproduce the exact query key that would exist in prod
 		client.setQueryData(
-			["items", { apikey: masterKey, dataURI: targetLibrary.path + "/items", library: targetLibrary.path }],
+			["items", { dataURI: targetLibrary.path + "/items", library: targetLibrary.path }],
 			(_prev) => ({
 				data: [parentItem, samplePDF],
 				lastUpdated: targetLibrary.version
@@ -333,7 +333,7 @@ describe("Retrieval utils", () => {
 			const colls = findCollections(type.slice(0,-1), id, 0);
 
 			client.setQueryData(
-				["collections", { apikey: masterKey, library: path }],
+				["collections", { library: path }],
 				(_prev) => ({
 					data: colls,
 					lastUpdated: version
@@ -504,7 +504,7 @@ describe("Retrieval utils", () => {
 				const tagList = makeTagList(tags[path]);
 
 				client.setQueryData(
-					["tags", { apikey: masterKey, library: path }],
+					["tags", { library: path }],
 					(_prev) => ({
 						data: tagList,
 						lastUpdated: version
