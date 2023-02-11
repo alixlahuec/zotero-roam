@@ -315,7 +315,7 @@ describe("Retrieval utils", () => {
 		// getItemChildren() retrieves queries data by matching the data URI,
 		// so no need to reproduce the exact query key that would exist in prod
 		client.setQueryData(
-			["items", { apikey: masterKey, dataURI: targetLibrary.path + "/items", library: targetLibrary.path }],
+			["items", { dataURI: targetLibrary.path + "/items", library: targetLibrary.path }],
 			(_prev) => ({
 				data: [parentItem, samplePDF],
 				lastUpdated: targetLibrary.version

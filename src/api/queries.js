@@ -9,7 +9,7 @@ import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSeman
  * @returns 
  */
 async function wrappedFetchItems(req, queryClient) {
-	const { library: { path }, ...identifiers } = req;
+	const { apikey, library: { path }, ...identifiers } = req;
 	const queryKey = ["items", path, { ...identifiers }];
 	const { data: match, lastUpdated: since } = queryClient.getQueryData(queryKey) || {};
 
@@ -90,7 +90,7 @@ const useQuery_Items = (reqs, opts = {}) => {
 
 		// Factory
 		return reqs.map((req) => {
-			const { library: { path }, ...identifiers } = req;
+			const { apikey, library: { path }, ...identifiers } = req;
 			const queryKey = ["items", path, { ...identifiers }];
 			return {
 				queryKey: queryKey,
