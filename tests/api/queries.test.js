@@ -210,7 +210,7 @@ describe("Wrapper for fetching items", () => {
 		apikey: masterKey,
 		dataURI: userPath + "/items"
 	};
-	const { library, ...identifiers } = sample_req;
+	const { apikey, library, ...identifiers } = sample_req;
 	const fetchItemsSpy = jest.spyOn(apiUtils, "fetchItems");
 
 	beforeEach(() => {

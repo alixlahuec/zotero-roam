@@ -423,8 +423,8 @@ async function _getItemCitation(item, config, { libraries }){
  * @returns The library's collections
  */
 function _getCollections(library, { queryClient }) {
-	const { apikey, path } = library;
-	const datastore = queryClient.getQueryData(["collections", { apikey, library: path }]);
+	const { /*apikey,*/ path } = library;
+	const datastore = queryClient.getQueryData(["collections", { library: path }]);
 	return datastore.data;
 }
 
@@ -583,7 +583,7 @@ function _getItems(select, filters, { queryClient }) {
  */
 function _getTags(location, { libraries, queryClient }) {
 	const library = libraries.find(lib => lib.path == location);
-	const { apikey, path } = library;
-	const datastore = queryClient.getQueryData(["tags", { apikey, library: path }]);
+	const { /*apikey,*/ path } = library;
+	const datastore = queryClient.getQueryData(["tags", { library: path }]);
 	return datastore.data;
 }

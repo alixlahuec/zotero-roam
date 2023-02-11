@@ -91,9 +91,12 @@ export function analyzeUserRequests(requests){
 			const libraries = dataRequests.reduce((arr, req) => {
 				const { library: { path }, apikey } = req;
 				const has_lib = arr.find(lib => lib.path == path);
-				if(!has_lib){
-					arr.push({ path, apikey });
+
+				if(has_lib){
+					throw new Error(`The same library was provided twice: ${path}.`);
 				}
+				
+				arr.push({ path, apikey });
 				return arr;
 			}, []);
 
