@@ -20,7 +20,7 @@ import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
 import IDBDatabase from "../../services/idb";
-import { createPersisterWithIDB, validateShortcuts } from "../../setup";
+import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } from "../../setup";
 
 import * as customPropTypes from "../../propTypes";
 
@@ -55,6 +55,9 @@ const persistProviderProps = {
 	},
 	persistOptions: {
 		buster: "v1.0",
+		dehydrateOptions: {
+			shouldDehydrateQuery: (query) => shouldQueryBePersisted(query),
+		},
 		maxAge: 1000 * 60 * 60 * 24 * 3,
 		persister: createPersisterWithIDB(idbDatabase)
 	}

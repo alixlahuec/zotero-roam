@@ -2,6 +2,7 @@ import { unmountComponentAtNode } from "react-dom";
 
 import { parseKeyCombo } from "@blueprintjs/core";
 import { deleteDB } from "idb";
+import { defaultShouldDehydrateQuery } from "@tanstack/react-query";
 
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
@@ -138,6 +139,20 @@ export async function deleteIDBIfExists(){
 	} catch(e){
 		// Do nothing
 	}
+}
+
+/** Conducts checks on a query to determine if it should be persisted
+ * @param {*} query - The targeted React Query query
+ * @returns 
+ */
+export function shouldQueryBePersisted(query){
+	const { queryKey } = query;
+
+	if(queryKey.includes("permissions") || queryKey[0] == "permissions"){
+		return false;
+	}
+
+	return defaultShouldDehydrateQuery(query);
 }
 
 /** Generates a merged settings object, combining user settings and defaults.
