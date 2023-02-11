@@ -406,8 +406,8 @@ async function _getItemCitation(item, config, { libraries }){
  * @returns The library's collections
  */
 function _getCollections(library, { queryClient }) {
-	const { apikey, path } = library;
-	const datastore = queryClient.getQueryData(["collections", { apikey, library: path }]);
+	const { /*apikey,*/ path } = library;
+	const datastore = queryClient.getQueryData(["collections", { library: path }]);
 	return datastore.data;
 }
 

@@ -72,7 +72,7 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 		);
 
 		queryClient.setQueryData(
-			["collections", { apikey: masterKey, library: userLibrary.path }],
+			["collections", { library: userLibrary.path }],
 			(_prev) => ({
 				data: findCollections(userLibrary.type, userLibrary.id, 0),
 				lastUpdated: userLibrary.version

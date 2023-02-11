@@ -60,8 +60,8 @@ const useQuery_Collections = (libraries, opts = {}) => {
 	// Factory
 	const client = useQueryClient();
 	const queriesDefs = libraries.map((lib) => {
-		const { path, apikey } = lib;
-		const queryKey = ["collections", { library: path, apikey }];
+		const { path/*, apikey*/ } = lib;
+		const queryKey = ["collections", { library: path }];
 		const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
 		return {
 			queryKey: queryKey,

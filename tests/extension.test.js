@@ -333,7 +333,7 @@ describe("Retrieval utils", () => {
 			const colls = findCollections(type.slice(0,-1), id, 0);
 
 			client.setQueryData(
-				["collections", { apikey: masterKey, library: path }],
+				["collections", { library: path }],
 				(_prev) => ({
 					data: colls,
 					lastUpdated: version
