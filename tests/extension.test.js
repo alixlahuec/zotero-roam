@@ -504,7 +504,7 @@ describe("Retrieval utils", () => {
 				const tagList = makeTagList(tags[path]);
 
 				client.setQueryData(
-					["tags", { apikey: masterKey, library: path }],
+					["tags", { library: path }],
 					(_prev) => ({
 						data: tagList,
 						lastUpdated: version

@@ -566,7 +566,7 @@ function _getItems(select, filters, { queryClient }) {
  */
 function _getTags(location, { libraries, queryClient }) {
 	const library = libraries.find(lib => lib.path == location);
-	const { apikey, path } = library;
-	const datastore = queryClient.getQueryData(["tags", { apikey, library: path }]);
+	const { /*apikey,*/ path } = library;
+	const datastore = queryClient.getQueryData(["tags", { library: path }]);
 	return datastore.data;
 }

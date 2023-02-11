@@ -163,7 +163,7 @@ const useQuery_Tags = (libraries, opts = {}) => {
 		// Factory
 		return libraries.map((lib) => {
 			const { apikey, path } = lib;
-			const queryKey = ["tags", { apikey, library: path }];
+			const queryKey = ["tags", { library: path }];
 			return {
 				queryKey: queryKey,
 				queryFn: (_queryKey) => fetchTags({ apikey, path }),

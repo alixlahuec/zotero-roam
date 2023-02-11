@@ -479,7 +479,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			// Retrieve deleted items, if any
 			deleted = await fetchDeleted({ apikey, path }, since);
 
-			const tagsQueryKey = ["tags", { apikey, library: path }];
+			const tagsQueryKey = ["tags", { library: path }];
 			const { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {};
 			if(modified.length > 0 || Number(latest_tags_version) < Number(lastUpdated)){
 				// Refetch tags data
