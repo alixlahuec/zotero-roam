@@ -49,8 +49,7 @@ const persistProviderProps = {
 	onSuccess: () => {
 		window.zoteroRoam?.info?.({
 			origin: "Database",
-			message: "Successfully restored data from cache",
-			showToaster: 1000
+			message: "Initialization complete"
 		});
 	},
 	persistOptions: {
