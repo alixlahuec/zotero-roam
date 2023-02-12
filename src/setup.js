@@ -12,6 +12,7 @@ import {
 	EXTENSION_PORTAL_ID,
 	EXTENSION_SLOT_ID,
 	IDB_DATABASE_NAME,
+	IDB_REACT_QUERY_CLIENT_KEY,
 	IDB_REACT_QUERY_STORE_NAME,
 	TYPEMAP_DEFAULT
 } from "./constants";
@@ -117,7 +118,7 @@ export function analyzeUserRequests(requests){
  * @returns 
  */
 export function createPersisterWithIDB(database){
-	const indexedDbKey = "REACT_QUERY_CLIENT";
+	const indexedDbKey = IDB_REACT_QUERY_CLIENT_KEY;
 	const reactQueryStore = database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 
 	return {

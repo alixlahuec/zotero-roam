@@ -12,6 +12,8 @@ export const IDB_DATABASE_NAME = "ZOTERO_ROAM";
 export const IDB_DATABASE_VERSION = 1;
 /** @constant {String} The name for the React Query store in the extension's idb database */
 export const IDB_REACT_QUERY_STORE_NAME = "REACT_QUERY";
+/** @constant {String} The key name for the client in the React Query store */
+export const IDB_REACT_QUERY_CLIENT_KEY = "REACT_QUERY_CLIENT";
 
 /* istanbul ignore file */
 export const TYPEMAP_DEFAULT = {
