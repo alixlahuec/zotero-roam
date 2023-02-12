@@ -137,7 +137,7 @@ export async function deleteIDBIfExists(){
 	try {
 		await deleteDB(IDB_DATABASE_NAME);
 	} catch(e){
-		// Do nothing
+		console.error(e);
 	}
 }
 
