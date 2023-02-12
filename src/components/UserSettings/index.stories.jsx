@@ -61,6 +61,7 @@ export default {
 			},
 			other: {
 				autoload: true,
+				cacheEnabled: false,
 				darkTheme: false,
 				render_inline: true
 			},

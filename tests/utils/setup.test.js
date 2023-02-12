@@ -227,6 +227,7 @@ describe("Parsing initial user settings", () => {
 		},
 		other: {
 			autoload: false,
+			cacheEnabled: false,
 			darkTheme: false,
 			render_inline: false
 		},

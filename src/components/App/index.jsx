@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { bool } from "prop-types";
 import { Component, createContext, useMemo } from "react";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
@@ -44,7 +44,7 @@ const queryClient = new QueryClient({
 });
 
 const idbDatabase = new IDBDatabase();
-const persistProviderProps = {
+const QCProviderProps = {
 	client: queryClient,
 	onSuccess: () => {
 		window.zoteroRoam?.info?.({
@@ -72,7 +72,7 @@ const AppWrapper = (props) => {
 	// TODO: move validation step upstream
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
-	return <App autoload={otherSettings.autoload} requests={requests} shortcuts={sanitizedShortcuts} {...props} />;
+	return <App autoload={otherSettings.autoload} cacheEnabled={otherSettings.cacheEnabled} requests={requests} shortcuts={sanitizedShortcuts} {...props} />;
 };
 
 class App extends Component {
@@ -89,7 +89,9 @@ class App extends Component {
 					? "disabled"
 					: this.props.autoload 
 						? "on" 
-						: "off")
+						: "off"
+			),
+			usePersister: this.props.cacheEnabled
 		};
 		this.toggleExtension = this.toggleExtension.bind(this);
 		this.closeSearchPanel = this.closeSearchPanel.bind(this);
@@ -150,7 +152,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { status, isDashboardOpen, isLoggerOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
+		const { status, usePersister, isDashboardOpen, isLoggerOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
 		const { extension } = this.props;
 
 		const hotkeys = Object.keys(this.shortcutsConfig)
@@ -168,9 +170,11 @@ class App extends Component {
 				}
 			}).filter(Boolean);
 		
+		const QCProvider = usePersister ? PersistQueryClientProvider : QueryClientProvider;
+
 		return (
 			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>
-				<PersistQueryClientProvider {...persistProviderProps}>
+				<QCProvider {...QCProviderProps}>
 					<ExtensionContext.Provider value={extension}>
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
@@ -190,7 +194,7 @@ class App extends Component {
 							<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
 						</RoamCitekeysProvider>
 					</ExtensionContext.Provider>
-				</PersistQueryClientProvider>
+				</QCProvider>
 			</HotkeysTarget2>
 		);
 	}
@@ -265,6 +269,7 @@ class App extends Component {
 }
 App.propTypes = {
 	autoload: bool,
+	cacheEnabled: bool,
 	extension: customPropTypes.extensionType,
 	requests: customPropTypes.requestsType,
 	shortcuts: customPropTypes.shortcutsSettingsType
