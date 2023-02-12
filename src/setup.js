@@ -123,8 +123,7 @@ export function createPersisterWithIDB(database){
 	return {
 		persistClient: async (client) => {
 			try {
-				const db = await reactQueryStore.set(indexedDbKey, client);
-				return db;
+				return await reactQueryStore.set(indexedDbKey, client);
 			} catch(e) {
 				window.zoteroRoam?.error?.({
 					origin: "Database",
@@ -138,8 +137,7 @@ export function createPersisterWithIDB(database){
 		},
 		removeClient: async () => {
 			try {
-				const db = await reactQueryStore.delete(indexedDbKey);
-				return db;
+				return await reactQueryStore.delete(indexedDbKey);
 			} catch (e) {
 				window.zoteroRoam?.error?.({
 					origin: "Database",
@@ -153,8 +151,7 @@ export function createPersisterWithIDB(database){
 		},
 		restoreClient: async () => {
 			try {
-				const db = await reactQueryStore.get(indexedDbKey);
-				return db;
+				return await reactQueryStore.get(indexedDbKey);
 			} catch (e) {
 				window.zoteroRoam?.error?.({
 					origin: "Database",
