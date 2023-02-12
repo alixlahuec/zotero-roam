@@ -2,7 +2,7 @@ import { H5 } from "@blueprintjs/core";
 import zrToaster from "Components/ExtensionToaster";
 
 import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
-import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
+import { cleanBibliographyHTML, cleanErrorIfAxios, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 import { findRoamBlock } from "Roam";
 
@@ -51,12 +51,22 @@ export default class ZoteroRoam {
 	/* istanbul ignore next */
 	async clearDataCache(){
 		if(this.#db){
-			await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).clear();
-			this.info({
-				origin: "Database",
-				message: "Successfully cleared data from cache",
-				showToaster: 1000
-			});
+			try {
+				await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).clear();
+				this.info({
+					origin: "Database",
+					message: "Successfully cleared data from cache",
+					showToaster: 1000
+				});
+			} catch(e){
+				this.error({
+					origin: "Database",
+					message: "Failed to clear data from cache",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+			}
 		}
 	}
 
