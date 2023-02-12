@@ -4,6 +4,7 @@ import { parseKeyCombo } from "@blueprintjs/core";
 import { deleteDB } from "idb";
 import { defaultShouldDehydrateQuery } from "@tanstack/react-query";
 
+import { cleanErrorIfAxios } from "./api/utils";
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
 
@@ -121,13 +122,49 @@ export function createPersisterWithIDB(database){
 
 	return {
 		persistClient: async (client) => {
-			return await reactQueryStore.set(indexedDbKey, client);
+			try {
+				const db = await reactQueryStore.set(indexedDbKey, client);
+				return db;
+			} catch(e) {
+				window.zoteroRoam?.error?.({
+					origin: "Database",
+					message: "Failed to persist query client",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+				throw e;
+			}
 		},
 		removeClient: async () => {
-			return await reactQueryStore.delete(indexedDbKey);
+			try {
+				const db = await reactQueryStore.delete(indexedDbKey);
+				return db;
+			} catch (e) {
+				window.zoteroRoam?.error?.({
+					origin: "Database",
+					message: "Failed to remove query client",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+				throw e;
+			}
 		},
 		restoreClient: async () => {
-			return await reactQueryStore.get(indexedDbKey);
+			try {
+				const db = await reactQueryStore.get(indexedDbKey);
+				return db;
+			} catch (e) {
+				window.zoteroRoam?.error?.({
+					origin: "Database",
+					message: "Failed to restore query client",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+				throw e;
+			}
 		}
 	};
 }
