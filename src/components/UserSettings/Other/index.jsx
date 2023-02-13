@@ -69,7 +69,7 @@ function OtherSettingsWidget() {
 
 	return <>
 		<Toggle description="Activate the extension on graph load" isChecked={autoload} label="Toggle 'autoload' setting" onChange={handlers.toggleAutoload} title="Autoload" />
-		<Toggle description="Allow the extension to cache API data between sessions. Note: the extension needs to be reloaded for any changes to take effect." isChecked={cacheEnabled} label="Toggle 'cache enabled' setting" onChange={handlers.toggleCacheEnabled} title="Enable Cache" />
+		<Toggle description="Allow the extension to cache API data between sessions. Note: the extension needs to be reloaded for this setting to take effect." isChecked={cacheEnabled} label="Toggle 'cache enabled' setting" onChange={handlers.toggleCacheEnabled} title="Enable Cache" />
 		<Toggle description="Should dark theme be used by default?" isChecked={darkTheme} label="Toggle 'dark theme' setting" onChange={handlers.toggleDarkTheme} title="Use Dark Theme by default" />
 		<Toggle description="This will display [[@citekey]] references as a formatted citation, like Scott et al. (2003). Block content will not be affected." isChecked={render_inline} label="Toggle 'render inline' setting" onChange={handlers.toggleRenderInline} title="Display references as citations" />
 	</>;
