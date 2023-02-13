@@ -6,7 +6,7 @@ import { cleanBibliographyHTML, cleanErrorIfAxios, fetchBibEntries, fetchBibliog
 import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 import { findRoamBlock } from "Roam";
 
-import { IDB_REACT_QUERY_STORE_NAME } from "./constants";
+import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "./constants";
 
 
 /**
@@ -49,6 +49,7 @@ export default class ZoteroRoam {
 	}
 
 	/* istanbul ignore next */
+	/** Clears the contents of the React Query store from the database. */
 	async clearDataCache(){
 		if(this.#db){
 			try {
@@ -62,6 +63,52 @@ export default class ZoteroRoam {
 				this.error({
 					origin: "Database",
 					message: "Failed to clear data from cache",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+			}
+		}
+	}
+
+	/* istanbul ignore next */
+	/** Checks if there is a cached version of the React Query client
+	 * @returns 
+	 */
+	async isDataCached(){
+		if(this.#db){
+			try {
+				const cachedClient = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).get(IDB_REACT_QUERY_CLIENT_KEY);
+				return cachedClient !== undefined;
+			} catch(e) {
+				this.error({
+					origin: "Database",
+					message: "Failed to obtain caching status",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+
+				return false;
+			}
+		}
+
+		return false;
+	}
+
+	/* istanbul ignore next */
+	/** Retrieves the timestamp when the React Query client was last persisted to cache.
+	 * @returns {Integer}
+	 */
+	async getDataCacheUpdatedAt(){
+		if(this.#db){
+			try {
+				const { timestamp } = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).get(IDB_REACT_QUERY_CLIENT_KEY);
+				return timestamp;
+			} catch(e){
+				this.error({
+					origin: "Database",
+					message: "Failed to retrieve cache age",
 					context: {
 						error: cleanErrorIfAxios(e)
 					}
