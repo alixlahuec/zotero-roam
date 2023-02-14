@@ -1,7 +1,6 @@
 import { unmountComponentAtNode } from "react-dom";
 
 import { parseKeyCombo } from "@blueprintjs/core";
-import { deleteDB } from "idb";
 import { defaultShouldDehydrateQuery } from "@tanstack/react-query";
 
 import { cleanErrorIfAxios } from "./api/utils";
@@ -11,7 +10,6 @@ import { setDefaultHooks } from "./events";
 import {
 	EXTENSION_PORTAL_ID,
 	EXTENSION_SLOT_ID,
-	IDB_DATABASE_NAME,
 	IDB_REACT_QUERY_CLIENT_KEY,
 	IDB_REACT_QUERY_STORE_NAME,
 	TYPEMAP_DEFAULT
@@ -165,15 +163,6 @@ export function createPersisterWithIDB(database){
 			}
 		}
 	};
-}
-
-/* istanbul ignore next */
-export async function deleteIDBIfExists(){
-	try {
-		await deleteDB(IDB_DATABASE_NAME);
-	} catch(e){
-		console.error(e);
-	}
 }
 
 /** Conducts checks on a query to determine if it should be persisted

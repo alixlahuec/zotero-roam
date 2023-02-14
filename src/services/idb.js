@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { openDB } from "idb";
+import { deleteDB, openDB } from "idb";
 import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 
 
@@ -35,6 +35,17 @@ class IDBDatabase {
 				STORE_NAMES.forEach((storeName) => database.createObjectStore(storeName));
 			}
 		});
+	}
+
+	/** Deletes the database from memory.
+	 * @returns 
+	 */
+	async deleteSelf(){
+		try {
+			return await deleteDB(this.#dbName);
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	/**

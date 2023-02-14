@@ -72,6 +72,14 @@ export default class ZoteroRoam {
 	}
 
 	/* istanbul ignore next */
+	/** Deletes the database, if any */
+	async deleteDatabase(){
+		if(this.#db){
+			await this.#db.deleteSelf();
+		}
+	}
+
+	/* istanbul ignore next */
 	/** Checks if there is a cached version of the React Query client
 	 * @returns 
 	 */
