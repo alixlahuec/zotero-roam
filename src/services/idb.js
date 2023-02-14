@@ -7,6 +7,21 @@ const STORE_NAMES = [
 	IDB_REACT_QUERY_STORE_NAME
 ];
 
+/* istanbul ignore next */
+/** Executes type validation against the IDBDatabase constructor
+ * @param {*} props - The props passed to the component
+ * @param {*} propName - The name of the prop being evaluated
+ * @param {*} componentName - The name of the component
+ * @returns 
+ */
+const isIDBDatabase = (props, propName, componentName) => {
+	if(!props[propName].constructor === IDBDatabase){
+		return new Error(
+			`Invalid prop ${propName} passed to ${componentName}. Expected a valid email.`
+		);
+	}
+};
+
 /**
  * Opens the extension's interface with IndexedDB. This is the basis for managing caching and persistence with React Query.
  */
@@ -46,3 +61,4 @@ class IDBDatabase {
 }
 
 export default IDBDatabase;
+export { isIDBDatabase };

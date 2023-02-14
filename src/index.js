@@ -2,12 +2,13 @@
 import { render } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
-import { AppWrapper, idbDatabase, queryClient } from "Components/App";
+import { AppWrapper, queryClient } from "Components/App";
 import { UserSettingsProvider } from "Components/UserSettings";
 import zrToaster from "Components/ExtensionToaster";
 
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./constants";
 import { initialize, setup, setupPortals  } from "./setup";
+import IDBDatabase from "./services/idb";
 import ZoteroRoam from "./extension";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
@@ -26,6 +27,8 @@ import "./index.css";
 
 		const { requests, settings } = initialize(INSTALL_CONTEXT, { manualSettings });
 
+		const idbDatabase = new IDBDatabase();
+
 		window.zoteroRoam = new ZoteroRoam({
 			idbDatabase,
 			queryClient,
@@ -43,6 +46,7 @@ import "./index.css";
 							portalId: EXTENSION_PORTAL_ID,
 							version: EXTENSION_VERSION,
 						}}
+						idbDatabase={idbDatabase}
 					/>
 				</UserSettingsProvider>
 			</HotkeysProvider>, 

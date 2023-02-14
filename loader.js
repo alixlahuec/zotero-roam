@@ -2,18 +2,18 @@
 import { render } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
-import { AppWrapper, idbDatabase, queryClient } from "Components/App";
+import { AppWrapper, queryClient } from "Components/App";
 import { UserSettingsProvider } from "Components/UserSettings";
 
 import { deleteIDBIfExists, initialize, setup, setupPortals, unmountExtensionIfExists } from "./src/setup";
 
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./src/constants";
+import IDBDatabase from "./src/services/idb";
 import ZoteroRoam from "./src/extension";
-
+import { unregisterSmartblockCommands } from "./src/smartblocks";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./src/index.css";
-import { unregisterSmartblockCommands } from "./src/smartblocks";
 
 
 function onload({ extensionAPI }){
@@ -23,6 +23,8 @@ function onload({ extensionAPI }){
 	setupPortals();
 
 	const { requests, settings } = initialize(INSTALL_CONTEXT, { extensionAPI });
+
+	const idbDatabase = new IDBDatabase();
 
 	window.zoteroRoam = new ZoteroRoam({
 		idbDatabase,
@@ -41,6 +43,7 @@ function onload({ extensionAPI }){
 						portalId: EXTENSION_PORTAL_ID,
 						version: EXTENSION_VERSION,
 					}}
+					idbDatabase={idbDatabase}
 				/>
 			</UserSettingsProvider>
 		</HotkeysProvider>, 

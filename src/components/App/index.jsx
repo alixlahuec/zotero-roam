@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { bool } from "prop-types";
+import { bool, node } from "prop-types";
 import { Component, createContext, useMemo } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
@@ -19,7 +19,7 @@ import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
-import IDBDatabase from "../../services/idb";
+import { isIDBDatabase } from "../../services/idb";
 import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } from "../../setup";
 
 import * as customPropTypes from "../../propTypes";
@@ -43,23 +43,33 @@ const queryClient = new QueryClient({
 	}
 });
 
-const idbDatabase = new IDBDatabase();
-const QCProviderProps = {
-	client: queryClient,
-	onSuccess: () => {
-		window.zoteroRoam?.info?.({
-			origin: "Database",
-			message: "Initialization complete"
-		});
-	},
-	persistOptions: {
-		buster: "v1.0",
-		dehydrateOptions: {
-			shouldDehydrateQuery: (query) => shouldQueryBePersisted(query),
+const QCProvider = ({ children, idbDatabase, usePersister }) => {
+	const Provider = usePersister ? PersistQueryClientProvider : QueryClientProvider;
+
+	const persisterProps = useMemo(() => ({
+		onSuccess: () => {
+			window.zoteroRoam?.info?.({
+				origin: "Database",
+				message: "Initialization complete"
+			});
 		},
-		maxAge: 1000 * 60 * 60 * 24 * 3,
-		persister: createPersisterWithIDB(idbDatabase)
-	}
+		persistOptions: {
+			buster: "v1.0",
+			dehydrateOptions: {
+				shouldDehydrateQuery: (query) => shouldQueryBePersisted(query),
+			},
+			maxAge: 1000 * 60 * 60 * 24 * 3,
+			persister: createPersisterWithIDB(idbDatabase)
+		}
+	}), [idbDatabase]);
+
+	return <Provider client={queryClient} {...persisterProps}>{children}</Provider>;
+
+};
+QCProvider.propTypes = {
+	children: node,
+	idbDatabase: isIDBDatabase,
+	usePersister: bool
 };
 
 // https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component
@@ -153,7 +163,7 @@ class App extends Component {
 
 	render() {
 		const { status, usePersister, isDashboardOpen, isLoggerOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
-		const { extension } = this.props;
+		const { extension, idbDatabase } = this.props;
 
 		const hotkeys = Object.keys(this.shortcutsConfig)
 			.map(cmd => {
@@ -169,12 +179,10 @@ class App extends Component {
 					return false;
 				}
 			}).filter(Boolean);
-		
-		const QCProvider = usePersister ? PersistQueryClientProvider : QueryClientProvider;
 
 		return (
 			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>
-				<QCProvider {...QCProviderProps}>
+				<QCProvider idbDatabase={idbDatabase} usePersister={usePersister}>
 					<ExtensionContext.Provider value={extension}>
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
@@ -271,6 +279,7 @@ App.propTypes = {
 	autoload: bool,
 	cacheEnabled: bool,
 	extension: customPropTypes.extensionType,
+	idbDatabase: isIDBDatabase,
 	requests: customPropTypes.requestsType,
 	shortcuts: customPropTypes.shortcutsSettingsType
 };
@@ -278,6 +287,5 @@ App.propTypes = {
 export {
 	AppWrapper,
 	ExtensionContext,
-	idbDatabase,
 	queryClient
 };
