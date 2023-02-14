@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 import { deleteDB, openDB } from "idb";
+import { getGraphName } from "Roam";
 import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 
 
@@ -28,9 +29,21 @@ const isIDBDatabase = (props, propName, componentName) => {
 class IDBDatabase {
 	/** @private */
 	#db;
+	/** @private */
+	#dbName;
 
 	constructor(){
-		this.#db = openDB(IDB_DATABASE_NAME, IDB_DATABASE_VERSION, {
+		let graphName = null;
+		try {
+			graphName = getGraphName();
+		} catch(_e){
+			// Do nothing
+		}
+
+		const dbName = [IDB_DATABASE_NAME, graphName].filter(Boolean).join("_");
+
+		this.#dbName = dbName;
+		this.#db = openDB(this.#dbName, IDB_DATABASE_VERSION, {
 			upgrade: (database, _oldVersion, _newVersion, _transaction) => {
 				STORE_NAMES.forEach((storeName) => database.createObjectStore(storeName));
 			}

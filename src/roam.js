@@ -253,6 +253,13 @@ function getCurrentCursorLocation(){
 	return output;
 }
 
+/** Retrieve the name of the current Roam graph.
+ * @returns 
+ */
+function getGraphName(){
+	return window.roamAlphaAPI.graph.name;
+}
+
 /** Retrieves the full list of Roam pages whose title begins with any of the keys provided
  * @param {String[]} keys - The Array of keys for which to retrieve Roam pages 
  * @returns {{title: String, uid: String}[]} The Array of pages whose title begins with any of the specified initials
@@ -461,6 +468,7 @@ export {
 	getCitekeyPages,
 	getCitekeyPagesWithEditTime,
 	getCurrentCursorLocation,
+	getGraphName,
 	getInitialedPages,
 	importItemMetadata,
 	importItemNotes,
