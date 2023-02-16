@@ -1,5 +1,5 @@
 import { citoidClient, semanticClient, zoteroClient } from "./clients";
-import { makeDictionary, parseDOI, searchEngine } from "../utils";
+import { cleanNewlines, makeDictionary, parseDOI, searchEngine } from "../utils";
 import { emitCustomEvent } from "../events";
 
 
@@ -82,8 +82,18 @@ function categorizeZoteroTags(z_data, tagMap){
  * @returns The clean bibliography string
  */
 function cleanBibliographyHTML(bib){
-	// Grab only the string (strip outer divs)
-	const bibString = bib.match("<div.*?>(.+?)</div>")[1];
+	let bibString = bib;
+
+	// Strip divs
+	const richTags = ["div"];
+	richTags.forEach(tag => {
+		// eslint-disable-next-line no-useless-escape
+		const tagRegex = new RegExp(`<\/?${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag> or </tag>, and the case with modifiers : <tag :modifier>
+		bibString = bibString.replaceAll(tagRegex, "");
+	});
+
+	bibString = cleanNewlines(bibString).trim();
+
 	// Use a textarea element to decode HTML
 	const formatter = document.createElement("textarea");
 	formatter.innerHTML = bibString;
