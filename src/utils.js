@@ -1302,6 +1302,7 @@ export {
 	cleanLibrary,
 	cleanLibraryItem,
 	cleanLibraryPDF,
+	cleanNewlines,
 	cleanSemantic,
 	cleanSemanticItem,
 	compareItemsByYear,
