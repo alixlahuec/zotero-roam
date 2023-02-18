@@ -80,7 +80,7 @@
         "@storybook/react": "^6.5.16",
         "@storybook/test-runner": "^0.9.4",
         "@storybook/testing-library": "^0.0.13",
-        "@testing-library/react": "^12.1.5",
+        "@testing-library/react": "^14.0.0",
         "@testing-library/react-hooks": "^8.0.1",
         "auto-changelog": "^2.4.0",
         "axe-playwright": "^1.1.12",
