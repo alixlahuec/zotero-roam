@@ -1,4 +1,4 @@
-import { searchEngine } from "../../../../utils";
+import { makeDNP, searchEngine } from "../../../../utils";
 
 
 /**
@@ -81,6 +81,7 @@ const queries = {
 			checkInput: (value) => value && value?.constructor === Date,
 			defaultInput: new Date(),
 			inputType: "date",
+			stringify: (value) => makeDNP(value, { brackets: false }),
 			testItem: (item, value) => {
 				if(value == null){
 					return true;
@@ -95,6 +96,7 @@ const queries = {
 			checkInput: (value) => value && value.constructor === Date,
 			defaultInput: new Date(),
 			inputType: "date",
+			stringify: (value) => makeDNP(value, { brackets: false }),
 			testItem: (item, value) => {
 				if(value == null){
 					return true;
@@ -109,6 +111,11 @@ const queries = {
 			checkInput: (value) => value?.constructor === Array && value.length == 2 && value.every(d => d == null || d?.constructor === Date),
 			defaultInput: [null, null],
 			inputType: "date-range",
+			stringify: (value) => {
+				return value.map(val => {
+					return val ? makeDNP(val, { brackets: false }) : "...";
+				}).join("-");
+			},
 			testItem: (item, value) => {
 				const [from, to] = value;
 				let afterFrom
@@ -139,12 +146,14 @@ const queries = {
 			checkInput: (value) => value?.constructor === Array && value.length > 0 && value.every(el => el?.constructor === String),
 			defaultInput: [],
 			inputType: "multiselect",
+			stringify: (value) => value.join(", "),
 			testItem: (item, value) => value.includes(item.itemType)
 		},
 		"is not": {
 			checkInput: (value) => value?.constructor === Array && value.length > 0 && value.every(el => el?.constructor === String),
 			defaultInput: [],
 			inputType: "multiselect",
+			stringify: (value) => value.join(", "),
 			testItem: (item, value) => !value.includes(item.itemType)
 		}
 	},
@@ -195,6 +204,7 @@ const queries = {
 			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
 			inputType: "multiselect",
+			stringify: (value) => value.join(", "),
 			testItem: (item, value = []) => {
 				if(item.tags.length == 0 || value.length == 0){ return false; }
 				return value.every(tag => searchEngine(tag, item.tags, { match: "exact" }));
@@ -204,6 +214,7 @@ const queries = {
 			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
 			inputType: "multiselect",
+			stringify: (value) => value.join(", "),
 			testItem: (item, value = []) => {
 				if(item.tags.length == 0 || value.length == 0){ return false; }
 				return value.some(tag => searchEngine(tag, item.tags, { match: "exact" }));
@@ -212,6 +223,7 @@ const queries = {
 			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
 			inputType: "multiselect",
+			stringify: (value) => value.join(", "),
 			testItem: (item, value) => {
 				if(item.tags.length == 0 || value.length == 0){ return true; }
 				return value.every(tag => !searchEngine(tag, item.tags, { match: "exact" }));
