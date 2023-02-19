@@ -9,14 +9,17 @@ export default {
 };
 
 const Template = (args) => {
+	const { __log_props, __log_level } = args;
+	const log = new ZoteroRoamLog(__log_props, __log_level);
+
 	return <ListWrapper>
-		<LogEntry {...args} />
+		<LogEntry {...args} log={log} />
 	</ListWrapper>;
 };
 
 export const Error = Template.bind({});
 Error.args = {
-	log: new ZoteroRoamLog({
+	__log_props: {
 		origin: "API",
 		message: "Failed to fetch",
 		detail: "404 Error - Not Found",
@@ -26,25 +29,28 @@ Error.args = {
 				message: "Some error message"
 			}
 		}
-	}, "error")
+	},
+	__log_level: "error"
 };
 
 export const Warning = Template.bind({});
 Warning.args = {
-	log: new ZoteroRoamLog({
+	__log_props: {
 		origin: "Shortcuts",
 		message: "Hotkey combo is not valid",
 		context: {
 			combo: "alt++"
 		}
-	}, "warning")
+	},
+	__log_level: "warning"
 };
 
 export const Info = Template.bind({});
 Info.args = {
-	log: new ZoteroRoamLog({
+	__log_props: {
 		origin: "Setup",
 		message: "Extension initialized from roam/js",
 		context: {}
-	}, "info")
+	},
+	__log_level: "info"
 };

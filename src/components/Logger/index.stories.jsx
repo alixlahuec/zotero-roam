@@ -5,32 +5,6 @@ import Logger from ".";
 import { ZoteroRoamLog } from "../../extension";
 
 
-window.zoteroRoam = {
-	logs: [
-		new ZoteroRoamLog({
-			origin: "API",
-			message: "Failed to fetch",
-			detail: "404 Error - Not Found",
-			context: {
-				dataURI: "users/123456/items",
-				error: "Some error message"
-			}
-		}, "error"),
-		new ZoteroRoamLog({
-			origin: "Shortcuts",
-			message: "Hotkey combo is not valid",
-			context: {
-				combo: "alt++"
-			}
-		}, "warning"),
-		new ZoteroRoamLog({
-			origin: "Setup",
-			message: "Extension initialized from roam/js",
-			context: {}
-		}, "info")
-	],
-};
-
 export default {
 	component: Logger,
 	args: {
@@ -39,7 +13,35 @@ export default {
 	}
 };
 
-const Template = (args) => <Logger {...args} />;
+const Template = (args) => {
+	window.zoteroRoam = {
+		logs: [
+			new ZoteroRoamLog({
+				origin: "API",
+				message: "Failed to fetch",
+				detail: "404 Error - Not Found",
+				context: {
+					dataURI: "users/123456/items",
+					error: "Some error message"
+				}
+			}, "error"),
+			new ZoteroRoamLog({
+				origin: "Shortcuts",
+				message: "Hotkey combo is not valid",
+				context: {
+					combo: "alt++"
+				}
+			}, "warning"),
+			new ZoteroRoamLog({
+				origin: "Setup",
+				message: "Extension initialized from roam/js",
+				context: {}
+			}, "info")
+		],
+	};
+
+	return <Logger {...args} />;
+};
 
 export const Default = Template.bind({});
 
