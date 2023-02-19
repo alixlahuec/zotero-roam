@@ -16,7 +16,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
 
       - name: Install packages
         run: npm ci --legacy-peer-deps # To fix failing CI due to webpack-filter-warnings-plugin (https://github.com/storybookjs/storybook/issues/13990)
