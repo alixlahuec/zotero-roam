@@ -48,6 +48,7 @@ jobs:
         uses: chromaui/action@v1
         with:
           buildScriptName: "build-storybook"
+          exitOnceUploaded: true
           onlyChanged: true
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           exitZeroOnChanges: true
