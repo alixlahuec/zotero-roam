@@ -34,6 +34,7 @@
         "build-storybook": "build-storybook --quiet",
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage --junit",
+		"chromatic": "chromatic",
         "version-release": "release-it --config dev/.release-it.json --ci --no-git.tag --no-npm.publish --no-github.release",
         "version-release:latest": "npm run version-release",
         "version-release:beta": "npm run version-release -- --preRelease=beta",

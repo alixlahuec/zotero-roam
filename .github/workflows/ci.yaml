@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v2
 
       - name: Install packages
@@ -43,18 +45,12 @@ jobs:
           reporter: jest-junit
 
       - name: Storybook CI
-        run: |
-          chmod +x "./dev/ci-storybook.sh"
-          ./dev/ci-storybook.sh
-        shell: bash
-
-      - name: Upload test reports (Storybook)
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
+        uses: chromaui/action@v1
         with:
-          name: Storybook
-          path: reports/storybook-junit.xml
-          reporter: jest-junit
+          buildScriptName: "build-storybook"
+          onlyChanged: true
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          exitZeroOnChanges: true
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
