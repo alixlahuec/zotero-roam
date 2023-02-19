@@ -4,35 +4,38 @@ import ClearCacheButton from "Components/ClearCacheButton";
 
 export default {
 	component: ClearCacheButton,
-	args: {
+	parameters: {
 		returnValue: false
-	}
+	},
+	decorators: [
+		(Story, context) => {
+			const { parameters: { returnValue } } = context;
+
+			useEffect(() => {
+				window.zoteroRoam = {
+					isDataCached: () => {
+						return new Promise((resolve) => {
+							setTimeout(() => {
+								resolve(returnValue);
+							}, 800);
+						});
+					}
+				};
+			}, [returnValue]);
+
+			return <Story />;
+		}
+	]
 };
 
-const Template = (args) => {
-	const { returnValue } = args;
-
-	useEffect(() => {
-		window.zoteroRoam = {
-			isDataCached: () => {
-				return new Promise((resolve) => {
-					setTimeout(() => {
-						resolve(returnValue);
-					}, 0);
-				});
-			}
-		};
-	}, [returnValue]);
-
-	return <ClearCacheButton />;
-};
+const Template = () => <ClearCacheButton />;
 
 export const NoData = Template.bind({});
-NoData.args = {
+NoData.parameters = {
 	returnValue: false
 };
 
 export const WithData = Template.bind({});
-WithData.args = {
+NoData.parameters = {
 	returnValue: true
 };
