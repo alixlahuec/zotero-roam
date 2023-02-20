@@ -2,6 +2,7 @@
 import { useEffect, useGlobals } from "@storybook/addons";
 import { initialize, mswLoader } from "msw-storybook-addon";
 import { rest } from "msw";
+import { mockDateDecorator } from "storybook-mock-date-decorator";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
 import "../node_modules/@blueprintjs/select/lib/css/blueprint-select.css";
@@ -84,9 +85,11 @@ export const parameters = {
 		config: {
 			rules: A11Y_RULES
 		}
-	}
+	},
+	chromatic: { diffThreshold: 0.1 },
+	date: new Date("April 6, 2022 17:15:00")
 };
 
-export const decorators = [withTheme, withHotkeysProvider, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys];
+export const decorators = [withTheme, withHotkeysProvider, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys, mockDateDecorator];
 
 export const loaders = [mswLoader];

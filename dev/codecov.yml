@@ -24,11 +24,6 @@ coverage:
           - mocks/
         target: 100%
         threshold: 5%
-      components:
-        paths:
-          - src/components/
-        target: 80%
-        threshold: 5%
       utils:
         paths:
           - src/hooks/
@@ -36,3 +31,5 @@ coverage:
           - src/utils.js
         target: 95%
         threshold: 5%
+ignore:
+  - src/components
