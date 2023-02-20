@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import ClearCacheButton from "Components/ClearCacheButton";
 
 
@@ -12,17 +11,15 @@ export default {
 		(Story, context) => {
 			const { parameters: { returnDataIsCached } } = context;
 
-			useEffect(() => {
-				window.zoteroRoam = {
-					isDataCached: () => {
-						return new Promise((resolve) => {
-							setTimeout(() => {
-								resolve(returnDataIsCached);
-							}, 0);
-						});
-					}
-				};
-			}, [returnDataIsCached]);
+			window.zoteroRoam = {
+				isDataCached: () => {
+					return new Promise((resolve) => {
+						setTimeout(() => {
+							resolve(returnDataIsCached);
+						}, 0);
+					});
+				}
+			};
 
 			return <Story />;
 		}
