@@ -18,7 +18,7 @@ export default {
 						return new Promise((resolve) => {
 							setTimeout(() => {
 								resolve(returnDataIsCached);
-							}, 800);
+							}, 0);
 						});
 					}
 				};
