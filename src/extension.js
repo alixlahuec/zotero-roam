@@ -51,7 +51,7 @@ export default class ZoteroRoam {
 	/* istanbul ignore next */
 	/** Clears the contents of the React Query store from the database. */
 	async clearDataCache(){
-		if(this.#db){
+		if(this.#db !== null){
 			try {
 				await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).clear();
 				this.info({
@@ -84,7 +84,7 @@ export default class ZoteroRoam {
 	 * @returns 
 	 */
 	async isDataCached(){
-		if(this.#db){
+		if(this.#db !== null){
 			try {
 				const cachedClient = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).get(IDB_REACT_QUERY_CLIENT_KEY);
 				return cachedClient !== undefined;
