@@ -22,7 +22,8 @@ const panelConfig = {
 	settings: [
 		{
 			id: "cache-clear",
-			name: "Local data cache",
+			name: "Clear cache",
+			description: "Delete all data cached by the extension, if any.",
 			action: {
 				type: "reactComponent",
 				component: ClearCacheButton
