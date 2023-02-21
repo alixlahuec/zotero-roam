@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { Button } from "@blueprintjs/core";
+
 import useBool from "../../hooks/useBool";
 
 
 function ClearCacheButton(){
 	const [dataIsCached, { set: setDataIsCached }] = useBool(null);
-
-	useEffect(() => {
+	const updateCacheStatus = useCallback(() => {
 		window.zoteroRoam?.isDataCached?.()
-			.then((data_is_cached) => setDataIsCached(data_is_cached));
+			.then(status => setDataIsCached(status))
+			.catch(e => console.error(e));
 	}, [setDataIsCached]);
+
+	useEffect(() => updateCacheStatus(), [updateCacheStatus]);
 
 	const buttonProps = useMemo(() => {
 		if(dataIsCached){
@@ -29,12 +32,8 @@ function ClearCacheButton(){
 
 	const clearCache = useCallback(() => {
 		window.zoteroRoam?.clearDataCache?.()
-			.then(() => window.zoteroRoam?.info?.({
-				context: "Database",
-				message: "Successfully cleared data cache",
-				showToaster: 1500
-			}));
-	}, []);
+			.then(() => updateCacheStatus());
+	}, [updateCacheStatus]);
 
 	return <Button loading={dataIsCached == null} onClick={clearCache} {...buttonProps} />;
 }
