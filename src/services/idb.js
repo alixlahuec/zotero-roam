@@ -46,6 +46,15 @@ class IDBDatabase {
 		this.#db = openDB(this.#dbName, IDB_DATABASE_VERSION, {
 			upgrade: (database, _oldVersion, _newVersion, _transaction) => {
 				STORE_NAMES.forEach((storeName) => database.createObjectStore(storeName));
+			},
+			// TODO: check which idb version provides args
+			blocking: (_currentVersion, _blockedVersion, event) => {
+				const db = event.target.result;
+				db.close();
+				console.log("ZR - Connection closed to unblock new connection");
+			},
+			blocked: () => {
+				console.log("ZR - Connection blocked by another open connection");
 			}
 		});
 	}
