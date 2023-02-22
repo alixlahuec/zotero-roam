@@ -47,14 +47,14 @@ class IDBDatabase {
 			upgrade: (database, _oldVersion, _newVersion, _transaction) => {
 				STORE_NAMES.forEach((storeName) => database.createObjectStore(storeName));
 			},
-			// TODO: check which idb version provides args
-			blocking: (_currentVersion, _blockedVersion, event) => {
-				const db = event.target.result;
-				db.close();
-				console.log("ZR - Connection closed to unblock new connection");
+			blocking: () => {
+				console.log(`${this.#dbName} - Existing connection is blocking another connection, will close`);
+				this.#db
+					.then((db) => db.close())
+					.then(() => console.log(`${this.#dbName} - Connection successfully closed`));
 			},
 			blocked: () => {
-				console.log("ZR - Connection blocked by another open connection");
+				console.log(`${this.#dbName} - Connection blocked by another open connection`);
 			}
 		});
 	}
@@ -65,9 +65,8 @@ class IDBDatabase {
 	async deleteSelf(){
 		try {
 			return await deleteDB(this.#dbName, {
-				// TODO: check which idb version provides args
-				blocked: (_currentVersion, _event) => {
-					console.log("ZR - Database deletion is blocked");
+				blocked: () => {
+					console.log(`${this.#dbName} - Database deletion is blocked`);
 				}
 			});
 		} catch (e) {
