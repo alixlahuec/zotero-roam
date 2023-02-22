@@ -64,7 +64,12 @@ class IDBDatabase {
 	 */
 	async deleteSelf(){
 		try {
-			return await deleteDB(this.#dbName);
+			return await deleteDB(this.#dbName, {
+				// TODO: check which idb version provides args
+				blocked: (_currentVersion, _event) => {
+					console.log("ZR - Database deletion is blocked");
+				}
+			});
 		} catch (e) {
 			console.error(e);
 		}

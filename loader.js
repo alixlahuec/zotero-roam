@@ -71,10 +71,8 @@ function onload({ extensionAPI }){
 function offload(){
 	unregisterSmartblockCommands();
 	unmountExtensionIfExists();
-	window.zoteroRoam.deleteDatabase()
-		.then(() => {
-			delete window.zoteroRoam;
-		});
+	window.zoteroRoam.deleteDatabase(); // TODO: make sure this is correctly setup
+	delete window.zoteroRoam;
 }
 
 export default {
