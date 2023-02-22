@@ -2,8 +2,8 @@ import { useCallback, useState } from "react";
 
 
 /** Custom hook for handling component state that takes a boolean
- * @param {*} initialState 
- * @returns 
+ * @param {Boolean} initialState 
+ * @returns {[Boolean, { set: Function, toggle: Function, on: Function, off: Function}]}
  */
 const useBool = (initialState = false) => {
 	const [state, setState] = useState(initialState);

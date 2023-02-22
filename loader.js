@@ -3,6 +3,7 @@ import { render } from "react-dom";
 import { HotkeysProvider } from "@blueprintjs/core";
 
 import { AppWrapper, queryClient } from "Components/App";
+import ClearCacheButton from "Components/ClearCacheButton";
 import { UserSettingsProvider } from "Components/UserSettings";
 
 import { initialize, setup, setupPortals, unmountExtensionIfExists } from "./src/setup";
@@ -15,6 +16,21 @@ import { unregisterSmartblockCommands } from "./src/smartblocks";
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./src/index.css";
 
+
+const panelConfig = {
+	tabTitle: "zoteroRoam",
+	settings: [
+		{
+			id: "cache-clear",
+			name: "Clear cache",
+			description: "Delete all data cached by the extension, if any.",
+			action: {
+				type: "reactComponent",
+				component: ClearCacheButton
+			}
+		}
+	]
+};
 
 function onload({ extensionAPI }){
 
@@ -33,6 +49,7 @@ function onload({ extensionAPI }){
 		settings
 	});
 
+	extensionAPI.settings.panel.create(panelConfig);
 	setup({ settings });
 
 	render(
