@@ -34,6 +34,7 @@
         "build-storybook": "build-storybook --quiet",
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage --junit",
+        "chromatic": "chromatic",
         "version-release": "release-it --config dev/.release-it.json --ci --no-git.tag --no-npm.publish --no-github.release",
         "version-release:latest": "npm run version-release",
         "version-release:beta": "npm run version-release -- --preRelease=beta",
@@ -56,11 +57,6 @@
                 }
             ]
         ]
-    },
-    "jest-junit": {
-        "includeConsoleOutput": true,
-        "outputDirectory": "reports",
-        "outputName": "storybook-junit.xml"
     },
     "devDependencies": {
         "@babel/core": "^7.20.12",
@@ -86,6 +82,7 @@
         "axe-playwright": "^1.1.12",
         "babel-jest": "^28.1.3",
         "babel-loader": "^9.1.2",
+        "chromatic": "^6.17.0",
         "css-loader": "^6.7.3",
         "css-minimizer-webpack-plugin": "^4.1.0",
         "eslint": "^8.24.0",
@@ -103,6 +100,7 @@
         "msw": "^0.47.3",
         "msw-storybook-addon": "^1.7.0",
         "release-it": "^15.6.0",
+        "storybook-mock-date-decorator": "^1.0.0",
         "style-loader": "^3.3.1",
         "webpack": "^5.75.0",
         "webpack-cli": "^5.0.1",
