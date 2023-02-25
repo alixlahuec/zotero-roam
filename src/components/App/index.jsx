@@ -60,7 +60,11 @@ const QCProvider = ({ children, idbDatabase }) => {
 		persistOptions: {
 			buster: "v1.0",
 			dehydrateOptions: {
-				shouldDehydrateQuery: (query) => shouldQueryBePersisted(query, { cacheEnabled })
+				shouldDehydrateQuery: (query) => {
+					//! DEBUG
+					console.log("Dehydration check: " + "cacheEnabled: " + cacheEnabled + ", query: " + JSON.stringify(query));
+					return shouldQueryBePersisted(query, { cacheEnabled });
+				}
 			},
 			maxAge: 1000 * 60 * 60 * 24 * 3,
 			persister
