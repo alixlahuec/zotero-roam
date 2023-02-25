@@ -55,7 +55,7 @@ const QCProvider = ({ children, idbDatabase }) => {
 	const [{ cacheEnabled }] = useOtherSettings();
 	const persister = useMemo(() => createPersisterWithIDB(idbDatabase), [idbDatabase]);
 
-	const persisterProps = useMemo(() => ({
+	const persisterProps = {
 		onSuccess: onPersisterSuccess,
 		persistOptions: {
 			buster: "v1.0",
@@ -69,7 +69,7 @@ const QCProvider = ({ children, idbDatabase }) => {
 			maxAge: 1000 * 60 * 60 * 24 * 3,
 			persister
 		}
-	}), [cacheEnabled, persister]);
+	};
 
 	return <PersistQueryClientProvider client={queryClient} {...persisterProps}>{children}</PersistQueryClientProvider>;
 
