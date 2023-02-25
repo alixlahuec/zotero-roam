@@ -59,16 +59,12 @@ const QCProvider = ({ children, idbDatabase }) => {
 		persistOptions: {
 			buster: "v1.0",
 			dehydrateOptions: {
-				shouldDehydrateQuery: (query) => {
-					//! DEBUG
-					console.log("Dehydration check: " + "cacheEnabled: " + cacheEnabled);
-					return shouldQueryBePersisted(query, { cacheEnabled });
-				}
+				shouldDehydrateQuery: shouldQueryBePersisted
 			},
 			maxAge: 1000 * 60 * 60 * 24 * 3,
 			persister
 		}
-	}), [cacheEnabled, persister]);
+	}), [persister]);
 
 	const Provider = useMemo(() => cacheEnabled ? PersistQueryClientProvider : QueryClientProvider, [cacheEnabled]);
 

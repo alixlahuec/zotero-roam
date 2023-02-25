@@ -288,50 +288,16 @@ describe("Parsing user shortcuts", () => {
 
 describe("Filtering queries for persistence", () => {
 	const cases = [
-		[
-			[
-				{ queryKey: "permissions/XXXXXX", state: { status: "success" } }
-			], 
-			false
-		],
-		[
-			[
-				{ queryKey: ["permissions", { apikey: "XXXXXX" }], state: { status: "success" } }
-			],
-			false
-		],
-		[
-			[
-				{ queryKey: ["tags", { library: "users/123456" }], state: { status: "error" } }
-			],
-			false
-		],
-		[
-			[
-				{ queryKey: ["tags", { library: "users/123456" }], state: { status: "success" } }
-			],
-			true
-		],
-		[
-			[
-				{ queryKey: ["tags", { library: "users/123456" }], state: { status: "success" } },
-				{ cacheEnabled: true }
-			],
-			true
-		],
-		[
-			[
-				{ queryKey: ["items", { library: "users/123456" }], state: { status: "success" } },
-				{ cacheEnabled: false }
-			],
-			false
-		]
+		[{ queryKey: "permissions/XXXXXX", state: { status: "success" } }, false],
+		[{ queryKey: ["permissions", { apikey: "XXXXXX" }], state: { status: "success" } }, false],
+		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "error" } }, false],
+		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "success" } }, true],
 	];
 
 	test.each(cases)(
 		"%#",
-		(args, is_allowed) => {
-			expect(shouldQueryBePersisted(...args)).toBe(is_allowed);
+		(query, is_allowed) => {
+			expect(shouldQueryBePersisted(query)).toBe(is_allowed);
 		}
 	);
 });
