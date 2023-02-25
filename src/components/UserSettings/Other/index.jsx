@@ -14,6 +14,12 @@ const OtherSettingsProvider = ({ children, init, updater }) => {
 	const setOther = useCallback((updateFn) => {
 		_setOther((prevState) => {
 			const update = updateFn(prevState);
+
+			// If user disabled caching, clear the data cache
+			if(prevState.cacheEnabled === true && update.cacheEnabled === false){
+				window.zoteroRoam?.clearDataCache?.();
+			}
+
 			updater(update);
 			return update;
 		});
