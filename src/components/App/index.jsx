@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { bool, node } from "prop-types";
 import { Component, createContext, useMemo } from "react";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
@@ -54,8 +54,7 @@ const onPersisterSuccess = () => {
 const QCProvider = ({ children, idbDatabase }) => {
 	const [{ cacheEnabled }] = useOtherSettings();
 	const persister = useMemo(() => createPersisterWithIDB(idbDatabase), [idbDatabase]);
-
-	const persisterProps = {
+	const persisterProps = useMemo(() => ({
 		onSuccess: onPersisterSuccess,
 		persistOptions: {
 			buster: "v1.0",
@@ -69,9 +68,11 @@ const QCProvider = ({ children, idbDatabase }) => {
 			maxAge: 1000 * 60 * 60 * 24 * 3,
 			persister
 		}
-	};
+	}), [cacheEnabled, persister]);
 
-	return <PersistQueryClientProvider client={queryClient} {...persisterProps}>{children}</PersistQueryClientProvider>;
+	const Provider = useMemo(() => cacheEnabled ? PersistQueryClientProvider : QueryClientProvider, [cacheEnabled]);
+
+	return <Provider client={queryClient} {...persisterProps}>{children}</Provider>;
 
 };
 QCProvider.propTypes = {
