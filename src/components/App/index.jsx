@@ -62,7 +62,7 @@ const QCProvider = ({ children, idbDatabase }) => {
 			dehydrateOptions: {
 				shouldDehydrateQuery: (query) => {
 					//! DEBUG
-					console.log("Dehydration check: " + "cacheEnabled: " + cacheEnabled + ", query: " + JSON.stringify(query));
+					console.log("Dehydration check: " + "cacheEnabled: " + cacheEnabled);
 					return shouldQueryBePersisted(query, { cacheEnabled });
 				}
 			},
