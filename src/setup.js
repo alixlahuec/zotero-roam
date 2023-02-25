@@ -167,10 +167,15 @@ export function createPersisterWithIDB(database){
 
 /** Conducts checks on a query to determine if it should be persisted
  * @param {*} query - The targeted React Query query
+ * @param {{cacheEnabled: Boolean}} config - Additional context
  * @returns 
  */
-export function shouldQueryBePersisted(query){
+export function shouldQueryBePersisted(query, { cacheEnabled = true } = {}){
 	const { queryKey } = query;
+
+	if(!cacheEnabled){
+		return false;
+	}
 
 	if(queryKey.includes("permissions") || queryKey[0] == "permissions"){
 		return false;

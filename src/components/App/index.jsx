@@ -54,11 +54,7 @@ const onPersisterSuccess = () => {
 const QCProvider = ({ children, idbDatabase }) => {
 	const [{ cacheEnabled }] = useOtherSettings();
 	const persister = useMemo(() => createPersisterWithIDB(idbDatabase), [idbDatabase]);
-	const shouldDehydrateQuery = useCallback((query) => {
-		return cacheEnabled
-			? shouldQueryBePersisted(query)
-			: false;
-	}, [cacheEnabled]);
+	const shouldDehydrateQuery = useCallback((query) => shouldQueryBePersisted(query, { cacheEnabled }), [cacheEnabled]);
 
 	const persisterProps = useMemo(() => ({
 		onSuccess: onPersisterSuccess,
