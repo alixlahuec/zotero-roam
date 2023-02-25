@@ -185,8 +185,8 @@ class App extends Component {
 
 		return (
 			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>
-				<QCProvider idbDatabase={idbDatabase}>
-					<ExtensionContext.Provider value={extension}>
+				<ExtensionContext.Provider value={extension}>
+					<QCProvider idbDatabase={idbDatabase}>
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
 							openLogger={this.openLogger}
@@ -194,8 +194,6 @@ class App extends Component {
 							openSettingsPanel={this.openSettings}
 							status={status} 
 							toggleExtension={this.toggleExtension} />
-						<Logger isOpen={isLoggerOpen} onClose={this.closeLogger} />
-						<SettingsDialog isOpen={isSettingsPanelOpen} onClose={this.closeSettings} />
 						<RoamCitekeysProvider>
 							{status == "on" ? <GraphWatcher /> : null}
 							<SearchPanel
@@ -204,8 +202,10 @@ class App extends Component {
 								status={status} />
 							<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
 						</RoamCitekeysProvider>
-					</ExtensionContext.Provider>
-				</QCProvider>
+					</QCProvider>
+					<Logger isOpen={isLoggerOpen} onClose={this.closeLogger} />
+					<SettingsDialog isOpen={isSettingsPanelOpen} onClose={this.closeSettings} />
+				</ExtensionContext.Provider>
 			</HotkeysTarget2>
 		);
 	}
