@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import { bool, node } from "prop-types";
-import { Component, createContext, useCallback, useMemo } from "react";
+import { Component, createContext, useMemo } from "react";
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
@@ -54,19 +54,18 @@ const onPersisterSuccess = () => {
 const QCProvider = ({ children, idbDatabase }) => {
 	const [{ cacheEnabled }] = useOtherSettings();
 	const persister = useMemo(() => createPersisterWithIDB(idbDatabase), [idbDatabase]);
-	const shouldDehydrateQuery = useCallback((query) => shouldQueryBePersisted(query, { cacheEnabled }), [cacheEnabled]);
 
 	const persisterProps = useMemo(() => ({
 		onSuccess: onPersisterSuccess,
 		persistOptions: {
 			buster: "v1.0",
 			dehydrateOptions: {
-				shouldDehydrateQuery
+				shouldDehydrateQuery: (query) => shouldQueryBePersisted(query, { cacheEnabled })
 			},
 			maxAge: 1000 * 60 * 60 * 24 * 3,
 			persister
 		}
-	}), [persister, shouldDehydrateQuery]);
+	}), [cacheEnabled, persister]);
 
 	return <PersistQueryClientProvider client={queryClient} {...persisterProps}>{children}</PersistQueryClientProvider>;
 
