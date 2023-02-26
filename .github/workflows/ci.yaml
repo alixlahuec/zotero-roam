@@ -10,6 +10,8 @@ jobs:
   commit-checks:
     name: Lint, test, and build
     runs-on: ubuntu-latest
+    env:
+      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
     steps:
       - name: Checkout code

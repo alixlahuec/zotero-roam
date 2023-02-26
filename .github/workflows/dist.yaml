@@ -8,6 +8,8 @@ jobs:
   runTests:
     name: Run tests suites, and upload coverage reports
     runs-on: ubuntu-latest
+    env:
+      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
     steps:
       - uses: actions/checkout@v2
