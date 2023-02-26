@@ -254,7 +254,7 @@ function getCurrentCursorLocation(){
 }
 
 /** Retrieve the name of the current Roam graph.
- * @returns 
+ * @returns {String} The name of the graph
  */
 function getGraphName(){
 	return window.roamAlphaAPI.graph.name;

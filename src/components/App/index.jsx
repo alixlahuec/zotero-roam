@@ -1,19 +1,18 @@
 /* istanbul ignore file */
-import { bool, node } from "prop-types";
+import { bool, instanceOf, node } from "prop-types";
 import { Component, createContext, useMemo } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import Dashboard from "Components/Dashboard";
 import ExtensionIcon from "Components/ExtensionIcon";
 import GraphWatcher from "Components/GraphWatcher";
 import Logger from "Components/Logger";
+import { RoamCitekeysProvider } from "Components/RoamCitekeysContext";
 import SearchPanel from "Components/SearchPanel";
 import { SettingsDialog } from "Components/UserSettings";
-
-import { RoamCitekeysProvider } from "Components/RoamCitekeysContext";
 import { useOtherSettings } from "Components/UserSettings/Other";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
@@ -43,19 +42,16 @@ const queryClient = new QueryClient({
 	}
 });
 
-/* istanbul ignore next */
-const onPersisterSuccess = () => {
-	window.zoteroRoam?.info?.({
-		origin: "Database",
-		message: "Initialization complete"
-	});
-};
-
 const QCProvider = ({ children, idbDatabase }) => {
 	const [{ cacheEnabled }] = useOtherSettings();
 	const persister = useMemo(() => createPersisterWithIDB(idbDatabase), [idbDatabase]);
 	const persisterProps = useMemo(() => ({
-		onSuccess: onPersisterSuccess,
+		onSuccess: () => {
+			window.zoteroRoam?.info?.({
+				origin: "Database",
+				message: "Initialization complete"
+			});
+		},
 		persistOptions: {
 			buster: "v1.0",
 			dehydrateOptions: {
@@ -281,7 +277,7 @@ class App extends Component {
 App.propTypes = {
 	autoload: bool,
 	extension: customPropTypes.extensionType,
-	idbDatabase: isIDBDatabase,
+	idbDatabase: instanceOf(IDBDatabase),
 	requests: customPropTypes.requestsType,
 	shortcuts: customPropTypes.shortcutsSettingsType
 };

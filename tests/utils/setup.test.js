@@ -291,7 +291,9 @@ describe("Filtering queries for persistence", () => {
 		[{ queryKey: "permissions/XXXXXX", state: { status: "success" } }, false],
 		[{ queryKey: ["permissions", { apikey: "XXXXXX" }], state: { status: "success" } }, false],
 		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "error" } }, false],
-		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "success" } }, true],
+		[{ queryKey: ["collections", { library: "users/123456" }], state: { status: "success" } }, true],
+		[{ queryKey: ["items", { library: "users/123456" }], state: { status: "success" } }, true],
+		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "success" } }, true]
 	];
 
 	test.each(cases)(

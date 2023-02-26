@@ -6,10 +6,11 @@ import { AppWrapper, queryClient } from "Components/App";
 import { UserSettingsProvider } from "Components/UserSettings";
 import zrToaster from "Components/ExtensionToaster";
 
-import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./constants";
-import { initialize, setup, setupPortals  } from "./setup";
 import IDBDatabase from "./services/idb";
 import ZoteroRoam from "./extension";
+import { initialize, setup, setupPortals } from "./setup";
+
+import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./constants";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./index.css";

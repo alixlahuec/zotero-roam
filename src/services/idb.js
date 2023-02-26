@@ -8,23 +8,8 @@ const STORE_NAMES = [
 	IDB_REACT_QUERY_STORE_NAME
 ];
 
-/* istanbul ignore next */
-/** Executes type validation against the IDBDatabase constructor
- * @param {*} props - The props passed to the component
- * @param {*} propName - The name of the prop being evaluated
- * @param {*} componentName - The name of the component
- * @returns 
- */
-const isIDBDatabase = (props, propName, componentName) => {
-	if(!props[propName].constructor === IDBDatabase){
-		return new Error(
-			`Invalid prop ${propName} passed to ${componentName}. Expected a valid email.`
-		);
-	}
-};
-
 /**
- * Opens the extension's interface with IndexedDB. This is the basis for managing caching and persistence with React Query.
+ * Opens the extension's interface with IndexedDB. This is the basis for managing local caching with React Query.
  */
 class IDBDatabase {
 	/** @private */
@@ -48,13 +33,13 @@ class IDBDatabase {
 				STORE_NAMES.forEach((storeName) => database.createObjectStore(storeName));
 			},
 			blocking: () => {
-				console.log(`${this.#dbName} - Existing connection is blocking another connection, will close`);
+				console.log(`${this.#dbName} - Connection is blocking another, will close`);
 				this.#db
 					.then((db) => db.close())
 					.then(() => console.log(`${this.#dbName} - Connection successfully closed`));
 			},
 			blocked: () => {
-				console.log(`${this.#dbName} - Connection blocked by another open connection`);
+				console.log(`${this.#dbName} - Connection blocked by another`);
 			}
 		});
 	}
@@ -98,4 +83,3 @@ class IDBDatabase {
 }
 
 export default IDBDatabase;
-export { isIDBDatabase };
