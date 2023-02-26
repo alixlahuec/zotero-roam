@@ -33,6 +33,7 @@ const events = [
 	 * Signals a tag deletion has terminated
 	 * @event zotero-roam:tags-deleted
 	 * @type {object}
+	 * @property {*} data - The data received, if successful
      * @property {{tags: String[]}} args - The input provided to the deleting function
 	 * @property {error|null} error - The error thrown during the import, if failed
 	 * @property {String} library - The path of the targeted library
