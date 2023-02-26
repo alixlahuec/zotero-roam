@@ -43,38 +43,42 @@ const queryClient = new QueryClient({
 	}
 });
 
-const QCProvider = ({ children, idbDatabase, usePersister }) => {
-	const Provider = usePersister ? PersistQueryClientProvider : QueryClientProvider;
+/* istanbul ignore next */
+const onPersisterSuccess = () => {
+	window.zoteroRoam?.info?.({
+		origin: "Database",
+		message: "Initialization complete"
+	});
+};
 
+const QCProvider = ({ children, idbDatabase }) => {
+	const [{ cacheEnabled }] = useOtherSettings();
+	const persister = useMemo(() => createPersisterWithIDB(idbDatabase), [idbDatabase]);
 	const persisterProps = useMemo(() => ({
-		onSuccess: () => {
-			window.zoteroRoam?.info?.({
-				origin: "Database",
-				message: "Initialization complete"
-			});
-		},
+		onSuccess: onPersisterSuccess,
 		persistOptions: {
 			buster: "v1.0",
 			dehydrateOptions: {
-				shouldDehydrateQuery: (query) => shouldQueryBePersisted(query),
+				shouldDehydrateQuery: shouldQueryBePersisted
 			},
 			maxAge: 1000 * 60 * 60 * 24 * 3,
-			persister: createPersisterWithIDB(idbDatabase)
+			persister
 		}
-	}), [idbDatabase]);
+	}), [persister]);
+
+	const Provider = useMemo(() => cacheEnabled ? PersistQueryClientProvider : QueryClientProvider, [cacheEnabled]);
 
 	return <Provider client={queryClient} {...persisterProps}>{children}</Provider>;
 
 };
 QCProvider.propTypes = {
 	children: node,
-	idbDatabase: isIDBDatabase,
-	usePersister: bool
+	idbDatabase: isIDBDatabase
 };
 
 // https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component
 const AppWrapper = (props) => {
-	const [otherSettings] = useOtherSettings();
+	const [{ autoload }] = useOtherSettings();
 	const [requests] = useRequestsSettings();
 	const [shortcuts] = useShortcutsSettings();
 
@@ -82,7 +86,7 @@ const AppWrapper = (props) => {
 	// TODO: move validation step upstream
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
-	return <App autoload={otherSettings.autoload} cacheEnabled={otherSettings.cacheEnabled} requests={requests} shortcuts={sanitizedShortcuts} {...props} />;
+	return <App autoload={autoload} requests={requests} shortcuts={sanitizedShortcuts} {...props} />;
 };
 
 class App extends Component {
@@ -100,8 +104,7 @@ class App extends Component {
 					: this.props.autoload 
 						? "on" 
 						: "off"
-			),
-			usePersister: this.props.cacheEnabled
+			)
 		};
 		this.toggleExtension = this.toggleExtension.bind(this);
 		this.closeSearchPanel = this.closeSearchPanel.bind(this);
@@ -162,7 +165,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { status, usePersister, isDashboardOpen, isLoggerOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
+		const { status, isDashboardOpen, isLoggerOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
 		const { extension, idbDatabase } = this.props;
 
 		const hotkeys = Object.keys(this.shortcutsConfig)
@@ -182,8 +185,8 @@ class App extends Component {
 
 		return (
 			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>
-				<QCProvider idbDatabase={idbDatabase} usePersister={usePersister}>
-					<ExtensionContext.Provider value={extension}>
+				<ExtensionContext.Provider value={extension}>
+					<QCProvider idbDatabase={idbDatabase}>
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
 							openLogger={this.openLogger}
@@ -191,8 +194,6 @@ class App extends Component {
 							openSettingsPanel={this.openSettings}
 							status={status} 
 							toggleExtension={this.toggleExtension} />
-						<Logger isOpen={isLoggerOpen} onClose={this.closeLogger} />
-						<SettingsDialog isOpen={isSettingsPanelOpen} onClose={this.closeSettings} />
 						<RoamCitekeysProvider>
 							{status == "on" ? <GraphWatcher /> : null}
 							<SearchPanel
@@ -201,8 +202,10 @@ class App extends Component {
 								status={status} />
 							<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
 						</RoamCitekeysProvider>
-					</ExtensionContext.Provider>
-				</QCProvider>
+					</QCProvider>
+					<Logger isOpen={isLoggerOpen} onClose={this.closeLogger} />
+					<SettingsDialog isOpen={isSettingsPanelOpen} onClose={this.closeSettings} />
+				</ExtensionContext.Provider>
 			</HotkeysTarget2>
 		);
 	}
@@ -277,7 +280,6 @@ class App extends Component {
 }
 App.propTypes = {
 	autoload: bool,
-	cacheEnabled: bool,
 	extension: customPropTypes.extensionType,
 	idbDatabase: isIDBDatabase,
 	requests: customPropTypes.requestsType,
