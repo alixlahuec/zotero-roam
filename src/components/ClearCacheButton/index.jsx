@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { Button } from "@blueprintjs/core";
 
 import useBool from "../../hooks/useBool";
+import { cleanErrorIfAxios } from "../../api/utils";
 
 
 function ClearCacheButton(){
@@ -9,7 +10,15 @@ function ClearCacheButton(){
 	const updateCacheStatus = useCallback(() => {
 		window.zoteroRoam?.isDataCached?.()
 			.then(status => setDataIsCached(status))
-			.catch(e => console.error(e));
+			.catch(e => {
+				window.zoteroRoam?.error?.({
+					origin: "Cache",
+					message: "Failed to update caching status",
+					detail: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+			});
 	}, [setDataIsCached]);
 
 	useEffect(() => updateCacheStatus(), [updateCacheStatus]);
