@@ -34,24 +34,22 @@ function LoggerList({ items }){
 	return <div className="zr-logger--datalist">
 		{visibleItems.length == 0
 			? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />
-			: <>
-				<ListWrapper>
-					{visibleItems
-						.sort((a, b) => a.timestamp > b.timestamp ? -1 : 1)
-						.slice(...pageLimits)
-						.map((entry, j) => <LogEntry key={j} log={entry} />)}
-				</ListWrapper>
-				<Toolbar>
-					<Pagination
-						arrows="first" 
-						currentPage={currentPage}
-						itemsPerPage={itemsPerPage}
-						nbItems={visibleItems.length} 
-						setCurrentPage={setCurrentPage} 
-					/>
-					<Switch aria-checked={showAllEntries} checked={showAllEntries} label="Show all entries" role="switch" onChange={toggleShowAll} />
-				</Toolbar>
-			</>}
+			: <ListWrapper>
+				{visibleItems
+					.sort((a, b) => a.timestamp > b.timestamp ? -1 : 1)
+					.slice(...pageLimits)
+					.map((entry, j) => <LogEntry key={j} log={entry} />)}
+			</ListWrapper>}
+		<Toolbar>
+			<Pagination
+				arrows="first"
+				currentPage={currentPage}
+				itemsPerPage={itemsPerPage}
+				nbItems={visibleItems.length}
+				setCurrentPage={setCurrentPage}
+			/>
+			<Switch aria-checked={showAllEntries} checked={showAllEntries} label="Show all entries" role="switch" onChange={toggleShowAll} />
+		</Toolbar>
 	</div>;
 }
 LoggerList.propTypes = {
