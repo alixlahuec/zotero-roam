@@ -84,7 +84,11 @@ function emitCustomEvent(type, detail = {}, target = document){
 		const e = new CustomEvent(`zotero-roam:${type}`, { bubbles: true, cancelable: true, detail: detail });
 		target.dispatchEvent(e);
 	} else {
-		console.warn(`Event type "${type}" is not recognized`);
+		window.zoteroRoam?.warn?.({
+			origin: "Extension",
+			message: `Event type "${type}" not recognized`,
+			context: detail
+		});
 	}
 }
 
