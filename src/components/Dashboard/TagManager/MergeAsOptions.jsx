@@ -43,8 +43,7 @@ function MergeAsCustom({ disabled, library, tags }){
 			library,
 			tags
 		}, {
-			onSettled: (data, error, variables) => console.log(data, error, variables),
-			onSuccess: (_data, _variables, _context) => closeDialog()
+			onSuccess: () => closeDialog()
 		});
 	}, [closeDialog, library, mutate, tags, value]);
 
@@ -97,8 +96,6 @@ function MergeAsOptions({ library, options }) {
 			into: value,
 			library,
 			tags: tagList
-		}, {
-			onSettled: (data, error, variables) => console.log(data, error, variables)
 		});
 	}, [library, mutate, tagList]);
 
