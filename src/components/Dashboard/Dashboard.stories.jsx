@@ -33,7 +33,7 @@ const Template = (args) => <Dashboard {...args} />;
 export const Default = Template.bind({});
 Default.parameters = {
 	chromatic: {
-		disabled: true
+		disableSnapshot: true
 	}
 };
 

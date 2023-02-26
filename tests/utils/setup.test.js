@@ -1,5 +1,5 @@
 import { TYPEMAP_DEFAULT } from "../../src/constants";
-import { analyzeUserRequests, setupInitialSettings, validateShortcuts } from "../../src/setup";
+import { analyzeUserRequests, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 
@@ -227,6 +227,7 @@ describe("Parsing initial user settings", () => {
 		},
 		other: {
 			autoload: false,
+			cacheEnabled: false,
 			darkTheme: false,
 			render_inline: false
 		},
@@ -281,6 +282,24 @@ describe("Parsing user shortcuts", () => {
 		(input, expectation) => {
 			expect(validateShortcuts(input))
 				.toEqual(expectation);
+		}
+	);
+});
+
+describe("Filtering queries for persistence", () => {
+	const cases = [
+		[{ queryKey: "permissions/XXXXXX", state: { status: "success" } }, false],
+		[{ queryKey: ["permissions", { apikey: "XXXXXX" }], state: { status: "success" } }, false],
+		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "error" } }, false],
+		[{ queryKey: ["collections", { library: "users/123456" }], state: { status: "success" } }, true],
+		[{ queryKey: ["items", { library: "users/123456" }], state: { status: "success" } }, true],
+		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "success" } }, true]
+	];
+
+	test.each(cases)(
+		"%#",
+		(query, is_allowed) => {
+			expect(shouldQueryBePersisted(query)).toBe(is_allowed);
 		}
 	);
 });

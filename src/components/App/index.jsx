@@ -1,26 +1,27 @@
 /* istanbul ignore file */
-import { bool } from "prop-types";
+import { bool, instanceOf, node } from "prop-types";
 import { Component, createContext, useMemo } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
-import { validateShortcuts } from "../../../src/setup";
 import Dashboard from "Components/Dashboard";
 import ExtensionIcon from "Components/ExtensionIcon";
 import GraphWatcher from "Components/GraphWatcher";
-import SearchPanel from "Components/SearchPanel";
-
+import Logger from "Components/Logger";
 import { RoamCitekeysProvider } from "Components/RoamCitekeysContext";
+import SearchPanel from "Components/SearchPanel";
+import { SettingsDialog } from "Components/UserSettings";
 import { useOtherSettings } from "Components/UserSettings/Other";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
+import { isIDBDatabase } from "../../services/idb";
+import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } from "../../setup";
 
 import * as customPropTypes from "../../propTypes";
-import { SettingsDialog } from "../UserSettings";
-import Logger from "Components/Logger";
 
 
 const openSearchCommand = "zoteroRoam : Open Search Panel";
@@ -31,6 +32,7 @@ const ExtensionContext = createContext();
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
+			cacheTime: Infinity,
 			refetchOnWindowFocus: false,
 			refetchOnMount: false,
 			refetchIntervalInBackground: true,
@@ -40,9 +42,39 @@ const queryClient = new QueryClient({
 	}
 });
 
+const QCProvider = ({ children, idbDatabase }) => {
+	const [{ cacheEnabled }] = useOtherSettings();
+	const persister = useMemo(() => createPersisterWithIDB(idbDatabase), [idbDatabase]);
+	const persisterProps = useMemo(() => ({
+		onSuccess: () => {
+			window.zoteroRoam?.info?.({
+				origin: "Database",
+				message: "Initialization complete"
+			});
+		},
+		persistOptions: {
+			buster: "v1.0",
+			dehydrateOptions: {
+				shouldDehydrateQuery: shouldQueryBePersisted
+			},
+			maxAge: 1000 * 60 * 60 * 24 * 3,
+			persister
+		}
+	}), [persister]);
+
+	const Provider = useMemo(() => cacheEnabled ? PersistQueryClientProvider : QueryClientProvider, [cacheEnabled]);
+
+	return <Provider client={queryClient} {...persisterProps}>{children}</Provider>;
+
+};
+QCProvider.propTypes = {
+	children: node,
+	idbDatabase: isIDBDatabase
+};
+
 // https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component
 const AppWrapper = (props) => {
-	const [otherSettings] = useOtherSettings();
+	const [{ autoload }] = useOtherSettings();
 	const [requests] = useRequestsSettings();
 	const [shortcuts] = useShortcutsSettings();
 
@@ -50,7 +82,7 @@ const AppWrapper = (props) => {
 	// TODO: move validation step upstream
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
-	return <App autoload={otherSettings.autoload} requests={requests} shortcuts={sanitizedShortcuts} {...props} />;
+	return <App autoload={autoload} requests={requests} shortcuts={sanitizedShortcuts} {...props} />;
 };
 
 class App extends Component {
@@ -67,7 +99,8 @@ class App extends Component {
 					? "disabled"
 					: this.props.autoload 
 						? "on" 
-						: "off")
+						: "off"
+			)
 		};
 		this.toggleExtension = this.toggleExtension.bind(this);
 		this.closeSearchPanel = this.closeSearchPanel.bind(this);
@@ -129,7 +162,7 @@ class App extends Component {
 
 	render() {
 		const { status, isDashboardOpen, isLoggerOpen, isSearchPanelOpen, isSettingsPanelOpen } = this.state;
-		const { extension } = this.props;
+		const { extension, idbDatabase } = this.props;
 
 		const hotkeys = Object.keys(this.shortcutsConfig)
 			.map(cmd => {
@@ -145,11 +178,11 @@ class App extends Component {
 					return false;
 				}
 			}).filter(Boolean);
-		
+
 		return (
 			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>
-				<QueryClientProvider client={queryClient}>
-					<ExtensionContext.Provider value={extension}>
+				<ExtensionContext.Provider value={extension}>
+					<QCProvider idbDatabase={idbDatabase}>
 						<ExtensionIcon
 							openDashboard={this.openDashboard}
 							openLogger={this.openLogger}
@@ -157,8 +190,6 @@ class App extends Component {
 							openSettingsPanel={this.openSettings}
 							status={status} 
 							toggleExtension={this.toggleExtension} />
-						<Logger isOpen={isLoggerOpen} onClose={this.closeLogger} />
-						<SettingsDialog isOpen={isSettingsPanelOpen} onClose={this.closeSettings} />
 						<RoamCitekeysProvider>
 							{status == "on" ? <GraphWatcher /> : null}
 							<SearchPanel
@@ -167,8 +198,10 @@ class App extends Component {
 								status={status} />
 							<Dashboard isOpen={isDashboardOpen} onClose={this.closeDashboard} />
 						</RoamCitekeysProvider>
-					</ExtensionContext.Provider>
-				</QueryClientProvider>
+					</QCProvider>
+					<Logger isOpen={isLoggerOpen} onClose={this.closeLogger} />
+					<SettingsDialog isOpen={isSettingsPanelOpen} onClose={this.closeSettings} />
+				</ExtensionContext.Provider>
 			</HotkeysTarget2>
 		);
 	}
@@ -244,6 +277,7 @@ class App extends Component {
 App.propTypes = {
 	autoload: bool,
 	extension: customPropTypes.extensionType,
+	idbDatabase: instanceOf(IDBDatabase),
 	requests: customPropTypes.requestsType,
 	shortcuts: customPropTypes.shortcutsSettingsType
 };

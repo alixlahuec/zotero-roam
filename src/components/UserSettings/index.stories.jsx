@@ -61,6 +61,7 @@ export default {
 			},
 			other: {
 				autoload: true,
+				cacheEnabled: false,
 				darkTheme: false,
 				render_inline: true
 			},
@@ -82,7 +83,7 @@ export const Default = Template.bind({});
 export const WithInteractions = Template.bind({});
 WithInteractions.parameters = {
 	chromatic: {
-		disabled: true
+		disableSnapshot: true
 	}
 };
 WithInteractions.play = async({ canvasElement, parameters }) => {
