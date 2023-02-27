@@ -26,8 +26,6 @@ function AutoMerge({ library, suggestion }){
 			into: recommend,
 			library,
 			tags: [...use.roam, ...use.zotero]
-		}, {
-			onSettled: (data, error, variables) => console.log(data, error, variables)
 		});
 	}, [library, mutate, recommend, use]);
 

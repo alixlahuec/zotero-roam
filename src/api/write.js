@@ -15,7 +15,7 @@ const useDeleteTags = () => {
 
 		return deleteTags(tags, { apikey, path }, version);
 	}, {
-		onSettled: (_data, error, variables, _context) => {
+		onSettled: (data, error, variables, _context) => {
 			const { library: { path }, tags } = variables;
 
 			if(!error){
@@ -29,6 +29,7 @@ const useDeleteTags = () => {
 			}
 
 			emitCustomEvent("tags-deleted", {
+				data,
 				error,
 				library: path,
 				tags

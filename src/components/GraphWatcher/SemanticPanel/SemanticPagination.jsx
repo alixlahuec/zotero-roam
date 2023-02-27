@@ -41,7 +41,13 @@ function filter(items, filterList){
 			arr = arr.filter(item => item.doi);
 			break;
 		default:
-			console.warning("Filter not recognized: " + op.value);
+			window.zoteroRoam?.warn?.({
+				origin: "Interface",
+				message: `Filter not recognized: ${op.value}`,
+				context: {
+					...op
+				}
+			});
 		}
 	});
 

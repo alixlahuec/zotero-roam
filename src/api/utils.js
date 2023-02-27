@@ -142,10 +142,15 @@ async function deleteTags(tags, library, version){
 	// https://www.zotero.org/support/dev/web_api/v3/write_requests#deleting_multiple_tags
 	/* istanbul ignore if */
 	if(tags.length > 50){
-		console.warn("Only 50 Zotero tags can be deleted at once : any additional tags provided will be ignored.");
+		window.zoteroRoam?.warn?.({
+			origin: "API",
+			message: "API limits exceeded",
+			detail: "Only 50 Zotero tags can be deleted at once. Any additional tags selected will be ignored."
+		});
 	}
 
 	const tagList = tags.slice(0,50).map(t => encodeURIComponent(t)).join(" || ");
+
 	return await zoteroClient.delete(
 		`${path}/tags`, 
 		{ 

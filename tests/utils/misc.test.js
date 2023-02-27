@@ -44,10 +44,17 @@ describe("Executing a function by name", () => {
 	});
 });
 
-test("Event emitter warns about unrecognized event names", () => {
-	console.warn = jest.fn();
-	emitCustomEvent("unrecognized-event-name");
-	expect(console.warn).toHaveBeenCalled();
+describe("Event emitter warns about unrecognized event names", () => {
+	beforeEach(() => {
+		window.zoteroRoam = {
+			warn: jest.fn()
+		};
+	});
+
+	test("The warn method is called, if defined", () => {
+		emitCustomEvent("unrecognized-event-name");
+		expect(window.zoteroRoam.warn).toHaveBeenCalled();
+	});
 });
 
 describe("Checking for changes in a list of nodes", () => {

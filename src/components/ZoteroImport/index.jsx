@@ -43,7 +43,7 @@ const ImportButton = memo(function ImportButton(props) {
 			library, 
 			tags 
 		}, {
-			onSettled: (_data, _error, _variables) => resetImport()
+			onSuccess: () => resetImport()
 		});
 	}, [citoids, importProps, mutate, resetImport]);
 

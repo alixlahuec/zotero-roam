@@ -13,7 +13,13 @@ async function addBlockObject(parentUID, object, order = 0) {
 	const { string: blockString, children = [], ...opts } = object;
 	
 	if(typeof(blockString) === "undefined"){
-		console.log(object);
+		window.zoteroRoam?.error?.({
+			origin: "Metadata",
+			message: "Bad object received",
+			detail: {
+				object
+			}
+		});
 		throw new Error("All blocks passed as an Object must have a string property.");
 	} else {
 		const blockUID = await createRoamBlock(
@@ -34,12 +40,24 @@ async function addBlockObject(parentUID, object, order = 0) {
 					// eslint-disable-next-line no-await-in-loop
 					await createRoamBlock(blockUID, children[j], order, {});
 				} else {
-					console.log(children[j]);
+					window.zoteroRoam?.error?.({
+						origin: "Metadata",
+						message: "Bad element received",
+						detail: {
+							element: children[j]
+						}
+					});
 					throw new Error(`All children array items should be of type String or Object, not ${children[j].constructor.name}`);
 				}
 			}
 		} else {
-			console.log(object);
+			window.zoteroRoam?.error?.({
+				origin: "Metadata",
+				message: "Bad object received",
+				detail: {
+					object
+				}
+			});
 			throw new Error(`If provided, the 'children' property of a block should be an Array, not ${children.constructor.name}`);
 		}
 	}
@@ -73,7 +91,13 @@ async function addBlocksArray(parentUID, arr, order = 0){
 					// eslint-disable-next-line no-await-in-loop
 					await createRoamBlock(parentUID, arr[k], order, {});
 				} else {
-					console.log(arr[k]);
+					window.zoteroRoam?.error?.({
+						origin: "Metadata",
+						message: "Bad element received",
+						detail: {
+							element: arr[k]
+						}
+					});
 					throw new Error(`All array items should be of type String or Object, not ${arr[k].constructor.name}`);
 				}
 			}
@@ -81,14 +105,17 @@ async function addBlocksArray(parentUID, arr, order = 0){
 				...defaultOutcome, 
 				success: true });
 		} catch(e) {
-			console.error(e);
 			return Promise.resolve({ 
 				...defaultOutcome,
 				error: e, 
-				success: false });
+				success: false
+			});
 		}
 	} else {
-		console.warn("The metadata array received was empty. Depending on your configuration, this may or may not be expected.");
+		window.zoteroRoam?.warn?.({
+			origin: "Metadata",
+			message: "Empty metadata array received"
+		});
 		return Promise.resolve(defaultOutcome);
 	}
 }
