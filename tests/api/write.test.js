@@ -85,6 +85,7 @@ describe("Mutation hooks for the Zotero API", () => {
 			);
 
 			expect(document.dispatchEvent.mock.calls[0][0].detail).toEqual({
+				data: result.current.data,
 				error: null,
 				library: userLibrary.path,
 				tags: ["systems"]
