@@ -91,52 +91,49 @@ WithInteractions.play = async({ canvasElement, parameters }) => {
 	const canvas = within(canvasElement);
 	const frame = within(canvasElement.parentElement);
 
+	const navigateToTab = async(name) => {
+		const tab = canvas.getByRole("tab", { name });
+		await userEvent.click(tab);
+	};
 
-	await expect(canvas.getByText("Settings for zoteroRoam"))
-		.toBeInTheDocument();
-
+	// Other settings
+	await navigateToTab("Other");
 
 	const autoloadSwitch = canvas.getByRole("switch", { name: "Toggle 'autoload' setting" });
-
 	await expect(autoloadSwitch.checked)
 		.toBe(userSettings.other.autoload);
-
 	await userEvent.click(autoloadSwitch);
-
 	await expect(autoloadSwitch.checked)
 		.toBe(!userSettings.other.autoload);
 
-    
-	const autocompleteTrigger = canvas.getByTitle("Enter a trigger for the 'autocomplete' feature");
 
+	// Autocomplete settings
+	await navigateToTab("Autocomplete");
+	
+	const autocompleteTrigger = canvas.getByTitle("Enter a trigger for the 'autocomplete' feature");
 	await expect(autocompleteTrigger.value)
 		.toBe(userSettings.autocomplete.trigger);
-    
+
 	await userEvent.clear(autocompleteTrigger);
 	await userEvent.type(autocompleteTrigger, ";;");
-
 	await expect(autocompleteTrigger.value)
 		.toBe(";;");
     
-
+	// Copy settings
+	await navigateToTab("Copy");
+	
 	const qcOverrideKey = canvas.getByTitle("Select an override key for Quick Copy");
-
 	await expect(qcOverrideKey.innerText)
 		.toBe(OVERRIDE_KEY_OPTIONS.find(op => op.value == userSettings.copy.overrideKey).label);
-
+	
 	await userEvent.click(qcOverrideKey);
-
 	const overrideMenu = frame.getByRole("list", { name: "Select an override key for Quick Copy" });
-
 	await expect(overrideMenu).toBeInTheDocument();
-    
 	const overrideOptions = within(overrideMenu).getAllByRole("listitem");
-
 	await expect(overrideOptions.length)
 		.toBe(OVERRIDE_KEY_OPTIONS.length);
     
 	await userEvent.click(within(overrideMenu).getByTitle("Shift"));
-
 	await expect(qcOverrideKey.innerText)
 		.toBe("Shift");
 
