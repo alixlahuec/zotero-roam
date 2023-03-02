@@ -35,7 +35,7 @@ function SettingsDialog({ isOpen, onClose }){
 						})
 					}
 					<Tabs.Expander />
-					<Button minimal={true} rightIcon="document">Docs</Button>
+					<Button active={true} fill={true} intent="primary" minimal={true} rightIcon="document-open"><b>Docs</b></Button>
 				</Tabs>
 			</div>
 		</div>

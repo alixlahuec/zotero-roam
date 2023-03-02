@@ -579,8 +579,8 @@ textarea.zr-text-input,
 
 @media (max-width: 1000px) {
 
-    .zr-tabs.bp3-tabs>.bp3-tab-list>.bp3-tab,
-    .zr-tabs-minimal.bp3-tabs>.bp3-tab-list>.bp3-tab {
+    .zr-tabs.bp3-tabs:not(.bp3-vertical)>.bp3-tab-list>.bp3-tab,
+    .zr-tabs-minimal.bp3-tabs:not(.bp3-vertical)>.bp3-tab-list>.bp3-tab {
         margin-right: 0px;
         width: auto;
     }

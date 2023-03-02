@@ -17,6 +17,11 @@
     background: var(--zr-box-bg);
     border-right: 1px var(--zr-border-co) solid;
     height: 90vh;
+	padding-top: 10px;
+}
+
+.zr-settings--main > .bp3-tabs > .bp3-tab-list > .bp3-tab {
+	padding: 0px 15px;
 }
 
 /* Settings TabPanels */
