@@ -21,6 +21,7 @@ function DataRequest({ request }){
 	}, [path, type]);
 
 	return <div className="zr-settings--card">
+		{/* TODO: replace settings-row by something else */}
 		<div zr-role="settings-row">
 			<span className={CustomClasses.TEXT_AUXILIARY}>Library</span>
 			<div>
