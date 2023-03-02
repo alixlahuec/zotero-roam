@@ -1,8 +1,10 @@
 import { bool, func } from "prop-types";
 
-import { Button, Classes, Tab, Tabs } from "@blueprintjs/core";
+import { Classes, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
+import ButtonLink from "Components/ButtonLink";
+import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import UserSettingsProvider from "./Provider";
 
 import { CustomClasses } from "../../constants";
@@ -10,7 +12,6 @@ import { SETTINGS_CONFIG } from "./mapping";
 import { camelToTitleCase } from "../../utils";
 
 import "./index.css";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
 
 
 function SettingsDialog({ isOpen, onClose }){
@@ -35,7 +36,7 @@ function SettingsDialog({ isOpen, onClose }){
 						})
 					}
 					<Tabs.Expander />
-					<Button active={true} fill={true} intent="primary" minimal={true} rightIcon="document-open"><b>Docs</b></Button>
+					<ButtonLink active={true} fill={true} href="https://alix-lahuec.gitbook.io/zotero-roam/customization/user-settings" intent="primary" rightIcon="document-open" text="Docs" />
 				</Tabs>
 			</div>
 		</div>
