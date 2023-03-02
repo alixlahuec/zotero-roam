@@ -108,25 +108,15 @@ Description.propTypes = {
 	children: node
 };
 
-const MultiInput = ({ description = null, options, setValue, title = null, value, ...props }) => {
-	return <Row>
-		<div>
-			{title && <Title>{title}</Title>}
-			{description && <Description>{description}</Description>}
-		</div>
-		<TextInput>
-			<InputMultiSelect className={CustomClasses.TEXT_SMALL} options={options} setValue={setValue} value={value} {...props} />
-		</TextInput>
-	</Row>;
+const MultiInput = ({ options, setValue, value, ...props }) => {
+	return <InputMultiSelect className={CustomClasses.TEXT_SMALL} options={options} setValue={setValue} value={value} {...props} />;
 };
 MultiInput.propTypes = {
-	description: node,
 	options: arrayOf(shape({
 		label: string,
 		value: string
 	})),
 	setValue: func,
-	title: node,
 	value: arrayOf(string)
 };
 
@@ -149,7 +139,7 @@ NumericSelect.propTypes = {
 	value: number
 };
 
-const RoamTagsInput = ({ description, onChange, title = null, value }) => {
+const RoamTagsInput = ({ description = null, onChange, title = null, value }) => {
 	const selectTag = useCallback((val) => {
 		onChange(Array.from(new Set([...value, val])));
 	}, [onChange, value]);
@@ -158,15 +148,9 @@ const RoamTagsInput = ({ description, onChange, title = null, value }) => {
 		onChange(value.filter(v => v != val));
 	}, [onChange, value]);
 
-	return <Row>
-		<div>
-			{title && <Title>{title}</Title>}
-			{description && <Description>{description}</Description>}
-		</div>
-		<TextInput>
-			<TagsSelector className={CustomClasses.TEXT_SMALL} onRemove={removeTag} onSelect={selectTag} selectedTags={value} />
-		</TextInput>
-	</Row>;
+	return <RowCol title={title} description={description} >
+		<TagsSelector className={CustomClasses.TEXT_SMALL} onRemove={removeTag} onSelect={selectTag} selectedTags={value} />
+	</RowCol>;
 };
 RoamTagsInput.propTypes = {
 	description: node,
