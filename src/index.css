@@ -527,6 +527,7 @@ textarea.zr-text-input,
 .zr-tabs.bp3-tabs>.bp3-tab-list>.bp3-tab,
 .zr-tabs-minimal.bp3-tabs>.bp3-tab-list>.bp3-tab {
     color: var(--zr-text-co);
+	font-size: 0.9rem;
     opacity: 0.8;
 }
 
@@ -544,7 +545,8 @@ textarea.zr-text-input,
 
 .zr-tabs.bp3-tabs>.bp3-tab-list>.bp3-tab[aria-selected="true"],
 .zr-tabs.bp3-tabs>.bp3-tab-list>.bp3-tab:not([aria-disabled="true"]):hover {
-    background-color: var(--zr-box-bg);
+    background-color: var(--zr-dialog-bg);
+	transition: 0.4s;
 }
 
 .zr-tabs.bp3-tabs>.bp3-tab-list>.bp3-tab .bp3-icon,

@@ -12,3 +12,143 @@
 .zr-auxiliary-dialog--settings.bp3-dialog h5.panel-tt {
     color: var(--zr-secondary-co);
 }
+
+.zr-settings--main > .bp3-tabs > .bp3-tab-list {
+    background: var(--zr-box-bg);
+    border-right: 1px var(--zr-border-co) solid;
+    height: 90vh;
+}
+
+/* Settings TabPanels */
+
+.zr-settings-panel {
+    max-height: 90vh;
+    overflow-y: scroll;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 100%;
+}
+
+.zr-settings-panel::-webkit-scrollbar {
+    width: 0px;
+}
+
+.zr-settings-panel h4.bp3-heading {
+	color: var(--zr-text-co);
+	margin: 0px;
+    font-size: 1.05rem;
+}
+
+.zr-settings-panel h5.bp3-heading {
+    color: var(--zr-auxiliary);
+    margin: 0px;
+}
+
+.zr-settings-panel h5.bp3-heading,
+.zr-settings-panel .zr-settings-rowgroup--option > .bp3-control-indicator {
+    font-size: 0.95rem;
+}
+
+.zr-settings-panel [zr-row-option-selected="true"] h5.bp3-heading {
+    color: var(--zr-text-co);
+}
+
+.zr-settings-panel [zr-role="settings-row"],
+.zr-settings-panel [zr-role="settings-row-col"],
+.zr-settings-panel [zr-role="settings-row-group"] {
+	padding: 15px 10px;
+}
+
+.zr-settings-panel [zr-role="settings-row"],
+.zr-settings-panel [zr-role="settings-rowgroup--option"] {
+    align-items: center;
+    display: flex;
+    font-size: 0.9em;
+    justify-content: space-between;
+}
+
+.zr-settings-panel [zr-role="settings-rowgroup--option"] {
+    padding: 0px 10px;
+}
+
+.zr-settings-panel [zr-role="settings-rowgroup--option"] [zr-role="settings-row"] {
+    padding: 0px;
+}
+
+.zr-settings-panel [zr-role="settings-row-group"] > div:first-child:not(:empty),
+.zr-settings-panel [zr-role="settings-row-col"] > div:first-child:not(:empty) {
+    padding-bottom: 10px;
+}
+
+.zr-settings-panel [zr-role="settings-row"] > div:first-child:not(:empty),
+.zr-settings-panel [zr-role="settings-rowgroup--option"] > .zr-settings-rowgroup--option {
+    flex: 1 1 50%;
+    padding-right: 10px;
+}
+
+.zr-settings-panel [zr-role="settings-rowgroup--option"] > .zr-settings-rowgroup--option {
+    align-items: baseline;
+    display: flex;
+}
+
+.zr-settings-panel .zr-settings-rowgroup--option[zr-row-option-selected="false"] {
+    opacity: 0.6;
+}
+
+.zr-settings-panel .zr-settings-rowgroup--option > input[type="checkbox"],
+.zr-settings-panel .zr-settings-rowgroup--option > .bp3-control-indicator {
+    flex: 0 0 auto;
+}
+
+.zr-settings-panel .zr-settings--card {
+    border: 1px var(--zr-border-co) solid;
+    border-radius: 3px;
+    color: var(--zr-text-co);
+    flex: 0 0 45%;
+	margin: 10px 0px;
+    padding: 5px 10px;
+}
+
+.zr-settings-panel [zr-role="settings-row-col"] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.zr-settings-panel [zr-role="settings-row-col"] > button.bp3-button {
+    height: fit-content;
+}
+
+.zr-settings-panel [zr-role="settings-row-col--container"] {
+    display: flex;
+    flex: 0 0 100%;
+    place-content: space-evenly;
+}
+
+.zr-settings-panel [zr-role="settings-row"] > [zr-role="input-text"] {
+    flex: auto;
+    text-align: right;
+}
+
+.zr-settings-panel .zr-setting--single-input button {
+    background: hsla(var(--zr-accent-1-hsl), 5%);
+}
+
+.zr-settings-panel .zr-setting--single-input button:hover {
+    background: hsla(var(--zr-accent-1-hsl), 10%);
+}
+
+.zr-text-select-group > .zr-setting--single-input {
+    padding: 0px 10px;
+}
+
+.zr-text-select-group > .zr-text-input {
+    flex: 1;
+}
+
+.zr-settings-panel .scite-badge {
+    align-self: center;
+    margin-bottom: 10px;
+    max-width: 100%;
+    width: fit-content;
+}

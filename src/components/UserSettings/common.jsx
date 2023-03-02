@@ -108,14 +108,14 @@ Description.propTypes = {
 	children: node
 };
 
-const MultiInput = ({ description = null, options, setValue, title = null, value }) => {
+const MultiInput = ({ description = null, options, setValue, title = null, value, ...props }) => {
 	return <Row>
 		<div>
 			{title && <Title>{title}</Title>}
 			{description && <Description>{description}</Description>}
 		</div>
 		<TextInput>
-			<InputMultiSelect className={CustomClasses.TEXT_SMALL} options={options} setValue={setValue} value={value} />
+			<InputMultiSelect className={CustomClasses.TEXT_SMALL} options={options} setValue={setValue} value={value} {...props} />
 		</TextInput>
 	</Row>;
 };
@@ -254,9 +254,9 @@ const TextAreaInput = ({ label = null, onChange, value, ...extraProps }) => {
 	return <TextArea 
 		aria-label={label}
 		autoComplete="off" 
-		className={["zr-text-input", CustomClasses.TEXT_SMALL, Classes.INPUT].join(" ")}
+		className={["zr-text-input", CustomClasses.TEXT_SMALL, Classes.CODE_BLOCK].join(" ")}
 		fill={true}
-		growVertically={true}
+		growVertically={false}
 		onChange={valueHandler}
 		spellCheck="false" 
 		title={label}
