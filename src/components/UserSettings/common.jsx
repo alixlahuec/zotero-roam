@@ -68,12 +68,13 @@ RowGroup.propTypes = {
 };
 
 const RowGroupOption = ({ alignToBaseline = false, children, description = null, handleSelect, id, options, selected }) => {
+	const isSelected = useMemo(() => selected == id, [id, selected]);
 	const onChange = useCallback(() => handleSelect(id), [handleSelect, id]);
 
-	return <div className={alignToBaseline && "align-items-baseline"} zr-role="settings-rowgroup--option" zr-row-option-selected={(selected == id).toString()}>
+	return <div className={["zr-settings-rowgroup--option", alignToBaseline && "align-items-baseline"].filter(Boolean).join(" ")} >
 		<Checkbox
 			checked={selected == id}
-			className="zr-settings-rowgroup--option"
+			className={["zr-settings-rowgroup--option-label", isSelected && "selected"].filter(Boolean).join(" ")}
 			inline={false}
 			labelElement={<div>
 				<OptionTitle>{options[id]}</OptionTitle>
