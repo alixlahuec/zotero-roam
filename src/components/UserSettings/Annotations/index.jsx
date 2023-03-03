@@ -123,7 +123,7 @@ function AnnotationsWidget(){
 			<RowGroupOption id="default">
 				<SingleInput menuTitle="Select whether annotations should be grouped" onChange={handlers.updateGroupBy} options={GROUP_BY_OPTIONS} value={group_by} />
 			</RowGroupOption>
-			<RowGroupOption id="function" description="Enter the name of a custom function, and choose the type of input it should receive.">
+			<RowGroupOption id="function" description="Enter the inputs and name of your custom function.">
 				<TextWithSelect 
 					onSelectChange={handlers.updateWithFormat} 
 					onValueChange={handlers.updateFuncName} 
@@ -132,7 +132,7 @@ function AnnotationsWidget(){
 					selectOptions={WITH_OPTIONS} 
 					selectValue={__with} 
 					textValue={func} 
-					inputLabel="Enter the name of the function to use for formatting annotations" 
+					inputLabel="Enter the name of your custom function for formatting annotations" 
 					selectLabel="Select an input format for your custom function" />
 			</RowGroupOption>
 		</RowGroup>

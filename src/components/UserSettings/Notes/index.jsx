@@ -139,7 +139,7 @@ function NotesWidget(){
 			options={USE_OPTIONS}
 			selected={use}>
 			<RowGroupOption id="default" />
-			<RowGroupOption id="function" description="Enter the name of a custom function, and choose the type of input it should receive.">
+			<RowGroupOption id="function" description="Enter the inputs and name of your custom function.">
 				<TextWithSelect 
 					onSelectChange={handlers.updateWithFormat} 
 					onValueChange={handlers.updateFuncName} 
@@ -148,7 +148,7 @@ function NotesWidget(){
 					selectOptions={WITH_OPTIONS} 
 					selectValue={__with} 
 					textValue={func} 
-					inputLabel="Enter the name of the function to use for formatting notes" 
+					inputLabel="Enter the name of your custom function for formatting notes" 
 					selectLabel="Select an input format for your custom function" />
 			</RowGroupOption>
 		</RowGroup>
