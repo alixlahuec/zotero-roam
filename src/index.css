@@ -115,6 +115,10 @@ button.bp3-button.bp3-minimal.zr-secondary:not([class*="bp3-intent-"]) .bp3-icon
     margin-left: 0px;
 }
 
+.zr-text-small .bp3-code {
+    font-size: inherit;
+}
+
 /* Blueprint Inputs */
 
 [class*="zr"] .bp3-input:focus,

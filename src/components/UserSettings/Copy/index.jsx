@@ -1,7 +1,7 @@
 import { func, node } from "prop-types";
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
-import { RowGroup, RowGroupOption, SingleInput, TextField, Toggle } from "../common";
+import { Definition, RowGroup, RowGroupOption, SingleInput, TextField, Toggle } from "../common";
 
 import * as customPropTypes from "../../../propTypes";
 
@@ -64,6 +64,16 @@ export const OVERRIDE_KEY_OPTIONS = [
 	{ label: "System key", value: "metaKey" },
 ];
 
+const COPY_REPLACEMENTS = (
+	<>
+		Replacements available:
+		<Definition item="{{authors}}" text="Author et al." />
+		<Definition item="{{key}}" text="someCitekey" />
+		<Definition item="{{title}}" />
+		<Definition item="{{year}}" />
+	</>
+);
+
 function CopyWidget(){
 	const [
 		{
@@ -113,7 +123,7 @@ function CopyWidget(){
 			<RowGroupOption id="preset">
 				<SingleInput menuTitle="Select a formatting preset" onChange={handlers.updatePresetFormat} options={PRESET_OPTIONS} value={preset} />
 			</RowGroupOption>
-			<RowGroupOption id="template" description="Available replacements: {{key}} ; {{authors}} ; {{title}} ; {{year}}." >
+			<RowGroupOption alignToBaseline={true} id="template" description={COPY_REPLACEMENTS} >
 				<TextField ifEmpty={true} label="Enter a custom formatting template" onChange={handlers.updateTemplate} value={template} />
 			</RowGroupOption>
 		</RowGroup>

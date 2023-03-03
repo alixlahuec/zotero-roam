@@ -1,7 +1,7 @@
 import { arrayOf, bool, func, node, number, object, objectOf, oneOfType, shape, string } from "prop-types";
 import { Children, cloneElement, isValidElement, useCallback, useMemo } from "react";
 
-import { Button, Checkbox, Classes, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, Code, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
 import useBool from "../../hooks/useBool";
@@ -37,7 +37,7 @@ const RowCol = ({ children, description = null, rightElement = null, title = nul
 );
 RowCol.propTypes = {
 	children: node,
-	description: string,
+	description: node,
 	rightElement: node,
 	title: string
 };
@@ -60,17 +60,17 @@ const RowGroup = ({ children, description = null, onChange, options, selected, t
 };
 RowGroup.propTypes = {
 	children: node,
-	description: string,
+	description: node,
 	onChange: func,
 	options: objectOf(string),
 	selected: string,
 	title: string
 };
 
-const RowGroupOption = ({ children, description = null, handleSelect, id, options, selected }) => {
+const RowGroupOption = ({ alignToBaseline = false, children, description = null, handleSelect, id, options, selected }) => {
 	const onChange = useCallback(() => handleSelect(id), [handleSelect, id]);
 
-	return <div zr-role="settings-rowgroup--option" zr-row-option-selected={(selected == id).toString()}>
+	return <div className={alignToBaseline && "align-items-baseline"} zr-role="settings-rowgroup--option" zr-row-option-selected={(selected == id).toString()}>
 		<Checkbox
 			checked={selected == id}
 			className="zr-settings-rowgroup--option"
@@ -85,8 +85,9 @@ const RowGroupOption = ({ children, description = null, handleSelect, id, option
 	</div>;
 };
 RowGroupOption.propTypes = {
+	alignToBaseline: bool,
 	children: node,
-	description: string,
+	description: node,
 	handleSelect: func,
 	id: string,
 	options: objectOf(string),
@@ -106,6 +107,15 @@ OptionTitle.propTypes = {
 const Description = ({ children }) => <span className={[CustomClasses.TEXT_SECONDARY, CustomClasses.TEXT_SMALL].join(" ")}>{children}</span>;
 Description.propTypes = {
 	children: node
+};
+
+const Definition = ({ item, text = null }) => <div className="zr-definition--wrapper">
+	<Code className="zr-definition--item">{item}</Code>
+	{text && <span>{text}</span>}
+</div>;
+Definition.propTypes = {
+	item: string,
+	text: string
 };
 
 const MultiInput = ({ options, setValue, value, ...props }) => {
@@ -384,6 +394,7 @@ Toggle.propTypes = {
 };
 
 export {
+	Definition,
 	MultiInput,
 	NumericSelect,
 	RoamTagsInput,

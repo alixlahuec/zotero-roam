@@ -1,8 +1,9 @@
 import { func as funcType, node } from "prop-types";
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
+import { Definition, RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect } from "../common";
+
 import * as customPropTypes from "../../../propTypes";
-import { RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect } from "../common";
 
 
 const AnnotationsSettings = createContext({});
@@ -54,6 +55,23 @@ const WITH_OPTIONS = [
 	{ label: "Use simplified data", value: "formatted" }
 ];
 
+const COMMENT_REPLACEMENTS = (
+	<>
+		Replacements available:
+		<Definition item="{{comment}}" text="the comment's text" />
+	</>
+);
+
+const HIGHLIGHT_REPLACEMENTS = (
+	<>
+		Replacements available:
+		<Definition item="{{highlight}}" text="the highlighted text" />
+		<Definition item="{{page_label}}" text="the page number" />
+		<Definition item="{{link_page}}" text="the link to the PDF page" />
+		<Definition item="{{tags_string}}" text="the tags associated with the highlight (comma-separated, in brackets)" />
+	</>
+);
+
 function AnnotationsWidget(){
 	const [
 		{
@@ -91,10 +109,10 @@ function AnnotationsWidget(){
 	}), []);
 
 	return <>
-		<RowCol title="Comment Template" description="Template for comment blocks. Replacements available: {{comment}} (comment's text)." >
+		<RowCol title="Comment Template" description={COMMENT_REPLACEMENTS} >
 			<TextAreaInput label="Enter a template for comment blocks" onChange={handlers.updateTemplateComment} value={template_comment} />
 		</RowCol>
-		<RowCol title="Highlight Template" description="Template for highlight blocks. Replacements available: {{highlight}} (highlighted text), {{page_label}} (page number), {{link_page}} (the link to the specific page of the PDF), {{tags_string}} (the string of tags associated with the highlight)." >
+		<RowCol title="Highlight Template" description={HIGHLIGHT_REPLACEMENTS} >
 			<TextAreaInput label="Enter a template for highlight blocks" onChange={handlers.updateTemplateHighlight} value={template_highlight} />
 		</RowCol>
 		<RowGroup title="Formatter"
