@@ -528,6 +528,10 @@ textarea.zr-text-input,
 
 /* Tabs */
 
+[class*="zr-tabs"].bp3-tabs.bp3-vertical > .bp3-tab-list > *:not(:last-child) {
+	margin-right: 0px;
+}
+
 .zr-tabs.bp3-tabs>.bp3-tab-list>.bp3-tab,
 .zr-tabs-minimal.bp3-tabs>.bp3-tab-list>.bp3-tab {
     color: var(--zr-text-co);
@@ -556,6 +560,17 @@ textarea.zr-text-input,
 .zr-tabs.bp3-tabs>.bp3-tab-list>.bp3-tab .bp3-icon,
 .zr-tabs-minimal.bp3-tabs>.bp3-tab-list>.bp3-tab .bp3-icon {
     margin-right: 8px;
+}
+
+/* Vertical tabs */
+
+.zr-tabs.bp3-tabs.bp3-vertical > .bp3-tab-list .bp3-tab {
+	padding: 0.2em 1.2em;
+}
+
+.zr-tabs.bp3-tabs.bp3-vertical > .bp3-tab-list .bp3-tab[aria-selected="true"],
+.zr-tabs.bp3-tabs.bp3-vertical > .bp3-tab-list .bp3-tab:not([aria-disabled="true"]):hover {
+	box-shadow: 0px 0px 10px 5px var(--zr-box-shadow-co);
 }
 
 /* Dividers */
@@ -593,7 +608,7 @@ textarea.zr-text-input,
         margin-right: 0px;
     }
 
-    .zr-tabs.bp3-tabs>.bp3-tab-list>.bp3-tab .bp3-icon+*,
+	.zr-tabs.bp3-tabs>.bp3-tab-list>.bp3-tab .bp3-icon+*,
     .zr-tabs-minimal.bp3-tabs>.bp3-tab-list>.bp3-tab .bp3-icon+* {
         display: none;
     }

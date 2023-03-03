@@ -9,28 +9,18 @@
     width: 5px;
 }
 
-.zr-auxiliary-dialog--settings.bp3-dialog h5.panel-tt {
-    color: var(--zr-secondary-co);
-}
-
-.zr-settings--main > .bp3-tabs > .bp3-tab-list {
+.zr-settings-tabs-wrapper > .bp3-tab-list {
     background: var(--zr-box-bg);
     border-right: 1px var(--zr-border-co) solid;
     height: 90vh;
-	padding-top: 10px;
-}
-
-.zr-settings--main > .bp3-tabs > .bp3-tab-list > .bp3-tab {
-	padding: 0px 15px;
 }
 
 /* Settings TabPanels */
 
-.zr-settings-panel {
+.zr-settings-panel.bp3-tab-panel {
     max-height: 90vh;
     overflow-y: scroll;
-    padding-left: 15px;
-    padding-right: 15px;
+	padding: 0.5em 1em;
     width: 100%;
 }
 
@@ -73,7 +63,7 @@
 .zr-settings-panel [zr-role="settings-row"],
 .zr-settings-panel [zr-role="settings-row-col"],
 .zr-settings-panel [zr-role="settings-row-group"] {
-	padding: 15px 10px;
+	padding: 0.9em 0.6em;
 }
 
 .zr-settings-panel [zr-role="settings-row"],
@@ -121,7 +111,7 @@
     flex: 0 0 auto;
 }
 
-.zr-settings-panel .zr-settings--card {
+.zr-settings--card {
     border: 1px var(--zr-border-co) solid;
     border-radius: 3px;
     color: var(--zr-text-co);
@@ -172,4 +162,14 @@
     margin-bottom: 10px;
     max-width: 100%;
     width: fit-content;
+}
+
+/* SMALLER DISPLAYS */
+
+@media (max-width: 1000px){
+
+	.zr-settings--card [zr-role="settings-row"] {
+		flex-direction: column;
+	}
+
 }

@@ -5,26 +5,21 @@
     overflow-y: scroll;
 }
 
-.zr-dashboard--main > .bp3-tabs > .bp3-tab-list,
-.zr-dashboard--main > .bp3-tabs > .bp3-tab-panel {
-    padding: 3px;
-}
-
-.zr-dashboard--main > .bp3-tabs > .bp3-tab-list {
+.zr-dashboard-tabs-wrapper > .bp3-tab-list {
     background: var(--zr-box-bg);
     border-right: 1px var(--zr-border-co) solid;
     height: 90vh;
+	padding: 3px;
 }
 
-.zr-dashboard--main > .bp3-tabs > .bp3-tab-panel {
+.zr-dashboard-panel.bp3-tab-panel {
     max-height: 90vh;
     overflow-y: scroll;
-    padding-left: 15px;
-    padding-right: 15px;
+	padding: 0.5em 1em;
     width: 100%;
 }
 
-.zr-dashboard--main > .bp3-tabs > .bp3-tab-panel::-webkit-scrollbar {
+.zr-dashboard-panel::-webkit-scrollbar {
     width: 0px;
 }
 

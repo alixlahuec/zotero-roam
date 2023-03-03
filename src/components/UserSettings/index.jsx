@@ -14,11 +14,16 @@ import { camelToTitleCase } from "../../utils";
 import "./index.css";
 
 
+const tabProps = {
+	className: "zr-settings-tab",
+	panelClassName: "zr-settings-panel"
+};
+
 function SettingsDialog({ isOpen, onClose }){
 	return <AuxiliaryDialog className="settings" isOpen={isOpen} label="zoteroRoam settings" onClose={onClose}>
 		<div className={ Classes.DIALOG_BODY }>
 			<div className="zr-settings--main">
-				<Tabs animate={false} className={CustomClasses.TABS} id="zr-settings--tabs" vertical={true}>
+				<Tabs animate={false} className={[CustomClasses.TABS, "zr-settings-tabs-wrapper"].join(" ")} id="zr-settings--tabs" vertical={true}>
 					{SETTINGS_CONFIG
 						.filter(entry => entry.widget)
 						.map(entry => {
@@ -30,8 +35,8 @@ function SettingsDialog({ isOpen, onClose }){
 								panel={<ErrorBoundary>
 									<Comp />
 								</ErrorBoundary>}
-								panelClassName="zr-settings-panel"
 								title={camelToTitleCase(id)}
+								{...tabProps}
 							/>;
 						})
 					}
