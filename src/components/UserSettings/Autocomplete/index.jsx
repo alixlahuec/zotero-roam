@@ -110,6 +110,7 @@ function AutocompleteWidget(){
 	}, [setOpts]);
 
 	return <>
+		<TextField description="The character(s) that should trigger the autocomplete. If no value is provided, the feature will be disabled." ifEmpty={true} label="Enter a trigger for the 'autocomplete' feature" onChange={handlers.updateTrigger} placeholder="e.g, @" title="Trigger" value={trigger} />
 		<RowGroup title="Display"
 			description="How suggestions should be displayed in the autocomplete menu"
 			onChange={handlers.updateDisplayUse}
@@ -134,7 +135,6 @@ function AutocompleteWidget(){
 				<TextField ifEmpty={true} label="Enter a custom template" onChange={handlers.updateFormatChar} placeholder="e.g, {{key}}" value={format_char} />
 			</RowGroupOption>
 		</RowGroup>
-		<TextField description="The character(s) that should trigger the autocomplete. If no value is provided, the feature will be disabled." ifEmpty={true} label="Enter a trigger for the 'autocomplete' feature" onChange={handlers.updateTrigger} placeholder="e.g, @" title="Trigger" value={trigger} />
 	</>;
 }
 
