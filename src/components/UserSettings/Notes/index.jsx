@@ -129,7 +129,7 @@ function NotesWidget(){
 			<RowGroupOption id="preset">
 				<SingleInput menuTitle="Select a separator preset" onChange={handlers.updateSplitPreset} options={SPLIT_PRESET_OPTIONS} value={split_preset} />
 			</RowGroupOption>
-			<RowGroupOption id="custom" description="Special characters, like \n are not allowed." >
+			<RowGroupOption id="custom" description="Special characters, like \n, are not allowed." >
 				<TextField ifEmpty={true} label="Enter a custom separator" onChange={handlers.updateSplitChar} placeholder="e.g, </p>" value={split_char} />
 			</RowGroupOption>
 		</RowGroup>

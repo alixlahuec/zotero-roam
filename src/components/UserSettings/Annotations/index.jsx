@@ -68,7 +68,7 @@ const HIGHLIGHT_REPLACEMENTS = (
 		<Definition item="{{highlight}}" text="the highlighted text" />
 		<Definition item="{{page_label}}" text="the page number" />
 		<Definition item="{{link_page}}" text="the link to the PDF page" />
-		<Definition item="{{tags_string}}" text="the tags associated with the highlight (comma-separated, in brackets)" />
+		<Definition item="{{tags_string}}" text="the tags associated with the highlight (comma-separated)" />
 	</>
 );
 
