@@ -1,7 +1,7 @@
 import { arrayOf, bool, func, node, number, object, objectOf, oneOfType, shape, string } from "prop-types";
 import { Children, cloneElement, isValidElement, useCallback, useMemo } from "react";
 
-import { Button, Checkbox, Classes, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
+import { Button, Checkbox, Classes, Code, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
 import useBool from "../../hooks/useBool";
@@ -37,7 +37,7 @@ const RowCol = ({ children, description = null, rightElement = null, title = nul
 );
 RowCol.propTypes = {
 	children: node,
-	description: string,
+	description: node,
 	rightElement: node,
 	title: string
 };
@@ -60,20 +60,21 @@ const RowGroup = ({ children, description = null, onChange, options, selected, t
 };
 RowGroup.propTypes = {
 	children: node,
-	description: string,
+	description: node,
 	onChange: func,
 	options: objectOf(string),
 	selected: string,
 	title: string
 };
 
-const RowGroupOption = ({ children, description = null, handleSelect, id, options, selected }) => {
+const RowGroupOption = ({ alignToBaseline = false, children, description = null, handleSelect, id, options, selected }) => {
+	const isSelected = useMemo(() => selected == id, [id, selected]);
 	const onChange = useCallback(() => handleSelect(id), [handleSelect, id]);
 
-	return <div zr-role="settings-rowgroup--option" zr-row-option-selected={(selected == id).toString()}>
+	return <div className={["zr-settings-rowgroup--option", alignToBaseline && "align-items-baseline"].filter(Boolean).join(" ")} >
 		<Checkbox
 			checked={selected == id}
-			className="zr-settings-rowgroup--option"
+			className={["zr-settings-rowgroup--option-label", isSelected && "selected"].filter(Boolean).join(" ")}
 			inline={false}
 			labelElement={<div>
 				<OptionTitle>{options[id]}</OptionTitle>
@@ -85,8 +86,9 @@ const RowGroupOption = ({ children, description = null, handleSelect, id, option
 	</div>;
 };
 RowGroupOption.propTypes = {
+	alignToBaseline: bool,
 	children: node,
-	description: string,
+	description: node,
 	handleSelect: func,
 	id: string,
 	options: objectOf(string),
@@ -108,25 +110,24 @@ Description.propTypes = {
 	children: node
 };
 
-const MultiInput = ({ description = null, options, setValue, title = null, value }) => {
-	return <Row>
-		<div>
-			{title && <Title>{title}</Title>}
-			{description && <Description>{description}</Description>}
-		</div>
-		<TextInput>
-			<InputMultiSelect className={CustomClasses.TEXT_SMALL} options={options} setValue={setValue} value={value} />
-		</TextInput>
-	</Row>;
+const Definition = ({ item, text = null }) => <div className="zr-definition--wrapper">
+	<Code className="zr-definition--item">{item}</Code>
+	{text && <span>{text}</span>}
+</div>;
+Definition.propTypes = {
+	item: string,
+	text: string
+};
+
+const MultiInput = ({ options, setValue, value, ...props }) => {
+	return <InputMultiSelect className={CustomClasses.TEXT_SMALL} options={options} setValue={setValue} value={value} {...props} />;
 };
 MultiInput.propTypes = {
-	description: node,
 	options: arrayOf(shape({
 		label: string,
 		value: string
 	})),
 	setValue: func,
-	title: node,
 	value: arrayOf(string)
 };
 
@@ -149,7 +150,7 @@ NumericSelect.propTypes = {
 	value: number
 };
 
-const RoamTagsInput = ({ description, onChange, title = null, value }) => {
+const RoamTagsInput = ({ description = null, onChange, title = null, value }) => {
 	const selectTag = useCallback((val) => {
 		onChange(Array.from(new Set([...value, val])));
 	}, [onChange, value]);
@@ -158,15 +159,9 @@ const RoamTagsInput = ({ description, onChange, title = null, value }) => {
 		onChange(value.filter(v => v != val));
 	}, [onChange, value]);
 
-	return <Row>
-		<div>
-			{title && <Title>{title}</Title>}
-			{description && <Description>{description}</Description>}
-		</div>
-		<TextInput>
-			<TagsSelector className={CustomClasses.TEXT_SMALL} onRemove={removeTag} onSelect={selectTag} selectedTags={value} />
-		</TextInput>
-	</Row>;
+	return <RowCol title={title} description={description} >
+		<TagsSelector className={CustomClasses.TEXT_SMALL} onRemove={removeTag} onSelect={selectTag} selectedTags={value} />
+	</RowCol>;
 };
 RoamTagsInput.propTypes = {
 	description: node,
@@ -254,9 +249,9 @@ const TextAreaInput = ({ label = null, onChange, value, ...extraProps }) => {
 	return <TextArea 
 		aria-label={label}
 		autoComplete="off" 
-		className={["zr-text-input", CustomClasses.TEXT_SMALL, Classes.INPUT].join(" ")}
+		className={["zr-text-input", CustomClasses.TEXT_SMALL, Classes.CODE_BLOCK].join(" ")}
 		fill={true}
-		growVertically={true}
+		growVertically={false}
 		onChange={valueHandler}
 		spellCheck="false" 
 		title={label}
@@ -400,6 +395,7 @@ Toggle.propTypes = {
 };
 
 export {
+	Definition,
 	MultiInput,
 	NumericSelect,
 	RoamTagsInput,

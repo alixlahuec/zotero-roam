@@ -1,36 +1,49 @@
 import { bool, func } from "prop-types";
 
-import { Button, Classes } from "@blueprintjs/core";
+import { Classes, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
+import ButtonLink from "Components/ButtonLink";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
-
-import SettingsPanel from "./Panel";
 import UserSettingsProvider from "./Provider";
 
 import { CustomClasses } from "../../constants";
+import { SETTINGS_CONFIG } from "./mapping";
+import { camelToTitleCase } from "../../utils";
 
 import "./index.css";
 
 
+const tabProps = {
+	className: "zr-settings-tab",
+	panelClassName: "zr-settings-panel"
+};
+
 function SettingsDialog({ isOpen, onClose }){
-	return <AuxiliaryDialog ariaLabelledBy="zr-settings-dialog--title" className="settings" isOpen={isOpen} onClose={onClose}>
+	return <AuxiliaryDialog className="settings" isOpen={isOpen} label="zoteroRoam settings" onClose={onClose}>
 		<div className={ Classes.DIALOG_BODY }>
-			<ErrorBoundary>
-				<div className="header-content">
-					<div className="header-left">
-						<h5 id="zr-settings-dialog--title" className="panel-tt">
-                                Settings for zoteroRoam
-						</h5>
-					</div>
-					<div className={["header-right", CustomClasses.TEXT_AUXILIARY].join(" ")}>
-						<Button icon="cross" large={true} minimal={true} onClick={onClose} title="Close dialog" />
-					</div>
-				</div>
-				<div className="rendered-div">
-					<SettingsPanel />
-				</div>	
-			</ErrorBoundary>
+			<div className="zr-settings--main">
+				<Tabs animate={false} className={[CustomClasses.TABS, "zr-settings-tabs-wrapper"].join(" ")} id="zr-settings--tabs" vertical={true}>
+					{SETTINGS_CONFIG
+						.filter(entry => entry.widget)
+						.map(entry => {
+							const { id, widget: Comp } = entry;
+
+							return <Tab 
+								key={id}
+								id={id}
+								panel={<ErrorBoundary>
+									<Comp />
+								</ErrorBoundary>}
+								title={camelToTitleCase(id)}
+								{...tabProps}
+							/>;
+						})
+					}
+					<Tabs.Expander />
+					<ButtonLink active={true} fill={true} href="https://alix-lahuec.gitbook.io/zotero-roam/customization/user-settings" intent="primary" rightIcon="document-open" text="Docs" />
+				</Tabs>
+			</div>
 		</div>
 	</AuxiliaryDialog>;
 }
@@ -41,6 +54,5 @@ SettingsDialog.propTypes = {
 
 export {
 	SettingsDialog,
-	SettingsPanel,
 	UserSettingsProvider
 };

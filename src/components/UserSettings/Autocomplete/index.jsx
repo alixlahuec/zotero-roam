@@ -2,7 +2,7 @@ import { func, node } from "prop-types";
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 import * as customPropTypes from "../../../propTypes";
-import { RowGroup, RowGroupOption, SingleInput, TextField } from "../common";
+import { Definition, RowGroup, RowGroupOption, SingleInput, TextField } from "../common";
 
 
 const AutocompleteSettings = createContext({});
@@ -62,6 +62,19 @@ const FORMAT_USE_OPTIONS = {
 	"custom": "Custom template"
 };
 
+const AUTOCOMPLETE_REPLACEMENTS = (
+	<>
+		Replacements available:
+		<Definition item="{{authors}}" text="Author et al." />
+		<Definition item="{{citekey}}" text="@someCitekey" />
+		<Definition item="{{key}}" text="someCitekey" />
+		<Definition item="{{summary}}" text="Author et al. (2023)" />
+		<Definition item="{{summary_or_key}}" />
+		<Definition item="{{title}}" />
+		<Definition item="{{year}}" />
+	</>
+);
+
 function AutocompleteWidget(){
 	const [
 		{
@@ -97,6 +110,7 @@ function AutocompleteWidget(){
 	}, [setOpts]);
 
 	return <>
+		<TextField description="The character(s) that should trigger the autocomplete. If no value is provided, the feature will be disabled." ifEmpty={true} label="Enter a trigger for the 'autocomplete' feature" onChange={handlers.updateTrigger} placeholder="e.g, @" title="Trigger" value={trigger} />
 		<RowGroup title="Display"
 			description="How suggestions should be displayed in the autocomplete menu"
 			onChange={handlers.updateDisplayUse}
@@ -105,7 +119,7 @@ function AutocompleteWidget(){
 			<RowGroupOption id="preset">
 				<SingleInput menuTitle="Select a display preset" onChange={handlers.updateDisplay} options={DISPLAY_OPTIONS} value={display} />
 			</RowGroupOption>
-			<RowGroupOption id="custom" description="Available replacements: {{authors}} ; {{citekey}} ; {{key}} ; {{summary}} ; {{summary_or_key}} ; {{title}} ; {{year}}." >
+			<RowGroupOption alignToBaseline={true} id="custom" description={AUTOCOMPLETE_REPLACEMENTS} >
 				<TextField ifEmpty={true} label="Enter a custom template" onChange={handlers.updateDisplayChar} placeholder="e.g, {{key}}" value={display_char} />
 			</RowGroupOption>
 		</RowGroup>
@@ -117,11 +131,10 @@ function AutocompleteWidget(){
 			<RowGroupOption id="preset">
 				<SingleInput menuTitle="Select a format preset" onChange={handlers.updateFormat} options={FORMAT_OPTIONS} value={format} />
 			</RowGroupOption>
-			<RowGroupOption id="custom" description="Available replacements: {{authors}} ; {{citekey}} ; {{key}} ; {{summary}} ; {{summary_or_key}} ; {{title}} ; {{year}}." >
+			<RowGroupOption alignToBaseline={true} id="custom" description={AUTOCOMPLETE_REPLACEMENTS} >
 				<TextField ifEmpty={true} label="Enter a custom template" onChange={handlers.updateFormatChar} placeholder="e.g, {{key}}" value={format_char} />
 			</RowGroupOption>
 		</RowGroup>
-		<TextField description="The character(s) that should trigger the autocomplete. If no value is provided, the feature will be disabled." ifEmpty={true} label="Enter a trigger for the 'autocomplete' feature" onChange={handlers.updateTrigger} placeholder="e.g, @" title="Trigger" value={trigger} />
 	</>;
 }
 
