@@ -8,6 +8,7 @@ import { UserSettingsProvider } from "Components/UserSettings";
 
 import IDBDatabase from "./src/services/idb";
 import ZoteroRoam from "./src/extension";
+import { clearDefaultHooks } from "./src/events";
 import { initialize, setup, setupPortals, unmountExtensionIfExists } from "./src/setup";
 import { unregisterSmartblockCommands } from "./src/smartblocks";
 
@@ -69,6 +70,7 @@ function onload({ extensionAPI }){
 }
 
 function offload(){
+	clearDefaultHooks();
 	unregisterSmartblockCommands();
 	unmountExtensionIfExists();
 	window.zoteroRoam.deleteDatabase();

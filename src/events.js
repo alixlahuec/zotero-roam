@@ -93,174 +93,211 @@ function emitCustomEvent(type, detail = {}, target = document){
 	}
 }
 
+/** Default hook for the zotero-roam:metadata-added event
+ * @param {CustomEvent} event - The custom event emitted by the extension
+ */
+function metadataAdded(event){
+	const { error, page: { title }, success } = event.detail;
+	if (error) {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: `Metadata import failed for ${title}`,
+			context: {
+				...event.detail,
+				error: cleanErrorIfAxios(error)
+			},
+			showToaster: true
+		});
+	} else if (success) {
+		zrToaster.show({
+			intent: "success",
+			message: "Metadata added to " + title
+		});
+	} else {
+		window.zoteroRoam?.warn?.({
+			origin: "API",
+			message: "Metadata import had uncertain outcome",
+			context: event.detail
+		});
+	}
+}
+
+/** Default hook for the zotero-roam:notes-added event
+ * @param {CustomEvent} event - The custom event emitted by the extension
+ */
+function notesAdded(event){
+	const { error, page: { title }, raw: { notes }, success } = event.detail;
+	if (error) {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: `Notes import failed for ${title}`,
+			context: {
+				...event.detail,
+				error: cleanErrorIfAxios(error)
+			},
+			showToaster: true
+		});
+	} else if (success) {
+		zrToaster.show({
+			intent: "success",
+			message: "Notes added to " + title + ` (${notes.length})`
+		});
+	} else {
+		window.zoteroRoam?.warn?.({
+			origin: "API",
+			message: "Notes import had uncertain outcome",
+			context: event.detail
+		});
+	}
+}
+
+/** Default hook for the zotero-roam:tags-deleted event
+ * @param {CustomEvent} event - The custom event emitted by the extension
+ */
+function tagsDeleted(event){
+	const { args: { tags }, error, library } = event.detail;
+	if (error) {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Tag deletion failed",
+			context: {
+				...event.detail,
+				error: cleanErrorIfAxios(error)
+			},
+			showToaster: true
+		});
+	} else {
+		zrToaster.show({
+			intent: "success",
+			message: pluralize(tags.length, "tag", ` deleted from ${library}`)
+		});
+	}
+}
+
+/** Default hook for the zotero-roam:tags-modified event
+ * @param {CustomEvent} event - The custom event emitted by the extension
+ */
+function tagsModified(event){
+	/* eslint-disable-next-line prefer-const */
+	let { data: { failed, successful }, error, library } = event.detail;
+
+	if (error) {
+		error = cleanErrorIfAxios(error);
+	}
+
+	if (error || (failed.length > 0 && successful.length == 0)) {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Tag modification failed",
+			context: {
+				...event.detail,
+				error
+			},
+			showToaster: true
+		});
+	} else {
+		const itemsOutcome = successful.reduce((counts, res) => {
+			counts.success += Object.keys(res.data.successful).length;
+			counts.error += Object.keys(res.data.failed).length;
+			return counts;
+		}, { error: 0, success: 0 });
+
+		const isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
+
+		if (isFullSuccess) {
+			zrToaster.show({
+				intent: "success",
+				message: pluralize(itemsOutcome.success, "item", ` successfully modified in ${library}.`)
+			});
+		} else {
+			window.zoteroRoam?.warn?.({
+				origin: "API",
+				message: "",
+				detail: `${pluralize(itemsOutcome.success, "item", "")} modified in ${library}, with some problems. \n Check the extension's logs for more details.`,
+				context: {
+					...event.detail,
+					error
+				},
+				showToaster: true
+			});
+		}
+	}
+}
+
+/** Default hook for the zotero-roam:write event
+ * @param {CustomEvent} event - The custom event emitted by the extension
+ */
+function writeFinished(event){
+	/* eslint-disable-next-line prefer-const */
+	let { data: { failed, successful }, error, library } = event.detail;
+
+	if (error) {
+		error = cleanErrorIfAxios(error);
+	}
+
+	if (error || (failed.length > 0 && successful.length == 0)) {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Error sending data to Zotero",
+			context: {
+				...event.detail,
+				error
+			},
+			showToaster: true
+		});
+	} else {
+		const itemsOutcome = successful.reduce((counts, res) => {
+			counts.success += Object.keys(res.data.successful).length;
+			counts.error += Object.keys(res.data.failed).length;
+			return counts;
+		}, { error: 0, success: 0 });
+
+		const isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
+
+		if (isFullSuccess) {
+			zrToaster.show({
+				intent: "success",
+				message: pluralize(itemsOutcome.success, "item", ` added to ${library}.`)
+			});
+		} else {
+			window.zoteroRoam?.warn?.({
+				origin: "API",
+				message: "Unsuccessful when sending data to Zotero",
+				detail: `${pluralize(itemsOutcome.success, "item", "")} added to ${library}, with some problems. \n Check the extension's logs for more details.`,
+				context: {
+					...event.detail,
+					error
+				},
+				showToaster: true
+			});
+		}
+	}
+}
+
 /* istanbul ignore next */
-/** Sets up default actions to trigger based on the extension's custom events
+/** Sets up default actions to trigger based on the extension's custom events.
  */
 function setDefaultHooks(){
-	document.addEventListener("zotero-roam:metadata-added", (e) => {
-		const { error, page: { title }, success } = e.detail;
-		if(error){
-			window.zoteroRoam?.error?.({
-				origin: "API",
-				message: `Metadata import failed for ${title}`,
-				context: {
-					...e.detail,
-					error: cleanErrorIfAxios(error)
-				},
-				showToaster: true
-			});
-		} else if(success){
-			zrToaster.show({
-				intent: "success",
-				message: "Metadata added to " + title
-			});
-		} else {
-			window.zoteroRoam?.warn?.({
-				origin: "API",
-				message: "Metadata import had uncertain outcome",
-				context: e.detail
-			});
-		}
-	});
-	document.addEventListener("zotero-roam:notes-added", (e) => {
-		const { error, page: { title }, raw: { notes }, success } = e.detail;
-		if(error){
-			window.zoteroRoam?.error?.({
-				origin: "API",
-				message: `Notes import failed for ${title}`,
-				context: {
-					...e.detail,
-					error: cleanErrorIfAxios(error)
-				},
-				showToaster: true
-			});
-		} else if(success){
-			zrToaster.show({
-				intent: "success",
-				message: "Notes added to " + title + ` (${notes.length})`
-			});
-		} else {
-			window.zoteroRoam?.warn?.({
-				origin: "API",
-				message: "Notes import had uncertain outcome",
-				context: e.detail
-			});
-		}
-	});
-	document.addEventListener("zotero-roam:write", (e) => {
-		/* eslint-disable-next-line prefer-const */
-		let { data: { failed, successful }, error, library } = e.detail;
+	document.addEventListener("zotero-roam:metadata-added", metadataAdded);
+	document.addEventListener("zotero-roam:notes-added", notesAdded);
+	document.addEventListener("zotero-roam:write", writeFinished);
+	document.addEventListener("zotero-roam:tags-deleted", tagsDeleted);
+	document.addEventListener("zotero-roam:tags-modified", tagsModified);
+}
 
-		if(error){
-			error = cleanErrorIfAxios(error);
-		}
-
-		if(error || (failed.length > 0 && successful.length == 0)){
-			window.zoteroRoam?.error?.({
-				origin: "API",
-				message: "Error sending data to Zotero",
-				context: {
-					...e.detail,
-					error
-				},
-				showToaster: true
-			});
-		} else {
-			const itemsOutcome = successful.reduce((counts, res) => {
-				counts.success += Object.keys(res.data.successful).length;
-				counts.error += Object.keys(res.data.failed).length;
-				return counts;
-			}, { error: 0, success: 0 });
-
-			const isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
-
-			if(isFullSuccess){
-				zrToaster.show({
-					intent: "success",
-					message: pluralize(itemsOutcome.success, "item", ` added to ${library}.`)
-				});
-			} else {
-				window.zoteroRoam?.warn?.({
-					origin: "API",
-					message: "Unsuccessful when sending data to Zotero",
-					detail: `${pluralize(itemsOutcome.success, "item", "")} added to ${library}, with some problems. \n Check the extension's logs for more details.`,
-					context: {
-						...e.detail,
-						error
-					},
-					showToaster: true
-				});
-			}
-		}
-	});
-	document.addEventListener("zotero-roam:tags-deleted", (e) => {
-		const { args: { tags }, error, library } = e.detail;
-		if(error){
-			window.zoteroRoam?.error?.({
-				origin: "API",
-				message: "Tag deletion failed",
-				context: {
-					...e.detail,
-					error: cleanErrorIfAxios(error)
-				},
-				showToaster: true
-			});
-		} else {
-			zrToaster.show({
-				intent: "success",
-				message: pluralize(tags.length, "tag", ` deleted from ${library}`)
-			});
-		}
-	});
-	document.addEventListener("zotero-roam:tags-modified", (e) => {
-		/* eslint-disable-next-line prefer-const */
-		let { data: { failed, successful }, error, library } = e.detail;
-
-		if (error) {
-			error = cleanErrorIfAxios(error);
-		}
-
-		if(error || (failed.length > 0 && successful.length == 0)){
-			window.zoteroRoam?.error?.({
-				origin: "API",
-				message: "Tag modification failed",
-				context: {
-					...e.detail,
-					error
-				},
-				showToaster: true
-			});
-		} else {
-			const itemsOutcome = successful.reduce((counts, res) => {
-				counts.success += Object.keys(res.data.successful).length;
-				counts.error += Object.keys(res.data.failed).length;
-				return counts;
-			}, { error: 0, success: 0 });
-
-			const isFullSuccess = failed.length == 0 && itemsOutcome.error == 0;
-
-			if(isFullSuccess){
-				zrToaster.show({
-					intent: "success",
-					message: pluralize(itemsOutcome.success, "item", ` successfully modified in ${library}.`)
-				});
-			} else {
-				window.zoteroRoam?.warn?.({
-					origin: "API",
-					message: "",
-					detail: `${pluralize(itemsOutcome.success, "item", "")} modified in ${library}, with some problems. \n Check the extension's logs for more details.`,
-					context: {
-						...e.detail,
-						error
-					},
-					showToaster: true
-				});
-			}
-		}
-	});
+/* istanbul ignore next */
+/** Cleans up all actions triggered on the extension's custom events.
+ */
+function clearDefaultHooks(){
+	document.removeEventListener("zotero-roam:metadata-added", metadataAdded);
+	document.removeEventListener("zotero-roam:notes-added", notesAdded);
+	document.removeEventListener("zotero-roam:write", writeFinished);
+	document.removeEventListener("zotero-roam:tags-deleted", tagsDeleted);
+	document.removeEventListener("zotero-roam:tags-modified", tagsModified);
 }
 
 export {
 	emitCustomEvent,
-	setDefaultHooks
+	setDefaultHooks,
+	clearDefaultHooks
 };
