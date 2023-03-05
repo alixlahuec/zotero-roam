@@ -22,6 +22,6 @@ module.exports = merge(baseConfig, {
 			"Roam": path.resolve("mocks", "roam.js"),
 			"Components": path.resolve("src", "components")
 		},
-		extensions: [".js", ".jsx", ".css"]
+		extensions: [".js", ".jsx", ".ts", ".tsx", ".css"]
 	}
 });
