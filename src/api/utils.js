@@ -122,11 +122,11 @@ function cleanErrorIfAxios(error){
 				}
 			};
 		}
-	} catch(e){
-		// Do nothing
-	}
 
-	return error.message;
+		return error.message;
+	} catch(e){
+		return error;
+	}
 }
 
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
@@ -142,10 +142,15 @@ async function deleteTags(tags, library, version){
 	// https://www.zotero.org/support/dev/web_api/v3/write_requests#deleting_multiple_tags
 	/* istanbul ignore if */
 	if(tags.length > 50){
-		console.warn("Only 50 Zotero tags can be deleted at once : any additional tags provided will be ignored.");
+		window.zoteroRoam?.warn?.({
+			origin: "API",
+			message: "API limits exceeded",
+			detail: "Only 50 Zotero tags can be deleted at once. Any additional tags selected will be ignored."
+		});
 	}
 
 	const tagList = tags.slice(0,50).map(t => encodeURIComponent(t)).join(" || ");
+
 	return await zoteroClient.delete(
 		`${path}/tags`, 
 		{ 
@@ -489,7 +494,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 			// Retrieve deleted items, if any
 			deleted = await fetchDeleted({ apikey, path }, since);
 
-			const tagsQueryKey = ["tags", { apikey, library: path }];
+			const tagsQueryKey = ["tags", { library: path }];
 			const { lastUpdated: latest_tags_version } = queryClient.getQueryData(tagsQueryKey) || {};
 			if(modified.length > 0 || Number(latest_tags_version) < Number(lastUpdated)){
 				// Refetch tags data

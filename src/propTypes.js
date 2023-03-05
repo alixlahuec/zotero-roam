@@ -315,6 +315,7 @@ const notesSettingsType = shape({
 
 const otherSettingsType = shape({
 	autoload: bool,
+	cacheEnabled: bool,
 	darkTheme: bool,
 	render_inline: bool
 });

@@ -2,9 +2,11 @@ import { H5 } from "@blueprintjs/core";
 import zrToaster from "Components/ExtensionToaster";
 
 import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
-import { cleanBibliographyHTML, fetchBibEntries, fetchBibliography } from "./api/utils";
+import { cleanBibliographyHTML, cleanErrorIfAxios, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 import { findRoamBlock } from "Roam";
+
+import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "./constants";
 
 
 /**
@@ -17,6 +19,8 @@ import { findRoamBlock } from "Roam";
  * @borrows _getItemTags as ZoteroRoam#getItemTags
  */
 export default class ZoteroRoam {
+	/** @private */
+	#db;
 	/** @private */
 	#libraries;
 	/** @private */
@@ -33,14 +37,92 @@ export default class ZoteroRoam {
      * settings: Object
      * }} context - The context in which the instance is being created
      */
-	constructor({ queryClient, requests, settings }) {
+	constructor({ idbDatabase = null, queryClient, requests, settings }) {
 		const { libraries } = requests;
 		const { annotations, notes, typemap } = settings;
 
+		this.#db = idbDatabase;
 		this.#libraries = libraries;
 		this.#queryClient = queryClient;
 		this.#settings = { annotations, notes, typemap };
 
+	}
+
+	/* istanbul ignore next */
+	/** Clears the contents of the React Query store from the database. */
+	async clearDataCache(){
+		if(this.#db !== null){
+			try {
+				await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).clear();
+				this.info({
+					origin: "Database",
+					message: "Successfully cleared data from cache",
+					showToaster: 1000
+				});
+			} catch(e){
+				this.error({
+					origin: "Database",
+					message: "Failed to clear data from cache",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+			}
+		}
+	}
+
+	/* istanbul ignore next */
+	/** Deletes the database, if any */
+	async deleteDatabase(){
+		if(this.#db){
+			await this.#db.deleteSelf();
+		}
+	}
+
+	/* istanbul ignore next */
+	/** Checks if there is a cached version of the React Query client
+	 * @returns 
+	 */
+	async isDataCached(){
+		if(this.#db !== null){
+			try {
+				const cachedClient = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).get(IDB_REACT_QUERY_CLIENT_KEY);
+				return cachedClient !== undefined;
+			} catch(e) {
+				this.error({
+					origin: "Database",
+					message: "Failed to obtain caching status",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+
+				return false;
+			}
+		}
+
+		return false;
+	}
+
+	/* istanbul ignore next */
+	/** Retrieves the timestamp when the React Query client was last persisted to cache.
+	 * @returns {Integer}
+	 */
+	async getDataCacheUpdatedAt(){
+		if(this.#db){
+			try {
+				const { timestamp } = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).get(IDB_REACT_QUERY_CLIENT_KEY);
+				return timestamp;
+			} catch(e){
+				this.error({
+					origin: "Database",
+					message: "Failed to retrieve cache age",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+			}
+		}
 	}
 
 	// To be called in the RequestsWidget
@@ -406,8 +488,8 @@ async function _getItemCitation(item, config, { libraries }){
  * @returns The library's collections
  */
 function _getCollections(library, { queryClient }) {
-	const { apikey, path } = library;
-	const datastore = queryClient.getQueryData(["collections", { apikey, library: path }]);
+	const { /*apikey,*/ path } = library;
+	const datastore = queryClient.getQueryData(["collections", { library: path }]);
 	return datastore.data;
 }
 
@@ -566,7 +648,7 @@ function _getItems(select, filters, { queryClient }) {
  */
 function _getTags(location, { libraries, queryClient }) {
 	const library = libraries.find(lib => lib.path == location);
-	const { apikey, path } = library;
-	const datastore = queryClient.getQueryData(["tags", { apikey, library: path }]);
+	const { /*apikey,*/ path } = library;
+	const datastore = queryClient.getQueryData(["tags", { library: path }]);
 	return datastore.data;
 }

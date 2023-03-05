@@ -1,12 +1,17 @@
 import { unmountComponentAtNode } from "react-dom";
 
 import { parseKeyCombo } from "@blueprintjs/core";
+import { defaultShouldDehydrateQuery } from "@tanstack/react-query";
+
+import { cleanErrorIfAxios } from "./api/utils";
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
 
 import {
 	EXTENSION_PORTAL_ID,
 	EXTENSION_SLOT_ID,
+	IDB_REACT_QUERY_CLIENT_KEY,
+	IDB_REACT_QUERY_STORE_NAME,
 	TYPEMAP_DEFAULT
 } from "./constants";
 
@@ -87,9 +92,12 @@ export function analyzeUserRequests(requests){
 			const libraries = dataRequests.reduce((arr, req) => {
 				const { library: { path }, apikey } = req;
 				const has_lib = arr.find(lib => lib.path == path);
-				if(!has_lib){
-					arr.push({ path, apikey });
+
+				if(has_lib){
+					throw new Error(`The same library was provided twice: ${path}.`);
 				}
+				
+				arr.push({ path, apikey });
 				return arr;
 			}, []);
 
@@ -100,6 +108,75 @@ export function analyzeUserRequests(requests){
 			};
 		}
 	}
+}
+
+/* istanbul ignore next */
+/** Creates a persister that can be used for writing a React Query client to the IndexedDB cache.
+ * @param {*} database - The targeted IDBDatabase
+ * @returns 
+ */
+export function createPersisterWithIDB(database){
+	const indexedDbKey = IDB_REACT_QUERY_CLIENT_KEY;
+	const reactQueryStore = database.selectStore(IDB_REACT_QUERY_STORE_NAME);
+
+	return {
+		persistClient: async (client) => {
+			try {
+				return await reactQueryStore.set(indexedDbKey, client);
+			} catch(e) {
+				window.zoteroRoam?.error?.({
+					origin: "Database",
+					message: "Failed to persist query client",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+				throw e;
+			}
+		},
+		removeClient: async () => {
+			try {
+				return await reactQueryStore.delete(indexedDbKey);
+			} catch (e) {
+				window.zoteroRoam?.error?.({
+					origin: "Database",
+					message: "Failed to remove query client",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+				throw e;
+			}
+		},
+		restoreClient: async () => {
+			try {
+				return await reactQueryStore.get(indexedDbKey);
+			} catch (e) {
+				window.zoteroRoam?.error?.({
+					origin: "Database",
+					message: "Failed to restore query client",
+					context: {
+						error: cleanErrorIfAxios(e)
+					}
+				});
+				throw e;
+			}
+		}
+	};
+}
+
+/** Conducts checks on a query to determine if it should be persisted
+ * @param {*} query - The targeted React Query query
+ * @returns 
+ */
+export function shouldQueryBePersisted(query){
+	const { queryKey } = query;
+
+	if(queryKey.includes("permissions") || queryKey[0] == "permissions"){
+		return false;
+	}
+
+	return defaultShouldDehydrateQuery(query);
 }
 
 /** Generates a merged settings object, combining user settings and defaults.
@@ -178,6 +255,7 @@ export function setupInitialSettings(settingsObject){
 		},
 		other: {
 			autoload: false,
+			cacheEnabled: false,
 			darkTheme: false,
 			render_inline: false,
 			...other

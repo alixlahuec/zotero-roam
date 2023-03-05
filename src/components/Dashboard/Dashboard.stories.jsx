@@ -31,6 +31,11 @@ export default {
 const Template = (args) => <Dashboard {...args} />;
 
 export const Default = Template.bind({});
+Default.parameters = {
+	chromatic: {
+		disableSnapshot: true
+	}
+};
 
 export const VisitTabs = Template.bind({});
 VisitTabs.play = async ({ canvasElement }) => {

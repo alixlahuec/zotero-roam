@@ -1,5 +1,5 @@
 import { TYPEMAP_DEFAULT } from "../../src/constants";
-import { analyzeUserRequests, setupInitialSettings, validateShortcuts } from "../../src/setup";
+import { analyzeUserRequests, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 
@@ -62,6 +62,15 @@ describe("Parsing user data requests", () => {
 			.toThrow("A library type is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 	});
 
+	it("throws if the same library is provided twice", () => {
+		const reqs = [
+			{ library: { type: "users", id: "123456" }, apikey: "XXXXXXXXXX" },
+			{ library: { type: "users", id: "123456" }, apikey: "XXXXXXXXXX", name: "duplicate lib" },
+		];
+		expect(() => analyzeUserRequests(reqs))
+			.toThrow("The same library was provided twice: users/123456.");
+	});
+
 	/* This is needed to support manual install via roam/js when the user has specified their dataRequests as an Object */
 	it("accepts an Object as input", () => {
 		const reqs = {
@@ -86,14 +95,12 @@ describe("Parsing user data requests", () => {
 	it("returns proper configuration when given correct input", () => {
 		const reqs = [
 			{ dataURI: "users/12345/items", name: "My personal library" },
-			{ dataURI: "users/12345/items/top" },
 			{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX" }
 		];
 
 		const expected = {
 			dataRequests: [
 				{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", name: "My personal library", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } },
-				{ dataURI: "users/12345/items/top", apikey: "XXXXXXXXXX", name: "", library: { id: "12345", path: "users/12345", type: "users", uri: "items/top" } },
 				{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", name: "", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items/top" } },
 			],
 			apiKeys: ["XXXXXXXXXX"],
@@ -111,14 +118,12 @@ describe("Parsing user data requests", () => {
 	it("returns proper configuration when given correct input (from library)", () => {
 		const reqs = [
 			{ library: { type: "users", id: "12345" }, name: "My personal library" },
-			{ library: { type: "users", id: "12345" } },
 			{ library: { type: "groups", id: "98765" }, apikey: "XXXXXXXXXX" }
 		];
 
 		const expected = {
 			dataRequests: [
 				{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", name: "My personal library", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } },
-				{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", name: "", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } },
 				{ dataURI: "groups/98765/items", apikey: "XXXXXXXXXX", name: "", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items" } },
 			],
 			apiKeys: ["XXXXXXXXXX"],
@@ -222,6 +227,7 @@ describe("Parsing initial user settings", () => {
 		},
 		other: {
 			autoload: false,
+			cacheEnabled: false,
 			darkTheme: false,
 			render_inline: false
 		},
@@ -276,6 +282,24 @@ describe("Parsing user shortcuts", () => {
 		(input, expectation) => {
 			expect(validateShortcuts(input))
 				.toEqual(expectation);
+		}
+	);
+});
+
+describe("Filtering queries for persistence", () => {
+	const cases = [
+		[{ queryKey: "permissions/XXXXXX", state: { status: "success" } }, false],
+		[{ queryKey: ["permissions", { apikey: "XXXXXX" }], state: { status: "success" } }, false],
+		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "error" } }, false],
+		[{ queryKey: ["collections", { library: "users/123456" }], state: { status: "success" } }, true],
+		[{ queryKey: ["items", { library: "users/123456" }], state: { status: "success" } }, true],
+		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "success" } }, true]
+	];
+
+	test.each(cases)(
+		"%#",
+		(query, is_allowed) => {
+			expect(shouldQueryBePersisted(query)).toBe(is_allowed);
 		}
 	);
 });

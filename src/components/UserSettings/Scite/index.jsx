@@ -95,17 +95,19 @@ function SciteWidget(){
 	}, [setOpts]);
 
 	return <>
-		<SciteBadge doi={EXAMPLE_DOI}
-			layout={layout}
-			showLabels={showLabels}
-			showZero={showZero}
-			small={small}
-			tooltipPlacement={tooltipPlacement}
-			tooltipSlide={tooltipSlide}
-		/>
+		<div style={{ padding: "10px 0px", textAlign: "center" }}>
+			<SciteBadge doi={EXAMPLE_DOI}
+				layout={layout}
+				showLabels={showLabels}
+				showZero={showZero}
+				small={small}
+				tooltipPlacement={tooltipPlacement}
+				tooltipSlide={tooltipSlide}
+			/>
+		</div>
 		<SingleInput menuTitle="Select the layout direction for the Scite badge" onChange={handlers.selectLayout} options={LAYOUT_OPTIONS} title="Layout" value={layout} />
-		<Toggle description="Should category labels be displayed?" isChecked={showLabels} label="Toggle if category labels should be shown" onChange={handlers.toggleLabels} title="Show labels" />
-		<Toggle description="Should categories with no items be displayed?" isChecked={showZero} label="Toggle if categories with no items should be shown" onChange={handlers.toggleZero} title="Show empty categories" />
+		<Toggle isChecked={showLabels} label="Toggle if category labels should be shown" onChange={handlers.toggleLabels} title="Show labels" />
+		<Toggle isChecked={showZero} label="Toggle if categories with no items should be shown" onChange={handlers.toggleZero} title="Show empty categories" />
 		<Toggle isChecked={small} label="Toggle if Scite badges should use a smaller styling" onChange={handlers.toggleSmall} title="Use small styling" />
 		<SingleInput menuTitle="Select the placement of the badge tooltip" onChange={handlers.selectTooltipPlacement} options={PLACEMENT_OPTIONS} title="Tooltip Placement" value={tooltipPlacement} />
 		<NumericSelect label="Indicate a numeric offset for the placement of the badge tooltip" setValue={handlers.updateTooltipSlide} title="Tooltip Offset" value={tooltipSlide} />

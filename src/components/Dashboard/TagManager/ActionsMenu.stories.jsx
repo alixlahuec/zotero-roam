@@ -24,7 +24,7 @@ const Template = (args) => {
 	const client = useQueryClient();
 
 	useEffect(() => {
-		client.setQueryData(["tags", { apikey: masterKey, library: userLibrary.path }], {
+		client.setQueryData(["tags", { library: userLibrary.path }], {
 			data: {},
 			lastUpdated: userLibrary.version
 		});

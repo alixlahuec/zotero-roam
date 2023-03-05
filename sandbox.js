@@ -58,7 +58,7 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 		});
 
 		queryClient.setQueryData(
-			["items", { apikey: masterKey, dataURI: userLibrary.path + "/items", library: userLibrary.path }],
+			["items", { dataURI: userLibrary.path + "/items", library: userLibrary.path }],
 			(_prev) => ({
 				data: [
 					...findItems({ type: userLibrary.type, id: userLibrary.id, since: 0 }),
@@ -72,7 +72,7 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 		);
 
 		queryClient.setQueryData(
-			["collections", { apikey: masterKey, library: userLibrary.path }],
+			["collections", { library: userLibrary.path }],
 			(_prev) => ({
 				data: findCollections(userLibrary.type, userLibrary.id, 0),
 				lastUpdated: userLibrary.version

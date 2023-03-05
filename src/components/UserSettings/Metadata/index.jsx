@@ -107,7 +107,7 @@ function MetadataWidget(){
 			<RowGroupOption id="function" description="Enter the name of a custom function to use">
 				<TextField ifEmpty={true} label="Enter the name of the function to use for formatting metadata" onChange={handlers.updateFuncName} placeholder="e.g, myFunction" value={func} />
 			</RowGroupOption>
-			<RowGroupOption id="smartblock" description="Choose the SmartBlock to use for formatting metadata">
+			<RowGroupOption id="smartblock" description="Choose a SmartBlock template">
 				<TextWithSelect 
 					onSelectChange={handlers.updateSmartblockParam} 
 					onValueChange={handlers.updateSmartblockParamValue} 

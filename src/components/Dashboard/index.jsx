@@ -13,6 +13,11 @@ import { CustomClasses } from "../../constants";
 import "./index.css";
 
 
+const tabProps = {
+	className: "zr-dashboard-tab",
+	panelClassName: "zr-dashboard-panel"
+};
+
 const TabList = memo(function TabList(props){
 	const { defaultTab, onClose } = props;
 	const [isActiveTab, setActiveTab] = useState(defaultTab);
@@ -24,11 +29,11 @@ const TabList = memo(function TabList(props){
 	const selectTab = useCallback((newtab, _prevtab, _event) => setActiveTab(newtab), []);
 
 	return(
-		<Tabs animate={false} className={CustomClasses.TABS} id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
-			<Tab className="zr-recentitems" id="recent-items" panel={<RecentItems onClose={onClose} />} title={<><Icon htmlTitle="Recent Items" icon="history" /><span>Recent Items</span></>} />
-			<Tab className="zr-tagmanager" id="tag-manager" panel={<TagManager />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} />
+		<Tabs animate={false} className={[CustomClasses.TABS, "zr-dashboard-tabs-wrapper"].join(" ")} id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
+			<Tab id="recent-items" panel={<RecentItems onClose={onClose} />} title={<><Icon htmlTitle="Recent Items" icon="history" /><span>Recent Items</span></>} {...tabProps} />
+			<Tab id="tag-manager" panel={<TagManager />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} {...tabProps} />
 			<Tabs.Expander />
-			<Tab className="zr-explorer" id="explorer" panel={<Explorer onClose={onClose} />} title={<><Icon htmlTitle="Explorer" icon="code-block" /><span>Explorer</span></>} />
+			<Tab id="explorer" panel={<Explorer onClose={onClose} />} title={<><Icon htmlTitle="Explorer" icon="code-block" /><span>Explorer</span></>} {...tabProps} />
 		</Tabs>
 	);
 });

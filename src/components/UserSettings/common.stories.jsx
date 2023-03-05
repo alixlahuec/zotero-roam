@@ -7,13 +7,17 @@ import { TextField } from "./common";
 export default {
 	component: TextField,
 	args: {
-		label: "Some label"
+		description: "Some description",
+		label: "Some label",
+		title: "Some title"
 	}
 };
 
 const Template = (args) => {
 	const [val, setVal] = useState(() => args.value);
-	return <TextField {...args} value={val} onChange={setVal} />;
+	return <div className="zr-settings-panel">
+		<TextField {...args} value={val} onChange={setVal} />
+	</div>;
 };
 
 export const Default = Template.bind({});

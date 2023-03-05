@@ -9,7 +9,7 @@ import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSeman
  * @returns 
  */
 async function wrappedFetchItems(req, queryClient) {
-	const { library: { path }, ...identifiers } = req;
+	const { apikey, library: { path }, ...identifiers } = req;
 	const queryKey = ["items", path, { ...identifiers }];
 	const { data: match, lastUpdated: since } = queryClient.getQueryData(queryKey) || {};
 
@@ -60,8 +60,8 @@ const useQuery_Collections = (libraries, opts = {}) => {
 	// Factory
 	const client = useQueryClient();
 	const queriesDefs = libraries.map((lib) => {
-		const { path, apikey } = lib;
-		const queryKey = ["collections", { library: path, apikey }];
+		const { path/*, apikey*/ } = lib;
+		const queryKey = ["collections", { library: path }];
 		const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
 		return {
 			queryKey: queryKey,
@@ -90,7 +90,7 @@ const useQuery_Items = (reqs, opts = {}) => {
 
 		// Factory
 		return reqs.map((req) => {
-			const { library: { path }, ...identifiers } = req;
+			const { apikey, library: { path }, ...identifiers } = req;
 			const queryKey = ["items", path, { ...identifiers }];
 			return {
 				queryKey: queryKey,
@@ -163,7 +163,7 @@ const useQuery_Tags = (libraries, opts = {}) => {
 		// Factory
 		return libraries.map((lib) => {
 			const { apikey, path } = lib;
-			const queryKey = ["tags", { apikey, library: path }];
+			const queryKey = ["tags", { library: path }];
 			return {
 				queryKey: queryKey,
 				queryFn: (_queryKey) => fetchTags({ apikey, path }),

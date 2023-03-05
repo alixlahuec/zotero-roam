@@ -1,5 +1,4 @@
 import { camelToTitleCase, executeFunctionByName, hasNodeListChanged } from "../../src/utils";
-import { emitCustomEvent } from "../../src/events";
 
 
 describe("Convert camelCase to Title Case", () => {
@@ -42,12 +41,6 @@ describe("Executing a function by name", () => {
 			executeFunctionByName("customFunc", window);
 		}).toThrow("Function customFunc doesn't exist");
 	});
-});
-
-test("Event emitter warns about unrecognized event names", () => {
-	console.warn = jest.fn();
-	emitCustomEvent("unrecognized-event-name");
-	expect(console.warn).toHaveBeenCalled();
 });
 
 describe("Checking for changes in a list of nodes", () => {
