@@ -1,8 +1,15 @@
 {
     "compilerOptions": {
-        "module": "es6",
+		"baseUrl": "./src",
 		"jsx": "react",
+        "module": "es6",
         "target": "es6",
+		"paths": {
+			"Components/*": ["./src/components/*"],
+			"Mocks/*": ["./mocks/*"],
+			"Roam": ["./src/roam.js"],
+			"Types/*": ["./src/types/*"]
+		},
         "alwaysStrict": false,
 		"noImplicitAny": false,
 		"skipLibCheck": true,
