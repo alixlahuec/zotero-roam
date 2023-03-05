@@ -1,6 +1,18 @@
 ## Changelog
 
-### [0.7.11](https://github.com/alixlahuec/zotero-roam/compare/0.7.10...0.7.11) - 
+### [0.7.12](https://github.com/alixlahuec/zotero-roam/compare/0.7.11...0.7.12) - 
+
+#### Features
+
+-  split settings into tabs ([`#199`](https://github.com/alixlahuec/zotero-roam/pull/199))
+-  support caching API data to local storage ([`#178`](https://github.com/alixlahuec/zotero-roam/pull/178))
+#### Bug Fixes
+
+-  clean up default hooks ([`#200`](https://github.com/alixlahuec/zotero-roam/pull/200))
+-  controls not displayed in logger when there are no errors ([`#193`](https://github.com/alixlahuec/zotero-roam/pull/193))
+-  parsing of item citations in complex styles ([`#184`](https://github.com/alixlahuec/zotero-roam/pull/184))
+
+### [0.7.11](https://github.com/alixlahuec/zotero-roam/compare/0.7.10...0.7.11) -  2023-02-09 
 
 #### Bug Fixes
 
