@@ -295,6 +295,11 @@ function clearDefaultHooks(){
 
 export {
 	emitCustomEvent,
+	metadataAdded,
+	notesAdded,
+	tagsDeleted,
+	tagsModified,
+	writeFinished,
 	setDefaultHooks,
 	clearDefaultHooks
 };
