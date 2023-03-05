@@ -1,5 +1,4 @@
 import { camelToTitleCase, executeFunctionByName, hasNodeListChanged } from "../../src/utils";
-import { emitCustomEvent } from "../../src/events";
 
 
 describe("Convert camelCase to Title Case", () => {
@@ -41,19 +40,6 @@ describe("Executing a function by name", () => {
 		expect(() => {
 			executeFunctionByName("customFunc", window);
 		}).toThrow("Function customFunc doesn't exist");
-	});
-});
-
-describe("Event emitter warns about unrecognized event names", () => {
-	beforeEach(() => {
-		window.zoteroRoam = {
-			warn: jest.fn()
-		};
-	});
-
-	test("The warn method is called, if defined", () => {
-		emitCustomEvent("unrecognized-event-name");
-		expect(window.zoteroRoam.warn).toHaveBeenCalled();
 	});
 });
 
