@@ -122,11 +122,11 @@ function cleanErrorIfAxios(error){
 				}
 			};
 		}
-	} catch(e){
-		// Do nothing
-	}
 
-	return error.message;
+		return error.message;
+	} catch(e){
+		return error;
+	}
 }
 
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API

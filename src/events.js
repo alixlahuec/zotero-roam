@@ -72,7 +72,8 @@ const events = [
     * @property {error|null} error - The error thrown during the operation, if any
     * @property {String} library - The path of the targeted library
     */
-	"write"];
+	"write"
+];
 
 /**
  * Emits a custom event for the extension
@@ -181,9 +182,7 @@ function tagsModified(event){
 	/* eslint-disable-next-line prefer-const */
 	let { data: { failed, successful }, error, library } = event.detail;
 
-	if (error) {
-		error = cleanErrorIfAxios(error);
-	}
+	error = cleanErrorIfAxios(error);
 
 	if (error || (failed.length > 0 && successful.length == 0)) {
 		window.zoteroRoam?.error?.({
@@ -231,9 +230,7 @@ function writeFinished(event){
 	/* eslint-disable-next-line prefer-const */
 	let { data: { failed, successful }, error, library } = event.detail;
 
-	if (error) {
-		error = cleanErrorIfAxios(error);
-	}
+	error = cleanErrorIfAxios(error);
 
 	if (error || (failed.length > 0 && successful.length == 0)) {
 		window.zoteroRoam?.error?.({
