@@ -171,7 +171,8 @@
 				"map": [
 					["Mocks", "./mocks"],
 					["Roam", "./src/roam.js"],
-					["Components", "./src/components"]
+					["Components", "./src/components"],
+					["Types", "./src/types"]
 				],
 				"extensions": [".js", ".jsx", ".css"]
 			  }
