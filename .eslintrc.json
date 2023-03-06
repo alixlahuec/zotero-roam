@@ -174,7 +174,7 @@
 					["Components", "./src/components"],
 					["Types", "./src/types"]
 				],
-				"extensions": [".js", ".jsx", ".css"]
+				"extensions": [".js", ".jsx", ".ts", ".tsx", ".css"]
 			  }
         }
     }
