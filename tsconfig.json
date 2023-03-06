@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-		"baseUrl": "./src",
+		"baseUrl": ".",
 		"jsx": "react",
         "module": "es6",
         "target": "es6",
@@ -16,6 +16,7 @@
 		"skipLibCheck": true,
         "strictNullChecks": true,
         "allowJs": true,
+		"checkJs": true,
 		"isolatedModules": true,
 		"noEmit": true
     },
