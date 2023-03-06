@@ -10,12 +10,13 @@
         "plugin:import/recommended",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
-        "plugin:storybook/recommended"
+        "plugin:storybook/recommended",
+		"plugin:@typescript-eslint/recommended"
     ],
     "globals": {
         "PACKAGE_VERSION": "readonly"
     },
-    "ignorePatterns": ["*.css", "dist/**", "dev/**", "*.html", "/extension.js", "/src/types/**"],
+    "ignorePatterns": ["*.css", "dist/**", "dev/**", "*.html", "/extension.js"],
     "overrides": [
         {
           "files": ["tests/**"],
@@ -40,6 +41,7 @@
 			}
 		}
       ],
+	"parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
@@ -50,7 +52,8 @@
     "plugins": [
         "react",
         "jest",
-        "import"
+        "import",
+		"@typescript-eslint"
     ],
     "rules": {
         "arrow-spacing": "error",
@@ -174,7 +177,7 @@
 					["Components", "./src/components"],
 					["Types", "./src/types"]
 				],
-				"extensions": [".js", ".jsx", ".css"]
+				"extensions": [".js", ".jsx", ".ts", ".tsx", ".css"]
 			  }
         }
     }
