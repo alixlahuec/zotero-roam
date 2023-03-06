@@ -1,5 +1,5 @@
-import { SmartblockConfig, ZLibrary } from "Types/common"
-import { ZoteroItemTopType } from "Types/externals/zotero"
+import { SmartblockConfig, ZLibrary } from "Types/common";
+import { ZoteroItemTopType } from "Types/externals/zotero";
 
 
 /* -------------------------------------------------------------- */

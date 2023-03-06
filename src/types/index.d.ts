@@ -1,4 +1,4 @@
-import ZoteroRoam from "../extension"
+import ZoteroRoam from "../extension";
 import { BlockFocusLocation, SidebarWindowType, ViewType } from "Types/externals/roam";
 
 

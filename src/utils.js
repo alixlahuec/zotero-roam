@@ -984,7 +984,7 @@ function pluralize(num, string, suffix = "") {
  * @returns The corresponding date, either as a Date or an Array (YYYY,M,DD)
  */
 function readDNP(string, { as_date = true } = {}){
-	// eslint-disable-next-line no-unused-vars
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [match, mm, dd, yy] = Array.from(string.matchAll(/(.+) ([0-9]+).{2}, ([0-9]{4})/g))[0];
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     
