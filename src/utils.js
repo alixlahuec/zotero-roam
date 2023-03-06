@@ -219,7 +219,7 @@ function cleanNewlines(text){
  */
 /** Formats the metadata of a Semantic Scholar entry
  * @param {Object} item - The Semantic Scholar entry to format 
- * @returns {CleanSemanticItem[]} The formatted entry
+ * @returns {CleanSemanticItem} The formatted entry
  * @see cleanSemanticItemType
  */
 function cleanSemanticItem(item){
@@ -396,9 +396,9 @@ function compareAnnotationRawIndices(a, b){
 }
 
 /** Compares two Zotero items by publication year then alphabetically, to determine sort order
- * @param {ZoteroItem} a - The first item to compare
- * @param {ZoteroItem} b - The second item to compare
- * @returns {(0|1)} The comparison outcome
+ * @param {ZoteroItemTop} a - The first item to compare
+ * @param {ZoteroItemTop} b - The second item to compare
+ * @returns {(-1|1)} The comparison outcome
  */
 function compareItemsByYear(a, b) {
 	if(!a.meta.parsedDate){
@@ -1012,7 +1012,7 @@ function searchEngine(query, target, { any_case = true, match = "partial", searc
 }
 
 /** Inclusive search engine, with optional configuration
- * @param {String} string - The query string to search 
+ * @param {String} str - The query string to search 
  * @param {String} text - The text to be searched
  * @param {{any_case: Boolean, match: ("exact"|"partial"|"word"), search_compounds: Boolean, word_order: ("strict"|"loose")}} config - Additional configuration
  * @returns {Boolean} `true` if the query is matched in the target string ; `false` otherwise.
@@ -1269,7 +1269,7 @@ function sortCollections(arr){
 }
 
 /** Sorts an array of objects on a given string key, in A-Z order
- * @param {Object[]} items - The list of elements to sort 
+ * @param {Object[]} arr - The list of elements to sort 
  * @param {String} sort - The key to sort elements on 
  * @returns {Object[]} The sorted array
  */

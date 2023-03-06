@@ -194,7 +194,7 @@ export default class ZoteroRoam {
 	}
 
 	/** Retrieves the list of collections for a given library
-     * @param {ZoteroLibrary} library - The targeted library
+     * @param {String} path - The targeted library
      * @returns 
      */
 	getCollections(path) {
@@ -323,15 +323,13 @@ export class ZoteroRoamLog {
 
 	/**
 	 * @param {{
-	 * obj: {
 	 * origin?: String,
 	 * message?: String,
 	 * detail?: String,
 	 * context?: Object,
 	 * showToaster?: Number|Boolean
-	 * },
-	 * level: ("error"|"info"|"warning")
-	 * }} config - The details of the log entry
+	 * }} obj
+	 * @param {("error"|"info"|"warning")} level
 	 */
 	constructor(obj = {}, level = "info"){
 		const { origin = "", message = "", detail = "", context = {}, showToaster = false } = obj;
