@@ -13,20 +13,21 @@ module.exports = {
         alias: {
             "Mocks": path.resolve("mocks"),
             "Roam": path.resolve("src", "roam.js"),
-			"Components": path.resolve("src", "components")
+			"Components": path.resolve("src", "components"),
+			"Types": path.resolve("src", "types")
         },
-		extensions: [".js", ".jsx", ".css"]
+		extensions: [".js", ".jsx", ".ts", ".tsx", ".css"]
 	},
 	mode: "production",
 	module: {
 		rules: [
 			{
-				test: /\.(js|jsx)$/,
+				test: /\.(t|j)sx?$/,
 				include: path.resolve("src"),
 				use: {
 					loader: "babel-loader",
 					options: {
-						presets: ["@babel/preset-env", "@babel/preset-react"]
+						presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"]
 					}
 				}
 			},

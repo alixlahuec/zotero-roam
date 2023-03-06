@@ -18,7 +18,6 @@ import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
-import { isIDBDatabase } from "../../services/idb";
 import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } from "../../setup";
 
 import * as customPropTypes from "../../propTypes";
@@ -69,7 +68,7 @@ const QCProvider = ({ children, idbDatabase }) => {
 };
 QCProvider.propTypes = {
 	children: node,
-	idbDatabase: isIDBDatabase
+	idbDatabase: instanceOf(IDBDatabase)
 };
 
 // https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component

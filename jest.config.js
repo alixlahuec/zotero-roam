@@ -94,7 +94,8 @@ module.exports = {
   moduleNameMapper: {
       "Mocks/(.*)$": "<rootDir>/mocks/$1",
       "Roam": "<rootDir>/mocks/roam.js",
-	  "Components/(.*)$": "<rootDir>/src/components/$1"
+	  "Components/(.*)$": "<rootDir>/src/components/$1",
+	  "Types/(.*)$": "<rootDir>/src/types/$1"
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

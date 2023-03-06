@@ -27,7 +27,7 @@
         "build:sandbox": "webpack --config dev/webpack.sandbox.config.js",
         "lint": "eslint loader.js sandbox.js .storybook/** src/** stories/** tests/**",
         "lint:fix": "npm run lint -- --fix",
-        "ci:lint": "npm run lint -- --format junit -o reports/eslint-junit.xml",
+        "ci:lint": "npm run lint -- --fix --format junit -o reports/eslint-junit.xml",
         "test": "jest",
         "ci:test": "jest --ci --collectCoverage",
         "storybook": "start-storybook -p 6006",
@@ -55,13 +55,15 @@
                 {
                     "runtime": "automatic"
                 }
-            ]
+            ],
+            "@babel/preset-typescript"
         ]
     },
     "devDependencies": {
         "@babel/core": "^7.20.12",
         "@babel/preset-env": "^7.20.2",
         "@babel/preset-react": "^7.18.6",
+        "@babel/preset-typescript": "^7.21.0",
         "@storybook/addon-a11y": "^6.5.16",
         "@storybook/addon-actions": "^6.5.16",
         "@storybook/addon-controls": "^6.5.16",
@@ -78,6 +80,8 @@
         "@storybook/testing-library": "^0.0.13",
         "@testing-library/react": "^12.1.5",
         "@testing-library/react-hooks": "^8.0.1",
+        "@typescript-eslint/eslint-plugin": "^5.54.1",
+        "@typescript-eslint/parser": "^5.54.1",
         "auto-changelog": "^2.4.0",
         "axe-playwright": "^1.1.12",
         "babel-jest": "^28.1.3",
@@ -102,6 +106,7 @@
         "release-it": "^15.6.0",
         "storybook-mock-date-decorator": "^1.0.0",
         "style-loader": "^3.3.1",
+        "typescript": "^4.9.5",
         "webpack": "^5.75.0",
         "webpack-cli": "^5.0.1",
         "webpack-merge": "^5.8.0"

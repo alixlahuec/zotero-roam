@@ -12,7 +12,7 @@ const events = [
     * @property {({blocks: Array, uid: String}|{smartblock: {param: ("srcName"|"srcUid"), paramValue: String}, uid: String})} args - The configuration used for the import
     * @property {error|null} error - The error thrown during the import, if failed
 	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-    * @property {{item: ZoteroItem, notes: (ZoteroItem|ZoteroAnnotation)[], pdfs: ZoteroItem[]}} raw - The raw data provided as input
+    * @property {{item: ZoteroItemTop, notes: (ZoteroItemNote|ZoteroItemAnnotation)[], pdfs: ZoteroItemAttachment[]}} raw - The raw data provided as input
     * @property {Boolean|null} success - Indicates if the update was successful
     * @see importItemMetadata
     */
@@ -24,7 +24,7 @@ const events = [
 	* @property {{blocks: Array, uid: String}} args - The configuration used for the import
 	* @property {error|null} error - The error thrown during the import, if failed
 	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-	* @property {{item: ZoteroItem, notes: (ZoteroItem|ZoteroAnnotation)[]}} raw - The raw data provided as input
+	* @property {{item: ZoteroItemTop, notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} raw - The raw data provided as input
 	* @property {Boolean|null} success - Indicates if the update was successful
 	* @see importItemNotes
     */
@@ -55,7 +55,7 @@ const events = [
     * Signals a data update has terminated
      * @event zotero-roam:update
      * @type {object}
-     * @property {((ZoteroItem|ZoteroAnnotation)[])|(ZoteroCollection[])|null} data - The data contained in the update, if successful
+     * @property {((ZoteroItem)[])|(ZoteroCollection[])|null} data - The data contained in the update, if successful
      * @property {error|null} error - The error thrown during the update, if failed
      * @property {String} library - The path of the library that yielded the update
      * @property {Integer} since - The library version since which elements were retrieved
