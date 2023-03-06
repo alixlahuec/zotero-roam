@@ -131,7 +131,7 @@ function cleanErrorIfAxios(error){
 
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
  * @param {String[]} tags - The names of the tags to be deleted
- * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @param {ZLibrary} library - The targeted Zotero library
  * @param {Integer} version - The last known version of the Zotero library
  * @returns The outcome of the Axios API call
  */
@@ -231,7 +231,7 @@ async function fetchAdditionalData(req, totalResults) {
 
 /** Retrieves the bibliography for a list of Zotero items.
  * @param {String[]} itemKeys - The Zotero keys of the targeted items
- * @param {ZoteroLibrary} library - The library of the targeted items
+ * @param {ZLibrary} library - The library of the targeted items
  * @returns The generated bibliography
  */
 async function fetchBibEntries(itemKeys, library) {
@@ -265,7 +265,7 @@ async function fetchBibEntries(itemKeys, library) {
 
 /** Retrieves an item's formatted bibliographic entry as returned by the Zotero API
  * @param {String} itemKey - The item's Zotero key
- * @param {ZoteroLibrary} library - The item's Zotero library
+ * @param {ZLibrary} library - The item's Zotero library
  * @param {ConfigBibliography} config - Optional parameters to use in the API call
  * @returns
  */
@@ -335,7 +335,7 @@ async function fetchCitoid(query) {
 
 /** Requests data from the `/[library]/collections` endpoint of the Zotero API
  * @fires zotero-roam:update
- * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @param {ZLibrary} library - The targeted Zotero library
  * @param {Integer} since - A library version
  * @param {{match: Object[]}} config - Additional parameters
  * @returns {Promise<{data: ZoteroCollection[], lastUpdated: Integer}>} Collections created or modified in Zotero since the specified version
@@ -413,7 +413,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 }
 
 /** Requests data from the `/[library]/deleted` endpoint of the Zotero API
- * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @param {ZLibrary} library - The targeted Zotero library
  * @param {Integer} since - A library version
  * @returns {Promise<Object>} Elements deleted from Zotero since the specified version
  */
@@ -534,7 +534,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 
 /** Requests data from the `/keys` endpoint of the Zotero API
  * @param {String} apikey - The targeted API key
- * @returns {Promise<ZoteroKey>} The API key's permissions
+ * @returns {Promise<ZoteroPermissionsResponse>} The API key's permissions
  */
 async function fetchPermissions(apikey) {
 	try {
@@ -578,7 +578,7 @@ async function fetchSemantic(doi) {
 }
 
 /** Requests data from the `/[library]/tags` endpoint of the Zotero API
- * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @param {ZLibrary} library - The targeted Zotero library
  * @returns {Promise<{data: Object[], lastUpdated: Integer}>} The library's tags
  */
 async function fetchTags(library) {
@@ -651,7 +651,7 @@ function makeTagMap(tags){
 
 /** Compares two datasets and merges the changes. As the match is done on the `data.key` property, both items and collections can be matched.
  *  For items, merging involves an additional step to extract citekeys.
- * @param {{modified: (ZoteroItem|ZoteroAnnotation)[]|ZoteroCollection[], deleted: (ZoteroItem|ZoteroAnnotation)[]|ZoteroCollection[]}} update - The newer dataset
+ * @param {{modified: (ZoteroItem)[]|ZoteroCollection[], deleted: (ZoteroItem)[]|ZoteroCollection[]}} update - The newer dataset
  * @param {Object[]} arr - The older dataset
  * @param {{with_citekey?: Boolean}} config - Additional parameters 
  * @returns {Object[]} - The merged dataset
@@ -735,7 +735,7 @@ function updateTagMap(map, tagEntry){
 
 /** Adds new items to a Zotero library, with optional collections & tags.
  * @param {Object[]} citoids -  The items to be added to Zotero.
- * @param {{library: ZoteroLibrary, collections: String[], tags: String[]}} config - The options to be used for the import. 
+ * @param {{library: ZLibrary, collections: String[], tags: String[]}} config - The options to be used for the import. 
  * @returns 
  */
 function writeCitoids(items, { library, collections = [], tags = [] } = {}){
@@ -767,7 +767,7 @@ function writeCitoids(items, { library, collections = [], tags = [] } = {}){
 
 /** Modifies data for existing items in a Zotero library
  * @param {Object[]} dataList - The data array containing the modifications
- * @param {ZoteroLibrary} library - The targeted Zotero library
+ * @param {ZLibrary} library - The targeted Zotero library
  * @returns The outcome of the Axios API call
  */
 function writeItems(dataList, library){

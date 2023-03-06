@@ -42,13 +42,13 @@ const addPageMenus = () => {
  * @typedef {{
  * abstract: String,
  * added: String,
- * children: {pdfs: ZoteroItem[], notes: (ZoteroItem|ZoteroAnnotation)[]},
+ * children: {pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]},
  * inGraph: Boolean|String,
  * itemType: String,
  * key: String,
  * location: String,
  * meta: String,
- * raw: ZoteroItem,
+ * raw: ZoteroItemTop,
  * timestamp: String,
  * title: String
  * }}
@@ -57,8 +57,8 @@ const addPageMenus = () => {
  */
 
 /** Formats an item for display in AuxiliaryDialog
- * @param {ZoteroItem} item - The item to format
- * @param {{pdfs: ZoteroItem[], notes: (ZoteroItem|ZoteroAnnotation)[]}} libraryData - The list of attachments in the library
+ * @param {ZoteroItemTop} item - The item to format
+ * @param {{pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} libraryData - The list of attachments in the library
  * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.  
  * @returns {CleanRelatedItem[]} The formatted array
  * @see cleanRelatedItemType

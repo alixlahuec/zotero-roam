@@ -243,14 +243,6 @@ function getCitekeyPagesWithEditTime(){
 		}));
 }
 
-/**
- * @typedef {{
- * id: String,
- * location: {"block-uid": String, "window-id": String},
- * selection: ({start: Integer, end: Integer}|undefined)
- * }}
- * CursorLocation
- */
 /** Retrieves the current cursor location in the Roam interface, to enable returning focus to its previous state after an interaction with the extension's interface (e.g opening a dialog).
  * @returns {CursorLocation} Information about the cursor's location
  */
@@ -304,7 +296,7 @@ function getInitialedPages(keys){
 
 /** Imports an item's metadata as Roam blocks
  * @fires zotero-roam:metadata-added
- * @param {{item: ZoteroItem, pdfs: ZoteroItem[], notes: (ZoteroItem|ZoteroAnnotation)[]}} itemData - The item's Zotero data and its children, if any
+ * @param {{item: ZoteroItemTop, pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} itemData - The item's Zotero data and its children, if any
  * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
  * @param {SettingsMetadata} metadataSettings - The user's `metadata` settings 
  * @param {SettingsTypemap} typemap - The user's `typemap` settings
@@ -395,7 +387,7 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 
 /** Imports an item's notes as Roam blocks
  * @fires zotero-roam:notes-added
- * @param {{item: ZoteroItem, notes: (ZoteroItem|ZoteroAnnotation)[]}} itemData - The item's Zotero data and its notes, if any 
+ * @param {{item: ZoteroItemTop, notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} itemData - The item's Zotero data and its notes, if any 
  * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value
  * @param {SettingsNotes} notesSettings - The user's `notes` settings
  * @param {SettingsAnnotations} annotationsSettings - The user's `annotations` settings

@@ -50,7 +50,7 @@ const useQuery_Citoid = (urls, opts = {}) => {
 };
 
 /** React Query custom hook for retrieving Zotero collections. By default, `staleTime = 5 min` and `refetchInterval = 5 min`.
- * @param {ZoteroLibrary[]} libraries - The targeted Zotero libraries 
+ * @param {ZLibrary[]} libraries - The targeted Zotero libraries 
  * @param {Object} opts - Optional configuration to use with the queries 
  * @returns The React Queries for the given libraries' collections
  */
@@ -152,7 +152,7 @@ const useQuery_Semantic = (doi, opts = {}) => {
 
 /** React Query custom hook for retrieving Zotero tags. By default, `staleTime = 3 min`.
  *  Refetching is managed by {@link useQuery_Items}.
- * @param {ZoteroLibrary[]} libraries - The targeted Zotero libraries 
+ * @param {ZLibrary[]} libraries - The targeted Zotero libraries 
  * @param {Object} opts - Optional configuration to use with the queries 
  * @returns The React Queries for the given libraries' tags
  */
@@ -179,8 +179,8 @@ const useQuery_Tags = (libraries, opts = {}) => {
 };
 
 /** Custom hook for retrieving the list of Zotero libraries with `write` permissions.
- * @param {ZoteroLibrary[]} libraries - The targeted Zotero libraries
- * @returns {{data: ZoteroLibrary[], isLoading: Boolean}} The operation's status and outcome
+ * @param {ZLibrary[]} libraries - The targeted Zotero libraries
+ * @returns {{data: ZLibrary[], isLoading: Boolean}} The operation's status and outcome
  */
 const useWriteableLibraries = (libraries) => {
 	const apiKeys = useMemo(() => Array.from(new Set(libraries.map(lib => lib.apikey))), [libraries]);

@@ -18,7 +18,7 @@ import {
 
 /** Generates a data requests configuration object
  * @param {DataRequest|DataRequest[]} requests - Data requests provided by the user
- * @returns {ConfigRequests} A configuration object for the extension to use
+ * @returns {UserRequests} A configuration object for the extension to use
  */
 export function analyzeUserRequests(requests){
 	const reqs = (requests.constructor === Array)
