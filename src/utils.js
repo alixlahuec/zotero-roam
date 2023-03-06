@@ -1,7 +1,5 @@
 import zrToaster from "Components/ExtensionToaster";
 
-import "./typedefs";
-
 
 /** Converts a string from camelCase to Title Case
  * From https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-title-case-text
