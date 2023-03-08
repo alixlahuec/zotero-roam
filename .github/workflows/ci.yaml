@@ -23,28 +23,16 @@ jobs:
 
       - name: Install packages
         run: npm ci --legacy-peer-deps # To fix failing CI due to webpack-filter-warnings-plugin (https://github.com/storybookjs/storybook/issues/13990)
-      
-      - name: ESLint
-        run: npm run ci:lint
 
-      # Re-enable once parsing errors are fixed
-      # - name: Upload linter reports
-      #   uses: dorny/test-reporter@v1
-      #   if: success() || failure()
-      #   with:
-      #     name: ESLint
-      #     path: reports/eslint-junit.xml
-      #     reporter: jest-junit
-
-      - name: Jest
+      - name: Jest, ESLint
         run: npm run ci:test
 
       - name: Upload test reports
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          name: Jest
-          path: reports/jest-junit.xml
+          name: Tests
+          path: reports/tests-junit.xml
           reporter: jest-junit
 
       - name: Storybook CI
