@@ -9,7 +9,7 @@ import UserSettingsProvider from "./Provider";
 
 import { CustomClasses } from "../../constants";
 import { SETTINGS_CONFIG } from "./mapping";
-import { camelToTitleCase } from "../../utils";
+import { camelToTitleCase } from "./helpers";
 
 import "./index.css";
 

@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useMemo, useState } from "react
 
 import { parseKeyCombo } from "@blueprintjs/core";
 import { TextField } from "../common";
-import { camelToTitleCase } from "../../../utils";
+import { camelToTitleCase } from "../helpers";
 
 import * as customPropTypes from "../../../propTypes";
 

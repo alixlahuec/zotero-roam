@@ -1,18 +1,6 @@
 import zrToaster from "Components/ExtensionToaster";
 
 
-/** Converts a string from camelCase to Title Case
- * From https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-title-case-text
- * @param {String} text - The text to be transformed
- * @returns The text in title case
- */
-function camelToTitleCase(text){
-	const result = text.replace(/([A-Z])/g, " $1");
-	const finalResult = result.charAt(0).toUpperCase() + result.slice(1);
-
-	return finalResult;
-}
-
 /** Categorizes library items according to their type (items, PDFs attachments, notes)
  * @param {(ZoteroItem)[]} datastore - The items to categorize 
  * @returns {{items: ZoteroItemTop[], pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} The categorized object
@@ -1293,7 +1281,6 @@ function splitNotes(notes, separator){
 }
 
 export {
-	camelToTitleCase,
 	categorizeLibraryItems,
 	cleanAuthorLastName,
 	cleanAuthorsNames,
