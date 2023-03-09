@@ -2,10 +2,10 @@ import { hasNodeListChanged, sortElems } from "./helpers";
 
 
 describe("Checking for changes in a list of nodes", () => {
-	const someDiv = document.createElement("div");
-	someDiv.classList.add("some-div");
-	const anotherDiv = document.createElement("div");
-	anotherDiv.classList.add("another-div");
+	document.body.innerHTML = `
+		<div class="some-div"></div>
+		<div class="another-div"></div>
+	`;
 
 	const someNodeList = document.querySelectorAll(".some-div");
 	const anotherNodeList = document.querySelectorAll(".another-div");
