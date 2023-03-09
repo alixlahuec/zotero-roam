@@ -593,15 +593,6 @@ function makeTimestamp(date){
 	return `${d.getHours()}:${("0" + d.getMinutes()).slice(-2)}`;
 }
 
-/** Determines if two arrays have any elements in common
- * @param {Array} arr1 - The first array to use 
- * @param {Array} arr2 - The second array to use
- * @returns `true` if at least one elements is present in both arrays - otherwise `false`
- */
-function matchArrays(arr1, arr2){
-	return arr1.some(el => arr2.includes(el));
-}
-
 /** Extracts a valid DOI from a string
  * @param {String|undefined} doi - The string to test 
  * @returns The DOI (starting with `10.`) if any - otherwise `false`
@@ -1014,7 +1005,6 @@ export {
 	makeDateFromAgo,
 	makeDNP,
 	makeTimestamp,
-	matchArrays,
 	parseDOI,
 	pluralize,
 	readDNP,

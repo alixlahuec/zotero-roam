@@ -1,12 +1,21 @@
-/* istanbul ignore file */
-import { matchArrays } from "../../../utils";
 import { webimportClass } from "../classes";
 
 
+/* istanbul ignore next */
 const findWebimportDivs = () => {
 	return Array.from(document.querySelectorAll(`[class="${webimportClass}"]`));
 };
 
+/** Determines if two arrays have any elements in common
+ * @param {Array} arr1 - The first array to use 
+ * @param {Array} arr2 - The second array to use
+ * @returns `true` if at least one elements is present in both arrays - otherwise `false`
+ */
+function matchArrays(arr1, arr2) {
+	return arr1.some(el => arr2.includes(el));
+}
+
+/* istanbul ignore next */
 const setWebimportDivs = (tags) => {
 	// Old blocks - are they still valid ?
 	findWebimportDivs()
@@ -23,4 +32,4 @@ const setWebimportDivs = (tags) => {
 	newTrigBlocks.forEach(b => b.insertAdjacentElement("afterbegin", elem.cloneNode(true)));
 };
 
-export { findWebimportDivs, setWebimportDivs };
+export { findWebimportDivs, matchArrays, setWebimportDivs };
