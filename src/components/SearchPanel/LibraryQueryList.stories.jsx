@@ -2,7 +2,7 @@ import LibraryQueryList from "./LibraryQueryList";
 
 import useBool from "../../hooks/useBool";
 
-import { cleanLibrary } from "../../utils";
+import { cleanLibrary } from "./helpers";
 import { items } from "Mocks/zotero/items";
 
 

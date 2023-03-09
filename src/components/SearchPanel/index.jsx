@@ -11,7 +11,7 @@ import { useQuery_Items } from "../../api/queries";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
-import { cleanLibrary } from "../../utils";
+import { cleanLibrary } from "./helpers";
 
 import { dialogClass, dialogLabel } from "./classes";
 

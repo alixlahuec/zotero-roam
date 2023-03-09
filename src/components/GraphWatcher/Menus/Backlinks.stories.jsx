@@ -1,6 +1,6 @@
 import { Backlinks } from "./CitekeyMenu";
 
-import { cleanSemanticItem } from "../../../utils";
+import { cleanSemanticItem } from "./helpers";
 
 import { citoids, semanticIdentifier } from "Mocks/citoid";
 import { items } from "Mocks/zotero/items";

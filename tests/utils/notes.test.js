@@ -1,6 +1,4 @@
 import { formatItemNotes, formatZoteroNotes, splitNotes } from "../../src/utils";
-import { libraries } from "Mocks/zotero/libraries";
-import { sampleNote } from "Mocks/zotero/notes";
 
 
 describe("Splitting HTML notes", () => {
