@@ -9,7 +9,7 @@ function addElemToArray(arr, elem){
 
 /** Removes an element from an array at a given index
  * @param {Array} arr - The targeted array
- * @param {Integer} index - The index of the element to remove
+ * @param {Number} index - The index of the element to remove
  * @returns 
  */
 function removeArrayElemAt(arr, index){
@@ -31,7 +31,7 @@ function returnSiblingArray(elem, sibling){
 
 /** Updates the value of an array element from its index
  * @param {Array} arr - The targeted array
- * @param {Integer} index - The index of the element to update
+ * @param {Number} index - The index of the element to update
  * @param {*} value - The new value of the element
  * @returns 
  */

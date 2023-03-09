@@ -58,7 +58,7 @@ const events = [
      * @property {((ZoteroItem)[])|(ZoteroCollection[])|null} data - The data contained in the update, if successful
      * @property {error|null} error - The error thrown during the update, if failed
      * @property {String} library - The path of the library that yielded the update
-     * @property {Integer} since - The library version since which elements were retrieved
+     * @property {Number} since - The library version since which elements were retrieved
      * @property {Boolean} success - Indicates if the update was successful
      * @property {("items"|"collections")} type - The data type targeted by the update
      */

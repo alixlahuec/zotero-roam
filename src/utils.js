@@ -558,7 +558,7 @@ function makeDNP(date, { brackets = true } = {}){
 }
 
 /** Converts a number into ordinal format
- * @param {Integer} i - The number to convert
+ * @param {Number} i - The number to convert
  * @returns {String} The number in ordinal format
  */
 function makeOrdinal(i) {
@@ -649,7 +649,7 @@ function parseNoteBlock(block){
 }
 
 /** Quantifies an ordinary English noun
- * @param {Integer} num - The quantity 
+ * @param {Number} num - The quantity 
  * @param {String} string - The noun to quantify 
  * @param {String} suffix - An optional suffix for the noun, apposed immediately after the noun (without spacing).
  * @returns A properly pluralized string

@@ -25,7 +25,7 @@ function getTagStats(tagListData){
 /** Compiles the usage count for a given tag. This returns the number of Zotero items which use the tag, with an option to add +1 if the tag has a Roam page.
  * @param {TagEntry} entry - The targeted tag
  * @param {{count_roam: Boolean}} config - Additional config 
- * @returns {Integer}
+ * @returns {Number}
  */
 function getTagUsage(entry, { count_roam = false } = {}){
 	return entry.zotero.reduce((count, tag) => {

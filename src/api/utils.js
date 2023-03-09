@@ -132,7 +132,7 @@ function cleanErrorIfAxios(error){
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
  * @param {String[]} tags - The names of the tags to be deleted
  * @param {ZLibrary} library - The targeted Zotero library
- * @param {Integer} version - The last known version of the Zotero library
+ * @param {Number} version - The last known version of the Zotero library
  * @returns The outcome of the Axios API call
  */
 async function deleteTags(tags, library, version){
@@ -185,8 +185,8 @@ function extractCitekeys(arr){
 
 /** Retrieves additional data from the Zotero API, when the original results are greater than the limit of n = 100.
  *  A minimum of parameters are required so that the function can be used for all data types.
- * @param {{dataURI: String, apikey: String, since?: Integer}} req - The parameters of the request 
- * @param {Integer} totalResults - The total number of results indicated by the original response 
+ * @param {{dataURI: String, apikey: String, since?: Number}} req - The parameters of the request 
+ * @param {Number} totalResults - The total number of results indicated by the original response 
  * @returns {Promise<Object[]>} The additional results to the original request
  */
 async function fetchAdditionalData(req, totalResults) {
@@ -336,9 +336,9 @@ async function fetchCitoid(query) {
 /** Requests data from the `/[library]/collections` endpoint of the Zotero API
  * @fires zotero-roam:update
  * @param {ZLibrary} library - The targeted Zotero library
- * @param {Integer} since - A library version
+ * @param {Number} since - A library version
  * @param {{match: Object[]}} config - Additional parameters
- * @returns {Promise<{data: ZoteroCollection[], lastUpdated: Integer}>} Collections created or modified in Zotero since the specified version
+ * @returns {Promise<{data: ZoteroCollection[], lastUpdated: Number}>} Collections created or modified in Zotero since the specified version
  */
 async function fetchCollections(library, since = 0, { match = [] } = {}) {
 	const { apikey, path } = library;
@@ -414,7 +414,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 
 /** Requests data from the `/[library]/deleted` endpoint of the Zotero API
  * @param {ZLibrary} library - The targeted Zotero library
- * @param {Integer} since - A library version
+ * @param {Number} since - A library version
  * @returns {Promise<Object>} Elements deleted from Zotero since the specified version
  */
 async function fetchDeleted(library, since) {
@@ -449,7 +449,7 @@ async function fetchDeleted(library, since) {
  * @param {DataRequest} req - The parameters of the request 
  * @param {{match: Object[]}} config - Additional parameters
  * @param {*} queryClient - The current React Query client
- * @returns {Promise<{data: Object[], lastUpdated: Integer}>}
+ * @returns {Promise<{data: Object[], lastUpdated: Number}>}
  */
 async function fetchItems(req, { match = [] } = {}, queryClient) {
 	const { apikey, dataURI, library: { path }, since = 0 } = req;
@@ -579,7 +579,7 @@ async function fetchSemantic(doi) {
 
 /** Requests data from the `/[library]/tags` endpoint of the Zotero API
  * @param {ZLibrary} library - The targeted Zotero library
- * @returns {Promise<{data: Object[], lastUpdated: Integer}>} The library's tags
+ * @returns {Promise<{data: Object[], lastUpdated: Number}>} The library's tags
  */
 async function fetchTags(library) {
 	const { apikey, path } = library;

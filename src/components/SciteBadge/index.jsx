@@ -13,7 +13,7 @@ import "./index.css";
  * @param {Boolean} showZero - Should the badge include categories that contain no citing paper ?
  * @param {Boolean} small - Should the badge have a small appearance ?
  * @param {string} tooltipPlacement - Where should the tooltip be displayed ?
- * @param {Integer} tooltipSlide - Should the tooltip be positioned with offset ? 
+ * @param {Number} tooltipSlide - Should the tooltip be positioned with offset ? 
  **/
 const SciteBadge = memo(function SciteBadge(props) {
 	const {
