@@ -523,26 +523,6 @@ function isHTMLTag(input){
 	};
 }
 
-/** Creates a dictionary from a String Array
- * @param {String[]} arr - The array from which to make the dictionary
- * @returns {Object.<string, string[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
- */
-function makeDictionary(arr){
-	return arr.reduce((dict, elem) => {
-		try {
-			const initial = elem.charAt(0).toLowerCase();
-			if(dict[initial]){
-				dict[initial].push(elem);
-			} else {
-				dict[initial] = [elem];
-			}
-		} catch(e){
-			throw new Error(`Could not add ${JSON.stringify(elem)} to dictionary`);
-		}
-		return dict;
-	}, {});
-}
-
 /** Converts a date into a String format, in relation to the current date.
  * For dates that belong to today : `Today at HH:MM` ; for dates that belong to yesterday : `Yesterday at HH:MM`.
  * For any previous dates : `MMMM DD, YYYY` (DNP format).
@@ -1032,7 +1012,6 @@ export {
 	hasNodeListChanged,
 	identifyChildren,
 	makeDateFromAgo,
-	makeDictionary,
 	makeDNP,
 	makeTimestamp,
 	matchArrays,

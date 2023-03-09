@@ -1,5 +1,5 @@
 import { citoidClient, semanticClient, zoteroClient } from "./clients";
-import { cleanNewlines, makeDictionary, parseDOI, searchEngine } from "../utils";
+import { cleanNewlines, parseDOI, searchEngine } from "../utils";
 import { emitCustomEvent } from "../events";
 
 
@@ -618,6 +618,26 @@ async function fetchTags(library) {
 	}
 }
 
+/** Creates a dictionary from a String Array
+ * @param {String[]} arr - The array from which to make the dictionary
+ * @returns {Object.<string, string[]>} An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
+ */
+function makeDictionary(arr) {
+	return arr.reduce((dict, elem) => {
+		try {
+			const initial = elem.charAt(0).toLowerCase();
+			if (dict[initial]) {
+				dict[initial].push(elem);
+			} else {
+				dict[initial] = [elem];
+			}
+		} catch (e) {
+			throw new Error(`Could not add ${JSON.stringify(elem)} to dictionary`);
+		}
+		return dict;
+	}, {});
+}
+
 /** Converts Zotero tags data into a categorized list
  * @param {ZoteroTag[]} tags - The tags data from Zotero to categorize
  * @returns {Object.<string, TagEntry[]>} The list of categorized tags
@@ -801,6 +821,7 @@ export {
 	fetchPermissions,
 	fetchSemantic,
 	fetchTags,
+	makeDictionary,
 	makeTagList,
 	matchWithCurrentData,
 	parseSemanticDOIs,

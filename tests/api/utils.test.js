@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
+import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeDictionary, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems, items } from "Mocks/zotero/items";
 import { findTags, tags } from "Mocks/zotero/tags";
@@ -158,6 +158,26 @@ describe("Building tag maps", () => {
 
 		expect(() => updateTagMap(map_with_error, { tag: "some_tag", meta: { numItems: 8, type: 1 } }))
 			.toThrow("Map entry is of unexpected type String, expected Array or Object");
+	});
+});
+
+describe("Creating a dictionary", () => {
+	test("Creates dictionary from string Array", () => {
+		const arr = ["amble", "bereft", "cedar", "Arbiter", "Beforehand", "Callously", "*Important*", "12th century", "🔥"];
+		expect(makeDictionary(arr)).toEqual({
+			"*": ["*Important*"],
+			"1": ["12th century"],
+			"a": ["amble", "Arbiter"],
+			"b": ["bereft", "Beforehand"],
+			"c": ["cedar", "Callously"],
+			"\uD83D": ["🔥"]
+		});
+	});
+
+	test("Bad inputs are detected", () => {
+		const arr = [{ some: "prop" }];
+		expect(() => makeDictionary(arr))
+			.toThrow("Could not add {\"some\":\"prop\"} to dictionary");
 	});
 });
 

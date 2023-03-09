@@ -4,8 +4,7 @@ import {
 	getPDFLink, 
 	getWebLink, 
 	makeDNP,
-	makeDateFromAgo, 
-	makeDictionary, 
+	makeDateFromAgo,
 	makeTimestamp, 
 	parseDOI, 
 	pluralize, 
@@ -231,24 +230,4 @@ test("Pluralizes tokens", () => {
 	expect(pluralize(3, "item", "")).toBe("3 items");
 	expect(pluralize(1, "item", " added")).toBe("1 item added");
 	expect(pluralize(3, "item", " added")).toBe("3 items added");
-});
-
-describe("Creating a dictionary", () => {
-	test("Creates dictionary from string Array", () => {
-		const arr = ["amble", "bereft", "cedar", "Arbiter", "Beforehand", "Callously", "*Important*", "12th century", "🔥"];
-		expect(makeDictionary(arr)).toEqual({
-			"*": ["*Important*"],
-			"1": ["12th century"],
-			"a": ["amble", "Arbiter"],
-			"b": ["bereft", "Beforehand"],
-			"c": ["cedar", "Callously"],
-			"\uD83D": ["🔥"]
-		});
-	});
-
-	test("Bad inputs are detected", () => {
-		const arr = [{ some: "prop" }];
-		expect(() => makeDictionary(arr))
-			.toThrow("Could not add {\"some\":\"prop\"} to dictionary");
-	});
 });
