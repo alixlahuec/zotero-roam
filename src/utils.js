@@ -98,24 +98,6 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 	return clean_item;
 }
 
-/** Formats a Zotero PDF's metadata into a clean format, with parent & annotations data
- * @param {ZoteroItemAttachment} pdf - The Zotero PDF entry
- * @param {ZoteroItemTop} parent - The Zotero PDF's parent item
- * @param {ZoteroItemAnnotation[]} annotations - The Zotero PDF's linked annotations
- * @returns {Object} The simplified PDF entry
- * @see cleanLibraryPDFType
- */
-function cleanLibraryPDF(pdf, parent = {}, annotations = []){
-	return {
-		annotations,
-		key: pdf.data.key,
-		link: getPDFLink(pdf, "href"),
-		parent,
-		title: pdf.data.filename || pdf.data.title,
-		raw: pdf
-	};
-}
-
 /** Removes newlines at the beginning and end of a string
  * @param {String} text - The string to be trimmed
  * @returns The clean string
@@ -1077,7 +1059,6 @@ function splitNotes(notes, separator){
 export {
 	categorizeLibraryItems,
 	cleanLibraryItem,
-	cleanLibraryPDF,
 	cleanNewlines,
 	compareItemsByYear,
 	compareAnnotationIndices,

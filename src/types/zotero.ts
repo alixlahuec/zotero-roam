@@ -27,6 +27,15 @@ export interface ZCleanItemTop {
 	_multiField: string,
 	raw: ZoteroItemTop
 }
+
+export interface ZCleanItemPDF {
+	annotations: ZoteroItemAnnotation[],
+	key: string,
+	link: string,
+	parent: ZoteroItemTop | Record<string, never>,
+	title: string,
+	raw: ZoteroItemAttachment
+}
 export interface ZLibraryContents {
 	items: ZoteroItemTop[],
 	notes: (ZoteroItemAnnotation | ZoteroItemNote)[],

@@ -140,7 +140,7 @@ const cleanLibraryItemType = shape({
 const cleanLibraryReturnArrayType = arrayOf(cleanLibraryItemType);
 
 /**
- * @see cleanLibraryPDF
+ * @see ZCleanItemPDF
  */
 const cleanLibraryPDFType = shape({
 	annotations: arrayOf(zoteroAnnotationType),
