@@ -27,7 +27,7 @@ axiosRetry(zoteroClient, {
 		/* istanbul ignore else */
 		if(error.response){
 			const { headers } = error.response;
-			return (headers.backoff || headers["retry-after"] || retryCount) * 1000;
+			return (Number(headers.backoff) || headers["retry-after"] || retryCount) * 1000;
 		} else {
 			return retryCount * 3000;
 		}
