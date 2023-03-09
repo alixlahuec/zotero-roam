@@ -3,7 +3,7 @@ import zrToaster from "Components/ExtensionToaster";
 
 /** Categorizes library items according to their type (items, PDFs attachments, notes)
  * @param {(ZoteroItem)[]} datastore - The items to categorize 
- * @returns {{items: ZoteroItemTop[], pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} The categorized object
+ * @returns {ZLibraryContents} The categorized object
  */
 function categorizeLibraryItems(datastore){
 	return datastore.reduce((obj, item) => {
@@ -21,38 +21,6 @@ function categorizeLibraryItems(datastore){
 		return obj;
 
 	}, { items: [], pdfs: [], notes: [] });
-}
-
-/** Extracts an author's last name
- * @param {String} name - The author's full name
- * @returns The author's last name
- */
-function cleanAuthorLastName(name){
-	const components = name.replaceAll(".", " ").split(" ").filter(Boolean);
-	if(components.length == 1){
-		return components[0];
-	} else {
-		return components.slice(1).filter(c => c.length > 1).join(" ");
-	}
-}
-
-/** Formats authoring metadata
- * @param {String[]} names - The last names of the author(s)
- * @returns The formatted authoring string
- */
-function cleanAuthorsNames(names){
-	switch(names.length){
-	case 0:
-		return "";
-	case 1:
-		return names[0];
-	case 2:
-		return names[0] + " & " + names[1];
-	case 3:
-		return names[0] + ", " + names[1] + " & " + names[2];
-	default:
-		return names[0] + " et al.";
-	}
 }
 
 /** Converts library data into a simplified list of top-level items, with their metadata, children, and links
@@ -184,161 +152,6 @@ function cleanNewlines(text){
 	cleanText = cleanText.replaceAll(/\n{2}/g, "\n");
 
 	return cleanText;
-}
-
-/**
- * @typedef {{
- * authors: String, 
- * authorsLastNames: String[],
- * authorsString: String,
- * doi: String, 
- * intent: String[], 
- * isInfluential: Boolean,
- * links: Object,
- * meta: String,
- * title: String,
- * url: String,
- * year: String,
- * _multiField: String
- * }}
- * CleanSemanticItem
- */
-/** Formats the metadata of a Semantic Scholar entry
- * @param {Object} item - The Semantic Scholar entry to format 
- * @returns {CleanSemanticItem} The formatted entry
- * @see cleanSemanticItemType
- */
-function cleanSemanticItem(item){
-	const clean_item = {
-		authors: "",
-		//* Note: SemanticScholar DOIs are sanitized on fetch
-		doi: item.doi,
-		intent: item.intent,
-		isInfluential: item.isInfluential,
-		links: {},
-		meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
-		title: item.title,
-		url: item.url || "",
-		year: item.year ? item.year.toString() : ""
-	};
-
-	// Parse authors data
-	clean_item.authorsLastNames = item.authors.map(a => cleanAuthorLastName(a.name));
-	clean_item.authorsString = clean_item.authorsLastNames.join(" ");
-	clean_item.authors = cleanAuthorsNames(clean_item.authorsLastNames);
-	
-	// Parse external links
-	if(item.paperId){
-		clean_item.links["semantic-scholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
-	}
-	if(item.arxivId){
-		clean_item.links.arxiv = `https://arxiv.org/abs/${item.arxivId}`;
-	}
-	if(item.doi || item.title){
-		clean_item.links["connected-papers"] = "https://www.connectedpapers.com/" + (item.doi ? "api/redirect/doi/" + item.doi : "search?q=" + encodeURIComponent(item.title));
-		clean_item.links["google-scholar"] = "https://scholar.google.com/scholar?q=" + (item.doi || encodeURIComponent(item.title));
-	}
-
-	// Set multifield property for search
-	clean_item._multiField = [
-		clean_item.authorsString,
-		clean_item.year,
-		clean_item.title
-	].filter(Boolean).join(" ");
-
-	return clean_item;
-}
-
-/**
- * @typedef {{
- * ...CleanSemanticItem, 
- * inGraph: (Boolean|String), 
- * inLibrary: (Boolean|{children: {pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}, raw: ZoteroItemTop})
- * }}
- * CleanSemanticReturn
- */
-/** Matches a clean Semantic Scholar entry to Zotero and Roam data
- * @param {Object} semanticItem - A Semantic Scholar item, as returned by {@link cleanSemanticItem}
- * @param {{items: ZoteroItemTop[], pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} datastore - The categorized list of Zotero items to match against 
- * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
- * @returns {CleanSemanticReturn} - The matched entry for the item
- * @see cleanSemanticReturnType
- */
-function cleanSemanticMatch(semanticItem, { items = [], pdfs = [], notes = [] } = {}, roamCitekeys){
-	const cleanItem = cleanSemanticItem(semanticItem);
-	if(!cleanItem.doi){
-		return {
-			...cleanItem,
-			inGraph: false,
-			inLibrary: false
-		};
-	} else {
-		const libItem = items.find(it => parseDOI(it.data.DOI) == cleanItem.doi);
-		if(!libItem){
-			return {
-				...cleanItem,
-				inGraph: false,
-				inLibrary: false
-			};	
-		} else { 
-			const itemKey = libItem.data.key;
-			const location = libItem.library.type + "s/" + libItem.library.id;
-			const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
-
-			return {
-				...cleanItem,
-				inGraph: roamCitekeys.has("@" + libItem.key) ? roamCitekeys.get("@" + libItem.key) : false,
-				inLibrary: {
-					children,
-					raw: libItem
-				}
-			};
-		}
-	}
-}
-
-/**
- * @typedef {{
- * citations: CleanSemanticReturn[],
- * references: CleanSemanticReturn[],
- * backlinks: CleanSemanticReturn[]
- * }}
- * CleanSemanticReturnObject
- */
-/** Formats a list of Semantic Scholar entries for display
- * @param {ZoteroItem[]} datastore - The list of Zotero items to match against 
- * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to format 
- * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
- * @returns {CleanSemanticReturnObject} The formatted list
- * @see cleanSemanticReturnObjectType
- */
-function cleanSemantic(datastore, semantic, roamCitekeys){
-	const { items = [], pdfs = [], notes = [] } = datastore;
-	const itemsWithDOIs = items.filter(it => it.data.DOI);
-	// * Note: DOIs from the Semantic Scholar queries are sanitized at fetch
-	const { citations = [], references = [] } = semantic;
-
-	const clean_citations = citations.map((cit) => {
-		const cleanProps = cleanSemanticMatch(cit, { items: itemsWithDOIs, pdfs, notes }, roamCitekeys);
-		return {
-			...cleanProps,
-			_type: "citing"
-		};
-	});
-
-	const clean_references = references.map((ref) => {
-		const cleanProps = cleanSemanticMatch(ref, { items: itemsWithDOIs, pdfs, notes }, roamCitekeys);
-		return {
-			...cleanProps,
-			_type: "cited"
-		};
-	});
-
-	return {
-		citations: clean_citations,
-		references: clean_references,
-		backlinks: [...clean_references, ...clean_citations].filter(item => item.inLibrary)
-	};
 }
 
 /** Orders the indices of two Zotero annotations
@@ -892,7 +705,7 @@ function matchArrays(arr1, arr2){
 }
 
 /** Extracts a valid DOI from a string
- * @param {String} doi - The string to test 
+ * @param {String|undefined} doi - The string to test 
  * @returns The DOI (starting with `10.`) if any - otherwise `false`
  */
 function parseDOI(doi){
@@ -1282,14 +1095,10 @@ function splitNotes(notes, separator){
 
 export {
 	categorizeLibraryItems,
-	cleanAuthorLastName,
-	cleanAuthorsNames,
 	cleanLibrary,
 	cleanLibraryItem,
 	cleanLibraryPDF,
 	cleanNewlines,
-	cleanSemantic,
-	cleanSemanticItem,
 	compareItemsByYear,
 	compareAnnotationIndices,
 	compareAnnotationRawIndices,

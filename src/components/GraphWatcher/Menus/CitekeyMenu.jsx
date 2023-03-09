@@ -9,6 +9,7 @@ import CitekeyPopover from "Components/CitekeyPopover";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import ErrorCallout from "Components/Errors/ErrorCallout";
 import ItemDetails from "Components/ItemDetails";
+import NotesImport from "Components/NotesImport";
 import SciteBadge from "Components/SciteBadge";
 import SemanticPanel from "../SemanticPanel";
 
@@ -24,13 +25,13 @@ import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import { showClasses } from "../classes";
 
-import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
+import { cleanSemantic } from "./helpers";
+import { cleanLibraryItem, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
 import { findRoamPage, importItemMetadata } from "Roam";
 
 import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
-import NotesImport from "Components/NotesImport";
 
 
 function BacklinksItem({ entry }) {

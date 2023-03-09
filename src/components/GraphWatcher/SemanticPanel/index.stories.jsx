@@ -3,7 +3,8 @@ import { userEvent, within } from "@storybook/testing-library";
 
 import SemanticPanel from "Components/GraphWatcher/SemanticPanel";
 
-import { cleanSemantic, parseDOI } from "../../../utils";
+import { cleanSemantic } from "../Menus/helpers";
+import { parseDOI } from "../../../utils";
 import { parseSemanticDOIs } from "../../../api/utils";
 
 import { semantics } from "Mocks/semantic-scholar";
@@ -21,7 +22,7 @@ export default {
 	component: SemanticPanel,
 	args: {
 		isOpen: true,
-		items: cleanSemantic([], semanticData, new Map()),
+		items: cleanSemantic({ items: [], notes: [], pdfs: [] }, semanticData, new Map()),
 		onClose: () => {},
 		show: {
 			title: "@" + semanticItem.key,

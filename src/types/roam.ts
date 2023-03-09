@@ -14,6 +14,11 @@ export interface CursorLocation {
 }
 
 /**
+ * Mapping between the title and UID of all citekey pages in the Roam graph.
+ */
+export type RoamCitekeysList = Map<string, string>;
+
+/**
  * A block-format element that can be imported to Roam, by the extension or a SmartBlock.
  */
 export interface RoamImportableBlock {
