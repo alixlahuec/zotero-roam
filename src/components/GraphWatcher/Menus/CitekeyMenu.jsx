@@ -25,8 +25,8 @@ import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import { showClasses } from "../classes";
 
-import { cleanSemantic } from "./helpers";
-import { cleanLibraryItem, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
+import { cleanSemantic, compareItemsByYear } from "./helpers";
+import { cleanLibraryItem, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
 import { findRoamPage, importItemMetadata } from "Roam";
 
 import { CustomClasses } from "../../../constants";

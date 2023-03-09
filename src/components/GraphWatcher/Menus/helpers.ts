@@ -37,6 +37,32 @@ interface SRelatedEntries {
 	backlinks: EnrichedSemanticItem[]
 }
 
+/** Compares two Zotero items by publication year then alphabetically, to determine sort order
+ * @returns The comparison outcome
+ */
+function compareItemsByYear(a: ZoteroItemTop, b: ZoteroItemTop): (-1|1) {
+	if (!a.meta.parsedDate) {
+		if (!b.meta.parsedDate) {
+			return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
+		} else {
+			return 1;
+		}
+	} else {
+		if (!b.meta.parsedDate) {
+			return -1;
+		} else {
+			const date_diff = new Date(a.meta.parsedDate).getUTCFullYear() - new Date(b.meta.parsedDate).getUTCFullYear();
+			if (date_diff < 0) {
+				return -1;
+			} else if (date_diff == 0) {
+				return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
+			} else {
+				return 1;
+			}
+		}
+	}
+}
+
 /** Extracts an author's last name */
 function getAuthorLastName(name: string): string {
 	const components = name.replaceAll(".", " ").split(" ").filter(Boolean);
@@ -186,6 +212,7 @@ function cleanSemantic(
 }
 
 export {
+	compareItemsByYear,
 	getAuthorLastName,
 	makeAuthorsSummary,
 	cleanSemanticItem,

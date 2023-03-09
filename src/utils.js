@@ -157,34 +157,6 @@ function compareAnnotationRawIndices(a, b){
 	);
 }
 
-/** Compares two Zotero items by publication year then alphabetically, to determine sort order
- * @param {ZoteroItemTop} a - The first item to compare
- * @param {ZoteroItemTop} b - The second item to compare
- * @returns {(-1|1)} The comparison outcome
- */
-function compareItemsByYear(a, b) {
-	if(!a.meta.parsedDate){
-		if(!b.meta.parsedDate){
-			return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
-		} else {
-			return 1;
-		}
-	} else {
-		if(!b.meta.parsedDate){
-			return -1;
-		} else {
-			const date_diff = new Date(a.meta.parsedDate).getUTCFullYear() - new Date(b.meta.parsedDate).getUTCFullYear();
-			if(date_diff < 0){
-				return -1;
-			} else if(date_diff == 0){
-				return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
-			} else {
-				return 1;
-			}
-		}
-	}
-}
-
 /** Extracts the numerical index of a Zotero annotation, from its string origin
  * @param {String} str - The string index
  * @returns The index in numerical Array form
@@ -1043,7 +1015,6 @@ export {
 	categorizeLibraryItems,
 	cleanLibraryItem,
 	cleanNewlines,
-	compareItemsByYear,
 	compareAnnotationIndices,
 	compareAnnotationRawIndices,
 	copyToClipboard,
