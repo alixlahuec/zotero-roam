@@ -64,7 +64,7 @@ export interface ZoteroCollection extends ZoteroBase {
 		/** The collection's display name */
 		name: string,
 		/** The key of the collection's parent, if any */
-		parentCollection: string,
+		parentCollection: string | false,
 		relations: Record<string, string | string[]>,
 		version: ZoteroBase["version"]
 	} & Record<string,any>,

@@ -15,7 +15,7 @@ import useMulti from "../../hooks/useMulti";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import useSelect from "../../hooks/useSelect";
 
-import { sortCollections } from "../../utils";
+import { sortCollections } from "./helpers";
 
 import * as customPropTypes from "../../propTypes";
 import { CustomClasses } from "../../constants";

@@ -861,59 +861,6 @@ function simplifyZoteroAnnotations(annotations){
 	});
 }
 
-/** Sorts the children of a Zotero collection, with nested children
- * @param {ZoteroCollection} parent - The parent collection
- * @param {ZoteroCollection[]} children - Child collections among which to identify the parent's children
- * @param {Number} depth - The current level of nesting
- * @returns The sorted array
- */
-function sortCollectionChildren(parent, children, depth = 0){
-	const parColl = parent;
-	parColl.depth = depth;
-	
-	const chldn = children.filter(ch => ch.data.parentCollection == parColl.key);
-	// If the collection has children, recurse
-	if(chldn.length > 0){
-		const collArray = [parColl];
-		// Go through each child collection 1-by-1
-		// If a child has children itself, the recursion should ensure everything gets added where it should
-		for(let j = 0; j < chldn.length; j++){
-			collArray.push(...sortCollectionChildren(chldn[j], children, depth + 1));
-		}
-		return collArray;
-	} else {
-		return [parColl];
-	}
-
-}
-
-/** Sorts an array of Zotero collections in A-Z order, with child collections
- * @param {ZoteroCollection[]} arr - The array of Zotero collections to sort
- * @returns The sorted array
- */
-function sortCollections(arr){
-	if(arr.length > 0){
-		// Sort collections A-Z
-		const array = [...arr].sort((a,b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
-		const orderedArray = [];
-		const topColls = array.filter(cl => !cl.data.parentCollection);
-		topColls.forEach((cl, i) => { topColls[i].depth = 0; });
-		const childColls = array.filter(cl => cl.data.parentCollection);
-		for(let k = 0; k < topColls.length; k++){
-			const chldn = childColls.filter(ch => ch.data.parentCollection == topColls[k].key);
-			// If the collection has children, pass it to sortCollectionChildren to recursively process the nested collections
-			if(chldn.length > 0){
-				orderedArray.push(...sortCollectionChildren(topColls[k], childColls));
-			} else {
-				orderedArray.push(topColls[k]);
-			}
-		}
-		return orderedArray;
-	} else {
-		return [];
-	}
-}
-
 /** Sorts an array of objects on a given string key, in A-Z order
  * @param {Object[]} arr - The list of elements to sort 
  * @param {String} sort - The key to sort elements on 
@@ -968,7 +915,6 @@ export {
 	readDNP,
 	searchEngine,
 	simplifyZoteroAnnotations,
-	sortCollections,
 	sortElems,
 	splitNotes
 };
