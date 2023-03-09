@@ -44,10 +44,24 @@ export const makeEntityLinks = ({ key, library, parentItem = null }) => {
 	};
 };
 
-export const makeItemMetadata = ({ citekey = false, itemType = null, key = "__NO_UNIQUE_KEY__", library, title ="", version = 1, data = {} }) => ({
+/**
+ * 
+ * @param {{
+ * citekey: string | false,
+ * itemType: ZoteroItemTopType,
+ * key: string,
+ * library: ZLibraryMock,
+ * title: string,
+ * version?: number,
+ * data: Partial<ZoteroItemTop["data"]>
+ * }} config
+ */
+export const makeItemMetadata = ({ citekey = false, itemType = "journalArticle", key = "__NO_UNIQUE_KEY__", library, title ="", version = 1, data = {} }) => ({
 	data: {
 		creators: [],
 		collections: [],
+		dateAdded: "",
+		dateModified: "",
 		itemType,
 		key,
 		extra: citekey ? `Citation Key: ${citekey}` : "",

@@ -1,4 +1,16 @@
-const configLibrary = (type, id, name) => {
+export interface ZLibraryMock {
+	id: number,
+	links: {
+		alternate: { href: string, type: string }
+	},
+	name: string,
+	path: string,
+	type: "user" | "group",
+	username?: string,
+	version: number
+}
+
+const configLibrary = (type: "user"|"group", id: number, name: string) => {
 	const path = type + "s/" + id;
 	return {
 		id,
@@ -14,7 +26,7 @@ const configLibrary = (type, id, name) => {
 	};
 };
 
-const data = {
+const data: Record<string, ZLibraryMock> = {
 	"userLibrary": {
 		...configLibrary("user", 123456, "username"),
 		username: "username",

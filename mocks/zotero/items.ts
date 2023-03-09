@@ -1,12 +1,13 @@
 import { rest } from "msw";
+import { ZoteroItemTop } from "Types/externals/zotero";
 import { citoids, semanticIdentifier } from "../citoid";
 import { makeItemMetadata, zotero } from "./common";
-import { libraries } from "./libraries";
+import { libraries, ZLibraryMock } from "./libraries";
 
 
 const { userLibrary, groupLibrary } = libraries;
 
-const data = [
+const data: ZoteroItemTop[] = [
 	{
 		...makeItemMetadata({
 			citekey: "blochImplementingSocialInterventions2021",
@@ -132,7 +133,7 @@ const data = [
 ];
 
 const makeBibEntry = ({ citekey, biblatex }) => {
-	const item = data.find(it => it.key == citekey);
+	const item = data.find(it => it.key == citekey) as ZoteroItemTop;
 	const { data: { key }, library, links, meta, version } = item;
 	return {
 		biblatex,
@@ -172,12 +173,12 @@ export const handleItems = [
 			const include = req.url.searchParams.get("include") || "json";
 
 			// Otherwise create success response
-			const { type, id, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
+			const { type, id, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`) as ZLibraryMock;
 
 			// Bibliography entries
 			if(include == "biblatex"){
-				const keyList = req.url.searchParams.get("itemKey").split(",");
-				const bibs = keyList.map(key => findBibEntry({ type, id, key }));
+				const keyList = req.url.searchParams.get("itemKey")?.split(",");
+				const bibs = keyList?.map(key => findBibEntry({ type, id, key }));
 				return res(
 					ctx.json(bibs)
 				);
@@ -186,8 +187,8 @@ export const handleItems = [
 			// Items JSON
 			const items = findItems({ type, id, since });
 			return res(
-				ctx.set("last-modified-version", version),
-				ctx.set("total-results", Math.min(items.length, 100)), // We're not mocking for additional requests
+				ctx.set("last-modified-version", version.toString()),
+				ctx.set("total-results", Math.min(items.length, 100).toString()), // We're not mocking for additional requests
 				ctx.json(items)
 			);
 		}
@@ -199,7 +200,7 @@ export const handleItems = [
 			const { libraryType, libraryID } = req.params;
 			const itemsData = await req.json();
 
-			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
+			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`) as ZLibraryMock;
 
 			const output = itemsData.reduce((obj, item) => {
 				const { key, version, ...props } = item;
@@ -215,7 +216,7 @@ export const handleItems = [
 						})
 					});
 				} else {
-					const libraryCopy = data.find(it => it.library.type == library.type && it.library.id == library.id);
+					const libraryCopy = data.find(it => it.library.type == library.type && it.library.id == library.id) as ZoteroItemTop;
 					if(version < libraryCopy.version){
 						obj.failed.push(libraryCopy.data.key);
 						obj.unchanged.push(libraryCopy);

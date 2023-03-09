@@ -6,6 +6,11 @@ const addSampleMetadata = () => ({
 	version: 0
 });
 
+/**
+ * 
+ * @param {Partial<ZoteroItemTop["data"]>} config 
+ * @returns 
+ */
 const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ...props }) => ({
 	...addSampleMetadata,
 	creators,

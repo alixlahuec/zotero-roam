@@ -23,31 +23,12 @@ function categorizeLibraryItems(datastore){
 	}, { items: [], pdfs: [], notes: [] });
 }
 
-/** Converts library data into a simplified list of top-level items, with their metadata, children, and links
- * @param {(ZoteroItem)[]} arr - The library's contents, including top-level items, attachments and notes/annotations
- * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
- * @returns {Object[]} The simplified items
- * @see cleanLibraryReturnArrayType
- */
-function cleanLibrary(arr, roamCitekeys){
-	const lib = categorizeLibraryItems(arr);
-
-	return lib.items
-		.map(item => {
-			const itemKey = item.data.key;
-			const location = item.library.type + "s/" + item.library.id;
-			const { pdfs, notes } = identifyChildren(itemKey, location, { pdfs: lib.pdfs, notes: lib.notes });
-
-			return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
-		});
-}
-
 /** Formats a Zotero item's metadata into a clean format, with Roam & children data
  * @param {ZoteroItemTop} item - The Zotero item
  * @param {ZoteroItemAttachment[]} pdfs - The Zotero item's attached PDFs
  * @param {(ZoteroItemNote|ZoteroItemAnnotation)[]} notes - The Zotero item's notes and annotations
- * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
- * @returns {Object} The simplified item
+ * @param {RoamCitekeysList} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
+ * @returns {ZCleanItemTop} The simplified item
  * @see cleanLibraryItemType
  */
 function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
@@ -1095,7 +1076,6 @@ function splitNotes(notes, separator){
 
 export {
 	categorizeLibraryItems,
-	cleanLibrary,
 	cleanLibraryItem,
 	cleanLibraryPDF,
 	cleanNewlines,
