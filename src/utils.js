@@ -478,16 +478,6 @@ function getWebLink(item, { format = "markdown", text = "Web library" } = {}){
 	}
 }
 
-/** Checks if the contents of a NodeList have changed
- * From mauroc8 on SO: https://stackoverflow.com/questions/51958759/how-can-i-test-the-equality-of-two-nodelists
- * @param {NodeList} prev - The previous contents of the NodeList
- * @param {NodeList} current - The current contents of the NodeList
- * @returns {Boolean} `true` if the NodeList has changed ; `false` otherwise
- */
-function hasNodeListChanged(prev, current){
-	return (prev.length + current.length) != 0 && (prev.length !== current.length || prev.some((el, i) => el !== current[i]));
-}
-
 /** Identifies the children of a Zotero item within a given set of PDF and note entries
  * @param {String} itemKey - The Zotero key of the parent item
  * @param {String} location - The library location of the parent item
@@ -861,15 +851,6 @@ function simplifyZoteroAnnotations(annotations){
 	});
 }
 
-/** Sorts an array of objects on a given string key, in A-Z order
- * @param {Object[]} arr - The list of elements to sort 
- * @param {String} sort - The key to sort elements on 
- * @returns {Object[]} The sorted array
- */
-function sortElems(arr, sort){
-	return arr.sort((a,b) => (`${a[sort]}`.toLowerCase() < `${b[sort]}`.toLowerCase()) ? -1 : 1);
-}
-
 /** Splits Zotero notes on a given string
  * @param {Object[]} notes - The raw array of notes to split
  * @param {String} separator - The string on which to split notes
@@ -905,7 +886,6 @@ export {
 	getPDFLink,
 	getLocalLink,
 	getWebLink,
-	hasNodeListChanged,
 	identifyChildren,
 	makeDateFromAgo,
 	makeDNP,
@@ -915,6 +895,5 @@ export {
 	readDNP,
 	searchEngine,
 	simplifyZoteroAnnotations,
-	sortElems,
 	splitNotes
 };

@@ -12,7 +12,7 @@ import { useWebImportSettings } from "Components/UserSettings/WebImport";
 import { addPageMenus, findPageMenus } from "./Menus/utils";
 import { findWebimportDivs, setWebimportDivs } from "./WebImport/utils";
 import { menuPrefix, webimportClass } from "./classes";
-import { hasNodeListChanged } from "../../utils";
+import { hasNodeListChanged } from "./helpers";
 
 
 const GraphWatcher = memo(function GraphWatcher(){

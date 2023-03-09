@@ -8,7 +8,8 @@ import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import SemanticPagination from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
-import { pluralize, sortElems } from "../../../utils";
+import { pluralize } from "../../../utils";
+import { sortElems } from "../helpers";
 import useMulti from "../../../hooks/useMulti";
 
 import { CustomClasses } from "../../../constants";

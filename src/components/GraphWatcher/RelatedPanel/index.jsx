@@ -9,7 +9,8 @@ import ErrorBoundary from "Components/Errors/ErrorBoundary";
 
 import useBool from "../../../hooks/useBool";
 
-import { pluralize, sortElems } from "../../../utils";
+import { pluralize } from "../../../utils";
+import { sortElems } from "../helpers";
 
 import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";

@@ -8,7 +8,7 @@ import WebImportPanel from "./WebImportPanel";
 
 import useBool from "../../../hooks/useBool";
 
-import { hasNodeListChanged } from "../../../utils";
+import { hasNodeListChanged } from "../helpers";
 
 import "./index.css";
 
