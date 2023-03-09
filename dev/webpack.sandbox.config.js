@@ -16,6 +16,20 @@ module.exports = merge(baseConfig, {
 		},
 		sourceMapFilename: "zoteroRoam.sandbox.js.map"
 	},
+	module: {
+		rules: [
+			{
+				test: /\.(t|j)sx?$/,
+				include: [path.resolve("src"), path.resolve("mocks"), path.resolve("sandbox.js")],
+				use: {
+					loader: "babel-loader",
+					options: {
+						presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"]
+					}
+				}
+			}
+		]
+	},
 	resolve: {
 		alias: {
 			"Mocks": path.resolve("mocks"),
