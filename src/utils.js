@@ -533,23 +533,6 @@ function identifyChildren(itemKey, location, { pdfs = [], notes = [] } = {}){
 	};
 }
 
-/** Identifies the connections of a Zotero PDF within a given set of item and notes entries
- * @param {String} itemKey - The Zotero key of the PDF item
- * @param {String} parentKey - The Zotero key of the PDF's parent
- * @param {String} location - The library location of the PDF item
- * @param {{items: ZoteroItemTop[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} data - The items among which connections are to be identified 
- * @returns The item's connections
- */
-function identifyPDFConnections(itemKey, parentKey, location, { items = [], notes = [] } = {}){
-	const parentItem = items.find(it => it.data.key == parentKey && (it.library.type + "s/" + it.library.id == location));
-	const annotationItems = notes.filter(n => n.data.itemType == "annotation" && n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location);
-	
-	return {
-		parent: parentItem,
-		annotations: annotationItems
-	};
-}
-
 /** Checks if a string input is an HTML tag
  * @param {String} input - The targeted string
  * @returns The outcome of the test
@@ -1077,7 +1060,6 @@ export {
 	getWebLink,
 	hasNodeListChanged,
 	identifyChildren,
-	identifyPDFConnections,
 	makeDateFromAgo,
 	makeDictionary,
 	makeDNP,

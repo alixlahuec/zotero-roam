@@ -12,8 +12,8 @@ import { useQuery_Items } from "../../../api/queries";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
-import { categorizeLibraryItems, cleanLibraryItem, identifyChildren, identifyPDFConnections } from "../../../utils";
-import { cleanLibraryPDF } from "./helpers";
+import { categorizeLibraryItems, cleanLibraryItem, identifyChildren } from "../../../utils";
+import { cleanLibraryPDF, identifyPDFConnections } from "./helpers";
 
 import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
