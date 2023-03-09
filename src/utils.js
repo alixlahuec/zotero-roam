@@ -861,48 +861,6 @@ function simplifyZoteroAnnotations(annotations){
 	});
 }
 
-/** Simplifies data structure for Zotero notes
- * @param {Object[]} notes - The list of notes to simplify
- * @returns {{
- * dateAdded: String,
- * dateModified: String,
- * key: String,
- * location: String,
- * link_note: String,
- * note: String,
- * parent_item: String,
- * raw: Object,
- * tags: String[]
- * }[]} The simplified array of notes
- */
-function simplifyZoteroNotes(notes){
-	return notes.map(nt => {
-		const {
-			dateAdded: date_added,
-			dateModified: date_modified,
-			parentItem: parent_item,
-			note,
-			tags
-		} = nt.data;
-
-		const location = nt.library.type + "s/" + nt.library.id;
-		const libLoc = location.startsWith("groups/") ? location : "library";
-		const link_note = `zotero://select/${libLoc}/items/${nt.key}`;
-
-		return {
-			date_added,
-			date_modified,
-			key: nt.key,
-			location,
-			link_note,
-			note,
-			parent_item,
-			raw: nt,
-			tags: tags.map(t => t.tag)
-		};
-	});
-}
-
 /** Sorts the children of a Zotero collection, with nested children
  * @param {ZoteroCollection} parent - The parent collection
  * @param {ZoteroCollection[]} children - Child collections among which to identify the parent's children
@@ -1010,7 +968,6 @@ export {
 	readDNP,
 	searchEngine,
 	simplifyZoteroAnnotations,
-	simplifyZoteroNotes,
 	sortCollections,
 	sortElems,
 	splitNotes

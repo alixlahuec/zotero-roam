@@ -5,11 +5,12 @@ import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tab, Tabs, Tag } fr
 
 import ButtonLink from "Components/ButtonLink";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
-
-import useBool from "../../hooks/useBool";
 import { useNotesSettings } from "Components/UserSettings/Notes";
 
-import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
+import useBool from "../../hooks/useBool";
+
+import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations } from "../../utils";
+import { simplifyZoteroNotes } from "./helpers";
 
 import { CustomClasses } from "../../constants";
 
