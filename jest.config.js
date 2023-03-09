@@ -110,12 +110,6 @@ const common = {
   // A preset that is used as a base for Jest's configuration
   // preset: undefined,
 
-  // Use this configuration option to add custom reporters to Jest
-  reporters: [
-	"default",
-	["jest-junit", { outputFile: "reports/jest-junit.xml" }]
-  ],
-
   // Automatically reset mock state before every test
   // resetMocks: false,
 
@@ -198,7 +192,7 @@ module.exports = {
 			// A list of paths to modules that run some code to configure or set up the testing framework before each test
 			setupFilesAfterEnv: ["./dev/jest.setup.js"],
 			// The regexp pattern or array of patterns that Jest uses to detect test files
-			testRegex: "(/__tests__/.*|(\\.|/)test)\\.jsx?$",
+			testRegex: "(/__tests__/.*|(\\.|/)test)\\.[jt]sx?$",
 		},
 		{
 			...common,
