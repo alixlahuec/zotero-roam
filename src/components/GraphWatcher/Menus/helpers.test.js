@@ -1,6 +1,33 @@
-import { getAuthorLastName, makeAuthorsSummary, cleanSemantic } from "./helpers";
+import { compareItemsByYear, getAuthorLastName, makeAuthorsSummary, cleanSemantic } from "./helpers";
 import { semantics } from "Mocks/semantic-scholar";
 
+
+test("Sorts Zotero items by publication year & creators", () => {
+	const a = { meta: { creatorSummary: "Smith et al.", parsedDate: "" } };
+	const b = { meta: { creatorSummary: "Scott et al.", parsedDate: "" } };
+	const c = { meta: { creatorSummary: "Smith et al.", parsedDate: "2022-01-01" } };
+	const d = { meta: { creatorSummary: "Tikki and Noald", parsedDate: "2021-01-01" } };
+	const e = { meta: { creatorSummary: "Chen and Talmanes", parsedDate: "2021" } };
+
+	expect([
+		[a, b].sort(compareItemsByYear),
+		[a, c].sort(compareItemsByYear),
+		[c, a].sort(compareItemsByYear),
+		[b, c].sort(compareItemsByYear),
+		[c, d].sort(compareItemsByYear),
+		[d, c].sort(compareItemsByYear),
+		[d, e].sort(compareItemsByYear),
+	])
+		.toEqual([
+			[b, a],
+			[c, a],
+			[c, a],
+			[c, b],
+			[d, c],
+			[d, c],
+			[e, d],
+		]);
+});
 
 describe("Extracting authors' last names", () => {
 	it("extracts from single names", () => {

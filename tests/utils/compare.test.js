@@ -1,51 +1,7 @@
-import { 
-	compareItemsByYear,
-	matchArrays,
+import {
 	sortCollections,
 	sortElems } from "../../src/utils";
 
-
-test("Sorts Zotero items by publication year & creators", () => {
-	const a = { meta: { creatorSummary: "Smith et al.", parsedDate: "" } };
-	const b = { meta: { creatorSummary: "Scott et al.", parsedDate: "" } };
-	const c = { meta: { creatorSummary: "Smith et al.", parsedDate: "2022-01-01" } };
-	const d = { meta: { creatorSummary: "Tikki and Noald", parsedDate: "2021-01-01" } };
-	const e = { meta: { creatorSummary: "Chen and Talmanes", parsedDate: "2021" } };
-
-	expect([
-		[a,b].sort(compareItemsByYear),
-		[a,c].sort(compareItemsByYear),
-		[c,a].sort(compareItemsByYear),
-		[b,c].sort(compareItemsByYear),
-		[c,d].sort(compareItemsByYear),
-		[d,c].sort(compareItemsByYear),
-		[d,e].sort(compareItemsByYear),
-	])
-		.toEqual([
-			[b,a],
-			[c,a],
-			[c,a],
-			[c,b],
-			[d,c],
-			[d,c],
-			[e,d],
-		]);
-});
-
-test("Finds if two string arrays have elements in common", () => {
-	const arr1 = ["tools", "platforms", "models"];
-	const arr2 = ["makers", "founders", "tools"];
-	const arr3 = ["makers", "founders", "companies"];
-
-	expect([
-		matchArrays(arr1, arr2),
-		matchArrays(arr1, arr3)
-	])
-		.toEqual([
-			true,
-			false
-		]);
-});
 
 describe("Zotero collections sorting", () => {
 	it("returns an empty array when given an empty input", () => {
