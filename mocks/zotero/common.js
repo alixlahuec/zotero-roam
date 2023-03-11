@@ -1,3 +1,7 @@
+/**
+ * @param {string} URI 
+ * @returns 
+ */
 export const zotero = (URI) => "https://api.zotero.org/" + URI;
 
 export const makeCollection = ({ key, library, name, version, hasParent = false, hasChildren = 0 }) => ({

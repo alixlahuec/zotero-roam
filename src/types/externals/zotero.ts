@@ -40,8 +40,6 @@ type ZoteroLibrary = {
 
 /** Basic metadata for Zotero items and collections */
 interface ZoteroBase {
-	/** The entity's data */
-	data: Record<string,any>,
 	/** The entity's Zotero key */
 	key: string,
 	/** The entity's Zotero library */
@@ -53,6 +51,42 @@ interface ZoteroBase {
 	/** The entity's current version */
 	version: number
 }
+
+type ZoteroExportFormat =
+	| "bibtex"
+	| "biblatex"
+	| "bookmarks"
+	| "coins"
+	| "csljson"
+	| "csv"
+	| "mods"
+	| "refer"
+	| "rdf_bibliontology"
+	| "rdf_dc"
+	| "rdf_zotero"
+	| "ris"
+	| "tei"
+	| "wikipedia";
+
+type ZoteroExportFormatData = {
+	[Format in ZoteroExportFormat]: unknown
+}
+
+interface ZoteroIncludeJSON extends ZoteroExportFormatData {
+	bib: string,
+	citation: string,
+	data: Record<string, any>
+}
+
+export type ZoteroIncludeFormat = keyof ZoteroIncludeJSON;
+
+export type ZoteroBibliography<K extends ZoteroIncludeFormat> = ZoteroBase & Pick<ZoteroIncludeJSON, K> & {
+	meta: {
+		creatorSummary: string,
+		parsedDate: string
+	} & Record<string, any>
+};
+
 
 /**
  * A Zotero collection
@@ -72,6 +106,12 @@ export interface ZoteroCollection extends ZoteroBase {
 		numCollections: number,
 		numItems: number
 	}
+}
+
+export interface ZoteroDeleted {
+	collections: ZoteroCollection[],
+	items: ZoteroItem[]
+	// TODO: verify response type
 }
 
 /**

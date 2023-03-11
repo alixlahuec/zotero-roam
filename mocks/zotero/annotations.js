@@ -4,6 +4,10 @@ import { libraries } from "./libraries";
 
 const { userLibrary } = libraries;
 
+/**
+ * @param {*} config
+ * @returns {ZoteroItemAnnotation}
+ */
 const makeAnnot = ({ key, library, parentItem, version, data }) => {
 	return {
 		data: {

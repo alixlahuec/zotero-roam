@@ -1,4 +1,4 @@
-import { ZoteroItemAnnotation, ZoteroItemAttachment, ZoteroItemNote, ZoteroItemTop, ZoteroItemTopType } from "./externals/zotero";
+import { ZoteroItem, ZoteroItemAnnotation, ZoteroItemAttachment, ZoteroItemNote, ZoteroItemTop, ZoteroItemTopType } from "./externals/zotero";
 
 
 export interface ZCleanItemTop {
@@ -36,6 +36,11 @@ export interface ZCleanItemPDF {
 	title: string,
 	raw: ZoteroItemAttachment
 }
+
+export type ZItem = ZoteroItem & {
+	has_citekey?: boolean
+}
+
 export interface ZLibraryContents {
 	items: ZoteroItemTop[],
 	notes: (ZoteroItemAnnotation | ZoteroItemNote)[],

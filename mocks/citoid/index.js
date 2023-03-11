@@ -1,5 +1,6 @@
 import { rest } from "msw";
 
+
 /* istanbul ignore next */
 const addSampleMetadata = () => ({
 	key: "XRT92",
@@ -22,6 +23,10 @@ const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ..
 	...props
 });
 
+/**
+ * @param {string[]} args 
+ * @returns {ZoteroCreator}
+ */
 const addCreator = ([firstName, lastName, role = "author"]) => ({
 	firstName,
 	lastName,

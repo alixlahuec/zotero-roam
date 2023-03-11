@@ -267,7 +267,7 @@ async function fetchBibEntries(itemKeys, library) {
  * @param {String} itemKey - The item's Zotero key
  * @param {ZLibrary} library - The item's Zotero library
  * @param {ConfigBibliography} config - Optional parameters to use in the API call
- * @returns
+ * @returns {Promise<string>}
  */
 async function fetchBibliography(itemKey, library, config = {}) {
 	const { apikey, path } = library;
@@ -415,7 +415,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 /** Requests data from the `/[library]/deleted` endpoint of the Zotero API
  * @param {ZLibrary} library - The targeted Zotero library
  * @param {Number} since - A library version
- * @returns {Promise<Object>} Elements deleted from Zotero since the specified version
+ * @returns {Promise<ZoteroDeleted>} Elements deleted from Zotero since the specified version
  */
 async function fetchDeleted(library, since) {
 	const { apikey, path } = library;
@@ -447,16 +447,16 @@ async function fetchDeleted(library, since) {
 /** Requests data from the Zotero API, based on a specific data URI
  * @fires zotero-roam:update
  * @param {DataRequest} req - The parameters of the request 
- * @param {{match: Object[]}} config - Additional parameters
+ * @param {{match?: Object[]}} config - Additional parameters
  * @param {*} queryClient - The current React Query client
- * @returns {Promise<{data: Object[], lastUpdated: Number}>}
+ * @returns {Promise<{data: ZItem[], lastUpdated: Number}>}
  */
 async function fetchItems(req, { match = [] } = {}, queryClient) {
 	const { apikey, dataURI, library: { path }, since = 0 } = req;
 	const paramsQuery = new URLSearchParams("");
 	paramsQuery.set("since", since);
-	paramsQuery.set("start", 0);
-	paramsQuery.set("limit", 100);
+	paramsQuery.set("start", "0");
+	paramsQuery.set("limit", "100");
 
 	const defaultOutcome = {
 		data: null,
