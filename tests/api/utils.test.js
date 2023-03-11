@@ -1,15 +1,14 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeDictionary, makeTagList, parseSemanticDOIs, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
+import { areTagsDuplicate, deleteTags, fetchBibEntries, fetchBibliography, fetchCitoid, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeDictionary, makeTagList, parseSemanticDOIs, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
-import { findBibEntry, findItems, items } from "Mocks/zotero/items";
+import { findBibEntry, findItems } from "Mocks/zotero/items";
 import { findTags, tags } from "Mocks/zotero/tags";
 import { apiKeys } from "Mocks/zotero/keys";
 import { citoids } from "Mocks/citoid";
 import { deletions } from "Mocks/zotero/deleted";
-import { findCollections } from "Mocks/zotero/collections";
 import { libraries } from "Mocks/zotero/libraries";
 import { makeItemMetadata } from "Mocks/zotero/common";
 import { semantics } from "Mocks/semantic-scholar";

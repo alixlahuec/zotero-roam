@@ -1,6 +1,8 @@
-import { citoidClient, semanticClient, zoteroClient } from "./clients";
-import { cleanErrorIfAxios, cleanNewlines, parseDOI, searchEngine } from "../utils";
 import { emitCustomEvent } from "../events";
+import { cleanErrorIfAxios, parseDOI, searchEngine } from "../utils";
+
+import { citoidClient, semanticClient, zoteroClient } from "./clients";
+import { matchWithCurrentData } from "./helpers";
 
 
 /**
@@ -430,7 +432,7 @@ async function fetchSemantic(doi) {
 
 /** Requests data from the `/[library]/tags` endpoint of the Zotero API
  * @param {ZLibrary} library - The targeted Zotero library
- * @returns {Promise<{data: Object[], lastUpdated: Number}>} The library's tags
+ * @returns {Promise<{data: Object, lastUpdated: Number}>} The library's tags
  */
 async function fetchTags(library) {
 	const { apikey, path } = library;
