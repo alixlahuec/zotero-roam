@@ -78,7 +78,7 @@ const events = [
  * Emits a custom event for the extension
  * @param {string} type - The suffix of the event to be emitted
  * @param {object} detail - The object containing the event's detail
- * @param {Element} target - The DOM target on which the event should be emitted
+ * @param {Element|Document} target - The DOM target on which the event should be emitted
  */
 function emitCustomEvent(type, detail = {}, target = document){
 	if(events.includes(type)){
