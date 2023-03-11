@@ -1,7 +1,7 @@
 import { emitCustomEvent } from "../events";
-import { cleanErrorIfAxios, parseDOI, searchEngine } from "../utils";
+import { cleanErrorIfAxios, searchEngine } from "../utils";
 
-import { citoidClient, semanticClient, zoteroClient } from "./clients";
+import { citoidClient, zoteroClient } from "./clients";
 import { matchWithCurrentData } from "./helpers";
 
 
@@ -402,34 +402,6 @@ async function fetchPermissions(apikey) {
 	}
 }
 
-/** Requests data from the `/paper` endpoint of the Semantic Scholar API
- * @param {String} doi - The DOI of the targeted item, assumed to have already been checked and parsed.
- * @returns {Promise<{doi: String, citations: Object[], references: Object[]}>} Citation data for the item
-**/
-async function fetchSemantic(doi) {
-	let response = null;
-
-	try {
-		response = await semanticClient.get(`${doi}`);
-		const { data: { citations, references } } = response;
-		return { 
-			doi, 
-			citations: parseSemanticDOIs(citations), 
-			references: parseSemanticDOIs(references) 
-		};
-	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error?.({
-			origin: "API",
-			message: "Failed to fetch data from SemanticScholar",
-			context: {
-				error: cleanErrorIfAxios(error),
-				response
-			}
-		});
-		return Promise.reject(error);
-	}
-}
-
 /** Requests data from the `/[library]/tags` endpoint of the Zotero API
  * @param {ZLibrary} library - The targeted Zotero library
  * @returns {Promise<{data: Object, lastUpdated: Number}>} The library's tags
@@ -520,20 +492,6 @@ function makeTagMap(tags){
 		(map, tag) => updateTagMap(map, tag),
 		new Map()
 	);
-}
-
-/** Selects and transforms Semantic items with valid DOIs
- * @param {Object[]} arr - The array of Semantic items to clean
- * @returns The clean Semantic array
- */
-function parseSemanticDOIs(arr){
-	return arr.map(elem => {
-		const { doi, ...rest } = elem;
-		return {
-			doi: parseDOI(doi),
-			...rest
-		};
-	});
 }
 
 /** Adds a new entry to a tag map, if it doesn't already exist
@@ -629,11 +587,9 @@ export {
 	fetchDeleted,
 	fetchItems,
 	fetchPermissions,
-	fetchSemantic,
 	fetchTags,
 	makeDictionary,
 	makeTagList,
-	parseSemanticDOIs,
 	updateTagMap,
 	writeCitoids,
 	writeItems

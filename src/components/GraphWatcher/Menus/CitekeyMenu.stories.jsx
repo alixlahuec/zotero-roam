@@ -6,7 +6,7 @@ import { expect } from "@storybook/jest";
 
 import CitekeyMenu from "./CitekeyMenu";
 import { parseDOI } from "../../../utils";
-import { parseSemanticDOIs } from "../../../api/utils";
+import { parseSemanticDOIs } from "../../../api/semantic";
 import { sleep } from "../../../../.storybook/utils";
 import { items } from "Mocks/zotero/items";
 import { sampleNote } from "Mocks/zotero/notes";

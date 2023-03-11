@@ -5,7 +5,7 @@ import SemanticPanel from "Components/GraphWatcher/SemanticPanel";
 
 import { cleanSemantic } from "../Menus/helpers";
 import { parseDOI } from "../../../utils";
-import { parseSemanticDOIs } from "../../../api/utils";
+import { parseSemanticDOIs } from "../../../api/semantic";
 
 import { semantics } from "Mocks/semantic-scholar";
 import { items } from "Mocks/zotero/items";

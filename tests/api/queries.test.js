@@ -2,7 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react-hooks";
 
 import * as apiUtils from "../../src/api/utils";
-import { wrappedFetchItems, useQuery_Citoid, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
+import { parseSemanticDOIs, useQuery_Semantic } from "../../src/api/semantic";
+import { wrappedFetchItems, useQuery_Citoid, useQuery_Items, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
 import { useQuery_Collections } from "../../src/api/collections";
 
 import { badIdentifier, goodIdentifier } from "Mocks/citoid";
@@ -14,7 +15,7 @@ import { semantics } from "Mocks/semantic-scholar";
 import { tags } from "Mocks/zotero/tags";
 
 
-const { makeTagList, parseSemanticDOIs } = apiUtils;
+const { makeTagList } = apiUtils;
 
 const { 
 	keyWithFullAccess: { key: masterKey },

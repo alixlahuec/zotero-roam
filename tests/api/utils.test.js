@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import { areTagsDuplicate, deleteTags, fetchBibEntries, fetchBibliography, fetchCitoid, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeDictionary, makeTagList, parseSemanticDOIs, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
+import { areTagsDuplicate, deleteTags, fetchBibEntries, fetchBibliography, fetchCitoid, fetchDeleted, fetchItems, fetchPermissions, fetchTags, makeDictionary, makeTagList, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems } from "Mocks/zotero/items";
@@ -173,23 +173,6 @@ describe("Creating formatted tag lists", () => {
 			expect(makeTagList(tags[path])).toEqual(expectations[path]);
 		}
 	);
-});
-
-test("Selecting and formatting Semantic DOIs", () => {
-	const testItems = [
-		{ doi: null },
-		{ doi: "invalid.DOI" },
-		{ doi: "10.1186/S40985-018-0094-7" },
-		{ doi: "10.1370/afm.1918" }
-	];
-
-	expect(parseSemanticDOIs(testItems))
-		.toEqual([
-			{ doi: false },
-			{ doi: false },
-			{ doi: "10.1186/s40985-018-0094-7" },
-			{ doi: "10.1370/afm.1918" }
-		]);
 });
 
 describe("Fetching mocked API Key permissions", () => {
@@ -469,24 +452,6 @@ describe("Writing mocked Citoid data", () => {
 					}
 				}
 			}]);
-		}
-	);
-});
-
-describe("Fetching mocked Semantic data", () => {
-	const cases = Object.entries(semantics);
-	test.each(cases)(
-		"%# Successfully mocking Semantic data for %s",
-		async(doi, semanticData) => {
-			const { citations, references } = semanticData;
-			
-			const res = await fetchSemantic(doi);
-
-			expect(res).toEqual({
-				doi,
-				citations: parseSemanticDOIs(citations),
-				references: parseSemanticDOIs(references)
-			});
 		}
 	);
 });

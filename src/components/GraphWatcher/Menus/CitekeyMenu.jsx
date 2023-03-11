@@ -18,7 +18,7 @@ import useBool from "../../../hooks/useBool";
 import { useMetadataSettings } from "Components/UserSettings/Metadata";
 import { useNotesSettings } from "Components/UserSettings/Notes";
 import { usePageMenuSettings } from "Components/UserSettings/PageMenu";
-import { useQuery_Semantic } from "../../../api/queries";
+import { useQuery_Semantic } from "../../../api/semantic";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import { useSciteSettings } from "Components/UserSettings/Scite";
 import { useTypemapSettings } from "Components/UserSettings/Typemap";

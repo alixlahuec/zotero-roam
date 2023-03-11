@@ -636,7 +636,7 @@ function makeTimestamp(date){
 }
 
 /** Extracts a valid DOI from a string
- * @param {String|undefined} doi - The string to test 
+ * @param {String|*} doi - The string to test 
  * @returns The DOI (starting with `10.`) if any - otherwise `false`
  */
 function parseDOI(doi){

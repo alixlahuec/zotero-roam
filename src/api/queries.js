@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchCitoid, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
+import { fetchCitoid, fetchItems, fetchPermissions, fetchTags } from "./utils";
 
 
 /** Wrapper for retrieving items data, based on contents of the query cache.
@@ -104,25 +104,6 @@ const useQuery_Permissions = (keys, opts = {}) => {
 	});
 };
 
-/** React Query custom hook for retrieving Semantic Scholar citation data by DOI. By default, `cacheTime = Infinity`.
- *  There is no refetch scheduled, since the data should not change over the course of a session.
- * @param {String} doi - The targeted DOI 
- * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The React Query for the given DOI's Semantic Scholar data
- */
-const useQuery_Semantic = (doi, opts = {}) => {
-	// Defaults for this query
-	const { cacheTime = Infinity, ...rest } = opts;
-	// Factory
-	const queryKey = ["semantic", { doi }];
-	return useQuery({
-		queryKey,
-		queryFn: (_queryKey) => fetchSemantic(doi),
-		cacheTime,
-		...rest
-	});
-};
-
 /** React Query custom hook for retrieving Zotero tags. By default, `staleTime = 3 min`.
  *  Refetching is managed by {@link useQuery_Items}.
  * @param {ZLibrary[]} libraries - The targeted Zotero libraries 
@@ -190,7 +171,6 @@ export {
 	useQuery_Citoid,
 	useQuery_Items,
 	useQuery_Permissions,
-	useQuery_Semantic,
 	useQuery_Tags,
 	useWriteableLibraries
 };
