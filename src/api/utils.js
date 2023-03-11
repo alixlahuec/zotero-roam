@@ -1,5 +1,5 @@
 import { citoidClient, semanticClient, zoteroClient } from "./clients";
-import { cleanNewlines, parseDOI, searchEngine } from "../utils";
+import { cleanErrorIfAxios, cleanNewlines, parseDOI, searchEngine } from "../utils";
 import { emitCustomEvent } from "../events";
 
 
@@ -77,58 +77,6 @@ function categorizeZoteroTags(z_data, tagMap){
 	return output.sort((a,b) => a.token < b.token ? -1 : 1);
 }
 
-/** Parses the XHTML bibliography for a Zotero item into Roam formatting
- * @param {String} bib - The item's XHTML bibliography
- * @returns The clean bibliography string
- */
-function cleanBibliographyHTML(bib){
-	let bibString = bib;
-
-	// Strip divs
-	const richTags = ["div"];
-	richTags.forEach(tag => {
-		// eslint-disable-next-line no-useless-escape
-		const tagRegex = new RegExp(`<\/?${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag> or </tag>, and the case with modifiers : <tag :modifier>
-		bibString = bibString.replaceAll(tagRegex, "");
-	});
-
-	bibString = cleanNewlines(bibString).trim();
-
-	// Use a textarea element to decode HTML
-	const formatter = document.createElement("textarea");
-	formatter.innerHTML = bibString;
-	let formattedBib = formatter.innerText;
-	// Convert italics
-	formattedBib = formattedBib.replaceAll(/<\/?i>/g, "__");
-	// Convert links
-	const linkRegex = /<a href="(.+)">(.+)<\/a>/g;
-	formattedBib = formattedBib.replaceAll(linkRegex, "[$2]($1)");
-
-	return formattedBib;
-}
-
-/* istanbul ignore next */
-function cleanErrorIfAxios(error){
-	try {
-		const origin = error.name || "";
-		if(origin == "AxiosError"){
-			const { code, message, status, config: { url } } = error;
-			return {
-				code,
-				message,
-				status,
-				config: {
-					url
-				}
-			};
-		}
-
-		return error.message;
-	} catch(e){
-		return error;
-	}
-}
-
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
  * @param {String[]} tags - The names of the tags to be deleted
  * @param {ZLibrary} library - The targeted Zotero library
@@ -163,24 +111,6 @@ async function deleteTags(tags, library, version){
 			} 
 		}
 	);
-}
-
-/** Extracts pinned citekeys from a dataset
- * @param {ZoteroItem[]} arr - The dataset of Zotero items to scan
- * @returns {ZoteroItem[]} The processed dataset : each item gains a `has_citekey` property, and its `key` property is assigned its citekey 
- */
-function extractCitekeys(arr){
-	const itemList = [...arr];
-	return itemList.map(item => {
-		item.has_citekey = false;
-		if(typeof(item.data.extra) !== "undefined"){
-			if(item.data.extra.includes("Citation Key: ")){
-				item.key = item.data.extra.match("Citation Key: (.+)")[1];
-				item.has_citekey = true;
-			}
-		}
-		return item;
-	});
 }
 
 /** Retrieves additional data from the Zotero API, when the original results are greater than the limit of n = 100.
@@ -328,85 +258,6 @@ async function fetchCitoid(query) {
 				query,
 				response
 			}
-		});
-		return Promise.reject(error);
-	}
-}
-
-/** Requests data from the `/[library]/collections` endpoint of the Zotero API
- * @fires zotero-roam:update
- * @param {ZLibrary} library - The targeted Zotero library
- * @param {Number} since - A library version
- * @param {{match: Object[]}} config - Additional parameters
- * @returns {Promise<{data: ZoteroCollection[], lastUpdated: Number}>} Collections created or modified in Zotero since the specified version
- */
-async function fetchCollections(library, since = 0, { match = [] } = {}) {
-	const { apikey, path } = library;
-
-	const defaultOutcome = {
-		data: null,
-		error: null,
-		library: path,
-		since,
-		success: null,
-		type: "collections"
-	};
-
-	let response = null;
-	let modified = null;
-	let deleted = null;
-
-	try {
-		response = await zoteroClient.get(
-			`${path}/collections`,
-			{ 
-				headers: { "Zotero-API-Key": apikey },
-				params: { since }
-			});
-		const { data, headers } = response;
-		modified = data;
-
-		const { "last-modified-version": lastUpdated, "total-results": totalResultsStr } = headers;
-		const totalResults = Number(totalResultsStr);
-
-		if(totalResults > 100){
-			const additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since }, totalResults);
-			modified.push(...additional);
-		}
-
-		deleted = { collections: [] };
-
-		// DO NOT request deleted items since X if since = 0 (aka, initial data request)
-		// It's a waste of a call
-		if(since > 0 && modified.length > 0){
-			deleted = await fetchDeleted(library, since);
-
-			emitCustomEvent("update", {
-				...defaultOutcome,
-				data: modified,
-				success: true
-			});
-		}
-
-		return {
-			data: matchWithCurrentData({ modified, deleted: deleted.collections }, match),
-			lastUpdated: Number(lastUpdated)
-		};
-	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error?.({
-			origin: "API",
-			message: "Failed to fetch collections",
-			context: {
-				data: modified,
-				deleted,
-				error: cleanErrorIfAxios(error),
-				response
-			}
-		});
-		emitCustomEvent("update", {
-			...defaultOutcome,
-			error,
-			success: false
 		});
 		return Promise.reject(error);
 	}
@@ -669,45 +520,6 @@ function makeTagMap(tags){
 	);
 }
 
-/** Compares two datasets and merges the changes. As the match is done on the `data.key` property, both items and collections can be matched.
- *  For items, merging involves an additional step to extract citekeys.
- * @param {{modified: (ZoteroItem)[]|ZoteroCollection[], deleted: (ZoteroItem)[]|ZoteroCollection[]}} update - The newer dataset
- * @param {Object[]} arr - The older dataset
- * @param {{with_citekey?: Boolean}} config - Additional parameters 
- * @returns {Object[]} - The merged dataset
- */
-function matchWithCurrentData(update, arr = [], { with_citekey = false } = {}) {
-	const { modified = [], deleted = [] } = update;
-	// If the data has citekeys, transform before pushing
-	const modifiedData = with_citekey
-		? extractCitekeys([...modified])
-		: [...modified];
-	const deletedData = [...deleted];
-
-	// Remove deleted items
-	const oldData = deletedData.length == 0
-		? arr
-		: arr.filter(item => !deletedData.includes(item.data.key));
-
-	// Update datastore
-	if(modifiedData.length == 0){
-		return oldData;
-	} else if(oldData.length == 0){
-		return modifiedData;
-	} else {
-		const [...datastore] = oldData;
-		modifiedData.forEach(item => {
-			const duplicateIndex = datastore.findIndex(i => i.data.key == item.data.key);
-			if(duplicateIndex == -1){
-				datastore.push(item);
-			} else {
-				datastore[duplicateIndex] = item;
-			}
-		});
-		return datastore;
-	}
-}
-
 /** Selects and transforms Semantic items with valid DOIs
  * @param {Object[]} arr - The array of Semantic items to clean
  * @returns The clean Semantic array
@@ -807,15 +619,11 @@ function writeItems(dataList, library){
 
 export {
 	areTagsDuplicate,
-	cleanBibliographyHTML,
-	cleanErrorIfAxios,
 	deleteTags,
-	extractCitekeys,
 	fetchAdditionalData,
 	fetchBibEntries,
 	fetchBibliography,
 	fetchCitoid,
-	fetchCollections,
 	fetchDeleted,
 	fetchItems,
 	fetchPermissions,
@@ -823,7 +631,6 @@ export {
 	fetchTags,
 	makeDictionary,
 	makeTagList,
-	matchWithCurrentData,
 	parseSemanticDOIs,
 	updateTagMap,
 	writeCitoids,

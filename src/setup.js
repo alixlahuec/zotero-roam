@@ -3,7 +3,7 @@ import { unmountComponentAtNode } from "react-dom";
 import { parseKeyCombo } from "@blueprintjs/core";
 import { defaultShouldDehydrateQuery } from "@tanstack/react-query";
 
-import { cleanErrorIfAxios } from "./api/utils";
+import { cleanErrorIfAxios } from "./utils";
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
 

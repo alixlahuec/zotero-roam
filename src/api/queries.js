@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
+import { fetchCitoid, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
 
 
 /** Wrapper for retrieving items data, based on contents of the query cache.
@@ -41,33 +41,6 @@ const useQuery_Citoid = (urls, opts = {}) => {
 			cacheTime,
 			retry,
 			staleTime,
-			...rest
-		};
-	});
-	return useQueries({
-		queries: queriesDefs
-	});
-};
-
-/** React Query custom hook for retrieving Zotero collections. By default, `staleTime = 5 min` and `refetchInterval = 5 min`.
- * @param {ZLibrary[]} libraries - The targeted Zotero libraries 
- * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The React Queries for the given libraries' collections
- */
-const useQuery_Collections = (libraries, opts = {}) => {
-	// Defaults for this query
-	const { staleTime = 1000 * 60 * 5, refetchInterval = 1000 * 60 * 5, ...rest } = opts;
-	// Factory
-	const client = useQueryClient();
-	const queriesDefs = libraries.map((lib) => {
-		const { path/*, apikey*/ } = lib;
-		const queryKey = ["collections", { library: path }];
-		const { data: match, lastUpdated: since } = client.getQueryData(queryKey) || {};
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchCollections(lib, since, { match }),
-			staleTime,
-			refetchInterval,
 			...rest
 		};
 	});
@@ -215,7 +188,6 @@ const useWriteableLibraries = (libraries) => {
 export {
 	wrappedFetchItems,
 	useQuery_Citoid,
-	useQuery_Collections,
 	useQuery_Items,
 	useQuery_Permissions,
 	useQuery_Semantic,

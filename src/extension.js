@@ -2,8 +2,8 @@ import { H5 } from "@blueprintjs/core";
 import zrToaster from "Components/ExtensionToaster";
 
 import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
-import { cleanBibliographyHTML, cleanErrorIfAxios, fetchBibEntries, fetchBibliography } from "./api/utils";
-import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
+import { fetchBibEntries, fetchBibliography } from "./api/utils";
+import { cleanBibliographyHTML, cleanErrorIfAxios, compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 import { findRoamBlock } from "Roam";
 
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "./constants";

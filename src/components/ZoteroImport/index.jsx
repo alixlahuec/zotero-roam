@@ -9,7 +9,8 @@ import LibrarySelector from "./LibrarySelector";
 import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
 import TagsSelector from "Components/Inputs/TagsSelector";
 
-import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
+import { useQuery_Collections } from "../../api/collections";
+import { useQuery_Citoid, useWriteableLibraries } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
 import useMulti from "../../hooks/useMulti";
 import { useRequestsSettings } from "Components/UserSettings/Requests";

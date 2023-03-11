@@ -2,8 +2,8 @@ import { QueryClient } from "@tanstack/query-core";
 
 import { H5 } from "@blueprintjs/core";
 import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
-import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
-import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
+import { makeTagList } from "../src/api/utils";
+import { cleanBibliographyHTML, formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
 
 import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from "../src/extension";
 import zrToaster from "Components/ExtensionToaster";

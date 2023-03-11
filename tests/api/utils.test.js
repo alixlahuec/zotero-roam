@@ -1,7 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeDictionary, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
+import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeDictionary, makeTagList, parseSemanticDOIs, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
+
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems, items } from "Mocks/zotero/items";
 import { findTags, tags } from "Mocks/zotero/tags";
@@ -19,47 +20,6 @@ const { userLibrary, groupLibrary } = libraries;
 const getLibraryPath = (library) => {
 	return library.type + "s/" + library.id;
 };
-
-describe("Cleaning XHTML markup for bibliography entries", () => {
-	// Necessary since jsdom does not support innerText
-	// It shouldn't give discrepant results here
-	// https://github.com/jsdom/jsdom/issues/1245#issuecomment-763535573
-	beforeAll(() => {
-		Object.defineProperty(HTMLElement.prototype, "innerText", {
-			get() {
-				return this.textContent;
-			}
-		});
-	});
-
-	it("should correctly format citations with one content div (like Chicago)", () => {
-		expect(cleanBibliographyHTML(bibs.itemFromUserLibrary.bib))
-			.toBe("Agarwal, Payal, Rick Wang, Christopher Meaney, Sakina Walji, Ali Damji, Navsheer Gill Toor, Gina Yip, et al. “Sociodemographic Differences in Patient Experience with Virtual Care during COVID-19.” medRxiv, July 22, 2021. https://www.medrxiv.org/content/10.1101/2021.07.19.21260373v1.");
-	});
-
-	it("should correctly format citations with multiple content divs (like Vancouver)", () => {
-		const sample_bib_vancouver = "<div class=\"csl-bib-body\" style=\"line-height: 1.35; \">\n  <div class=\"csl-entry\" style=\"clear: left; \">\n    <div class=\"csl-left-margin\" style=\"float: left; padding-right: 0.5em; text-align: right; width: 1em;\">1. </div><div class=\"csl-right-inline\" style=\"margin: 0 .4em 0 1.5em;\">MacDonald K, Fainman-Adelman N, Anderson KK, Iyer SN. Pathways to mental health services for young people: a systematic review. Soc Psychiatry Psychiatr Epidemiol. 2018 Oct;53(10):1005&#x2013;38.</div>\n   </div>\n</div>";
-
-		expect(cleanBibliographyHTML(sample_bib_vancouver))
-			.toBe("1. MacDonald K, Fainman-Adelman N, Anderson KK, Iyer SN. Pathways to mental health services for young people: a systematic review. Soc Psychiatry Psychiatr Epidemiol. 2018 Oct;53(10):1005–38.");
-	});
-});
-
-test("Extracting citekeys for Zotero items", () => {
-	const cases = [
-		{ key: "ABCD1234", data: { extra: "Citation Key: someCitekey1994" } },
-		{ key: "PQRST789", data: { extra: "" } }
-	];
-
-	const expectations = [
-		{ key: "someCitekey1994", data: { extra: "Citation Key: someCitekey1994" }, has_citekey: true },
-		{ key: "PQRST789", data: { extra: "" }, has_citekey: false }
-	];
-
-	expect(extractCitekeys(cases)).toEqual(expectations);
-	expect(extractCitekeys(items)).toEqual(items);
-
-});
 
 describe("Comparing tag entries", () => {
 	const tag1 = { tag: "some_tag", meta: { numItems: 3, type: 0 } };
@@ -216,54 +176,6 @@ describe("Creating formatted tag lists", () => {
 	);
 });
 
-test("Merging data updates", () => {
-	const itemsList = [
-		{ data: { key: "ABC" } },
-		{ data: { key: "DEF" } },
-		{ data: { key: "GHI" } }
-	];
-
-	expect(matchWithCurrentData(
-		{ 
-			modified: [itemsList[1]], 
-			deleted: [] 
-		}, 
-		[itemsList[0]], 
-		{ with_citekey: false }
-	))
-		.toEqual([itemsList[0], itemsList[1]]);
-    
-	expect(matchWithCurrentData(
-		{
-			modified: [itemsList[2]],
-			deleted: []
-		},
-		itemsList,
-		{ with_citekey: false }
-	))
-		.toEqual(itemsList);
-
-	expect(matchWithCurrentData(
-		{ 
-			modified: [], 
-			deleted: [itemsList[0].data.key]
-		}, 
-		[itemsList[0]], 
-		{ with_citekey: false }
-	))
-		.toEqual([]);
-    
-	expect(matchWithCurrentData(
-		{
-			modified: [itemsList[1]],
-			deleted: [itemsList[2].data.key]
-		},
-		itemsList,
-		{ with_citekey: false }
-	))
-		.toEqual(itemsList.slice(0,2));
-});
-
 test("Selecting and formatting Semantic DOIs", () => {
 	const testItems = [
 		{ doi: null },
@@ -321,58 +233,6 @@ describe("Fetching mocked bibliography entries", () => {
 			const sample_bib = findBibEntry({ type, id, key: sample_item.data.key });
 
 			expect(res).toBe(sample_bib.biblatex);
-		}
-	);
-});
-
-describe("Fetching mocked collections", () => {
-	const cases = Object.entries(libraries);
-
-	test.each(cases)(
-		"%# There should be no items older than latest in %s",
-		(_libName, libraryDetails) => {
-			const { type, id, version } = libraryDetails;
-			expect(findCollections(type, id, version)).toEqual([]);
-		}
-	);
-
-	test.each(cases)(
-		"%# Fetching collections for %s",
-		async(_libName, libraryDetails) => {
-			const { id, path, type, version } = libraryDetails;
-			const libraryObj = {
-				apikey: masterKey,
-				path
-			};
-
-			const allCollections = findCollections(type, id, 0);
-
-			const sinceEver = await fetchCollections(
-				libraryObj, 
-				0, 
-				{ match: [] }
-			);
-			expect(sinceEver).toEqual({
-				data: allCollections,
-				lastUpdated: version
-			});
-
-			const sinceLatest = await fetchCollections(
-				libraryObj, 
-				version, 
-				{ match: sinceEver.data }
-			);
-			expect(sinceLatest).toEqual({
-				data: allCollections,
-				lastUpdated: version
-			});
-
-			// To cover fetchAdditionalData
-			const mockAdditional = await fetchAdditionalData(
-				{ apikey: masterKey, dataURI: `${path}/collections`, since: 0 },
-				allCollections.length + 100
-			);
-			expect(mockAdditional).toEqual(allCollections);
 		}
 	);
 });

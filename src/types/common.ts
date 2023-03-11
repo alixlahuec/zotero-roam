@@ -1,3 +1,6 @@
+/* UTILS */
+
+export type Maybe<T> = T | undefined;
 
 /* SMARTBLOCKS */
 

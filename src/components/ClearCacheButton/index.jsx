@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { Button } from "@blueprintjs/core";
 
 import useBool from "../../hooks/useBool";
-import { cleanErrorIfAxios } from "../../api/utils";
+import { cleanErrorIfAxios } from "../../utils";
 
 
 function ClearCacheButton(){

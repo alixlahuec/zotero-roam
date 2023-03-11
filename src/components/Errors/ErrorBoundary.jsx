@@ -3,7 +3,7 @@ import { Component } from "react";
 
 import ErrorCallout from "./ErrorCallout";
 
-import { cleanErrorIfAxios } from "../../../src/api/utils";
+import { cleanErrorIfAxios } from "../../utils";
 
 
 class ErrorBoundary extends Component {

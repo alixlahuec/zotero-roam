@@ -109,7 +109,7 @@ export interface ZoteroCollection extends ZoteroBase {
 }
 
 export interface ZoteroDeleted {
-	collections: ZoteroCollection[],
+	collections: string[],
 	items: ZoteroItem[]
 	// TODO: verify response type
 }

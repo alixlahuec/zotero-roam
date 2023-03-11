@@ -1,7 +1,6 @@
 import zrToaster from "Components/ExtensionToaster";
 
-import { cleanErrorIfAxios } from "./api/utils";
-import { pluralize } from "./utils";
+import { cleanErrorIfAxios, pluralize } from "./utils";
 
 
 const events = [

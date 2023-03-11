@@ -165,6 +165,36 @@ function extractSortIndex(str){
 	return str.split("|").map(ind => Number(ind));
 }
 
+/** Parses the XHTML bibliography for a Zotero item into Roam formatting
+ * @param {String} bib - The item's XHTML bibliography
+ * @returns The clean bibliography string
+ */
+function cleanBibliographyHTML(bib) {
+	let bibString = bib;
+
+	// Strip divs
+	const richTags = ["div"];
+	richTags.forEach(tag => {
+		// eslint-disable-next-line no-useless-escape
+		const tagRegex = new RegExp(`<\/?${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag> or </tag>, and the case with modifiers : <tag :modifier>
+		bibString = bibString.replaceAll(tagRegex, "");
+	});
+
+	bibString = cleanNewlines(bibString).trim();
+
+	// Use a textarea element to decode HTML
+	const formatter = document.createElement("textarea");
+	formatter.innerHTML = bibString;
+	let formattedBib = formatter.innerText;
+	// Convert italics
+	formattedBib = formattedBib.replaceAll(/<\/?i>/g, "__");
+	// Convert links
+	const linkRegex = /<a href="(.+)">(.+)<\/a>/g;
+	formattedBib = formattedBib.replaceAll(linkRegex, "[$2]($1)");
+
+	return formattedBib;
+}
+
 /** Copies a portion of text to the user's clipboard
  * @param {String} text - The text to copy 
  * @returns {{success: Boolean|null}} The outcome of the operation
@@ -413,6 +443,28 @@ function formatZoteroNotes(notes, { func = "", split_char = "", split_preset = "
 	} else {
 		// Otherwise use the default formatter
 		return formatItemNotes(notes, separator);
+	}
+}
+
+/* istanbul ignore next */
+function cleanErrorIfAxios(error) {
+	try {
+		const origin = error.name || "";
+		if (origin == "AxiosError") {
+			const { code, message, status, config: { url } } = error;
+			return {
+				code,
+				message,
+				status,
+				config: {
+					url
+				}
+			};
+		}
+
+		return error.message;
+	} catch (e) {
+		return error;
 	}
 }
 
@@ -870,6 +922,8 @@ function splitNotes(notes, separator){
 
 export {
 	categorizeLibraryItems,
+	cleanBibliographyHTML,
+	cleanErrorIfAxios,
 	cleanLibraryItem,
 	cleanNewlines,
 	compareAnnotationIndices,

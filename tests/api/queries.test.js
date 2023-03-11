@@ -2,7 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react-hooks";
 
 import * as apiUtils from "../../src/api/utils";
-import { wrappedFetchItems, useQuery_Citoid, useQuery_Collections, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
+import { wrappedFetchItems, useQuery_Citoid, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
+import { useQuery_Collections } from "../../src/api/collections";
 
 import { badIdentifier, goodIdentifier } from "Mocks/citoid";
 import { apiKeys } from "Mocks/zotero/keys";
