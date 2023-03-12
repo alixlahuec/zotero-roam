@@ -1,3 +1,7 @@
+import { cleanErrorIfAxios } from "../utils";
+import { zoteroClient } from "./clients";
+
+
 type WithCitekeys<T> = T & { has_citekey: boolean };
 
 /** Extracts pinned citekeys from a dataset
@@ -22,6 +26,58 @@ function extractCitekeys<T extends { key: string, data: { extra?: string } }>(ar
 			has_citekey
 		};
 	});
+}
+
+/** Retrieves additional data from the Zotero API, when the original results are greater than the limit of n = 100.
+ *  A minimum of parameters are required so that the function can be used for all data types.
+ * @param req - The parameters of the request 
+ * @param totalResults - The total number of results indicated by the original response 
+ * @returns The additional results to the original request
+ */
+async function fetchAdditionalData<T>(
+	req: { dataURI: string, apikey: string, since?: number },
+	totalResults: number
+) {
+	const { dataURI, apikey, since = null } = req;
+	const nbExtraCalls = Math.ceil((totalResults / 100) - 1);
+
+	const apiCalls: ReturnType<typeof zoteroClient.get<T>>[] = [];
+
+	for (let i = 1; i <= nbExtraCalls; i++) {
+		const reqParams = new URLSearchParams("");
+		if (since) {
+			reqParams.set("since", `${since}`);
+		}
+		reqParams.set("start", `${100 * i}`);
+		reqParams.set("limit", `${100}`);
+		apiCalls.push(zoteroClient.get<T>(
+			`${dataURI}?${reqParams.toString()}`,
+			{
+				headers: { "Zotero-API-Key": apikey }
+			})
+		);
+	}
+
+	let responses: unknown[] = [null];
+
+	try {
+		const apiResponses = await Promise.all(apiCalls);
+		responses = apiResponses;
+
+		return apiResponses.map(res => res.data).flat(1);
+	} catch (error) /* istanbul ignore next */ {
+		window.zoteroRoam?.error?.({
+			origin: "API",
+			message: "Failed to fetch additional data",
+			context: {
+				dataURI,
+				error: cleanErrorIfAxios(error),
+				responses,
+				totalResults
+			}
+		});
+		return Promise.reject(error);
+	}
 }
 
 /** Compares two datasets and merges the changes. As the match is done on the `data.key` property, both items and collections can be matched. For items, merging involves an additional step to extract citekeys.
@@ -65,5 +121,6 @@ function matchWithCurrentData<T extends { data: { key: string, extra?: string },
 
 export {
 	extractCitekeys,
+	fetchAdditionalData,
 	matchWithCurrentData
 };

@@ -2,7 +2,8 @@ import { emitCustomEvent } from "../events";
 import { cleanErrorIfAxios, searchEngine } from "../utils";
 
 import { zoteroClient } from "./clients";
-import { matchWithCurrentData } from "./helpers";
+import { fetchDeleted } from "./deleted";
+import { fetchAdditionalData, matchWithCurrentData } from "./helpers";
 
 
 /**
@@ -115,52 +116,6 @@ async function deleteTags(tags, library, version){
 	);
 }
 
-/** Retrieves additional data from the Zotero API, when the original results are greater than the limit of n = 100.
- *  A minimum of parameters are required so that the function can be used for all data types.
- * @param {{dataURI: String, apikey: String, since?: Number}} req - The parameters of the request 
- * @param {Number} totalResults - The total number of results indicated by the original response 
- * @returns {Promise<Object[]>} The additional results to the original request
- */
-async function fetchAdditionalData(req, totalResults) {
-	const { dataURI, apikey, since = null } = req;
-	const nbExtraCalls = Math.ceil((totalResults / 100) - 1);
-	const apiCalls = [];
-
-	for(let i=1; i <= nbExtraCalls; i++){
-		const reqParams = new URLSearchParams("");
-		if(since){
-			reqParams.set("since", since);
-		}
-		reqParams.set("start", 100*i);
-		reqParams.set("limit", 100);
-		apiCalls.push(zoteroClient.get(
-			`${dataURI}?${reqParams.toString()}`, 
-			{ 
-				headers: { "Zotero-API-Key": apikey }
-			})
-		);
-	}
-
-	let responses = null;
-
-	try {
-		responses = await Promise.all(apiCalls);
-		return responses.map(res => res.data).flat(1);
-	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error?.({
-			origin: "API",
-			message: "Failed to fetch additional data",
-			context: {
-				dataURI,
-				error: cleanErrorIfAxios(error),
-				responses,
-				totalResults
-			}
-		});
-		return Promise.reject(error);
-	}
-}
-
 /** Retrieves the bibliography for a list of Zotero items.
  * @param {String[]} itemKeys - The Zotero keys of the targeted items
  * @param {ZLibrary} library - The library of the targeted items
@@ -231,38 +186,6 @@ async function fetchBibliography(itemKey, library, config = {}) {
 			context: {
 				config,
 				dataURI,
-				error: cleanErrorIfAxios(error),
-				response
-			}
-		});
-		return Promise.reject(error);
-	}
-}
-
-/** Requests data from the `/[library]/deleted` endpoint of the Zotero API
- * @param {ZLibrary} library - The targeted Zotero library
- * @param {Number} since - A library version
- * @returns {Promise<ZoteroDeleted>} Elements deleted from Zotero since the specified version
- */
-async function fetchDeleted(library, since) {
-	const { apikey, path } = library;
-
-	let response = null;
-
-	try {
-		response = await zoteroClient.get(
-			`${path}/deleted`, 
-			{ 
-				headers: { "Zotero-API-Key": apikey },
-				params: { since } 
-			}
-		);
-		return response.data;
-	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error?.({
-			origin: "API",
-			message: "Failed to fetch deleted data",
-			context: {
 				error: cleanErrorIfAxios(error),
 				response
 			}
@@ -522,10 +445,8 @@ function writeItems(dataList, library){
 export {
 	areTagsDuplicate,
 	deleteTags,
-	fetchAdditionalData,
 	fetchBibEntries,
 	fetchBibliography,
-	fetchDeleted,
 	fetchItems,
 	fetchPermissions,
 	fetchTags,

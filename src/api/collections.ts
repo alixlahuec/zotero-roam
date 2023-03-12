@@ -4,8 +4,8 @@ import { emitCustomEvent } from "../events";
 import { cleanErrorIfAxios } from "../utils";
 
 import { zoteroClient } from "./clients";
-import { matchWithCurrentData } from "./helpers";
-import { fetchAdditionalData, fetchDeleted } from "./utils";
+import { fetchDeleted } from "./deleted";
+import { fetchAdditionalData, matchWithCurrentData } from "./helpers";
 
 import { Maybe, ZLibrary } from "Types/common";
 import { ZoteroCollection } from "Types/externals/zotero";
@@ -56,7 +56,7 @@ async function fetchCollections(
 		const totalResults = Number(totalResultsStr);
 
 		if (totalResults > 100) {
-			const additional = await fetchAdditionalData({ dataURI: `${path}/collections`, apikey, since }, totalResults);
+			const additional = await fetchAdditionalData<ZoteroCollection>({ dataURI: `${path}/collections`, apikey, since }, totalResults);
 			modified.push(...additional);
 		}
 

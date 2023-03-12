@@ -1,9 +1,10 @@
 import { fetchCollections } from "./collections";
-import { fetchAdditionalData } from "./utils";
+import { fetchAdditionalData } from "./helpers";
 
 import { apiKeys } from "Mocks/zotero/keys";
 import { findCollections } from "Mocks/zotero/collections";
 import { libraries } from "Mocks/zotero/libraries";
+import { ZoteroCollection } from "Types/externals/zotero";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -51,7 +52,7 @@ describe("Fetching mocked collections", () => {
 			});
 
 			// To cover fetchAdditionalData
-			const mockAdditional = await fetchAdditionalData(
+			const mockAdditional = await fetchAdditionalData<ZoteroCollection>(
 				{ apikey: masterKey, dataURI: `${path}/collections`, since: 0 },
 				allCollections.length + 100
 			);

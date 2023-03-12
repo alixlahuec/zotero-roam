@@ -5,6 +5,9 @@ import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 
+/**
+ * @constant {Record<string, {collections: ZoteroCollection[], items: ZoteroItem[]}>}
+ */
 const data = {
 	[userLibrary.path]: {
 		collections: [
@@ -65,16 +68,22 @@ const data = {
 	}
 };
 
+/**
+ * @param {{path: string, since: number}} args 
+ * @returns {{collections: string[], items: string[]}}
+ */
 export const findDeleted = ({ path, since }) => {
 	const entities = {};
 
 	entities.collections = data[path]
 		.collections
-		.filter(cl => cl.version > since);
+		.filter(cl => cl.version > since)
+		.map(cl => cl.key);
     
 	entities.items = data[path]
 		.items
-		.filter(it => it.version > since);
+		.filter(it => it.version > since)
+		.map(cl => cl.key);
    
 	return entities;
 };
@@ -83,7 +92,7 @@ export const handleDeleted = rest.get(
 	zotero(":libraryType/:libraryID/deleted"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID } = req.params;
-		const since = req.url.searchParams.get("since");
+		const since = Number(req.url.searchParams.get("since"));
 		const path = `${libraryType}/${libraryID}`;
 
 		const { collections, items } = findDeleted({ path, since });
@@ -93,7 +102,6 @@ export const handleDeleted = rest.get(
 				collections,
 				items,
 				searches: [],
-				settings: [],
 				tags: []
 			})
 		);

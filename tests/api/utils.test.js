@@ -1,13 +1,12 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import { areTagsDuplicate, deleteTags, fetchBibEntries, fetchBibliography, fetchDeleted, fetchItems, fetchPermissions, fetchTags, makeDictionary, makeTagList, updateTagMap, writeItems } from "../../src/api/utils";
+import { areTagsDuplicate, deleteTags, fetchBibEntries, fetchBibliography, fetchItems, fetchPermissions, fetchTags, makeDictionary, makeTagList, updateTagMap, writeItems } from "../../src/api/utils";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems } from "Mocks/zotero/items";
 import { findTags, tags } from "Mocks/zotero/tags";
 import { apiKeys } from "Mocks/zotero/keys";
-import { deletions } from "Mocks/zotero/deleted";
 import { libraries } from "Mocks/zotero/libraries";
 
 
@@ -212,39 +211,6 @@ describe("Fetching mocked bibliography entries", () => {
 			const sample_bib = findBibEntry({ type, id, key: sample_item.data.key });
 
 			expect(res).toBe(sample_bib.biblatex);
-		}
-	);
-});
-
-describe("Fetching mocked deleted entities", () => {
-	const cases = Object.entries(libraries);
-
-	test.each(cases)(
-		"%# Fetching entities deleted from %s",
-		async(_libName, libraryDetails) => {
-			const { path } = libraryDetails;
-			const deleted = await fetchDeleted({ apikey: masterKey, path }, 0);
-			expect(deleted).toEqual({
-				...deletions[path],
-				searches: [],
-				settings: [],
-				tags: []
-			});
-		}
-	);
-
-	test.each(cases)(
-		"%# Checking that no entities are versioned over latest in %s",
-		async(_libName, libraryDetails) => {
-			const { path, version } = libraryDetails;
-			const deleted = await fetchDeleted({ apikey: masterKey, path }, version);
-			expect(deleted).toEqual({
-				collections: [],
-				items: [],
-				searches: [],
-				settings: [],
-				tags: []
-			});
 		}
 	);
 });
