@@ -127,6 +127,11 @@ export interface ZoteroTag {
 	tag: string,
 }
 
+export type ZoteroTagItem = {
+	tag: ZoteroTag["tag"],
+	type?: ZoteroTag["meta"]["type"]
+};
+
 export type ZoteroItemTopType =
 	|"artwork"
 	|"audioRecording"
@@ -179,7 +184,7 @@ export interface ZoteroItemDataBase<T extends ZoteroItemType> {
 	/** Zotero entities linked that are linked to the item */
 	relations: Record<string, string | string[]>,
 	/** The item's tags */
-	tags: ZoteroTag[]
+	tags: ZoteroTagItem[]
 	/** The item's current version */
 	version: ZoteroBase["version"]
 }
@@ -252,6 +257,7 @@ export interface ZoteroItemTop extends ZoteroBase {
 	} & Record<string,any>,
 	meta: {
 		creatorSummary: string,
+		numChildren: number,
 		parsedDate: string
 	} & Record<string,any>
 }
