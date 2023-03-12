@@ -728,7 +728,7 @@ function readDNP(string, { as_date = true } = {}){
 /** Inclusive multi-field search engine, with optional configuration
  * @param {String} query - The query string to search 
  * @param {String|String[]} target - The text to be searched. Can be a String or a String Array.
- * @param {{any_case: Boolean, match: ("exact"|"partial"|"word"), search_compounds: Boolean, word_order: ("strict"|"loose")}} config - Additional configuration
+ * @param {{any_case?: Boolean, match?: ("exact"|"partial"|"word"), search_compounds?: Boolean, word_order?: ("strict"|"loose")}} config - Additional configuration
  * @returns {Boolean} `true` if the query is matched in the target (if String) or any of its elements (if String Array) ; `false` otherwise.
  */
 function searchEngine(query, target, { any_case = true, match = "partial", search_compounds = true, word_order = "strict" } = {}){

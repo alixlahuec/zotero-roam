@@ -113,7 +113,6 @@ const useWriteableLibraries = (libraries) => {
 export {
 	wrappedFetchItems,
 	useQuery_Items,
-	useQuery_Permissions,
 	useQuery_Tags,
 	useWriteableLibraries
 };
