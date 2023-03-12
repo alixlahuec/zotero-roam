@@ -8,7 +8,8 @@ import LibrarySelect from "../LibrarySelect";
 import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
 import TagsDatalist from "./TagsDatalist";
 
-import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
+import { useQuery_Tags } from "../../../api/tags";
+import { useWriteableLibraries } from "../../../api/queries";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 
 import * as customPropTypes from "../../../propTypes";

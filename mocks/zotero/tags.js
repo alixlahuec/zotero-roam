@@ -32,6 +32,9 @@ export const findTags = (path, token) => {
 	return tagList.filter(t => searchEngine(t.tag, token, { any_case: true, match: "exact", search_compounds: true }));
 };
 
+/**
+ * @constant {Record<string,ZoteroTag[]>}
+ */
 const data = {
 	[userLibrary.path]: [
 		makeTag({ tag: "immigrant youth", library: userLibrary, numItems: 2 }),

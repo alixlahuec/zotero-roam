@@ -3,7 +3,8 @@ import { act, renderHook } from "@testing-library/react-hooks";
 
 import * as apiUtils from "../../src/api/utils";
 import * as citoidUtils from "../../src/api/citoid";
-import { fetchItems, fetchTags } from "../../src/api/utils";
+import * as tagsUtils from "../../src/api/tags";
+import { fetchItems } from "../../src/api/utils";
 import { useDeleteTags, useImportCitoids, useModifyTags } from "../../src/api/write";
 
 import { apiKeys } from "Mocks/zotero/keys";
@@ -13,6 +14,7 @@ import { citoids, goodIdentifier } from "Mocks/citoid";
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { groupLibrary, userLibrary } = libraries;
+const { fetchTags } = tagsUtils;
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -41,7 +43,7 @@ describe("Mutation hooks for the Zotero API", () => {
 	afterEach(() => queryClient.clear());
 
 	describe("useDeleteTags", () => {
-		const deleteTagsSpy = jest.spyOn(apiUtils, "deleteTags");
+		const deleteTagsSpy = jest.spyOn(tagsUtils, "deleteTags");
 
 		beforeEach(() => {
 			return fetchTags({ apikey: masterKey, path: userLibrary.path })

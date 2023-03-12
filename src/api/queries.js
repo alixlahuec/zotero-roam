@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { useQuery_Permissions } from "./keys";
-import { fetchItems, fetchTags } from "./utils";
+import { fetchItems } from "./utils";
 
 
 /** Wrapper for retrieving items data, based on contents of the query cache.
@@ -48,34 +48,6 @@ const useQuery_Items = (reqs, opts = {}) => {
 	});
 };
 
-/** React Query custom hook for retrieving Zotero tags. By default, `staleTime = 3 min`.
- *  Refetching is managed by {@link useQuery_Items}.
- * @param {ZLibrary[]} libraries - The targeted Zotero libraries 
- * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The React Queries for the given libraries' tags
- */
-const useQuery_Tags = (libraries, opts = {}) => {
-	const queriesDefs = useMemo(() => {
-		// Defaults for this query
-		const { staleTime = 1000 * 60 * 3, ...rest } = opts;
-		// Factory
-		return libraries.map((lib) => {
-			const { apikey, path } = lib;
-			const queryKey = ["tags", { library: path }];
-			return {
-				queryKey: queryKey,
-				queryFn: (_queryKey) => fetchTags({ apikey, path }),
-				staleTime,
-				...rest
-			};
-		});
-	}, [libraries, opts]);
-
-	return useQueries({
-		queries: queriesDefs
-	});
-};
-
 /** Custom hook for retrieving the list of Zotero libraries with `write` permissions.
  * @param {ZLibrary[]} libraries - The targeted Zotero libraries
  * @returns {{data: ZLibrary[], isLoading: Boolean}} The operation's status and outcome
@@ -113,6 +85,5 @@ const useWriteableLibraries = (libraries) => {
 export {
 	wrappedFetchItems,
 	useQuery_Items,
-	useQuery_Tags,
 	useWriteableLibraries
 };

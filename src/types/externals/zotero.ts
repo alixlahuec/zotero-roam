@@ -122,7 +122,7 @@ export interface ZoteroTag {
 	links: ZoteroBase["links"],
 	meta: {
 		numItems: number,
-		type: 0 | 1
+		type: 0 | 1 | number
 	},
 	tag: string,
 }
