@@ -282,23 +282,6 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 	}
 }
 
-/** Requests data from the `/keys` endpoint of the Zotero API
- * @param {String} apikey - The targeted API key
- * @returns {Promise<ZoteroPermissionsResponse>} The API key's permissions
- */
-async function fetchPermissions(apikey) {
-	try {
-		const { data } = await zoteroClient.get(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } });
-		return data;
-	} catch(error) /* istanbul ignore next */ {
-		window.zoteroRoam?.error?.({
-			origin: "API",
-			message: "Failed to fetch permissions"
-		});
-		return Promise.reject(error);
-	}
-}
-
 /** Requests data from the `/[library]/tags` endpoint of the Zotero API
  * @param {ZLibrary} library - The targeted Zotero library
  * @returns {Promise<{data: Object, lastUpdated: Number}>} The library's tags
@@ -448,7 +431,6 @@ export {
 	fetchBibEntries,
 	fetchBibliography,
 	fetchItems,
-	fetchPermissions,
 	fetchTags,
 	makeDictionary,
 	makeTagList,

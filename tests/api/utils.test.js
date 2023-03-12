@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import { areTagsDuplicate, deleteTags, fetchBibEntries, fetchBibliography, fetchItems, fetchPermissions, fetchTags, makeDictionary, makeTagList, updateTagMap, writeItems } from "../../src/api/utils";
+import { areTagsDuplicate, deleteTags, fetchBibEntries, fetchBibliography, fetchItems, fetchTags, makeDictionary, makeTagList, updateTagMap, writeItems } from "../../src/api/utils";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems } from "Mocks/zotero/items";
@@ -167,17 +167,6 @@ describe("Creating formatted tag lists", () => {
 		(_libName, libraryDetails) => {
 			const { path } = libraryDetails;
 			expect(makeTagList(tags[path])).toEqual(expectations[path]);
-		}
-	);
-});
-
-describe("Fetching mocked API Key permissions", () => {
-	const cases = Object.entries(apiKeys);
-	test.each(cases)(
-		"%# Fetching permissions for %s", 
-		async(_keyName, expectation) => {
-			const permissions = await fetchPermissions(expectation.key);
-			expect(permissions).toEqual(expectation);
 		}
 	);
 });

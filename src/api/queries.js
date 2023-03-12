@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
-import { fetchItems, fetchPermissions, fetchTags } from "./utils";
+import { useQuery_Permissions } from "./keys";
+import { fetchItems, fetchTags } from "./utils";
 
 
 /** Wrapper for retrieving items data, based on contents of the query cache.
@@ -42,30 +43,6 @@ const useQuery_Items = (reqs, opts = {}) => {
 		});
 	}, [reqs, client, opts]);
 
-	return useQueries({
-		queries: queriesDefs
-	});
-};
-
-/** React Query custom hook for retrieving permissions for Zotero API keys. By default, `staleTime = 1 hour` and `refetchInterval = 1 hour`.
- * @param {String[]} keys - The targeted Zotero API keys 
- * @param {Object} opts - Optional configuration to use with the queries 
- * @returns The React Queries for the given API keys' permissions
- */
-const useQuery_Permissions = (keys, opts = {}) => {
-	// Defaults for this query
-	const { staleTime = 1000 * 60 * 60, refetchInterval = 1000 * 60 * 60, ...rest } = opts;
-	// Factory
-	const queriesDefs = keys.map((apikey) => {
-		const queryKey = ["permissions", { apikey }];
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchPermissions(apikey),
-			staleTime,
-			refetchInterval,
-			...rest
-		};
-	});
 	return useQueries({
 		queries: queriesDefs
 	});
