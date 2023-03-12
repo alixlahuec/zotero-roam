@@ -75,9 +75,16 @@ WithInteractions.play = async({ args, canvasElement }) => {
 	});
 
 	const firstCitoid = await canvas.findByRole("listitem", { name: args.urls[0], queryFallbacks: true });
-	const citoidCheckbox = within(firstCitoid).getByRole("checkbox").nextSibling;
+	const citoidCheckbox = within(firstCitoid).getByRole("checkbox").nextElementSibling;
 
 	await userEvent.click(citoidCheckbox);
+
+	await waitFor(() => expect(
+		canvas.getByRole("button", { name: "Send to Zotero" })
+	).toBeInTheDocument(),
+		{
+		timeout: 2000
+	})
 
 	const importButton = canvas.getByRole("button", { name: "Send to Zotero" });
 
