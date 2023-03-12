@@ -32,12 +32,12 @@ describe("Comparing tag entries", () => {
 	);
 
 	test("Inputs with incorrect format are detected", () => {
-		// @ts-expect-error
+		// @ts-expect-error Test checks for bad input handling
 		expect(() => areTagsDuplicate(tag1, "some_text"))
 			.toThrow("Received bad input: \"some_text\", expected a Zotero tag");
 
 		const tag_with_error = { tag: "some_tag", meta: { numItems: 4 } };
-		// @ts-expect-error
+		// @ts-expect-error Test checks for bad input handling
 		expect(() => areTagsDuplicate(tag1, tag_with_error))
 			.toThrow(`Received bad input: ${JSON.stringify(tag_with_error)}, expected the tag to have a type`);
 	});
@@ -61,7 +61,7 @@ describe("Building tag maps", () => {
 	});
 
 	test("New entries are added correctly", () => {
-		updateTagMap(tagMap, { tag: "a_new_tag", meta: { numItems: 2, type: 2 } } as ZoteroTag);
+		updateTagMap(tagMap, { tag: "a_new_tag", meta: { numItems: 2, type: 1 } } as ZoteroTag);
 		expect(tagMap.has("a_new_tag"))
 			.toBe(true);
 		expect(tagMap.get("a_new_tag"))
@@ -80,7 +80,7 @@ describe("Building tag maps", () => {
 	});
 
 	test("New entries are appended correctly - Array entries", () => {
-		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 7, type: 1 } } as ZoteroTag);
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 7, type: 2 } } as ZoteroTag);
 		expect(tagMap.get("other_tag").length).toBe(3);
 	});
 
@@ -106,9 +106,9 @@ describe("Building tag maps", () => {
 			["other_tag", "other_text"]
 		]);
 
-		// @ts-expect-error
+		// @ts-expect-error Test checks for bad input handling
 		expect(() => updateTagMap(map_with_error, { tag: "some_tag", meta: { numItems: 8, type: 1 } }))
-			.toThrow("Map entry is of unexpected type String, expected Array or Object");
+			.toThrow("Map entry is of unexpected type string, expected Array or Object");
 	});
 });
 
@@ -127,7 +127,7 @@ describe("Creating a dictionary", () => {
 
 	test("Bad inputs are detected", () => {
 		const arr = [{ some: "prop" }];
-		// @ts-expect-error
+		// @ts-expect-error Test checks for bad input handling
 		expect(() => makeDictionary(arr))
 			.toThrow("Could not add {\"some\":\"prop\"} to dictionary");
 	});

@@ -5,13 +5,11 @@ import { fetchBibEntries, fetchBibliography, fetchItems, writeItems } from "../.
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems } from "Mocks/zotero/items";
-import { findTags, tags } from "Mocks/zotero/tags";
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
-const { userLibrary, groupLibrary } = libraries;
 const getLibraryPath = (library) => {
 	return library.type + "s/" + library.id;
 };

@@ -2,11 +2,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react-hooks";
 
 import * as apiUtils from "../../src/api/utils";
-import { makeTagList } from "../../src/api/tags";
+import { makeTagList, useQuery_Tags } from "../../src/api/tags";
 import { parseSemanticDOIs, useQuery_Semantic } from "../../src/api/semantic";
 import { useQuery_Citoid } from "../../src/api/citoid";
 import { useQuery_Collections } from "../../src/api/collections";
-import { useQuery_Tags } from "../../src/api/tags";
 import { wrappedFetchItems, useQuery_Items, useWriteableLibraries } from "../../src/api/queries";
 
 import { badIdentifier, goodIdentifier } from "Mocks/citoid";
