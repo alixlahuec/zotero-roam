@@ -6,7 +6,7 @@ import { cleanErrorIfAxios } from "../utils";
 
 import { CitoidZotero } from "Types/externals/citoid";
 import { ZLibrary } from "Types/common";
-import { ZoteroItem } from "Types/externals/zotero";
+import { ZoteroWriteItemsResponse } from "Types/externals/zotero";
 
 
 type QueryKeyCitoid = ["citoid", { url: string }];
@@ -14,13 +14,6 @@ type QueryKeyCitoid = ["citoid", { url: string }];
 type QueryDataCitoid = {
 	item: CitoidZotero,
 	query: string
-};
-
-type ZoteroWriteItemsResponse = {
-	failed: Record<number, string>,
-	unchanged: Record<number, string>,
-	success: Record<number, string>,
-	successful: Record<number, ZoteroItem>
 };
 
 /** Requests data from the `/data/citation/zotero` endpoint of the Wikipedia API

@@ -273,3 +273,10 @@ export interface ZoteroPermissionsResponse {
 	userID: number,
 	username: string
 }
+
+export interface ZoteroWriteItemsResponse {
+	failed: Record<number, string>,
+	unchanged: Record<number, string>,
+	success: Record<number, string>,
+	successful: Record<number, ZoteroItem>
+}
