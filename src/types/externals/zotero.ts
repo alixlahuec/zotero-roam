@@ -69,7 +69,7 @@ type ZoteroExportFormat =
 	| "wikipedia";
 
 type ZoteroExportFormatData = {
-	[Format in ZoteroExportFormat]: unknown
+	[Format in ZoteroExportFormat]: string
 }
 
 interface ZoteroIncludeJSON extends ZoteroExportFormatData {
