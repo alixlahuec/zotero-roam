@@ -3,7 +3,8 @@ import { renderHook } from "@testing-library/react-hooks";
 
 import * as apiUtils from "../../src/api/utils";
 import { parseSemanticDOIs, useQuery_Semantic } from "../../src/api/semantic";
-import { wrappedFetchItems, useQuery_Citoid, useQuery_Items, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
+import { useQuery_Citoid } from "../../src/api/citoid";
+import { wrappedFetchItems, useQuery_Items, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
 import { useQuery_Collections } from "../../src/api/collections";
 
 import { badIdentifier, goodIdentifier } from "Mocks/citoid";

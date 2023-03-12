@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteTags, writeCitoids, writeItems } from "./utils";
 import { emitCustomEvent } from "../events";
+
+import { writeCitoids } from "./citoid";
+import { deleteTags, writeItems } from "./utils";
+
 
 /** React Query custom mutation hook for deleting tags from a Zotero library.
  * @fires zotero-roam:write

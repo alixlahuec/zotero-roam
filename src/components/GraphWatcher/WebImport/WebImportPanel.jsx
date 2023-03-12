@@ -9,7 +9,7 @@ import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import ZoteroImport from "Components/ZoteroImport";
 
 import useMulti from "../../../hooks/useMulti";
-import { useQuery_Citoid } from "../../../api/queries";
+import { useQuery_Citoid } from "../../../api/citoid";
 import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import { pluralize } from "../../../utils";

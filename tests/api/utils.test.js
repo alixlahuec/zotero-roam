@@ -1,17 +1,14 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import { areTagsDuplicate, deleteTags, fetchBibEntries, fetchBibliography, fetchCitoid, fetchDeleted, fetchItems, fetchPermissions, fetchTags, makeDictionary, makeTagList, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
+import { areTagsDuplicate, deleteTags, fetchBibEntries, fetchBibliography, fetchDeleted, fetchItems, fetchPermissions, fetchTags, makeDictionary, makeTagList, updateTagMap, writeItems } from "../../src/api/utils";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems } from "Mocks/zotero/items";
 import { findTags, tags } from "Mocks/zotero/tags";
 import { apiKeys } from "Mocks/zotero/keys";
-import { citoids } from "Mocks/citoid";
 import { deletions } from "Mocks/zotero/deleted";
 import { libraries } from "Mocks/zotero/libraries";
-import { makeItemMetadata } from "Mocks/zotero/common";
-import { semantics } from "Mocks/semantic-scholar";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -371,87 +368,6 @@ describe("Deleting mocked tags", () => {
 
 			const deleteLatest = await deleteTags(["systems"], { apikey: masterKey, path }, version);
 			expect(deleteLatest.status).toBe(204);
-		}
-	);
-});
-
-describe("Fetching mocked Citoid data", () => {
-	const { success_cases, error_cases } = Object.entries(citoids).reduce((obj, entry) => {
-		const { status = 200 } = entry[1];
-		if(status == 200){
-			obj.success_cases.push(entry);
-		} else {
-			obj.error_cases.push(entry);
-		}
-		return obj;
-	}, { success_cases: [], error_cases: [] });
-
-	test.each(success_cases)(
-		"%# Successfully mocking Citoid data for %s",
-		async(identifier, itemData) => {
-			const { status, ...output } = itemData;
-			const citoid = await fetchCitoid(identifier);
-			expect(citoid).toEqual({
-				item: output,
-				query: identifier
-			});
-		}
-	);
-
-	test.each(error_cases)(
-		"%# Successfully mocking Citoid error for %s",
-		async(identifier, itemData) => {
-			const { status, ...output } = itemData;
-			const res = await fetchCitoid(identifier)
-				.catch((error) => {
-					if(error.response){
-						return error.response;
-					}
-				});
-			expect(res.status).toBe(status);
-			expect(res.data).toEqual([output]);
-		}
-	);
-    
-});
-
-describe("Writing mocked Citoid data", () => {
-	const cases = Object.entries(libraries);
-
-	test.each(cases)(
-		"%# Adding a Citoid to %s",
-		async(_libName, libraryDetails) => {
-			const { path, version } = libraryDetails;
-
-			const res = await writeCitoids(
-				[{ title: "TEST_TITLE" }],
-				{ 
-					library: { apikey: masterKey, path },
-					collections: [],
-					tags: []
-				}
-			);
-
-			const data = res.map(rq => rq.value.data);
-
-			expect(data).toEqual([{
-				failed: {},
-				unchanged: {},
-				success: {
-					0: "__NO_UNIQUE_KEY__"
-				},
-				successful: {
-					0: {
-						...makeItemMetadata({
-							library: libraryDetails,
-							version,
-							data: {
-								title: "TEST_TITLE"
-							}
-						})
-					}
-				}
-			}]);
 		}
 	);
 });

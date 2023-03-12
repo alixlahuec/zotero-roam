@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchCitoid, fetchItems, fetchPermissions, fetchTags } from "./utils";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
+import { fetchItems, fetchPermissions, fetchTags } from "./utils";
 
 
 /** Wrapper for retrieving items data, based on contents of the query cache.
@@ -15,39 +15,6 @@ async function wrappedFetchItems(req, queryClient) {
 
 	return await fetchItems({ ...req, since }, { match }, queryClient);
 }
-
-/** React Query custom hook for retrieving Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity` and `staleTime = 10min`.
- *  There is no refetch scheduled, since the data should not change over the course of a session.
- *  Requests are retried only once (except for 404 errors, which should never be retried).
- * @param {String[]} urls - The targeted URLs 
- * @param {Object} opts - Optional configuration to use with the queries
- * @returns The React Queries for the given URLs' Wikipedia metadata
- */
-const useQuery_Citoid = (urls, opts = {}) => {
-	// Defaults for this query
-	const { 
-		cacheTime = Infinity,
-		retry = (failureCount, error) => {
-			return (failureCount < 1 && error.toJSON().status != 404);
-		}, 
-		staleTime = 1000 * 60 * 10,
-		...rest } = opts;
-	// Factory
-	const queriesDefs = urls.map((url) => {
-		const queryKey = ["citoid", { url }];
-		return {
-			queryKey: queryKey,
-			queryFn: (_queryKey) => fetchCitoid(url),
-			cacheTime,
-			retry,
-			staleTime,
-			...rest
-		};
-	});
-	return useQueries({
-		queries: queriesDefs
-	});
-};
 
 /** React Query custom hook for retrieving Zotero items. By default, `staleTime = 1 min` and `refetchInterval = 1 min`.
  * @param {DataRequest[]} reqs - The targeted data requests
@@ -168,7 +135,6 @@ const useWriteableLibraries = (libraries) => {
 
 export {
 	wrappedFetchItems,
-	useQuery_Citoid,
 	useQuery_Items,
 	useQuery_Permissions,
 	useQuery_Tags,

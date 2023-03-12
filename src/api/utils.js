@@ -1,7 +1,7 @@
 import { emitCustomEvent } from "../events";
 import { cleanErrorIfAxios, searchEngine } from "../utils";
 
-import { citoidClient, zoteroClient } from "./clients";
+import { zoteroClient } from "./clients";
 import { matchWithCurrentData } from "./helpers";
 
 
@@ -232,32 +232,6 @@ async function fetchBibliography(itemKey, library, config = {}) {
 				config,
 				dataURI,
 				error: cleanErrorIfAxios(error),
-				response
-			}
-		});
-		return Promise.reject(error);
-	}
-}
-
-/** Requests data from the `/data/citation/zotero` endpoint of the Wikipedia API
- * @param {String} query - The URL for which to request Zotero metadata
- * @returns {Promise<{item: Object, query: String}>} The metadata for the URL
- */
-async function fetchCitoid(query) {
-	let response = null;
-	try {
-		response = await citoidClient.get(encodeURIComponent(query));
-		return {
-			item: response.data[0],
-			query
-		};
-	} catch(error){
-		window.zoteroRoam?.error?.({
-			origin: "API",
-			message: "Failed to fetch metadata from Wikipedia",
-			context: {
-				error: cleanErrorIfAxios(error),
-				query,
 				response
 			}
 		});
@@ -525,38 +499,6 @@ function updateTagMap(map, tagEntry){
 	return map;
 }
 
-/** Adds new items to a Zotero library, with optional collections & tags.
- * @param {Object[]} items -  The items to be added to Zotero.
- * @param {{library: ZLibrary, collections: String[], tags: String[]}} config - The options to be used for the import. 
- * @returns 
- */
-function writeCitoids(items, { library, collections = [], tags = [] } = {}){
-	const { apikey, path } = library;
-	const clean_tags = tags.map(t => { return { tag: t }; });
-	// * Only 50 items can be added at once
-	// * https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
-	const apiCalls = [];
-	const nbCalls = Math.ceil(items.length / 50);
-
-	for(let i=1; i <= nbCalls; i++){
-		const itemsData = items
-			.slice(50*(i-1),50*i)
-			.map(citoid => {
-				// Remove key and version from the data object
-				const { key, version, ...item } = citoid;
-		
-				return {
-					...item,
-					collections,
-					tags: clean_tags
-				};
-			});
-		apiCalls.push(zoteroClient.post(`${path}/items`, JSON.stringify(itemsData), { headers: { "Zotero-API-Key": apikey } }));
-	}
-
-	return Promise.allSettled(apiCalls);
-}
-
 /** Modifies data for existing items in a Zotero library
  * @param {Object[]} dataList - The data array containing the modifications
  * @param {ZLibrary} library - The targeted Zotero library
@@ -583,7 +525,6 @@ export {
 	fetchAdditionalData,
 	fetchBibEntries,
 	fetchBibliography,
-	fetchCitoid,
 	fetchDeleted,
 	fetchItems,
 	fetchPermissions,
@@ -591,6 +532,5 @@ export {
 	makeDictionary,
 	makeTagList,
 	updateTagMap,
-	writeCitoids,
 	writeItems
 };

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react-hooks";
 
 import * as apiUtils from "../../src/api/utils";
+import * as citoidUtils from "../../src/api/citoid";
 import { fetchItems, fetchTags } from "../../src/api/utils";
 import { useDeleteTags, useImportCitoids, useModifyTags } from "../../src/api/write";
 
@@ -94,7 +95,7 @@ describe("Mutation hooks for the Zotero API", () => {
 	});
 
 	describe("useImportCitoids", () => {
-		const writeCitoidsSpy = jest.spyOn(apiUtils, "writeCitoids");
+		const writeCitoidsSpy = jest.spyOn(citoidUtils, "writeCitoids");
 
 		test("args passed to writeCitoids", async() => {
 			const { result, waitFor } = renderHook(() => useImportCitoids(), { wrapper });

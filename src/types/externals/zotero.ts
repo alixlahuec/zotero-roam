@@ -166,7 +166,7 @@ export type ZoteroItemTopType =
 type ZoteroItemType = ZoteroItemTopType | "attachment" | "annotation" | "note";
 
 /** Basic metadata for Zotero items */
-interface ZoteroItemDataBase<T extends ZoteroItemType> {
+export interface ZoteroItemDataBase<T extends ZoteroItemType> {
 	/** The datetime when the item was created */
 	dateAdded: string,
 	/** The datetime when the item was last modified */
