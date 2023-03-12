@@ -20,7 +20,7 @@ type MockCitoidErrorResponse = {
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 
 // https://stackoverflow.com/a/73913774/21032793
-const isFulfilled = <T,>(p: PromiseSettledResult<T>): p is PromiseFulfilledResult<T> => p.status === 'fulfilled';
+const isFulfilled = <T,>(p: PromiseSettledResult<T>): p is PromiseFulfilledResult<T> => p.status === "fulfilled";
 
 describe("Fetching mocked Citoid data", () => {
 	const { success_cases, error_cases } = Object.entries(citoids)
