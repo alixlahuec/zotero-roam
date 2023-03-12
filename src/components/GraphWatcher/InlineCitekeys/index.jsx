@@ -14,7 +14,7 @@ import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import useBool from "../../../hooks/useBool";
-import { useQuery_Items } from "../../../api/queries";
+import { useQuery_Items } from "../../../api/items";
 
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
 import { importItemMetadata } from "Roam";

@@ -22,9 +22,9 @@ type TagDictionary = Record<string, string[]>;
 
 type TagList = Record<string, TagEntry[]>;
 
-type QueryKeyTags = ["tags", { library: string }];
+export type QueryKeyTags = ["tags", { library: string }];
 
-type QueryDataTags = {
+export type QueryDataTags = {
 	data: TagList,
 	lastUpdated: number
 }

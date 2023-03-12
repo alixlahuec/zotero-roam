@@ -2,7 +2,7 @@ import { H5 } from "@blueprintjs/core";
 import zrToaster from "Components/ExtensionToaster";
 
 import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
-import { fetchBibEntries, fetchBibliography } from "./api/utils";
+import { fetchBibEntries, fetchBibliography } from "./api/items";
 import { cleanBibliographyHTML, cleanErrorIfAxios, compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 import { findRoamBlock } from "Roam";
 

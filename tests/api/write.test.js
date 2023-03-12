@@ -1,10 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react-hooks";
 
-import * as apiUtils from "../../src/api/utils";
+import * as itemUtils from "../../src/api/items";
 import * as citoidUtils from "../../src/api/citoid";
 import * as tagsUtils from "../../src/api/tags";
-import { fetchItems } from "../../src/api/utils";
 import { useDeleteTags, useImportCitoids, useModifyTags } from "../../src/api/write";
 
 import { apiKeys } from "Mocks/zotero/keys";
@@ -15,6 +14,7 @@ import { citoids, goodIdentifier } from "Mocks/citoid";
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { groupLibrary, userLibrary } = libraries;
 const { fetchTags } = tagsUtils;
+const { fetchItems } = itemUtils;
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -155,7 +155,7 @@ describe("Mutation hooks for the Zotero API", () => {
 	});
 
 	describe("useModifyTags", () => {
-		const writeItemsSpy = jest.spyOn(apiUtils, "writeItems");
+		const writeItemsSpy = jest.spyOn(itemUtils, "writeItems");
 
 		beforeEach(() => {
 			return fetchItems(

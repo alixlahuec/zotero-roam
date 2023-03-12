@@ -7,12 +7,11 @@ import LibraryQueryList from "./LibraryQueryList";
 
 import useBool from "../../hooks/useBool";
 import { useCopySettings } from "Components/UserSettings/Copy";
-import { useQuery_Items } from "../../api/queries";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
+import { useQuery_Items } from "../../api/items";
 
 import { cleanLibrary } from "./helpers";
-
 import { dialogClass, dialogLabel } from "./classes";
 
 import "./index.css";

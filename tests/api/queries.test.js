@@ -1,12 +1,14 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react-hooks";
 
-import * as apiUtils from "../../src/api/utils";
+import * as itemUtils from "../../src/api/items";
 import { makeTagList, useQuery_Tags } from "../../src/api/tags";
 import { parseSemanticDOIs, useQuery_Semantic } from "../../src/api/semantic";
 import { useQuery_Citoid } from "../../src/api/citoid";
 import { useQuery_Collections } from "../../src/api/collections";
-import { wrappedFetchItems, useQuery_Items, useWriteableLibraries } from "../../src/api/queries";
+import { useQuery_Items } from "../../src/api/items";
+import { useWriteableLibraries } from "../../src/api/queries";
+import { wrappedFetchItems } from "../../src/api/helpers";
 
 import { badIdentifier, goodIdentifier } from "Mocks/citoid";
 import { apiKeys } from "Mocks/zotero/keys";
@@ -213,7 +215,7 @@ describe("Wrapper for fetching items", () => {
 		dataURI: userPath + "/items"
 	};
 	const { apikey, library, ...identifiers } = sample_req;
-	const fetchItemsSpy = jest.spyOn(apiUtils, "fetchItems");
+	const fetchItemsSpy = jest.spyOn(itemUtils, "fetchItems");
 
 	beforeEach(() => {
 		client = new QueryClient();
@@ -222,7 +224,7 @@ describe("Wrapper for fetching items", () => {
 	test("Fetching items when query cache is empty", async() => {
 		await wrappedFetchItems(sample_req, client);
 
-		expect(fetchItemsSpy).toHaveBeenCalledWith({ ...sample_req, since: undefined }, { match: undefined }, client);
+		expect(fetchItemsSpy).toHaveBeenCalledWith({ ...sample_req, since: 0 }, { match: [] }, client);
 	});
 
 	test("Fetching items when query cache has version data", async() => {

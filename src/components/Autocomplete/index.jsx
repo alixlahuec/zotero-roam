@@ -6,7 +6,7 @@ import { useAutocompleteSettings } from "Components/UserSettings/Autocomplete";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 
 import { escapeRegExp, formatItemReference } from "../../utils";
-import { useQuery_Items } from "../../api/queries";
+import { useQuery_Items } from "../../api/items";
 
 import { CustomClasses } from "../../constants";
 
