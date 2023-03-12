@@ -310,7 +310,7 @@ describe("Retrieval utils", () => {
 	});
 
 	test("Retrieving children data for an item", () => {
-		const targetLibrary = Object.values(libraries).find(lib => lib.type == samplePDF.library.type && lib.id == samplePDF.library.id);
+		const targetLibrary = Object.values(libraries).find(lib => lib.type == samplePDF.library.type + "s" && lib.id == samplePDF.library.id);
 		const parentItem = items.find(it => it.data.key == samplePDF.data.parentItem);
 		// getItemChildren() retrieves queries data by matching the data URI,
 		// so no need to reproduce the exact query key that would exist in prod
@@ -330,7 +330,7 @@ describe("Retrieval utils", () => {
 		Object.values(libraries).forEach(lib => {
 			const { path, version } = lib;
 			const [type, id] = path.split("/");
-			const colls = findCollections(type.slice(0,-1), id, 0);
+			const colls = findCollections(type, id, 0);
 
 			client.setQueryData(
 				["collections", { library: path }],
@@ -342,7 +342,7 @@ describe("Retrieval utils", () => {
 		});
 
 		const sample_item = items.find(it => it.data.collections.length > 0);
-		const collectionList = findCollections(sample_item.library.type, sample_item.library.id, 0);
+		const collectionList = findCollections(sample_item.library.type + "s", sample_item.library.id, 0);
 		const expectedColls = sample_item.data.collections
 			.map(key => collectionList.find(coll => coll.key == key).data.name);
 
@@ -425,7 +425,7 @@ describe("Retrieval utils", () => {
 			const path = type + "s/" + id;
 			const itemKey = sample_bib.key;
 
-			const sample_item = findItems({ type, id, since: 0 }).find(it => it.data.key == itemKey);
+			const sample_item = findItems({ type: type + "s", id, since: 0 }).find(it => it.data.key == itemKey);
 
 			const res = await extension.getItemCitation(sample_item, {});
 

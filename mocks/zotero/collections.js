@@ -21,7 +21,7 @@ const data = [
 ];
 
 export const findCollections = (type, id, since) => {
-	return data.filter(cl => cl.library.type == type && cl.library.id == id && cl.version > Number(since));
+	return data.filter(cl => cl.library.type + "s" == type && cl.library.id == id && cl.version > Number(since));
 };
 
 export const handleCollections = rest.get(

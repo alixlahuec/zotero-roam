@@ -5,18 +5,18 @@ export interface ZLibraryMock {
 	},
 	name: string,
 	path: string,
-	type: "user" | "group",
+	type: "users" | "groups",
 	username?: string,
 	version: number
 }
 
-const configLibrary = (type: "user"|"group", id: number, name: string) => {
-	const path = type + "s/" + id;
+const configLibrary = (type: "users"|"groups", id: number, name: string) => {
+	const path = type + "/" + id;
 	return {
 		id,
 		links: {
 			alternate: {
-				href: "https://www.zotero.org/" + (type == "user" ? name : path),
+				href: "https://www.zotero.org/" + (type == "users" ? name : path),
 				type: "text/html"
 			}
 		},
@@ -28,12 +28,12 @@ const configLibrary = (type: "user"|"group", id: number, name: string) => {
 
 const data: Record<string, ZLibraryMock> = {
 	"userLibrary": {
-		...configLibrary("user", 123456, "username"),
+		...configLibrary("users", 123456, "username"),
 		username: "username",
 		version: 4310
 	},
 	"groupLibrary": {
-		...configLibrary("group", 456789, "group-library"),
+		...configLibrary("groups", 456789, "group-library"),
 		version: 1598
 	}
 };
