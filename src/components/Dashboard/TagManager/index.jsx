@@ -8,7 +8,7 @@ import LibrarySelect from "../LibrarySelect";
 import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
 import TagsDatalist from "./TagsDatalist";
 
-import { useQuery_Tags } from "../../../api/tags";
+import { useQuery_Tags } from "../../../api/zotero";
 import useWriteableLibraries from "../../../hooks/useWriteableLibraries";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 

@@ -1,5 +1,5 @@
 import { useQueries } from "@tanstack/react-query";
-import { zoteroClient } from "./clients";
+import { zoteroClient } from "../clients";
 import { ZoteroPermissionsResponse } from "Types/externals/zotero";
 
 

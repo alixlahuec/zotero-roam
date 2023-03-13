@@ -1,4 +1,4 @@
-import { fetchSemantic, parseSemanticDOIs } from "./semantic";
+import { fetchSemantic, parseSemanticDOIs } from ".";
 
 import { semantics } from "Mocks/semantic-scholar";
 

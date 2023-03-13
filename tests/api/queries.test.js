@@ -1,14 +1,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react-hooks";
 
-import * as itemUtils from "../../src/api/items";
-import { makeTagList, useQuery_Tags } from "../../src/api/tags";
+import * as itemUtils from "../../src/api/zotero/items";
 import { parseSemanticDOIs, useQuery_Semantic } from "../../src/api/semantic";
 import { useQuery_Citoid } from "../../src/api/citoid";
-import { useQuery_Collections } from "../../src/api/collections";
-import { useQuery_Items } from "../../src/api/items";
+import { makeTagList, wrappedFetchItems, useQuery_Collections, useQuery_Items, useQuery_Tags } from "../../src/api/zotero";
 import useWriteableLibraries from "../../src/hooks/useWriteableLibraries";
-import { wrappedFetchItems } from "../../src/api/helpers";
 
 import { badIdentifier, goodIdentifier } from "Mocks/citoid";
 import { apiKeys } from "Mocks/zotero/keys";

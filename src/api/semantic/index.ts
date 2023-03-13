@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { cleanErrorIfAxios, parseDOI } from "../utils";
-import { semanticClient } from "./clients";
+import { cleanErrorIfAxios, parseDOI } from "../../utils";
+import { semanticClient } from "../clients";
 
 import { SemanticScholarItem, SemanticScholarRelatedEntry } from "Types/externals/semantic";
 

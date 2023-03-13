@@ -1,13 +1,13 @@
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 
 import { AxiosError } from "axios";
-import { citoidClient, zoteroClient } from "./clients";
-import { emitCustomEvent } from "../events";
-import { cleanErrorIfAxios } from "../utils";
+import { writeItems } from "../zotero";
+import { citoidClient } from "../clients";
+import { emitCustomEvent } from "../../events";
+import { cleanErrorIfAxios } from "../../utils";
 
 import { CitoidZotero } from "Types/externals/citoid";
 import { ZLibrary } from "Types/common";
-import { ZoteroWriteItemsResponse } from "Types/externals/zotero";
 
 
 type QueryKeyCitoid = ["citoid", { url: string }];
@@ -87,27 +87,19 @@ const useQuery_Citoid = (urls: string[], opts: Record<string, any> = {}) => {
 	});
 };
 
-
-/** Adds new items to a Zotero library, with optional collections & tags.
- * @param items -  The items to be added to Zotero.
- * @param config - The options to be used for the import. 
+/** React Query custom mutation hook for adding items to Zotero
+ * @fires zotero-roam:write
  * @returns 
  */
-function writeCitoids(
-	items: CitoidZotero[],
-	{ library, collections = [], tags = [] }: { library: ZLibrary, collections: string[], tags: string[] }
-) {
-	const { apikey, path } = library;
-	const clean_tags = tags.map(t => { return { tag: t }; });
-	// * Only 50 items can be added at once
-	// * https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
-	const nbCalls = Math.ceil(items.length / 50);
+const useImportCitoids = () => {
+	const client = useQueryClient();
 
-	const apiCalls: ReturnType<typeof zoteroClient.post<ZoteroWriteItemsResponse>>[] = [];
+	return useMutation((variables: ImportCitoidsArgs) => {
+		const { collections = [], items, library, tags = [] } = variables;
 
-	for (let i = 1; i <= nbCalls; i++) {
-		const itemsData = items
-			.slice(50 * (i - 1), 50 * i)
+		// Transform the data for import
+		const clean_tags = tags.map(t => { return { tag: t }; });
+		const dataList = items
 			.map(citoid => {
 				// Remove key and version from the data object
 				const { key, version, ...item } = citoid;
@@ -118,22 +110,8 @@ function writeCitoids(
 					tags: clean_tags
 				};
 			});
-		apiCalls.push(zoteroClient.post<ZoteroWriteItemsResponse>(`${path}/items`, JSON.stringify(itemsData), { headers: { "Zotero-API-Key": apikey } }));
-	}
 
-	return Promise.allSettled(apiCalls);
-}
-
-/** React Query custom mutation hook for adding items to Zotero
- * @fires zotero-roam:write
- * @returns 
- */
-const useImportCitoids = () => {
-	const client = useQueryClient();
-
-	return useMutation((variables: ImportCitoidsArgs) => {
-		const { collections = [], items, library, tags = [] } = variables;
-		return writeCitoids(items, { library, collections, tags });
+		return writeItems<CitoidZotero>(dataList, library);
 	}, {
 		onSettled: (data = [], error, variables, _context) => {
 			const { collections, items, library: { path }, tags } = variables;
@@ -173,6 +151,5 @@ const useImportCitoids = () => {
 export {
 	fetchCitoid,
 	useQuery_Citoid,
-	writeCitoids,
 	useImportCitoids
 };

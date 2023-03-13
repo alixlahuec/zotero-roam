@@ -10,7 +10,7 @@ import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
 import TagsSelector from "Components/Inputs/TagsSelector";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 
-import { useQuery_Collections } from "../../api/collections";
+import { useQuery_Collections } from "../../api/zotero";
 import { useQuery_Citoid, useImportCitoids } from "../../api/citoid";
 import useWriteableLibraries from "../../hooks/useWriteableLibraries";
 

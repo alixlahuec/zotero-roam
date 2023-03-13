@@ -9,7 +9,7 @@ import useBool from "../../hooks/useBool";
 import { useCopySettings } from "Components/UserSettings/Copy";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
-import { useQuery_Items } from "../../api/items";
+import { useQuery_Items } from "../../api/zotero";
 
 import { cleanLibrary } from "./helpers";
 import { dialogClass, dialogLabel } from "./classes";

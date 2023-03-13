@@ -1,5 +1,5 @@
-import { cleanErrorIfAxios } from "../utils";
-import { zoteroClient } from "./clients";
+import { cleanErrorIfAxios } from "../../utils";
+import { zoteroClient } from "../clients";
 
 import { ZoteroDeleted } from "Types/externals/zotero";
 import { ZLibrary } from "Types/common";

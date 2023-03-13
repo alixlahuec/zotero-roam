@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useQuery_Permissions } from "../api/keys";
+import { useQuery_Permissions } from "../api/zotero";
 
 import { ZLibrary } from "Types/common";
 

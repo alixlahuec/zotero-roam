@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 
 import { cleanErrorIfAxios } from "../utils";
 import { zoteroClient } from "./clients";
-import { QueryKeyItems, QueryDataItems, fetchItems } from "./items";
+import { QueryKeyItems, QueryDataItems, fetchItems } from "./zotero";
 
 import { DataRequest } from "Types/settings";
 
@@ -124,24 +124,8 @@ function matchWithCurrentData<T extends { data: { key: string, extra?: string },
 	}
 }
 
-// TODO: move to more appropriate place - but not the same file as fetchItems, so that tests can still work
-/** Wrapper for retrieving items data, based on contents of the query cache.
- * @param req - The parameters of the request
- * @param queryClient - The current React Query client
- * @returns 
- */
-async function wrappedFetchItems(req: DataRequest, queryClient: QueryClient) {
-	const { apikey, library: { path }, ...identifiers } = req;
-	const queryKey: QueryKeyItems = ["items", path, { ...identifiers }];
-	const { data: match = [], lastUpdated: since = 0 } = queryClient.getQueryData<QueryDataItems>(queryKey) || {};
-
-	return await fetchItems({ ...req, since }, { match }, queryClient);
-}
-
-
 export {
 	extractCitekeys,
 	fetchAdditionalData,
 	matchWithCurrentData,
-	wrappedFetchItems
 };

@@ -1,4 +1,4 @@
-import { fetchCitoid, writeCitoids } from "./citoid";
+import { fetchCitoid } from ".";
 
 import { citoids } from "Mocks/citoid";
 import { makeItemMetadata } from "Mocks/zotero/common";
@@ -59,45 +59,4 @@ describe("Fetching mocked Citoid data", () => {
 		}
 	);
 
-});
-
-describe("Writing mocked Citoid data", () => {
-	const cases = Object.entries(libraries);
-
-	test.each(cases)(
-		"%# Adding a Citoid to %s",
-		async (_libName, libraryDetails) => {
-			const { path, version } = libraryDetails;
-
-			const res = await writeCitoids(
-				[{ title: "TEST_TITLE" }] as CitoidZotero[],
-				{
-					library: { apikey: masterKey, path },
-					collections: [],
-					tags: []
-				}
-			);
-
-			const data = res.filter(isFulfilled).map(rq => rq.value.data);
-
-			expect(data).toEqual([{
-				failed: {},
-				unchanged: {},
-				success: {
-					0: "__NO_UNIQUE_KEY__"
-				},
-				successful: {
-					0: {
-						...makeItemMetadata({
-							library: libraryDetails,
-							version,
-							data: {
-								title: "TEST_TITLE"
-							}
-						})
-					}
-				}
-			}]);
-		}
-	);
 });

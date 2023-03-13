@@ -1,11 +1,11 @@
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 
-import { emitCustomEvent } from "../events";
-import { cleanErrorIfAxios } from "../utils";
+import { emitCustomEvent } from "../../events";
+import { cleanErrorIfAxios } from "../../utils";
+import { zoteroClient } from "../clients";
+import { fetchAdditionalData, matchWithCurrentData } from "../helpers";
 
-import { zoteroClient } from "./clients";
 import { fetchDeleted } from "./deleted";
-import { fetchAdditionalData, matchWithCurrentData } from "./helpers";
 
 import { Maybe, ZLibrary } from "Types/common";
 import { ZoteroCollection } from "Types/externals/zotero";

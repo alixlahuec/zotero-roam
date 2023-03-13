@@ -1,15 +1,17 @@
 import { useMemo } from "react";
 import { QueryClient, useQueries, useQueryClient } from "@tanstack/react-query";
-import { emitCustomEvent } from "../events";
-import { cleanErrorIfAxios } from "../utils";
 
-import { zoteroClient } from "./clients";
+import { emitCustomEvent } from "../../events";
+import { cleanErrorIfAxios } from "../../utils";
+import { zoteroClient } from "../clients";
+import { fetchAdditionalData, matchWithCurrentData } from "../helpers";
+
 import { fetchDeleted } from "./deleted";
-import { fetchAdditionalData, matchWithCurrentData, wrappedFetchItems } from "./helpers";
 import { QueryKeyTags, QueryDataTags } from "./tags";
+import * as __thisModule from "./items";
 
 import { Maybe, ZLibrary } from "Types/common";
-import { ZoteroBibliography, ZoteroConfigBibliography, ZoteroItem, ZoteroItemTop, ZoteroWriteItemsResponse } from "Types/externals/zotero";
+import { ZoteroBibliography, ZoteroConfigBibliography, ZoteroItem, ZoteroWriteItemsResponse } from "Types/externals/zotero";
 import { DataRequest } from "Types/settings";
 
 
@@ -194,18 +196,31 @@ async function fetchItems(
 	}
 }
 
-/** Modifies data for existing items in a Zotero library
- * @param dataList - The data array containing the modifications
- * @param library - The targeted Zotero library
- * @returns The outcome of the Axios API call
+/** Wrapper for retrieving items data, based on contents of the query cache.
+ * @param req - The parameters of the request
+ * @param queryClient - The current React Query client
+ * @returns 
  */
-function writeItems(dataList: Pick<ZoteroItemTop["data"], "key" | "version" | "tags">[], library: ZLibrary) {
+async function wrappedFetchItems(req: DataRequest, queryClient: QueryClient) {
+	const { apikey, library: { path }, ...identifiers } = req;
+	const queryKey: QueryKeyItems = ["items", path, { ...identifiers }];
+	const { data: match = [], lastUpdated: since = 0 } = queryClient.getQueryData<QueryDataItems>(queryKey) || {};
+
+	return await __thisModule.fetchItems({ ...req, since }, { match }, queryClient);
+}
+
+/** Adds or modifies items in a Zotero library. Only 50 items can be manipulated per API call.
+ * @param dataList - The array containing the items' data
+ * @param library - The targeted Zotero library
+ * @see https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
+ * @see https://www.zotero.org/support/dev/web_api/v3/write_requests#updating_multiple_objects
+ */
+function writeItems<T>(dataList: T[], library: ZLibrary) {
 	const { apikey, path } = library;
-	// * Only 50 items can be added at once
-	// * https://www.zotero.org/support/dev/web_api/v3/write_requests#updating_multiple_objects
-	const apiCalls: ReturnType<typeof zoteroClient.post<ZoteroWriteItemsResponse>>[] = [];
 	const nbCalls = Math.ceil(dataList.length / 50);
 
+	const apiCalls: ReturnType<typeof zoteroClient.post<ZoteroWriteItemsResponse>>[] = [];
+	
 	for (let i = 1; i <= nbCalls; i++) {
 		const itemsData = dataList.slice(50 * (i - 1), 50 * i);
 		apiCalls.push(zoteroClient.post<ZoteroWriteItemsResponse>(
@@ -253,6 +268,7 @@ export {
 	fetchBibEntries,
 	fetchBibliography,
 	fetchItems,
+	wrappedFetchItems,
 	writeItems,
 	useQuery_Items
 };

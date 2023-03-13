@@ -1,14 +1,16 @@
 import { useMemo } from "react";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
-import { emitCustomEvent } from "../events";
-import { cleanErrorIfAxios, searchEngine } from "../utils";
+import { emitCustomEvent } from "../../events";
+import { cleanErrorIfAxios, searchEngine } from "../../utils";
 
-import { zoteroClient } from "./clients";
-import { fetchAdditionalData } from "./helpers";
+import { zoteroClient } from "../clients";
+import { fetchAdditionalData } from "../helpers";
 import { writeItems, QueryDataItems } from "./items";
+import * as __thisModule from "./tags";
 
 import { ZoteroItemTop, ZoteroTag } from "Types/externals/zotero";
 import { ZLibrary } from "Types/common";
+
 
 
 type RoamPage = { title: string, uid: string }
@@ -296,7 +298,7 @@ const useDeleteTags = () => {
 		const { library: { apikey, path }, tags } = variables;
 		const { lastUpdated: version = 0 } = client.getQueryData<QueryDataTags>(["tags", { library: path }]) || {};
 
-		return deleteTags(tags, { apikey, path }, version);
+		return __thisModule.deleteTags(tags, { apikey, path }, version);
 	}, {
 		onSettled: (data, error, variables, _context) => {
 			const { library: { path }, tags } = variables;
@@ -355,7 +357,7 @@ const useModifyTags = () => {
 			}
 		});
 
-		return writeItems(dataList, { apikey, path });
+		return writeItems<Pick<ZoteroItemTop["data"], "key" | "version" | "tags">>(dataList, { apikey, path });
 	}, {
 		onSettled: (data = [], error, variables, _context) => {
 			const { into, library: { path }, tags } = variables;

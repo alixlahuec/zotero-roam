@@ -1,9 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react-hooks";
 
-import * as itemUtils from "../../src/api/items";
+import * as itemUtils from "../../src/api/zotero/items";
 import * as citoidUtils from "../../src/api/citoid";
-import * as tagsUtils from "../../src/api/tags";
+import * as tagsUtils from "../../src/api/zotero/tags";
 
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
@@ -98,9 +98,10 @@ describe("Mutation hooks for the Zotero API", () => {
 	});
 
 	describe("useImportCitoids", () => {
-		const writeCitoidsSpy = jest.spyOn(citoidUtils, "writeCitoids");
+		const writeItemsSpy = jest.spyOn(itemUtils, "writeItems");
 
-		test("args passed to writeCitoids", async() => {
+		test("args passed to writeItems", async () => {
+			const library = { apikey: masterKey, path: userLibrary.path };
 			const { result, waitFor } = renderHook(() => useImportCitoids(), { wrapper });
 
 			expect(result.current.status).toBe("idle");
@@ -108,15 +109,21 @@ describe("Mutation hooks for the Zotero API", () => {
 				result.current.mutate({
 					collections: [],
 					items: [citoids[goodIdentifier]],
-					library: { apikey: masterKey, path: userLibrary.path },
+					library,
 					tags: []
 				});
 			});
 			await waitFor(() => result.current.status == "success");
 
-			expect(writeCitoidsSpy).toHaveBeenCalledWith(
-				[citoids[goodIdentifier]],
-				{ collections: [], library: { apikey: masterKey, path: userLibrary.path }, tags: [] }
+			expect(writeItemsSpy).toHaveBeenCalledWith(
+				[
+					{
+						...citoids[goodIdentifier],
+						collections: [],
+						tags: []
+					}
+				],
+				library
 			);
 		});
 

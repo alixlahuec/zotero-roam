@@ -10,7 +10,7 @@ import TagMenu from "./TagMenu";
 import { usePageMenuSettings } from "Components/UserSettings/PageMenu";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
-import { useQuery_Items } from "../../../api/items";
+import { useQuery_Items } from "../../../api/zotero";
 
 import { categorizeLibraryItems } from "../../../utils";
 import { cleanRelatedItem } from "./utils";

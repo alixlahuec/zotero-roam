@@ -1,5 +1,5 @@
 import { fetchCollections } from "./collections";
-import { fetchAdditionalData } from "./helpers";
+import { fetchAdditionalData } from "../helpers";
 
 import { apiKeys } from "Mocks/zotero/keys";
 import { findCollections } from "Mocks/zotero/collections";

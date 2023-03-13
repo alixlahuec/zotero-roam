@@ -8,7 +8,7 @@ import { ListWrapper, Toolbar } from "Components/DataList";
 import LogItem from "./LogItem";
 
 import useBool from "../../../hooks/useBool";
-import { useQuery_Items } from "../../../api/items";
+import { useQuery_Items } from "../../../api/zotero";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 
 import { categorizeLibraryItems } from "../../../utils";
