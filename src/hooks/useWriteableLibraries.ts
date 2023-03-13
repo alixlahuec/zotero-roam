@@ -1,13 +1,14 @@
 import { useMemo } from "react";
+import { useQuery_Permissions } from "../api/keys";
 
-import { useQuery_Permissions } from "./keys";
+import { ZLibrary } from "Types/common";
 
 
 /** Custom hook for retrieving the list of Zotero libraries with `write` permissions.
- * @param {ZLibrary[]} libraries - The targeted Zotero libraries
- * @returns {{data: ZLibrary[], isLoading: Boolean}} The operation's status and outcome
+ * @param libraries - The targeted Zotero libraries
+ * @returns The operation's status and outcome
  */
-const useWriteableLibraries = (libraries) => {
+const useWriteableLibraries = (libraries: ZLibrary[]) => {
 	const apiKeys = useMemo(() => Array.from(new Set(libraries.map(lib => lib.apikey))), [libraries]);
 	const permissionQueries = useQuery_Permissions(apiKeys, {
 		notifyOnChangeProps: ["data", "isLoading"]
@@ -25,18 +26,18 @@ const useWriteableLibraries = (libraries) => {
 				} else {
 					const { access } = keyData;
 					const [libType, libId] = lib.path.split("/");
-					const permissionsList = libType == "users" ? (access.user || {}) : (access.groups[libId] || access.groups.all);
-					return permissionsList?.write || false;
+					const permissionsList = libType == "users"
+						? access.user
+						: (access.groups?.[libId] || access.groups?.all);
+					return (permissionsList || {}).write || false;
 				}
 			});
 	}, [libraries, permissions]);
-	
+
 	return {
 		data,
 		isLoading
 	};
 };
 
-export {
-	useWriteableLibraries
-};
+export default useWriteableLibraries;

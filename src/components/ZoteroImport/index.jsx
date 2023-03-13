@@ -12,7 +12,7 @@ import { useRequestsSettings } from "Components/UserSettings/Requests";
 
 import { useQuery_Collections } from "../../api/collections";
 import { useQuery_Citoid, useImportCitoids } from "../../api/citoid";
-import { useWriteableLibraries } from "../../api/queries";
+import useWriteableLibraries from "../../hooks/useWriteableLibraries";
 
 import useMulti from "../../hooks/useMulti";
 import useSelect from "../../hooks/useSelect";

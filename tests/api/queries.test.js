@@ -7,7 +7,7 @@ import { parseSemanticDOIs, useQuery_Semantic } from "../../src/api/semantic";
 import { useQuery_Citoid } from "../../src/api/citoid";
 import { useQuery_Collections } from "../../src/api/collections";
 import { useQuery_Items } from "../../src/api/items";
-import { useWriteableLibraries } from "../../src/api/queries";
+import useWriteableLibraries from "../../src/hooks/useWriteableLibraries";
 import { wrappedFetchItems } from "../../src/api/helpers";
 
 import { badIdentifier, goodIdentifier } from "Mocks/citoid";
