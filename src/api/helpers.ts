@@ -1,10 +1,5 @@
-import { QueryClient } from "@tanstack/react-query";
-
 import { cleanErrorIfAxios } from "../utils";
 import { zoteroClient } from "./clients";
-import { QueryKeyItems, QueryDataItems, fetchItems } from "./zotero";
-
-import { DataRequest } from "Types/settings";
 
 
 type WithCitekeys<T> = T & { has_citekey: boolean };

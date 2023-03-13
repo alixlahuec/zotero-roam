@@ -1,11 +1,5 @@
-import { fetchCitoid } from ".";
-
+import { fetchCitoid } from "./index";
 import { citoids } from "Mocks/citoid";
-import { makeItemMetadata } from "Mocks/zotero/common";
-import { apiKeys } from "Mocks/zotero/keys";
-import { libraries } from "Mocks/zotero/libraries";
-
-import { isFulfilled } from "Types/common";
 import { CitoidZotero } from "Types/externals/citoid";
 
 
@@ -17,8 +11,6 @@ type MockCitoidErrorResponse = {
 	uri: string
 };
 // type MockCitoidResponse = MockCitoidSuccessResponse | MockCitoidErrorResponse;
-
-const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 
 describe("Fetching mocked Citoid data", () => {
 	const { success_cases, error_cases } = Object.entries(citoids)
