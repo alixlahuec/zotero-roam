@@ -267,8 +267,24 @@ export interface ZoteroItemTop extends ZoteroBase {
  */
 export type ZoteroItem = ZoteroItemAnnotation | ZoteroItemAttachment | ZoteroItemNote | ZoteroItemTop;
 
+/**
+ * @see https://www.zotero.org/support/dev/web_api/v3/syncing#verify_key_access
+ */
 export interface ZoteroPermissionsResponse {
-	access: Record<string, string>,
+	access: {
+		user?: {
+			files: boolean,
+			library: boolean,
+			notes: boolean,
+			write: boolean
+		},
+		groups?: {
+			[P in "all" | string]?: {
+				library: boolean,
+				write: boolean
+			}
+		}
+	},
 	key: string,
 	userID: number,
 	username: string
