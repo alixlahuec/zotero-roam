@@ -6,7 +6,7 @@ import RequestsEditor from "./RequestsEditor";
 import { RowCol } from "../common";
 
 import useBool from "../../../hooks/useBool";
-import { useRequestsSettings } from "./index";
+import { useRequestsSettings } from ".";
 
 import { CustomClasses } from "../../../constants";
 

@@ -1,4 +1,4 @@
-import { fetchCitoid } from "./index";
+import { fetchCitoid } from ".";
 import { citoids } from "Mocks/citoid";
 import { CitoidZotero } from "Types/externals/citoid";
 
