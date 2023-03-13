@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { Menu, MenuItem } from "@blueprintjs/core";
 
 import MergeAsOptions from "./MergeAsOptions";
-import { useDeleteTags } from "../../../api/write";
+import { useDeleteTags } from "../../../api/tags";
 
 import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";

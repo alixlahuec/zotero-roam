@@ -1,10 +1,13 @@
 import { useMemo } from "react";
-import { useQueries } from "@tanstack/react-query";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
+import { emitCustomEvent } from "../events";
 import { cleanErrorIfAxios, searchEngine } from "../utils";
 
 import { zoteroClient } from "./clients";
 import { fetchAdditionalData } from "./helpers";
-import { ZoteroTag } from "Types/externals/zotero";
+import { writeItems, QueryDataItems } from "./items";
+
+import { ZoteroItemTop, ZoteroTag } from "Types/externals/zotero";
 import { ZLibrary } from "Types/common";
 
 
@@ -29,6 +32,16 @@ export type QueryDataTags = {
 	lastUpdated: number
 }
 
+export type DeleteTagsArgs = {
+	library: ZLibrary,
+	tags: string[]
+};
+
+export type ModifyTagsArgs = {
+	into: string,
+	library: ZLibrary,
+	tags: string[]
+};
 
 /** Compares two Zotero tags based on tag string and type, to determine if they are duplicates
  * @param tag1 - The first tag to compare
@@ -272,7 +285,112 @@ const useQuery_Tags = (libraries: ZLibrary[], opts: Record<string, any> = {}) =>
 	});
 };
 
+/** React Query custom mutation hook for deleting tags from a Zotero library.
+ * @fires zotero-roam:write
+ * @returns 
+ */
+const useDeleteTags = () => {
+	const client = useQueryClient();
 
+	return useMutation((variables: DeleteTagsArgs) => {
+		const { library: { apikey, path }, tags } = variables;
+		const { lastUpdated: version = 0 } = client.getQueryData<QueryDataTags>(["tags", { library: path }]) || {};
+
+		return deleteTags(tags, { apikey, path }, version);
+	}, {
+		onSettled: (data, error, variables, _context) => {
+			const { library: { path }, tags } = variables;
+
+			if (!error) {
+				// Invalidate item queries related to the library used
+				// Data can't be updated through cache modification because of the library version
+				client.invalidateQueries(["items", path], {
+					refetchType: "all"
+				}, {
+					throwOnError: true
+				});
+			}
+
+			emitCustomEvent("tags-deleted", {
+				data,
+				error,
+				library: path,
+				tags
+			});
+		}
+	});
+};
+
+/** React Query custom mutation hook for modifying tags in a Zotero library
+ * @fires zotero-roam:tags-modified
+ * @returns
+ */
+const useModifyTags = () => {
+	const client = useQueryClient();
+
+	return useMutation((variables: ModifyTagsArgs) => {
+		const { into, library: { apikey, path }, tags } = variables;
+		const dataList: Pick<ZoteroItemTop["data"], "key" | "version" | "tags">[] = [];
+		const libItems = client.getQueriesData<QueryDataItems>(["items", path])
+			.map(query => (query[1] || {}).data || []).flat(1)
+			.filter(i => !["attachment", "note", "annotation"].includes(i.data.itemType) && i.data.tags.length > 0);
+
+		libItems.forEach(i => {
+			const itemTags = i.data.tags;
+			// If the item already has the target tag, with type 0 (explicit or implicit) - remove it from the array before the filtering :
+			const has_clean_tag = itemTags.findIndex(it => it.tag == into && (it.type == 0 || !it.type));
+			if (has_clean_tag > -1) {
+				itemTags.splice(has_clean_tag, 1);
+			}
+			// Compare the lengths of the tag arrays, before vs. after filtering out the tags to be renamed
+			const cleanTags = itemTags.filter(t => !tags.includes(t.tag));
+			if (cleanTags.length < itemTags.length) {
+				// If they do not match (aka, there are tags to be removed/renamed), insert the target tag & add to the dataList
+				cleanTags.push({ tag: into, type: 0 });
+				dataList.push({
+					key: i.data.key,
+					version: i.version,
+					tags: cleanTags
+				});
+			}
+		});
+
+		return writeItems(dataList, { apikey, path });
+	}, {
+		onSettled: (data = [], error, variables, _context) => {
+			const { into, library: { path }, tags } = variables;
+
+			const outcome = data.reduce<{ successful: unknown[], failed: unknown[] }>((obj, res) => {
+				/* istanbul ignore else */
+				if (res.status == "fulfilled") {
+					obj.successful.push(res.value);
+				} else {
+					obj.failed.push(res.reason);
+				}
+				return obj;
+			}, { successful: [], failed: [] });
+
+			/* istanbul ignore if */
+			if (outcome.successful.length > 0) {
+				// If any item was modified, invalidate item queries for the targeted library
+				// Data can't be updated through cache modification because of the library version
+				client.invalidateQueries(["items", path], {
+					refetchType: "all"
+				});
+			}
+
+			emitCustomEvent("tags-modified", {
+				args: {
+					into,
+					tags
+				},
+				data: outcome,
+				error,
+				library: path
+			});
+		}
+	});
+};
 
 export {
 	areTagsDuplicate,
@@ -281,5 +399,7 @@ export {
 	makeDictionary,
 	makeTagList,
 	updateTagMap,
-	useQuery_Tags
+	useQuery_Tags,
+	useDeleteTags,
+	useModifyTags
 };

@@ -1,7 +1,8 @@
-import { useQueries } from "@tanstack/react-query";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 
 import { AxiosError } from "axios";
 import { citoidClient, zoteroClient } from "./clients";
+import { emitCustomEvent } from "../events";
 import { cleanErrorIfAxios } from "../utils";
 
 import { CitoidZotero } from "Types/externals/citoid";
@@ -14,6 +15,13 @@ type QueryKeyCitoid = ["citoid", { url: string }];
 type QueryDataCitoid = {
 	item: CitoidZotero,
 	query: string
+};
+
+type ImportCitoidsArgs = {
+	collections: string[],
+	items: CitoidZotero[],
+	library: ZLibrary,
+	tags: string[]
 };
 
 /** Requests data from the `/data/citation/zotero` endpoint of the Wikipedia API
@@ -116,8 +124,55 @@ function writeCitoids(
 	return Promise.allSettled(apiCalls);
 }
 
+/** React Query custom mutation hook for adding items to Zotero
+ * @fires zotero-roam:write
+ * @returns 
+ */
+const useImportCitoids = () => {
+	const client = useQueryClient();
+
+	return useMutation((variables: ImportCitoidsArgs) => {
+		const { collections = [], items, library, tags = [] } = variables;
+		return writeCitoids(items, { library, collections, tags });
+	}, {
+		onSettled: (data = [], error, variables, _context) => {
+			const { collections, items, library: { path }, tags } = variables;
+
+			const outcome = data.reduce<{ successful: unknown[], failed: unknown[] }>((obj, res) => {
+				/* istanbul ignore else */
+				if (res.status == "fulfilled") {
+					obj.successful.push(res.value);
+				} else {
+					obj.failed.push(res.reason);
+				}
+				return obj;
+			}, { successful: [], failed: [] });
+
+			if (!error && outcome.successful.length > 0) {
+				// Invalidate item queries related to the library used
+				// Data can't be updated through cache modification because of the library version
+				client.invalidateQueries(["items", path], {
+					refetchType: "all"
+				});
+			}
+
+			emitCustomEvent("write", {
+				args: {
+					collections,
+					items,
+					tags
+				},
+				data: outcome,
+				error,
+				library: path,
+			});
+		}
+	});
+};
+
 export {
 	fetchCitoid,
 	useQuery_Citoid,
-	writeCitoids
+	writeCitoids,
+	useImportCitoids
 };

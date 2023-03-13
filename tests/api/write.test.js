@@ -4,7 +4,6 @@ import { act, renderHook } from "@testing-library/react-hooks";
 import * as itemUtils from "../../src/api/items";
 import * as citoidUtils from "../../src/api/citoid";
 import * as tagsUtils from "../../src/api/tags";
-import { useDeleteTags, useImportCitoids, useModifyTags } from "../../src/api/write";
 
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
@@ -13,8 +12,10 @@ import { citoids, goodIdentifier } from "Mocks/citoid";
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { groupLibrary, userLibrary } = libraries;
-const { fetchTags } = tagsUtils;
+
+const { useImportCitoids } = citoidUtils;
 const { fetchItems } = itemUtils;
+const { fetchTags, useDeleteTags, useModifyTags } = tagsUtils;
 
 const queryClient = new QueryClient({
 	defaultOptions: {

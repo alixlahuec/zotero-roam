@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag, UL } from "@blueprintjs/core";
 
 import useBool from "../../../hooks/useBool";
-import { useModifyTags } from "../../../api/write";
+import { useModifyTags } from "../../../api/tags";
 import useText from "../../../hooks/useText";
 
 import * as customPropTypes from "../../../propTypes";
