@@ -1,4 +1,4 @@
-import { ZoteroItemNote } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 
 
 export interface ZSimplifiedNote {
@@ -9,13 +9,13 @@ export interface ZSimplifiedNote {
 	link_note: string,
 	note: string,
 	parent_item: string,
-	raw: ZoteroItemNote,
+	raw: ZoteroAPI.ItemNote,
 	tags: string[]
 }
 /** Simplifies data structure for Zotero notes
  * @returns The simplified array of notes
  */
-function simplifyZoteroNotes(notes: ZoteroItemNote[]): ZSimplifiedNote[] {
+function simplifyZoteroNotes(notes: ZoteroAPI.ItemNote[]): ZSimplifiedNote[] {
 	return notes.map(nt => {
 		const {
 			dateAdded: date_added,

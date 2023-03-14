@@ -1,7 +1,7 @@
-import { ZoteroCollection } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 
 
-export interface ZEnrichedCollection extends ZoteroCollection {
+export interface ZEnrichedCollection extends ZoteroAPI.Collection {
 	depth: number
 }
 
@@ -9,8 +9,8 @@ export interface ZEnrichedCollection extends ZoteroCollection {
  * @returns The sorted array
  */
 function sortCollectionChildren(
-	parent: ZoteroCollection,
-	children: ZoteroCollection[],
+	parent: ZoteroAPI.Collection,
+	children: ZoteroAPI.Collection[],
 	depth = 0
 ): ZEnrichedCollection[] {
 	const parColl = {
@@ -35,10 +35,10 @@ function sortCollectionChildren(
 }
 
 /** Sorts an array of Zotero collections in A-Z order, with child collections
- * @param {ZoteroCollection[]} arr - The array of Zotero collections to sort
+ * @param arr - The array of Zotero collections to sort
  * @returns The sorted array
  */
-function sortCollections(arr: ZoteroCollection[]): ZEnrichedCollection[] {
+function sortCollections(arr: ZoteroAPI.Collection[]): ZEnrichedCollection[] {
 	if (arr.length > 0) {
 		// Sort collections A-Z
 		const array = [...arr].sort((a, b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));

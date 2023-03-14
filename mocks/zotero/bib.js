@@ -16,8 +16,8 @@ const addMetadata = ({ key, library, version }) => ({
 });
 
 /**
- * @param {{key: stirng, path: string}} args 
- * @returns {ZoteroBibliography<"bib">}
+ * @param {{key: string, path: string}} args 
+ * @returns {ZoteroAPI.Responses.ItemGet<"bib">}
  */
 export const findBibliographyEntry = ({ key, path }) => {
 	const [libraryType, libraryID] = path.split("/");
@@ -25,7 +25,7 @@ export const findBibliographyEntry = ({ key, path }) => {
 };
 
 /**
- * @constant {Record<string, ZoteroBibliography<"bib">>}
+ * @constant {Record<string, ZoteroAPI.Responses.ItemGet<"bib">}
  */
 const data = {
 	"itemInLibrary": {

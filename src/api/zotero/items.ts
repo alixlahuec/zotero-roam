@@ -11,17 +11,15 @@ import { QueryKeyTags, QueryDataTags } from "./tags";
 import * as __thisModule from "./items";
 
 import { Maybe, ZLibrary } from "Types/common";
-import { ZoteroBibliography, ZoteroConfigBibliography, ZoteroItem, ZoteroWriteItemsResponse } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
+
 import { DataRequest } from "Types/settings";
 
-
-type ZoteroItemsBiblatexResponse = ZoteroBibliography<"biblatex">[];
-type ZoteroItemsBibResponse = ZoteroBibliography<"bib">;
 
 export type QueryKeyItems = ["items", string, Omit<DataRequest, "apikey" | "library">];
 
 export type QueryDataItems = {
-	data: ZoteroItem[],
+	data: ZoteroAPI.Item[],
 	lastUpdated: number
 };
 
@@ -34,12 +32,12 @@ async function fetchBibEntries(itemKeys: string[], library: ZLibrary) {
 	const { apikey, path } = library;
 
 	// * Only 100 entries can be retrieved at once
-	const apiCalls: ReturnType<typeof zoteroClient.get<ZoteroItemsBiblatexResponse>>[] = [];
+	const apiCalls: ReturnType<typeof zoteroClient.get<ZoteroAPI.Responses.ItemsGet<"biblatex">>>[] = [];
 	const nbCalls = Math.ceil(itemKeys.length / 100);
 
 	for (let i = 1; i <= nbCalls; i++) {
 		const keyList = itemKeys.slice(100 * (i - 1), 100 * i);
-		apiCalls.push(zoteroClient.get<ZoteroItemsBiblatexResponse>(`${path}/items`, {
+		apiCalls.push(zoteroClient.get<ZoteroAPI.Responses.ItemsGet<"biblatex">>(`${path}/items`, {
 			headers: {
 				"Zotero-API-Key": apikey
 			},
@@ -65,7 +63,7 @@ async function fetchBibEntries(itemKeys: string[], library: ZLibrary) {
  * @param config - Optional parameters to use in the API call
  * @returns
  */
-async function fetchBibliography(itemKey: string, library: ZLibrary, config: ZoteroConfigBibliography = {}) {
+async function fetchBibliography(itemKey: string, library: ZLibrary, config: Partial<ZoteroAPI.Requests.BibliographyArgs> = {}) {
 	const { apikey, path } = library;
 	const dataURI = `${path}/items/${itemKey}`;
 	// See https://www.zotero.org/support/dev/web_api/v3/basics#parameters_for_format_bib_includecontent_bib_includecontent_citation
@@ -74,7 +72,7 @@ async function fetchBibliography(itemKey: string, library: ZLibrary, config: Zot
 	let response: unknown;
 
 	try {
-		const { data, ...rest } = await zoteroClient.get<ZoteroItemsBibResponse>(
+		const { data, ...rest } = await zoteroClient.get<ZoteroAPI.Responses.ItemGet<"bib">>(
 			dataURI,
 			{
 				headers: { "Zotero-API-Key": apikey },
@@ -107,13 +105,13 @@ async function fetchBibliography(itemKey: string, library: ZLibrary, config: Zot
 /** Requests data from the Zotero API, based on a specific data URI
  * @fires zotero-roam:update
  * @param req - The parameters of the request 
- * @param {{match?: Object[]}} config - Additional parameters
+ * @param config - Additional parameters
  * @param queryClient - The current React Query client
  * @returns
  */
 async function fetchItems(
 	req: DataRequest & { since?: number },
-	{ match = [] }: { match: ZoteroItem[] },
+	{ match = [] }: { match: ZoteroAPI.Item[] },
 	queryClient: QueryClient
 ): Promise<QueryDataItems> {
 	const { apikey, dataURI, library: { path }, since = 0 } = req;
@@ -132,11 +130,11 @@ async function fetchItems(
 	};
 
 	let response: unknown;
-	let modified: Maybe<ZoteroItem[]>;
+	let modified: Maybe<ZoteroAPI.Item[]>;
 	let deleted: Maybe<string[]>;
 
 	try {
-		const { data, headers, ...rest } = await zoteroClient.get<ZoteroItem[]>(`${dataURI}?${paramsQuery.toString()}`,
+		const { data, headers, ...rest } = await zoteroClient.get<ZoteroAPI.Responses.ItemsGet>(`${dataURI}?${paramsQuery.toString()}`,
 			{
 				headers: { "Zotero-API-Key": apikey }
 			});
@@ -147,7 +145,7 @@ async function fetchItems(
 		const totalResults = Number(totalResultsStr);
 
 		if (totalResults > 100) {
-			const additional = await fetchAdditionalData<ZoteroItem>({ dataURI, apikey, since }, totalResults);
+			const additional = await fetchAdditionalData<ZoteroAPI.Responses.ItemsGet>({ dataURI, apikey, since }, totalResults);
 			modified.push(...additional);
 		}
 
@@ -219,11 +217,11 @@ function writeItems<T>(dataList: T[], library: ZLibrary) {
 	const { apikey, path } = library;
 	const nbCalls = Math.ceil(dataList.length / 50);
 
-	const apiCalls: ReturnType<typeof zoteroClient.post<ZoteroWriteItemsResponse>>[] = [];
+	const apiCalls: ReturnType<typeof zoteroClient.post<ZoteroAPI.Responses.ItemsWrite>>[] = [];
 	
 	for (let i = 1; i <= nbCalls; i++) {
 		const itemsData = dataList.slice(50 * (i - 1), 50 * i);
-		apiCalls.push(zoteroClient.post<ZoteroWriteItemsResponse>(
+		apiCalls.push(zoteroClient.post<ZoteroAPI.Responses.ItemsWrite>(
 			`${path}/items`,
 			JSON.stringify(itemsData),
 			{ headers: { "Zotero-API-Key": apikey } }

@@ -4,17 +4,17 @@ import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 import { findTags, tags } from "Mocks/zotero/tags";
 
-import { ZoteroTag } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { groupLibrary, userLibrary } = libraries;
 
 describe("Comparing tag entries", () => {
-	const tag1 = { tag: "some_tag", meta: { numItems: 3, type: 0 } } as ZoteroTag;
-	const tag2 = { tag: "some_tag", meta: { numItems: 2, type: 0 } } as ZoteroTag;
-	const tag3 = { tag: "some_tag", meta: { numItems: 6, type: 1 } } as ZoteroTag;
-	const tag4 = { tag: "other_tag", meta: { numItems: 4, type: 1 } } as ZoteroTag;
+	const tag1 = { tag: "some_tag", meta: { numItems: 3, type: 0 } } as ZoteroAPI.Tag;
+	const tag2 = { tag: "some_tag", meta: { numItems: 2, type: 0 } } as ZoteroAPI.Tag;
+	const tag3 = { tag: "some_tag", meta: { numItems: 6, type: 1 } } as ZoteroAPI.Tag;
+	const tag4 = { tag: "other_tag", meta: { numItems: 4, type: 1 } } as ZoteroAPI.Tag;
 
 	const cases = [
 		[[tag1, tag2], true],
@@ -25,7 +25,7 @@ describe("Comparing tag entries", () => {
 		[[tag3, tag4], false]
 	];
 
-	test.each(cases as [[ZoteroTag, ZoteroTag], boolean][])(
+	test.each(cases as [[ZoteroAPI.Tag, ZoteroAPI.Tag], boolean][])(
 		"Tag comparison %#",
 		(tags_to_compare, are_duplicates) => {
 			expect(areTagsDuplicate(...tags_to_compare)).toBe(are_duplicates);
@@ -62,7 +62,7 @@ describe("Building tag maps", () => {
 	});
 
 	test("New entries are added correctly", () => {
-		updateTagMap(tagMap, { tag: "a_new_tag", meta: { numItems: 2, type: 1 } } as ZoteroTag);
+		updateTagMap(tagMap, { tag: "a_new_tag", meta: { numItems: 2, type: 1 } } as ZoteroAPI.Tag);
 		expect(tagMap.has("a_new_tag"))
 			.toBe(true);
 		expect(tagMap.get("a_new_tag"))
@@ -70,7 +70,7 @@ describe("Building tag maps", () => {
 	});
 
 	test("New entries are appended correctly - Object entries", () => {
-		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 1 } } as ZoteroTag);
+		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 1 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("some_tag")).toBeInstanceOf(Array);
 		expect(tagMap.get("some_tag").length).toBe(2);
 		expect(tagMap.get("some_tag"))
@@ -81,12 +81,12 @@ describe("Building tag maps", () => {
 	});
 
 	test("New entries are appended correctly - Array entries", () => {
-		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 7, type: 2 } } as ZoteroTag);
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 7, type: 2 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("other_tag").length).toBe(3);
 	});
 
 	test("Duplicates are prevented - Object entries", () => {
-		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 0 } } as ZoteroTag);
+		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 0 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("some_tag"))
 			.toEqual({ tag: "some_tag", meta: { numItems: 4, type: 0 } });
 	});
@@ -94,10 +94,10 @@ describe("Building tag maps", () => {
 	test("Duplicates are prevented - Array entries", () => {
 		expect(tagMap.get("other_tag").length).toBe(2);
 
-		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 3, type: 0 } } as ZoteroTag);
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 3, type: 0 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("other_tag").length).toBe(2);
 
-		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 11, type: 1 } } as ZoteroTag);
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 11, type: 1 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("other_tag").length).toBe(2);
 	});
 

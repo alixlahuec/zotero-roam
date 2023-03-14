@@ -1,4 +1,4 @@
-import { ZoteroItem, ZoteroItemAnnotation, ZoteroItemAttachment, ZoteroItemNote, ZoteroItemTop, ZoteroItemTopType } from "./externals/zotero";
+import { ZoteroAPI } from "./externals/zotero";
 
 
 export interface ZCleanItemTop {
@@ -8,13 +8,13 @@ export interface ZCleanItemTop {
 	authorsLastNames: string[],
 	authorsRoles: string[],
 	children: {
-		notes: (ZoteroItemAnnotation|ZoteroItemNote)[],
-		pdfs: ZoteroItemAttachment[]
+		notes: (ZoteroAPI.ItemAnnotation|ZoteroAPI.ItemNote)[],
+		pdfs: ZoteroAPI.ItemAttachment[]
 	},
 	createdByUser: string | null,
 	inGraph: string | false,
 	itemKey: string,
-	itemType: ZoteroItemTopType,
+	itemType: ZoteroAPI.ItemTop["data"]["itemType"],
 	key: string,
 	location: string,
 	meta: string,
@@ -25,24 +25,24 @@ export interface ZCleanItemTop {
 	year: string,
 	zotero: { local: string, web: string },
 	_multiField: string,
-	raw: ZoteroItemTop
+	raw: ZoteroAPI.ItemTop
 }
 
 export interface ZCleanItemPDF {
-	annotations: ZoteroItemAnnotation[],
+	annotations: ZoteroAPI.ItemAnnotation[],
 	key: string,
 	link: string,
-	parent: ZoteroItemTop | Record<string, never>,
+	parent: ZoteroAPI.ItemTop | Record<string, never>,
 	title: string,
-	raw: ZoteroItemAttachment
+	raw: ZoteroAPI.ItemAttachment
 }
 
-export type ZItem = ZoteroItem & {
+export type ZItem = ZoteroAPI.Item & {
 	has_citekey?: boolean
 }
 
 export interface ZLibraryContents {
-	items: ZoteroItemTop[],
-	notes: (ZoteroItemAnnotation | ZoteroItemNote)[],
-	pdfs: ZoteroItemAttachment[]
+	items: ZoteroAPI.ItemTop[],
+	notes: (ZoteroAPI.ItemAnnotation | ZoteroAPI.ItemNote)[],
+	pdfs: ZoteroAPI.ItemAttachment[]
 }

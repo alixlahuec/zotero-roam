@@ -1,10 +1,10 @@
 import { getPDFLink } from "../../../utils";
-import { ZoteroItemAnnotation, ZoteroItemAttachment, ZoteroItemTop } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 import { ZCleanItemPDF, ZLibraryContents } from "Types/zotero";
 
 
 /** Formats a Zotero PDF's metadata into a clean format, with parent & annotations data */
-function cleanLibraryPDF(pdf: ZoteroItemAttachment, parent: (ZoteroItemTop|Record<string, never>) = {}, annotations: ZoteroItemAnnotation[] = []): ZCleanItemPDF {
+function cleanLibraryPDF(pdf: ZoteroAPI.ItemAttachment, parent: (ZoteroAPI.ItemTop|Record<string, never>) = {}, annotations: ZoteroAPI.ItemAnnotation[] = []): ZCleanItemPDF {
 	return {
 		annotations,
 		key: pdf.data.key,
@@ -27,9 +27,9 @@ function identifyPDFConnections(
 	parentKey: string,
 	location: string,
 	{ items = [], notes = [] }: Pick<ZLibraryContents, "items" | "notes">
-): {parent?: ZoteroItemTop, annotations: ZoteroItemAnnotation[] } {
+): {parent?: ZoteroAPI.ItemTop, annotations: ZoteroAPI.ItemAnnotation[] } {
 	const parentItem = items.find(it => it.data.key == parentKey && (it.library.type + "s/" + it.library.id == location));
-	const annotationItems = notes.filter(n => n.data.itemType == "annotation" && n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location) as ZoteroItemAnnotation[];
+	const annotationItems = notes.filter(n => n.data.itemType == "annotation" && n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location) as ZoteroAPI.ItemAnnotation[];
 
 	return {
 		parent: parentItem,

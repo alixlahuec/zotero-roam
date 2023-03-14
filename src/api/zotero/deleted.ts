@@ -1,7 +1,7 @@
 import { cleanErrorIfAxios } from "../../utils";
 import { zoteroClient } from "../clients";
 
-import { ZoteroDeleted } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 import { ZLibrary } from "Types/common";
 
 
@@ -16,7 +16,7 @@ async function fetchDeleted(library: ZLibrary, since: number) {
 	let response: unknown;
 
 	try {
-		const { data } = await zoteroClient.get<ZoteroDeleted>(
+		const { data } = await zoteroClient.get<ZoteroAPI.Responses.Deleted>(
 			`${path}/deleted`,
 			{
 				headers: { "Zotero-API-Key": apikey },

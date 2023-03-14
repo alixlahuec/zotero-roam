@@ -8,13 +8,13 @@ import { fetchAdditionalData, matchWithCurrentData } from "../helpers";
 import { fetchDeleted } from "./deleted";
 
 import { Maybe, ZLibrary } from "Types/common";
-import { ZoteroCollection } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 
 
 type QueryKeyCollections = ["collections", { library: string }];
 
 type QueryDataCollections = {
-	data: ZoteroCollection[],
+	data: ZoteroAPI.Collection[],
 	lastUpdated: number
 };
 
@@ -25,7 +25,7 @@ type QueryDataCollections = {
 async function fetchCollections(
 	library: ZLibrary,
 	since = 0,
-	{ match = [] }: { match?: ZoteroCollection[] }
+	{ match = [] }: { match?: ZoteroAPI.Collection[] }
 ): Promise<QueryDataCollections> {
 	const { apikey, path } = library;
 
@@ -39,11 +39,11 @@ async function fetchCollections(
 	};
 
 	let response: unknown;
-	let modified: Maybe<ZoteroCollection[]>;
+	let modified: Maybe<ZoteroAPI.Collection[]>;
 	let deleted: Maybe<string[]>;
 
 	try {
-		const { data, headers, ...rest } = await zoteroClient.get<ZoteroCollection[]>(
+		const { data, headers, ...rest } = await zoteroClient.get<ZoteroAPI.Responses.Collections>(
 			`${path}/collections`,
 			{
 				headers: { "Zotero-API-Key": apikey },
@@ -56,7 +56,7 @@ async function fetchCollections(
 		const totalResults = Number(totalResultsStr);
 
 		if (totalResults > 100) {
-			const additional = await fetchAdditionalData<ZoteroCollection>({ dataURI: `${path}/collections`, apikey, since }, totalResults);
+			const additional = await fetchAdditionalData<ZoteroAPI.Responses.Collections>({ dataURI: `${path}/collections`, apikey, since }, totalResults);
 			modified.push(...additional);
 		}
 

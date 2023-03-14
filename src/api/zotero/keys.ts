@@ -1,11 +1,11 @@
 import { useQueries } from "@tanstack/react-query";
 import { zoteroClient } from "../clients";
-import { ZoteroPermissionsResponse } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 
 
 type QueryKeyPermissions = ["permissions", { apikey: string }];
 
-type QueryDataPermissions = ZoteroPermissionsResponse;
+type QueryDataPermissions = ZoteroAPI.Responses.Permissions;
 
 /** Requests data from the `/keys` endpoint of the Zotero API
  * @param apikey - The targeted API key
@@ -13,7 +13,7 @@ type QueryDataPermissions = ZoteroPermissionsResponse;
  */
 async function fetchPermissions(apikey: string): Promise<QueryDataPermissions> {
 	try {
-		const { data } = await zoteroClient.get<ZoteroPermissionsResponse>(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } });
+		const { data } = await zoteroClient.get<ZoteroAPI.Responses.Permissions>(`keys/${apikey}`, { headers: { "Zotero-API-Key": apikey } });
 		return data;
 	} catch (error) /* istanbul ignore next */ {
 		window.zoteroRoam?.error?.({

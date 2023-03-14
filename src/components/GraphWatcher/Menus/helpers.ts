@@ -1,5 +1,5 @@
 import { identifyChildren, parseDOI } from "../../../utils";
-import { ZoteroItemAnnotation, ZoteroItemAttachment, ZoteroItemNote, ZoteroItemTop } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 import { RoamCitekeysList } from "Types/roam";
 import { ZLibraryContents } from "Types/zotero";
 import { SemanticScholarItem, SemanticScholarRelatedEntry } from "Types/externals/semantic";
@@ -25,8 +25,8 @@ interface CleanSemanticItem {
 interface EnrichedSemanticItem extends CleanSemanticItem {
 	inGraph: false | string,
 	inLibrary: false | {
-		children: { notes: (ZoteroItemAnnotation | ZoteroItemNote)[], pdfs: ZoteroItemAttachment[] },
-		raw: ZoteroItemTop
+		children: { notes: (ZoteroAPI.ItemAnnotation | ZoteroAPI.ItemNote)[], pdfs: ZoteroAPI.ItemAttachment[] },
+		raw: ZoteroAPI.ItemTop
 	},
 	_type?: "citing" | "cited"
 }
@@ -40,7 +40,7 @@ interface SRelatedEntries {
 /** Compares two Zotero items by publication year then alphabetically, to determine sort order
  * @returns The comparison outcome
  */
-function compareItemsByYear(a: ZoteroItemTop, b: ZoteroItemTop): (-1|1) {
+function compareItemsByYear(a: ZoteroAPI.ItemTop, b: ZoteroAPI.ItemTop): (-1|1) {
 	if (!a.meta.parsedDate) {
 		if (!b.meta.parsedDate) {
 			return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;

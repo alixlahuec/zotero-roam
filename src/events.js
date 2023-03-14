@@ -54,7 +54,7 @@ const events = [
     * Signals a data update has terminated
      * @event zotero-roam:update
      * @type {object}
-     * @property {((ZoteroItem)[])|(ZoteroCollection[])|null} data - The data contained in the update, if successful
+     * @property {((ZoteroItem)[])|(ZoteroAPI.Collection[])|null} data - The data contained in the update, if successful
      * @property {error|null} error - The error thrown during the update, if failed
      * @property {String} library - The path of the library that yielded the update
      * @property {Number} since - The library version since which elements were retrieved

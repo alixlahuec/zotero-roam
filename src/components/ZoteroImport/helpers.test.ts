@@ -1,5 +1,5 @@
 import { sortCollections } from "./helpers";
-import { ZoteroCollection } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 
 
 describe("Zotero collections sorting", () => {
@@ -8,7 +8,7 @@ describe("Zotero collections sorting", () => {
 	});
 
 	it("correctly sorts an array of Zotero collections", () => {
-		const colls: ZoteroCollection[] = [
+		const colls: ZoteroAPI.Collection[] = [
 			{
 				"key": "N7W92H48",
 				"version": 1,

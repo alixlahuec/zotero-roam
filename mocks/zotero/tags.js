@@ -33,7 +33,7 @@ export const findTags = (path, token) => {
 };
 
 /**
- * @constant {Record<string,ZoteroTag[]>}
+ * @constant {Record<string,ZoteroAPI.Tag[]>}
  */
 const data = {
 	[userLibrary.path]: [

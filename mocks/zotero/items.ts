@@ -1,13 +1,15 @@
 import { rest } from "msw";
-import { ZoteroItemTop } from "Types/externals/zotero";
+
 import { citoids, semanticIdentifier } from "../citoid";
 import { makeItemMetadata, zotero } from "./common";
 import { libraries, ZLibraryMock } from "./libraries";
 
+import { ZoteroAPI } from "Types/externals/zotero";
+
 
 const { userLibrary, groupLibrary } = libraries;
 
-const data: ZoteroItemTop[] = [
+const data: ZoteroAPI.ItemTop[] = [
 	{
 		...makeItemMetadata({
 			citekey: "blochImplementingSocialInterventions2021",
@@ -133,7 +135,7 @@ const data: ZoteroItemTop[] = [
 ];
 
 const makeBibEntry = ({ citekey, biblatex }) => {
-	const item = data.find(it => it.key == citekey) as ZoteroItemTop;
+	const item = data.find(it => it.key == citekey) as ZoteroAPI.ItemTop;
 	const { data: { key }, library, links, meta, version } = item;
 	return {
 		biblatex,
@@ -216,7 +218,7 @@ export const handleItems = [
 						})
 					});
 				} else {
-					const libraryCopy = data.find(it => it.library.type + "s" == library.type && it.library.id == library.id) as ZoteroItemTop;
+					const libraryCopy = data.find(it => it.library.type + "s" == library.type && it.library.id == library.id) as ZoteroAPI.ItemTop;
 					if(version < libraryCopy.version){
 						obj.failed.push(libraryCopy.data.key);
 						obj.unchanged.push(libraryCopy);

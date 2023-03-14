@@ -184,7 +184,7 @@ export default class ZoteroRoam {
 
 	/** Retrieves the formatted bibliography for a given item, with optional config
      * @param {ZoteroItemTop} item - The targeted item
-     * @param {ZoteroConfigBibliography} config - Optional parameters to use to format the bibliography
+     * @param {ZoteroAPI.Requests.BibliographyArgs} config - Optional parameters to use to format the bibliography
      * @returns 
      */
 	async getItemCitation(item, config = {}) {
@@ -468,7 +468,7 @@ async function _getBibEntries(citekeys, { libraries, queryClient }) {
 
 /** Returns an item's formatted bibliography as returned by the Zotero API
  * @param {ZoteroItemTop} item - The targeted Zotero item
- * @param {ZoteroConfigBibliography} config - Optional parameters to use in the API call
+ * @param {ZoteroAPI.Requests.BibliographyArgs} config - Optional parameters to use in the API call
  * @param {{libraries: ZLibrary[]}} requests - The user's current requests
  * @returns 
  */
@@ -504,7 +504,7 @@ function _getItemChildren(item, { queryClient }) {
 
 /** Retrieves an item's collections' names, from a given list of collections
  * @param {ZoteroItemTop} item - The targeted Zotero item
- * @param {ZoteroCollection[]} collectionList - The list of library collections to match data to
+ * @param {ZoteroAPI.Collection[]} collectionList - The list of library collections to match data to
  * @param {{return_as: ("string"|"array"), brackets: Boolean}} config - Additional configuration 
  * @returns {String[]} The Array containing the names of the item's collections, if any
  */

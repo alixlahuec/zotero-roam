@@ -8,19 +8,19 @@ import { fetchAdditionalData } from "../helpers";
 import { writeItems, QueryDataItems } from "./items";
 import * as __thisModule from "./tags";
 
-import { ZoteroItemTop, ZoteroTag } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 import { ZLibrary } from "Types/common";
 
 
 
 type RoamPage = { title: string, uid: string }
 
-type TagMap = Map<string, (ZoteroTag | ZoteroTag[])>
+type TagMap = Map<string, (ZoteroAPI.Tag | ZoteroAPI.Tag[])>
 
 type TagEntry = {
 	token: string,
 	roam: RoamPage[],
-	zotero: ZoteroTag[]
+	zotero: ZoteroAPI.Tag[]
 }
 
 type TagDictionary = Record<string, string[]>;
@@ -50,7 +50,7 @@ export type ModifyTagsArgs = {
  * @param tag2 - The second tag to compare
  * @returns The result of the comparison - `true` if the tags are duplicates of each other, `false` otherwise
  */
-function areTagsDuplicate(tag1: ZoteroTag, tag2: ZoteroTag) {
+function areTagsDuplicate(tag1: ZoteroAPI.Tag, tag2: ZoteroAPI.Tag) {
 	[tag1, tag2].forEach(tag => {
 		if (tag.constructor !== Object || !tag.tag || !tag.meta) {
 			throw new Error(`Received bad input: ${JSON.stringify(tag)}, expected a Zotero tag`);
@@ -141,10 +141,10 @@ async function deleteTags(tags: string[], library: ZLibrary, version: number) {
 async function fetchTags(library: ZLibrary): Promise<QueryDataTags> {
 	const { apikey, path } = library;
 
-	let tags: ZoteroTag[] = [];
+	let tags: ZoteroAPI.Tag[] = [];
 
 	try {
-		const { data, headers } = await zoteroClient.get<ZoteroTag[]>(
+		const { data, headers } = await zoteroClient.get<ZoteroAPI.Tag[]>(
 			`${path}/tags?limit=100`,
 			{ headers: { "Zotero-API-Key": apikey } }
 		);
@@ -154,7 +154,7 @@ async function fetchTags(library: ZLibrary): Promise<QueryDataTags> {
 		const totalResults = Number(totalResultsStr);
 
 		if (totalResults > 100) {
-			const additional = await fetchAdditionalData<ZoteroTag>({ dataURI: `${path}/tags`, apikey }, totalResults);
+			const additional = await fetchAdditionalData<ZoteroAPI.Responses.Tags>({ dataURI: `${path}/tags`, apikey }, totalResults);
 			tags.push(...additional);
 		}
 
@@ -197,10 +197,10 @@ function makeDictionary(arr: string[]): TagDictionary {
 }
 
 /** Converts Zotero tags data into a categorized list
- * @param {ZoteroTag[]} tags - The tags data from Zotero to categorize
+ * @param {ZoteroAPI.Tag[]} tags - The tags data from Zotero to categorize
  * @returns {Object.<string, TagEntry[]>} The list of categorized tags
  */
-function makeTagList(tags: ZoteroTag[]): TagList {
+function makeTagList(tags: ZoteroAPI.Tag[]): TagList {
 	try {
 		const tagMap = makeTagMap(tags);
 		const zdict = makeDictionary(Array.from(tagMap.keys()));
@@ -220,7 +220,7 @@ function makeTagList(tags: ZoteroTag[]): TagList {
  * @param tags - The tags data from Zotero from which to create the Map
  * @returns A Map where each entry groups together Zotero tags with the exact same spelling, but a different type
  */
-function makeTagMap(tags: ZoteroTag[]) {
+function makeTagMap(tags: ZoteroAPI.Tag[]) {
 	return tags.reduce<TagMap>(
 		(map, tag) => updateTagMap(map, tag),
 		new Map()
@@ -232,7 +232,7 @@ function makeTagMap(tags: ZoteroTag[]) {
  * @param tagEntry - The entry to be added
  * @returns The updated tag map
  */
-function updateTagMap(map: TagMap, tagEntry: ZoteroTag) {
+function updateTagMap(map: TagMap, tagEntry: ZoteroAPI.Tag) {
 	const { tag } = tagEntry;
 
 	// If the map already has an entry for the tag, try to append the new entry
@@ -332,7 +332,7 @@ const useModifyTags = () => {
 
 	return useMutation((variables: ModifyTagsArgs) => {
 		const { into, library: { apikey, path }, tags } = variables;
-		const dataList: Pick<ZoteroItemTop["data"], "key" | "version" | "tags">[] = [];
+		const dataList: Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">[] = [];
 		const libItems = client.getQueriesData<QueryDataItems>(["items", path])
 			.map(query => (query[1] || {}).data || []).flat(1)
 			.filter(i => !["attachment", "note", "annotation"].includes(i.data.itemType) && i.data.tags.length > 0);
@@ -357,7 +357,7 @@ const useModifyTags = () => {
 			}
 		});
 
-		return writeItems<Pick<ZoteroItemTop["data"], "key" | "version" | "tags">>(dataList, { apikey, path });
+		return writeItems<Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">>(dataList, { apikey, path });
 	}, {
 		onSettled: (data = [], error, variables, _context) => {
 			const { into, library: { path }, tags } = variables;

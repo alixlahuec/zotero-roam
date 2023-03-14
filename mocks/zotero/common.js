@@ -52,7 +52,7 @@ export const makeEntityLinks = ({ key, library, parentItem = null }) => {
  * 
  * @param {{
  * citekey?: string | false,
- * itemType?: ZoteroItemTopType,
+ * itemType?: ZoteroAPI.ItemTopType,
  * key?: string,
  * library: ZLibraryMock,
  * title?: string,

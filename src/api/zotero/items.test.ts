@@ -7,7 +7,7 @@ import { findBibEntry, findItems } from "Mocks/zotero/items";
 import { libraries } from "Mocks/zotero/libraries";
 
 import { isFulfilled } from "Types/common";
-import { ZoteroItemTop } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals/zotero";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -98,7 +98,7 @@ describe("Updating mocked items", () => {
 			const { type, id, path } = libraryDetails;
 			const sample_item = findItems({ type, id, since: 0 })[0];
 
-			const res = await writeItems<Pick<ZoteroItemTop["data"], "key" | "version" | "tags">>(
+			const res = await writeItems<Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">>(
 				[{ key: sample_item.data.key, version: sample_item.version, tags: [{ tag: "TEST_TAG", type: 0 }] }],
 				{ apikey: masterKey, path });
 
@@ -120,7 +120,7 @@ describe("Updating mocked items", () => {
 				}
 			}]);
 
-			const resWithFailure = await writeItems<Pick<ZoteroItemTop["data"], "key" | "version" | "tags">>(
+			const resWithFailure = await writeItems<Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">>(
 				[{ key: sample_item.data.key, version: sample_item.version - 1, tags: [{ tag: "TEST_TAG", type: 0 }] }],
 				{ apikey: masterKey, path });
 

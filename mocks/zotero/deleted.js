@@ -6,7 +6,7 @@ import { libraries } from "./libraries";
 const { userLibrary, groupLibrary } = libraries;
 
 /**
- * @constant {Record<string, {collections: ZoteroCollection[], items: ZoteroItem[]}>}
+ * @constant {Record<string, {collections: ZoteroAPI.Collection[], items: ZoteroItem[]}>}
  */
 const data = {
 	[userLibrary.path]: {
