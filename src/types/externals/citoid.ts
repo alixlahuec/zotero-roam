@@ -1,4 +1,4 @@
-import { ZoteroItemTop } from "./zotero";
+import { ZoteroAPI } from "./zotero";
 
 
-export type CitoidZotero = Omit<ZoteroItemTop["data"], "key"> & { itemKey?: string, key?: string };
+export type CitoidZotero = Omit<ZoteroAPI.ItemTop["data"], "key"> & { itemKey?: string, key?: string };
