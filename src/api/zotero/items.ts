@@ -14,12 +14,13 @@ import { Maybe, ZLibrary } from "Types/common";
 import { ZoteroAPI } from "Types/externals/zotero";
 
 import { DataRequest } from "Types/settings";
+import { ZItem } from "Types/zotero";
 
 
 export type QueryKeyItems = ["items", string, Omit<DataRequest, "apikey" | "library">];
 
 export type QueryDataItems = {
-	data: ZoteroAPI.Item[],
+	data: ZItem[],
 	lastUpdated: number
 };
 
@@ -171,7 +172,7 @@ async function fetchItems(
 		}
 
 		return {
-			data: matchWithCurrentData({ modified, deleted }, match, { with_citekey: true }),
+			data: matchWithCurrentData({ modified, deleted }, match, { with_citekey: true }) as ZItem[],
 			lastUpdated: Number(lastUpdated)
 		};
 	} catch (error) {

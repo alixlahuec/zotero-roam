@@ -2,13 +2,13 @@ import { cleanErrorIfAxios } from "../utils";
 import { zoteroClient } from "./clients";
 
 
-type WithCitekeys<T> = T & { has_citekey: boolean };
+type WithHasCitekey<T> = T & { has_citekey: boolean };
 
 /** Extracts pinned citekeys from a dataset
  * @param arr - The items to scan
  * @returns The processed dataset : each item gains a `has_citekey` property, and its `key` property is assigned its citekey 
  */
-function extractCitekeys<T extends { key: string, data: { extra?: string } }>(arr: T[]): WithCitekeys<T>[] {
+function extractCitekeys<T extends { key: string, data: { extra?: string } }>(arr: T[]): WithHasCitekey<T>[] {
 	const itemList = [...arr];
 	return itemList.map(item => {
 		let { key } = item;

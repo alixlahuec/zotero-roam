@@ -16,10 +16,10 @@ function cleanLibraryPDF(pdf: ZoteroAPI.ItemAttachment, parent: (ZoteroAPI.ItemT
 }
 
 /** Identifies the connections of a Zotero PDF within a given set of item and notes entries
- * @param {String} itemKey - The Zotero key of the PDF item
- * @param {String} parentKey - The Zotero key of the PDF's parent
- * @param {String} location - The library location of the PDF item
- * @param {{items: ZoteroItemTop[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} data - The items among which connections are to be identified 
+ * @param itemKey - The Zotero key of the PDF item
+ * @param parentKey - The Zotero key of the PDF's parent
+ * @param location - The library location of the PDF item
+ * @param data - The items among which connections are to be identified 
  * @returns The item's connections
  */
 function identifyPDFConnections(
