@@ -46,15 +46,20 @@ jobs:
         id: version
         run: |
           next_version=$(npx release-it --release-version | tail -1)
-          echo $next_version
           echo "next=$next_version" >> $GITHUB_OUTPUT
+          echo "### Release Details" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** $next_version >> $GITHUB_STEP_SUMMARY
+          echo "**Channel:** ${{ env.RELEASE_BRANCH }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Get changelog
         id: changelog
         run: |
           changelog=$(npx auto-changelog --stdout --unreleased-only --config dev/.auto-changelog)
-          echo $changelog
           echo "changelog=$changelog" >> $GITHUB_OUTPUT
+          echo "### Changelog" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "$changelog" >> $GITHUB_STEP_SUMMARY
 
       - name: Bump version, build
         run: |
@@ -84,8 +89,9 @@ jobs:
 
             ${{ steps.changelog.outputs.changelog }}
 
-      - name: Show PR details
+      - name: PR summary
         run: |
-          echo ${{steps.cpr.outputs.pr_url}}
-          echo ${{steps.open-pr.outputs.pr_number}}
-          echo ${{steps.open-pr.outputs.has_changed_files}}
+          echo "### PR Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Link:** [PR ${{steps.open-pr.outputs.pr_number}}](${{steps.cpr.outputs.pr_url}})" >> $GITHUB_STEP_SUMMARY
+          echo "**Changed files:** ${{steps.open-pr.outputs.has_changed_files}}" >> $GITHUB_STEP_SUMMARY
