@@ -38,54 +38,6 @@ const addPageMenus = () => {
 	}
 };
 
-/**
- * @typedef {{
- * abstract: String,
- * added: String,
- * children: {pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]},
- * inGraph: Boolean|String,
- * itemType: String,
- * key: String,
- * location: String,
- * meta: String,
- * raw: ZoteroItemTop,
- * timestamp: String,
- * title: String
- * }}
- * CleanRelatedItem
- * @see cleanRelatedItemType
- */
-
-/** Formats an item for display in AuxiliaryDialog
- * @param {ZoteroItemTop} item - The item to format
- * @param {{pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} libraryData - The list of attachments in the library
- * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.  
- * @returns {CleanRelatedItem[]} The formatted array
- * @see cleanRelatedItemType
- */
-function cleanRelatedItem(item, { pdfs = [], notes = [] } = {}, roamCitekeys){
-	const creator = item.meta.creatorSummary || "";
-	const pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
-	const itemKey = item.data.key;
-	const location = item.library.type + "s/" + item.library.id;
-
-	const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
-
-	return {
-		abstract: item.data.abstractNote || "",
-		added: item.data.dateAdded,
-		children,
-		inGraph: roamCitekeys.has("@" + item.key) ? roamCitekeys.get("@" + item.key) : false,
-		itemType: item.data.itemType,
-		key: item.key,
-		location,
-		meta: [creator, pub_year].filter(Boolean).join(" "),
-		raw: item,
-		timestamp: makeTimestamp(item.data.dateAdded),
-		title: item.data.title || ""
-	};
-}
-
 const findPageMenus = () => {
 	return {
 		citekeyMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.citekey}]`)),
@@ -96,6 +48,5 @@ const findPageMenus = () => {
 
 export {
 	addPageMenus,
-	cleanRelatedItem,
 	findPageMenus
 };

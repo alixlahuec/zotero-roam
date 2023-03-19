@@ -13,7 +13,7 @@ import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import { useQuery_Items } from "../../../api/zotero";
 
 import { categorizeLibraryItems } from "../../../utils";
-import { cleanRelatedItem } from "./utils";
+import { cleanRelatedItem } from "../helpers";
 
 import "./index.css";
 
