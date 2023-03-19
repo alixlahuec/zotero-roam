@@ -122,14 +122,22 @@ async function addBlocksArray(parentUID, arr, order = 0){
 
 /** Adds an entry to Roam's Command Palette
  * @param {String} label - The label for the menu option 
- * @param {Function} onSelect - The callback to execute upon selection
+ * @param {() => void} onSelect - The callback to execute upon selection
+ * @param {Object} extensionAPI - The API specifically available to the extension
  * @see https://roamresearch.com/#/app/developer-documentation/page/rAkidgrv3
  */
-function addPaletteCommand(label, onSelect){
-	window.roamAlphaAPI.ui.commandPalette.addCommand({
+function addPaletteCommand(label, onSelect, extensionAPI = {}) {
+	const command = {
 		label,
-		callback: onSelect
-	});
+		callback: onSelect,
+		// TODO: migrate shortcuts to command palette
+		"disable-hotkey": true
+	};
+	if (!extensionAPI.ui) {
+		window.roamAlphaAPI.ui.commandPalette.addCommand(command);
+	} else {
+		extensionAPI.ui.commandPalette.addCommand(command);
+	}
 }
 
 /** Adds a single Roam block to a parent UID, with optional formatting.
@@ -473,10 +481,16 @@ async function openPageByUID(uid){
 
 /** Removes an entry from Roam's Command Palette
  * @param {String} label - The label for the menu option
+ * @param {Object} extensionAPI - The API specifically available to the extension
  * @see https://roamresearch.com/#/app/developer-documentation/page/eG9ulEdWq
  */
-function removePaletteCommand(label){
-	window.roamAlphaAPI.ui.commandPalette.removeCommand({ label });
+function removePaletteCommand(label, extensionAPI = {}) {
+	const command = { label };
+	if (!extensionAPI.ui) {
+		window.roamAlphaAPI.ui.commandPalette.removeCommand(command);	
+	} else {
+		extensionAPI.ui.commandPalette.removeCommand(command);
+	}
 }
 
 export {
