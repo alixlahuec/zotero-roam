@@ -47,14 +47,14 @@ jobs:
         run: |
           next_version=$(npx release-it --release-version | tail -1)
           echo $next_version
-          echo "::set-output name=next::$next_version"
+          echo "next=$next_version" >> $GITHUB_OUTPUT
 
       - name: Get changelog
         id: changelog
         run: |
           changelog=$(npx auto-changelog --stdout --unreleased-only --config dev/.auto-changelog)
           echo $changelog
-          echo "::set-output name=changelog::$changelog"
+          echo "changelog=$changelog" >> $GITHUB_OUTPUT
 
       - name: Bump version, build
         run: |
