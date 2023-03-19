@@ -1,11 +1,11 @@
 import { categorizeLibraryItems, cleanLibraryItem, identifyChildren } from "../../utils";
 
-import { RoamCitekeysList , ZCleanItemTop, ZItem, ZItemTop } from "Types/transforms";
+import { RCitekeyPages, ZCleanItemTop, ZItem, ZItemTop } from "Types/transforms";
 
 
 
 /** Categorizes library data into top-level items, annotations/notes, and PDFs with their metadata, children, and links */
-function cleanLibrary(arr: ZItem[], roamCitekeys: RoamCitekeysList): ZCleanItemTop[] {
+function cleanLibrary(arr: ZItem[], roamCitekeys: RCitekeyPages): ZCleanItemTop[] {
 	const lib = categorizeLibraryItems(arr);
 
 	return lib.items

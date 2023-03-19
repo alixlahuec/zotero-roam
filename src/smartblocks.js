@@ -222,8 +222,8 @@ function eval_term(term, props){
 }
 
 /** Enforces the block-object format (recursively) for an array of importable blocks. This is needed for correctly importing nested blocks with SmartBlocks.
- * @param {RoamImportableElement[]} arr - The array of importable blocks to reformat
- * @returns {RoamImportableBlock[]} - The reformatted array, where all elements are in the block-object format
+ * @param {RImportableElement[]} arr - The array of importable blocks to reformat
+ * @returns {RImportableBlock[]} - The reformatted array, where all elements are in the block-object format
  */
 function reformatImportableBlocks(arr){
 	if(!arr){
@@ -313,12 +313,12 @@ function unregisterSmartblockCommands(){
 
 /* istanbul ignore next */
 /** Triggers a given SmartBlock to import an item's metadata
- * @param {SmartblockConfig} config - The configuration of the SmartBlock to use.
+ * @param {SBConfig} config - The configuration of the SmartBlock to use.
  * @param {{
- * item: ZoteroItemTop,
- * notes: (ZoteroItemNote|ZoteroItemAnnotation)[],
+ * item: ZItemTop,
+ * notes: (ZItemNote|ZItemAnnotation)[],
  * page: {new: Boolean, title: String, uid: String}, 
- * pdfs: ZoteroItemAttachment[]}} context - The context variables provided by the extension to the SmartBlock
+ * pdfs: ZItemAttachment[]}} context - The context variables provided by the extension to the SmartBlock
  * @returns {Promise} If successful, `{success:true}` - otherwise an object containing the error encountered and the arguments with which the function was called.
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */

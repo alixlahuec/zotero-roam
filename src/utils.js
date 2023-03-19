@@ -27,7 +27,7 @@ function categorizeLibraryItems(datastore){
  * @param {ZItemTop} item - The Zotero item
  * @param {ZItemAttachment[]} pdfs - The Zotero item's attached PDFs
  * @param {(ZItemNote|ZItemAnnotation)[]} notes - The Zotero item's notes and annotations
- * @param {RoamCitekeysList} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
+ * @param {RCitekeyPages} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
  * @returns {ZCleanItemTop} The simplified item
  * @see cleanLibraryItemType
  */

@@ -8,10 +8,10 @@ const events = [
     * Signals a metadata import has terminated
     * @event zotero-roam:metadata-added
     * @type {object}
-    * @property {({blocks: Array, uid: String}|{smartblock: {param: ("srcName"|"srcUid"), paramValue: String}, uid: String})} args - The configuration used for the import
+    * @property {({blocks: RImportableElement[], uid: String}|{smartblock: SBConfig, uid: String})} args - The configuration used for the import
     * @property {error|null} error - The error thrown during the import, if failed
 	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-    * @property {{item: ZoteroItemTop, notes: (ZoteroItemNote|ZoteroItemAnnotation)[], pdfs: ZoteroItemAttachment[]}} raw - The raw data provided as input
+    * @property {{item: ZItemTop, notes: (ZItemNote|ZItemAnnotation)[], pdfs: ZItemAttachment[]}} raw - The raw data provided as input
     * @property {Boolean|null} success - Indicates if the update was successful
     * @see importItemMetadata
     */
@@ -20,10 +20,10 @@ const events = [
     * Signals a notes import has terminated
     * @event zotero-roam:notes-added
     * @type {object}
-	* @property {{blocks: Array, uid: String}} args - The configuration used for the import
+	* @property {{blocks: RImportableElement[], uid: String}} args - The configuration used for the import
 	* @property {error|null} error - The error thrown during the import, if failed
 	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-	* @property {{item: ZoteroItemTop, notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} raw - The raw data provided as input
+	* @property {{item: ZItemTop, notes: (ZItemNote|ZItemAnnotation)[]}} raw - The raw data provided as input
 	* @property {Boolean|null} success - Indicates if the update was successful
 	* @see importItemNotes
     */
@@ -54,7 +54,7 @@ const events = [
     * Signals a data update has terminated
      * @event zotero-roam:update
      * @type {object}
-     * @property {((ZoteroItem)[])|(ZoteroAPI.Collection[])|null} data - The data contained in the update, if successful
+     * @property {((ZItem)[])|(ZoteroAPI.Collection[])|null} data - The data contained in the update, if successful
      * @property {error|null} error - The error thrown during the update, if failed
      * @property {String} library - The path of the library that yielded the update
      * @property {Number} since - The library version since which elements were retrieved

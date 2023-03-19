@@ -1,5 +1,5 @@
 import { ZoteroAPI } from "./externals";
-import { SmartblockConfig, ZLibrary } from "./transforms";
+import { SBConfig, ZLibrary } from "./transforms";
 
 
 /* -------------------------------------------------------------- */
@@ -106,7 +106,7 @@ export interface SettingsMetadata {
 	/** The name of the custom formatting function */
 	func: string,
 	/** The configuration of the custom formatting SmartBlock */
-	smartblock: SmartblockConfig,
+	smartblock: SBConfig,
 	/** The type of formatter to use for metadata */
 	use: "default" | "function" | "smartblock"
 }

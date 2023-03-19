@@ -9,7 +9,7 @@ const addSampleMetadata = () => ({
 
 /**
  * 
- * @param {Partial<ZoteroItemTop["data"]>} config 
+ * @param {Partial<CitoidAPI.AsZotero>} config 
  * @returns 
  */
 const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ...props }) => ({
@@ -25,7 +25,7 @@ const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ..
 
 /**
  * @param {string[]} args 
- * @returns {ZoteroCreator}
+ * @returns {ZoteroAPI.Creator}
  */
 const addCreator = ([firstName, lastName, role = "author"]) => ({
 	firstName,

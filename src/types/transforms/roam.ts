@@ -2,9 +2,14 @@ import { Roam } from "Types/externals";
 
 
 /**
+ * Mapping between the title and UID of all citekey pages in the Roam graph.
+ */
+export type RCitekeyPages = Map<string, string>;
+
+/**
  * Location parameters for the user's cursor within the Roam interface
  */
-export interface CursorLocation {
+export interface RCursorLocation {
 	/** The `id` of the DOM element */
 	id: string,
 	/** The coordinates of the Roam block where cursor focus is, or should be */
@@ -14,16 +19,11 @@ export interface CursorLocation {
 }
 
 /**
- * Mapping between the title and UID of all citekey pages in the Roam graph.
- */
-export type RoamCitekeysList = Map<string, string>;
-
-/**
  * A block-format element that can be imported to Roam, by the extension or a SmartBlock.
  */
-export interface RoamImportableBlock {
+export interface RImportableBlock {
 	/** Child elements to nest under the block */
-	children?: RoamImportableElement,
+	children?: RImportableElement,
 	/** Position in which the block should be inserted under its parent */
 	order?: number,
 	/** The UID of the block's parent */
@@ -37,4 +37,4 @@ export interface RoamImportableBlock {
 /**
  * An element that can be imported to Roam by the extension.
  */
-export type RoamImportableElement = RoamImportableBlock | string;
+export type RImportableElement = RImportableBlock | string;

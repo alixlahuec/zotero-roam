@@ -1,6 +1,6 @@
 import { identifyChildren, parseDOI } from "../../../utils";
 import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
-import { RoamCitekeysList , ZLibraryContents } from "Types/transforms";
+import { RCitekeyPages, ZLibraryContents } from "Types/transforms";
 
 
 
@@ -140,7 +140,7 @@ function cleanSemanticItem(item: SemanticScholarAPI.RelatedPaper): CleanSemantic
 function matchSemanticEntry(
 	semanticItem: SemanticScholarAPI.RelatedPaper,
 	datastore: Partial<ZLibraryContents>,
-	roamCitekeys: RoamCitekeysList
+	roamCitekeys: RCitekeyPages
 ): EnrichedSemanticItem {
 	const { items = [], pdfs = [], notes = [] } = datastore;
 	const cleanItem = cleanSemanticItem(semanticItem);
@@ -181,7 +181,7 @@ function matchSemanticEntry(
 function cleanSemantic(
 	datastore: ZLibraryContents,
 	semantic: Pick<SemanticScholarAPI.Item, "citations" | "references">,
-	roamCitekeys: RoamCitekeysList
+	roamCitekeys: RCitekeyPages
 ): SRelatedEntries {
 	const { items = [], pdfs = [], notes = [] } = datastore;
 	const itemsWithDOIs = items.filter(it => it.data.DOI);

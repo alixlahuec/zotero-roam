@@ -361,13 +361,13 @@ export class ZoteroRoamLog {
 
 
 /** Formats Zotero notes/annotations items
- * @param {(ZoteroItemNote|ZoteroItemAnnotation)[]} notes - The Array of Zotero notes/annotations
+ * @param {(ZItemNote|ZItemAnnotation)[]} notes - The Array of Zotero notes/annotations
  * @param {String} pageUID - The UID of the parent item's Roam page (optional)
  * @param {{
  * annotationsSettings: SettingsAnnotations, 
  * notesSettings: SettingsNotes
  * }} settings - The user's current settings
- * @returns {(String|RoamImportableBlock)[]} The formatted Array
+ * @returns {(RImportableElement)[]} The formatted Array
  */
 export function _formatNotes(notes, pageUID = null, { annotationsSettings, notesSettings }) {
 	if (!notes) {

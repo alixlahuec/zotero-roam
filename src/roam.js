@@ -7,7 +7,7 @@ import { use_smartblock_metadata } from "./smartblocks";
 
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
- * @param {RoamImportableBlock} object - The block Object to use as template 
+ * @param {RImportableBlock} object - The block Object to use as template 
  */
 async function addBlockObject(parentUID, object, order = 0) {
 	const { string: blockString, children = [], ...opts } = object;
@@ -65,7 +65,7 @@ async function addBlockObject(parentUID, object, order = 0) {
 
 /** Adds Roam blocks to a parent UID, based on an array input.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
- * @param {(String|RoamImportableBlock)[]} arr - The array to use as template
+ * @param {(RImportableElement)[]} arr - The array to use as template
  * @returns The outcome of the operation
  */
 async function addBlocksArray(parentUID, arr, order = 0){
@@ -252,7 +252,7 @@ function getCitekeyPagesWithEditTime(){
 }
 
 /** Retrieves the current cursor location in the Roam interface, to enable returning focus to its previous state after an interaction with the extension's interface (e.g opening a dialog).
- * @returns {CursorLocation} Information about the cursor's location
+ * @returns {RCursorLocation} Information about the cursor's location
  */
 function getCurrentCursorLocation(){
 	const { "block-uid": blockUID, "window-id": windowID } = (window.roamAlphaAPI.ui.getFocusedBlock() || {});
@@ -450,7 +450,7 @@ async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, an
 }
 
 /** Places the cursor in a given location, if it is specified
- * @param {CursorLocation} place 
+ * @param {RCursorLocation} place 
  */
 function maybeReturnCursorToPlace(place = {}){
 	if(place && place.location){
