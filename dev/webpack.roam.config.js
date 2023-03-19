@@ -54,7 +54,7 @@ module.exports = merge(baseConfig, {
     module: {
         rules: [
 			{
-				test: /\.(t|j)sx?$/,
+				test: /\.[tj]sx?$/,
 				include: [path.resolve("src"), path.resolve("loader.js")],
 				use: {
 					loader: "babel-loader",
