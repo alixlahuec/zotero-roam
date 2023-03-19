@@ -1,19 +1,17 @@
 import { useCallback, useMemo, useState } from "react";
 
 
-/** Custom hook for pagination values
- * @param {{itemsPerPage: number}} config
- * @returns 
+/** Custom hook for handling list pagination
  */
 const usePagination = ({ itemsPerPage = 20 }) => {
-	const [currentPage, setPage] = useState(1);
+	const [currentPage, setPage] = useState<number>(1);
 
 	const pageLimits = useMemo(() => [
 		itemsPerPage*(currentPage - 1), 
 		itemsPerPage*currentPage
 	], [currentPage, itemsPerPage]);
 
-	const setCurrentPage = useCallback((val) => {
+	const setCurrentPage = useCallback((val: number) => {
 		setPage(val);
 	}, []);
 

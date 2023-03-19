@@ -7,6 +7,7 @@ import usePagination from "./usePagination";
 import useSelect from "./useSelect";
 import useText from "./useText";
 import useToggle from "./useToggle";
+import { ChangeEvent, FormEvent } from "react";
 
 
 describe("Hook for boolean state", () => {
@@ -184,7 +185,7 @@ test("Hook for numeric state", () => {
 	expect(result.current[0]).toBe(0);
 
 	act(() => {
-		result.current[1](null, "13");
+		result.current[1](999, "13");
 	});
 
 	expect(result.current[0]).toBe(13);
@@ -211,7 +212,7 @@ describe("Hook for single selection state", () => {
 		expect(result.current[0]).toBe(null);
 
 		act(() => {
-			result.current[1]({ currentTarget: { value: "Some value" } });
+			result.current[1]({ currentTarget: { value: "Some value" } } as FormEvent<HTMLInputElement>);
 		});
 
 		expect(result.current[0]).toBe("Some value");
@@ -229,7 +230,7 @@ describe("Hook for single selection state", () => {
 		expect(result.current[0]).toBe(null);
 
 		act(() => {
-			result.current[1]({ currentTarget: { value: "TEXT" } });
+			result.current[1]({ currentTarget: { value: "TEXT" } } as FormEvent<HTMLInputElement>);
 		});
 
 		expect(result.current[0]).toEqual({
@@ -244,7 +245,7 @@ test("Hook for text state", () => {
 	expect(result.current[0]).toBe("");
 
 	act(() => {
-		result.current[1]({ target: { value: "query" } });
+		result.current[1]({ target: { value: "query" } } as ChangeEvent<HTMLInputElement>);
 	});
 
 	expect(result.current[0]).toBe("query");
