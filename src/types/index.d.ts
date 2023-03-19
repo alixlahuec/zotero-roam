@@ -1,5 +1,6 @@
 import ZoteroRoam from "../extension";
 import { SmartblocksPlugin, Roam } from "./externals";
+import { LegacyUserSettings } from "./settings";
 
 
 
@@ -16,5 +17,7 @@ declare global {
 		}
 
 		zoteroRoam: ZoteroRoam
+
+		zoteroRoam_settings?: LegacyUserSettings
 	}
 }

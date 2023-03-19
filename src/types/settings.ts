@@ -4,6 +4,22 @@ import { SBConfig, ZLibrary } from "./transforms";
 
 /* -------------------------------------------------------------- */
 
+/**
+ * Legacy format for data requests. Should be assumed to be used by all users loading the extension via `roam/js`.
+ */
+export interface LegacyDataRequest {
+	/** The API key to be used */
+	apikey: string,
+	/** The data URI to be used
+	 * @example "users/123456/items"
+	*/
+	dataURI: string,
+	/** A user-chosen name for the request */
+	name?: string,
+	/** Additional parameters for the request */
+	params?: string
+}
+
 /** 
  * Parameters for making a request for items to the Zotero API
 */
@@ -204,4 +220,10 @@ export interface UserSettings {
 /** 
  * The user's full settings
 */
-export type InitSettings = UserRequests & UserSettings;
+export type InitSettings = {
+	requests: UserRequests
+} & UserSettings;
+
+export type LegacyUserSettings = {
+	dataRequests: LegacyDataRequest[]
+} & UserSettings
