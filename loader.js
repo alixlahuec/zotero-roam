@@ -61,6 +61,7 @@ function onload({ extensionAPI }){
 						portalId: EXTENSION_PORTAL_ID,
 						version: EXTENSION_VERSION,
 					}}
+					extensionAPI={extensionAPI}
 					idbDatabase={idbDatabase}
 				/>
 			</UserSettingsProvider>

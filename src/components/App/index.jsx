@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { bool, instanceOf, node } from "prop-types";
+import { bool, instanceOf, node, object } from "prop-types";
 import { Component, createContext, useMemo } from "react";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
@@ -134,8 +134,8 @@ class App extends Component {
 	}
 
 	componentDidMount(){
-		addPaletteCommand(openSearchCommand, this.openSearchPanel);
-		addPaletteCommand(openDashboardCommand, this.openDashboard);
+		addPaletteCommand(openSearchCommand, this.openSearchPanel, this.props.extensionAPI);
+		addPaletteCommand(openDashboardCommand, this.openDashboard, this.props.extensionAPI);
 	}
 
 	componentDidUpdate(prevProps){
@@ -155,8 +155,8 @@ class App extends Component {
 	}
 
 	componentWillUnmount(){
-		removePaletteCommand(openSearchCommand);
-		removePaletteCommand(openDashboardCommand);
+		removePaletteCommand(openSearchCommand, this.props.extensionAPI);
+		removePaletteCommand(openDashboardCommand, this.props.extensionAPI);
 	}
 
 	render() {
@@ -276,6 +276,7 @@ class App extends Component {
 App.propTypes = {
 	autoload: bool,
 	extension: customPropTypes.extensionType,
+	extensionAPI: object,
 	idbDatabase: instanceOf(IDBDatabase),
 	requests: customPropTypes.requestsType,
 	shortcuts: customPropTypes.shortcutsSettingsType
