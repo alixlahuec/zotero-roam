@@ -32,6 +32,7 @@ export default class ZoteroRoam {
 
 	/**
      * @param {{
+	 * idbDatabase: *,
      * queryClient: *,
      * requests: UserRequests,
      * settings: Object
