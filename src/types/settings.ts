@@ -1,5 +1,5 @@
-import { SmartblockConfig, ZLibrary } from "Types/common";
-import { ZoteroAPI } from "Types/externals/zotero";
+import { ZoteroAPI } from "./externals";
+import { SmartblockConfig, ZLibrary } from "./transforms";
 
 
 /* -------------------------------------------------------------- */

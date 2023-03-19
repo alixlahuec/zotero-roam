@@ -1,8 +1,8 @@
 import { identifyChildren, parseDOI } from "../../../utils";
-import { ZoteroAPI } from "Types/externals/zotero";
-import { RoamCitekeysList } from "Types/roam";
-import { ZLibraryContents } from "Types/zotero";
-import { SemanticScholarItem, SemanticScholarRelatedEntry } from "Types/externals/semantic";
+import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
+import { RoamCitekeysList , ZLibraryContents } from "Types/transforms";
+
+
 
 
 type SemanticLinkType = "arxiv" | "connected-papers" | "google-scholar" | "semantic-scholar";
@@ -90,7 +90,7 @@ function makeAuthorsSummary(names: string[]): string {
 }
 
 /** Formats the metadata of a Semantic Scholar entry */
-function cleanSemanticItem(item: SemanticScholarRelatedEntry): CleanSemanticItem {
+function cleanSemanticItem(item: SemanticScholarAPI.RelatedPaper): CleanSemanticItem {
 	const clean_item: CleanSemanticItem = {
 		authors: "",
 		authorsLastNames: [],
@@ -138,7 +138,7 @@ function cleanSemanticItem(item: SemanticScholarRelatedEntry): CleanSemanticItem
  * @returns The matched entry for the item
  */
 function matchSemanticEntry(
-	semanticItem: SemanticScholarRelatedEntry,
+	semanticItem: SemanticScholarAPI.RelatedPaper,
 	datastore: Partial<ZLibraryContents>,
 	roamCitekeys: RoamCitekeysList
 ): EnrichedSemanticItem {
@@ -180,7 +180,7 @@ function matchSemanticEntry(
  */
 function cleanSemantic(
 	datastore: ZLibraryContents,
-	semantic: Pick<SemanticScholarItem, "citations" | "references">,
+	semantic: Pick<SemanticScholarAPI.Item, "citations" | "references">,
 	roamCitekeys: RoamCitekeysList
 ): SRelatedEntries {
 	const { items = [], pdfs = [], notes = [] } = datastore;

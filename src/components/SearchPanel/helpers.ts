@@ -1,7 +1,7 @@
 import { categorizeLibraryItems, cleanLibraryItem, identifyChildren } from "../../utils";
 
-import { RoamCitekeysList } from "Types/roam";
-import { ZCleanItemTop, ZItem, ZItemTop } from "Types/zotero";
+import { RoamCitekeysList , ZCleanItemTop, ZItem, ZItemTop } from "Types/transforms";
+
 
 
 /** Categorizes library data into top-level items, annotations/notes, and PDFs with their metadata, children, and links */

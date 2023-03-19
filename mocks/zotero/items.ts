@@ -4,8 +4,8 @@ import { citoids, semanticIdentifier } from "../citoid";
 import { makeItemMetadata, zotero } from "./common";
 import { libraries, ZLibraryMock } from "./libraries";
 
-import { ZItemTop } from "Types/zotero";
-import { ZoteroAPI } from "Types/externals/zotero";
+import { ZItemTop } from "Types/transforms/zotero";
+import { ZoteroAPI } from "Types/externals";
 
 
 const { userLibrary, groupLibrary } = libraries;

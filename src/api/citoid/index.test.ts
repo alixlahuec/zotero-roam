@@ -1,9 +1,9 @@
 import { fetchCitoid } from ".";
 import { citoids } from "Mocks/citoid";
-import { CitoidZotero } from "Types/externals/citoid";
+import { CitoidAPI } from "Types/externals";
 
 
-type MockCitoidSuccessResponse = CitoidZotero & { status?: number };
+type MockCitoidSuccessResponse = CitoidAPI.AsZotero & { status?: number };
 type MockCitoidErrorResponse = {
 	status: number,
 	method: "get",

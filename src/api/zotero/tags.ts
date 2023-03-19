@@ -8,8 +8,8 @@ import { fetchAdditionalData } from "../helpers";
 import { writeItems, QueryDataItems } from "./items";
 import * as __thisModule from "./tags";
 
-import { ZoteroAPI } from "Types/externals/zotero";
-import { ZLibrary } from "Types/common";
+import { ZoteroAPI } from "Types/externals";
+import { ZLibrary } from "Types/transforms/zotero";
 
 
 

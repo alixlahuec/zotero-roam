@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQuery_Permissions } from "../api/zotero";
 
-import { ZLibrary } from "Types/common";
+import { ZLibrary } from "Types/transforms/zotero";
 
 
 /** Custom hook for retrieving the list of Zotero libraries with `write` permissions.

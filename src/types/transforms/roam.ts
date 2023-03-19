@@ -1,4 +1,4 @@
-import { BlockFocusLocation } from "Types/externals/roam";
+import { Roam } from "Types/externals";
 
 
 /**
@@ -8,7 +8,7 @@ export interface CursorLocation {
 	/** The `id` of the DOM element */
 	id: string,
 	/** The coordinates of the Roam block where cursor focus is, or should be */
-	location: BlockFocusLocation,
+	location: Roam.BlockFocusLocation,
 	/** The indices for making the cursor into a selection */
 	selection?: { start: number, end: number }
 }

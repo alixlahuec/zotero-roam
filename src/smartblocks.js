@@ -2,7 +2,7 @@ import { getLocalLink, getWebLink, makeDNP, parseDOI } from "./utils";
 
 
 /** Generates the list of custom SmartBlocks commands to register
- * @returns {Object.<string, SmartblockCommand>} The list of commands to register
+ * @returns {Object.<string, SmartblocksPlugin.Command>} The list of commands to register
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 const sbCommands = () => {

@@ -1,4 +1,4 @@
-import { ZoteroAPI } from "./externals/zotero";
+import { ZoteroAPI } from "../externals/zotero";
 
 
 export interface ZCleanItemTop {
@@ -72,4 +72,9 @@ export interface ZLibraryContents {
 	items: ZItemTop[],
 	notes: (ZItemAnnotation | ZItemNote)[],
 	pdfs: ZItemAttachment[]
+}
+
+export interface ZLibrary {
+	apikey: string,
+	path: string
 }

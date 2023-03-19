@@ -1,5 +1,5 @@
 import { sortCollections } from "./helpers";
-import { ZoteroAPI } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals";
 
 
 describe("Zotero collections sorting", () => {

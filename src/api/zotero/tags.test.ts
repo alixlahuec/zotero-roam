@@ -4,7 +4,7 @@ import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 import { findTags, tags } from "Mocks/zotero/tags";
 
-import { ZoteroAPI } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;

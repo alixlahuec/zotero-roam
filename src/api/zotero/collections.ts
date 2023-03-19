@@ -7,8 +7,9 @@ import { fetchAdditionalData, matchWithCurrentData } from "../helpers";
 
 import { fetchDeleted } from "./deleted";
 
-import { Maybe, ZLibrary } from "Types/common";
-import { ZoteroAPI } from "Types/externals/zotero";
+import { Maybe } from "Types/common";
+import { ZLibrary } from "Types/transforms/zotero";
+import { ZoteroAPI } from "Types/externals";
 
 
 type QueryKeyCollections = ["collections", { library: string }];

@@ -7,7 +7,7 @@ import { findBibEntry, findItems } from "Mocks/zotero/items";
 import { libraries } from "Mocks/zotero/libraries";
 
 import { isFulfilled } from "Types/common";
-import { ZoteroAPI } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;

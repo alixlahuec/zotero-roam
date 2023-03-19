@@ -1,6 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 import { zoteroClient } from "../clients";
-import { ZoteroAPI } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals";
 
 
 type QueryKeyPermissions = ["permissions", { apikey: string }];

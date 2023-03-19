@@ -1,6 +1,6 @@
 import { getPDFLink } from "../../../utils";
-import { ZoteroAPI } from "Types/externals/zotero";
-import { ZCleanItemPDF, ZLibraryContents } from "Types/zotero";
+import { ZoteroAPI } from "Types/externals";
+import { ZCleanItemPDF, ZLibraryContents } from "Types/transforms/zotero";
 
 
 /** Formats a Zotero PDF's metadata into a clean format, with parent & annotations data */

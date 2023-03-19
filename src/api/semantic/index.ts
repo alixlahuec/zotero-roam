@@ -2,15 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { cleanErrorIfAxios, parseDOI } from "../../utils";
 import { semanticClient } from "../clients";
 
-import { SemanticScholarItem, SemanticScholarRelatedEntry } from "Types/externals/semantic";
+import { SemanticScholarAPI } from "Types/externals";
 
 
 type QueryKeySemantic = ["semantic", { doi: string }];
 
 type QueryDataSemantic = {
 	doi: string,
-	citations: ReturnType<typeof parseSemanticDOIs<SemanticScholarRelatedEntry>>,
-	references: ReturnType<typeof parseSemanticDOIs<SemanticScholarRelatedEntry>>
+	citations: ReturnType<typeof parseSemanticDOIs<SemanticScholarAPI.RelatedPaper>>,
+	references: ReturnType<typeof parseSemanticDOIs<SemanticScholarAPI.RelatedPaper>>
 };
 
 /** Requests data from the `/paper` endpoint of the Semantic Scholar API
@@ -21,7 +21,7 @@ async function fetchSemantic(doi: string): Promise<QueryDataSemantic> {
 	let response: unknown;
 
 	try {
-		const apiResponse = await semanticClient.get<SemanticScholarItem>(`${doi}`);
+		const apiResponse = await semanticClient.get<SemanticScholarAPI.Item>(`${doi}`);
 		const { data: { citations, references } } = apiResponse;
 		response = apiResponse;
 

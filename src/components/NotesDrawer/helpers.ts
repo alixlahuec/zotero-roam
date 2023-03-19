@@ -1,4 +1,4 @@
-import { ZoteroAPI } from "Types/externals/zotero";
+import { ZoteroAPI } from "Types/externals";
 
 
 export interface ZSimplifiedNote {

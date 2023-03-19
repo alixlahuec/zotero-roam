@@ -303,7 +303,7 @@ export function setupInitialSettings(settingsObject){
 
 /* istanbul ignore next */
 /** Initializes the extension, from a Roam Depot install
- * @param {{extensionAPI: Object}} config - The install parameters 
+ * @param {{extensionAPI: Roam.ExtensionAPI}} config - The install parameters 
  * @returns The user's setup configuration
  */
 function configRoamDepot({ extensionAPI }){
@@ -351,7 +351,7 @@ function configRoamJS({ manualSettings }){
 /* istanbul ignore next */
 /** Initializes the extension, given an installation environment and parameters
  * @param {("roam/depot"|"roam/js"|"sandbox")} context - The install environment
- * @param {{extensionAPI?: Object, manualSettings?: Object}} config - The install parameters 
+ * @param {{extensionAPI?: Roam.ExtensionAPI, manualSettings?: Object}} config - The install parameters 
  * @returns 
  */
 export function initialize(context = "roam/js", { extensionAPI, manualSettings }){

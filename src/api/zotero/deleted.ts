@@ -1,8 +1,8 @@
 import { cleanErrorIfAxios } from "../../utils";
 import { zoteroClient } from "../clients";
 
-import { ZoteroAPI } from "Types/externals/zotero";
-import { ZLibrary } from "Types/common";
+import { ZoteroAPI } from "Types/externals";
+import { ZLibrary } from "Types/transforms/zotero";
 
 
 /** Requests data from the `/[library]/deleted` endpoint of the Zotero API

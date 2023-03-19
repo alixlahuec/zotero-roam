@@ -10,11 +10,9 @@ import { fetchDeleted } from "./deleted";
 import { QueryKeyTags, QueryDataTags } from "./tags";
 import * as __thisModule from "./items";
 
-import { Maybe, ZLibrary } from "Types/common";
-import { ZoteroAPI } from "Types/externals/zotero";
-
+import { ZItem, ZLibrary } from "Types/transforms/zotero";
+import { ZoteroAPI } from "Types/externals";
 import { DataRequest } from "Types/settings";
-import { ZItem } from "Types/zotero";
 
 
 export type QueryKeyItems = ["items", string, Omit<DataRequest, "apikey" | "library">];
@@ -131,8 +129,8 @@ async function fetchItems(
 	};
 
 	let response: unknown;
-	let modified: Maybe<ZoteroAPI.Item[]>;
-	let deleted: Maybe<string[]>;
+	let modified: ZoteroAPI.Item[] | undefined;
+	let deleted: string[] | undefined;
 
 	try {
 		const { data, headers, ...rest } = await zoteroClient.get<ZoteroAPI.Responses.ItemsGet>(`${dataURI}?${paramsQuery.toString()}`,

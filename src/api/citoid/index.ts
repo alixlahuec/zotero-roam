@@ -6,20 +6,20 @@ import { citoidClient } from "../clients";
 import { emitCustomEvent } from "../../events";
 import { cleanErrorIfAxios } from "../../utils";
 
-import { CitoidZotero } from "Types/externals/citoid";
-import { ZLibrary } from "Types/common";
+import { CitoidAPI } from "Types/externals";
+import { ZLibrary } from "Types/transforms/zotero";
 
 
 type QueryKeyCitoid = ["citoid", { url: string }];
 
 type QueryDataCitoid = {
-	item: CitoidZotero,
+	item: CitoidAPI.AsZotero,
 	query: string
 };
 
 type ImportCitoidsArgs = {
 	collections: string[],
-	items: CitoidZotero[],
+	items: CitoidAPI.AsZotero[],
 	library: ZLibrary,
 	tags: string[]
 };
@@ -31,7 +31,7 @@ type ImportCitoidsArgs = {
 async function fetchCitoid(url: string): Promise<QueryDataCitoid> {
 	let response: unknown;
 	try {
-		const { data, ...rest } = await citoidClient.get<CitoidZotero[]>(encodeURIComponent(url));
+		const { data, ...rest } = await citoidClient.get<CitoidAPI.AsZotero[]>(encodeURIComponent(url));
 		response = { data, ...rest };
 
 		return {
@@ -111,7 +111,7 @@ const useImportCitoids = () => {
 				};
 			});
 
-		return writeItems<CitoidZotero>(dataList, library);
+		return writeItems<CitoidAPI.AsZotero>(dataList, library);
 	}, {
 		onSettled: (data = [], error, variables, _context) => {
 			const { collections, items, library: { path }, tags } = variables;
