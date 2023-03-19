@@ -19,7 +19,7 @@ module.exports = merge(baseConfig, {
 	module: {
 		rules: [
 			{
-				test: /\.(t|j)sx?$/,
+				test: /\.[tj]sx?$/,
 				include: [path.resolve("src"), path.resolve("mocks"), path.resolve("sandbox.js")],
 				use: {
 					loader: "babel-loader",

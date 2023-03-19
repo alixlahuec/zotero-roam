@@ -161,7 +161,7 @@ const common = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    "\\.(t|j)sx?$": "babel-jest",
+    "\\.[tj]sx?$": "babel-jest",
     "^.+\\.css$": "jest-transform-css"
   },
 
@@ -192,7 +192,7 @@ module.exports = {
 			// A list of paths to modules that run some code to configure or set up the testing framework before each test
 			setupFilesAfterEnv: ["./dev/jest.setup.js"],
 			// The regexp pattern or array of patterns that Jest uses to detect test files
-			testRegex: "(/__tests__/.*|(\\.|/)test)\\.[jt]sx?$",
+			testRegex: "(/__tests__/.*|(\\.|/)test)\\.[tj]sx?$",
 		},
 		{
 			...common,
