@@ -129,7 +129,9 @@ async function addBlocksArray(parentUID, arr, order = 0){
 function addPaletteCommand(label, onSelect, extensionAPI = {}) {
 	const command = {
 		label,
-		callback: onSelect
+		callback: onSelect,
+		// TODO: migrate shortcuts to command palette
+		"disable-hotkey": true
 	};
 	if (!extensionAPI.ui) {
 		window.roamAlphaAPI.ui.commandPalette.addCommand(command);
