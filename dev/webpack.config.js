@@ -22,7 +22,7 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.(t|j)sx?$/,
+				test: /\.[tj]sx?$/,
 				include: path.resolve("src"),
 				use: {
 					loader: "babel-loader",

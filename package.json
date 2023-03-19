@@ -25,6 +25,8 @@
         "build:roam": "webpack --config dev/webpack.roam.config.js",
         "build:dev-roam": "webpack --config dev/webpack.dev.roam.config.js",
         "build:sandbox": "webpack --config dev/webpack.sandbox.config.js",
+		"typecheck": "tsc --noEmit --pretty --checkJs false",
+		"ci:typecheck": "npm run typecheck",
         "test": "jest",
         "ci:test": "jest --ci --collectCoverage",
         "storybook": "start-storybook -p 6006",
