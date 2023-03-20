@@ -10,9 +10,9 @@ import { fetchDeleted } from "./deleted";
 import { QueryKeyTags, QueryDataTags } from "./tags";
 import * as __thisModule from "./items";
 
-import { ZItem, ZLibrary } from "Types/transforms/zotero";
+import { ZItem, ZLibrary } from "Types/transforms";
 import { ZoteroAPI } from "Types/externals";
-import { DataRequest } from "Types/settings";
+import { DataRequest } from "Types/extension";
 
 
 export type QueryKeyItems = ["items", string, Omit<DataRequest, "apikey" | "library">];

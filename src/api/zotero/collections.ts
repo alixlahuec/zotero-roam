@@ -7,7 +7,7 @@ import { fetchAdditionalData, matchWithCurrentData } from "../helpers";
 
 import { fetchDeleted } from "./deleted";
 
-import { Maybe } from "Types/common";
+import { Maybe } from "Types/helpers";
 import { ZLibrary } from "Types/transforms/zotero";
 import { ZoteroAPI } from "Types/externals";
 

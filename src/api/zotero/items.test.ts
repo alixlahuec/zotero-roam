@@ -6,7 +6,7 @@ import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems } from "Mocks/zotero/items";
 import { libraries } from "Mocks/zotero/libraries";
 
-import { isFulfilled } from "Types/common";
+import { isFulfilled } from "Types/helpers";
 import { ZoteroAPI } from "Types/externals";
 
 
