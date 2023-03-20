@@ -366,7 +366,8 @@ describe("Fetching mocked deleted entities", () => {
 			const { path } = libraryDetails;
 			const deleted = await fetchDeleted({ apikey: masterKey, path }, 0);
 			expect(deleted).toEqual({
-				...deletions[path].map(el => el.key),
+				collections: deletions[path].collections.map(del => del.key),
+				items: deletions[path].items.map(del => del.key),
 				searches: [],
 				tags: []
 			});
