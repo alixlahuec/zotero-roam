@@ -304,8 +304,8 @@ function getInitialedPages(keys){
 
 /** Imports an item's metadata as Roam blocks
  * @fires zotero-roam:metadata-added
- * @param {{item: ZoteroAPI.ItemTop, pdfs: ZoteroAPI.ItemAttachment[], notes: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}} itemData - The item's Zotero data and its children, if any
- * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
+ * @param {{item: ZItemTop, pdfs?: ZItemAttachment[], notes?: (ZItemNote|ZItemAnnotation)[]}} itemData - The item's Zotero data and its children, if any
+ * @param {String|false} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
  * @param {SettingsMetadata} metadataSettings - The user's `metadata` settings 
  * @param {SettingsTypemap} typemap - The user's `typemap` settings
  * @param {SettingsNotes} notesSettings - The user's `notes` settings
@@ -396,7 +396,7 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 /** Imports an item's notes as Roam blocks
  * @fires zotero-roam:notes-added
  * @param {{item: ZoteroAPI.ItemTop, notes: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}} itemData - The item's Zotero data and its notes, if any 
- * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value
+ * @param {String|false} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value
  * @param {SettingsNotes} notesSettings - The user's `notes` settings
  * @param {SettingsAnnotations} annotationsSettings - The user's `annotations` settings
  * @returns If successful, a detailed outcome of the immport ; otherwise, the first error encountered.

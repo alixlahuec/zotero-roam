@@ -197,10 +197,10 @@ async function fetchAdditionalData(req, totalResults) {
 	for(let i=1; i <= nbExtraCalls; i++){
 		const reqParams = new URLSearchParams("");
 		if(since){
-			reqParams.set("since", since);
+			reqParams.set("since", `${since}`);
 		}
-		reqParams.set("start", 100*i);
-		reqParams.set("limit", 100);
+		reqParams.set("start", `${100*i}`);
+		reqParams.set("limit", "100");
 		apiCalls.push(zoteroClient.get(
 			`${dataURI}?${reqParams.toString()}`, 
 			{ 
@@ -309,7 +309,7 @@ async function fetchBibliography(itemKey, library, config = {}) {
 
 /** Requests data from the `/data/citation/zotero` endpoint of the Wikipedia API
  * @param {String} query - The URL for which to request Zotero metadata
- * @returns {Promise<{item: Object, query: String}>} The metadata for the URL
+ * @returns {Promise<{item: CitoidAPI.AsZotero, query: String}>} The metadata for the URL
  */
 async function fetchCitoid(query) {
 	let response = null;
@@ -415,7 +415,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 /** Requests data from the `/[library]/deleted` endpoint of the Zotero API
  * @param {ZLibrary} library - The targeted Zotero library
  * @param {Number} since - A library version
- * @returns {Promise<Object>} Elements deleted from Zotero since the specified version
+ * @returns {Promise<ZoteroAPI.Responses.Deleted>} Elements deleted from Zotero since the specified version
  */
 async function fetchDeleted(library, since) {
 	const { apikey, path } = library;
@@ -448,8 +448,8 @@ async function fetchDeleted(library, since) {
  * @fires zotero-roam:update
  * @param {DataRequest} req - The parameters of the request 
  * @param {{match?: Object[]}} config - Additional parameters
- * @param {*} queryClient - The current React Query client
- * @returns {Promise<{data: Object[], lastUpdated: Number}>}
+ * @param {QueryClient} queryClient - The current React Query client
+ * @returns {Promise<{data: ZItem[], lastUpdated: Number}>}
  */
 async function fetchItems(req, { match = [] } = {}, queryClient) {
 	const { apikey, dataURI, library: { path }, since = 0 } = req;
@@ -551,7 +551,7 @@ async function fetchPermissions(apikey) {
 
 /** Requests data from the `/paper` endpoint of the Semantic Scholar API
  * @param {String} doi - The DOI of the targeted item, assumed to have already been checked and parsed.
- * @returns {Promise<{doi: String, citations: Object[], references: Object[]}>} Citation data for the item
+ * @returns {Promise<{doi: String, citations: SemanticScholarAPI.RelatedPaper[], references: SemanticScholarAPI.RelatedPaper[]}>} Citation data for the item
 **/
 async function fetchSemantic(doi) {
 	let response = null;
@@ -651,10 +651,10 @@ function makeTagMap(tags){
 
 /** Compares two datasets and merges the changes. As the match is done on the `data.key` property, both items and collections can be matched.
  *  For items, merging involves an additional step to extract citekeys.
- * @param {{modified: (ZoteroAPI.Item)[]|ZoteroAPI.Collection[], deleted: (ZoteroAPI.Item)[]|ZoteroAPI.Collection[]}} update - The newer dataset
- * @param {Object[]} arr - The older dataset
+ * @param {{modified: (ZoteroAPI.Item|ZoteroAPI.Collection)[], deleted: string[]}} update - The newer dataset
+ * @param {(ZItem|ZoteroAPI.Collection)[]} arr - The older dataset
  * @param {{with_citekey?: Boolean}} config - Additional parameters 
- * @returns {Object[]} - The merged dataset
+ * @returns {(ZItem|ZoteroAPI.Collection)[]} - The merged dataset
  */
 function matchWithCurrentData(update, arr = [], { with_citekey = false } = {}) {
 	const { modified = [], deleted = [] } = update;
@@ -689,8 +689,8 @@ function matchWithCurrentData(update, arr = [], { with_citekey = false } = {}) {
 }
 
 /** Selects and transforms Semantic items with valid DOIs
- * @param {Object[]} arr - The array of Semantic items to clean
- * @returns The clean Semantic array
+ * @param {SemanticScholarAPI.RelatedPaper[]} arr - The array of Semantic items to clean
+ * @returns {SemanticScholarAPI.RelatedPaper[]} The clean Semantic array
  */
 function parseSemanticDOIs(arr){
 	return arr.map(elem => {

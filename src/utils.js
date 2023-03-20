@@ -14,8 +14,8 @@ function camelToTitleCase(text){
 }
 
 /** Categorizes library items according to their type (items, PDFs attachments, notes)
- * @param {(ZoteroAPI.Item)[]} datastore - The items to categorize 
- * @returns {{items: ZoteroAPI.ItemTop[], pdfs: ZoteroAPI.ItemAttachment[], notes: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}} The categorized object
+ * @param {(ZItem)[]} datastore - The items to categorize 
+ * @returns {{items: ZItemTop[], pdfs: ZItemAttachment[], notes: (ZItemNote|ZItemAnnotation)[]}} The categorized object
  */
 function categorizeLibraryItems(datastore){
 	return datastore.reduce((obj, item) => {
@@ -68,9 +68,9 @@ function cleanAuthorsNames(names){
 }
 
 /** Converts library data into a simplified list of top-level items, with their metadata, children, and links
- * @param {(ZoteroAPI.Item)[]} arr - The library's contents, including top-level items, attachments and notes/annotations
- * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
- * @returns {Object[]} The simplified items
+ * @param {(ZItem)[]} arr - The library's contents, including top-level items, attachments and notes/annotations
+ * @param {RCitekeyPages} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
+ * @returns {ZCleanItemTop[]} The simplified items
  * @see cleanLibraryReturnArrayType
  */
 function cleanLibrary(arr, roamCitekeys){
@@ -87,11 +87,11 @@ function cleanLibrary(arr, roamCitekeys){
 }
 
 /** Formats a Zotero item's metadata into a clean format, with Roam & children data
- * @param {ZoteroAPI.ItemTop} item - The Zotero item
- * @param {ZoteroAPI.ItemAttachment[]} pdfs - The Zotero item's attached PDFs
- * @param {(ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]} notes - The Zotero item's notes and annotations
- * @param {Map<String, String>} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
- * @returns {Object} The simplified item
+ * @param {ZItemTop} item - The Zotero item
+ * @param {ZItemAttachment[]} pdfs - The Zotero item's attached PDFs
+ * @param {(ZItemNote|ZItemAnnotation)[]} notes - The Zotero item's notes and annotations
+ * @param {RCitekeyPages} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
+ * @returns {ZCleanItemTop} The simplified item
  * @see cleanLibraryItemType
  */
 function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
@@ -162,9 +162,9 @@ function cleanLibraryItem(item, pdfs = [], notes = [], roamCitekeys){
 }
 
 /** Formats a Zotero PDF's metadata into a clean format, with parent & annotations data
- * @param {ZoteroAPI.ItemAttachment} pdf - The Zotero PDF entry
- * @param {ZoteroAPI.ItemTop} parent - The Zotero PDF's parent item
- * @param {ZoteroAPI.ItemAnnotation[]} annotations - The Zotero PDF's linked annotations
+ * @param {ZItemAttachment} pdf - The Zotero PDF entry
+ * @param {ZItemTop} parent - The Zotero PDF's parent item
+ * @param {ZItemAnnotation[]} annotations - The Zotero PDF's linked annotations
  * @returns {Object} The simplified PDF entry
  * @see cleanLibraryPDFType
  */
@@ -264,13 +264,13 @@ function cleanSemanticItem(item){
 /**
  * @typedef {CleanSemanticItem & {
  * inGraph: (Boolean|String), 
- * inLibrary: (Boolean|{children: {pdfs: ZoteroAPI.ItemAttachment[], notes: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}, raw: ZoteroAPI.ItemTop})
+ * inLibrary: (Boolean|{children: {pdfs: ZItemAttachment[], notes: (ZItemNote|ZItemAnnotation)[]}, raw: ZItemTop})
  * }}
  * CleanSemanticReturn
  */
 /** Matches a clean Semantic Scholar entry to Zotero and Roam data
  * @param {Object} semanticItem - A Semantic Scholar item, as returned by {@link cleanSemanticItem}
- * @param {{items?: ZoteroAPI.ItemTop[], pdfs?: ZoteroAPI.ItemAttachment[], notes?: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}} datastore - The categorized list of Zotero items to match against 
+ * @param {{items?: ZItemTop[], pdfs?: ZItemAttachment[], notes?: (ZItemNote|ZItemAnnotation)[]}} datastore - The categorized list of Zotero items to match against 
  * @param {RCitekeyPages} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
  * @returns {CleanSemanticReturn} - The matched entry for the item
  * @see cleanSemanticReturnType
@@ -317,8 +317,8 @@ function cleanSemanticMatch(semanticItem, { items = [], pdfs = [], notes = [] } 
  * CleanSemanticReturnObject
  */
 /** Formats a list of Semantic Scholar entries for display
- * @param {ZoteroAPI.Item[]} datastore - The list of Zotero items to match against 
- * @param {{citations: Object[], references: Object[]}} semantic - The Semantic Scholar citation data to format 
+ * @param {ZLibraryContents} datastore - The list of Zotero items to match against 
+ * @param {{citations: SemanticScholarAPI.RelatedPaper[], references: SemanticScholarAPI.RelatedPaper[]}} semantic - The Semantic Scholar citation data to format 
  * @param {RCitekeyPages} roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.
  * @returns {CleanSemanticReturnObject} The formatted list
  * @see cleanSemanticReturnObjectType
@@ -393,8 +393,8 @@ function compareAnnotationRawIndices(a, b){
 }
 
 /** Compares two Zotero items by publication year then alphabetically, to determine sort order
- * @param {ZoteroAPI.ItemTop} a - The first item to compare
- * @param {ZoteroAPI.ItemTop} b - The second item to compare
+ * @param {ZItemTop} a - The first item to compare
+ * @param {ZItemTop} b - The second item to compare
  * @returns {(-1|1)} The comparison outcome
  */
 function compareItemsByYear(a, b) {
@@ -500,7 +500,7 @@ function executeFunctionByName(functionName, context /*, args */) {
 }
 
 /** Formats a single Zotero annotation with params
- * @param {ZoteroAPI.ItemAnnotation} annotation - The (raw) annotation to be formatted
+ * @param {ZItemAnnotation} annotation - The (raw) annotation to be formatted
  * @param {{template_comment?: string, template_highlight?: string}} config - Additional configuration 
  * @returns A block object, ready for import into Roam
  */
@@ -538,7 +538,7 @@ function formatAnnotationWithParams(annotation, { template_comment = "{{comment}
 }
 
 /** Default formatter for annotations
- * @param {ZoteroAPI.ItemAnnotation[]} annotations - The (raw) array of annotations to be formatted 
+ * @param {ZItemAnnotation[]} annotations - The (raw) array of annotations to be formatted 
  * @param {{group_by?: ("day_added"|false), template_comment?: string, template_highlight?: string}} config - Additional configuration
  * @returns An array of block objects, ready for import into Roam.
  */
@@ -585,7 +585,7 @@ function formatItemAnnotations(annotations, { group_by = false, template_comment
 }
 
 /** Default formatter for notes
- * @param {{ZoteroAPI.ItemNote}[]} notes - The (raw) array of notes to be formatted
+ * @param {ZItemNote[]} notes - The (raw) array of notes to be formatted
  * @param {String} separator - The string on which to split notes into blocks
  * @returns A flat array of strings, separated according to `separator`, and ready for import into Roam.
  */
@@ -597,7 +597,7 @@ function formatItemNotes(notes, separator = "\n"){
 }
 
 /** Converts an item into a given string format
- * @param {ZoteroAPI.ItemTop} item - The item to convert 
+ * @param {ZItemTop} item - The item to convert 
  * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} format - The format to convert into 
  * @param {{accent_class?: String}} config - Additional parameters 
  * @returns {String} The formatted reference
@@ -647,7 +647,7 @@ function formatItemReference(item, format, { accent_class = "zr-accent-1" } = {}
 }
 
 /** Formats an array of Zotero annotations into Roam blocks, with optional configuration
- * @param {ZoteroAPI.ItemAnnotation[]} annotations - The Zotero annotations to format
+ * @param {ZItemAnnotation[]} annotations - The Zotero annotations to format
  * @param {SettingsAnnotations} config - Additional settings 
  * @returns The formatted annotations
  */
@@ -661,7 +661,7 @@ function formatZoteroAnnotations(annotations, { func = "", use = "default", __wi
 }
 
 /** Formats an array of Zotero notes into Roam blocks, with optional configuration
- * @param {ZoteroAPI.ItemNote[]} notes - The Zotero notes to format
+ * @param {ZItemNote[]} notes - The Zotero notes to format
  * @param {SettingsNotes} config - Additional settings
  * @returns The formatted notes
  */
@@ -680,7 +680,7 @@ function formatZoteroNotes(notes, { func = "", split_char = "", split_preset = "
 }
 
 /** Creates a local link to a specific Zotero item, which opens in the standalone app.
- * @param {ZoteroAPI.ItemTop} item - The targeted Zotero item
+ * @param {ZItemTop} item - The targeted Zotero item
  * @param {{format?: ("markdown"|"target"), text?: String}} config - Additional settings
  * @returns A link to the item, either as a Markdown link or a URI
  */
@@ -698,7 +698,7 @@ function getLocalLink(item, { format = "markdown", text = "Local library" } = {}
 
 /** Creates a link to a specific PDF attachment in Zotero.
  * If the PDF is a `linked_file`, `imported_file` or `imported_url`, the link opens through the local Zotero app ; otherwise, it's the PDF's URL.
- * @param {ZoteroAPI.ItemAttachment} pdfItem - The targeted Zotero PDF item
+ * @param {ZItemAttachment} pdfItem - The targeted Zotero PDF item
  * @param {("markdown"|"href")} as - The format in which to return the link
  * @returns The link to the PDF
  */
@@ -725,7 +725,7 @@ function getPDFLink(pdfItem, as = "href"){
 }
 
 /** Creates a web link to a specific Zotero item, which opens in the browser.
- * @param {ZoteroAPI.ItemTop} item - The targeted Zotero item 
+ * @param {ZItemTop} item - The targeted Zotero item 
  * @param {{format?: ("markdown"|"target"), text?: String}} config - Additional settings 
  * @returns A link to the item, either as a Markdown link or a URL
  */
@@ -754,7 +754,7 @@ function hasNodeListChanged(prev, current){
 /** Identifies the children of a Zotero item within a given set of PDF and note entries
  * @param {String} itemKey - The Zotero key of the parent item
  * @param {String} location - The library location of the parent item
- * @param {{pdfs?: ZoteroAPI.ItemAttachment[], notes?: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}} data - The items among which children are to be identified 
+ * @param {{pdfs?: ZItemAttachment[], notes?: (ZItemNote|ZItemAnnotation)[]}} data - The items among which children are to be identified 
  * @returns The item's children
  */
 function identifyChildren(itemKey, location, { pdfs = [], notes = [] } = {}){
@@ -772,7 +772,7 @@ function identifyChildren(itemKey, location, { pdfs = [], notes = [] } = {}){
  * @param {String} itemKey - The Zotero key of the PDF item
  * @param {String} parentKey - The Zotero key of the PDF's parent
  * @param {String} location - The library location of the PDF item
- * @param {{items?: ZoteroAPI.ItemTop[], notes?: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}} data - The items among which connections are to be identified 
+ * @param {{items?: ZItemTop[], notes?: (ZItemNote|ZItemAnnotation)[]}} data - The items among which connections are to be identified 
  * @returns The item's connections
  */
 function identifyPDFConnections(itemKey, parentKey, location, { items = [], notes = [] } = {}){
@@ -1095,32 +1095,9 @@ function searchEngine_string(str, text, { any_case = true, match = "partial", se
 
 }
 
-/**
- * @typedef{{
- * color: String,
- * comment: String,
- * date_added: String,
- * date_modified: String,
- * day_added: String,
- * day_modified: String,
- * key: String,
- * library: String,
- * link_page: String,
- * link_pdf: String,
- * page_label: String,
- * parent_item: String,
- * position: Object,
- * raw: Object,
- * sortIndex: Number[],
- * tags: String[],
- * text: String|null,
- * type: ("highlight"|"image")
- * }}
- * SimplifiedZoteroAnnotation
- */
 /** Simplifies data structure for Zotero 6 annotations
- * @param {ZoteroAPI.ItemAnnotation[]} annotations - The list of annotations to simplify
- * @returns {SimplifiedZoteroAnnotation[]} The simplified array of annotations
+ * @param {ZItemAnnotation[]} annotations - The list of annotations to simplify
+ * @returns {ZSimplifiedAnnotation[]} The simplified array of annotations
  */
 function simplifyZoteroAnnotations(annotations){
 	return annotations.map(annot => {
@@ -1171,18 +1148,8 @@ function simplifyZoteroAnnotations(annotations){
 }
 
 /** Simplifies data structure for Zotero notes
- * @param {Object[]} notes - The list of notes to simplify
- * @returns {{
- * date_added: String,
- * date_modified: String,
- * key: String,
- * location: String,
- * link_note: String,
- * note: String,
- * parent_item: String,
- * raw: Object,
- * tags: String[]
- * }[]} The simplified array of notes
+ * @param {ZItemNote[]} notes - The list of notes to simplify
+ * @returns {ZSimplifiedNote[]} The simplified array of notes
  */
 function simplifyZoteroNotes(notes){
 	return notes.map(nt => {

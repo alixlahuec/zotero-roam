@@ -315,10 +315,10 @@ function unregisterSmartblockCommands(){
 /** Triggers a given SmartBlock to import an item's metadata
  * @param {SBConfig} config - The configuration of the SmartBlock to use.
  * @param {{
- * item: ZoteroAPI.ItemTop,
- * notes: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[],
+ * item: ZItemTop,
+ * notes: (ZItemNote|ZItemAnnotation)[],
  * page: {new: Boolean, title: String, uid: String}, 
- * pdfs: ZoteroAPI.ItemAttachment[]}} context - The context variables provided by the extension to the SmartBlock
+ * pdfs: ZItemAttachment[]}} context - The context variables provided by the extension to the SmartBlock
  * @returns {Promise} If successful, `{success:true}` - otherwise an object containing the error encountered and the arguments with which the function was called.
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */

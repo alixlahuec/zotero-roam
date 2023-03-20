@@ -112,7 +112,7 @@ export function analyzeUserRequests(requests){
 
 /* istanbul ignore next */
 /** Creates a persister that can be used for writing a React Query client to the IndexedDB cache.
- * @param {*} database - The targeted IDBDatabase
+ * @param {IDBDatabase} database - The targeted IDBDatabase
  * @returns 
  */
 export function createPersisterWithIDB(database){
@@ -166,7 +166,7 @@ export function createPersisterWithIDB(database){
 }
 
 /** Conducts checks on a query to determine if it should be persisted
- * @param {*} query - The targeted React Query query
+ * @param {QueryKey} query - The targeted React Query query
  * @returns 
  */
 export function shouldQueryBePersisted(query){
@@ -379,16 +379,16 @@ export function setupPortals(){
 	const roamSearchbar = document.querySelector(".rm-topbar .rm-find-or-create-wrapper");
 	const extensionSlot = document.createElement("span");
 	extensionSlot.id = EXTENSION_SLOT_ID;
-	roamSearchbar.insertAdjacentElement("afterend", extensionSlot);
+	roamSearchbar?.insertAdjacentElement("afterend", extensionSlot);
 
 	const zrPortal = document.createElement("div");
 	zrPortal.id = EXTENSION_PORTAL_ID;
-	document.getElementById("app").appendChild(zrPortal);
+	document.getElementById("app")?.appendChild(zrPortal);
 }
 
 /* istanbul ignore next */
 /** Sets up secondary functions that are needed by the extension
- * @param {{settings: Object}} config - The user's current settings
+ * @param {{settings: UserSettings}} config - The user's current settings
  */
 export function setup({ settings }){
 	setupDarkTheme(settings.other.darkTheme);
@@ -410,11 +410,8 @@ export function unmountExtensionIfExists(){
 	}
 
 	// Portal for the extension's overlays
-	try{ 
-		document.getElementById(EXTENSION_PORTAL_ID).remove(); 
-	} catch(e){
-		// Do nothing
-	}
+	document.getElementById(EXTENSION_PORTAL_ID)?.remove(); 
+
 }
 
 export function validateShortcuts(shortcuts){
