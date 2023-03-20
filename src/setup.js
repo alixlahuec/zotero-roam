@@ -17,7 +17,7 @@ import {
 
 
 /** Generates a data requests configuration object
- * @param {DataRequest|DataRequest[]} requests - Data requests provided by the user
+ * @param {LegacyDataRequest|LegacyDataRequest[]|DataRequest[]} requests - Data requests provided by the user
  * @returns {UserRequests} A configuration object for the extension to use
  */
 export function analyzeUserRequests(requests){
@@ -180,7 +180,7 @@ export function shouldQueryBePersisted(query){
 }
 
 /** Generates a merged settings object, combining user settings and defaults.
- * @param {Object} settingsObject - The user's settings object
+ * @param {Partial<UserSettings>} settingsObject - The user's settings object
  * @returns The merged object
  */
 export function setupInitialSettings(settingsObject){
@@ -303,7 +303,7 @@ export function setupInitialSettings(settingsObject){
 
 /* istanbul ignore next */
 /** Initializes the extension, from a Roam Depot install
- * @param {{extensionAPI: Object}} config - The install parameters 
+ * @param {{extensionAPI: Roam.ExtensionAPI}} config - The install parameters 
  * @returns The user's setup configuration
  */
 function configRoamDepot({ extensionAPI }){
@@ -332,7 +332,7 @@ function configRoamDepot({ extensionAPI }){
 
 /* istanbul ignore next */
 /** Initializes the extension, from a roam/js install
- * @param {{manualSettings: Object}} config - The install parameters 
+ * @param {{manualSettings: UserSettings}} config - The install parameters 
  * @returns The user's setup configuration
  */
 function configRoamJS({ manualSettings }){
@@ -351,7 +351,7 @@ function configRoamJS({ manualSettings }){
 /* istanbul ignore next */
 /** Initializes the extension, given an installation environment and parameters
  * @param {("roam/depot"|"roam/js"|"sandbox")} context - The install environment
- * @param {{extensionAPI?: Object, manualSettings?: Object}} config - The install parameters 
+ * @param {{extensionAPI?: Roam.ExtensionAPI, manualSettings?: Object}} config - The install parameters 
  * @returns 
  */
 export function initialize(context = "roam/js", { extensionAPI, manualSettings }){

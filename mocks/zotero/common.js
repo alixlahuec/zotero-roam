@@ -61,7 +61,7 @@ export const makeEntityLinks = ({ key, library, parentItem = null }) => {
  * library: ZLibraryMock,
  * title?: string,
  * version?: number,
- * data?: Partial<ZoteroItemTop["data"]>
+ * data?: Partial<ZoteroAPI.ItemTop["data"]>
  * }} config
  */
 export const makeItemMetadata = ({ citekey = false, itemType = null, key = "__NO_UNIQUE_KEY__", library, title ="", version = 1, data = {} }) => ({

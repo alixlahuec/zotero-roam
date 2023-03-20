@@ -32,6 +32,7 @@ export default class ZoteroRoam {
 
 	/**
      * @param {{
+	 * idbDatabase: *,
      * queryClient: *,
      * requests: UserRequests,
      * settings: Object
@@ -161,7 +162,7 @@ export default class ZoteroRoam {
 
 
 	/** Formats Zotero notes and annotations, with current user settings
-     * @param {(ZoteroItemNote|ZoteroItemAnnotation)[]} notes 
+     * @param {(ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]} notes 
      * @returns 
      */
 	formatNotes(notes) {
@@ -183,8 +184,8 @@ export default class ZoteroRoam {
 	}
 
 	/** Retrieves the formatted bibliography for a given item, with optional config
-     * @param {ZoteroItemTop} item - The targeted item
-     * @param {ZoteroConfigBibliography} config - Optional parameters to use to format the bibliography
+     * @param {ZoteroAPI.ItemTop} item - The targeted item
+     * @param {ZoteroAPI.Requests.BibliographyArgs} config - Optional parameters to use to format the bibliography
      * @returns 
      */
 	async getItemCitation(item, config = {}) {
@@ -205,7 +206,7 @@ export default class ZoteroRoam {
 	}
 
 	/** Retrieves the children for a given item
-     * @param {ZoteroItemTop} item - The targeted item
+     * @param {ZoteroAPI.ItemTop} item - The targeted item
      * @returns 
      */
 	getItemChildren(item) {
@@ -215,8 +216,8 @@ export default class ZoteroRoam {
 	}
 
 	/** Retrieves the list of collections for a given item
-     * @param {ZoteroItemTop} item - The targeted item
-     * @param {{return_as: ("string"|"array"), brackets: Boolean}} config - Optional parameters to use to format the collections 
+     * @param {ZoteroAPI.ItemTop} item - The targeted item
+     * @param {{return_as?: ("string"|"array"), brackets?: Boolean}} config - Optional parameters to use to format the collections 
      * @returns 
      */
 	getItemCollections(item, { return_as = "string", brackets = true } = {},) {
@@ -228,9 +229,9 @@ export default class ZoteroRoam {
 
 	/* istanbul ignore next */
 	/** Formats an item's metadata into Roam blocks
-     * @param {ZoteroItemTop} item - The targeted item
-     * @param {ZoteroItemAttachment[]} pdfs - The item's linked PDFs, if any
-     * @param {(ZoteroItemNote|ZoteroItemAnnotation)[]} notes - The item's linked notes, if any
+     * @param {ZoteroAPI.ItemTop} item - The targeted item
+     * @param {ZoteroAPI.ItemAttachment[]} pdfs - The item's linked PDFs, if any
+     * @param {(ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]} notes - The item's linked notes, if any
      * @returns 
      */
 	getItemMetadata(item, pdfs, notes) {
@@ -242,8 +243,8 @@ export default class ZoteroRoam {
 	}
 
 	/** Retrieves the in-library relations for a given item
-     * @param {ZoteroItem} item - The targeted item
-     * @param {{return_as: ("string"|"raw"|"array"), brackets: Boolean}} config - Optional parameters to use to format the relations
+     * @param {ZoteroAPI.Item} item - The targeted item
+     * @param {{return_as?: ("string"|"raw"|"array"), brackets?: Boolean}} config - Optional parameters to use to format the relations
      * @returns 
      */
 	getItemRelated(item, { return_as = "string", brackets = true } = {}) {
@@ -255,8 +256,8 @@ export default class ZoteroRoam {
 	}
 
 	/** Retrieves an item's type
-     * @param {ZoteroItemTop} item - The targeted item
-     * @param {{brackets: Boolean}} config - Optional parameters to use to format the type
+     * @param {ZoteroAPI.ItemTop} item - The targeted item
+     * @param {{brackets?: Boolean}} config - Optional parameters to use to format the type
      * @returns 
      */
 	getItemType(item, { brackets = true } = {}) {
@@ -361,13 +362,13 @@ export class ZoteroRoamLog {
 
 
 /** Formats Zotero notes/annotations items
- * @param {(ZoteroItemNote|ZoteroItemAnnotation)[]} notes - The Array of Zotero notes/annotations
- * @param {String} pageUID - The UID of the parent item's Roam page (optional)
+ * @param {(ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]} notes - The Array of Zotero notes/annotations
+ * @param {String?} pageUID - The UID of the parent item's Roam page (optional)
  * @param {{
  * annotationsSettings: SettingsAnnotations, 
  * notesSettings: SettingsNotes
  * }} settings - The user's current settings
- * @returns {(String|RoamImportableBlock)[]} The formatted Array
+ * @returns {RImportableElement[]} The formatted Array
  */
 export function _formatNotes(notes, pageUID = null, { annotationsSettings, notesSettings }) {
 	if (!notes) {
@@ -467,8 +468,8 @@ async function _getBibEntries(citekeys, { libraries, queryClient }) {
 }
 
 /** Returns an item's formatted bibliography as returned by the Zotero API
- * @param {ZoteroItemTop} item - The targeted Zotero item
- * @param {ZoteroConfigBibliography} config - Optional parameters to use in the API call
+ * @param {ZoteroAPI.ItemTop} item - The targeted Zotero item
+ * @param {ZoteroAPI.Requests.BibliographyArgs} config - Optional parameters to use in the API call
  * @param {{libraries: ZLibrary[]}} requests - The user's current requests
  * @returns 
  */
@@ -492,7 +493,7 @@ function _getCollections(library, { queryClient }) {
 }
 
 /** Returns the (cached) children for a given item
- * @param {ZoteroItemTop} item - The targeted Zotero item
+ * @param {ZoteroAPI.ItemTop} item - The targeted Zotero item
  * @param {{ queryClient: * }} context - The current context for the extension
  * @returns The item's children
  */
@@ -503,10 +504,10 @@ function _getItemChildren(item, { queryClient }) {
 }
 
 /** Retrieves an item's collections' names, from a given list of collections
- * @param {ZoteroItemTop} item - The targeted Zotero item
- * @param {ZoteroCollection[]} collectionList - The list of library collections to match data to
- * @param {{return_as: ("string"|"array"), brackets: Boolean}} config - Additional configuration 
- * @returns {String[]} The Array containing the names of the item's collections, if any
+ * @param {ZoteroAPI.ItemTop} item - The targeted Zotero item
+ * @param {ZoteroAPI.Collection[]} collectionList - The list of library collections to match data to
+ * @param {{return_as?: ("string"|"array"), brackets?: Boolean}} config - Additional configuration 
+ * @returns {String|String[]} The names of the item's collections, if any
  */
 function _getItemCollections(item, collectionList, { return_as = "string", brackets = true } = {}) {
 	if (item.data.collections.length > 0) {
@@ -534,8 +535,8 @@ function _getItemCollections(item, collectionList, { return_as = "string", brack
 }
 
 /** Returns the date on which an item was added to Zotero, in DNP format
- * @param {ZoteroItem} item - The targeted Zotero item
- * @param {{brackets: Boolean}} config - Additional configuration
+ * @param {ZoteroAPI.Item} item - The targeted Zotero item
+ * @param {{brackets?: Boolean}} config - Additional configuration
  * @returns {String}
  */
 function _getItemDateAdded(item, { brackets = true } = {}){
@@ -550,9 +551,9 @@ function _getItemLink(item, type = "local", config = {}){
 
 /* istanbul ignore next */
 /** Formats an item's and its children's metadata for import to Roam using the default template
- * @param {ZoteroItemTop} item - The targeted Zotero item
- * @param {ZoteroItemAttachment[]} pdfs - The item's PDFs, if any
- * @param {(ZoteroItemNote|ZoteroItemAnnotation)[]} notes - The item's linked notes, if any
+ * @param {ZoteroAPI.ItemTop} item - The targeted Zotero item
+ * @param {ZoteroAPI.ItemAttachment[]} pdfs - The item's PDFs, if any
+ * @param {(ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]} notes - The item's linked notes, if any
  * @param {{
  * annotationsSettings: SettingsAnnotations,
  * notesSettings: SettingsNotes,
@@ -586,7 +587,7 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 
 /** Retrieves the publication details for a given item.
  * The extension will check for the existence of a `publicationTitle`, then a `bookTitle`, then a `university` name.
- * @param {ZoteroItemTop} item - The targeted item
+ * @param {ZoteroAPI.ItemTop} item - The targeted item
  * @returns {String}
  */
 function _getItemPublication(item, { brackets = true } = {}){
@@ -601,8 +602,8 @@ function _getItemPublication(item, { brackets = true } = {}){
 }
 
 /** Retrieves the type of a Zotero item, according to a given typemap
- * @param {ZoteroItemTop} item - The targeted Zotero item
- * @param {{brackets: Boolean}} config - Additional configuration
+ * @param {ZoteroAPI.ItemTop} item - The targeted Zotero item
+ * @param {{brackets?: Boolean}} config - Additional configuration
  * @param {SettingsTypemap} typemap - The typemap to be used
  * @returns {String} The clean type for the item
  */
@@ -615,7 +616,7 @@ function _getItemType(item, { brackets = true } = {}, { typemap }) {
  * @param {("all"|"annotations"|"attachments"|"children"|"items"|"notes"|"pdfs")} select - The type of items to retrieve
  * @param {Object} filters - Optional filters for the item queries
  * @param {{ queryClient: * }} context - The current context for the extension
- * @returns {(ZoteroItem)[]} - The requested items
+ * @returns {(ZoteroAPI.Item)[]} - The requested items
  */
 function _getItems(select, filters, { queryClient }) {
 	const items = queryClient.getQueriesData(["items"], filters).map(query => (query[1] || {}).data || []).flat(1);
