@@ -6,6 +6,7 @@ import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 
+/** @constant {ZItemTop[]} */
 const data = [
 	{
 		...makeItemMetadata({

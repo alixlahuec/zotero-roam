@@ -1,3 +1,7 @@
+/**
+ * @param {string} URI 
+ * @returns 
+ */
 export const zotero = (URI) => "https://api.zotero.org/" + URI;
 
 export const makeCollection = ({ key, library, name, version, hasParent = false, hasChildren = 0 }) => ({
@@ -18,6 +22,10 @@ export const makeCollection = ({ key, library, name, version, hasParent = false,
 	version
 });
 
+/**
+ * @param {{key: string, library: ZMockLibrary, parentItem?: string | null}} param0 
+ * @returns 
+ */
 export const makeEntityLinks = ({ key, library, parentItem = null }) => {
 	const { type, name, path } = library;
 	let upLink = {};
@@ -44,6 +52,18 @@ export const makeEntityLinks = ({ key, library, parentItem = null }) => {
 	};
 };
 
+/**
+ * 
+ * @param {{
+ * citekey?: string | false,
+ * itemType?: ZoteroAPI.ItemTopType,
+ * key?: string,
+ * library: ZLibraryMock,
+ * title?: string,
+ * version?: number,
+ * data?: Partial<ZoteroItemTop["data"]>
+ * }} config
+ */
 export const makeItemMetadata = ({ citekey = false, itemType = null, key = "__NO_UNIQUE_KEY__", library, title ="", version = 1, data = {} }) => ({
 	data: {
 		creators: [],
@@ -65,6 +85,10 @@ export const makeItemMetadata = ({ citekey = false, itemType = null, key = "__NO
 	version
 });
 
+/**
+ * @param {ZLibraryMock} library 
+ * @returns 
+ */
 export const makeLibraryMetadata = (library) => {
 	const { type, id, name, path } = library;
 	return {
