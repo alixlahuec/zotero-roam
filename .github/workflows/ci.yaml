@@ -52,9 +52,6 @@ jobs:
         with:
           directory: ./coverage/
           verbose: true
-      
-      - name: Webpack build (dev)
-        run: npm run build:dev
 
       - name: Webpack build (prod)
         run: npm run build:prod
