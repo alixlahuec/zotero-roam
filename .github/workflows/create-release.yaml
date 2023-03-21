@@ -49,7 +49,7 @@ jobs:
           echo "next=$next_version" >> $GITHUB_OUTPUT
           echo "### Release Details" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Version:** $next_version >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** $next_version" >> $GITHUB_STEP_SUMMARY
           echo "**Channel:** ${{ env.RELEASE_BRANCH }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Get changelog
