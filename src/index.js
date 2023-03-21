@@ -47,6 +47,7 @@ import "./index.css";
 							portalId: EXTENSION_PORTAL_ID,
 							version: EXTENSION_VERSION,
 						}}
+						extensionAPI={null}
 						idbDatabase={idbDatabase}
 					/>
 				</UserSettingsProvider>

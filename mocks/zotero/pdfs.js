@@ -4,6 +4,19 @@ import { libraries } from "./libraries";
 
 const { userLibrary } = libraries;
 
+/**
+ * 
+ * @param {{
+ * key: string,
+ * library: ZLibraryMock,
+ * numChildren: number,
+ * parentItem: string,
+ * title: string,
+ * version: number,
+ * data: Partial<ZoteroAPI.ItemAttachment["data"]>
+ * }} config 
+ * @returns {ZoteroAPI.ItemAttachment}
+ */
 const makePDF = ({ key, library, numChildren = 0, parentItem, title, version, data = {} }) => ({
 	key,
 	data: {

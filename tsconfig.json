@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+		"baseUrl": ".",
+		"jsx": "react-jsx",
+        "module": "es6",
+        "target": "ES2021",
+		"moduleResolution": "node",
+		"paths": {
+			"Components/*": ["./src/components/*"],
+			"Mocks/*": ["./mocks/*"],
+			"Roam": ["./src/roam.js"],
+			"Types/*": ["./src/types/*"]
+		},
+        "alwaysStrict": false,
+		"noImplicitAny": false,
+		"skipLibCheck": true,
+        "strictNullChecks": true,
+        "allowJs": true,
+		"checkJs": true,
+		"isolatedModules": true,
+		"noEmit": true
+    },
+	"exclude": ["node_modules", "dist"],
+    "include": [
+        "src/**/*",
+		"loader.js",
+		"sandbox.js"
+    ]
+}

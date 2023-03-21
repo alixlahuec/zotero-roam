@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { bool, instanceOf, node } from "prop-types";
+import { bool, instanceOf, node, object } from "prop-types";
 import { Component, createContext, useMemo } from "react";
 
 import { HotkeysTarget2 } from "@blueprintjs/core";
@@ -18,7 +18,6 @@ import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
-import { isIDBDatabase } from "../../services/idb";
 import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } from "../../setup";
 
 import * as customPropTypes from "../../propTypes";
@@ -69,7 +68,7 @@ const QCProvider = ({ children, idbDatabase }) => {
 };
 QCProvider.propTypes = {
 	children: node,
-	idbDatabase: isIDBDatabase
+	idbDatabase: instanceOf(IDBDatabase)
 };
 
 // https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component
@@ -135,8 +134,8 @@ class App extends Component {
 	}
 
 	componentDidMount(){
-		addPaletteCommand(openSearchCommand, this.openSearchPanel);
-		addPaletteCommand(openDashboardCommand, this.openDashboard);
+		addPaletteCommand(openSearchCommand, this.openSearchPanel, this.props.extensionAPI);
+		addPaletteCommand(openDashboardCommand, this.openDashboard, this.props.extensionAPI);
 	}
 
 	componentDidUpdate(prevProps){
@@ -156,8 +155,8 @@ class App extends Component {
 	}
 
 	componentWillUnmount(){
-		removePaletteCommand(openSearchCommand);
-		removePaletteCommand(openDashboardCommand);
+		removePaletteCommand(openSearchCommand, this.props.extensionAPI);
+		removePaletteCommand(openDashboardCommand, this.props.extensionAPI);
 	}
 
 	render() {
@@ -277,6 +276,7 @@ class App extends Component {
 App.propTypes = {
 	autoload: bool,
 	extension: customPropTypes.extensionType,
+	extensionAPI: object,
 	idbDatabase: instanceOf(IDBDatabase),
 	requests: customPropTypes.requestsType,
 	shortcuts: customPropTypes.shortcutsSettingsType

@@ -4,7 +4,7 @@
  * https://jestjs.io/docs/configuration
  */
 
-module.exports = {
+const common = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -94,7 +94,8 @@ module.exports = {
   moduleNameMapper: {
       "Mocks/(.*)$": "<rootDir>/mocks/$1",
       "Roam": "<rootDir>/mocks/roam.js",
-	  "Components/(.*)$": "<rootDir>/src/components/$1"
+	  "Components/(.*)$": "<rootDir>/src/components/$1",
+	  "Types/(.*)$": "<rootDir>/src/types/$1"
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -108,15 +109,6 @@ module.exports = {
 
   // A preset that is used as a base for Jest's configuration
   // preset: undefined,
-
-  // Run tests from one or more projects
-  // projects: undefined,
-
-  // Use this configuration option to add custom reporters to Jest
-  reporters: [
-	"default",
-	["jest-junit", { outputFile: "reports/jest-junit.xml" }]
-  ],
 
   // Automatically reset mock state before every test
   // resetMocks: false,
@@ -138,14 +130,8 @@ module.exports = {
   //   "<rootDir>"
   // ],
 
-  // Allows you to use a custom runner instead of Jest's default test runner
-  // runner: "jest-runner",
-
   // The paths to modules that run some code to configure or set up the testing environment before each test
   // setupFiles: [],
-
-  // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  setupFilesAfterEnv: ["./dev/jest.setup.js"],
 
   // The number of seconds after which a test is considered as slow and reported as such in the results.
   // slowTestThreshold: 5,
@@ -162,19 +148,10 @@ module.exports = {
   // Adds a location field to test results
   // testLocationInResults: false,
 
-  // The glob patterns Jest uses to detect test files
-  // testMatch: [
-  //   "**/__tests__/**/*.[jt]s?(x)",
-  //   "**/?(*.)+(spec|test).[tj]s?(x)"
-  // ],
-
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
   //   "\\\\node_modules\\\\"
   // ],
-
-  // The regexp pattern or array of patterns that Jest uses to detect test files
-  testRegex: "(/__tests__/.*|(\\.|/)test)\\.jsx?$",
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: undefined,
@@ -184,7 +161,7 @@ module.exports = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    "\\.jsx?$": "babel-jest",
+    "\\.[tj]sx?$": "babel-jest",
     "^.+\\.css$": "jest-transform-css"
   },
 
@@ -205,4 +182,34 @@ module.exports = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+};
+
+module.exports = {
+	projects: [
+		{
+			...common,
+			displayName: "test",
+			// A list of paths to modules that run some code to configure or set up the testing framework before each test
+			setupFilesAfterEnv: ["./dev/jest.setup.js"],
+			// The regexp pattern or array of patterns that Jest uses to detect test files
+			testRegex: "(/__tests__/.*|(\\.|/)test)\\.[tj]sx?$",
+		},
+		{
+			...common,
+			displayName: "lint",
+			runner: "jest-runner-eslint",
+			testMatch: [
+				"<rootDir>/src/**/*",
+				"<rootDir>/stories/**/*",
+				"<rootDir>/tests/**/*",
+				"<rootDir>/loader.js",
+				"<rootDir>/sandbox.js"
+			]
+		}
+	],
+	// Use this configuration option to add custom reporters to Jest
+	reporters: [
+		"default",
+		["jest-junit", { outputFile: "reports/tests-junit.xml" }]
+	],
 };

@@ -15,11 +15,18 @@ const addMetadata = ({ key, library, version }) => ({
 	}
 });
 
+/**
+ * @param {{key: string, path: string}} args 
+ * @returns {ZoteroAPI.Responses.ItemGet<"bib">}
+ */
 export const findBibliographyEntry = ({ key, path }) => {
 	const [libraryType, libraryID] = path.split("/");
 	return Object.values(data).find(item => item.library.type + "s" == libraryType && item.library.id == libraryID && item.key == key);
 };
 
+/**
+ * @constant {Record<string, ZoteroAPI.Responses.ItemGet<"bib">}
+ */
 const data = {
 	"itemInLibrary": {
 		...addMetadata({
@@ -51,9 +58,13 @@ export const handleBibliography = rest.get(
 	zotero(":libraryType/:libraryID/items/:itemKey"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID, itemKey } = req.params;
-		const include = req.url.searchParams.get("include");
+		const includeFormats = (req.url.searchParams.get("include") || "").split(",");
         
-		const { key, version, library, links, meta, [include]: output } = findBibliographyEntry({ key: itemKey, path: `${libraryType}/${libraryID}` });
+		const { key, version, library, links, meta, ...outputs } = findBibliographyEntry({ key: `${itemKey}`, path: `${libraryType}/${libraryID}` });
+
+		const formatsData = Object.fromEntries(
+			Object.entries(outputs)
+				.filter(([format, _output]) => includeFormats.includes(format)));
 
 		return res(
 			ctx.json({
@@ -62,7 +73,7 @@ export const handleBibliography = rest.get(
 				library,
 				links,
 				meta,
-				[include]: output
+				...formatsData
 			})
 		);
 	}

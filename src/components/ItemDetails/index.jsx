@@ -36,7 +36,7 @@ const popoverProps = {
 /** Creates a formatted reference to an item
  * @param {String} citekey - The item's citekey
  * @param {("citation"|"citekey"|"page-reference"|"tag")} format 
- * @param {ZoteroItem} item - The Zotero item
+ * @param {ZoteroAPI.ItemTop} item - The Zotero item
  * @returns The formatted reference
  */
 const makeItemReference = (citekey, format, item) => {
