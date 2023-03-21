@@ -15,11 +15,18 @@ const addMetadata = ({ key, library, version }) => ({
 	}
 });
 
+/**
+ * @param {{key: string, path: string}} args 
+ * @returns {ZoteroAPI.Responses.ItemGet<"bib">}
+ */
 export const findBibliographyEntry = ({ key, path }) => {
 	const [libraryType, libraryID] = path.split("/");
 	return Object.values(data).find(item => item.library.type + "s" == libraryType && item.library.id == libraryID && item.key == key);
 };
 
+/**
+ * @constant {Record<string, ZoteroAPI.Responses.ItemGet<"bib">}
+ */
 const data = {
 	"itemInLibrary": {
 		...addMetadata({

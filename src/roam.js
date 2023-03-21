@@ -7,7 +7,7 @@ import { use_smartblock_metadata } from "./smartblocks";
 
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
- * @param {RoamImportableBlock} object - The block Object to use as template 
+ * @param {RImportableBlock} object - The block Object to use as template 
  */
 async function addBlockObject(parentUID, object, order = 0) {
 	const { string: blockString, children = [], ...opts } = object;
@@ -65,7 +65,7 @@ async function addBlockObject(parentUID, object, order = 0) {
 
 /** Adds Roam blocks to a parent UID, based on an array input.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
- * @param {(String|RoamImportableBlock)[]} arr - The array to use as template
+ * @param {RImportableElement[]} arr - The array to use as template
  * @returns The outcome of the operation
  */
 async function addBlocksArray(parentUID, arr, order = 0){
@@ -123,7 +123,7 @@ async function addBlocksArray(parentUID, arr, order = 0){
 /** Adds an entry to Roam's Command Palette
  * @param {String} label - The label for the menu option 
  * @param {() => void} onSelect - The callback to execute upon selection
- * @param {Object} extensionAPI - The API specifically available to the extension
+ * @param {Roam.ExtensionAPI?} extensionAPI - The API specifically available to the extension
  * @see https://roamresearch.com/#/app/developer-documentation/page/rAkidgrv3
  */
 function addPaletteCommand(label, onSelect, extensionAPI = {}) {
@@ -252,7 +252,7 @@ function getCitekeyPagesWithEditTime(){
 }
 
 /** Retrieves the current cursor location in the Roam interface, to enable returning focus to its previous state after an interaction with the extension's interface (e.g opening a dialog).
- * @returns {CursorLocation} Information about the cursor's location
+ * @returns {RCursorLocation} Information about the cursor's location
  */
 function getCurrentCursorLocation(){
 	const { "block-uid": blockUID, "window-id": windowID } = (window.roamAlphaAPI.ui.getFocusedBlock() || {});
@@ -304,8 +304,8 @@ function getInitialedPages(keys){
 
 /** Imports an item's metadata as Roam blocks
  * @fires zotero-roam:metadata-added
- * @param {{item: ZoteroItemTop, pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} itemData - The item's Zotero data and its children, if any
- * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
+ * @param {{item: ZItemTop, pdfs?: ZItemAttachment[], notes?: (ZItemNote|ZItemAnnotation)[]}} itemData - The item's Zotero data and its children, if any
+ * @param {String|false} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
  * @param {SettingsMetadata} metadataSettings - The user's `metadata` settings 
  * @param {SettingsTypemap} typemap - The user's `typemap` settings
  * @param {SettingsNotes} notesSettings - The user's `notes` settings
@@ -395,8 +395,8 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 
 /** Imports an item's notes as Roam blocks
  * @fires zotero-roam:notes-added
- * @param {{item: ZoteroItemTop, notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} itemData - The item's Zotero data and its notes, if any 
- * @param {String|Boolean} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value
+ * @param {{item: ZoteroAPI.ItemTop, notes: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}} itemData - The item's Zotero data and its notes, if any 
+ * @param {String|false} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value
  * @param {SettingsNotes} notesSettings - The user's `notes` settings
  * @param {SettingsAnnotations} annotationsSettings - The user's `annotations` settings
  * @returns If successful, a detailed outcome of the immport ; otherwise, the first error encountered.
@@ -450,7 +450,7 @@ async function importItemNotes({ item, notes = [] } = {}, uid, notesSettings, an
 }
 
 /** Places the cursor in a given location, if it is specified
- * @param {CursorLocation} place 
+ * @param {RCursorLocation} place 
  */
 function maybeReturnCursorToPlace(place = {}){
 	if(place && place.location){
@@ -481,7 +481,7 @@ async function openPageByUID(uid){
 
 /** Removes an entry from Roam's Command Palette
  * @param {String} label - The label for the menu option
- * @param {Object} extensionAPI - The API specifically available to the extension
+ * @param {Roam.ExtensionAPI?} extensionAPI - The API specifically available to the extension
  * @see https://roamresearch.com/#/app/developer-documentation/page/eG9ulEdWq
  */
 function removePaletteCommand(label, extensionAPI = {}) {

@@ -1,11 +1,16 @@
 import { rest } from "msw";
 
+
 /* istanbul ignore next */
 const addSampleMetadata = () => ({
 	key: "XRT92",
 	version: 0
 });
 
+/**
+ * @param {Partial<CitoidAPI.AsZotero>} config 
+ * @returns 
+ */
 const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ...props }) => ({
 	...addSampleMetadata,
 	creators,
@@ -17,6 +22,10 @@ const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ..
 	...props
 });
 
+/**
+ * @param {string[]} args 
+ * @returns {ZoteroAPI.Creator}
+ */
 const addCreator = ([firstName, lastName, role = "author"]) => ({
 	firstName,
 	lastName,

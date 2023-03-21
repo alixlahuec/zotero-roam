@@ -4,6 +4,10 @@ import { libraries } from "./libraries";
 
 const { userLibrary } = libraries;
 
+/**
+ * @param {{key: string, library: ZMockLibrary, parentItem: string, version: number, data: Partial<ZoteroAPI.ItemAnnotation["data"]>}} config
+ * @returns {ZoteroAPI.ItemAnnotation}
+ */
 const makeAnnot = ({ key, library, parentItem, version, data }) => {
 	return {
 		data: {

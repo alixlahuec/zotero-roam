@@ -378,7 +378,7 @@ const userSettings = {
 const userSettingsType = shape(userSettings);
 
 const initSettingsType = shape({
-	...requests,
+	requests: requestsType,
 	...userSettings
 });
 

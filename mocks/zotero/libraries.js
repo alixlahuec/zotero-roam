@@ -14,6 +14,7 @@ const configLibrary = (type, id, name) => {
 	};
 };
 
+/** @constant {Record<string, ZLibraryMock>} */
 const data = {
 	"userLibrary": {
 		...configLibrary("user", 123456, "username"),

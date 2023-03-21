@@ -5,7 +5,7 @@ import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSeman
 
 /** Wrapper for retrieving items data, based on contents of the query cache.
  * @param {DataRequest} req - The parameters of the request
- * @param {*} queryClient - The current React Query client
+ * @param {QueryClient} queryClient - The current React Query client
  * @returns 
  */
 async function wrappedFetchItems(req, queryClient) {

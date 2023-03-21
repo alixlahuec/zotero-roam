@@ -18,6 +18,7 @@ import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "./src/index.css";
 
 
+/** @constant {ExtensionSettingsConfig} */
 const panelConfig = {
 	tabTitle: "zoteroRoam",
 	settings: [
@@ -33,6 +34,9 @@ const panelConfig = {
 	]
 };
 
+/**
+ * @param {{extensionAPI: Roam.ExtensionAPI}} param0 
+ */
 function onload({ extensionAPI }){
 
 	const INSTALL_CONTEXT = "roam/depot";
