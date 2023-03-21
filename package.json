@@ -1,6 +1,6 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.7.12",
+    "version": "0.7.13",
     "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
@@ -25,8 +25,8 @@
         "build:roam": "webpack --config dev/webpack.roam.config.js",
         "build:dev-roam": "webpack --config dev/webpack.dev.roam.config.js",
         "build:sandbox": "webpack --config dev/webpack.sandbox.config.js",
-		"typecheck": "tsc --noEmit --pretty --checkJs false",
-		"ci:typecheck": "npm run typecheck",
+        "typecheck": "tsc --noEmit --pretty --checkJs false",
+        "ci:typecheck": "npm run typecheck",
         "test": "jest",
         "ci:test": "jest --ci --collectCoverage",
         "storybook": "start-storybook -p 6006",
@@ -58,11 +58,11 @@
             "@babel/preset-typescript"
         ]
     },
-	"jest-runner-eslint": {
-		"cliOptions": {
-			"fix": true
-		}
-	},
+    "jest-runner-eslint": {
+        "cliOptions": {
+            "fix": true
+        }
+    },
     "devDependencies": {
         "@babel/core": "^7.20.12",
         "@babel/preset-env": "^7.20.2",
