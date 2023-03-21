@@ -4,7 +4,7 @@
  */
 export namespace ZoteroAPI {
 	/** A creator of a Zotero item */
-	type Creator = ({ name: string } | { firstName: string, lastName: string }) & {
+	export type Creator = ({ name: string } | { firstName: string, lastName: string }) & {
 		/** The creator's role (author, editor, translator...) */
 		creatorType: _CreatorType
 	};

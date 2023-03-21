@@ -22,6 +22,10 @@ export const makeCollection = ({ key, library, name, version, hasParent = false,
 	version
 });
 
+/**
+ * @param {{key: string, library: ZMockLibrary, parentItem?: string | null}} param0 
+ * @returns 
+ */
 export const makeEntityLinks = ({ key, library, parentItem = null }) => {
 	const { type, name, path } = library;
 	let upLink = {};
@@ -57,7 +61,7 @@ export const makeEntityLinks = ({ key, library, parentItem = null }) => {
  * library: ZLibraryMock,
  * title?: string,
  * version?: number,
- * data?: Partial<ZoteroItemTop["data"]>
+ * data?: Partial<ZoteroAPI.ItemTop["data"]>
  * }} config
  */
 export const makeItemMetadata = ({ citekey = false, itemType = "journalArticle", key = "__NO_UNIQUE_KEY__", library, title ="", version = 1, data = {} }) => ({

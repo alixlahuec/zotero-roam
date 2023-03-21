@@ -58,6 +58,18 @@ export interface ZSimplifiedAnnotation {
 	type: "highlight" | "image"
 }
 
+export interface ZSimplifiedNote {
+	date_added: string,
+	date_modified: string,
+	key: string,
+	location: string,
+	link_note: string,
+	note: string,
+	parent_item: string,
+	raw: ZItemNote,
+	tags: string[]
+}
+
 type ZItemBase = {
 	has_citekey: boolean
 };

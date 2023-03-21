@@ -13,9 +13,9 @@ const { userLibrary } = libraries;
  * parentItem: string,
  * title: string,
  * version: number,
- * data: Partial<ZoteroItemAttachment["data"]>
+ * data: Partial<ZoteroAPI.ItemAttachment["data"]>
  * }} config 
- * @returns {ZoteroItemAttachment}
+ * @returns {ZoteroAPI.ItemAttachment}
  */
 const makePDF = ({ key, library, numChildren = 0, parentItem, title, version, data = {} }) => ({
 	key,

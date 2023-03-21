@@ -6,7 +6,7 @@ import { libraries } from "./libraries";
 const { userLibrary, groupLibrary } = libraries;
 
 /**
- * @constant {Record<string, {collections: ZoteroAPI.Collection[], items: ZoteroItem[]}>}
+ * @constant {Record<string, {collections: ZoteroAPI.Collection[], items: ZoteroAPI.Item[]}>}
  */
 const data = {
 	[userLibrary.path]: {
@@ -83,7 +83,7 @@ export const findDeleted = ({ path, since }) => {
 	entities.items = data[path]
 		.items
 		.filter(it => it.version > since)
-		.map(cl => cl.key);
+		.map(it => it.key);
    
 	return entities;
 };

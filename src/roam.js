@@ -65,7 +65,7 @@ async function addBlockObject(parentUID, object, order = 0) {
 
 /** Adds Roam blocks to a parent UID, based on an array input.
  * @param {String} parentUID - The UID of the parent (Roam block or page) 
- * @param {(RImportableElement)[]} arr - The array to use as template
+ * @param {RImportableElement[]} arr - The array to use as template
  * @returns The outcome of the operation
  */
 async function addBlocksArray(parentUID, arr, order = 0){
@@ -123,7 +123,7 @@ async function addBlocksArray(parentUID, arr, order = 0){
 /** Adds an entry to Roam's Command Palette
  * @param {String} label - The label for the menu option 
  * @param {() => void} onSelect - The callback to execute upon selection
- * @param {Roam.ExtensionAPI} extensionAPI - The API specifically available to the extension
+ * @param {Roam.ExtensionAPI?} extensionAPI - The API specifically available to the extension
  * @see https://roamresearch.com/#/app/developer-documentation/page/rAkidgrv3
  */
 function addPaletteCommand(label, onSelect, extensionAPI = {}) {
@@ -304,7 +304,7 @@ function getInitialedPages(keys){
 
 /** Imports an item's metadata as Roam blocks
  * @fires zotero-roam:metadata-added
- * @param {{item: ZoteroItemTop, pdfs: ZoteroItemAttachment[], notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} itemData - The item's Zotero data and its children, if any
+ * @param {{item: ZItemTop, pdfs?: ZItemAttachment[], notes?: (ZItemNote|ZItemAnnotation)[]}} itemData - The item's Zotero data and its children, if any
  * @param {String|false} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value 
  * @param {SettingsMetadata} metadataSettings - The user's `metadata` settings 
  * @param {SettingsTypemap} typemap - The user's `typemap` settings
@@ -395,7 +395,7 @@ async function importItemMetadata({ item, pdfs = [], notes = [] } = {}, uid, met
 
 /** Imports an item's notes as Roam blocks
  * @fires zotero-roam:notes-added
- * @param {{item: ZoteroItemTop, notes: (ZoteroItemNote|ZoteroItemAnnotation)[]}} itemData - The item's Zotero data and its notes, if any 
+ * @param {{item: ZoteroAPI.ItemTop, notes: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}} itemData - The item's Zotero data and its notes, if any 
  * @param {String|false} uid - The UID of the item's Roam page (if it exists), otherwise a falsy value
  * @param {SettingsNotes} notesSettings - The user's `notes` settings
  * @param {SettingsAnnotations} annotationsSettings - The user's `annotations` settings
@@ -481,7 +481,7 @@ async function openPageByUID(uid){
 
 /** Removes an entry from Roam's Command Palette
  * @param {String} label - The label for the menu option
- * @param {Roam.ExtensionAPI} extensionAPI - The API specifically available to the extension
+ * @param {Roam.ExtensionAPI?} extensionAPI - The API specifically available to the extension
  * @see https://roamresearch.com/#/app/developer-documentation/page/eG9ulEdWq
  */
 function removePaletteCommand(label, extensionAPI = {}) {

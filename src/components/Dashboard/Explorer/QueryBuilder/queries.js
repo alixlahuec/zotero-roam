@@ -250,7 +250,7 @@ const queries = {
 /** Evaluates a query term (predicate or group) against an item
  * @param {QueryTerm|QueryTerm[]} term - The term to evaluate
  * @param {Boolean} useOR - If the term is a group, is it an `OR` group? If `false`, it is treated as an `AND` group.
- * @param {ZoteroItemTop} item - The item against which to evaluate the term
+ * @param {ZoteroAPI.ItemTop} item - The item against which to evaluate the term
  * @returns {Boolean} The result of the term evaluation for the item
  */
 function runQueryTerm(term, useOR = false, item){

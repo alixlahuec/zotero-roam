@@ -268,7 +268,7 @@ function executeFunctionByName(functionName, context /*, args */) {
 
 /** Formats a single Zotero annotation with params
  * @param {ZItemAnnotation} annotation - The (raw) annotation to be formatted
- * @param {{template_comment: string, template_highlight: string}} config - Additional configuration 
+ * @param {{template_comment?: string, template_highlight?: string}} config - Additional configuration 
  * @returns A block object, ready for import into Roam
  */
 function formatAnnotationWithParams(annotation, { template_comment = "{{comment}}", template_highlight = "[[>]] {{highlight}} ([p. {{page_label}}]({{link_page}})) {{tags_string}}" } = {}){
@@ -306,7 +306,7 @@ function formatAnnotationWithParams(annotation, { template_comment = "{{comment}
 
 /** Default formatter for annotations
  * @param {ZItemAnnotation[]} annotations - The (raw) array of annotations to be formatted 
- * @param {{group_by: ("day_added"|false), template_comment: string, template_highlight: string}} config - Additional configuration
+ * @param {{group_by?: ("day_added"|false), template_comment?: string, template_highlight?: string}} config - Additional configuration
  * @returns An array of block objects, ready for import into Roam.
  */
 function formatItemAnnotations(annotations, { group_by = false, template_comment, template_highlight } = {}){
@@ -352,7 +352,7 @@ function formatItemAnnotations(annotations, { group_by = false, template_comment
 }
 
 /** Default formatter for notes
- * @param {{ZoteroItemNote}[]} notes - The (raw) array of notes to be formatted
+ * @param {ZItemNote[]} notes - The (raw) array of notes to be formatted
  * @param {String} separator - The string on which to split notes into blocks
  * @returns A flat array of strings, separated according to `separator`, and ready for import into Roam.
  */
@@ -366,7 +366,7 @@ function formatItemNotes(notes, separator = "\n"){
 /** Converts an item into a given string format
  * @param {ZItemTop} item - The item to convert 
  * @param {("inline"|"tag"|"pageref"|"citation"|"popover"|"zettlr"|"citekey")} format - The format to convert into 
- * @param {{accent_class: String}} config - Additional parameters 
+ * @param {{accent_class?: String}} config - Additional parameters 
  * @returns {String} The formatted reference
  */
 function formatItemReference(item, format, { accent_class = "zr-accent-1" } = {}){
@@ -515,7 +515,7 @@ function getPDFLink(pdfItem, as = "href"){
 
 /** Creates a web link to a specific Zotero item, which opens in the browser.
  * @param {ZItemTop} item - The targeted Zotero item 
- * @param {{format: ("markdown"|"target"), text?: String}} config - Additional settings 
+ * @param {{format?: ("markdown"|"target"), text?: String}} config - Additional settings 
  * @returns A link to the item, either as a Markdown link or a URL
  */
 function getWebLink(item, { format = "markdown", text = "Web library" } = {}){
@@ -615,11 +615,11 @@ function makeDNP(date, { brackets = true } = {}){
  */
 function makeOrdinal(i) {
 	const j = i % 10;
-	if (j == 1 & i != 11) {
+	if (j == 1 && i != 11) {
 		return i + "st";
-	} else if (j == 2 & i != 12) {
+	} else if (j == 2 && i != 12) {
 		return i + "nd";
-	} else if (j == 3 & i != 13) {
+	} else if (j == 3 && i != 13) {
 		return i + "rd";
 	} else {
 		return i + "th";

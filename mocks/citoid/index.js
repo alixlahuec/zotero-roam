@@ -8,7 +8,6 @@ const addSampleMetadata = () => ({
 });
 
 /**
- * 
  * @param {Partial<CitoidAPI.AsZotero>} config 
  * @returns 
  */
