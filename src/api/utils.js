@@ -733,55 +733,25 @@ function updateTagMap(map, tagEntry){
 	return map;
 }
 
-/** Adds new items to a Zotero library, with optional collections & tags.
- * @param {Object[]} items -  The items to be added to Zotero.
- * @param {{library: ZLibrary, collections?: String[], tags?: String[]}} config - The options to be used for the import. 
- * @returns 
- */
-function writeCitoids(items, { library, collections = [], tags = [] } = {}){
-	const { apikey, path } = library;
-	const clean_tags = tags.map(t => { return { tag: t }; });
-	// * Only 50 items can be added at once
-	// * https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
-	const apiCalls = [];
-	const nbCalls = Math.ceil(items.length / 50);
-
-	for(let i=1; i <= nbCalls; i++){
-		const itemsData = items
-			.slice(50*(i-1),50*i)
-			.map(citoid => {
-				// Remove key and version from the data object
-				const { key, version, ...item } = citoid;
-		
-				return {
-					...item,
-					collections,
-					tags: clean_tags
-				};
-			});
-		apiCalls.push(zoteroClient.post(`${path}/items`, JSON.stringify(itemsData), { headers: { "Zotero-API-Key": apikey } }));
-	}
-
-	return Promise.allSettled(apiCalls);
-}
-
-/** Modifies data for existing items in a Zotero library
- * @param {Object[]} dataList - The data array containing the modifications
+/** Adds or modifies items in a Zotero library. Only 50 items can be manipulated per API call.
+ * @param {Object[]} dataList - The array containing the items' data
  * @param {ZLibrary} library - The targeted Zotero library
- * @returns The outcome of the Axios API call
+ * @see https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
+ * @see https://www.zotero.org/support/dev/web_api/v3/write_requests#updating_multiple_objects
  */
-function writeItems(dataList, library){
+function writeItems(dataList, library) {
 	const { apikey, path } = library;
-	// * Only 50 items can be added at once
-	// * https://www.zotero.org/support/dev/web_api/v3/write_requests#updating_multiple_objects
-	const apiCalls = [];
 	const nbCalls = Math.ceil(dataList.length / 50);
+	const apiCalls = [];
 
-	for(let i=1; i <= nbCalls; i++){
-		const itemsData = dataList.slice(50*(i-1),50*i);
-		apiCalls.push(zoteroClient.post(`${path}/items`, JSON.stringify(itemsData), { headers: { "Zotero-API-Key": apikey } }));
+	for (let i = 1; i <= nbCalls; i++) {
+		const itemsData = dataList.slice(50 * (i - 1), 50 * i);
+		apiCalls.push(zoteroClient.post(
+			`${path}/items`,
+			JSON.stringify(itemsData),
+			{ headers: { "Zotero-API-Key": apikey } }
+		));
 	}
-
 	return Promise.allSettled(apiCalls);
 }
 
@@ -805,6 +775,5 @@ export {
 	matchWithCurrentData,
 	parseSemanticDOIs,
 	updateTagMap,
-	writeCitoids,
 	writeItems
 };

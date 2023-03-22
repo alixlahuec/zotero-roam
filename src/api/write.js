@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteTags, writeCitoids, writeItems } from "./utils";
+import { deleteTags, writeItems } from "./utils";
 import { emitCustomEvent } from "../events";
 
 /** React Query custom mutation hook for deleting tags from a Zotero library.
@@ -47,7 +47,23 @@ const useImportCitoids = () => {
 
 	return useMutation((variables) => {
 		const { collections = [], items, library, tags = [] } = variables;
-		return writeCitoids(items, { library, collections, tags });
+
+		// Transform the data for import
+		const clean_tags = tags.map(t => { return { tag: t }; });
+		const dataList = items
+			.map(citoid => {
+				// Remove key and version from the data object
+				const { key, version, ...item } = citoid;
+
+				return {
+					...item,
+					collections,
+					tags: clean_tags
+				};
+			});
+		
+		return writeItems(dataList, library);
+
 	}, {
 		onSettled: (data, error, variables, _context) => {
 			const { collections, items, library: { path }, tags } = variables;
