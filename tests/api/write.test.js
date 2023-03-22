@@ -94,9 +94,10 @@ describe("Mutation hooks for the Zotero API", () => {
 	});
 
 	describe("useImportCitoids", () => {
-		const writeCitoidsSpy = jest.spyOn(apiUtils, "writeCitoids");
+		const writeItemsSpy = jest.spyOn(apiUtils, "writeItems");
 
-		test("args passed to writeCitoids", async() => {
+		test("args passed to writeItems", async () => {
+			const library = { apikey: masterKey, path: userLibrary.path };
 			const { result, waitFor } = renderHook(() => useImportCitoids(), { wrapper });
 
 			expect(result.current.status).toBe("idle");
@@ -104,15 +105,21 @@ describe("Mutation hooks for the Zotero API", () => {
 				result.current.mutate({
 					collections: [],
 					items: [citoids[goodIdentifier]],
-					library: { apikey: masterKey, path: userLibrary.path },
+					library,
 					tags: []
 				});
 			});
 			await waitFor(() => result.current.status == "success");
 
-			expect(writeCitoidsSpy).toHaveBeenCalledWith(
-				[citoids[goodIdentifier]],
-				{ collections: [], library: { apikey: masterKey, path: userLibrary.path }, tags: [] }
+			expect(writeItemsSpy).toHaveBeenCalledWith(
+				[
+					{
+						...citoids[goodIdentifier],
+						collections: [],
+						tags: []
+					}
+				],
+				library
 			);
 		});
 

@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeCitoids, writeItems } from "../../src/api/utils";
+import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeItems } from "../../src/api/utils";
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
 import { findBibEntry, findItems, items } from "Mocks/zotero/items";
 import { findTags, tags } from "Mocks/zotero/tags";
@@ -10,7 +10,6 @@ import { citoids } from "Mocks/citoid";
 import { deletions } from "Mocks/zotero/deleted";
 import { findCollections } from "Mocks/zotero/collections";
 import { libraries } from "Mocks/zotero/libraries";
-import { makeItemMetadata } from "Mocks/zotero/common";
 import { semantics } from "Mocks/semantic-scholar";
 
 
@@ -550,47 +549,6 @@ describe("Fetching mocked Citoid data", () => {
 		}
 	);
     
-});
-
-describe("Writing mocked Citoid data", () => {
-	const cases = Object.entries(libraries);
-
-	test.each(cases)(
-		"%# Adding a Citoid to %s",
-		async(_libName, libraryDetails) => {
-			const { path, version } = libraryDetails;
-
-			const res = await writeCitoids(
-				[{ title: "TEST_TITLE" }],
-				{ 
-					library: { apikey: masterKey, path },
-					collections: [],
-					tags: []
-				}
-			);
-
-			const data = res.map(rq => rq.value.data);
-
-			expect(data).toEqual([{
-				failed: {},
-				unchanged: {},
-				success: {
-					0: "__NO_UNIQUE_KEY__"
-				},
-				successful: {
-					0: {
-						...makeItemMetadata({
-							library: libraryDetails,
-							version,
-							data: {
-								title: "TEST_TITLE"
-							}
-						})
-					}
-				}
-			}]);
-		}
-	);
 });
 
 describe("Fetching mocked Semantic data", () => {
