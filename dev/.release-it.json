@@ -1,7 +1,6 @@
 {
     "hooks": {
         "after:bump": [
-            "npm run build:dev",
             "npm run build:prod",
             "npm run build:roam",
 			"npm run build:sandbox"
