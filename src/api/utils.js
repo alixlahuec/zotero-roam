@@ -733,7 +733,7 @@ function updateTagMap(map, tagEntry){
 	return map;
 }
 
-/** Adds or modifies items in a Zotero library. Only 50 items can be manipulated per API call.
+/** Adds or modifies items in a Zotero library. Only the first 50 items will be sent to the API.
  * @param {Object[]} dataList - The array containing the items' data
  * @param {ZLibrary} library - The targeted Zotero library
  * @see https://www.zotero.org/support/dev/web_api/v3/write_requests#creating_multiple_objects
@@ -741,6 +741,7 @@ function updateTagMap(map, tagEntry){
  */
 function writeItems(dataList, library) {
 	const { apikey, path } = library;
+	// Only 50 items can be manipulated per API call.
 	const nbCalls = Math.ceil(dataList.length / 50);
 	const apiCalls = [];
 
