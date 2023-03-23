@@ -7,7 +7,7 @@ import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import { ListWrapper, Toolbar } from "Components/DataList";
 import LogItem from "./LogItem";
 
-import useBool from "../../../hooks/useBool";
+import { useBool } from "../../../hooks";
 import { useQuery_Items } from "../../../api/queries";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 

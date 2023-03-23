@@ -1,6 +1,6 @@
 import LibraryQueryList from "./LibraryQueryList";
 
-import useBool from "../../hooks/useBool";
+import { useBool } from "../../hooks";
 
 import { cleanLibrary } from "../../utils";
 import { items } from "Mocks/zotero/items";

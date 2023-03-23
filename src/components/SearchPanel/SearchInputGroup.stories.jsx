@@ -6,7 +6,7 @@ import { expect } from "@storybook/jest";
 
 import SearchInputGroup from "./SearchInputGroup";
 
-import useBool from "../../hooks/useBool";
+import { useBool } from "../../hooks";
 
 
 export default {

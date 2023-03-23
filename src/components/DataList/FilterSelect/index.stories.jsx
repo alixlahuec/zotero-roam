@@ -1,6 +1,6 @@
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import useFilterList from "../../../hooks/useFilterList";
+import { useFilterList } from "../../../hooks";
 import FilterSelect from "Components/DataList/FilterSelect";
 
 

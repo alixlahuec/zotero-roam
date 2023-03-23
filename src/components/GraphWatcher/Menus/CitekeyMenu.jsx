@@ -13,7 +13,7 @@ import SciteBadge from "Components/SciteBadge";
 import SemanticPanel from "../SemanticPanel";
 
 import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
-import useBool from "../../../hooks/useBool";
+import { useBool } from "../../../hooks";
 import { useMetadataSettings } from "Components/UserSettings/Metadata";
 import { useNotesSettings } from "Components/UserSettings/Notes";
 import { usePageMenuSettings } from "Components/UserSettings/PageMenu";

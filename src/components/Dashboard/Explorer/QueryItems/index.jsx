@@ -7,7 +7,7 @@ import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import ItemElement from "./ItemElement";
 import QueryFilterList from "../QueryBuilder/QueryFilterList";
 
-import usePagination from "../../../../hooks/usePagination";
+import { usePagination } from "../../../../hooks";
 
 import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../QueryBuilder/utils";
 import { runQuerySet } from "../QueryBuilder/queries";

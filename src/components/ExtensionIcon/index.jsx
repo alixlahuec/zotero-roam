@@ -7,7 +7,7 @@ import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 import { ExtensionContext } from "Components/App";
 
 import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/queries";
-import useBool from "../../hooks/useBool";
+import { useBool } from "../../hooks";
 import { useOtherSettings } from "Components/UserSettings/Other";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 

@@ -6,7 +6,7 @@ import { NonIdealState } from "@blueprintjs/core";
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import PDFElement from "./PDFElement";
 
-import usePagination from "../../../../hooks/usePagination";
+import { usePagination } from "../../../../hooks";
 
 import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";

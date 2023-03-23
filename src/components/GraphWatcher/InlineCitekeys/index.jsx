@@ -13,7 +13,7 @@ import { useOtherSettings } from "Components/UserSettings/Other";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
 import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
-import useBool from "../../../hooks/useBool";
+import { useBool } from "../../../hooks";
 import { useQuery_Items } from "../../../api/queries";
 
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";

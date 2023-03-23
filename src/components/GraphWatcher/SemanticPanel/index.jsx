@@ -9,7 +9,7 @@ import SemanticPagination from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
 import { pluralize, sortElems } from "../../../utils";
-import useMulti from "../../../hooks/useMulti";
+import { useMulti } from "../../../hooks";
 
 import { CustomClasses } from "../../../constants";
 

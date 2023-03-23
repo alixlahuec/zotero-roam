@@ -7,7 +7,7 @@ import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import CitekeyPopover from "Components/CitekeyPopover";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
 
-import useBool from "../../../hooks/useBool";
+import { useBool } from "../../../hooks";
 
 import { pluralize, sortElems } from "../../../utils";
 

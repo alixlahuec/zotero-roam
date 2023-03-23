@@ -14,7 +14,7 @@ import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
 import { formatItemReferenceWithDefault } from "Components/SearchPanel/utils";
 
 import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
-import useBool from "../../hooks/useBool";
+import { useBool } from "../../hooks";
 import { useCopySettings } from "Components/UserSettings/Copy";
 import { useMetadataSettings } from "Components/UserSettings/Metadata";
 import { useNotesSettings } from "Components/UserSettings/Notes";

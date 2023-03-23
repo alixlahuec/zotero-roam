@@ -8,7 +8,7 @@ import { CitoidGuide } from "Components/Guide";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import ZoteroImport from "Components/ZoteroImport";
 
-import useMulti from "../../../hooks/useMulti";
+import { useMulti } from "../../../hooks";
 import { useQuery_Citoid } from "../../../api/queries";
 import { useTypemapSettings } from "Components/UserSettings/Typemap";
 

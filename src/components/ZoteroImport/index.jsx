@@ -11,9 +11,9 @@ import TagsSelector from "Components/Inputs/TagsSelector";
 
 import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";
-import useMulti from "../../hooks/useMulti";
+import { useMulti ,useSelect} from "../../hooks";
 import { useRequestsSettings } from "Components/UserSettings/Requests";
-import useSelect from "../../hooks/useSelect";
+
 
 import { sortCollections } from "../../utils";
 

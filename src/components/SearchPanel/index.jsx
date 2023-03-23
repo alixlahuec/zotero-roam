@@ -5,7 +5,7 @@ import DialogOverlay from "Components/DialogOverlay";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import LibraryQueryList from "./LibraryQueryList";
 
-import useBool from "../../hooks/useBool";
+import { useBool } from "../../hooks";
 import { useCopySettings } from "Components/UserSettings/Copy";
 import { useQuery_Items } from "../../api/queries";
 import { useRequestsSettings } from "Components/UserSettings/Requests";

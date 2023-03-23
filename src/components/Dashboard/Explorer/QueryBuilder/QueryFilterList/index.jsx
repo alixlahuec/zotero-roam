@@ -6,7 +6,7 @@ import QueryBox from "../QueryBox";
 
 import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "../utils";
 import { defaultQueryTerm, queries } from "../queries";
-import useBool from "../../../../../hooks/useBool";
+import { useBool } from "../../../../../hooks";
 
 import { CustomClasses } from "../../../../../constants";
 

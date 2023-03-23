@@ -3,6 +3,7 @@ import { useCallback , useMemo } from "react";
 
 import { Button, Classes, Tag } from "@blueprintjs/core";
 
+import { ListWrapper, Toolbar } from "Components/DataList";
 import DayList from "Components/NotesImport/DayList";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
@@ -10,12 +11,11 @@ import { useNotesSettings } from "Components/UserSettings/Notes";
 
 import { importItemNotes } from "Roam";
 import { makeDNP } from "../../../src/utils";
-import useMulti from "../../../src/hooks/useMulti";
+import { useMulti } from "../../../src/hooks";
 
 import { CustomClasses } from "../../../src/constants";
 import * as customPropTypes from "../../propTypes";
 import "./index.css";
-import { ListWrapper, Toolbar } from "Components/DataList";
 
 
 function NotesList({ notes, selectedKeys, selectProps }){

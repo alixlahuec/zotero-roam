@@ -4,7 +4,7 @@ import { Children, cloneElement, isValidElement, useCallback, useMemo } from "re
 import { Button, Checkbox, Classes, Code, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
-import useBool from "../../hooks/useBool";
+import { useBool } from "../../hooks";
 import InputMultiSelect from "Components/Inputs/InputMultiSelect";
 import TagsSelector from "Components/Inputs/TagsSelector";
 
