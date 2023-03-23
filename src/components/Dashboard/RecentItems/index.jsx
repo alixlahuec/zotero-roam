@@ -3,7 +3,7 @@ import { memo, useEffect, useMemo, useState } from "react";
 
 import { NonIdealState, Slider, Spinner, Switch } from "@blueprintjs/core";
 
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 import { ListWrapper, Toolbar } from "Components/DataList";
 import LogItem from "./LogItem";
 

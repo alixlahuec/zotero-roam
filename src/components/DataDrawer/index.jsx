@@ -1,7 +1,7 @@
 import { bool, func, object } from "prop-types";
 
 import { Button, Classes, Drawer, Tab, Tabs } from "@blueprintjs/core";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 
 import { CustomClasses } from "../../constants";
 

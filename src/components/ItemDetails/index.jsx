@@ -5,7 +5,7 @@ import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprin
 
 import { validateShortcuts } from "../../setup";
 import DataDrawer from "Components/DataDrawer";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 import NotesDrawer from "Components/NotesDrawer";
 import ShortcutSequence from "Components/ShortcutSequence";
 

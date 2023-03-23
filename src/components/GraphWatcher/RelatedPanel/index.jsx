@@ -5,7 +5,7 @@ import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import CitekeyPopover from "Components/CitekeyPopover";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 
 import { useBool } from "../../../hooks";
 

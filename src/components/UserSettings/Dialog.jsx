@@ -4,7 +4,7 @@ import { Classes, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import ButtonLink from "Components/ButtonLink";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 
 import { CustomClasses } from "../../constants";
 import { SETTINGS_CONFIG } from "./mapping";

@@ -6,8 +6,7 @@ import { Button, ButtonGroup, Card, Classes, Collapse, Tag } from "@blueprintjs/
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import ButtonLink from "Components/ButtonLink";
 import CitekeyPopover from "Components/CitekeyPopover";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
-import ErrorCallout from "Components/Errors/ErrorCallout";
+import { ErrorBoundary, ErrorCallout } from "Components/Errors";
 import ItemDetails from "Components/ItemDetails";
 import SciteBadge from "Components/SciteBadge";
 import SemanticPanel from "../SemanticPanel";

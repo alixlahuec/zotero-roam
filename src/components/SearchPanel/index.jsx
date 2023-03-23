@@ -2,7 +2,7 @@ import { bool, func, oneOf } from "prop-types";
 import { memo, useCallback, useMemo } from "react";
 
 import DialogOverlay from "Components/DialogOverlay";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 import LibraryQueryList from "./LibraryQueryList";
 
 import { useBool } from "../../hooks";

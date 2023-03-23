@@ -3,12 +3,11 @@ import { memo, useCallback, useMemo } from "react";
 
 import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 
-import CollectionsSelector from "./CollectionsSelector";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
-import LibrarySelector from "./LibrarySelector";
-import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
+import { ErrorBoundary, NoWriteableLibraries } from "Components/Errors";
 import TagsSelector from "Components/Inputs/TagsSelector";
 import { useRequestsSettings } from "Components/UserSettings";
+import CollectionsSelector from "./CollectionsSelector";
+import LibrarySelector from "./LibrarySelector";
 
 import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
 import { useImportCitoids } from "../../api/write";

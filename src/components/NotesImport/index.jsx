@@ -4,9 +4,9 @@ import { useCallback , useMemo } from "react";
 import { Button, Classes, Tag } from "@blueprintjs/core";
 
 import { ListWrapper, Toolbar } from "Components/DataList";
-import DayList from "Components/NotesImport/DayList";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 import { useAnnotationsSettings, useNotesSettings } from "Components/UserSettings";
+import DayList from "./DayList";
 
 import { importItemNotes } from "Roam";
 import { makeDNP } from "../../../src/utils";
