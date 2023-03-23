@@ -7,7 +7,7 @@ import ButtonLink from "Components/ButtonLink";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
 
 import { useBool } from "../../hooks";
-import { useNotesSettings } from "Components/UserSettings/Notes";
+import { useNotesSettings } from "Components/UserSettings";
 
 import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
 

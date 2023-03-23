@@ -9,7 +9,7 @@ import LogItem from "./LogItem";
 
 import { useBool } from "../../../hooks";
 import { useQuery_Items } from "../../../api/queries";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useRequestsSettings } from "Components/UserSettings";
 
 import { categorizeLibraryItems } from "../../../utils";
 import { makeLogFromItems } from "./utils";

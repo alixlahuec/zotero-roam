@@ -9,7 +9,7 @@ import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
 import TagsDatalist from "./TagsDatalist";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useRequestsSettings } from "Components/UserSettings";
 
 import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";

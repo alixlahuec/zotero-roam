@@ -6,9 +6,9 @@ import ErrorBoundary from "Components/Errors/ErrorBoundary";
 import LibraryQueryList from "./LibraryQueryList";
 
 import { useBool } from "../../hooks";
-import { useCopySettings } from "Components/UserSettings/Copy";
+import { useCopySettings, useRequestsSettings } from "Components/UserSettings";
 import { useQuery_Items } from "../../api/queries";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
 import { cleanLibrary } from "../../utils";

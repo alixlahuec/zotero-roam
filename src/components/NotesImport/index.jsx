@@ -6,8 +6,7 @@ import { Button, Classes, Tag } from "@blueprintjs/core";
 import { ListWrapper, Toolbar } from "Components/DataList";
 import DayList from "Components/NotesImport/DayList";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
-import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
-import { useNotesSettings } from "Components/UserSettings/Notes";
+import { useAnnotationsSettings, useNotesSettings } from "Components/UserSettings";
 
 import { importItemNotes } from "Roam";
 import { makeDNP } from "../../../src/utils";

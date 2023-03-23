@@ -9,7 +9,7 @@ import QueryItems from "./QueryItems";
 import QueryPDFs from "./QueryPDFs";
 
 import { useQuery_Items } from "../../../api/queries";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useRequestsSettings } from "Components/UserSettings";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
 import { categorizeLibraryItems, cleanLibraryItem, cleanLibraryPDF, identifyChildren, identifyPDFConnections } from "../../../utils";

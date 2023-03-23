@@ -6,8 +6,8 @@ import Autocomplete from "Components/Autocomplete";
 import InlineCitekeys from "./InlineCitekeys";
 import WebImportFactory from "./WebImport";
 
-import { useAutocompleteSettings } from "Components/UserSettings/Autocomplete";
-import { useWebImportSettings } from "Components/UserSettings/WebImport";
+import { useAutocompleteSettings, useWebImportSettings } from "Components/UserSettings";
+
 
 import { addPageMenus, findPageMenus } from "./Menus/utils";
 import { findWebimportDivs, setWebimportDivs } from "./WebImport/utils";

@@ -6,7 +6,7 @@ import InputMultiSelect from "Components/Inputs/InputMultiSelect";
 import InputText from "Components/Inputs/InputText";
 import TagsSelector from "Components/Inputs/TagsSelector";
 
-import { useTypemapSettings } from "Components/UserSettings/Typemap";
+import { useTypemapSettings } from "Components/UserSettings";
 
 import { queries, types } from "../queries";
 

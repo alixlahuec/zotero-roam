@@ -10,7 +10,7 @@ import ZoteroImport from "Components/ZoteroImport";
 
 import { useMulti } from "../../../hooks";
 import { useQuery_Citoid } from "../../../api/queries";
-import { useTypemapSettings } from "Components/UserSettings/Typemap";
+import { useTypemapSettings } from "Components/UserSettings";
 
 import { pluralize } from "../../../utils";
 

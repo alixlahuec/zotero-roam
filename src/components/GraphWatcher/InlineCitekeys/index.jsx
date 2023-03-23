@@ -6,12 +6,7 @@ import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/cor
 
 import { ExtensionContext } from "Components/App";
 import NotesDrawer from "Components/NotesDrawer";
-import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
-import { useMetadataSettings } from "Components/UserSettings/Metadata";
-import { useNotesSettings } from "Components/UserSettings/Notes";
-import { useOtherSettings } from "Components/UserSettings/Other";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
-import { useTypemapSettings } from "Components/UserSettings/Typemap";
+import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useOtherSettings, useRequestsSettings, useTypemapSettings } from "Components/UserSettings";
 
 import { useBool } from "../../../hooks";
 import { useQuery_Items } from "../../../api/queries";

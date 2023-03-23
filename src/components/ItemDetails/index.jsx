@@ -13,14 +13,14 @@ import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
 import { formatItemReferenceWithDefault } from "Components/SearchPanel/utils";
 
-import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
+import { useAnnotationsSettings, useCopySettings, useMetadataSettings, useNotesSettings, useShortcutsSettings, useTypemapSettings } from "Components/UserSettings";
 import { useBool } from "../../hooks";
-import { useCopySettings } from "Components/UserSettings/Copy";
-import { useMetadataSettings } from "Components/UserSettings/Metadata";
-import { useNotesSettings } from "Components/UserSettings/Notes";
+
+
+
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
-import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
-import { useTypemapSettings } from "Components/UserSettings/Typemap";
+
+
 
 import { CustomClasses } from "../../constants";
 

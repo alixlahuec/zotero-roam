@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 import { CitekeyContextMenu, useGetItems } from ".";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useRequestsSettings } from "Components/UserSettings";
 
 import { items } from "Mocks/zotero/items";
 
