@@ -32,22 +32,6 @@ Default.play = async({ args, canvasElement }) => {
 	const into = "healthcare";
 
 	document.dispatchEvent = jest.fn();
-	const expectedEvent = new CustomEvent("zotero-roam:tags-modified", {
-		bubbles: true,
-		cancelable: true,
-		detail: {
-			args: {
-				into,
-				tags: [...args.options.roam, ...args.options.zotero]
-			},
-			data: {
-				successful: [],
-				failed: []
-			},
-			error: null,
-			library: userLibrary.path
-		}
-	});
 
 	const canvas = within(canvasElement);
 	const frame = within(canvasElement.parentElement);
@@ -69,5 +53,17 @@ Default.play = async({ args, canvasElement }) => {
 		timeout: 3000 
 	});
 
-	await expect(document.dispatchEvent).toHaveBeenCalledWith(expectedEvent);
+	await expect(document.dispatchEvent.mock.calls[0][0].detail)
+		.toEqual({
+			args: {
+				into,
+				tags: [...args.options.roam, ...args.options.zotero];
+			},
+			data: {
+				successful: [],
+				failed: [];
+			},
+			error: null,
+			library: userLibrary.path;
+		});
 };
