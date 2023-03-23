@@ -15,4 +15,4 @@ const useNumeric = (initialState = 0) => {
 	return [state, set];
 };
 
-export default useNumeric;
+export { useNumeric };

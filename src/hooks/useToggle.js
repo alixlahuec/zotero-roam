@@ -15,4 +15,4 @@ const useToggle = ({ start, options = [start, null] }) => {
 	return [state, toggle];
 };
 
-export default useToggle;
+export { useToggle };

@@ -23,4 +23,4 @@ const useBool = (initialState = false) => {
 	return [state, { set, toggle, on, off }];
 };
 
-export default useBool;
+export { useBool };
