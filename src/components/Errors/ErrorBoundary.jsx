@@ -38,4 +38,4 @@ ErrorBoundary.propTypes = {
 	children: node
 };
 
-export default ErrorBoundary;
+export { ErrorBoundary };
