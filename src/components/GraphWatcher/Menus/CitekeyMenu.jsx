@@ -10,7 +10,7 @@ import { ErrorBoundary, ErrorCallout } from "Components/Errors";
 import ItemDetails from "Components/ItemDetails";
 import SciteBadge from "Components/SciteBadge";
 import SemanticPanel from "../SemanticPanel";
-import { useAnnotationsSettings , useMetadataSettings , useNotesSettings , usePageMenuSettings , useSciteSettings , useTypemapSettings } from "Components/UserSettings";
+import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, usePageMenuSettings, useSciteSettings, useTypemapSettings } from "Components/UserSettings";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
 import { useBool } from "../../../hooks";
