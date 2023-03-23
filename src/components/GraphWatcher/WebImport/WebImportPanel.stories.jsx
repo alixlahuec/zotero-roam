@@ -47,23 +47,6 @@ WithInteractions.play = async({ args, canvasElement }) => {
 	const items = args.urls.map(id => citoids[id]);
 
 	document.dispatchEvent = jest.fn();
-	const expectedEvent = new CustomEvent("zotero-roam:write", {
-		bubbles: true,
-		cancelable: true,
-		detail: {
-			args: {
-				collections: [],
-				items,
-				tags: []
-			},
-			data: {
-				successful: [],
-				failed: []
-			},
-			error: null,
-			library: userLibrary.path
-		}
-	});
 
 	const canvas = within(canvasElement);
 
@@ -97,5 +80,20 @@ WithInteractions.play = async({ args, canvasElement }) => {
 		timeout: 3000 
 	});
 
-	await expect(document.dispatchEvent).toHaveBeenCalledWith(expectedEvent);
+	await expect(document.dispatchEvent.mock.calls[0][0].detail)
+		.toEqual({
+			args: {
+				collections: [],
+				items,
+				tags: []
+			},
+			data: {
+				successful: expect.arrayContaining([
+					expect.objectContaining({ status: 200 })
+				]),
+				failed: []
+			},
+			error: null,
+			library: userLibrary.path
+		});
 };
