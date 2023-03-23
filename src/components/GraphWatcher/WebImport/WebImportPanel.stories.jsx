@@ -88,7 +88,9 @@ WithInteractions.play = async({ args, canvasElement }) => {
 				tags: []
 			},
 			data: {
-				successful: [],
+				successful: expect.arrayContaining([
+					expect.objectContaining({ status: 200 })
+				]),
 				failed: []
 			},
 			error: null,
