@@ -57,13 +57,13 @@ Default.play = async({ args, canvasElement }) => {
 		.toEqual({
 			args: {
 				into,
-				tags: [...args.options.roam, ...args.options.zotero];
+				tags: [...args.options.roam, ...args.options.zotero]
 			},
 			data: {
 				successful: [],
-				failed: [];
+				failed: []
 			},
 			error: null,
-			library: userLibrary.path;
+			library: userLibrary.path
 		});
 };
