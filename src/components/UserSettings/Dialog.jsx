@@ -5,7 +5,6 @@ import { Classes, Tab, Tabs } from "@blueprintjs/core";
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import ButtonLink from "Components/ButtonLink";
 import ErrorBoundary from "Components/Errors/ErrorBoundary";
-import UserSettingsProvider from "./Provider";
 
 import { CustomClasses } from "../../constants";
 import { SETTINGS_CONFIG } from "./mapping";
@@ -19,9 +18,9 @@ const tabProps = {
 	panelClassName: "zr-settings-panel"
 };
 
-function SettingsDialog({ isOpen, onClose }){
+function SettingsDialog({ isOpen, onClose }) {
 	return <AuxiliaryDialog className="settings" isOpen={isOpen} label="zoteroRoam settings" onClose={onClose}>
-		<div className={ Classes.DIALOG_BODY }>
+		<div className={Classes.DIALOG_BODY}>
 			<div className="zr-settings--main">
 				<Tabs animate={false} className={[CustomClasses.TABS, "zr-settings-tabs-wrapper"].join(" ")} id="zr-settings--tabs" vertical={true}>
 					{SETTINGS_CONFIG
@@ -29,7 +28,7 @@ function SettingsDialog({ isOpen, onClose }){
 						.map(entry => {
 							const { id, widget: Comp } = entry;
 
-							return <Tab 
+							return <Tab
 								key={id}
 								id={id}
 								panel={<ErrorBoundary>
@@ -53,6 +52,5 @@ SettingsDialog.propTypes = {
 };
 
 export {
-	SettingsDialog,
-	UserSettingsProvider
+	SettingsDialog
 };

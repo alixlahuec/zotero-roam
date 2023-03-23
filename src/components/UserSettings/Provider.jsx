@@ -27,4 +27,4 @@ UserSettingsProvider.propTypes = {
 	init: customPropTypes.initSettingsType
 };
 
-export default UserSettingsProvider;
+export { UserSettingsProvider };
