@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { Button } from "@blueprintjs/core";
 
-import useBool from "../../hooks/useBool";
+import { useBool } from "../../hooks";
 import { cleanErrorIfAxios } from "../../utils";
 
 

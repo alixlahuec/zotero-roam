@@ -1,13 +1,6 @@
-import { act, renderHook } from "@testing-library/react-hooks";
-import useFilterList from "./useFilterList";
-import useBool from "./useBool";
-import useMulti from "./useMulti";
-import useNumeric from "./useNumeric";
-import usePagination from "./usePagination";
-import useSelect from "./useSelect";
-import useText from "./useText";
-import useToggle from "./useToggle";
 import { ChangeEvent, FormEvent } from "react";
+import { act, renderHook } from "@testing-library/react-hooks";
+import { useFilterList, useBool, useMulti, useNumeric, usePagination, useSelect, useText, useToggle } from ".";
 
 
 describe("Hook for boolean state", () => {

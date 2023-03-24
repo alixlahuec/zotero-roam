@@ -2,13 +2,12 @@ import { bool, func, oneOf } from "prop-types";
 import { memo, useCallback, useMemo } from "react";
 
 import DialogOverlay from "Components/DialogOverlay";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
+import { useCopySettings, useRequestsSettings } from "Components/UserSettings";
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import LibraryQueryList from "./LibraryQueryList";
 
-import useBool from "../../hooks/useBool";
-import { useCopySettings } from "Components/UserSettings/Copy";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
-import { useRoamCitekeys } from "Components/RoamCitekeysContext";
+import { useBool } from "../../hooks";
 import { useQuery_Items } from "../../api/zotero";
 
 import { cleanLibrary } from "./helpers";

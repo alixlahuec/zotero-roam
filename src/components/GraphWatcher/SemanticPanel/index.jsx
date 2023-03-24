@@ -4,13 +4,13 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 import SemanticPagination from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
 import { pluralize } from "../../../utils";
 import { sortElems } from "../helpers";
-import useMulti from "../../../hooks/useMulti";
+import { useMulti } from "../../../hooks";
 
 import { CustomClasses } from "../../../constants";
 

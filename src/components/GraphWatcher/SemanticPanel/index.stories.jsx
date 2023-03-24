@@ -1,7 +1,7 @@
 import { expect } from "@storybook/jest";
 import { userEvent, within } from "@storybook/testing-library";
 
-import SemanticPanel from "Components/GraphWatcher/SemanticPanel";
+import SemanticPanel from ".";
 
 import { cleanSemantic } from "../Menus/helpers";
 import { parseDOI } from "../../../utils";

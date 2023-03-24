@@ -7,8 +7,8 @@ import { QueryList, renderFilteredItems } from "@blueprintjs/select";
 import ItemDetails from "Components/ItemDetails";
 import SearchInputGroup from "./SearchInputGroup";
 
-import { useCopySettings } from "Components/UserSettings/Copy";
-import useDebounceCallback from "../../hooks/useDebounceCallback";
+import { useCopySettings } from "Components/UserSettings";
+import { useDebounceCallback } from "../../hooks";
 
 import { copyToClipboard, pluralize, searchEngine } from "../../utils";
 import { formatItemReferenceWithDefault } from "./utils";

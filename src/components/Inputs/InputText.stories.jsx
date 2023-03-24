@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import InputText from "./InputText";
+import { InputText } from ".";
 
 
 export default {

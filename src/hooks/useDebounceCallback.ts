@@ -8,7 +8,7 @@ import { useCallback, useRef } from "react";
  * @param timeout - The delay to be used (ms)
  * @returns The callback and a method to cancel it
  */
-export default function useDebounceCallback(callback: CallableFunction, timeout: number) {
+function useDebounceCallback(callback: CallableFunction, timeout: number) {
 	const timeoutRef = useRef<NodeJS.Timeout|undefined|null>(undefined);
 
 	const cancel = function() {
@@ -28,3 +28,5 @@ export default function useDebounceCallback(callback: CallableFunction, timeout:
 
 	return [debounceCallback, cancel];
 }
+
+export { useDebounceCallback };

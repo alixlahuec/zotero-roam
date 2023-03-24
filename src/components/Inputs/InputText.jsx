@@ -17,4 +17,4 @@ InputText.propTypes = {
 	setValue: func
 };
 
-export default InputText;
+export { InputText };

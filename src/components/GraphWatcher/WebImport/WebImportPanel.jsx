@@ -5,12 +5,12 @@ import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import { CitoidGuide } from "Components/Guide";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
+import { useTypemapSettings } from "Components/UserSettings";
 import ZoteroImport from "Components/ZoteroImport";
 
-import useMulti from "../../../hooks/useMulti";
+import { useMulti } from "../../../hooks";
 import { useQuery_Citoid } from "../../../api/citoid";
-import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import { pluralize } from "../../../utils";
 

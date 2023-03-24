@@ -5,7 +5,7 @@ import DataRequest from "./DataRequest";
 import RequestsEditor from "./RequestsEditor";
 import { RowCol } from "../common";
 
-import useBool from "../../../hooks/useBool";
+import { useBool } from "../../../hooks";
 import { useRequestsSettings } from ".";
 
 import { CustomClasses } from "../../../constants";

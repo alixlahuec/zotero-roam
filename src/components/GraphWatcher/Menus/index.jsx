@@ -3,13 +3,12 @@ import { arrayOf, object } from "prop-types";
 import { createPortal } from "react-dom";
 import { useMemo } from "react";
 
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
+import { usePageMenuSettings, useRequestsSettings } from "Components/UserSettings";
 import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
-import { usePageMenuSettings } from "Components/UserSettings/PageMenu";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
-import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import { useQuery_Items } from "../../../api/zotero";
 
 import { categorizeLibraryItems } from "../../../utils";

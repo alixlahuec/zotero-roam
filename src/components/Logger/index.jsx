@@ -7,8 +7,7 @@ import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import LogEntry from "./LogEntry";
 
-import useBool from "../../../src/hooks/useBool";
-import usePagination from "../../../src/hooks/usePagination";
+import { useBool, usePagination } from "../../../src/hooks";
 
 import * as customPropTypes from "../../propTypes";
 import { CustomClasses } from "../../../src/constants";

@@ -3,14 +3,13 @@ import { useCallback, useMemo, useState } from "react";
 
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary, NoWriteableLibraries } from "Components/Errors";
+import { useRequestsSettings } from "Components/UserSettings";
 import LibrarySelect from "../LibrarySelect";
-import NoWriteableLibraries from "Components/Errors/NoWriteableLibraries";
 import TagsDatalist from "./TagsDatalist";
 
 import { useQuery_Tags } from "../../../api/zotero";
-import useWriteableLibraries from "../../../hooks/useWriteableLibraries";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useWriteableLibraries } from "../../../hooks";
 
 import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";

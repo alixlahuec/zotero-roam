@@ -4,10 +4,10 @@ import { memo, useMemo } from "react";
 import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tab, Tabs, Tag } from "@blueprintjs/core";
 
 import ButtonLink from "Components/ButtonLink";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
-import { useNotesSettings } from "Components/UserSettings/Notes";
+import { ErrorBoundary } from "Components/Errors";
+import { useNotesSettings } from "Components/UserSettings";
 
-import useBool from "../../hooks/useBool";
+import { useBool } from "../../hooks";
 
 import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations } from "../../utils";
 import { simplifyZoteroNotes } from "./helpers";

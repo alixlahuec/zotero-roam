@@ -18,4 +18,4 @@ const usePagination = ({ itemsPerPage = 20 }) => {
 	return { currentPage, pageLimits, setCurrentPage };
 };
 
-export default usePagination;
+export { usePagination };

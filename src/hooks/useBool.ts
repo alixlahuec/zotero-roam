@@ -28,4 +28,4 @@ const useBool = (initialState = false): [boolean, Handlers] => {
 	return [state, { set, toggle, on, off }];
 };
 
-export default useBool;
+export { useBool };

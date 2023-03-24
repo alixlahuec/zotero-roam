@@ -6,22 +6,16 @@ import { Button, ButtonGroup, Card, Classes, Collapse, Tag } from "@blueprintjs/
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import ButtonLink from "Components/ButtonLink";
 import CitekeyPopover from "Components/CitekeyPopover";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
-import ErrorCallout from "Components/Errors/ErrorCallout";
+import { ErrorBoundary, ErrorCallout } from "Components/Errors";
 import ItemDetails from "Components/ItemDetails";
 import NotesImport from "Components/NotesImport";
 import SciteBadge from "Components/SciteBadge";
+import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, usePageMenuSettings } from "Components/UserSettings";
 import SemanticPanel from "../SemanticPanel";
 
-import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
-import useBool from "../../../hooks/useBool";
-import { useMetadataSettings } from "Components/UserSettings/Metadata";
-import { useNotesSettings } from "Components/UserSettings/Notes";
-import { usePageMenuSettings } from "Components/UserSettings/PageMenu";
+import { useBool } from "../../../hooks";
 import { useQuery_Semantic } from "../../../api/semantic";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
-import { useSciteSettings } from "Components/UserSettings/Scite";
-import { useTypemapSettings } from "Components/UserSettings/Typemap";
 
 import { showClasses } from "../classes";
 

@@ -5,7 +5,7 @@ import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprin
 
 import { validateShortcuts } from "../../setup";
 import DataDrawer from "Components/DataDrawer";
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 import NotesDrawer from "Components/NotesDrawer";
 import ShortcutSequence from "Components/ShortcutSequence";
 
@@ -13,14 +13,14 @@ import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
 import { formatItemReferenceWithDefault } from "Components/SearchPanel/utils";
 
-import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
-import useBool from "../../hooks/useBool";
-import { useCopySettings } from "Components/UserSettings/Copy";
-import { useMetadataSettings } from "Components/UserSettings/Metadata";
-import { useNotesSettings } from "Components/UserSettings/Notes";
+import { useAnnotationsSettings, useCopySettings, useMetadataSettings, useNotesSettings, useShortcutsSettings, useTypemapSettings } from "Components/UserSettings";
+import { useBool } from "../../hooks";
+
+
+
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
-import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
-import { useTypemapSettings } from "Components/UserSettings/Typemap";
+
+
 
 import { CustomClasses } from "../../constants";
 

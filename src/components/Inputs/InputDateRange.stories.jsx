@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { InputDateRange } from "./InputDate";
+import { InputDateRange } from ".";
 
 
 export default {

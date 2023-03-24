@@ -5,11 +5,10 @@ import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Switch, Tag } 
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 
 import { ExtensionContext } from "Components/App";
-import { useOtherSettings } from "Components/UserSettings/Other";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useOtherSettings, useRequestsSettings } from "Components/UserSettings";
 
 import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/zotero";
-import useBool from "../../hooks/useBool";
+import { useBool } from "../../hooks";
 
 import { makeTimestamp } from "../../utils";
 

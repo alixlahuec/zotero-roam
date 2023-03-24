@@ -3,7 +3,7 @@ import { memo, useMemo } from "react";
 import { Button, Classes, Collapse, Tag } from "@blueprintjs/core";
 
 import { makeTimestamp } from "../../../../src/utils";
-import useBool from "../../../../src/hooks/useBool";
+import { useBool } from "../../../../src/hooks";
 import { ListItem } from "Components/DataList";
 
 import * as customPropTypes from "../../../propTypes";
