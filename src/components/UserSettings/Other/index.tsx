@@ -1,51 +1,19 @@
-import { func, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
+import { useMemo } from "react";
 import { Toggle } from "../common";
 
-import * as customPropTypes from "../../../propTypes";
+import { SettingsManager } from "../Manager";
 
 
-const OtherSettings = createContext({});
-
-const OtherSettingsProvider = ({ children, init, updater }) => {
-	const [other, _setOther] = useState(init);
-
-	const setOther = useCallback((updateFn) => {
-		_setOther((prevState) => {
-			const update = updateFn(prevState);
-
-			// If user disabled caching, clear the data cache
-			if(prevState.cacheEnabled === true && update.cacheEnabled === false){
-				setTimeout(() => {
-					window.zoteroRoam?.clearDataCache?.();
-				}, 1000);
-			}
-
-			updater(update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [other, setOther], [other, setOther]);
-
-	return (
-		<OtherSettings.Provider value={contextValue}>
-			{children}
-		</OtherSettings.Provider>
-	);
-};
-OtherSettingsProvider.propTypes = {
-	children: node,
-	init: customPropTypes.otherSettingsType,
-	updater: func
-};
-
-const useOtherSettings = () => {
-	const context = useContext(OtherSettings);
-
-	return context;
-};
+const { Provider: OtherSettingsProvider, useSettings: useOtherSettings } = new SettingsManager<"other">({
+	beforeUpdate: (prevState, update) => {
+		// If user disabled caching, clear the data cache
+		if(prevState.cacheEnabled === true && update.cacheEnabled === false){
+			setTimeout(() => {
+				window.zoteroRoam?.clearDataCache?.();
+			}, 1000);
+		}
+	}
+});
 
 function OtherSettingsWidget() {
 	const [

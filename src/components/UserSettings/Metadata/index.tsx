@@ -1,43 +1,10 @@
-import { func as funcType, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
+import { useMemo } from "react";
 import { RowGroup, RowGroupOption, TextField, TextWithSelect } from "../common";
 
-import * as customPropTypes from "../../../propTypes";
+import { SettingsManager } from "../Manager";
 
 
-const MetadataSettings = createContext({});
-
-const MetadataProvider = ({ children, init, updater }) => {
-	const [metadata, _setMetadata] = useState(init);
-
-	const setMetadata = useCallback((updateFn) => {
-		_setMetadata((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [metadata, setMetadata], [metadata, setMetadata]);
-
-	return (
-		<MetadataSettings.Provider value={contextValue}>
-			{children}
-		</MetadataSettings.Provider>
-	);
-};
-MetadataProvider.propTypes = {
-	children: node,
-	init: customPropTypes.metadataSettingsType,
-	updater: funcType
-};
-
-const useMetadataSettings = () => {
-	const context = useContext(MetadataSettings);
-
-	return context;
-};
+const { Provider: MetadataProvider, useSettings: useMetadataSettings } = new SettingsManager<"metadata">();
 
 const PARAM_OPTIONS = [
 	{ label: "By name", value: "srcName" },

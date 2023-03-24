@@ -1,44 +1,12 @@
-import { func, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { useMemo } from "react";
 
-import { NumericSelect, SingleInput, Toggle } from "../common";
 import SciteBadge from "Components/SciteBadge";
+import { NumericSelect, SingleInput, Toggle } from "../common";
 
-import * as customPropTypes from "../../../propTypes";
+import { SettingsManager } from "../Manager";
 
 
-const SciteSettings = createContext({});
-
-const SciteProvider = ({ children, init, updater }) => {
-	const [sciteBadge, _setSciteBadge] = useState(init);
-
-	const setSciteBadge = useCallback((updateFn) => {
-		_setSciteBadge((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [sciteBadge, setSciteBadge], [sciteBadge, setSciteBadge]);
-
-	return (
-		<SciteSettings.Provider value={contextValue}>
-			{children}
-		</SciteSettings.Provider>
-	);
-};
-SciteProvider.propTypes = {
-	children: node,
-	init: customPropTypes.sciteBadgeSettingsType,
-	updater: func
-};
-
-const useSciteSettings = () => {
-	const context = useContext(SciteSettings);
-
-	return context;
-};
+const { Provider: SciteProvider, useSettings: useSciteSettings } = new SettingsManager<"sciteBadge">();
 
 const EXAMPLE_DOI = "10.1126/science.1179052";
 

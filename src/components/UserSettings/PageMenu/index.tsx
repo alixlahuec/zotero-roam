@@ -1,43 +1,10 @@
-import { func, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
+import { useMemo } from "react";
 import { MultiInput, RowCol, SingleInput } from "../common";
 
-import * as customPropTypes from "../../../propTypes";
+import { SettingsManager } from "../Manager";
 
 
-const PageMenuSettings = createContext({});
-
-const PageMenuProvider = ({ children, init, updater }) => {
-	const [pageMenu, _setPageMenu] = useState(init);
-
-	const setPageMenu = useCallback((updateFn) => {
-		_setPageMenu((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [pageMenu, setPageMenu], [pageMenu, setPageMenu]);
-
-	return (
-		<PageMenuSettings.Provider value={contextValue}>
-			{children}
-		</PageMenuSettings.Provider>
-	);
-};
-PageMenuProvider.propTypes = {
-	children: node,
-	init: customPropTypes.pageMenuSettingsType,
-	updater: func
-};
-
-const usePageMenuSettings = () => {
-	const context = useContext(PageMenuSettings);
-
-	return context;
-};
+const { Provider: PageMenuProvider, useSettings: usePageMenuSettings } = new SettingsManager<"pageMenu">();
 
 const ELEM_OPTIONS = [
 	{ label: "Metadata import", value: "addMetadata" }, 

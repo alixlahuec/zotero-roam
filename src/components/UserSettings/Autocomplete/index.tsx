@@ -1,42 +1,10 @@
-import { func, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
-import * as customPropTypes from "../../../propTypes";
+import { useMemo } from "react";
 import { Definition, RowGroup, RowGroupOption, SingleInput, TextField } from "../common";
 
+import { SettingsManager } from "../Manager";
 
-const AutocompleteSettings = createContext({});
 
-const AutocompleteProvider = ({ children, init, updater }) => {
-	const [autocomplete, _setAutocomplete] = useState(init);
-
-	const setAutocomplete = useCallback((updateFn) => {
-		_setAutocomplete((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [autocomplete, setAutocomplete], [autocomplete, setAutocomplete]);
-
-	return (
-		<AutocompleteSettings.Provider value={contextValue}>
-			{children}
-		</AutocompleteSettings.Provider>
-	);
-};
-AutocompleteProvider.propTypes = {
-	children: node,
-	init: customPropTypes.autocompleteSettingsType,
-	updater: func
-};
-
-const useAutocompleteSettings = () => {
-	const context = useContext(AutocompleteSettings);
-
-	return context;
-};
+const { Provider: AutocompleteProvider, useSettings: useAutocompleteSettings } = new SettingsManager<"autocomplete">();
 
 const DISPLAY_OPTIONS = [
 	{ label: "Citekey", value: "citekey" },

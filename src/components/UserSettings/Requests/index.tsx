@@ -1,15 +1,21 @@
 import { useCallback } from "react";
-
 import { Button, Dialog } from "@blueprintjs/core";
+
 import DataRequest from "./DataRequest";
 import RequestsEditor from "./RequestsEditor";
 import { RowCol } from "../common";
 
 import { useBool } from "../../../hooks";
-import { useRequestsSettings } from ".";
-
 import { CustomClasses } from "../../../constants";
 
+import { SettingsManager } from "../Manager";
+
+
+const { Provider: RequestsProvider, useSettings: useRequestsSettings } = new SettingsManager<"requests">({
+	afterUpdate: (_prevState, update) => {
+		window?.zoteroRoam?.updateLibraries?.(update.libraries);
+	}
+});
 
 function RequestsWidget(){
 	const [
@@ -35,4 +41,8 @@ function RequestsWidget(){
 	</>;
 }
 
-export default RequestsWidget;
+export {
+	RequestsProvider,
+	useRequestsSettings,
+	RequestsWidget
+};

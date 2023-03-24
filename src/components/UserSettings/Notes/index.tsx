@@ -1,44 +1,14 @@
-import { func as funcType, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
+import { useMemo } from "react";
 import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect } from "../common";
 
-import * as customPropTypes from "../../../propTypes";
+import { SettingsManager } from "../Manager";
 
 
-const NotesSettings = createContext({});
-
-const NotesProvider = ({ children, init, updater }) => {
-	const [notes, _setNotes] = useState(init);
-
-	const setNotes = useCallback((updateFn) => {
-		_setNotes((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			window?.zoteroRoam?.updateSetting?.("notes", update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [notes, setNotes], [notes, setNotes]);
-
-	return (
-		<NotesSettings.Provider value={contextValue}>
-			{children}
-		</NotesSettings.Provider>
-	);
-};
-NotesProvider.propTypes = {
-	children: node,
-	init: customPropTypes.notesSettingsType,
-	updater: funcType
-};
-
-const useNotesSettings = () => {
-	const context = useContext(NotesSettings);
-
-	return context;
-};
+const { Provider: NotesProvider, useSettings: useNotesSettings } = new SettingsManager<"notes">({
+	afterUpdate: (prevState, update) => {
+		window?.zoteroRoam?.updateSetting?.("notes", update);
+	}
+});
 
 const NEST_POSITION_OPTIONS = [
 	{ label: "At the top", value: "top" },
