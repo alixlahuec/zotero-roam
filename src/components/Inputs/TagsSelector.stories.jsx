@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import TagsSelector from "./TagsSelector";
+import { TagsSelector } from ".";
 
 
 export default {

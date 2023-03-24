@@ -1,4 +1,4 @@
-import ErrorCallout from "./ErrorCallout";
+import { ErrorCallout } from ".";
 
 
 export default {
