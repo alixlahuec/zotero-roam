@@ -13,4 +13,4 @@ const useToggle = <T>({ start, options = [start, null] }: { start: T | null, opt
 	return [state, toggle] as const;
 };
 
-export default useToggle;
+export { useToggle };

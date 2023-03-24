@@ -20,4 +20,4 @@ const reducer = (filterList: Filter[], key: string) => {
 /** Custom hook for handling a list of filters */
 const useFilterList = (filterList: Filter[]) => useReducer(reducer, filterList);
 
-export default useFilterList;
+export { useFilterList };

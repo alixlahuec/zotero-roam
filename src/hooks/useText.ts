@@ -13,4 +13,4 @@ const useText = (initialState = "") => {
 	return [state, set] as const;
 };
 
-export default useText;
+export { useText };

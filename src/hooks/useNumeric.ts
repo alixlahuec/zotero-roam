@@ -13,4 +13,4 @@ const useNumeric = (initialState = 0): [number, (valNum: number, valString: stri
 	return [state, set];
 };
 
-export default useNumeric;
+export { useNumeric };

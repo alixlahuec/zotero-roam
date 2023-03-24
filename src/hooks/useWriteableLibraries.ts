@@ -40,4 +40,4 @@ const useWriteableLibraries = (libraries: ZLibrary[]) => {
 	};
 };
 
-export default useWriteableLibraries;
+export { useWriteableLibraries };

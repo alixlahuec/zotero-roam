@@ -20,4 +20,4 @@ const useSelect = <T>({ start = null, transform = defaultTransform }: UseSelectA
 	return [state, set] as const;
 };
 
-export default useSelect;
+export { useSelect };

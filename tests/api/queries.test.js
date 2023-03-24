@@ -5,7 +5,7 @@ import * as itemUtils from "../../src/api/zotero/items";
 import { parseSemanticDOIs, useQuery_Semantic } from "../../src/api/semantic";
 import { useQuery_Citoid } from "../../src/api/citoid";
 import { makeTagList, wrappedFetchItems, useQuery_Collections, useQuery_Items, useQuery_Tags } from "../../src/api/zotero";
-import useWriteableLibraries from "../../src/hooks/useWriteableLibraries";
+import { useWriteableLibraries } from "../../src/hooks";
 
 import { badIdentifier, goodIdentifier } from "Mocks/citoid";
 import { apiKeys } from "Mocks/zotero/keys";

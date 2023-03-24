@@ -53,4 +53,4 @@ const useMulti = <T, V>(
 	return [state, { set, toggle, add, remove }] as const;
 };
 
-export default useMulti;
+export { useMulti };
