@@ -12,10 +12,7 @@ import GraphWatcher from "Components/GraphWatcher";
 import Logger from "Components/Logger";
 import { RoamCitekeysProvider } from "Components/RoamCitekeysContext";
 import SearchPanel from "Components/SearchPanel";
-import { SettingsDialog } from "Components/UserSettings";
-import { useOtherSettings } from "Components/UserSettings/Other";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
-import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
+import { SettingsDialog, useOtherSettings, useRequestsSettings, useShortcutsSettings } from "Components/UserSettings";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
 import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } from "../../setup";

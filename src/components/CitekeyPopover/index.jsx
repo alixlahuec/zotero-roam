@@ -4,11 +4,9 @@ import { memo, useCallback, useMemo } from "react";
 import { Button, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
-import { useAnnotationsSettings } from "Components/UserSettings/Annotations";
-import { useMetadataSettings } from "Components/UserSettings/Metadata";
-import { useNotesSettings } from "Components/UserSettings/Notes";
+import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useTypemapSettings } from "Components/UserSettings";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
-import { useTypemapSettings } from "Components/UserSettings/Typemap";
+
 
 import { getLocalLink, getWebLink } from "../../utils";
 import { importItemMetadata, openInSidebarByUID, openPageByUID } from "Roam";

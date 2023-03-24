@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { InputDateSingle } from "./InputDate";
+import { InputDateSingle } from ".";
 
 
 export default {

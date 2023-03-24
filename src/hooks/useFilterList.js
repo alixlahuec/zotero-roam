@@ -23,4 +23,4 @@ const reducer = (filterList, key) => {
 
 const useFilterList = (filterList) => useReducer(reducer, filterList);
 
-export default useFilterList;
+export { useFilterList };

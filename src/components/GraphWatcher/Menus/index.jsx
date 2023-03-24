@@ -7,9 +7,9 @@ import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
-import { usePageMenuSettings } from "Components/UserSettings/PageMenu";
+import { usePageMenuSettings, useRequestsSettings } from "Components/UserSettings";
 import { useQuery_Items } from "../../../api/queries";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
 import { categorizeLibraryItems } from "../../../utils";

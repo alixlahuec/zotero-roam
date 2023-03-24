@@ -8,9 +8,9 @@ import { SemanticGuide } from "Components/Guide";
 import SemanticItem from "./SemanticItem";
 
 import { searchEngine } from "../../../utils";
-import useFilterList from "../../../hooks/useFilterList";
-import usePagination from "../../../hooks/usePagination";
-import useText from "../../../hooks/useText";
+import { useFilterList, usePagination, useText } from "../../../hooks";
+
+
 
 import { CustomClasses } from "../../../constants";
 

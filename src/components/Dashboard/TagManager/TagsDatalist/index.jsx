@@ -10,7 +10,7 @@ import SortButtons from "Components/DataList/SortButtons";
 import Stats from "../Stats";
 
 import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
-import usePagination from "../../../../hooks/usePagination";
+import { usePagination } from "../../../../hooks";
 
 import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";

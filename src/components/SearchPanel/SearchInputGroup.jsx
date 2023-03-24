@@ -4,7 +4,7 @@ import { memo, useMemo } from "react";
 import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprintjs/core";
 
 import { validateShortcuts } from "../../setup";
-import { useShortcutsSettings } from "Components/UserSettings/Shortcuts";
+import { useShortcutsSettings } from "Components/UserSettings";
 
 import { dialogLabel } from "./classes";
 

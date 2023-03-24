@@ -19,4 +19,4 @@ ErrorCallout.propTypes = {
 	resetErrorBoundary: func
 };
 
-export default ErrorCallout;
+export { ErrorCallout };

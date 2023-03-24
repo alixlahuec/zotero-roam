@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Classes, ControlGroup, FormGroup, H6, InputGroup, MenuItem } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
-import ErrorCallout from "Components/Errors/ErrorCallout";
+import { ErrorCallout } from "Components/Errors";
 
 import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "Components/Dashboard/Explorer/QueryBuilder/utils";
 import { analyzeUserRequests } from "../../../setup";

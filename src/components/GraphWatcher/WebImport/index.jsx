@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 import { Button } from "@blueprintjs/core";
 import WebImportPanel from "./WebImportPanel";
 
-import useBool from "../../../hooks/useBool";
+import { useBool } from "../../../hooks";
 
 import { hasNodeListChanged } from "../../../utils";
 

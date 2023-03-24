@@ -17,4 +17,4 @@ const useSelect = ({ start = null, transform = defaultTransform }) => {
 	return [state, set];
 };
 
-export default useSelect;
+export { useSelect };
