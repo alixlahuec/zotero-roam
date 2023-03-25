@@ -81,6 +81,7 @@ const TagsSelector = memo<OwnProps & Partial<MultiSelectProps<Tag>>>(function Ta
 
 	return (
 		<MultiSelect
+			className={CustomClasses.TEXT_SMALL}
 			createNewItemFromQuery={createNewItemFromQuery}
 			createNewItemPosition="first"
 			createNewItemRenderer={createNewItemRenderer}

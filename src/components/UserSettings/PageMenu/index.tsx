@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { MultiInput, RowCol, SingleInput } from "../common";
+import { InputMultiSelect } from "Components/Inputs";
+import { RowCol, SingleInput } from "../common";
 
 import { SettingsManager } from "../Manager";
 
@@ -51,7 +52,7 @@ function PageMenuWidget(){
 
 	return <>
 		<RowCol title="Elements" >
-			<MultiInput fill={true} openOnKeyDown={false} options={ELEM_OPTIONS} setValue={handlers.updateMenuElems} value={defaults} />
+			<InputMultiSelect fill={true} openOnKeyDown={false} options={ELEM_OPTIONS} setValue={handlers.updateMenuElems} value={defaults} />
 		</RowCol>
 		<SingleInput description="Select when contextual menus should be shown. By default, menus are displayed if the page title is longer than 5 characters." menuTitle="Select whether to show the page menu" onChange={handlers.updateMenuTrigger} options={TRIGGER_OPTIONS} title="Show menus" value={trigger} />
 	</>;
