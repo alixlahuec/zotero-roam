@@ -1,9 +1,8 @@
-import { func, node, objectOf, string } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { useCallback } from "react";
 
+import { SettingsManager } from "../Manager";
 import { TextField } from "../common";
 import { camelToTitleCase } from "../../../utils";
-import { SettingsManager } from "../Manager";
 
 
 const { Provider: TypemapProvider, useSettings: useTypemapSettings } = new SettingsManager<"typemap">({

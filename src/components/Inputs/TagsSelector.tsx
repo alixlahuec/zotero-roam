@@ -1,8 +1,6 @@
-import { arrayOf, func, string } from "prop-types";
 import { memo, useCallback, useState } from "react";
-
-import { MenuItem } from "@blueprintjs/core";
-import { MultiSelect } from "@blueprintjs/select";
+import { MenuItem, TagInputProps } from "@blueprintjs/core";
+import { IListItemsProps, MultiSelect, MultiSelectProps } from "@blueprintjs/select";
 
 import { getAllPages } from "Roam";
 import { searchEngine } from "../../utils";
@@ -10,7 +8,8 @@ import { searchEngine } from "../../utils";
 import { CustomClasses } from "../../constants";
 
 
-const results_limit = 30;
+const MAX_RESULTS = 30;
+
 const popoverProps = {
 	canEscapeKeyClose: false,
 	className: "zr-input-tags",
@@ -19,7 +18,8 @@ const popoverProps = {
 	minimal: true,
 	popoverClassName: CustomClasses.POPOVER
 };
-const tagInputProps = {
+
+const tagInputProps: Partial<TagInputProps> = {
 	inputProps: {
 		"aria-label": "Add tags from Roam",
 		placeholder: "Add tag",
@@ -31,39 +31,51 @@ const tagInputProps = {
 	}
 };
 
-const createNewItemFromQuery = (tag) => tag;
-const tagRenderer = (tag) => tag;
+type Tag = string;
 
-function createNewItemRenderer(query, active, handleClick){
+type ListProps = IListItemsProps<Tag>;
+
+const createNewItemFromQuery: ListProps["createNewItemFromQuery"] = (tag) => tag;
+
+const createNewItemRenderer: ListProps["createNewItemRenderer"] = (query, active, handleClick) => {
 	return <MenuItem aria-selected={active} htmlTitle={"Add tag, " + `'${query}'`} icon="small-plus" onClick={handleClick} text={query} />;
-}
+};
 
-function itemRenderer(item, itemProps) {
+const itemRenderer: ListProps["itemRenderer"] = (item, itemProps) => {
 	const { handleClick, modifiers: { active } } = itemProps;
 	return <MenuItem aria-selected={active} key={item} onClick={handleClick} text={item} />;
-}
+};
 
-function itemListPredicate(query, items) {
+const itemListPredicate: ListProps["itemListPredicate"] = (query, items) => {
 	return items.filter(item => searchEngine(
-		query, 
+		query,
 		item, {
 			any_case: true,
 			match: "partial",
 			search_compounds: true,
 			word_order: "loose"
 		}))
-		.sort((a,b) => a.length < b.length ? -1 : 1)
-		.slice(0, results_limit);
-}
+		.sort((a, b) => a.length < b.length ? -1 : 1)
+		.slice(0, MAX_RESULTS);
+};
 
-const TagsSelector = memo(function TagsSelector({ selectedTags, onRemove, onSelect, ...props }) {
+const tagRenderer = (tag: Tag) => tag;
+
+
+type OwnProps = {
+	onRemove: (val: Tag) => void,
+	onSelect: (val: Tag) => void,
+	selectedTags: Tag[]
+};
+const TagsSelector = memo<OwnProps & Partial<MultiSelectProps<Tag>>>(function TagsSelector(props) {
+	const { selectedTags, onRemove, onSelect, ...extraProps } = props;
 	const [roamPages,] = useState(() => getAllPages()); // https://tkdodo.eu/blog/things-to-know-about-use-state
 
-	const addTag = useCallback((tag, _event) => {
+	const addTag = useCallback<ListProps["onItemSelect"]>((tag, _event) => {
 		onSelect(tag);
 	}, [onSelect]);
 
-	const removeTag = useCallback((tag, _index) => {
+	const removeTag = useCallback<NonNullable<MultiSelectProps<Tag>["onRemove"]>>((tag, _index) => {
 		onRemove(tag);
 	}, [onRemove]);
 
@@ -87,14 +99,9 @@ const TagsSelector = memo(function TagsSelector({ selectedTags, onRemove, onSele
 			selectedItems={selectedTags}
 			tagInputProps={tagInputProps}
 			tagRenderer={tagRenderer}
-			{...props}
+			{...extraProps}
 		/>
 	);
 });
-TagsSelector.propTypes = {
-	onRemove: func,
-	onSelect: func,
-	selectedTags: arrayOf(string)
-};
 
 export { TagsSelector };

@@ -101,6 +101,7 @@
         "sort-imports": "off",
         "react/jsx-uses-react": "off",
 		"react/no-unknown-property": "off",
+		"react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
         "import/newline-after-import": ["error", { "count": 2 }],
         "import/no-unresolved": ["warn", { "amd": true, "commonjs": true }],
@@ -162,7 +163,8 @@
 		"@typescript-eslint/no-var-requires": "off",
 		"@typescript-eslint/no-empty-function": "off",
 		"@typescript-eslint/no-namespace": "off",
-		"@typescript-eslint/no-explicit-any": "off" // TODO: re-enable later in TS migration
+		"@typescript-eslint/no-explicit-any": "off", // TODO: re-enable later in TS migration
+		"@typescript-eslint/no-non-null-assertion": "off"
     },
     "settings": {
         "react": {

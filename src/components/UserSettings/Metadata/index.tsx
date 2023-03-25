@@ -1,4 +1,6 @@
 import { useMemo } from "react";
+import { Intent } from "@blueprintjs/core";
+
 import { RowGroup, RowGroupOption, TextField, TextWithSelect } from "../common";
 
 import { SettingsManager } from "../Manager";
@@ -61,7 +63,7 @@ function MetadataWidget(){
 	}, [setOpts]);
 
 	const smartblockButtonProps = useMemo(() => ({
-		intent: "primary"
+		intent: Intent.PRIMARY
 	}), []);
 
 	return (

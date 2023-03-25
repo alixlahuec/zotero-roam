@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Intent } from "@blueprintjs/core";
 import { Definition, RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect } from "../common";
 
 import { SettingsManager } from "../Manager";
@@ -75,7 +76,7 @@ function AnnotationsWidget(){
 	}, [setOpts]);
 
 	const customFuncButtonProps = useMemo(() => ({
-		intent: "primary"
+		intent: Intent.PRIMARY
 	}), []);
 
 	return <>

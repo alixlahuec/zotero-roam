@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
-import { TextField } from "./common";
+import { TextField } from ".";
 
 
 export default {
