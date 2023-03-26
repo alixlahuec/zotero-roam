@@ -34,13 +34,13 @@
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage --junit",
         "chromatic": "chromatic",
-        "version-release": "release-it --config dev/.release-it.json --ci --no-git.tag --no-npm.publish --no-github.release",
+        "version-release": "release-it --config dev/.release-it.cjs --ci --no-git.tag --no-npm.publish --no-github.release",
         "version-release:latest": "npm run version-release",
         "version-release:beta": "npm run version-release -- --preRelease=beta",
-        "publish-release": "release-it --config dev/.release-it.json --ci --npm.skipChecks --no-increment",
+        "publish-release": "release-it --config dev/.release-it.cjs --ci --npm.skipChecks --no-increment",
         "publish-release:latest": "npm run publish-release -- --git.requireBranch=main --github.autoGenerate",
         "publish-release:beta": "npm run publish-release -- --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\"",
-        "release:preview": "release-it --config dev/.release-it.json --dry-run"
+        "release:preview": "release-it --config dev/.release-it.cjs --dry-run"
     },
     "sideEffects": [
         "*.css",
