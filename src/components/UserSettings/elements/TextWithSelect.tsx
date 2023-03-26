@@ -26,7 +26,8 @@ type OwnProps = {
 	selectLabel: string
 };
 
-const TextWithSelect: FC<OwnProps> = ({ description = null, onSelectChange, onValueChange, placeholder = undefined, selectOptions, selectValue, textValue, title = null, inputGroupProps = {}, inputLabel, selectButtonProps = {}, selectProps = {}, selectLabel }) => {
+const TextWithSelect: FC<OwnProps> = (props) => {
+	const { description = null, onSelectChange, onValueChange, placeholder = undefined, selectOptions, selectValue, textValue, title = null, inputGroupProps = {}, inputLabel, selectButtonProps = {}, selectProps = {}, selectLabel } = props;
 	const { popoverTargetProps, ...otherProps } = selectProps;
 
 	const mergedPopoverTargetProps = useMemo(() => ({

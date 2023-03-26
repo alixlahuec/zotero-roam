@@ -1,8 +1,6 @@
 import { useMemo } from "react";
 import { InputMultiSelect } from "Components/Inputs";
-import { RowCol, SingleInput } from "../common";
-
-import { SettingsManager } from "../Manager";
+import { RowCol, SingleInput, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: PageMenuProvider, useSettings: usePageMenuSettings } = new SettingsManager<"pageMenu">();

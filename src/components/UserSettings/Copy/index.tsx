@@ -1,7 +1,5 @@
 import { useMemo } from "react";
-import { Definition, RowGroup, RowGroupOption, SingleInput, TextField, Toggle } from "../common";
-
-import { SettingsManager } from "../Manager";
+import { Definition, RowGroup, RowGroupOption, SingleInput, TextField, Toggle, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: CopyProvider, useSettings: useCopySettings } = new SettingsManager<"copy">();

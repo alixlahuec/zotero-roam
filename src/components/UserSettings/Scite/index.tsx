@@ -1,9 +1,6 @@
 import { useMemo } from "react";
-
 import SciteBadge from "Components/SciteBadge";
-import { NumericSelect, SingleInput, Toggle } from "../common";
-
-import { SettingsManager } from "../Manager";
+import { NumericSelect, SingleInput, Toggle, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: SciteProvider, useSettings: useSciteSettings } = new SettingsManager<"sciteBadge">();

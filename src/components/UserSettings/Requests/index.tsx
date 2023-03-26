@@ -3,12 +3,10 @@ import { Button, Dialog } from "@blueprintjs/core";
 
 import DataRequest from "./DataRequest";
 import RequestsEditor from "./RequestsEditor";
-import { RowCol } from "../common";
+import { RowCol , SettingsManager } from "Components/UserSettings";
 
 import { useBool } from "../../../hooks";
 import { CustomClasses } from "../../../constants";
-
-import { SettingsManager } from "../Manager";
 
 
 const { Provider: RequestsProvider, useSettings: useRequestsSettings } = new SettingsManager<"requests">({

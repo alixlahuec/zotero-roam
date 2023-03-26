@@ -1,7 +1,5 @@
 import { useMemo } from "react";
-import { Toggle } from "../common";
-
-import { SettingsManager } from "../Manager";
+import { Toggle, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: OtherSettingsProvider, useSettings: useOtherSettings } = new SettingsManager<"other">({

@@ -1,8 +1,6 @@
 import { useMemo } from "react";
 import { TagsSelector } from "Components/Inputs";
-
-import { RowCol } from "../common";
-import { SettingsManager } from "../Manager";
+import { RowCol, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: WebImportProvider, useSettings: useWebImportSettings } = new SettingsManager<"webimport">();

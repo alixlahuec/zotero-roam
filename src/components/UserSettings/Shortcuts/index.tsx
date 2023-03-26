@@ -1,10 +1,8 @@
 import { useCallback } from "react";
 import { parseKeyCombo } from "@blueprintjs/core";
 
-import { TextField } from "../common";
+import { TextField, SettingsManager } from "Components/UserSettings";
 import { camelToTitleCase } from "../../../utils";
-
-import { SettingsManager } from "../Manager";
 
 
 const { Provider: ShortcutsProvider, useSettings: useShortcutsSettings } = new SettingsManager<"shortcuts">();

@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import { Intent } from "@blueprintjs/core";
 
-import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect } from "../common";
-
-import { SettingsManager } from "../Manager";
+import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: NotesProvider, useSettings: useNotesSettings } = new SettingsManager<"notes">({

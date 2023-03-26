@@ -1,8 +1,6 @@
 import { useMemo } from "react";
 import { Intent } from "@blueprintjs/core";
-import { Definition, RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect } from "../common";
-
-import { SettingsManager } from "../Manager";
+import { Definition, RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: AnnotationsProvider, useSettings: useAnnotationsSettings } = new SettingsManager<"annotations">({

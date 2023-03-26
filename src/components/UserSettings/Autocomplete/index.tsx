@@ -1,7 +1,5 @@
 import { useMemo } from "react";
-import { Definition, RowGroup, RowGroupOption, SingleInput, TextField } from "../common";
-
-import { SettingsManager } from "../Manager";
+import { Definition, RowGroup, RowGroupOption, SingleInput, TextField, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: AutocompleteProvider, useSettings: useAutocompleteSettings } = new SettingsManager<"autocomplete">();

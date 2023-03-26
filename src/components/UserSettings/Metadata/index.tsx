@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import { Intent } from "@blueprintjs/core";
 
-import { RowGroup, RowGroupOption, TextField, TextWithSelect } from "../common";
-
-import { SettingsManager } from "../Manager";
+import { RowGroup, RowGroupOption, TextField, TextWithSelect, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: MetadataProvider, useSettings: useMetadataSettings } = new SettingsManager<"metadata">();

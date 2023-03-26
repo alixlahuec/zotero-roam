@@ -1,7 +1,6 @@
 import { useCallback } from "react";
+import { SettingsManager, TextField } from "Components/UserSettings";
 
-import { SettingsManager } from "../Manager";
-import { TextField } from "../common";
 import { camelToTitleCase } from "../../../utils";
 
 
