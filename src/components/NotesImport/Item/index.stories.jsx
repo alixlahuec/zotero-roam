@@ -1,7 +1,7 @@
 import { Classes } from "@blueprintjs/core";
 
 import NotesImportItem from "Components/NotesImport/Item";
-import useBool from "../../../hooks/useBool";
+import { useBool } from "../../../hooks";
 
 import { sampleNote } from "Mocks/zotero/notes";
 import { sampleAnnot } from "Mocks/zotero/annotations";

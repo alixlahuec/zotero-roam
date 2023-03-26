@@ -5,7 +5,7 @@ import { Button } from "@blueprintjs/core";
 
 import RelatedPanel from "../RelatedPanel";
 
-import useBool from "../../../hooks/useBool";
+import { useBool } from "../../../hooks";
 
 import { pluralize } from "../../../utils";
 

@@ -48,4 +48,4 @@ const useMulti = ({ start = [], identify = defaultIdentify, retrieve = defaultRe
 	return [state, { set, toggle, add, remove }];
 };
 
-export default useMulti;
+export { useMulti };

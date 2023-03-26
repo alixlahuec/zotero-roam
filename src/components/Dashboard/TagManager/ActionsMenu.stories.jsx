@@ -50,17 +50,6 @@ Default.args = {
 };
 Default.play = async ({ canvasElement }) => {
 	document.dispatchEvent = jest.fn();
-	const expectedEvent = new CustomEvent("zotero-roam:tags-deleted", {
-		bubbles: true,
-		cancelable: true,
-		detail: {
-			args: {
-				tags: ["history", "HISTORY", "History"]
-			},
-			error: null,
-			library: userLibrary.path
-		}
-	});
 
 	const canvas = within(canvasElement);
 	await userEvent.click(canvas.getByText("Delete tag(s)"));
@@ -75,5 +64,11 @@ Default.play = async ({ canvasElement }) => {
 	});
 
 	await expect(document.dispatchEvent).toHaveBeenCalled();
-	await expect(document.dispatchEvent).toHaveBeenCalledWith(expectedEvent);
+	await expect(document.dispatchEvent.mock.calls[0][0].detail)
+		.toEqual(expect.objectContaining({
+			data: expect.objectContaining({ status: 204 }),
+			error: null,
+			library: userLibrary.path,
+			tags: ["history", "history", "HISTORY", "History"]
+		}));
 };

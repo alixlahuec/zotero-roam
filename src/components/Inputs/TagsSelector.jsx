@@ -97,4 +97,4 @@ TagsSelector.propTypes = {
 	selectedTags: arrayOf(string)
 };
 
-export default TagsSelector;
+export { TagsSelector };

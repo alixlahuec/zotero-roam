@@ -8,7 +8,7 @@ import { ListItem } from "Components/DataList";
 import NotesDrawer from "Components/NotesDrawer";
 
 import { pluralize } from "../../../../utils";
-import useBool from "../../../../hooks/useBool";
+import { useBool } from "../../../../hooks";
 
 import { CustomClasses } from "../../../../constants";
 

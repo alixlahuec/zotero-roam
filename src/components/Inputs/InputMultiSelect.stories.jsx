@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import InputMultiSelect from "./InputMultiSelect";
+import { InputMultiSelect } from ".";
 
 
 export default {

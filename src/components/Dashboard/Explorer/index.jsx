@@ -3,13 +3,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
-import ErrorBoundary from "Components/Errors/ErrorBoundary";
+import { ErrorBoundary } from "Components/Errors";
 import { ListItem, ListWrapper } from "Components/DataList";
 import QueryItems from "./QueryItems";
 import QueryPDFs from "./QueryPDFs";
 
 import { useQuery_Items } from "../../../api/queries";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useRequestsSettings } from "Components/UserSettings";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
 import { categorizeLibraryItems, cleanLibraryItem, cleanLibraryPDF, identifyChildren, identifyPDFConnections } from "../../../utils";

@@ -1,4 +1,4 @@
-import NoWriteableLibraries from "./NoWriteableLibraries";
+import { NoWriteableLibraries } from ".";
 
 
 export default {

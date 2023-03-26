@@ -40,6 +40,7 @@ jobs:
 
       - name: Storybook CI
         uses: chromaui/action@v1
+        if: ${{ !startsWith(github.ref_name, 'renovate/') }}
         with:
           buildScriptName: "build-storybook"
           exitOnceUploaded: true

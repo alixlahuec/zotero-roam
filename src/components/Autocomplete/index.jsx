@@ -2,8 +2,8 @@
 import { memo, useCallback, useEffect, useMemo } from "react";
 import Tribute from "tributejs";
 
-import { useAutocompleteSettings } from "Components/UserSettings/Autocomplete";
-import { useRequestsSettings } from "Components/UserSettings/Requests";
+import { useAutocompleteSettings, useRequestsSettings } from "Components/UserSettings";
+
 
 import { escapeRegExp, formatItemReference } from "../../utils";
 import { useQuery_Items } from "../../api/queries";

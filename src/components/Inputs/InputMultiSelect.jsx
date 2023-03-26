@@ -74,4 +74,4 @@ InputMultiSelect.propTypes = {
 	setValue: func
 };
 
-export default InputMultiSelect;
+export { InputMultiSelect };

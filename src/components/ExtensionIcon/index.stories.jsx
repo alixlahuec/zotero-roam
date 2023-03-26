@@ -2,7 +2,7 @@ import { screen, userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 
 import ExtensionIcon from ".";
-import useToggle from "../../hooks/useToggle";
+import { useToggle } from "../../hooks";
 import { sleep } from "../../../.storybook/utils";
 
 

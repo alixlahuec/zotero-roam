@@ -1,13 +1,11 @@
 /* istanbul ignore file */
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 
-import { CitekeyMenuFactory, DNPMenuFactory, TagMenuFactory } from "./Menus";
 import Autocomplete from "Components/Autocomplete";
+import { useAutocompleteSettings, useWebImportSettings } from "Components/UserSettings";
 import InlineCitekeys from "./InlineCitekeys";
+import { CitekeyMenuFactory, DNPMenuFactory, TagMenuFactory } from "./Menus";
 import WebImportFactory from "./WebImport";
-
-import { useAutocompleteSettings } from "Components/UserSettings/Autocomplete";
-import { useWebImportSettings } from "Components/UserSettings/WebImport";
 
 import { addPageMenus, findPageMenus } from "./Menus/utils";
 import { findWebimportDivs, setWebimportDivs } from "./WebImport/utils";
