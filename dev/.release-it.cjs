@@ -16,7 +16,11 @@ module.exports = {
 		"assets": ["dist/*.js", "./extension.css", "./extension.js"],
 		"draft": true,
 		"release": true,
-		"releaseName": "v${version}"
+		"releaseName": "v${version}",
+		releaseNotes(context){
+			// Remove the header
+			return context.changelog.split('\n').slice(2).join('\n');
+		}
 	},
 	"npm": {
 		"allowSameVersion": false,
