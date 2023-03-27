@@ -13,3 +13,4 @@ export * from "./WebImport";
 
 export * from "./Dialog";
 export * from "./Provider";
+export * from "./SettingsManager";
