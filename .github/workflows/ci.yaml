@@ -54,7 +54,7 @@ jobs:
         run: npm run ci:test-storybook
         env:
           TARGET_URL: "${{ steps.chromatic.outputs.storybookUrl }}"
-          JEST_JUNIT_OUTPUT_DIR: "reports",
+          JEST_JUNIT_OUTPUT_DIR: "reports"
           JEST_JUNIT_OUTPUT_NAME: "storybook-junit.xml"
 
       - name: Upload test reports
