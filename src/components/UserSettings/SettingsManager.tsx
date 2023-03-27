@@ -2,34 +2,40 @@ import { createContext, FC, ReactChildren, useCallback, useContext, useMemo, use
 import { InitSettings } from "Types/extension";
 
 
-type Setter<K extends keyof InitSettings> = (fn: (prev: InitSettings[K]) => InitSettings[K]) => void;
+type ContextSetter<K extends keyof InitSettings> = (fn: (prev: InitSettings[K]) => InitSettings[K]) => void;
+type ContextValue<K extends keyof InitSettings> = (readonly [InitSettings[K], ContextSetter<K>]) | null;
+type ContextType<K extends keyof InitSettings> = ReturnType<typeof createContext<ContextValue<K> | null>>;
 
-type Args<K extends keyof InitSettings> = {
+
+type HookEvents =
+	| "beforeUpdate"
+	| "afterUpdate";
+
+type Hooks<K extends keyof InitSettings> = {
+	[event in HookEvents]: ((prevState: InitSettings[K], update: InitSettings[K]) => void) | null
+};
+
+
+type ProviderProps<K extends keyof InitSettings> = {
 	children: ReactChildren,
 	init: InitSettings[K],
 	updater: (prevState: InitSettings[K]) => void
 };
 
-type ContextValue<K extends keyof InitSettings> = (readonly [InitSettings[K], Setter<K>]) | null;
-type ContextType<K extends keyof InitSettings> = ReturnType<typeof createContext<ContextValue<K> | null>>;
 
-type UpdateHooks<K extends keyof InitSettings> = {
-	[j in "beforeUpdate" | "afterUpdate"]: ((prevState: InitSettings[K], update: InitSettings[K]) => void) | null
-}
-
-export class SettingsManager<K extends keyof InitSettings> {
+class SettingsManager<K extends keyof InitSettings> {
 	context: ContextType<K>;
-	hooks: Partial<UpdateHooks<K>>;
+	hooks: Partial<Hooks<K>>;
 
-	constructor(hooks: Partial<UpdateHooks<K>> = {}) {
+	constructor(hooks: Partial<Hooks<K>> = {}) {
 		this.context = createContext<ContextValue<K>>(null);
 		this.hooks = hooks;
 	}
 
-	Provider: FC<Args<K>> = ({ children, init, updater }) => {
+	Provider: FC<ProviderProps<K>> = ({ children, init, updater }) => {
 		const [settings, _setSettings] = useState<InitSettings[K]>(init);
 
-		const setSettings = useCallback<Setter<K>>((updateFn) => {
+		const setSettings = useCallback<ContextSetter<K>>((updateFn) => {
 			_setSettings((prevState) => {
 				const update = updateFn(prevState);
 				this.hooks.beforeUpdate?.(prevState, update);
@@ -59,3 +65,5 @@ export class SettingsManager<K extends keyof InitSettings> {
 	};
 
 }
+
+export { SettingsManager };
