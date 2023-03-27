@@ -1,43 +1,8 @@
-import { func, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
-import { Definition, RowGroup, RowGroupOption, SingleInput, TextField, Toggle } from "../common";
-
-import * as customPropTypes from "../../../propTypes";
+import { useMemo } from "react";
+import { Definition, RowGroup, RowGroupOption, SingleInput, TextField, Toggle, SettingsManager } from "Components/UserSettings";
 
 
-const CopySettings = createContext({});
-
-const CopyProvider = ({ children, init, updater }) => {
-	const [copy, _setCopy] = useState(init);
-
-	const setCopy = useCallback((updateFn) => {
-		_setCopy((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [copy, setCopy], [copy, setCopy]);
-
-	return (
-		<CopySettings.Provider value={contextValue}>
-			{children}
-		</CopySettings.Provider>
-	);
-};
-CopyProvider.propTypes = {
-	children: node,
-	init: customPropTypes.copySettingsType,
-	updater: func
-};
-
-const useCopySettings = () => {
-	const context = useContext(CopySettings);
-
-	return context;
-};
+const { Provider: CopyProvider, useSettings: useCopySettings } = new SettingsManager();
 
 const PRESET_OPTIONS = [
 	{ label: "Citation", value: "citation" },

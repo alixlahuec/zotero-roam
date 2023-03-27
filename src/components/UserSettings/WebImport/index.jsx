@@ -1,42 +1,8 @@
-import { func, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
-import * as customPropTypes from "../../../propTypes";
-import { RoamTagsInput } from "../common";
+import { useMemo } from "react";
+import { RoamTagsInput, SettingsManager } from "Components/UserSettings";
 
 
-const WebImportSettings = createContext({});
-
-const WebImportProvider = ({ children, init, updater }) => {
-	const [webImport, _setWebImport] = useState(init);
-
-	const setWebImport = useCallback((updateFn) => {
-		_setWebImport((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [webImport, setWebImport], [webImport, setWebImport]);
-
-	return (
-		<WebImportSettings.Provider value={contextValue}>
-			{children}
-		</WebImportSettings.Provider>
-	);
-};
-WebImportProvider.propTypes = {
-	children: node,
-	init: customPropTypes.webImportSettingsType,
-	updater: func
-};
-
-const useWebImportSettings = () => {
-	const context = useContext(WebImportSettings);
-
-	return context;
-};
+const { Provider: WebImportProvider, useSettings: useWebImportSettings } = new SettingsManager();
 
 function WebImportWidget(){
 	const [
