@@ -5,7 +5,7 @@ import { Toggle, SettingsManager } from "Components/UserSettings";
 const { Provider: OtherSettingsProvider, useSettings: useOtherSettings } = new SettingsManager<"other">({
 	beforeUpdate: (prevState, update) => {
 		// If user disabled caching, clear the data cache
-		if (prevState.cacheEnabled === true && update.cacheEnabled === false){
+		if (prevState.cacheEnabled === true && update.cacheEnabled === false) {
 			setTimeout(() => {
 				window.zoteroRoam?.clearDataCache?.();
 			}, 1000);

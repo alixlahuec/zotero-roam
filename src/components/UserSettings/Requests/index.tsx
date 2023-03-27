@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { Button, Dialog } from "@blueprintjs/core";
 
+import { RowCol, SettingsManager } from "Components/UserSettings";
 import DataRequest from "./DataRequest";
 import RequestsEditor from "./RequestsEditor";
-import { RowCol , SettingsManager } from "Components/UserSettings";
 
 import { useBool } from "../../../hooks";
 import { CustomClasses } from "../../../constants";
