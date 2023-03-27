@@ -10,8 +10,7 @@ import { ShortcutsProvider, ShortcutsWidget } from "./Shortcuts";
 import { TypemapProvider, TypemapWidget } from "./Typemap";
 import { WebImportProvider, WebImportWidget } from "./WebImport";
 
-import { RequestsProvider } from "./Requests";
-import RequestsWidget from "./Requests/RequestsWidget";
+import { RequestsProvider, RequestsWidget } from "./Requests";
 
 
 export const SETTINGS_CONFIG = [

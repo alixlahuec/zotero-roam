@@ -1,43 +1,14 @@
-import { func, node, objectOf, string } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { useCallback } from "react";
 
-import { TextField } from "../common";
+import { TextField , SettingsManager } from "Components/UserSettings";
 import { camelToTitleCase } from "../../../utils";
 
 
-const TypemapSettings = createContext({});
-
-const TypemapProvider = ({ children, init, updater }) => {
-	const [typemap, _setTypemap] = useState(init);
-
-	const setTypemap = useCallback((updateFn) => {
-		_setTypemap((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			window?.zoteroRoam?.updateSetting?.("typemap", update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [typemap, setTypemap], [typemap, setTypemap]);
-
-	return (
-		<TypemapSettings.Provider value={contextValue}>
-			{children}
-		</TypemapSettings.Provider>
-	);
-};
-TypemapProvider.propTypes = {
-	children: node,
-	init: objectOf(string),
-	updater: func
-};
-
-const useTypemapSettings = () => {
-	const context = useContext(TypemapSettings);
-
-	return context;
-};
+const { Provider: TypemapProvider, useSettings: useTypemapSettings } = new SettingsManager({
+	afterUpdate: (_prevState, update) => {
+		window?.zoteroRoam?.updateSetting?.("typemap", update);
+	}
+});
 
 function TypemapWidget(){
 	const [
