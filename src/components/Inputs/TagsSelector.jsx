@@ -69,6 +69,7 @@ const TagsSelector = memo(function TagsSelector({ selectedTags, onRemove, onSele
 
 	return (
 		<MultiSelect
+			className={CustomClasses.TEXT_SMALL}
 			createNewItemFromQuery={createNewItemFromQuery}
 			createNewItemPosition="first"
 			createNewItemRenderer={createNewItemRenderer}
