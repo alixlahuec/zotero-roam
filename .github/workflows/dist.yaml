@@ -32,6 +32,7 @@ jobs:
           reporter: jest-junit
 
       - name: Storybook CI
+        id: chromatic
         uses: chromaui/action@v1
         with:
           buildScriptName: "build-storybook"
@@ -40,6 +41,20 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           autoAcceptChanges: true
           exitZeroOnChanges: true
+
+      - name: Storybook tests
+        run: npm run ci:test-storybook
+        env:
+          TARGET_URL: "${{ steps.chromatic.outputs.storybookUrl }}"
+          JEST_JUNIT_OUTPUT_DIR: "reports"
+          JEST_JUNIT_OUTPUT_NAME: "storybook-junit.xml"
+
+      - name: Upload test reports
+        uses: dorny/test-reporter@v1
+        with:
+          name: Storybook
+          path: reports/storybook-junit.xml
+          reporter: jest-junit
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
