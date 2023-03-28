@@ -38,6 +38,21 @@ jobs:
           path: reports/tests-junit.xml
           reporter: jest-junit
 
+      - name: Webpack build (prod)
+        run: npm run build:prod
+      
+      - name: Webpack build (Roam Depot)
+        run: npm run build:roam
+      
+      - name: Webpack build (sandbox)
+        run: npm run build:sandbox
+
+      - name: Commit to repository
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "auto-commit: lint, test, build"
+        continue-on-error: true # See https://github.com/stefanzweifel/git-auto-commit-action/issues/204
+
       - name: Storybook CI
         id: chromatic
         uses: chromaui/action@v1
@@ -70,18 +85,3 @@ jobs:
         with:
           directory: ./coverage/
           verbose: true
-
-      - name: Webpack build (prod)
-        run: npm run build:prod
-      
-      - name: Webpack build (Roam Depot)
-        run: npm run build:roam
-      
-      - name: Webpack build (sandbox)
-        run: npm run build:sandbox
-
-      - name: Commit to repository
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "auto-commit: lint, test, build"
-        continue-on-error: true # See https://github.com/stefanzweifel/git-auto-commit-action/issues/204
