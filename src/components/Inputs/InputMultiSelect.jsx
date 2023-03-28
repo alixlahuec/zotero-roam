@@ -52,6 +52,7 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }){
 	}, [value]);
 
 	return <MultiSelect
+		className={CustomClasses.TEXT_SMALL}
 		initialContent={null}
 		itemPredicate={itemPredicate}
 		itemRenderer={itemRenderer}

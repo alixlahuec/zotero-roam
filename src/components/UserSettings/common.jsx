@@ -118,18 +118,6 @@ Definition.propTypes = {
 	text: string
 };
 
-const MultiInput = ({ options, setValue, value, ...props }) => {
-	return <InputMultiSelect className={CustomClasses.TEXT_SMALL} options={options} setValue={setValue} value={value} {...props} />;
-};
-MultiInput.propTypes = {
-	options: arrayOf(shape({
-		label: string,
-		value: string
-	})),
-	setValue: func,
-	value: arrayOf(string)
-};
-
 const NumericSelect = ({ description = null, label, setValue, title = null, value, ...extraProps }) => {
 	const handler = useCallback((num, _numAsString) => setValue(num), [setValue]);
 
@@ -375,7 +363,6 @@ Toggle.propTypes = {
 
 export {
 	Definition,
-	MultiInput,
 	NumericSelect,
 	RowCol,
 	RowGroup,
