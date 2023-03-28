@@ -4,8 +4,6 @@ import { Children, cloneElement, isValidElement, useCallback, useMemo } from "re
 import { Button, Checkbox, Classes, Code, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
-import { InputMultiSelect } from "Components/Inputs";
-
 import { useBool } from "../../hooks";
 import { CustomClasses } from "../../constants";
 
@@ -116,18 +114,6 @@ const Definition = ({ item, text = null }) => <div className="zr-definition--wra
 Definition.propTypes = {
 	item: string,
 	text: string
-};
-
-const MultiInput = ({ options, setValue, value, ...props }) => {
-	return <InputMultiSelect className={CustomClasses.TEXT_SMALL} options={options} setValue={setValue} value={value} {...props} />;
-};
-MultiInput.propTypes = {
-	options: arrayOf(shape({
-		label: string,
-		value: string
-	})),
-	setValue: func,
-	value: arrayOf(string)
 };
 
 const NumericSelect = ({ description = null, label, setValue, title = null, value, ...extraProps }) => {
@@ -375,7 +361,6 @@ Toggle.propTypes = {
 
 export {
 	Definition,
-	MultiInput,
 	NumericSelect,
 	RowCol,
 	RowGroup,
