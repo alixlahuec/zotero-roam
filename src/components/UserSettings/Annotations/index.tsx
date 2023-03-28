@@ -4,6 +4,7 @@ import { Definition, RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInpu
 
 
 const { Provider: AnnotationsProvider, useSettings: useAnnotationsSettings } = new SettingsManager<"annotations">({
+	/* istanbul ignore next */
 	afterUpdate: (_prevState, update) => {
 		window?.zoteroRoam?.updateSetting?.("annotations", update);
 	}

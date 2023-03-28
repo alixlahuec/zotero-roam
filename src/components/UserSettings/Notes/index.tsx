@@ -5,6 +5,7 @@ import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect, Setti
 
 
 const { Provider: NotesProvider, useSettings: useNotesSettings } = new SettingsManager<"notes">({
+	/* istanbul ignore next */
 	afterUpdate: (_prevState, update) => {
 		window?.zoteroRoam?.updateSetting?.("notes", update);
 	}

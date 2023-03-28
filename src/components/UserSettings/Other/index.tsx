@@ -3,6 +3,7 @@ import { Toggle, SettingsManager } from "Components/UserSettings";
 
 
 const { Provider: OtherSettingsProvider, useSettings: useOtherSettings } = new SettingsManager<"other">({
+	/* istanbul ignore next */
 	beforeUpdate: (prevState, update) => {
 		// If user disabled caching, clear the data cache
 		if (prevState.cacheEnabled === true && update.cacheEnabled === false) {

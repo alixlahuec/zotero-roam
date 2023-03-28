@@ -10,6 +10,7 @@ import { CustomClasses } from "../../../constants";
 
 
 const { Provider: RequestsProvider, useSettings: useRequestsSettings } = new SettingsManager<"requests">({
+	/* istanbul ignore next */
 	afterUpdate: (_prevState, update) => {
 		window?.zoteroRoam?.updateLibraries?.(update.libraries);
 	}
