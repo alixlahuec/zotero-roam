@@ -31,5 +31,5 @@ coverage:
           - src/utils.js
         target: 95%
         threshold: 5%
-ignore:
-  - src/components
+# ignore:
+#   - src/components
