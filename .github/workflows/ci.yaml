@@ -85,3 +85,4 @@ jobs:
         with:
           directory: ./coverage/
           verbose: true
+          fail_ci_if_error: true
