@@ -177,7 +177,7 @@ describe("All commands return correct output", () => {
 		test("It returns the correct output", async() => {
 			const sample_bib = bibs.itemInLibrary;
 			const { library: { type, id } } = sample_bib;
-			const sample_item = findItems({ type, id, since: 0 }).find(it => it.data.key == sample_bib.key);
+			const sample_item = findItems({ type: type + "s", id, since: 0 }).find(it => it.data.key == sample_bib.key);
 			const context = makeSbContext({ item: sample_item });
 
 			const bib_with_defaults = await window.zoteroRoam.getItemCitation(sample_item, {});
@@ -201,7 +201,7 @@ describe("All commands return correct output", () => {
 		Object.values(libraries).forEach(lib => {
 			const { path, version } = lib;
 			const [type, id] = path.split("/");
-			const colls = findCollections(type.slice(0,-1), id, 0);
+			const colls = findCollections(type, id, 0);
 
 			client.setQueryData(
 				["collections", { library: path }],
@@ -213,7 +213,7 @@ describe("All commands return correct output", () => {
 		});
 
 		const sample_item = items.find(it => it.data.collections.length > 0);
-		const collectionList = findCollections(sample_item.library.type, sample_item.library.id, 0);
+		const collectionList = findCollections(sample_item.library.type + "s", sample_item.library.id, 0);
 		const expectedColls = sample_item.data.collections
 			.map(key => collectionList.find(coll => coll.key == key).data.name);
 		const context = makeSbContext({ item: sample_item });
