@@ -157,11 +157,11 @@ const bibEntries = {
 };
 
 export const findBibEntry = ({ type, id, key }) => {
-	return Object.values(bibEntries).find(entry => entry.key == key && entry.library.type == type && entry.library.id == id);
+	return Object.values(bibEntries).find(entry => entry.key == key && entry.library.type + "s" == type && entry.library.id == id);
 };
 
 export const findItems = ({ type, id, since }) => {
-	return data.filter(item => item.library.type == type && item.library.id == id && item.version > since);
+	return data.filter(item => item.library.type + "s" == type && item.library.id == id && item.version > since);
 };
 
 export const handleItems = [
@@ -216,7 +216,7 @@ export const handleItems = [
 						})
 					});
 				} else {
-					const libraryCopy = data.find(it => it.library.type == library.type && it.library.id == library.id);
+					const libraryCopy = data.find(it => it.library.type + "s" == library.type && it.library.id == library.id);
 					if(version < libraryCopy.version){
 						obj.failed.push(libraryCopy.data.key);
 						obj.unchanged.push(libraryCopy);

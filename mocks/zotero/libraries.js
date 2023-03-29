@@ -1,10 +1,10 @@
 const configLibrary = (type, id, name) => {
-	const path = type + "s/" + id;
+	const path = [type, id].join("/");
 	return {
 		id,
 		links: {
 			alternate: {
-				href: "https://www.zotero.org/" + (type == "user" ? name : path),
+				href: "https://www.zotero.org/" + (type == "users" ? name : path),
 				type: "text/html"
 			}
 		},
@@ -17,12 +17,12 @@ const configLibrary = (type, id, name) => {
 /** @constant {Record<string, ZLibraryMock>} */
 const data = {
 	"userLibrary": {
-		...configLibrary("user", 123456, "username"),
+		...configLibrary("users", 123456, "username"),
 		username: "username",
 		version: 4310
 	},
 	"groupLibrary": {
-		...configLibrary("group", 456789, "group-library"),
+		...configLibrary("groups", 456789, "group-library"),
 		version: 1598
 	}
 };

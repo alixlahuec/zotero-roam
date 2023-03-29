@@ -45,7 +45,7 @@ export const makeEntityLinks = ({ key, library, parentItem = null }) => {
 			type: "application/json"
 		},
 		alternate: {
-			href: `https://www.zotero.org/${type == "user" ? name : path}/items/${key}`,
+			href: `https://www.zotero.org/${type == "users" ? name : path}/items/${key}`,
 			type: "text/html"
 		},
 		...upLink
@@ -92,12 +92,12 @@ export const makeItemMetadata = ({ citekey = false, itemType = null, key = "__NO
 export const makeLibraryMetadata = (library) => {
 	const { type, id, name, path } = library;
 	return {
-		type,
+		type: type.slice(0, -1),
 		id,
 		name,
 		links: {
 			alternate: {
-				href: "https://www.zotero.org/" + (type == "user" ? name : path),
+				href: "https://www.zotero.org/" + (type == "users" ? name : path),
 				type: "text/html"
 			}
 		}
