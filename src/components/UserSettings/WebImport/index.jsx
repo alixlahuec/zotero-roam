@@ -1,42 +1,9 @@
-import { func, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
-import * as customPropTypes from "../../../propTypes";
-import { RoamTagsInput } from "../common";
+import { useMemo } from "react";
+import { TagsSelector } from "Components/Inputs";
+import { RowCol, SettingsManager } from "Components/UserSettings";
 
 
-const WebImportSettings = createContext({});
-
-const WebImportProvider = ({ children, init, updater }) => {
-	const [webImport, _setWebImport] = useState(init);
-
-	const setWebImport = useCallback((updateFn) => {
-		_setWebImport((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [webImport, setWebImport], [webImport, setWebImport]);
-
-	return (
-		<WebImportSettings.Provider value={contextValue}>
-			{children}
-		</WebImportSettings.Provider>
-	);
-};
-WebImportProvider.propTypes = {
-	children: node,
-	init: customPropTypes.webImportSettingsType,
-	updater: func
-};
-
-const useWebImportSettings = () => {
-	const context = useContext(WebImportSettings);
-
-	return context;
-};
+const { Provider: WebImportProvider, useSettings: useWebImportSettings } = new SettingsManager();
 
 function WebImportWidget(){
 	const [
@@ -47,20 +14,30 @@ function WebImportWidget(){
 	] = useWebImportSettings();
 
 	const handlers = useMemo(() => {
-		function updateSingleValue(op, val){
+		function addTag(val) {
 			setOpts(prevState => ({
 				...prevState,
-				[op]: val
+				tags: Array.from(new Set([...prevState.tags, val]))
+			}));
+		}
+
+		function removeTag(val) {
+			setOpts(prevState => ({
+				...prevState,
+				tags: prevState.tags.filter(v => v != val)
 			}));
 		}
 
 		return {
-			updateTags: (val) => updateSingleValue("tags", val)
+			addTag,
+			removeTag
 		};
 	}, [setOpts]);
 
 	return <>
-		<RoamTagsInput description="Select tags for which to show the import button" onChange={handlers.updateTags} title="Tags" value={tags} />
+		<RowCol title="Tags" description="Select tags for which to show the import button">
+			<TagsSelector onRemove={handlers.removeTag} onSelect={handlers.addTag} selectedTags={tags} />
+		</RowCol>
 	</>;
 }
 

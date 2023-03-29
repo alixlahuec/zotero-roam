@@ -1,43 +1,9 @@
-import { func, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
-import { MultiInput, RowCol, SingleInput } from "../common";
-
-import * as customPropTypes from "../../../propTypes";
+import { useMemo } from "react";
+import { InputMultiSelect } from "Components/Inputs";
+import { RowCol, SingleInput, SettingsManager } from "Components/UserSettings";
 
 
-const PageMenuSettings = createContext({});
-
-const PageMenuProvider = ({ children, init, updater }) => {
-	const [pageMenu, _setPageMenu] = useState(init);
-
-	const setPageMenu = useCallback((updateFn) => {
-		_setPageMenu((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [pageMenu, setPageMenu], [pageMenu, setPageMenu]);
-
-	return (
-		<PageMenuSettings.Provider value={contextValue}>
-			{children}
-		</PageMenuSettings.Provider>
-	);
-};
-PageMenuProvider.propTypes = {
-	children: node,
-	init: customPropTypes.pageMenuSettingsType,
-	updater: func
-};
-
-const usePageMenuSettings = () => {
-	const context = useContext(PageMenuSettings);
-
-	return context;
-};
+const { Provider: PageMenuProvider, useSettings: usePageMenuSettings } = new SettingsManager();
 
 const ELEM_OPTIONS = [
 	{ label: "Metadata import", value: "addMetadata" }, 
@@ -84,7 +50,7 @@ function PageMenuWidget(){
 
 	return <>
 		<RowCol title="Elements" >
-			<MultiInput fill={true} openOnKeyDown={false} options={ELEM_OPTIONS} setValue={handlers.updateMenuElems} value={defaults} />
+			<InputMultiSelect fill={true} openOnKeyDown={false} options={ELEM_OPTIONS} setValue={handlers.updateMenuElems} value={defaults} />
 		</RowCol>
 		<SingleInput description="Select when contextual menus should be shown. By default, menus are displayed if the page title is longer than 5 characters." menuTitle="Select whether to show the page menu" onChange={handlers.updateMenuTrigger} options={TRIGGER_OPTIONS} title="Show menus" value={trigger} />
 	</>;

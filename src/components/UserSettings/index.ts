@@ -11,5 +11,7 @@ export * from "./Shortcuts";
 export * from "./Typemap";
 export * from "./WebImport";
 
+export * from "./common";
 export * from "./Dialog";
 export * from "./Provider";
+export * from "./SettingsManager";
