@@ -62,7 +62,7 @@ export const handleBibliography = rest.get<never, Mocks.RequestParams.Bibliograp
 
 		const formatsData = Object.fromEntries(
 			Object.entries(outputs)
-				.filter(([format, _output]) => includeFormats.includes(format))) as ObjValues<typeof data>["bib"];
+				.filter(([format, _output]) => includeFormats.includes(format))) as { bib: string };
 
 		return res(
 			ctx.json({
