@@ -2,12 +2,13 @@ import { rest } from "msw";
 import { citoids, semanticIdentifier } from "../citoid";
 import { makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
+import { Mocks } from "Mocks/types";
+import { ObjValues } from "Types/helpers";
 
 
 const { userLibrary, groupLibrary } = libraries;
 
-/** @constant {ZItemTop[]} */
-const data = [
+const data: Mocks.ItemTop[] = [
 	{
 		...makeItemMetadata({
 			citekey: "blochImplementingSocialInterventions2021",
@@ -132,8 +133,8 @@ const data = [
 	}
 ];
 
-const makeBibEntry = ({ citekey, biblatex }) => {
-	const item = data.find(it => it.key == citekey);
+const makeBibEntry = ({ citekey, biblatex }: { citekey: string, biblatex: string }): Mocks.Bib => {
+	const item = data.find(it => it.key == citekey)!;
 	const { data: { key }, library, links, meta, version } = item;
 	return {
 		biblatex,
@@ -156,16 +157,16 @@ const bibEntries = {
 	})
 };
 
-export const findBibEntry = ({ type, id, key }) => {
-	return Object.values(bibEntries).find(entry => entry.key == key && entry.library.type == type && entry.library.id == id);
+export const findBibEntry = ({ type, id, key }: Pick<Mocks.Library, "type" | "id"> & { key: string }) => {
+	return Object.values<Mocks.Bib>(bibEntries).find(entry => entry.key == key && entry.library.type + "s" == type && entry.library.id == id);
 };
 
-export const findItems = ({ type, id, since }) => {
-	return data.filter(item => item.library.type == type && item.library.id == id && item.version > since);
+export const findItems = ({ type, id, since }: Pick<Mocks.Library, "type" | "id"> & { since: number }) => {
+	return data.filter(item => item.library.type + "s" == type && item.library.id == id && item.version > since);
 };
 
 export const handleItems = [
-	rest.get(
+	rest.get<never, Mocks.RequestParams.Items, Mocks.Responses.ItemsGet>(
 		zotero(":libraryType/:libraryID/items"),
 		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;
@@ -173,58 +174,72 @@ export const handleItems = [
 			const include = req.url.searchParams.get("include") || "json";
 
 			// Otherwise create success response
-			const { type, id, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
+			const { type, id, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`)!;
 
 			// Bibliography entries
-			if(include == "biblatex"){
-				const keyList = req.url.searchParams.get("itemKey").split(",");
-				const bibs = keyList.map(key => findBibEntry({ type, id, key }));
+			if (include == "biblatex") {
+				const keyList = req.url.searchParams.get("itemKey")!.split(",");
+				const bibs = keyList.map(key => findBibEntry({ type, id, key })!);
 				return res(
 					ctx.json(bibs)
 				);
 			}
 
 			// Items JSON
-			const items = findItems({ type, id, since });
+			const items = findItems({ type, id, since: Number(since) });
 			return res(
-				ctx.set("last-modified-version", version),
-				ctx.set("total-results", Math.min(items.length, 100)), // We're not mocking for additional requests
+				ctx.set("last-modified-version", `${version}`),
+				ctx.set("total-results", `${Math.min(items.length, 100)}`), // We're not mocking for additional requests
 				ctx.json(items)
 			);
 		}
 	),
-	rest.post(
+	rest.post<Mocks.RequestBody.ItemsPost, Mocks.RequestParams.Items, Mocks.Responses.ItemsPost>(
 		zotero(":libraryType/:libraryID/items"),
-		async(req, res, ctx) => {
+		async (req, res, ctx) => {
 			
 			const { libraryType, libraryID } = req.params;
-			const itemsData = await req.json();
+			const itemsData = await req.json<Mocks.RequestBody.ItemsPost>();
 
-			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
+			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`)!;
 
-			const output = itemsData.reduce((obj, item) => {
-				const { key, version, ...props } = item;
+			type TReduce = {
+				[k in keyof Mocks.Responses.ItemsPost]: ObjValues<Mocks.Responses.ItemsPost[k]>[]
+			};
+			const output = itemsData.reduce<TReduce>((obj, item) => {
+				const { key = "__NO_UNIQUE_KEY__", version = library.version, ...props } = item;
     
-				if(!key){
+				if (!key) {
 					// We're not actually adding the item to the data, so no need to ensure keys are unique
 					obj.success.push("__NO_UNIQUE_KEY__");
 					obj.successful.push({
 						...makeItemMetadata({
+							key,
+							itemType: props.itemType,
 							library,
+							title: props.title,
 							version: library.version,
-							...props
-						})
+							data: props
+						}),
+						meta: {
+							creatorSummary: "",
+							numChildren: 0,
+							parsedDate: ""
+						}
 					});
 				} else {
-					const libraryCopy = data.find(it => it.library.type == library.type && it.library.id == library.id);
-					if(version < libraryCopy.version){
+					const libraryCopy = data.find(it => it.library.type + "s" == library.type && it.library.id == library.id)!;
+					if (version < libraryCopy.version) {
 						obj.failed.push(libraryCopy.data.key);
-						obj.unchanged.push(libraryCopy);
+						obj.unchanged.push(libraryCopy.data.key);
 					} else {
 						obj.success.push(libraryCopy.data.key);
 						obj.successful.push({
 							...libraryCopy,
 							data: {
+								...libraryCopy.data,
+								key,
+								version,
 								...props
 							}
 						});
@@ -239,13 +254,15 @@ export const handleItems = [
 				successful: [],
 				unchanged: []
 			});
-    
-			for(const cat in output){
-				output[cat] = Object.fromEntries(output[cat].map((el, i) => [i, el]));
-			}
+
+			const restructuredOutput: Mocks.Responses.ItemsPost = { failed: {}, success: {}, successful: {}, unchanged: {} };
+
+			Object.keys(output).forEach(cat => {
+				restructuredOutput[cat] = Object.fromEntries(output[cat].map((el, i) => [i, el]));
+			});
 
 			return res(
-				ctx.json(output)
+				ctx.json(restructuredOutput)
 			);
 		}
 	)

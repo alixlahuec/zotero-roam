@@ -3,17 +3,19 @@
  * @see https://github.com/zotero/translators/blob/master/index.d.ts
  */
 export namespace ZoteroAPI {
+	/** A creator's role (author, editor, translator...) */
+	export type CreatorType = _CreatorType;
+
 	/** A creator of a Zotero item */
 	export type Creator = ({ name: string } | { firstName: string, lastName: string }) & {
-		/** The creator's role (author, editor, translator...) */
-		creatorType: _CreatorType
+		creatorType: CreatorType
 	};
 
 	/** An entity's related links */
 	type EntityLinks = Record<string, { href: string, type: string }>;
 
 	/** An entity's library */
-	type EntityLibrary = {
+	export type EntityLibrary = {
 		/** The library's Zotero ID */
 		id: number,
 		/** Links related to the library */
@@ -21,10 +23,13 @@ export namespace ZoteroAPI {
 		/** The library's display name */
 		name: string,
 		/** The library's type */
-		type: "group" | "user"
+		type: LibraryType
 	};
 
 	type ExportFormat = _ExportFormat;
+
+	export type LibraryType = "user" | "group";
+	export type LibraryTypeURI = `${LibraryType}s`;
 
 	/** Basic metadata for Zotero items and collections */
 	interface Base {
@@ -124,6 +129,7 @@ export namespace ZoteroAPI {
 			 * @example "application/pdf"
 			 */
 			contentType: string,
+			parentItem: string
 		} & Record<string, any>
 	}
 
@@ -195,7 +201,7 @@ export namespace ZoteroAPI {
 			},
 			key: string,
 			userID: number,
-			username: string
+			username?: string
 		}
 
 		/** COLLECTIONS */

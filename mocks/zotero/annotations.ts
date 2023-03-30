@@ -1,20 +1,27 @@
 import { makeEntityLinks, makeLibraryMetadata } from "./common";
 import { libraries } from "./libraries";
+import { Mocks } from "../types";
 
 
 const { userLibrary } = libraries;
 
-/**
- * @param {{key: string, library: ZMockLibrary, parentItem: string, version: number, data: Partial<ZoteroAPI.ItemAnnotation["data"]>}} config
- * @returns {ZoteroAPI.ItemAnnotation}
- */
-const makeAnnot = ({ key, library, parentItem, version, data }) => {
+type MakeAnnotArgs = {
+	data: Partial<Mocks.Annotation["data"]>,
+	key: string,
+	library: Mocks.Library,
+	parentItem: string,
+	version: number
+};
+const makeAnnot = ({ key, library, parentItem, version, data }: MakeAnnotArgs): Mocks.Annotation => {
 	return {
 		data: {
 			annotationColor: "#5fb236",
+			annotationComment: "",
 			annotationPageLabel: "25",
 			annotationPosition: "{\"pageIndex\":24,\"rects\":[[203.6,431.053,546.865,441.6],[203.6,419.056,536.829,429.603],[203.6,407.059,566.448,417.606],[203.6,395.062,564.521,405.609],[203.6,383.065,265.699,393.612]]}",
 			annotationSortIndex: "00024|001317|00350",
+			annotationText: "",
+			annotationType: "highlight",
 			dateAdded: "2022-03-18T13:00:00Z",
 			dateModified: "2022-04-02T02:00:00Z",
 			itemType: "annotation",

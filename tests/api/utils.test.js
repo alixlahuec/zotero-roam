@@ -430,9 +430,10 @@ describe("Updating mocked items", () => {
 		async(_libName, libraryDetails) => {
 			const { type, id, path } = libraryDetails;
 			const sample_item = findItems({ type, id, since: 0 })[0];
+			const sample_tags = [{ tag: "TEST_TAG", type: 0 }];
 
 			const res = await writeItems(
-				[{ key: sample_item.data.key, version: sample_item.version, tags: [{ tag: "TEST_TAG", type: 0 }] }],
+				[{ key: sample_item.data.key, version: sample_item.version, tags: sample_tags }],
 				{ apikey: masterKey, path });
 
 			const data = res.map(rq => rq.value.data);
@@ -447,14 +448,15 @@ describe("Updating mocked items", () => {
 					0: {
 						...sample_item,
 						data: {
-							tags: [{ tag: "TEST_TAG", type: 0 }]
+							...sample_item.data,
+							tags: sample_tags
 						}
 					}
 				}
 			}]);
 
 			const resWithFailure = await writeItems(
-				[{ key: sample_item.data.key, version: sample_item.version - 1, tags: [{ tag: "TEST_TAG", type: 0 }] }],
+				[{ key: sample_item.data.key, version: sample_item.version - 1, tags: sample_tags }],
 				{ apikey: masterKey, path });
 
 			const dataWithFailure = resWithFailure.map(rq => rq.value.data);
@@ -464,7 +466,7 @@ describe("Updating mocked items", () => {
 					0: sample_item.data.key
 				},
 				unchanged: {
-					0: sample_item
+					0: sample_item.data.key
 				},
 				success: {},
 				successful: {}
