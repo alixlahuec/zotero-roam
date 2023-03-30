@@ -4,9 +4,9 @@ import { RoamCitekeys } from "Components/RoamCitekeysContext";
 
 export const withRoamCitekeys = (Story, context) => {
 	const { args, parameters } = context;
-	const [citekeys,] = useState(new Map(args.roamCitekeys || []));
+	const [citekeys,] = useState<Map<string,string>>(new Map(args.roamCitekeys || []));
     
-	const contextValue = useMemo(() => [citekeys, () => {}], [citekeys]);
+	const contextValue = useMemo(() => [citekeys, () => {}] as const, [citekeys]);
 
 	return (
 		<RoamCitekeys.Provider value={contextValue}>

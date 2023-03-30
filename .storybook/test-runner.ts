@@ -1,7 +1,8 @@
-const fs = require("fs");
-const { checkA11y, configureAxe,/* getViolations,*/ injectAxe } = require("axe-playwright");
+import * as fs from "fs";
+import { checkA11y, configureAxe,/* getViolations,*/ injectAxe } from "axe-playwright";
 
-const { A11Y_RULES } = require("./a11y-rules");
+import { A11Y_RULES } from "./a11y-rules";
+
 
 // https://storybook.js.org/blog/automate-accessibility-tests-with-storybook/
 module.exports = {
