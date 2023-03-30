@@ -1,14 +1,12 @@
 import { rest } from "msw";
 import { makeCollection, makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
+import { ZoteroAPI } from "../../src/types/externals";
 
 
 const { userLibrary, groupLibrary } = libraries;
 
-/**
- * @constant {Record<string, {collections: ZoteroAPI.Collection[], items: ZoteroAPI.Item[]}>}
- */
-const data = {
+const data: Record<string, { collections: ZoteroAPI.Collection[], items: ZoteroAPI.Item[] }> = {
 	[userLibrary.path]: {
 		collections: [
 			makeCollection({
@@ -68,12 +66,8 @@ const data = {
 	}
 };
 
-/**
- * @param {{path: string, since: number}} args 
- * @returns {{collections: string[], items: string[]}}
- */
-export const findDeleted = ({ path, since }) => {
-	const entities = {};
+export const findDeleted = ({ path, since }: { path: string, since: number }) => {
+	const entities: Partial<ZoteroAPI.Responses.Deleted> = {};
 
 	entities.collections = data[path]
 		.collections
@@ -88,14 +82,21 @@ export const findDeleted = ({ path, since }) => {
 	return entities;
 };
 
-export const handleDeleted = rest.get(
+type DeletedResponseBody = ZoteroAPI.Responses.Deleted;
+
+type DeletedRequestParams = {
+	libraryType: ZoteroAPI.LibraryTypeURI,
+	libraryID: string
+};
+
+export const handleDeleted = rest.get<never, DeletedRequestParams, DeletedResponseBody>(
 	zotero(":libraryType/:libraryID/deleted"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID } = req.params;
 		const since = req.url.searchParams.get("since");
 		const path = `${libraryType}/${libraryID}`;
 
-		const { collections, items } = findDeleted({ path, since });
+		const { collections = [], items = [] } = findDeleted({ path, since: Number(since) });
 
 		return res(
 			ctx.json({

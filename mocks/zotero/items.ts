@@ -1,4 +1,6 @@
 import { rest } from "msw";
+import { ZoteroAPI } from "Types/externals";
+import { ZItemTop } from "Types/transforms";
 import { citoids, semanticIdentifier } from "../citoid";
 import { makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
@@ -6,8 +8,7 @@ import { libraries } from "./libraries";
 
 const { userLibrary, groupLibrary } = libraries;
 
-/** @constant {ZItemTop[]} */
-const data = [
+const data: ZItemTop[] = [
 	{
 		...makeItemMetadata({
 			citekey: "blochImplementingSocialInterventions2021",
@@ -133,7 +134,7 @@ const data = [
 ];
 
 const makeBibEntry = ({ citekey, biblatex }) => {
-	const item = data.find(it => it.key == citekey);
+	const item = data.find(it => it.key == citekey)!;
 	const { data: { key }, library, links, meta, version } = item;
 	return {
 		biblatex,
@@ -145,7 +146,7 @@ const makeBibEntry = ({ citekey, biblatex }) => {
 	};
 };
 
-const bibEntries = {
+const bibEntries: Record<string, ZoteroAPI.Responses.ItemGet<"biblatex">> = {
 	"blochImplementingSocialInterventions2021": makeBibEntry({
 		citekey: "blochImplementingSocialInterventions2021",
 		biblatex: "\n@article{blochImplementingSocialInterventions2021,\n\ttitle = {Implementing social interventions in primary care},\n\tvolume = {193},\n\trights = {© 2021 {CMA} Joule Inc. or its licensors. This is an Open Access article distributed in accordance with the terms of the Creative Commons Attribution ({CC} {BY}-{NC}-{ND} 4.0) licence, which permits use, distribution and reproduction in any medium, provided that the original publication is properly cited, the use is noncommercial (i.e., research or educational use), and no modifications or adaptations are made. See: https://creativecommons.org/licenses/by-nc-nd/4.0/},\n\tissn = {0820-3946, 1488-2329},\n\turl = {https://www.cmaj.ca/content/193/44/E1696},\n\tdoi = {10.1503/cmaj.210229},\n\tabstract = {{KEY} {POINTS}\n- Primary care–based social interventions offer an important means to mitigate threats to individual and community health posed by adverse social conditions.\n- Effective interventions include those that target individual-level determinants, connections with community resources, community-focused partnerships and structures within health teams that affect equity.\n- Accumulating evidence points to the positive impacts of social interventions on broad markers of health; however, most research in this area has focused on implementation and process measures, rather than outcomes.\n- Some interventions require large, interdisciplinary health care resources to implement, but many are accessible to small group practices or individual providers.},\n\tpages = {E1696--E1701},\n\tnumber = {44},\n\tjournaltitle = {{CMAJ}},\n\tauthor = {Bloch, Gary and Rozmovits, Linda},\n\turldate = {2021-11-12},\n\tdate = {2021-11-08},\n\tlangid = {english},\n\tpmid = {34750179},\n\tkeywords = {primary care, social prescribing},\n}"
@@ -164,8 +165,17 @@ export const findItems = ({ type, id, since }) => {
 	return data.filter(item => item.library.type + "s" == type && item.library.id == id && item.version > since);
 };
 
+type ItemsGetResponseBody = ZoteroAPI.Responses.ItemsGet<"biblatex"> | ZoteroAPI.Responses.ItemsGet<"data">;
+
+type ItemsPostResponseBody = ZoteroAPI.Responses.ItemsWrite;
+
+type ItemsRequestParams = {
+	libraryType: ZoteroAPI.LibraryTypeURI,
+	libraryID: string
+};
+
 export const handleItems = [
-	rest.get(
+	rest.get<never, ItemsRequestParams, ItemsGetResponseBody>(
 		zotero(":libraryType/:libraryID/items"),
 		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;
@@ -173,12 +183,12 @@ export const handleItems = [
 			const include = req.url.searchParams.get("include") || "json";
 
 			// Otherwise create success response
-			const { type, id, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
+			const { type, id, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`)!;
 
 			// Bibliography entries
 			if(include == "biblatex"){
-				const keyList = req.url.searchParams.get("itemKey").split(",");
-				const bibs = keyList.map(key => findBibEntry({ type, id, key }));
+				const keyList = req.url.searchParams.get("itemKey")!.split(",");
+				const bibs = keyList.map(key => findBibEntry({ type, id, key })!);
 				return res(
 					ctx.json(bibs)
 				);
@@ -187,20 +197,20 @@ export const handleItems = [
 			// Items JSON
 			const items = findItems({ type, id, since });
 			return res(
-				ctx.set("last-modified-version", version),
-				ctx.set("total-results", Math.min(items.length, 100)), // We're not mocking for additional requests
+				ctx.set("last-modified-version", `${version}`),
+				ctx.set("total-results", `${Math.min(items.length, 100)}`), // We're not mocking for additional requests
 				ctx.json(items)
 			);
 		}
 	),
-	rest.post(
+	rest.post<never, ItemsRequestParams, ItemsPostResponseBody>(
 		zotero(":libraryType/:libraryID/items"),
 		async(req, res, ctx) => {
 			
 			const { libraryType, libraryID } = req.params;
 			const itemsData = await req.json();
 
-			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
+			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`)!;
 
 			const output = itemsData.reduce((obj, item) => {
 				const { key, version, ...props } = item;
@@ -216,7 +226,7 @@ export const handleItems = [
 						})
 					});
 				} else {
-					const libraryCopy = data.find(it => it.library.type + "s" == library.type && it.library.id == library.id);
+					const libraryCopy = data.find(it => it.library.type + "s" == library.type && it.library.id == library.id)!;
 					if(version < libraryCopy.version){
 						obj.failed.push(libraryCopy.data.key);
 						obj.unchanged.push(libraryCopy);

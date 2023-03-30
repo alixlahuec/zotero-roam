@@ -1,6 +1,3 @@
-import { ZoteroAPI } from "../../src/types/externals";
-
-
 export interface ZLibraryMock {
 	id: number,
 	links: {
@@ -8,7 +5,7 @@ export interface ZLibraryMock {
 	},
 	name: string,
 	path: string,
-	type: ZoteroAPI.LibraryTypeURI,
+	type: "users" | "groups",
 	username?: string,
 	version: number
 }

@@ -1,4 +1,5 @@
 import { rest } from "msw";
+import { ZoteroAPI } from "Types/externals";
 import { zotero } from "./common";
 
 import { libraries } from "./libraries";
@@ -46,12 +47,16 @@ const data = {
 	}
 };
 
-export const handleAPIKey = rest.get(
+type APIKeyResponseBody = ZoteroAPI.Responses.Permissions;
+
+type APIKeyRequestParams = { apikey: keyof typeof data };
+
+export const handleAPIKey = rest.get<never, APIKeyRequestParams, APIKeyResponseBody>(
 	zotero("keys/:apikey"), 
 	(req, res, ctx) => {
 		const { apikey } = req.params;
 		return res(
-			ctx.json(Object.values(data).find(val => val.key == apikey))
+			ctx.json(Object.values(data).find(val => val.key == apikey)!)
 		);
 	}
 );

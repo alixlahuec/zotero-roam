@@ -1,3 +1,5 @@
+import { ZLibraryMock } from "Mocks/types";
+import { ZoteroAPI } from "Types/externals";
 import { makeEntityLinks, makeLibraryMetadata } from "./common";
 import { libraries } from "./libraries";
 
@@ -17,7 +19,16 @@ const { userLibrary } = libraries;
  * }} config 
  * @returns {ZoteroAPI.ItemAttachment}
  */
-const makePDF = ({ key, library, numChildren = 0, parentItem, title, version, data = {} }) => ({
+type MakePDFArgs = {
+	key: string,
+	library: ZLibraryMock,
+	numChildren?: number,
+	parentItem: string | false,
+	title: string,
+	version: number,
+	data?: Partial<ZoteroAPI.ItemAttachment["data"]>
+};
+const makePDF = ({ key, library, numChildren = 0, parentItem, title, version, data = {} }: MakePDFArgs) => ({
 	key,
 	data: {
 		accessDate: "",

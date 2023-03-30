@@ -1,11 +1,12 @@
 import { rest } from "msw";
 import { makeCollection, zotero } from "./common";
 import { libraries } from "./libraries";
+import { ZoteroAPI } from "Types/externals";
 
 
 const { userLibrary, groupLibrary } = libraries;
 
-const data = [
+const data: ZoteroAPI.Collection[] = [
 	makeCollection({
 		key: "ABCDEF",
 		library: userLibrary,
@@ -20,22 +21,29 @@ const data = [
 	})
 ];
 
-export const findCollections = (type, id, since) => {
+export const findCollections = (type: ZoteroAPI.LibraryTypeURI, id: number, since: string) => {
 	return data.filter(cl => cl.library.type + "s" == type && cl.library.id == id && cl.version > Number(since));
 };
 
-export const handleCollections = rest.get(
+type CollectionsResponseBody = ZoteroAPI.Responses.Collections;
+
+type CollectionsRequestParams = {
+	libraryType: ZoteroAPI.LibraryTypeURI,
+	libraryID: string
+};
+
+export const handleCollections = rest.get<never, CollectionsRequestParams, CollectionsResponseBody>(
 	zotero(":libraryType/:libraryID/collections"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID } = req.params;
-		const since = req.url.searchParams.get("since") || 0;
+		const since = req.url.searchParams.get("since") || "0";
 
-		const { id, type, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`);
+		const { id, type, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`)!;
 		const collections = findCollections(type, id, since);
 
 		return res(
 			ctx.set("last-modified-version", `${version}`),
-			ctx.set("total-results", Math.min(collections.length, 100)), // We're not mocking with additional requests
+			ctx.set("total-results", `${Math.min(collections.length, 100)}`), // We're not mocking with additional requests
 			ctx.json(collections)
 		);
 	}

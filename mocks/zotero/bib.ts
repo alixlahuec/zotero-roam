@@ -1,6 +1,7 @@
 import { rest } from "msw";
 import { makeEntityLinks, makeLibraryMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
+import { ZoteroAPI } from "../../src/types/externals";
 
 
 const { userLibrary } = libraries;
@@ -15,19 +16,12 @@ const addMetadata = ({ key, library, version }) => ({
 	}
 });
 
-/**
- * @param {{key: string, path: string}} args 
- * @returns {ZoteroAPI.Responses.ItemGet<"bib">}
- */
-export const findBibliographyEntry = ({ key, path }) => {
-	const [libraryType, libraryID] = path.split("/");
-	return Object.values(data).find(item => item.library.type + "s" == libraryType && item.library.id == libraryID && item.key == key);
+export const findBibliographyEntry = ({ key, path }: { key: string, path: string }): ZoteroAPI.Responses.ItemGet<"bib"> => {
+	const [libraryType, libraryID] = path.split("/") as [ZoteroAPI.LibraryTypeURI, string];
+	return Object.values(data).find(item => item.library.type + "s" == libraryType && item.library.id == Number(libraryID) && item.key == key)!;
 };
 
-/**
- * @constant {Record<string, ZoteroAPI.Responses.ItemGet<"bib">}
- */
-const data = {
+const data: Record<string, ZoteroAPI.Responses.ItemGet<"bib">> = {
 	"itemInLibrary": {
 		...addMetadata({
 			key: "PPD648N6",
@@ -54,7 +48,15 @@ const data = {
 	}
 };
 
-export const handleBibliography = rest.get(
+type BibliographyResponseBody = ZoteroAPI.Responses.ItemGet<"bib">;
+
+type BibliographyRequestParams = {
+	libraryType: ZoteroAPI.LibraryTypeURI,
+	libraryID: string,
+	itemKey: string
+};
+
+export const handleBibliography = rest.get<never, BibliographyRequestParams, BibliographyResponseBody>(
 	zotero(":libraryType/:libraryID/items/:itemKey"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID, itemKey } = req.params;
@@ -64,7 +66,7 @@ export const handleBibliography = rest.get(
 
 		const formatsData = Object.fromEntries(
 			Object.entries(outputs)
-				.filter(([format, _output]) => includeFormats.includes(format)));
+				.filter(([format, _output]) => includeFormats.includes(format))) as Pick<BibliographyResponseBody, "bib">;
 
 		return res(
 			ctx.json({

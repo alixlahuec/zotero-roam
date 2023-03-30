@@ -1,4 +1,8 @@
-const configLibrary = (type, id, name) => {
+import { ZLibraryMock } from "Mocks/types";
+import { ZoteroAPI } from "Types/externals";
+
+
+const configLibrary = (type: ZoteroAPI.LibraryTypeURI, id: number, name: string) => {
 	const path = [type, id].join("/");
 	return {
 		id,
@@ -14,8 +18,7 @@ const configLibrary = (type, id, name) => {
 	};
 };
 
-/** @constant {Record<string, ZLibraryMock>} */
-const data = {
+const data: Record<string, ZLibraryMock> = {
 	"userLibrary": {
 		...configLibrary("users", 123456, "username"),
 		username: "username",

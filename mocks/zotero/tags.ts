@@ -2,11 +2,17 @@ import { rest } from "msw";
 import { libraries } from "./libraries";
 import { searchEngine } from "../../src/utils";
 import { zotero } from "./common";
+import { ZLibraryMock } from "./types";
+import { ZoteroAPI } from "../../src/types/externals";
 
 
 const { userLibrary, groupLibrary } = libraries;
 
-const makeTag = ({ tag, library, type = 1, numItems = 1 }) => {
+type MakeTagArgs = {
+	tag: string,
+	library: ZLibraryMock,
+} & Partial<ZoteroAPI.Tag["meta"]>;
+const makeTag = ({ tag, library, type = 1, numItems = 1 }: MakeTagArgs) => {
 	const { path } = library;
 	return {
 		tag,
@@ -27,13 +33,12 @@ const makeTag = ({ tag, library, type = 1, numItems = 1 }) => {
 	};
 };
 
-export const findTags = (path, token) => {
+export const findTags = (path: string, token: string) => {
 	const tagList = data[path];
 	return tagList.filter(t => searchEngine(t.tag, token, { any_case: true, match: "exact", search_compounds: true }));
 };
 
-/** @constant {Record<string,ZoteroAPI.Tag[]>} */
-const data = {
+const data: Record<string, ZoteroAPI.Tag[]> = {
 	[userLibrary.path]: [
 		makeTag({ tag: "immigrant youth", library: userLibrary, numItems: 2 }),
 		makeTag({ tag: "immigration", library: userLibrary, type: 1 }),
@@ -49,8 +54,17 @@ const data = {
 	]
 };
 
+type TagsGetResponseBody = ZoteroAPI.Responses.Tags;
+
+type TagsDeleteResponseBody = {};
+
+type TagsRequestParams = {
+	libraryType: ZoteroAPI.LibraryTypeURI,
+	libraryID: string
+};
+
 export const handleTags = [
-	rest.get(
+	rest.get<never, TagsRequestParams, TagsGetResponseBody>(
 		zotero(":libraryType/:libraryID/tags"),
 		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;
@@ -60,12 +74,12 @@ export const handleTags = [
 
 			return res(
 				ctx.set("last-modified-version", version),
-				ctx.set("total-results", Math.min(tags.length, 100)), // We're not mocking with additional requests
+				ctx.set("total-results", `${Math.min(tags.length, 100)}`), // We're not mocking with additional requests
 				ctx.json(tags)
 			);
 		}
 	),
-	rest.delete(
+	rest.delete<never, TagsRequestParams, TagsDeleteResponseBody>(
 		zotero(":libraryType/:libraryID/tags"),
 		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;
@@ -74,7 +88,7 @@ export const handleTags = [
 
 			const { version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`);
 
-			if(ifUnmodifiedSince < version){
+			if(Number(ifUnmodifiedSince) < version){
 				return res(
 					ctx.status(412, "Precondition failed")
 				);
