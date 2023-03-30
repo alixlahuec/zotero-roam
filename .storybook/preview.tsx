@@ -32,7 +32,7 @@ const withTheme = (Story, context) => {
 	const [{ theme }, /* updateGlobals */] = useGlobals();
 
 	useEffect(() => {
-		document.getElementById("root").parentElement.setAttribute("zr-dark-theme", (theme == "dark").toString());
+		document.getElementById("root")?.parentElement?.setAttribute("zr-dark-theme", (theme == "dark").toString());
 	}, [theme]);
 
 	return <div className="zr-" 
