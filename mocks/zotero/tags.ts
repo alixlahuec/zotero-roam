@@ -59,11 +59,11 @@ export const handleTags = [
 		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;
             
-			const { path, version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`);
+			const { path, version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`)!;
 			const tags = data[path];
 
 			return res(
-				ctx.set("last-modified-version", version),
+				ctx.set("last-modified-version", `${version}`),
 				ctx.set("total-results", `${Math.min(tags.length, 100)}`), // We're not mocking with additional requests
 				ctx.json(tags)
 			);
@@ -76,7 +76,7 @@ export const handleTags = [
 			// const tag = req.url.searchParams("tag");
 			const ifUnmodifiedSince = req.headers.get("If-Unmodified-Since-Version");
 
-			const { version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`);
+			const { version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`)!;
 
 			if(Number(ifUnmodifiedSince) < version){
 				return res(
