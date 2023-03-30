@@ -1,18 +1,17 @@
 import { rest } from "msw";
+import { zotero } from "./common";
 import { libraries } from "./libraries";
 import { searchEngine } from "../../src/utils";
-import { zotero } from "./common";
-import { ZLibraryMock } from "./types";
-import { ZoteroAPI } from "../../src/types/externals";
+import { Mocks } from "../types";
 
 
 const { userLibrary, groupLibrary } = libraries;
 
 type MakeTagArgs = {
 	tag: string,
-	library: ZLibraryMock,
-} & Partial<ZoteroAPI.Tag["meta"]>;
-const makeTag = ({ tag, library, type = 1, numItems = 1 }: MakeTagArgs) => {
+	library: Mocks.Library,
+} & Partial<Mocks.Tag["meta"]>;
+const makeTag = ({ tag, library, type = 1, numItems = 1 }: MakeTagArgs): Mocks.Tag => {
 	const { path } = library;
 	return {
 		tag,
@@ -38,7 +37,7 @@ export const findTags = (path: string, token: string) => {
 	return tagList.filter(t => searchEngine(t.tag, token, { any_case: true, match: "exact", search_compounds: true }));
 };
 
-const data: Record<string, ZoteroAPI.Tag[]> = {
+const data: Record<string, Mocks.Tag[]> = {
 	[userLibrary.path]: [
 		makeTag({ tag: "immigrant youth", library: userLibrary, numItems: 2 }),
 		makeTag({ tag: "immigration", library: userLibrary, type: 1 }),
@@ -54,17 +53,8 @@ const data: Record<string, ZoteroAPI.Tag[]> = {
 	]
 };
 
-type TagsGetResponseBody = ZoteroAPI.Responses.Tags;
-
-type TagsDeleteResponseBody = {};
-
-type TagsRequestParams = {
-	libraryType: ZoteroAPI.LibraryTypeURI,
-	libraryID: string
-};
-
 export const handleTags = [
-	rest.get<never, TagsRequestParams, TagsGetResponseBody>(
+	rest.get<never, Mocks.RequestParams.Tags, Mocks.Responses.TagsGet>(
 		zotero(":libraryType/:libraryID/tags"),
 		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;
@@ -79,7 +69,7 @@ export const handleTags = [
 			);
 		}
 	),
-	rest.delete<never, TagsRequestParams, TagsDeleteResponseBody>(
+	rest.delete<never, Mocks.RequestParams.Tags, Mocks.Responses.TagsDelete>(
 		zotero(":libraryType/:libraryID/tags"),
 		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;

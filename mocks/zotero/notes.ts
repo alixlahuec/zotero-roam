@@ -1,11 +1,20 @@
 import { makeEntityLinks, makeLibraryMetadata } from "./common";
 import { libraries } from "./libraries";
-import { ZItemNote } from "Types/transforms";
+import { Mocks } from "Mocks/types";
 
 
 const { userLibrary } = libraries;
 
-const makeNote = ({ key, library, data, note, numChildren = 0, parentItem, version = 1 }): ZItemNote => {
+type MakeNoteArgs = {
+	key: string,
+	library: Mocks.Library,
+	data: Partial<Mocks.ItemNote["data"]>,
+	note: Mocks.ItemNote["data"]["note"],
+	numChildren?: number,
+	parentItem: string,
+	version?: number
+};
+const makeNote = ({ key, library, data, note, numChildren = 0, parentItem, version = 1 }: MakeNoteArgs): Mocks.ItemNote => {
 	return {
 		key,
 		data: {

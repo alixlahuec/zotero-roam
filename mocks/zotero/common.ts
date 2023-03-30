@@ -1,18 +1,17 @@
-import { ZLibraryMock } from "Mocks/types";
-import { ZoteroAPI } from "Types/externals";
+import { Mocks } from "Mocks/types";
 
 
 export const zotero = (URI: string) => "https://api.zotero.org/" + URI;
 
 
-type MakeCollectionArgs = Omit<ZoteroAPI.Collection["data"], "parentCollection"> & {
-	library: ZLibraryMock,
-	hasParent?: ZoteroAPI.Collection["data"]["parentCollection"],
+type MakeCollectionArgs = Omit<Mocks.Collection["data"], "parentCollection"> & {
+	library: Mocks.Library,
+	hasParent?: Mocks.Collection["data"]["parentCollection"],
 	hasChildren?: number
 };
 export const makeCollection = (
 	{ key, library, name, version, hasParent = false, hasChildren = 0 }: MakeCollectionArgs
-): ZoteroAPI.Collection => ({
+): Mocks.Collection => ({
 	data: {
 		key,
 		name,
@@ -33,7 +32,7 @@ export const makeCollection = (
 
 type MakeEntityLinksArgs = {
 	key: string,
-	library: ZLibraryMock,
+	library: Mocks.Library,
 	parentItem?: string | false
 };
 export const makeEntityLinks = ({ key, library, parentItem = false }: MakeEntityLinksArgs) => {
@@ -65,14 +64,14 @@ export const makeEntityLinks = ({ key, library, parentItem = false }: MakeEntity
 
 type MakeItemMetadataArgs = {
 	citekey?: string | false,
-	itemType?: ZoteroAPI.ItemTop["data"]["itemType"],
+	itemType?: Mocks.ItemTop["data"]["itemType"],
 	key?: string,
-	library: ZLibraryMock,
+	library: Mocks.Library,
 	title?: string,
 	version?: number,
-	data?: Partial<ZoteroAPI.ItemTop["data"]>
+	data?: Partial<Mocks.ItemTop["data"]>
 };
-export const makeItemMetadata = ({ citekey = false, itemType = "journalArticle", key = "__NO_UNIQUE_KEY__", library, title ="", version = 1, data = {} }: MakeItemMetadataArgs) => ({
+export const makeItemMetadata = ({ citekey = false, itemType = "journalArticle", key = "__NO_UNIQUE_KEY__", library, title = "", version = 1, data = {} }: MakeItemMetadataArgs): Omit<Mocks.ItemTop, "meta"> => ({
 	data: {
 		creators: [],
 		collections: [],
@@ -91,15 +90,14 @@ export const makeItemMetadata = ({ citekey = false, itemType = "journalArticle",
 	key: citekey || key,
 	library: makeLibraryMetadata(library),
 	links: makeEntityLinks({ key, library }),
-	meta: {},
 	version
 });
 
 
-export const makeLibraryMetadata = (library: ZLibraryMock): ZoteroAPI.EntityLibrary => {
+export const makeLibraryMetadata = (library: Mocks.Library): Mocks.EntityLibrary => {
 	const { type, id, name, path } = library;
 	return {
-		type: type.slice(0, -1) as ZoteroAPI.LibraryType,
+		type: type.slice(0, -1) as Mocks.EntityLibrary["type"],
 		id,
 		name,
 		links: {

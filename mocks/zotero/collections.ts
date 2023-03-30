@@ -1,12 +1,12 @@
 import { rest } from "msw";
 import { makeCollection, zotero } from "./common";
 import { libraries } from "./libraries";
-import { ZoteroAPI } from "Types/externals";
+import { Mocks } from "Mocks/types";
 
 
 const { userLibrary, groupLibrary } = libraries;
 
-const data: ZoteroAPI.Collection[] = [
+const data: Mocks.Collection[] = [
 	makeCollection({
 		key: "ABCDEF",
 		library: userLibrary,
@@ -21,18 +21,11 @@ const data: ZoteroAPI.Collection[] = [
 	})
 ];
 
-export const findCollections = (type: ZoteroAPI.LibraryTypeURI, id: number, since: string) => {
+export const findCollections = (type: Mocks.Library["type"], id: number, since: string) => {
 	return data.filter(cl => cl.library.type + "s" == type && cl.library.id == id && cl.version > Number(since));
 };
 
-type CollectionsResponseBody = ZoteroAPI.Responses.Collections;
-
-type CollectionsRequestParams = {
-	libraryType: ZoteroAPI.LibraryTypeURI,
-	libraryID: string
-};
-
-export const handleCollections = rest.get<never, CollectionsRequestParams, CollectionsResponseBody>(
+export const handleCollections = rest.get<never, Mocks.RequestParams.Collections, Mocks.Responses.Collections>(
 	zotero(":libraryType/:libraryID/collections"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID } = req.params;

@@ -1,19 +1,18 @@
 import { makeEntityLinks, makeLibraryMetadata } from "./common";
 import { libraries } from "./libraries";
-import { ZLibraryMock } from "../types";
-import { ZItemAnnotation } from "Types/transforms";
+import { Mocks } from "../types";
 
 
 const { userLibrary } = libraries;
 
 type MakeAnnotArgs = {
-	data: Partial<ZItemAnnotation["data"]>,
+	data: Partial<Mocks.Annotation["data"]>,
 	key: string,
-	library: ZLibraryMock,
+	library: Mocks.Library,
 	parentItem: string,
 	version: number
 };
-const makeAnnot = ({ key, library, parentItem, version, data }: MakeAnnotArgs): ZItemAnnotation => {
+const makeAnnot = ({ key, library, parentItem, version, data }: MakeAnnotArgs): Mocks.Annotation => {
 	return {
 		data: {
 			annotationColor: "#5fb236",

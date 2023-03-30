@@ -1,12 +1,12 @@
 import { rest } from "msw";
 import { makeCollection, makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
-import { ZoteroAPI } from "../../src/types/externals";
+import { Mocks } from "../types";
 
 
 const { userLibrary, groupLibrary } = libraries;
 
-const data: Record<string, { collections: ZoteroAPI.Collection[], items: ZoteroAPI.Item[] }> = {
+const data: Record<string, { collections: Mocks.Collection[], items: Mocks.ItemTop[] }> = {
 	[userLibrary.path]: {
 		collections: [
 			makeCollection({
@@ -67,7 +67,7 @@ const data: Record<string, { collections: ZoteroAPI.Collection[], items: ZoteroA
 };
 
 export const findDeleted = ({ path, since }: { path: string, since: number }) => {
-	const entities: Partial<ZoteroAPI.Responses.Deleted> = {};
+	const entities: Partial<Mocks.Responses.Deleted> = {};
 
 	entities.collections = data[path]
 		.collections
@@ -82,14 +82,7 @@ export const findDeleted = ({ path, since }: { path: string, since: number }) =>
 	return entities;
 };
 
-type DeletedResponseBody = ZoteroAPI.Responses.Deleted;
-
-type DeletedRequestParams = {
-	libraryType: ZoteroAPI.LibraryTypeURI,
-	libraryID: string
-};
-
-export const handleDeleted = rest.get<never, DeletedRequestParams, DeletedResponseBody>(
+export const handleDeleted = rest.get<never, Mocks.RequestParams.Deleted, Mocks.Responses.Deleted>(
 	zotero(":libraryType/:libraryID/deleted"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID } = req.params;

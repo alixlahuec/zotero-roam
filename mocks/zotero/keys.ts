@@ -1,8 +1,7 @@
 import { rest } from "msw";
-import { ZoteroAPI } from "Types/externals";
 import { zotero } from "./common";
-
 import { libraries } from "./libraries";
+import { Mocks } from "Mocks/types";
 
 
 const { userLibrary, groupLibrary } = libraries;
@@ -26,7 +25,7 @@ const data = {
 				}
 			}
 		}
-	},
+	} as Mocks.Responses.Permissions,
 	keyWithNoGroupAccess: {
 		...addUserInfo(),
 		key: "EFGH5678IJK",
@@ -44,14 +43,10 @@ const data = {
 				}
 			}
 		}
-	}
+	} as Mocks.Responses.Permissions
 };
 
-type APIKeyResponseBody = ZoteroAPI.Responses.Permissions;
-
-type APIKeyRequestParams = { apikey: keyof typeof data };
-
-export const handleAPIKey = rest.get<never, APIKeyRequestParams, APIKeyResponseBody>(
+export const handleAPIKey = rest.get<never, Mocks.RequestParams.Permissions, Mocks.Responses.Permissions>(
 	zotero("keys/:apikey"), 
 	(req, res, ctx) => {
 		const { apikey } = req.params;

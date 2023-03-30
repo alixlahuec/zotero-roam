@@ -1,7 +1,10 @@
 import { rest } from "msw";
+
 import { makeEntityLinks, makeLibraryMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
-import { ZoteroAPI } from "../../src/types/externals";
+
+import { Mocks } from "../types";
+import { ObjValues } from "../../src/types/helpers";
 
 
 const { userLibrary } = libraries;
@@ -16,12 +19,12 @@ const addMetadata = ({ key, library, version }) => ({
 	}
 });
 
-export const findBibliographyEntry = ({ key, path }: { key: string, path: string }): ZoteroAPI.Responses.ItemGet<"bib"> => {
-	const [libraryType, libraryID] = path.split("/") as [ZoteroAPI.LibraryTypeURI, string];
+export const findBibliographyEntry = ({ key, path }: { key: string, path: string }): ObjValues<typeof data> => {
+	const [libraryType, libraryID] = path.split("/") as [Mocks.Library["type"], string];
 	return Object.values(data).find(item => item.library.type + "s" == libraryType && item.library.id == Number(libraryID) && item.key == key)!;
 };
 
-const data: Record<string, ZoteroAPI.Responses.ItemGet<"bib">> = {
+const data: Record<string, Mocks.ItemBibliography> = {
 	"itemInLibrary": {
 		...addMetadata({
 			key: "PPD648N6",
@@ -48,15 +51,8 @@ const data: Record<string, ZoteroAPI.Responses.ItemGet<"bib">> = {
 	}
 };
 
-type BibliographyResponseBody = ZoteroAPI.Responses.ItemGet<"bib">;
 
-type BibliographyRequestParams = {
-	libraryType: ZoteroAPI.LibraryTypeURI,
-	libraryID: string,
-	itemKey: string
-};
-
-export const handleBibliography = rest.get<never, BibliographyRequestParams, BibliographyResponseBody>(
+export const handleBibliography = rest.get<never, Mocks.RequestParams.Bibliography, Mocks.Responses.Bibliography>(
 	zotero(":libraryType/:libraryID/items/:itemKey"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID, itemKey } = req.params;
@@ -66,7 +62,7 @@ export const handleBibliography = rest.get<never, BibliographyRequestParams, Bib
 
 		const formatsData = Object.fromEntries(
 			Object.entries(outputs)
-				.filter(([format, _output]) => includeFormats.includes(format))) as Pick<BibliographyResponseBody, "bib">;
+				.filter(([format, _output]) => includeFormats.includes(format))) as ObjValues<typeof data>["bib"];
 
 		return res(
 			ctx.json({

@@ -1,14 +1,14 @@
 import { rest } from "msw";
-import { ZoteroAPI } from "Types/externals";
-import { ZItemTop } from "Types/transforms";
 import { citoids, semanticIdentifier } from "../citoid";
 import { makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
+import { Mocks } from "Mocks/types";
+import { ObjValues } from "Types/helpers";
 
 
 const { userLibrary, groupLibrary } = libraries;
 
-const data: ZItemTop[] = [
+const data: Mocks.ItemTop[] = [
 	{
 		...makeItemMetadata({
 			citekey: "blochImplementingSocialInterventions2021",
@@ -133,7 +133,7 @@ const data: ZItemTop[] = [
 	}
 ];
 
-const makeBibEntry = ({ citekey, biblatex }) => {
+const makeBibEntry = ({ citekey, biblatex }: { citekey: string, biblatex: string }): Mocks.Bib => {
 	const item = data.find(it => it.key == citekey)!;
 	const { data: { key }, library, links, meta, version } = item;
 	return {
@@ -146,7 +146,7 @@ const makeBibEntry = ({ citekey, biblatex }) => {
 	};
 };
 
-const bibEntries: Record<string, ZoteroAPI.Responses.ItemGet<"biblatex">> = {
+const bibEntries = {
 	"blochImplementingSocialInterventions2021": makeBibEntry({
 		citekey: "blochImplementingSocialInterventions2021",
 		biblatex: "\n@article{blochImplementingSocialInterventions2021,\n\ttitle = {Implementing social interventions in primary care},\n\tvolume = {193},\n\trights = {© 2021 {CMA} Joule Inc. or its licensors. This is an Open Access article distributed in accordance with the terms of the Creative Commons Attribution ({CC} {BY}-{NC}-{ND} 4.0) licence, which permits use, distribution and reproduction in any medium, provided that the original publication is properly cited, the use is noncommercial (i.e., research or educational use), and no modifications or adaptations are made. See: https://creativecommons.org/licenses/by-nc-nd/4.0/},\n\tissn = {0820-3946, 1488-2329},\n\turl = {https://www.cmaj.ca/content/193/44/E1696},\n\tdoi = {10.1503/cmaj.210229},\n\tabstract = {{KEY} {POINTS}\n- Primary care–based social interventions offer an important means to mitigate threats to individual and community health posed by adverse social conditions.\n- Effective interventions include those that target individual-level determinants, connections with community resources, community-focused partnerships and structures within health teams that affect equity.\n- Accumulating evidence points to the positive impacts of social interventions on broad markers of health; however, most research in this area has focused on implementation and process measures, rather than outcomes.\n- Some interventions require large, interdisciplinary health care resources to implement, but many are accessible to small group practices or individual providers.},\n\tpages = {E1696--E1701},\n\tnumber = {44},\n\tjournaltitle = {{CMAJ}},\n\tauthor = {Bloch, Gary and Rozmovits, Linda},\n\turldate = {2021-11-12},\n\tdate = {2021-11-08},\n\tlangid = {english},\n\tpmid = {34750179},\n\tkeywords = {primary care, social prescribing},\n}"
@@ -157,25 +157,16 @@ const bibEntries: Record<string, ZoteroAPI.Responses.ItemGet<"biblatex">> = {
 	})
 };
 
-export const findBibEntry = ({ type, id, key }) => {
-	return Object.values(bibEntries).find(entry => entry.key == key && entry.library.type + "s" == type && entry.library.id == id);
+export const findBibEntry = ({ type, id, key }: Pick<Mocks.Library, "type" | "id"> & { key: string }) => {
+	return Object.values<Mocks.Bib>(bibEntries).find(entry => entry.key == key && entry.library.type + "s" == type && entry.library.id == id);
 };
 
-export const findItems = ({ type, id, since }) => {
+export const findItems = ({ type, id, since }: Pick<Mocks.Library, "type" | "id"> & { since: number }) => {
 	return data.filter(item => item.library.type + "s" == type && item.library.id == id && item.version > since);
 };
 
-type ItemsGetResponseBody = ZoteroAPI.Responses.ItemsGet<"biblatex"> | ZoteroAPI.Responses.ItemsGet<"data">;
-
-type ItemsPostResponseBody = ZoteroAPI.Responses.ItemsWrite;
-
-type ItemsRequestParams = {
-	libraryType: ZoteroAPI.LibraryTypeURI,
-	libraryID: string
-};
-
 export const handleItems = [
-	rest.get<never, ItemsRequestParams, ItemsGetResponseBody>(
+	rest.get<never, Mocks.RequestParams.Items, Mocks.Responses.ItemsGet>(
 		zotero(":libraryType/:libraryID/items"),
 		(req, res, ctx) => {
 			const { libraryType, libraryID } = req.params;
@@ -186,7 +177,7 @@ export const handleItems = [
 			const { type, id, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`)!;
 
 			// Bibliography entries
-			if(include == "biblatex"){
+			if (include == "biblatex") {
 				const keyList = req.url.searchParams.get("itemKey")!.split(",");
 				const bibs = keyList.map(key => findBibEntry({ type, id, key })!);
 				return res(
@@ -195,7 +186,7 @@ export const handleItems = [
 			}
 
 			// Items JSON
-			const items = findItems({ type, id, since });
+			const items = findItems({ type, id, since: Number(since) });
 			return res(
 				ctx.set("last-modified-version", `${version}`),
 				ctx.set("total-results", `${Math.min(items.length, 100)}`), // We're not mocking for additional requests
@@ -203,38 +194,52 @@ export const handleItems = [
 			);
 		}
 	),
-	rest.post<never, ItemsRequestParams, ItemsPostResponseBody>(
+	rest.post<Mocks.RequestBody.ItemsPost, Mocks.RequestParams.Items, Mocks.Responses.ItemsPost>(
 		zotero(":libraryType/:libraryID/items"),
-		async(req, res, ctx) => {
+		async (req, res, ctx) => {
 			
 			const { libraryType, libraryID } = req.params;
-			const itemsData = await req.json();
+			const itemsData = await req.json<Mocks.RequestBody.ItemsPost>();
 
 			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`)!;
 
-			const output = itemsData.reduce((obj, item) => {
-				const { key, version, ...props } = item;
+			type TReduce = {
+				[k in keyof Mocks.Responses.ItemsPost]: ObjValues<Mocks.Responses.ItemsPost[k]>[]
+			};
+			const output = itemsData.reduce<TReduce>((obj, item) => {
+				const { key = "__NO_UNIQUE_KEY__", version = library.version, ...props } = item;
     
-				if(!key){
+				if (!key) {
 					// We're not actually adding the item to the data, so no need to ensure keys are unique
 					obj.success.push("__NO_UNIQUE_KEY__");
 					obj.successful.push({
 						...makeItemMetadata({
+							key,
+							itemType: props.itemType,
 							library,
+							title: props.title,
 							version: library.version,
-							...props
-						})
+							data: props
+						}),
+						meta: {
+							creatorSummary: "",
+							numChildren: 0,
+							parsedDate: ""
+						}
 					});
 				} else {
 					const libraryCopy = data.find(it => it.library.type + "s" == library.type && it.library.id == library.id)!;
-					if(version < libraryCopy.version){
+					if (version < libraryCopy.version) {
 						obj.failed.push(libraryCopy.data.key);
-						obj.unchanged.push(libraryCopy);
+						obj.unchanged.push(libraryCopy.data.key);
 					} else {
 						obj.success.push(libraryCopy.data.key);
 						obj.successful.push({
 							...libraryCopy,
 							data: {
+								...libraryCopy.data,
+								key,
+								version,
 								...props
 							}
 						});
@@ -249,13 +254,15 @@ export const handleItems = [
 				successful: [],
 				unchanged: []
 			});
-    
-			for(const cat in output){
-				output[cat] = Object.fromEntries(output[cat].map((el, i) => [i, el]));
-			}
+
+			const restructuredOutput: Mocks.Responses.ItemsPost = { failed: {}, success: {}, successful: {}, unchanged: {} };
+
+			Object.keys(output).forEach(cat => {
+				restructuredOutput[cat] = Object.fromEntries(output[cat].map((el, i) => [i, el]));
+			});
 
 			return res(
-				ctx.json(output)
+				ctx.json(restructuredOutput)
 			);
 		}
 	)

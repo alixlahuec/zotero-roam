@@ -129,6 +129,7 @@ export namespace ZoteroAPI {
 			 * @example "application/pdf"
 			 */
 			contentType: string,
+			parentItem: string
 		} & Record<string, any>
 	}
 
