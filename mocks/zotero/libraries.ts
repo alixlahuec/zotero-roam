@@ -1,17 +1,8 @@
-export interface ZLibraryMock {
-	id: number,
-	links: {
-		alternate: { href: string, type: string }
-	},
-	name: string,
-	path: string,
-	type: "users" | "groups",
-	username?: string,
-	version: number
-}
+import { Mocks } from "Mocks/types";
 
-const configLibrary = (type: "users"|"groups", id: number, name: string) => {
-	const path = type + "/" + id;
+
+const configLibrary = (type: Mocks.Library["type"], id: number, name: string, version: number): Mocks.Library => {
+	const path = [type, id].join("/");
 	return {
 		id,
 		links: {
@@ -22,20 +13,15 @@ const configLibrary = (type: "users"|"groups", id: number, name: string) => {
 		},
 		name,
 		path,
-		type
+		type,
+		username: (type == "users" ? name : undefined),
+		version
 	};
 };
 
-const data: Record<string, ZLibraryMock> = {
-	"userLibrary": {
-		...configLibrary("users", 123456, "username"),
-		username: "username",
-		version: 4310
-	},
-	"groupLibrary": {
-		...configLibrary("groups", 456789, "group-library"),
-		version: 1598
-	}
+const data = {
+	"userLibrary": configLibrary("users", 123456, "username", 4310),
+	"groupLibrary": configLibrary("groups", 456789, "group-library", 1598)
 };
 
 export {

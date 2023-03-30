@@ -1,6 +1,10 @@
 import { rest } from "msw";
+
 import { makeEntityLinks, makeLibraryMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
+
+import { Mocks } from "../types";
+import { ObjValues } from "../../src/types/helpers";
 
 
 const { userLibrary } = libraries;
@@ -15,19 +19,12 @@ const addMetadata = ({ key, library, version }) => ({
 	}
 });
 
-/**
- * @param {{key: string, path: string}} args 
- * @returns {ZoteroAPI.Responses.ItemGet<"bib">}
- */
-export const findBibliographyEntry = ({ key, path }) => {
-	const [libraryType, libraryID] = path.split("/");
-	return Object.values(data).find(item => item.library.type + "s" == libraryType && item.library.id == libraryID && item.key == key);
+export const findBibliographyEntry = ({ key, path }: { key: string, path: string }): ObjValues<typeof data> => {
+	const [libraryType, libraryID] = path.split("/") as [Mocks.Library["type"], string];
+	return Object.values(data).find(item => item.library.type + "s" == libraryType && item.library.id == Number(libraryID) && item.key == key)!;
 };
 
-/**
- * @constant {Record<string, ZoteroAPI.Responses.ItemGet<"bib">}
- */
-const data = {
+const data: Record<string, Mocks.ItemBibliography> = {
 	"itemInLibrary": {
 		...addMetadata({
 			key: "PPD648N6",
@@ -54,7 +51,8 @@ const data = {
 	}
 };
 
-export const handleBibliography = rest.get(
+
+export const handleBibliography = rest.get<never, Mocks.RequestParams.Bibliography, Mocks.Responses.Bibliography>(
 	zotero(":libraryType/:libraryID/items/:itemKey"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID, itemKey } = req.params;
@@ -64,7 +62,7 @@ export const handleBibliography = rest.get(
 
 		const formatsData = Object.fromEntries(
 			Object.entries(outputs)
-				.filter(([format, _output]) => includeFormats.includes(format)));
+				.filter(([format, _output]) => includeFormats.includes(format))) as ObjValues<typeof data>["bib"];
 
 		return res(
 			ctx.json({

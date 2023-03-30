@@ -71,6 +71,7 @@ export interface ZSimplifiedNote {
 }
 
 type ZItemBase = {
+	/** Indicates if the item has a pinned citekey, based on the contents of the `data.extra` field */
 	has_citekey: boolean
 };
 

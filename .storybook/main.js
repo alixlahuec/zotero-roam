@@ -20,7 +20,7 @@ module.exports = {
 				...config.resolve,
 				alias: {
 					"Mocks": path.resolve(__dirname, "..", "mocks"),
-					"Roam": path.resolve(__dirname, "..", "mocks", "roam.js"),
+					"Roam": path.resolve(__dirname, "..", "mocks", "roam.ts"),
 					"Components": path.resolve(__dirname, "..", "src", "components"),
 					"Types": path.resolve(__dirname, "..", "src", "types")
 				}

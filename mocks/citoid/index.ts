@@ -1,4 +1,5 @@
 import { rest } from "msw";
+import { CitoidAPI, ZoteroAPI } from "Types/externals";
 
 
 /* istanbul ignore next */
@@ -7,11 +8,7 @@ const addSampleMetadata = () => ({
 	version: 0
 });
 
-/**
- * @param {Partial<CitoidAPI.AsZotero>} config 
- * @returns 
- */
-const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ...props }) => ({
+const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ...props }: Partial<CitoidAPI.AsZotero>) => ({
 	...addSampleMetadata,
 	creators,
 	date,
@@ -22,20 +19,25 @@ const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ..
 	...props
 });
 
-/**
- * @param {string[]} args 
- * @returns {ZoteroAPI.Creator}
- */
-const addCreator = ([firstName, lastName, role = "author"]) => ({
+const addCreator = (
+	[firstName, lastName, creatorType = "author"]: [string, string, ZoteroAPI.CreatorType?]
+): ZoteroAPI.Creator => ({
 	firstName,
 	lastName,
-	role
+	creatorType
 });
 
 export const goodIdentifier = "https://www.jmir.org/2021/9/e27283";
 export const badIdentifier = "https://projects.iq.harvard.edu/files/harvarduxgroup/files/ux-research-guide-sample-questions-for-user-interviews.pdf";
 export const semanticIdentifier = "https://doi.org/10.1370/afm.1918";
 export const semanticNotAddedIdentifier = "https://doi.org/10.3122/jabfm.2017.01.160355";
+
+type CitoidErrorResponseMock = {
+	status: number,
+	method: "get",
+	type: string,
+	uri: string
+};
 
 const data = {
 	[goodIdentifier]: {
@@ -53,13 +55,13 @@ const data = {
 			title: "Chloe for COVID-19: Evolution of an Intelligent Conversational Agent to Address Infodemic Management Needs During the COVID-19 Pandemic",
 			url: goodIdentifier
 		})
-	},
+	} as CitoidAPI.AsZotero,
 	[badIdentifier]: {
 		status: 500,
 		method: "get",
 		type: "https://mediawiki.org/wiki/HyperSwitch/errors/unknown_error",
 		uri: "/en.wikipedia.org/v1/data/citation/zotero/https%3A%2F%2Fprojects.iq.harvard.edu%2Ffiles%2Fharvarduxgroup%2Ffiles%2Fux-research-guide-sample-questions-for-user-interviews.pdf"
-	},
+	} as CitoidErrorResponseMock,
 	[semanticIdentifier]: {
 		...addCitoidMetadata({
 			abstractNote: "Recently, the recognition that medical care may contribute less to overall health than other aspects of people’s lives do has led policy makers, academics, and even some physicians to argue that clinicians should make screening and action on the social determinants of health their responsibility.",
@@ -87,7 +89,7 @@ const data = {
 			url: "https://www.annfammed.org/content/14/2/102",
 			volume: "14"
 		})
-	},
+	} as CitoidAPI.AsZotero,
 	[semanticNotAddedIdentifier]: {
 		...addCitoidMetadata({
 			abstractNote: "<p>Health extension programs represent an opportunity for practice-based research networks (PBRNs) and primary care practices to develop collaborations reaching beyond the clinic walls to address the upstream social determinants of health and engage in community-based research. The Health Extension Regional Officers (HEROs) program at the University of New Mexico described in this issue of the <i>JABFM</i> is an innovative model with a bidirectional approach to linking academic health centers to community-based practices and organizations. Health extension programs are local, influenced by history, relationships, and support. Oregon9s health extension workforce represents a diverse group that includes practice facilitators, community health workers, and Cooperative Extension agents. PBRNs are measuring success in terms of collaboration across a spectrum of health activities. The Oregon Rural Practice-based Research Network uses a “Four Pillars” model of community engagement, practice transformation, research, and education to involve researchers, health policy experts, educators, and health extension workers to improve community health.</p>",
@@ -105,14 +107,20 @@ const data = {
 			url: "https://doi.org/10.3122/jabfm.2017.01.160355",
 			volume: "30"
 		})
-	}
+	} as CitoidAPI.AsZotero
 };
 
-export const handleCitoid = rest.get(
+type CitoidResponseBody = CitoidAPI.AsZotero | CitoidErrorResponseMock;
+
+type CitoidRequestParams = {
+	identifier: string
+};
+
+export const handleCitoid = rest.get<never, CitoidRequestParams, CitoidResponseBody>(
 	"https://en.wikipedia.org/api/rest_v1/data/citation/zotero/:identifier",
 	(req, res, ctx) => {
 		const { identifier } = req.params;
-		const { status = 200, ...output } = data[decodeURIComponent(identifier)];
+		const { status = 200, ...output } = data[decodeURIComponent(`${identifier}`)];
 		return res(
 			ctx.status(status),
 			ctx.json([output])
