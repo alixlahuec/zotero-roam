@@ -114,6 +114,7 @@ describe("Updating mocked items", () => {
 					0: {
 						...sample_item,
 						data: {
+							...sample_item.data,
 							tags: [{ tag: "TEST_TAG", type: 0 }]
 						}
 					}
@@ -131,7 +132,7 @@ describe("Updating mocked items", () => {
 					0: sample_item.data.key
 				},
 				unchanged: {
-					0: sample_item
+					0: sample_item.data.key
 				},
 				success: {},
 				successful: {}
