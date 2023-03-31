@@ -88,7 +88,8 @@ describe("Mutation hooks for the Zotero API", () => {
 				data: result.current.data,
 				error: null,
 				library: userLibrary.path,
-				tags: ["systems"]
+				tags: ["systems"],
+				_type: "tags-deleted"
 			});
 		});
 	});
@@ -153,7 +154,8 @@ describe("Mutation hooks for the Zotero API", () => {
 					successful: result.current.data.map(res => res.value)
 				},
 				error: null,
-				library: userLibrary.path
+				library: userLibrary.path,
+				_type: "write"
 			});
 		});
 	});
@@ -216,7 +218,8 @@ describe("Mutation hooks for the Zotero API", () => {
 					successful: result.current.data.map(res => res.value)
 				},
 				error: null,
-				library: groupLibrary.path
+				library: groupLibrary.path,
+				_type: "tags-modified"
 			});
 		});
 	});

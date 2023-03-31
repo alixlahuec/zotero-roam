@@ -1,5 +1,5 @@
 import zrToaster from "Components/ExtensionToaster";
-import { emitCustomEvent, metadataAdded, notesAdded, tagsDeleted, tagsModified, writeFinished } from "../src/events";
+import { metadataAdded, notesAdded, tagsDeleted, tagsModified, writeFinished } from "../src/events";
 
 
 const showToasterFn = jest.spyOn(zrToaster, "show");
