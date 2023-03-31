@@ -221,7 +221,7 @@ function getAllPages(){
 }
 
 /** Retrieves the list of citekey pages (i.e, starting with `@`) in the Roam graph
- * @returns {Map<String,String>} A Map whose `keys` are the pages' titles, and whose `entries` are the pages' UIDs
+ * @returns {RCitekeyPages} A Map whose `keys` are the pages' titles, and whose `entries` are the pages' UIDs
  */
 function getCitekeyPages(){
 	return new Map(window.roamAlphaAPI.q(`[
