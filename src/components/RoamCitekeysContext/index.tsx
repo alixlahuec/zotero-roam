@@ -2,14 +2,15 @@ import { node } from "prop-types";
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 import { getCitekeyPages } from "Roam";
+import { RCitekeyPages } from "Types/transforms";
 
 
 // https://devtrium.com/posts/how-use-react-context-pro#memoize-values-in-your-context-with-usememo-and-usecallback
 
-const RoamCitekeys = createContext<(readonly [Map<string,string>, () => void]) | null>(null);
+const RoamCitekeys = createContext<(readonly [RCitekeyPages, () => void]) | null>(null);
 
 const RoamCitekeysProvider = ({ children }) => {
-	const [roamCitekeys, setRoamCitekeys] = useState(() => getCitekeyPages());
+	const [roamCitekeys, setRoamCitekeys] = useState<RCitekeyPages>(() => getCitekeyPages());
 
 	const update = useCallback(() => {
 		setRoamCitekeys(() => getCitekeyPages());
