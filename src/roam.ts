@@ -331,7 +331,7 @@ async function importItemMetadata(
 		const context = { item, notes, page, pdfs };
 		try {
 			const outcome = await use_smartblock_metadata({ param, paramValue }, context);
-			emitCustomEvent("metadata-added", outcome);
+			emitCustomEvent({ ...outcome, _type: "metadata-added" });
 
 			return outcome;
 
@@ -370,7 +370,7 @@ async function importItemMetadata(
 				},
 				success
 			};
-			emitCustomEvent("metadata-added", outcome);
+			emitCustomEvent({ ...outcome, _type: "metadata-added" });
 			
 			return outcome;
 
@@ -408,13 +408,11 @@ async function importItemNotes(
 ) {
 	const title = "@" + item.key;
 	const pageUID = uid || window.roamAlphaAPI.util.generateUID();
-	const page: Record<string,unknown> = { new: null, title, uid: pageUID };
+	const page = { new: false, title, uid: pageUID };
 
 	if(pageUID != uid){
 		window.roamAlphaAPI.createPage({ page: { title, "uid": pageUID } });
 		page.new = true;
-	} else {
-		page.new = false;
 	}
 
 	try {
@@ -431,7 +429,7 @@ async function importItemNotes(
 			},
 			success
 		};
-		emitCustomEvent("notes-added", outcome);
+		emitCustomEvent({ ...outcome, _type: "notes-added" });
 		
 		return outcome;
 

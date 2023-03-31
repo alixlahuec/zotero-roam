@@ -348,8 +348,7 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 		error: null,
 		library: path,
 		since,
-		success: null,
-		type: "collections"
+		success: false
 	};
 
 	let response = null;
@@ -381,10 +380,12 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 		if(since > 0 && modified.length > 0){
 			deleted = await fetchDeleted(library, since);
 
-			emitCustomEvent("update", {
+			emitCustomEvent({
 				...defaultOutcome,
 				data: modified,
-				success: true
+				success: true,
+				type: "collections",
+				_type: "update"
 			});
 		}
 
@@ -403,10 +404,12 @@ async function fetchCollections(library, since = 0, { match = [] } = {}) {
 				response
 			}
 		});
-		emitCustomEvent("update", {
+		emitCustomEvent({
 			...defaultOutcome,
 			error,
-			success: false
+			success: false,
+			type: "collections",
+			_type: "update"
 		});
 		return Promise.reject(error);
 	}
@@ -463,8 +466,7 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 		error: null,
 		library: path,
 		since,
-		success: null,
-		type: "items"
+		success: false
 	};
 
 	let response = null;
@@ -500,10 +502,12 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 				// Refetch tags data
 				queryClient.refetchQueries(tagsQueryKey);
 
-				emitCustomEvent("update", {
+				emitCustomEvent({
 					...defaultOutcome,
 					data: modified,
-					success: true
+					success: true,
+					type: "items",
+					_type: "update"
 				});
 			}
 		}
@@ -523,10 +527,12 @@ async function fetchItems(req, { match = [] } = {}, queryClient) {
 				response
 			}
 		});
-		emitCustomEvent("update", {
+		emitCustomEvent({
 			...defaultOutcome,
 			error,
-			success: false
+			success: false,
+			type: "items",
+			_type: "update"
 		});
 		return Promise.reject(error);
 	}
