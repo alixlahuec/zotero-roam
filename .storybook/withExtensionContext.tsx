@@ -1,3 +1,4 @@
+import { DecoratorFn } from "@storybook/react";
 import { ExtensionContext } from "Components/App";
 
 
@@ -6,7 +7,7 @@ const defaultContext = {
 	version: "VERSION"
 };
 
-export const withExtensionContext = (Story, context) => {
+export const withExtensionContext: DecoratorFn = (Story, context) => {
 	const { args: { extensionContext = {} }/*, parameters */ } = context;
     
 	return (

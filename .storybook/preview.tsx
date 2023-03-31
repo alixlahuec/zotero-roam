@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 import { useEffect, useGlobals } from "@storybook/addons";
+import { DecoratorFn, Parameters, Story, StoryContext } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
 import { rest } from "msw";
 import { mockDateDecorator } from "storybook-mock-date-decorator";
@@ -28,7 +29,7 @@ initialize({
 });
 
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
-const withTheme = (Story, context) => {
+const withTheme = (Story: Story, context: StoryContext) => {
 	const [{ theme }, /* updateGlobals */] = useGlobals();
 
 	useEffect(() => {
@@ -58,7 +59,7 @@ export const globalTypes = {
 	},
 };
 
-export const parameters = {
+export const parameters: Parameters = {
 	actions: { argTypesRegex: "^on[A-Z].*" },
 	controls: {
 		matchers: {
@@ -90,6 +91,6 @@ export const parameters = {
 	date: new Date("April 6, 2022 17:15:00")
 };
 
-export const decorators = [withTheme, withHotkeysProvider, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys, mockDateDecorator];
+export const decorators: DecoratorFn[] = [withTheme, withHotkeysProvider, withQueryClient, withExtensionContext, withUserSettings, withRoamCitekeys, mockDateDecorator];
 
 export const loaders = [mswLoader];

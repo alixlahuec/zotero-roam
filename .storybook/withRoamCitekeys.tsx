@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
+import { DecoratorFn } from "@storybook/react";
 import { RoamCitekeys } from "Components/RoamCitekeysContext";
 
 
-export const withRoamCitekeys = (Story, context) => {
+export const withRoamCitekeys: DecoratorFn = (Story, context) => {
 	const { args, parameters } = context;
 	const [citekeys,] = useState<Map<string,string>>(new Map(args.roamCitekeys || []));
     

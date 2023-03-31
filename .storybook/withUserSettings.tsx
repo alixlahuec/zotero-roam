@@ -1,5 +1,6 @@
-import { UserSettingsProvider } from "Components/UserSettings";
+import { DecoratorFn } from "@storybook/react";
 
+import { UserSettingsProvider } from "Components/UserSettings";
 import { analyzeUserRequests, setupInitialSettings } from "../src/setup";
 
 import { apiKeys } from "Mocks/zotero/keys";
@@ -22,7 +23,7 @@ const init = {
 	...initSettings
 };
 
-export const withUserSettings = (Story, context) => {
+export const withUserSettings: DecoratorFn = (Story, context) => {
 	const { parameters: { userSettings = {} } } = context;
 
 	return <UserSettingsProvider init={{ ...init, ...userSettings }}>
