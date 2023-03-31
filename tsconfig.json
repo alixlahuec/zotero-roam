@@ -8,7 +8,7 @@
 		"paths": {
 			"Components/*": ["./src/components/*"],
 			"Mocks/*": ["./mocks/*"],
-			"Roam": ["./src/roam.js"],
+			"Roam": ["./src/roam.ts"],
 			"Types/*": ["./src/types/*"]
 		},
         "alwaysStrict": false,
