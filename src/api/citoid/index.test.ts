@@ -1,25 +1,20 @@
 import { fetchCitoid } from ".";
 import { citoids } from "Mocks/citoid";
-import { CitoidAPI } from "Types/externals";
+import { Mocks } from "Mocks/types";
 
 
-type MockCitoidSuccessResponse = CitoidAPI.AsZotero & { status?: number };
-type MockCitoidErrorResponse = {
-	status: number,
-	method: "get",
-	type: string,
-	uri: string
-};
-// type MockCitoidResponse = MockCitoidSuccessResponse | MockCitoidErrorResponse;
+function isFailure(response: Mocks.Responses.Citoid): response is Mocks.Responses.CitoidError {
+	return (response as Mocks.Responses.CitoidError).status !== undefined;
+}
 
 describe("Fetching mocked Citoid data", () => {
 	const { success_cases, error_cases } = Object.entries(citoids)
-		.reduce<{success_cases: [string, MockCitoidSuccessResponse][], error_cases: [string, MockCitoidErrorResponse][]}>((obj, entry) => {
-			const { status = 200 } = entry[1];
-			if (status == 200) {
-				obj.success_cases.push(entry);
+		.reduce<{ success_cases: [string, Mocks.Responses.CitoidSuccess][], error_cases: [string, Mocks.Responses.CitoidError][] }>((obj, entry) => {
+			const [identifier, res] = entry;
+			if (isFailure(res)) {
+				obj.error_cases.push([identifier, res]);
 			} else {
-				obj.error_cases.push(entry);
+				obj.success_cases.push([identifier, res]);
 			}
 			return obj;
 		}, { success_cases: [], error_cases: [] });

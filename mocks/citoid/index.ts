@@ -1,5 +1,6 @@
 import { rest } from "msw";
-import { CitoidAPI, ZoteroAPI } from "Types/externals";
+import { Mocks } from "Mocks/types";
+import { CitoidAPI } from "Types/externals";
 
 
 /* istanbul ignore next */
@@ -20,8 +21,8 @@ const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ..
 });
 
 const addCreator = (
-	[firstName, lastName, creatorType = "author"]: [string, string, ZoteroAPI.CreatorType?]
-): ZoteroAPI.Creator => ({
+	[firstName, lastName, creatorType = "author"]: [string, string, Mocks.CreatorType?]
+): Mocks.Creator => ({
 	firstName,
 	lastName,
 	creatorType
@@ -31,13 +32,6 @@ export const goodIdentifier = "https://www.jmir.org/2021/9/e27283";
 export const badIdentifier = "https://projects.iq.harvard.edu/files/harvarduxgroup/files/ux-research-guide-sample-questions-for-user-interviews.pdf";
 export const semanticIdentifier = "https://doi.org/10.1370/afm.1918";
 export const semanticNotAddedIdentifier = "https://doi.org/10.3122/jabfm.2017.01.160355";
-
-type CitoidErrorResponseMock = {
-	status: number,
-	method: "get",
-	type: string,
-	uri: string
-};
 
 const data = {
 	[goodIdentifier]: {
@@ -61,7 +55,7 @@ const data = {
 		method: "get",
 		type: "https://mediawiki.org/wiki/HyperSwitch/errors/unknown_error",
 		uri: "/en.wikipedia.org/v1/data/citation/zotero/https%3A%2F%2Fprojects.iq.harvard.edu%2Ffiles%2Fharvarduxgroup%2Ffiles%2Fux-research-guide-sample-questions-for-user-interviews.pdf"
-	} as CitoidErrorResponseMock,
+	} as Mocks.Responses.CitoidError,
 	[semanticIdentifier]: {
 		...addCitoidMetadata({
 			abstractNote: "Recently, the recognition that medical care may contribute less to overall health than other aspects of people’s lives do has led policy makers, academics, and even some physicians to argue that clinicians should make screening and action on the social determinants of health their responsibility.",
@@ -110,13 +104,8 @@ const data = {
 	} as CitoidAPI.AsZotero
 };
 
-type CitoidResponseBody = CitoidAPI.AsZotero | CitoidErrorResponseMock;
 
-type CitoidRequestParams = {
-	identifier: string
-};
-
-export const handleCitoid = rest.get<never, CitoidRequestParams, CitoidResponseBody>(
+export const handleCitoid = rest.get<never, Mocks.RequestParams.Citoid, Mocks.Responses.Citoid>(
 	"https://en.wikipedia.org/api/rest_v1/data/citation/zotero/:identifier",
 	(req, res, ctx) => {
 		const { identifier } = req.params;
