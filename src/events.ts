@@ -2,102 +2,122 @@ import zrToaster from "Components/ExtensionToaster";
 
 import { cleanErrorIfAxios } from "./api/utils";
 import { pluralize } from "./utils";
+import { RImportableElement, SBConfig, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
+import { CitoidAPI, ZoteroAPI } from "Types/externals";
 
 
-const events = [
-	/**
-    * Signals a metadata import has terminated
-    * @event zotero-roam:metadata-added
-    * @type {object}
-    * @property {({blocks: RImportableElement[], uid: String}|{smartblock: SBConfig, uid: String})} args - The configuration used for the import
-    * @property {error|null} error - The error thrown during the import, if failed
-	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-    * @property {{item: ZItemTop, notes: (ZItemNote|ZItemAnnotation)[], pdfs: ZItemAttachment[]}} raw - The raw data provided as input
-    * @property {Boolean|null} success - Indicates if the update was successful
-    * @see importItemMetadata
-    */
-	"metadata-added",
-	/**
-    * Signals a notes import has terminated
-    * @event zotero-roam:notes-added
-    * @type {object}
-	* @property {{blocks: RImportableElement[], uid: String}} args - The configuration used for the import
-	* @property {error|null} error - The error thrown during the import, if failed
-	* @property {{new: Boolean, title: String, uid: String}} page - The details about the Roam page for the item
-	* @property {{item: ZItemTop, notes: (ZItemNote|ZItemAnnotation)[]}} raw - The raw data provided as input
-	* @property {Boolean|null} success - Indicates if the update was successful
-	* @see importItemNotes
-    */
-	"notes-added",
-	/**
-	 * Signals a tag deletion has terminated
-	 * @event zotero-roam:tags-deleted
-	 * @type {object}
-	 * @property {*} data - The data received, if successful
-     * @property {{tags: String[]}} args - The input provided to the deleting function
-	 * @property {error|null} error - The error thrown during the import, if failed
-	 * @property {String} library - The path of the targeted library
-	 * @see useDeleteTags
-	 */
-	"tags-deleted",
-	/**
-	 * Signals a tag modification has terminated
-	 * @event zotero-roam:tags-modified
-	 * @type {object}
-     * @property {{into: String, tags: String[]}} args - The input provided to the modifying function
-	 * @property {{successful: Object[], failed: Object[]}} data - The outcome of all requests
-	 * @property {error|null} error - The error thrown during the modification, if failed
-	 * @property {String} library - The path of the targeted library
-	 * @see useModifyTags
-	 */
-	"tags-modified",
-	/**
-    * Signals a data update has terminated
-     * @event zotero-roam:update
-     * @type {object}
-     * @property {((ZItem)[])|(ZoteroAPI.Collection[])|null} data - The data contained in the update, if successful
-     * @property {error|null} error - The error thrown during the update, if failed
-     * @property {String} library - The path of the library that yielded the update
-     * @property {Number} since - The library version since which elements were retrieved
-     * @property {Boolean} success - Indicates if the update was successful
-     * @property {("items"|"collections")} type - The data type targeted by the update
-     */
-	"update",
-	/**
-    * Signals a write call has terminated
-    * @event zotero-roam:write
-    * @type {object}
-    * @property {{collections: String[], items: Object[], tags: String[]}} args - The input provided to the writing function
-    * @property {{successful: Object[], failed: Object[]}|null} data - The outcome of the operation
-    * @property {error|null} error - The error thrown during the operation, if any
-    * @property {String} library - The path of the targeted library
-    */
-	"write"
-];
+/** Signals a metadata import has terminated
+ * @event zotero-roam:metadata-added
+ * @see importItemMetadata
+ */
+type MetadataAdded = {
+	_type: "metadata-added",
+	/** The configuration used for the import */
+	args: { blocks: RImportableElement[], uid: string } | { smartblock: SBConfig, uid: string },
+	/** The details about the Roam page for the item */
+	page: { new: boolean, title: string, uid: string },
+	/** The raw data provided as input */
+	raw: { item: ZItemTop, notes: (ZItemNote | ZItemAnnotation)[], pdfs: ZItemAttachment[] }
+} & ({ error: Error, success: null } | { error: null, success: boolean });
+
+
+/** Signals a notes import has terminated
+ * @event zotero-roam:notes-added
+ * @see importItemNotes
+ */
+type NotesAdded = {
+	_type: "notes-added",
+	/** The configuration used for the import */
+	args: { blocks: RImportableElement[], uid: string },
+	/** The details about the Roam page for the item */
+	page: { new: boolean, title: string, uid: string },
+	/** The raw data provided as input */
+	raw: { item: ZItemTop, notes: (ZItemNote | ZItemAnnotation)[] }
+} & ({ error: Error, success: null } | { error: null, success: boolean });
+
+
+/** Signals a tag deletion has terminated
+ * @event zotero-roam:tags-deleted
+ * @see useDeleteTags
+ */
+type TagsDeleted = {
+	_type: "tags-deleted",
+	/** The input provided to the deleting function */
+	args: { tags: string[] },
+	/** The path of the targeted library */
+	library: string
+} & ({ data: Record<string, any>, error: null } | { data?: Record<string, any>, error: Error });
+
+
+/** Signals a tag modification has terminated
+ * @event zotero-roam:tags-modified
+ * @see useModifyTags
+ */
+type TagsModified = {
+	_type: "tags-modified",
+	/** The input provided to the modifying function */
+	args: { into: string, tags: string[] },
+	/** The path of the targeted library */
+	library: string
+} & { data: { successful: Record<string, any>[], failed: Record<string, any>[] }, error: Error | null };
+
+
+/** Signals a data update has terminated
+* @event zotero-roam:update
+*/
+type Update = {
+	_type: "update",
+	/** The path of the library that yielded the update */
+	library: string,
+	/** The library version since which elements were retrieved */
+	since: number,
+	/** Indicates if the update was successful */
+	success: boolean
+} & (
+		| { type: "items", data: ZItem[], error: null }
+		| { type: "items", data: null, error: Error }
+		| { type: "collections", data: ZoteroAPI.Collection[], error: null }
+		| { type: "collections", data: null, error: Error }
+	);
+
+
+/** Signals a write call has terminated
+* @event zotero-roam:write
+*/
+type Write = {
+	_type: "write",
+	/** The input provided to the writing function */
+	args: { collections: string[], items: CitoidAPI.AsZotero[], tags: string[] },
+	/** The path of the targeted library */
+	library: string
+} & (
+		| { data: { successful: ZoteroAPI.ItemTop[], failed: ZoteroAPI.ItemTop[] }, error: null }
+		| { data: null, error: Error }
+	);
+
+
+type EventDetails =
+	| MetadataAdded
+	| NotesAdded
+	| TagsDeleted
+	| TagsModified
+	| Update
+	| Write
+;
+
 
 /**
  * Emits a custom event for the extension
- * @param {string} type - The suffix of the event to be emitted
- * @param {object} detail - The object containing the event's detail
- * @param {Element|Document} target - The DOM target on which the event should be emitted
+ * @param event - The object containing the event's details
+ * @param target - The DOM target on which the event should be emitted
  */
-function emitCustomEvent(type, detail = {}, target = document){
-	if(events.includes(type)){
-		const e = new CustomEvent(`zotero-roam:${type}`, { bubbles: true, cancelable: true, detail: detail });
-		target.dispatchEvent(e);
-	} else {
-		window.zoteroRoam?.warn?.({
-			origin: "Extension",
-			message: `Event type "${type}" not recognized`,
-			context: detail
-		});
-	}
+function emitCustomEvent(event: EventDetails, target: Element | Document = document) {
+	const e = new CustomEvent<EventDetails>(`zotero-roam:${event._type}`, { bubbles: true, cancelable: true, detail: event });
+	target.dispatchEvent(e);
 }
 
-/** Default hook for the zotero-roam:metadata-added event
- * @param {CustomEvent} event - The custom event emitted by the extension
- */
-function metadataAdded(event){
+/** Default hook for the zotero-roam:metadata-added event */
+function metadataAdded(event: CustomEvent<MetadataAdded>){
 	const { error, page: { title }, success } = event.detail;
 	if (error) {
 		window.zoteroRoam?.error?.({
@@ -123,10 +143,8 @@ function metadataAdded(event){
 	}
 }
 
-/** Default hook for the zotero-roam:notes-added event
- * @param {CustomEvent} event - The custom event emitted by the extension
- */
-function notesAdded(event){
+/** Default hook for the zotero-roam:notes-added event */
+function notesAdded(event: CustomEvent<NotesAdded>){
 	const { error, page: { title }, raw: { notes }, success } = event.detail;
 	if (error) {
 		window.zoteroRoam?.error?.({
@@ -155,7 +173,7 @@ function notesAdded(event){
 /** Default hook for the zotero-roam:tags-deleted event
  * @param {CustomEvent} event - The custom event emitted by the extension
  */
-function tagsDeleted(event){
+function tagsDeleted(event: CustomEvent<TagsDeleted>){
 	const { args: { tags }, error, library } = event.detail;
 	if (error) {
 		window.zoteroRoam?.error?.({
@@ -178,7 +196,7 @@ function tagsDeleted(event){
 /** Default hook for the zotero-roam:tags-modified event
  * @param {CustomEvent} event - The custom event emitted by the extension
  */
-function tagsModified(event){
+function tagsModified(event: CustomEvent<TagsModified>){
 	/* eslint-disable-next-line prefer-const */
 	let { data: { failed, successful }, error, library } = event.detail;
 
@@ -226,9 +244,10 @@ function tagsModified(event){
 /** Default hook for the zotero-roam:write event
  * @param {CustomEvent} event - The custom event emitted by the extension
  */
-function writeFinished(event){
+function writeFinished(event: CustomEvent<Write>){
 	/* eslint-disable-next-line prefer-const */
-	let { data: { failed, successful }, error, library } = event.detail;
+	let { data, error, library } = event.detail;
+	const { failed = [], successful = [] } = data || {};
 
 	error = cleanErrorIfAxios(error);
 

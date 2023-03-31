@@ -11,19 +11,6 @@ beforeEach(() => {
 	};
 });
 
-describe("Event emitter warns about unrecognized event names", () => {
-	beforeEach(() => {
-		window.zoteroRoam = {
-			warn: jest.fn()
-		};
-	});
-
-	test("The warn method is called, if defined", () => {
-		emitCustomEvent("unrecognized-event-name");
-		expect(window.zoteroRoam.warn).toHaveBeenCalled();
-	});
-});
-
 describe("metadataAdded", () => {
 	const base = {
 		args: {

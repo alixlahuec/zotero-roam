@@ -28,11 +28,12 @@ const useDeleteTags = () => {
 				});
 			}
 
-			emitCustomEvent("tags-deleted", {
+			emitCustomEvent({
 				data,
 				error,
 				library: path,
-				tags
+				tags,
+				_type: "tags-deleted"
 			});
 		}
 	});
@@ -86,7 +87,7 @@ const useImportCitoids = () => {
 				});
 			}
 
-			emitCustomEvent("write", {
+			emitCustomEvent({
 				args: {
 					collections,
 					items,
@@ -95,6 +96,7 @@ const useImportCitoids = () => {
 				data: outcome,
 				error,
 				library: path,
+				_type: "write"
 			});
 		}
 	});
@@ -158,14 +160,15 @@ const useModifyTags = () => {
 				});
 			}
 
-			emitCustomEvent("tags-modified", {
+			emitCustomEvent({
 				args: {
 					into,
 					tags
 				},
 				data: outcome,
 				error,
-				library: path
+				library: path,
+				_type: "tags-modified"
 			});
 		}
 	});
