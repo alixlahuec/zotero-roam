@@ -7,6 +7,11 @@ import { Roam } from "Types/externals";
 export type RCitekeyPages = Map<string, string>;
 
 /**
+ * Mapping between the title and metadata (uid, last-edited time) of all citekey pages in the Roam graph.
+ */
+export type RCitekeyPagesWithEditTime = Map<string, { edited: Date, uid: string }>;
+
+/**
  * Location parameters for the user's cursor within the Roam interface
  */
 export interface RCursorLocation {

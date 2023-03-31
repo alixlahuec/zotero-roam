@@ -179,7 +179,7 @@
             "alias": {
 				"map": [
 					["Mocks", "./mocks"],
-					["Roam", "./src/roam.js"],
+					["Roam", "./src/roam.ts"],
 					["Components", "./src/components"],
 					["Types", "./src/types"]
 				],

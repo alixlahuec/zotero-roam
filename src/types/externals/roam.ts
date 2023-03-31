@@ -7,9 +7,9 @@ export namespace Roam {
 		"window-id": string
 	};
 
-	type BlockOrder = number | "last";
+	export type BlockOrder = number | "last";
 	type Heading = 0 | 1 | 2 | 3;
-	type SidebarWindowType = "outline" | "block" | "graph" | "mentions";
+	export type SidebarWindowType = "outline" | "block" | "graph" | "mentions";
 	type TextAlign = "left" | "center" | "right" | "justify";
 	type ViewType = "bullet" | "document" | "numbered";
 
@@ -81,7 +81,7 @@ export namespace Roam {
 		 * @see https://roamresearch.com/#/app/developer-documentation/page/SI3FNt3EQ 
 		 * @deprecated Use `.data.q` instead.
 		 */
-		q: (query: string, ...params: any[]) => unknown,
+		q: <T>(query: string, ...params: any[]) => T,
 
 		ui: {
 			commandPalette: {
