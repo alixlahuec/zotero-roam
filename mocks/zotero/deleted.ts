@@ -86,10 +86,10 @@ export const handleDeleted = rest.get<never, Mocks.RequestParams.Deleted, Mocks.
 	zotero(":libraryType/:libraryID/deleted"),
 	(req, res, ctx) => {
 		const { libraryType, libraryID } = req.params;
-		const since = req.url.searchParams.get("since");
+		const since = Number(req.url.searchParams.get("since"));
 		const path = `${libraryType}/${libraryID}`;
 
-		const { collections = [], items = [] } = findDeleted({ path, since: Number(since) });
+		const { collections = [], items = [] } = findDeleted({ path, since });
 
 		return res(
 			ctx.json({
