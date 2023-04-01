@@ -170,7 +170,7 @@ export namespace Roam {
 	export interface ExtensionAPI {
 		settings: {
 			/** Getter for a single setting */
-			get: (key: string) => unknown,
+			get: <T = unknown>(key: string) => T | undefined,
 			/** Getter for all the extension's settings */
 			getAll: () => Record<string, unknown>,
 			/** Setter for a single setting */

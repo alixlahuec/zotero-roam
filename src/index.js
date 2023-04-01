@@ -26,7 +26,7 @@ import "./index.css";
 
 	try {
 
-		const { requests, settings } = initialize(INSTALL_CONTEXT, { manualSettings });
+		const { requests, settings } = initialize({ context: INSTALL_CONTEXT, manualSettings });
 
 		const idbDatabase = new IDBDatabase();
 

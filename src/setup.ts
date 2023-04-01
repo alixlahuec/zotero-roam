@@ -1,9 +1,10 @@
 import { unmountComponentAtNode } from "react-dom";
 
 import { parseKeyCombo } from "@blueprintjs/core";
-import { defaultShouldDehydrateQuery } from "@tanstack/react-query";
+import { Query, QueryClient, defaultShouldDehydrateQuery } from "@tanstack/react-query";
 
 import { cleanErrorIfAxios } from "./api/utils";
+import IDBDatabase from "./services/idb";
 import { registerSmartblockCommands } from "./smartblocks";
 import { setDefaultHooks } from "./events";
 
@@ -15,13 +16,21 @@ import {
 	TYPEMAP_DEFAULT
 } from "./constants";
 
+import { DataRequest, LegacyDataRequest, LegacyUserSettings, SettingsShortcuts, UserRequests, UserSettings } from "Types/extension";
+import { ZLibrary } from "Types/transforms";
+import { Roam } from "Types/externals";
 
-/** Generates a data requests configuration object
- * @param {LegacyDataRequest|LegacyDataRequest[]|DataRequest[]} requests - Data requests provided by the user
- * @returns {UserRequests} A configuration object for the extension to use
- */
-export function analyzeUserRequests(requests){
-	const reqs = (requests.constructor === Array)
+
+type InstallArgs =
+	| { context: "roam/depot", extensionAPI: Roam.ExtensionAPI }
+	| {
+		context: "roam/js" | "sandbox",
+		manualSettings: Partial<LegacyUserSettings>
+	}
+
+/** Generates a data requests configuration object */
+export function analyzeUserRequests(requests: LegacyDataRequest|(LegacyDataRequest|DataRequest)[]): UserRequests{
+	const reqs = (Array.isArray(requests))
 		? requests
 		: [requests];
 
@@ -38,11 +47,11 @@ export function analyzeUserRequests(requests){
 			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 		} else {
 			const dataRequests = reqs.map((req) => {
-				const { apikey, dataURI, library, name = "" } = req;
-				if(library){
-					const { id, type } = library;
+				const { apikey, dataURI, name = "" } = req;
+				if("library" in req){
+					const { id, type } = req.library;
                     
-					if(!id || isNaN(id)){
+					if(!id || isNaN(Number(id))){
 						throw new Error("A library ID is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 					}
 
@@ -80,7 +89,7 @@ export function analyzeUserRequests(requests){
 						library: {
 							id,
 							path: [type, id].join("/"),
-							type,
+							type: type as DataRequest["library"]["type"],
 							uri
 						}, 
 						name 
@@ -89,7 +98,7 @@ export function analyzeUserRequests(requests){
 			});
 
 			const apiKeys = Array.from(new Set(dataRequests.map(req => req.apikey))).filter(Boolean);
-			const libraries = dataRequests.reduce((arr, req) => {
+			const libraries = dataRequests.reduce<ZLibrary[]>((arr, req) => {
 				const { library: { path }, apikey } = req;
 				const has_lib = arr.find(lib => lib.path == path);
 
@@ -111,16 +120,13 @@ export function analyzeUserRequests(requests){
 }
 
 /* istanbul ignore next */
-/** Creates a persister that can be used for writing a React Query client to the IndexedDB cache.
- * @param {IDBDatabase} database - The targeted IDBDatabase
- * @returns 
- */
-export function createPersisterWithIDB(database){
+/** Creates a persister that can be used for writing a React Query client to the IndexedDB cache. */
+export function createPersisterWithIDB(database: IDBDatabase){
 	const indexedDbKey = IDB_REACT_QUERY_CLIENT_KEY;
 	const reactQueryStore = database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 
 	return {
-		persistClient: async (client) => {
+		persistClient: async (client: QueryClient) => {
 			try {
 				return await reactQueryStore.set(indexedDbKey, client);
 			} catch(e) {
@@ -165,11 +171,8 @@ export function createPersisterWithIDB(database){
 	};
 }
 
-/** Conducts checks on a query to determine if it should be persisted
- * @param {QueryKey} query - The targeted React Query query
- * @returns 
- */
-export function shouldQueryBePersisted(query){
+/** Conducts checks on a React Query query to determine if it should be persisted */
+export function shouldQueryBePersisted(query: Query){
 	const { queryKey } = query;
 
 	if(queryKey.includes("permissions") || queryKey[0] == "permissions"){
@@ -179,11 +182,8 @@ export function shouldQueryBePersisted(query){
 	return defaultShouldDehydrateQuery(query);
 }
 
-/** Generates a merged settings object, combining user settings and defaults.
- * @param {Partial<UserSettings>} settingsObject - The user's settings object
- * @returns The merged object
- */
-export function setupInitialSettings(settingsObject){
+/** Generates a merged settings object, combining user settings and defaults. */
+export function setupInitialSettings(settingsObject: Partial<UserSettings>): UserSettings{
 	const {
 		annotations = {},
 		autocomplete = {},
@@ -302,11 +302,10 @@ export function setupInitialSettings(settingsObject){
 }
 
 /* istanbul ignore next */
-/** Initializes the extension, from a Roam Depot install
- * @param {{extensionAPI: Roam.ExtensionAPI}} config - The install parameters 
+/** Initializes the extension, from a Roam Depot install 
  * @returns The user's setup configuration
  */
-function configRoamDepot({ extensionAPI }){
+function configRoamDepot({ extensionAPI }: { extensionAPI: Roam.ExtensionAPI }){
 	const current = extensionAPI.settings.getAll();
 	const settings = setupInitialSettings(current || {});
 
@@ -314,7 +313,7 @@ function configRoamDepot({ extensionAPI }){
 		extensionAPI.settings.set(key, val);
 	});
 
-	let requests = extensionAPI.settings.get("requests");
+	let requests = extensionAPI.settings.get<UserRequests>("requests");
 	if(!requests){
 		requests = {
 			dataRequests: [],
@@ -332,11 +331,10 @@ function configRoamDepot({ extensionAPI }){
 
 /* istanbul ignore next */
 /** Initializes the extension, from a roam/js install
- * @param {{manualSettings: UserSettings}} config - The install parameters 
  * @returns The user's setup configuration
  */
-function configRoamJS({ manualSettings }){
-	const { dataRequests } = manualSettings;
+function configRoamJS({ manualSettings }: { manualSettings: Partial<LegacyUserSettings> }){
+	const { dataRequests = [] } = manualSettings;
 
 	const settings = setupInitialSettings(manualSettings);
 
@@ -349,22 +347,18 @@ function configRoamJS({ manualSettings }){
 }
 
 /* istanbul ignore next */
-/** Initializes the extension, given an installation environment and parameters
- * @param {("roam/depot"|"roam/js"|"sandbox")} context - The install environment
- * @param {{extensionAPI?: Roam.ExtensionAPI, manualSettings?: Object}} config - The install parameters 
- * @returns 
- */
-export function initialize(context = "roam/js", { extensionAPI, manualSettings }){
-	const { requests, settings } = (context == "roam/depot")
-		? configRoamDepot({ extensionAPI })
-		: configRoamJS({ manualSettings });
+/** Initializes the extension, given an installation environment and parameters */
+export function initialize(configObj: InstallArgs) {
+	const { requests, settings } = (configObj.context == "roam/depot")
+		? configRoamDepot(configObj)
+		: configRoamJS(configObj);
     
 	return { requests, settings };
 }
 
 /* istanbul ignore next */
 /** Sets up the extension's theme (light vs dark)
- * @param {Boolean} use_dark - If the extension's theme should be `dark`
+ * @param use_dark - If the extension's theme should be `dark`
  */
 function setupDarkTheme(use_dark = false){
 	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
@@ -388,9 +382,9 @@ export function setupPortals(){
 
 /* istanbul ignore next */
 /** Sets up secondary functions that are needed by the extension
- * @param {{settings: UserSettings}} config - The user's current settings
+ * @param config - The user's current settings
  */
-export function setup({ settings }){
+export function setup({ settings }: { settings: UserSettings }){
 	setupDarkTheme(settings.other.darkTheme);
 	setDefaultHooks();
 	registerSmartblockCommands();
@@ -414,7 +408,7 @@ export function unmountExtensionIfExists(){
 
 }
 
-export function validateShortcuts(shortcuts){
+export function validateShortcuts(shortcuts: SettingsShortcuts){
 	const output = {};
 
 	Object.keys(shortcuts).forEach((key) => {
