@@ -1,11 +1,13 @@
+import { RImportableElement, SBConfig, SBImportableBlock, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import { getLocalLink, getWebLink, makeDNP, parseDOI } from "./utils";
+import { SmartblocksPlugin } from "Types/externals";
 
 
 /** Generates the list of custom SmartBlocks commands to register
  * @returns {Object.<string, SmartblocksPlugin.Command>} The list of commands to register
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
-const sbCommands = () => {
+const sbCommands = (): Record<string, Omit<SmartblocksPlugin.Command, "text">> => {
 	return {
 		"ZOTERORANDOMCITEKEY": {
 			help: "Returns one or more Zotero citekeys, with optional tag query",
@@ -52,7 +54,7 @@ const sbCommands = () => {
 			help: "Returns the comma-separated list of the creator(s) of a Zotero item. Options: brackets (`true`(default)|`false`|`existing`), use_type(`true`(default)|`false`).",
 			handler: (context) => (brackets = true, use_type = true) => {
 				const { item } = context.variables;
-				return window.zoteroRoam.getItemCreators(item, { return_as: "string", brackets, use_type });
+				return window.zoteroRoam.getItemCreators(item, { return_as: "string", brackets, use_type }) as string;
 			}
 		},
 		"ZOTEROITEMDATEADDED": {
@@ -137,7 +139,7 @@ const sbCommands = () => {
 				const { item } = context.variables;
 				return !item.meta.parsedDate
 					? ""
-					: isNaN(new Date(item.meta.parsedDate))
+					: isNaN(Number(new Date(item.meta.parsedDate)))
 						? ""
 						: (new Date(item.meta.parsedDate)).getUTCFullYear().toString();
 			}
@@ -155,18 +157,18 @@ const sbCommands = () => {
 			help: "Returns the comma-separated links to a list of Zotero PDFs",
 			handler: (context) => () => {
 				const { pdfs = [] } = context.variables;
-				return window.zoteroRoam.formatPDFs(pdfs, "string");
+				return window.zoteroRoam.formatPDFs(pdfs, "string") as string;
 			}
 		}
 	};
 };
 
 /** Returns the outcome of a given query against a given props array
- * @param {String} query - The query to test against the props
- * @param {String[]} props - The props to test the query against
- * @returns {Boolean} The query's outcome (`true` if the props include a string that matches the query, `false` otherwise)
+ * @param query - The query to test against the props
+ * @param props - The props to test the query against
+ * @returns The query's outcome (`true` if the props include a string that matches the query, `false` otherwise)
  */
-function processQuery(query, props){
+function processQuery(query: string, props: string[]): boolean{
 	// eslint-disable-next-line no-useless-escape
 	const components = query.split(/([\|\&]?)([^\&\|\(\)]+|\(.+\))([\|\&]?)/).filter(Boolean);
 	if(components.includes("|")){
@@ -177,11 +179,11 @@ function processQuery(query, props){
 }
 
 /** Evaluates an "AND" query against a given props array
- * @param {String[]} terms - The terms of the "AND" query 
- * @param {String[]} props - The props to test the query against 
- * @returns {Boolean} The query's outcome (`true` if all props match the query, `false` otherwise)
+ * @param terms - The terms of the "AND" query 
+ * @param props - The props to test the query against 
+ * @returns The query's outcome (`true` if all props match the query, `false` otherwise)
  */
-function eval_and(terms, props){
+function eval_and(terms: string[], props: string[]): boolean{
 	let outcome = true;
 	for(let i=0;i<terms.length && outcome == true;i++){
 		outcome = eval_term(terms[i], props);
@@ -190,11 +192,11 @@ function eval_and(terms, props){
 }
 
 /** Evaluates an "OR" query against a given props array
- * @param {String[]} terms - The terms of the "OR" query 
- * @param {String[]} props - The props to test the query against 
- * @returns {Boolean} The query's outcome (`true` if any of the props matches the query, `false` otherwise)
+ * @param terms - The terms of the "OR" query 
+ * @param props - The props to test the query against 
+ * @returns The query's outcome (`true` if any of the props matches the query, `false` otherwise)
  */
-function eval_or(terms, props){
+function eval_or(terms: string[], props: string[]): boolean{
 	let outcome = false;
 	for(let i=0;i<terms.length && outcome == false;i++){
 		outcome = eval_term(terms[i], props);
@@ -202,12 +204,15 @@ function eval_or(terms, props){
 	return outcome;
 }
 
-/** Evaluates how a query term should be handled. If the term is a (grouping), the outer parentheses are stripped and the contents are evaluated against the props array that was provided. If the term is a -negation, verify that the props *do not* include it ; otherwise, verify that the props include the term.
- * @param {String} term - The query term to evaluate 
- * @param {String[]} props - The props that are being tested
- * @returns {Boolean} The outcome of the term's evaluation against the props
+/** Evaluates how a query term should be handled. If the term is a (grouping), the outer parentheses are stripped and the contents are evaluated against the props array that was provided. If the term is a -negation, verify that the props *do not* include it ; otherwise, verify that the props include the term. 
+ * @returns The outcome of the term's evaluation against the props
  */
-function eval_term(term, props){
+function eval_term(
+	/** The query term to evaluate */
+	term: string,
+	/** The props that are being tested */
+	props: string[]
+): boolean{
 	if(term.startsWith("(") && term.endsWith(")")){
 		const clean_str = term.slice(1, -1);
 		return processQuery(clean_str, props);
@@ -221,25 +226,22 @@ function eval_term(term, props){
 	}
 }
 
-/** Enforces the block-object format (recursively) for an array of importable blocks. This is needed for correctly importing nested blocks with SmartBlocks.
- * @param {RImportableElement[]} arr - The array of importable blocks to reformat
- * @returns {RImportableBlock[]} - The reformatted array, where all elements are in the block-object format
- */
-function reformatImportableBlocks(arr){
+/** Enforces the block-object format (recursively) for an array of importable elements. This is needed for correctly importing nested blocks with SmartBlocks. */
+function reformatImportableBlocks(arr: RImportableElement[]): SBImportableBlock[]{
 	if(!arr){
 		return [];
 	} else {
 		return arr.map(blck => {
-			if(blck.constructor === String){
+			if(typeof(blck) === "string"){
 				return {
 					string: blck,
 					text: blck,
 					children: []
 				};
-			} else if(blck.constructor === Object) {
+			} else if(typeof(blck) === "object") {
 				return {
 					...blck,
-					children: reformatImportableBlocks(blck.children)
+					children: reformatImportableBlocks(blck.children || [])
 				};
 			} else {
 				window.zoteroRoam?.error?.({
@@ -249,7 +251,7 @@ function reformatImportableBlocks(arr){
 						element: blck
 					}
 				});
-				throw new Error(`All array items should be of type String or Object, not ${blck.constructor.name}`);
+				throw new Error(`All array items should be of type String or Object, not ${typeof(blck)}`);
 			}
 		});
 	}
@@ -279,7 +281,7 @@ function registerSmartblockCommands(){
 
 			Object.keys(commands).forEach(cmd => {
 				const { help, handler } = commands[cmd];
-				window.roamjs.extension.smartblocks.registerCommand({
+				window.roamjs?.extension.smartblocks?.registerCommand({
 					text: cmd,
 					help: help,
 					handler: handler
@@ -296,33 +298,42 @@ function registerSmartblockCommands(){
 }
 
 /* istanbul ignore next */
-/** Unregister the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
- * @see https://github.com/dvargas92495/roamjs-components/blob/7aeae1482714a4c829c8141667eb1d459403b4ec/src/util/registerSmartBlocksCommand.ts
- */
+/** Unregister the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph */
 function unregisterSmartblockCommands(){
 	const commands = sbCommands();
 
 	if(window.roamjs?.extension?.smartblocks){
 		Object.keys(commands).forEach(cmd => {
-			window.roamjs.extension.smartblocks.unregisterCommand(cmd);
+			window.roamjs?.extension?.smartblocks?.unregisterCommand(cmd);
 		});
 	}
 }
 
 // Extension-triggered SmartBlocks
 
+type SBContextMetadata = {
+	item: ZItemTop,
+	notes: (ZItemNote | ZItemAnnotation)[],
+	page: { new: boolean, title: string, uid: string },
+	pdfs: ZItemAttachment[]
+};
+
+type UseSBMetadataOutcome = {
+	args: {
+		smartblock: SBConfig,
+		uid: string
+	},
+	page: SBContextMetadata["page"],
+	raw: Pick<SBContextMetadata, "item" | "notes" | "pdfs">
+} & ({ error: null, success: true } | { error: Error, success: false });
+
 /* istanbul ignore next */
 /** Triggers a given SmartBlock to import an item's metadata
- * @param {SBConfig} config - The configuration of the SmartBlock to use.
- * @param {{
- * item: ZItemTop,
- * notes: (ZItemNote|ZItemAnnotation)[],
- * page: {new: Boolean, title: String, uid: String}, 
- * pdfs: ZItemAttachment[]}} context - The context variables provided by the extension to the SmartBlock
- * @returns {Promise} If successful, `{success:true}` - otherwise an object containing the error encountered and the arguments with which the function was called.
+ * @param config - The configuration of the SmartBlock to use.
+ * @param context - The context variables provided by the extension to the SmartBlock
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
-async function use_smartblock_metadata(config, context){
+async function use_smartblock_metadata(config: SBConfig, context: SBContextMetadata): Promise<UseSBMetadataOutcome>{
 	const { param: sbProp, paramValue: sbPropValue } = config;
 	const { item, notes, page, pdfs } = context;
 
@@ -355,7 +366,8 @@ async function use_smartblock_metadata(config, context){
 		await window.roamjs?.extension?.smartblocks?.triggerSmartblock(obj);
 		return Promise.resolve({
 			...defaultOutcome, 
-			success: true });
+			success: true
+		});
 	} catch(e){
 		window.zoteroRoam?.error?.({
 			origin: "SmartBlocks",
@@ -369,7 +381,8 @@ async function use_smartblock_metadata(config, context){
 		return Promise.resolve({
 			...defaultOutcome,
 			error: e,
-			success: false });
+			success: false
+		});
 	}
 }
 

@@ -5,14 +5,14 @@ import { emitCustomEvent } from "./events";
 import { use_smartblock_metadata } from "./smartblocks";
 import { RCitekeyPages, RCitekeyPagesWithEditTime, RCursorLocation, RImportableBlock, RImportableElement, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import { Roam } from "Types/externals";
-import { SettingsAnnotations, SettingsMetadata, SettingsNotes, SettingsTypemap } from "Types/extension";
+import { ArgsMetadataBlocks, OutcomeMetadataStatus, SettingsAnnotations, SettingsMetadata, SettingsNotes, SettingsTypemap } from "Types/extension";
 
 
 /** Adds Roam blocks to a parent UID based on an Object block template.
  * @param parentUID - The UID of the parent (Roam block or page) 
  * @param object - The block Object to use as template 
  */
-async function addBlockObject(parentUID: string, object: RImportableBlock, order: Roam.BlockOrder = 0) {
+async function addBlockObject(parentUID: string, object: RImportableBlock, order: Roam.BlockOrder = 0): Promise<void> {
 	const { string: blockString, children = [], ...opts } = object;
 	
 	if(typeof(blockString) === "undefined"){
@@ -35,13 +35,14 @@ async function addBlockObject(parentUID: string, object: RImportableBlock, order
 		if(children.constructor === Array){
 			// Go through each child element, starting by the last
 			// Recursion will ensure all nested children will be added
-			for(let j = children.length - 1; j >= 0; j--){
-				if(typeof(children[j]) === "object"){
+			for (let j = children.length - 1; j >= 0; j--){
+				const elem = children[j];
+				if(typeof(elem) === "object"){
 					// eslint-disable-next-line no-await-in-loop
-					await addBlockObject(blockUID, children[j], order);
+					await addBlockObject(blockUID, elem, order);
 				} else if(typeof(children[j]) === "string"){
 					// eslint-disable-next-line no-await-in-loop
-					await createRoamBlock(blockUID, children[j], order, {});
+					await createRoamBlock(blockUID, elem, order, {});
 				} else {
 					window.zoteroRoam?.error?.({
 						origin: "Metadata",
@@ -50,7 +51,7 @@ async function addBlockObject(parentUID: string, object: RImportableBlock, order
 							element: children[j]
 						}
 					});
-					throw new Error(`All children array items should be of type String or Object, not ${typeof(children[j])}`);
+					throw new Error(`All children array items should be of type String or Object, not ${typeof(elem)}`);
 				}
 			}
 		} else {
@@ -67,11 +68,16 @@ async function addBlockObject(parentUID: string, object: RImportableBlock, order
 }
 
 /** Adds Roam blocks to a parent UID, based on an array input.
- * @param parentUID - The UID of the parent (Roam block or page) 
- * @param arr - The array to use as template
  * @returns The outcome of the operation
  */
-async function addBlocksArray(parentUID: string, arr: RImportableElement[], order: Roam.BlockOrder = 0){
+async function addBlocksArray(
+	/** The UID of the parent (Roam block or page) */
+	parentUID: string,
+	/** The array to use as template */
+	arr: RImportableElement[],
+	/** The place where the blocks should be added */
+	order: Roam.BlockOrder = 0
+): Promise<{ args: ArgsMetadataBlocks } & OutcomeMetadataStatus>{
 	const defaultOutcome = {
 		args: {
 			blocks: arr,
@@ -107,7 +113,8 @@ async function addBlocksArray(parentUID: string, arr: RImportableElement[], orde
 			}
 			return Promise.resolve({ 
 				...defaultOutcome, 
-				success: true });
+				success: true
+			});
 		} catch(e) {
 			return Promise.resolve({ 
 				...defaultOutcome,
@@ -357,18 +364,16 @@ async function importItemMetadata(
 			const metadata = (use == "function" && func) 
 				? await executeFunctionByName(func, window, item, pdfs, notes) 
 				: _getItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap });
-			const { args, error, success } = await addBlocksArray(pageUID, metadata);
+			const importOutcome = await addBlocksArray(pageUID, metadata);
 
 			const outcome = {
-				args,
-				error,
 				page,
 				raw: {
 					item,
 					pdfs,
 					notes
 				},
-				success
+				...importOutcome
 			};
 			emitCustomEvent({ ...outcome, _type: "metadata-added" });
 			
@@ -417,17 +422,15 @@ async function importItemNotes(
 
 	try {
 		const formattedOutput = _formatNotes(notes, pageUID, { annotationsSettings, notesSettings });
-		const { args, error, success } = await addBlocksArray(pageUID, formattedOutput);
+		const importOutcome = await addBlocksArray(pageUID, formattedOutput);
 
 		const outcome = {
-			args,
-			error,
 			page,
 			raw: {
 				item,
 				notes
 			},
-			success
+			...importOutcome
 		};
 		emitCustomEvent({ ...outcome, _type: "notes-added" });
 		
