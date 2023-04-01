@@ -51,7 +51,7 @@ export function analyzeUserRequests(requests: LegacyDataRequest|(LegacyDataReque
 				if("library" in req){
 					const { id, type } = req.library;
                     
-					if(!id || typeof(id) !== "string"){
+					if(!id || isNaN(Number(id))){
 						throw new Error("A library ID is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 					}
 
