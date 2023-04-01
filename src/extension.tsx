@@ -449,7 +449,6 @@ type CollectionOptions<T extends CollectionFormatOption = CollectionFormatOption
  */
 function _getItemCollections(item: ZItemTop, collectionList: ZoteroAPI.Collection[], { brackets, return_as }: CollectionOptions<"array">): string[];
 function _getItemCollections(item: ZItemTop, collectionList: ZoteroAPI.Collection[], { brackets, return_as }: CollectionOptions<"string">): string;
-function _getItemCollections(item: ZItemTop, collectionList: ZoteroAPI.Collection[], { brackets, return_as }: CollectionOptions): string | string[];
 function _getItemCollections(
 	item: ZItemTop,
 	collectionList: ZoteroAPI.Collection[],
@@ -557,7 +556,6 @@ function _getItems(select: "children", filters: QueryFilters, { queryClient }: {
 function _getItems(select: "items", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemTop[];
 function _getItems(select: "notes", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): (ZItemNote | ZItemAnnotation)[];
 function _getItems(select: "pdfs", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemAttachment[];
-function _getItems(select: SelectItemsOption, filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItem[] | ZItemAnnotation[] | ZItemAttachment[] | ZItemTop[] | (ZItemAttachment | ZItemNote | ZItemAnnotation)[] | (ZItemNote | ZItemAnnotation)[];
 function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { queryClient }: { queryClient: QueryClient }) {
 	const items = queryClient.getQueriesData<QueryDataItems>({ ...filters, queryKey: ["items"] })
 		.map(query => {

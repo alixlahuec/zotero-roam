@@ -11,7 +11,6 @@ type PDFAsIdentity = { key: string, link: string, title: string };
 function _formatPDFs(pdfs: ZItemAttachment[], as: "identity"): PDFAsIdentity[];
 function _formatPDFs(pdfs: ZItemAttachment[], as: "links"): string[];
 function _formatPDFs(pdfs: ZItemAttachment[], as: "string"): string;
-function _formatPDFs(pdfs: ZItemAttachment[], as: PDFFormatOption): string | string[] | PDFAsIdentity[];
 function _formatPDFs(pdfs: ZItemAttachment[], as: PDFFormatOption = "string") {
 	if(!pdfs){
 		switch(as){
@@ -49,7 +48,6 @@ type CreatorOptions<T extends CreatorFormatOption = CreatorFormatOption> = { bra
 function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions<"array">): string[];
 function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions<"identity">): CreatorAsIdentity[];
 function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions<"string">): string;
-function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions): string | string[] | CreatorAsIdentity[];
 function _getItemCreators(item: ZItemTop, { return_as = "string", brackets = true, use_type = true }: Partial<CreatorOptions> = {}) {
 	const creatorsInfoList = item.data.creators.map(creator => {
 		const nameTag = "name" in creator
@@ -84,7 +82,6 @@ type TagOptions<T extends TagFormatOption = TagFormatOption> = { brackets: boole
 /** Retrieves the tags of a Zotero item, and returns them into a specific format */
 function _getItemTags(item: ZItemTop, { brackets, return_as }: TagOptions<"array">): string[];
 function _getItemTags(item: ZItemTop, { brackets, return_as }: TagOptions<"string">): string;
-function _getItemTags(item: ZItemTop, { brackets, return_as }: TagOptions): string | string[];
 function _getItemTags(item: ZItemTop, { return_as = "string", brackets = true }: Partial<TagOptions> = {}){
 	const tags = item.data.tags.map(t => t.tag);
 	const tagList = (brackets == true ? tags.map(el => `#[[${el}]]`) : tags);
@@ -106,7 +103,6 @@ export type RelatedOptions<T extends RelatedFormatOption = RelatedFormatOption> 
 function _getItemRelated(item: ZItemTop, datastore: ZItem[], { brackets, return_as }: RelatedOptions<"array">): string[];
 function _getItemRelated(item: ZItemTop, datastore: ZItem[], { brackets, return_as }: RelatedOptions<"raw">): ZItem[];
 function _getItemRelated(item: ZItemTop, datastore: ZItem[], { brackets, return_as }: RelatedOptions<"string">): string;
-function _getItemRelated(item: ZItemTop, datastore: ZItem[], { brackets, return_as }: RelatedOptions): string | string[] | ZItem[];
 function _getItemRelated(item: ZItemTop, datastore: ZItem[], { return_as = "string", brackets = true }: Partial<RelatedOptions> = {}){
 	if(item.data.relations && item.data.relations["dc:relation"]){
 		let relatedItems = item.data.relations["dc:relation"];
