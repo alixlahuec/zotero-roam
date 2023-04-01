@@ -24,7 +24,8 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 	constructor({ annotations = {}, metadata = {} }){
 		const INSTALL_CONTEXT = "sandbox";
 
-		const { requests, settings } = initialize(INSTALL_CONTEXT, {
+		const { requests, settings } = initialize({
+			context: INSTALL_CONTEXT,
 			manualSettings: {
 				dataRequests: [
 					{ 
