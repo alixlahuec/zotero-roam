@@ -19,7 +19,7 @@ async function addBlockObject(parentUID: string, object: RImportableBlock, order
 		window.zoteroRoam?.error?.({
 			origin: "Metadata",
 			message: "Bad object received",
-			detail: {
+			context: {
 				object
 			}
 		});
@@ -47,7 +47,7 @@ async function addBlockObject(parentUID: string, object: RImportableBlock, order
 					window.zoteroRoam?.error?.({
 						origin: "Metadata",
 						message: "Bad element received",
-						detail: {
+						context: {
 							element: children[j]
 						}
 					});
@@ -58,7 +58,7 @@ async function addBlockObject(parentUID: string, object: RImportableBlock, order
 			window.zoteroRoam?.error?.({
 				origin: "Metadata",
 				message: "Bad object received",
-				detail: {
+				context: {
 					object
 				}
 			});
@@ -104,7 +104,7 @@ async function addBlocksArray(
 					window.zoteroRoam?.error?.({
 						origin: "Metadata",
 						message: "Bad element received",
-						detail: {
+						context: {
 							element: arr[k]
 						}
 					});
