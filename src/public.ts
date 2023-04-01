@@ -5,17 +5,14 @@ import { ZoteroAPI } from "Types/externals";
 
 
 type PDFFormatOption = "links" | "identity" | "string";
+type PDFAsIdentity = { key: string, link: string, title: string };
 
-function _formatPDFs(pdfs: ZItemAttachment[], as: "identity"): { key: string, link: string, title: string }[];
+/** Converts Zotero PDF items into a specific format */
+function _formatPDFs(pdfs: ZItemAttachment[], as: "identity"): PDFAsIdentity[];
 function _formatPDFs(pdfs: ZItemAttachment[], as: "links"): string[];
 function _formatPDFs(pdfs: ZItemAttachment[], as: "string"): string;
-/** Converts Zotero PDF items into a specific format */
-function _formatPDFs(
-	/** The Array of Zotero PDFs */
-	pdfs: ZItemAttachment[],
-	/** The desired format */
-	as: PDFFormatOption = "string"
-) {
+function _formatPDFs(pdfs: ZItemAttachment[], as: PDFFormatOption): string | string[] | PDFAsIdentity[];
+function _formatPDFs(pdfs: ZItemAttachment[], as: PDFFormatOption = "string") {
 	if(!pdfs){
 		switch(as){
 		case "identity":
@@ -45,12 +42,14 @@ function _formatPDFs(
 
 
 type CreatorFormatOption = "array" | "identity" | "string";
+type CreatorAsIdentity = { inGraph: string | false, name: string, type: ZoteroAPI.CreatorType };
 type CreatorOptions<T extends CreatorFormatOption = CreatorFormatOption> = { brackets: boolean | "existing", return_as: T, use_type: boolean };
 
-function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions<"array">): string[];
-function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions<"identity">): { inGraph: string | false, name: string, type: ZoteroAPI.CreatorType }[];
-function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions<"string">): string;
 /** Retrieves the creators list of a Zotero item, and returns it into a specific format */
+function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions<"array">): string[];
+function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions<"identity">): CreatorAsIdentity[];
+function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions<"string">): string;
+function _getItemCreators(item: ZItemTop, { brackets, return_as, use_type }: CreatorOptions): string | string[] | CreatorAsIdentity[];
 function _getItemCreators(item: ZItemTop, { return_as = "string", brackets = true, use_type = true }: Partial<CreatorOptions> = {}) {
 	const creatorsInfoList = item.data.creators.map(creator => {
 		const nameTag = "name" in creator
@@ -82,9 +81,10 @@ function _getItemCreators(item: ZItemTop, { return_as = "string", brackets = tru
 type TagFormatOption = "array" | "string";
 type TagOptions<T extends TagFormatOption = TagFormatOption> = { brackets: boolean, return_as: T };
 
+/** Retrieves the tags of a Zotero item, and returns them into a specific format */
 function _getItemTags(item: ZItemTop, { brackets, return_as }: TagOptions<"array">): string[];
 function _getItemTags(item: ZItemTop, { brackets, return_as }: TagOptions<"string">): string;
-/** Retrieves the tags of a Zotero item, and returns them into a specific format */
+function _getItemTags(item: ZItemTop, { brackets, return_as }: TagOptions): string | string[];
 function _getItemTags(item: ZItemTop, { return_as = "string", brackets = true }: Partial<TagOptions> = {}){
 	const tags = item.data.tags.map(t => t.tag);
 	const tagList = (brackets == true ? tags.map(el => `#[[${el}]]`) : tags);
@@ -100,12 +100,13 @@ function _getItemTags(item: ZItemTop, { return_as = "string", brackets = true }:
 
 
 type RelatedFormatOption = "array" | "raw" | "string";
-type RelatedOptions<T extends RelatedFormatOption = RelatedFormatOption> = { brackets: boolean, return_as: T };
+export type RelatedOptions<T extends RelatedFormatOption = RelatedFormatOption> = { brackets: boolean, return_as: T };
 
+/** Retrieves the in-library relations of a Zotero item, and returns them into a specific format */
 function _getItemRelated(item: ZItemTop, datastore: ZItem[], { brackets, return_as }: RelatedOptions<"array">): string[];
 function _getItemRelated(item: ZItemTop, datastore: ZItem[], { brackets, return_as }: RelatedOptions<"raw">): ZItem[];
 function _getItemRelated(item: ZItemTop, datastore: ZItem[], { brackets, return_as }: RelatedOptions<"string">): string;
-/** Retrieves the in-library relations of a Zotero item, and returns them into a specific format */
+function _getItemRelated(item: ZItemTop, datastore: ZItem[], { brackets, return_as }: RelatedOptions): string | string[] | ZItem[];
 function _getItemRelated(item: ZItemTop, datastore: ZItem[], { return_as = "string", brackets = true }: Partial<RelatedOptions> = {}){
 	if(item.data.relations && item.data.relations["dc:relation"]){
 		let relatedItems = item.data.relations["dc:relation"];

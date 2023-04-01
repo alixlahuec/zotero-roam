@@ -1,44 +1,38 @@
-import { H5 } from "@blueprintjs/core";
+import { H5, IconName, Intent } from "@blueprintjs/core";
 import zrToaster from "Components/ExtensionToaster";
 
-import { _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
+import { RelatedOptions, _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
 import { cleanBibliographyHTML, cleanErrorIfAxios, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 import { findRoamBlock } from "Roam";
 
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "./constants";
+import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary } from "Types/transforms";
+import IDBDatabase from "./services/idb";
+import { QueryClient, QueryFilters } from "@tanstack/query-core";
+import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
+import { ZoteroAPI } from "Types/externals";
+import { QueryDataCollections, QueryDataItems, QueryDataTags } from "Types/transforms";
 
+
+type ZoteroRoamConstructorArgs = {
+	idbDatabase: IDBDatabase | null,
+	queryClient: QueryClient,
+	requests: UserRequests,
+	settings: UserSettings
+};
 
 /**
  * Creates a new public API instance for the extension. This is meant to make available an interface for users as well as other plugins to consume some of the extension's data and functionalities, in a controlled manner. Updates to settings are done by the relevant widgets.
- * @borrows _formatPDFs as ZoteroRoam#formatPDFs
- * @borrows _getItemCreators as ZoteroRoam#getItemCreators
- * @borrows _getItemDateAdded as ZoteroRoam#getItemDateAdded
- * @borrows _getItemLink as ZoteroRoam#getItemLink
- * @borrows _getItemPublication as ZoteroRoam#getItemPublication
- * @borrows _getItemTags as ZoteroRoam#getItemTags
  */
 export default class ZoteroRoam {
-	/** @constant {IDBDatabase} */
-	#db;
-	/** @constant {UserRequests["libraries"]} */
-	#libraries;
-	/** @constant {QueryClient} */
-	#queryClient;
-	/** @constant {Pick<UserSettings, "annotations" | "notes" | "typemap" >} */
-	#settings;
-	/** @constant {ZoteroRoamLog[]} */
-	logs = [];
+	#db: IDBDatabase | null;
+	#libraries: UserRequests["libraries"];
+	#queryClient: QueryClient;
+	#settings: Pick<UserSettings, "annotations" | "notes" | "typemap" >;
+	logs: ZoteroRoamLog[] = [];
 
-	/**
-     * @param {{
-	 * idbDatabase: IDBDatabase|null,
-     * queryClient: QueryClient,
-     * requests: UserRequests,
-     * settings: Object
-     * }} context - The context in which the instance is being created
-     */
-	constructor({ idbDatabase = null, queryClient, requests, settings }) {
+	constructor({ idbDatabase = null, queryClient, requests, settings }: ZoteroRoamConstructorArgs) {
 		const { libraries } = requests;
 		const { annotations, notes, typemap } = settings;
 
@@ -51,7 +45,7 @@ export default class ZoteroRoam {
 
 	/* istanbul ignore next */
 	/** Clears the contents of the React Query store from the database. */
-	async clearDataCache(){
+	async clearDataCache(): Promise<void>{
 		if(this.#db !== null){
 			try {
 				await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).clear();
@@ -74,17 +68,15 @@ export default class ZoteroRoam {
 
 	/* istanbul ignore next */
 	/** Deletes the database, if any */
-	async deleteDatabase(){
+	async deleteDatabase(): Promise<void>{
 		if(this.#db){
 			await this.#db.deleteSelf();
 		}
 	}
 
 	/* istanbul ignore next */
-	/** Checks if there is a cached version of the React Query client
-	 * @returns 
-	 */
-	async isDataCached(){
+	/** Checks if there is a cached version of the React Query client */
+	async isDataCached(): Promise<boolean>{
 		if(this.#db !== null){
 			try {
 				const cachedClient = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).get(IDB_REACT_QUERY_CLIENT_KEY);
@@ -128,28 +120,28 @@ export default class ZoteroRoam {
 
 	// To be called in the RequestsWidget
 	/* istanbul ignore next */
-	updateLibraries(val) {
+	updateLibraries(val: UserRequests["libraries"]) {
 		this.#libraries = val;
 	}
 
 	/* istanbul ignore next */
-	updateSetting(op, val) {
+	updateSetting<T extends "annotations" | "notes" | "typemap">(op: T, val: UserSettings[T]) {
 		this.#settings[op] = val;
 	}
 
-	send(obj, level = "info"){
+	send(obj: LogConfig, level: LogLevel = "info"){
 		this.logs.push(new ZoteroRoamLog(obj, level));
 	}
 
-	error(obj){
+	error(obj: LogConfig){
 		this.send(obj, "error");
 	}
 
-	info(obj){
+	info(obj: LogConfig){
 		this.send(obj, "info");
 	}
 
-	warn(obj){
+	warn(obj: LogConfig){
 		this.send(obj, "warning");
 	}
 
@@ -161,66 +153,46 @@ export default class ZoteroRoam {
 	getItemTags = _getItemTags;
 
 
-	/** Formats Zotero notes and annotations, with current user settings
-     * @param {(ZItemNote|ZItemAnnotation)[]} notes 
-     * @returns 
-     */
-	formatNotes(notes) {
+	/** Formats Zotero notes and annotations, with current user settings */
+	formatNotes(notes: (ZItemNote | ZItemAnnotation)[]) {
 		return _formatNotes(notes, null, {
 			annotationsSettings: this.#settings.annotations,
 			notesSettings: this.#settings.notes
 		});
 	}
 
-	/** Retrieves the bibliographic entries for a list of items
-     * @param {String[]} citekeys - The targeted items' citekeys
-     * @returns 
-     */
-	async getBibEntries(citekeys) {
+	/** Retrieves the bibliographic entries for a list of items */
+	async getBibEntries(citekeys: string[]) {
 		return await _getBibEntries(citekeys, {
 			libraries: this.#libraries,
 			queryClient: this.#queryClient
 		});
 	}
 
-	/** Retrieves the formatted bibliography for a given item, with optional config
-     * @param {ZItemTop} item - The targeted item
-     * @param {ZoteroAPI.Requests.BibliographyArgs} config - Optional parameters to use to format the bibliography
-     * @returns 
-     */
-	async getItemCitation(item, config = {}) {
+	/** Retrieves the formatted bibliography for a given item, with optional config */
+	async getItemCitation(item: ZItemTop, config: Partial<ZoteroAPI.Requests.BibliographyArgs> = {}) {
 		return await _getItemCitation(item, config, {
 			libraries: this.#libraries
 		});
 	}
 
-	/** Retrieves the list of collections for a given library
-     * @param {String} path - The targeted library
-     * @returns 
-     */
-	getCollections(path) {
-		const library = this.#libraries.find(lib => lib.path == path);
+	/** Retrieves the list of collections for a given library */
+	getCollections(path: string) {
+		const library = this.#libraries.find(lib => lib.path == path)!;
 		return _getCollections(library, {
 			queryClient: this.#queryClient
 		});
 	}
 
-	/** Retrieves the children for a given item
-     * @param {ZItemTop} item - The targeted item
-     * @returns 
-     */
-	getItemChildren(item) {
+	/** Retrieves the children for a given item */
+	getItemChildren(item: ZItemTop) {
 		return _getItemChildren(item, {
 			queryClient: this.#queryClient
 		});
 	}
 
-	/** Retrieves the list of collections for a given item
-     * @param {ZItemTop} item - The targeted item
-     * @param {{return_as?: ("string"|"array"), brackets?: Boolean}} config - Optional parameters to use to format the collections 
-     * @returns 
-     */
-	getItemCollections(item, { return_as = "string", brackets = true } = {},) {
+	/** Retrieves the list of collections for a given item */
+	getItemCollections(item: ZItemTop, { return_as = "string", brackets = true }: Partial<CollectionOptions> = {},) {
 		const path = item.library.type + "s/" + item.library.id;
 		const collectionList = this.getCollections(path);
 
@@ -228,13 +200,8 @@ export default class ZoteroRoam {
 	}
 
 	/* istanbul ignore next */
-	/** Formats an item's metadata into Roam blocks
-     * @param {ZItemTop} item - The targeted item
-     * @param {ZItemAttachment[]} pdfs - The item's linked PDFs, if any
-     * @param {(ZItemNote|ZItemAnnotation)[]} notes - The item's linked notes, if any
-     * @returns 
-     */
-	getItemMetadata(item, pdfs, notes) {
+	/** Formats an item's metadata into Roam blocks */
+	getItemMetadata(item: ZItemTop, pdfs: ZItemAttachment[], notes: (ZItemNote | ZItemAnnotation)[]) {
 		return _getItemMetadata(item, pdfs, notes, {
 			annotationsSettings: this.#settings.annotations,
 			notesSettings: this.#settings.notes,
@@ -242,12 +209,8 @@ export default class ZoteroRoam {
 		});
 	}
 
-	/** Retrieves the in-library relations for a given item
-     * @param {ZItem} item - The targeted item
-     * @param {{return_as?: ("string"|"raw"|"array"), brackets?: Boolean}} config - Optional parameters to use to format the relations
-     * @returns 
-     */
-	getItemRelated(item, { return_as = "string", brackets = true } = {}) {
+	/** Retrieves the in-library relations for a given item */
+	getItemRelated(item: ZItemTop, { return_as = "string", brackets = true }: Partial<RelatedOptions> = {}) {
 		const { type: libType, id: libID } = item.library;
 		const datastore = this.getItems("items")
 			.filter(it => it.library.id == libID && it.library.type == libType);
@@ -255,12 +218,8 @@ export default class ZoteroRoam {
 		return _getItemRelated(item, datastore, { return_as, brackets });
 	}
 
-	/** Retrieves an item's type
-     * @param {ZItemTop} item - The targeted item
-     * @param {{brackets?: Boolean}} config - Optional parameters to use to format the type
-     * @returns 
-     */
-	getItemType(item, { brackets = true } = {}) {
+	/** Retrieves an item's type */
+	getItemType(item: ZItemTop, { brackets = true }: { brackets?: boolean } = {}) {
 		return _getItemType(item, { brackets }, {
 			typemap: this.#settings.typemap
 		});
@@ -272,10 +231,8 @@ export default class ZoteroRoam {
      * .getItems("all")
      * // Returns all items currently loaded, except for annotations, notes, and attachments
      * .getItems("items")
-     * @param {("all"|"annotations"|"attachments"|"children"|"items"|"notes"|"pdfs")} select - The targeted set of items
-     * @returns 
      */
-	getItems(select = "all") {
+	getItems(select: SelectItemsOption = "all") {
 		return _getItems(select, {}, {
 			queryClient: this.#queryClient
 		});
@@ -285,10 +242,8 @@ export default class ZoteroRoam {
      * @example
      * // Returns the map of tags for the library of user ID 123456 
      * .getTags("users/123456")
-     * @param {String} path - The path of the targeted library 
-     * @returns 
      */
-	getTags(path) {
+	getTags(path: string) {
 		return _getTags(path, {
 			libraries: this.#libraries,
 			queryClient: this.#queryClient
@@ -296,45 +251,41 @@ export default class ZoteroRoam {
 	}
 }
 
+type LogConfig = {
+	context?: Record<string, any>,
+	detail?: string,
+	origin?: string,
+	message?: string,
+	showToaster?: number | boolean
+};
+
+type LogLevel = "error" | "info" | "warning";
+
 /**
  * Creates a log entry for the extension. This is meant to provide users with information about different events (e.g errors when fetching data), through an optional toast and more detailed logs.
  */
 export class ZoteroRoamLog {
-	level;
-	origin;
-	message;
-	detail;
-	context;
-	intent;
-	timestamp;
+	level: LogLevel;
+	origin: string;
+	message: string;
+	detail: string;
+	context: Record<string, any>;
+	intent: Intent | null;
+	timestamp: Date;
 
-	/** @private */
-	/** @constant {Record<string,Intent>} */
-	#LEVELS_MAPPING = {
+	#LEVELS_MAPPING: Record<LogLevel, Intent> = {
 		"error": "danger",
 		"info": "primary",
 		"warning": "warning"
 	};
 
-	/** @private */
-	/** @constant {Record<string,IconName>} */
-	#ICONS_MAPPING = {
+	#ICONS_MAPPING: Record<LogLevel, IconName> = {
 		"error": "warning-sign",
 		"info": "info-sign",
 		"warning": "warning-sign"
 	};
 
-	/**
-	 * @param {{
-	 * origin?: String,
-	 * message?: String,
-	 * detail?: String,
-	 * context?: Object,
-	 * showToaster?: Number|Boolean
-	 * }} obj
-	 * @param {("error"|"info"|"warning")} level
-	 */
-	constructor(obj = {}, level = "info"){
+	constructor(obj: LogConfig = {}, level: LogLevel = "info"){
 		const { origin = "", message = "", detail = "", context = {}, showToaster = false } = obj;
 		this.level = level;
 		this.origin = origin;
@@ -363,16 +314,15 @@ export class ZoteroRoamLog {
 }
 
 
-/** Formats Zotero notes/annotations items
- * @param {(ZItemNote|ZItemAnnotation)[]} notes - The Array of Zotero notes/annotations
- * @param {String?} pageUID - The UID of the parent item's Roam page (optional)
- * @param {{
- * annotationsSettings: SettingsAnnotations, 
- * notesSettings: SettingsNotes
- * }} settings - The user's current settings
- * @returns {RImportableElement[]} The formatted Array
- */
-export function _formatNotes(notes, pageUID = null, { annotationsSettings, notesSettings }) {
+/** Formats Zotero notes/annotations items */
+export function _formatNotes(
+	/** The Array of Zotero notes/annotations */
+	notes: (ZItemNote | ZItemAnnotation)[],
+	/** The UID of the parent item's Roam page, if it exists */
+	pageUID: string | null = null,
+	/** The user's current settings */
+	{ annotationsSettings, notesSettings }: { annotationsSettings: SettingsAnnotations, notesSettings: SettingsNotes }
+): RImportableElement[] {
 	if (!notes) {
 		return [];
 	} else {
@@ -433,12 +383,8 @@ export function _formatNotes(notes, pageUID = null, { annotationsSettings, notes
 	}
 }
 
-/** Compiles a bibliography for a list of items
- * @param {String[]} citekeys - The targeted items' citekeys
- * @param {{ libraries: ZLibrary[], queryClient: QueryClient }} context - The current context for the extension
- * @returns The compiled bibliography
- */
-async function _getBibEntries(citekeys, { libraries, queryClient }) {
+/** Compiles a bibliography for a list of items */
+async function _getBibEntries(citekeys: string[], { libraries, queryClient }: { libraries: ZLibrary[], queryClient: QueryClient }): Promise<string> {
 	const libraryItems = _getItems("items", {}, { queryClient });
 	const groupedList = citekeys.reduce((obj, citekey) => {
 		const libItem = libraryItems.find(it => it.key == citekey);
@@ -453,7 +399,7 @@ async function _getBibEntries(citekeys, { libraries, queryClient }) {
 		return obj;
 	}, {});
 
-	const bibEntries = [];
+	const bibEntries: Promise<string>[] = [];
 
 	Object.keys(groupedList)
 		.forEach(libPath => {
@@ -469,13 +415,8 @@ async function _getBibEntries(citekeys, { libraries, queryClient }) {
 
 }
 
-/** Returns an item's formatted bibliography as returned by the Zotero API
- * @param {ZItemTop} item - The targeted Zotero item
- * @param {ZoteroAPI.Requests.BibliographyArgs} config - Optional parameters to use in the API call
- * @param {{libraries: ZLibrary[]}} requests - The user's current requests
- * @returns 
- */
-async function _getItemCitation(item, config, { libraries }){
+/** Returns an item's formatted bibliography as returned by the Zotero API */
+async function _getItemCitation(item: ZItemTop, config: Partial<ZoteroAPI.Requests.BibliographyArgs> = {}, { libraries }: { libraries: ZLibrary[] }): Promise<string> {
 	const location = item.library.type + "s/" + item.library.id;
 	const library = libraries.find(lib => lib.path == location);
 
@@ -483,37 +424,39 @@ async function _getItemCitation(item, config, { libraries }){
 	return cleanBibliographyHTML(bib);
 }
 
-/** Retrieves the (cached) list of collections for a given library
- * @param {ZLibrary} library - The targeted Zotero library
- * @param {{ queryClient: QueryClient }} context - The current context for the extension
- * @returns The library's collections
- */
-function _getCollections(library, { queryClient }) {
+
+/** Retrieves the (cached) list of collections for a given library */
+function _getCollections(library: ZLibrary, { queryClient }: { queryClient: QueryClient }): ZoteroAPI.Collection[] {
 	const { /*apikey,*/ path } = library;
-	const datastore = queryClient.getQueryData(["collections", { library: path }]);
-	return datastore.data;
+	const datastore = queryClient.getQueryData<QueryDataCollections>(["collections", { library: path }]);
+	return datastore?.data || [];
 }
 
-/** Returns the (cached) children for a given item
- * @param {ZItemTop} item - The targeted Zotero item
- * @param {{ queryClient: QueryClient }} context - The current context for the extension
- * @returns The item's children
- */
-function _getItemChildren(item, { queryClient }) {
+/** Returns the (cached) children for a given item */
+function _getItemChildren(item: ZItemTop, { queryClient }: { queryClient: QueryClient }): (ZItemAttachment | ZItemNote | ZItemAnnotation)[] {
 	const location = item.library.type + "s/" + item.library.id;
 	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, { queryClient })
 		.filter(el => el.data.parentItem == item.data.key);
 }
 
+
+type CollectionFormatOption = "array" | "string";
+type CollectionOptions<T extends CollectionFormatOption = CollectionFormatOption> = { brackets: boolean, return_as: T };
+
 /** Retrieves an item's collections' names, from a given list of collections
- * @param {ZItemTop} item - The targeted Zotero item
- * @param {ZoteroAPI.Collection[]} collectionList - The list of library collections to match data to
  * @param {{return_as?: ("string"|"array"), brackets?: Boolean}} config - Additional configuration 
- * @returns {String|String[]} The names of the item's collections, if any
+ * @returns The names of the item's collections, if any
  */
-function _getItemCollections(item, collectionList, { return_as = "string", brackets = true } = {}) {
+function _getItemCollections(item: ZItemTop, collectionList: ZoteroAPI.Collection[], { brackets, return_as }: CollectionOptions<"array">): string[];
+function _getItemCollections(item: ZItemTop, collectionList: ZoteroAPI.Collection[], { brackets, return_as }: CollectionOptions<"string">): string;
+function _getItemCollections(item: ZItemTop, collectionList: ZoteroAPI.Collection[], { brackets, return_as }: CollectionOptions): string | string[];
+function _getItemCollections(
+	item: ZItemTop,
+	collectionList: ZoteroAPI.Collection[],
+	{ return_as = "string", brackets = true }: Partial<CollectionOptions> = {}
+): string | string[] {
 	if (item.data.collections.length > 0) {
-		const output = [];
+		const output: string[] = [];
 
 		item.data.collections.forEach(cl => {
 			const libCollection = collectionList.find(el => el.key == cl);
@@ -536,41 +479,31 @@ function _getItemCollections(item, collectionList, { return_as = "string", brack
 	}
 }
 
-/** Returns the date on which an item was added to Zotero, in DNP format
- * @param {ZItem} item - The targeted Zotero item
- * @param {{brackets?: Boolean}} config - Additional configuration
- * @returns {String}
- */
-function _getItemDateAdded(item, { brackets = true } = {}){
+/** Returns the date on which an item was added to Zotero, in DNP format */
+function _getItemDateAdded(item: ZItem, { brackets = true }: { brackets?: boolean } = {}): string{
 	return makeDNP(item.data.dateAdded, { brackets });
 }
 
-/** Returns a link for the item (web or local)
- * @param {ZItemTop} item - The targeted Zotero item
- * @param {"local"|"web"} type - The type of link to create
- * @param {{format?: "markdown"|"target", text?: string}} config 
- * @returns 
- */
-function _getItemLink(item, type = "local", config = {}){
+
+type LinkType = "local" | "web";
+type LinkOptions = {
+	format: "markdown" | "target",
+	text: string
+};
+/** Returns a link for the item (web or local) */
+function _getItemLink(item: ZItemTop, type: LinkType = "local", config: Partial<LinkOptions> = {}){
 	return (type == "local")
 		? getLocalLink(item, config)
 		: getWebLink(item, config);
 }
 
 /* istanbul ignore next */
-/** Formats an item's and its children's metadata for import to Roam using the default template
- * @param {ZItemTop} item - The targeted Zotero item
- * @param {ZItemAttachment[]} pdfs - The item's PDFs, if any
- * @param {(ZItemNote|ZItemAnnotation)[]} notes - The item's linked notes, if any
- * @param {{
- * annotationsSettings: SettingsAnnotations,
- * notesSettings: SettingsNotes,
- * typemap: SettingsTypemap
- * }} settings - The user's current settings
- * @returns The formatted metadata output
- */
-export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap }) {
-	const metadata = [];
+/** Formats an item's and its children's metadata for import to Roam using the default template */
+export function _getItemMetadata(
+	item: ZItemTop, pdfs: ZItemAttachment[], notes: (ZItemNote | ZItemAnnotation)[],
+	{ annotationsSettings, notesSettings, typemap }: { annotationsSettings: SettingsAnnotations, notesSettings: SettingsNotes, typemap: SettingsTypemap }
+): RImportableElement[] {
+	const metadata: RImportableElement[] = [];
 
 	if (item.data.title) { metadata.push(`Title:: ${item.data.title}`); } // Title, if available
 	if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${_getItemCreators(item, { return_as: "string", brackets: true, use_type: true })}`); } // Creators list, if available
@@ -595,10 +528,8 @@ export function _getItemMetadata(item, pdfs, notes, { annotationsSettings, notes
 
 /** Retrieves the publication details for a given item.
  * The extension will check for the existence of a `publicationTitle`, then a `bookTitle`, then a `university` name.
- * @param {ZItemTop} item - The targeted item
- * @returns {String}
  */
-function _getItemPublication(item, { brackets = true } = {}){
+function _getItemPublication(item: ZItemTop, { brackets = true }: { brackets?: boolean } = {}): string {
 	const maybePublication = item.data.publicationTitle || item.data.bookTitle || item.data.university;
 	if(maybePublication){
 		return (brackets == true)
@@ -609,25 +540,31 @@ function _getItemPublication(item, { brackets = true } = {}){
 	}
 }
 
-/** Retrieves the type of a Zotero item, according to a given typemap
- * @param {ZItemTop} item - The targeted Zotero item
- * @param {{brackets?: Boolean}} config - Additional configuration
- * @param {SettingsTypemap} typemap - The typemap to be used
- * @returns {String} The clean type for the item
- */
-function _getItemType(item, { brackets = true } = {}, { typemap }) {
+/** Retrieves the type of a Zotero item, according to a given typemap */
+function _getItemType(item: ZItemTop, { brackets = true }: { brackets?: boolean } = {}, { typemap }: { typemap: SettingsTypemap }): string {
 	const type = typemap[item.data.itemType] || item.data.itemType;
 	return (brackets == true ? `[[${type}]]` : type);
 }
 
-/** Returns the current items in the query cache, with optional configuration
- * @param {("all"|"annotations"|"attachments"|"children"|"items"|"notes"|"pdfs")} select - The type of items to retrieve
- * @param {Object} filters - Optional filters for the item queries
- * @param {{ queryClient: QueryClient }} context - The current context for the extension
- * @returns {(ZoteroAPI.Item)[]} - The requested items
- */
-function _getItems(select, filters, { queryClient }) {
-	const items = queryClient.getQueriesData(["items"], filters).map(query => (query[1] || {}).data || []).flat(1);
+
+type SelectItemsOption = "all" | "annotations" | "attachments" | "children" | "items" | "notes" | "pdfs";
+
+/** Returns the current items in the query cache, with optional configuration */
+function _getItems(select: "all", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItem[];
+function _getItems(select: "annotations", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemAnnotation[];
+function _getItems(select: "attachments", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemAttachment[];
+function _getItems(select: "children", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): (ZItemAttachment | ZItemNote | ZItemAnnotation)[];
+function _getItems(select: "items", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemTop[];
+function _getItems(select: "notes", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): (ZItemNote | ZItemAnnotation)[];
+function _getItems(select: "pdfs", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemAttachment[];
+function _getItems(select: SelectItemsOption, filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItem[] | ZItemAnnotation[] | ZItemAttachment[] | ZItemTop[] | (ZItemAttachment | ZItemNote | ZItemAnnotation)[] | (ZItemNote | ZItemAnnotation)[];
+function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { queryClient }: { queryClient: QueryClient }) {
+	const items = queryClient.getQueriesData<QueryDataItems>({ ...filters, queryKey: ["items"] })
+		.map(query => {
+			const [key, queryData] = query;
+			return queryData?.data || [];
+		})
+		.flat(1);
 
 	switch (select) {
 	case "items":
@@ -648,14 +585,11 @@ function _getItems(select, filters, { queryClient }) {
 	}
 }
 
-/** Returns the (cached) map of tags for a given library
- * @param {String} location - The path of the targeted Zotero library
- * @param {{ libraries: ZLibrary[], queryClient: QueryClient }} context - The current context for the extension
- * @returns The library's tags map
- */
-function _getTags(location, { libraries, queryClient }) {
-	const library = libraries.find(lib => lib.path == location);
+
+/** Returns the (cached) map of tags for a given library */
+function _getTags(location: string, { libraries, queryClient }: { libraries: ZLibrary[], queryClient: QueryClient }) {
+	const library = libraries.find(lib => lib.path == location)!;
 	const { /*apikey,*/ path } = library;
-	const datastore = queryClient.getQueryData(["tags", { library: path }]);
+	const datastore = queryClient.getQueryData<QueryDataTags>(["tags", { library: path }])!;
 	return datastore.data;
 }
