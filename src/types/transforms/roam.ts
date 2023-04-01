@@ -28,7 +28,7 @@ export interface RCursorLocation {
  */
 export interface RImportableBlock {
 	/** Child elements to nest under the block */
-	children?: RImportableElement,
+	children?: RImportableElement[],
 	/** Position in which the block should be inserted under its parent */
 	order?: number,
 	/** The UID of the block's parent */
