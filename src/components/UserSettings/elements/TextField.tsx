@@ -24,7 +24,7 @@ const TextField = ({ description = null, ifEmpty = null, label = undefined, onCh
 	const [isValid, { set: setIsValid }] = useBool(validate(value));
 	const valueHandler = useCallback<ChangeEventHandler<HTMLInputElement>>((event) => {
 		onChange(event.target.value);
-		setIsValid(() => validate(event.target.value));
+		setIsValid(validate(event.target.value));
 	}, [onChange, setIsValid, validate]);
 
 	return <Row>
