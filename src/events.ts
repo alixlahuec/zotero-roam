@@ -59,9 +59,14 @@ export namespace Events {
 		_type: "tags-modified",
 		/** The input provided to the modifying function */
 		args: { into: string, tags: string[] },
+		data: {
+			successful: ZoteroAPI.Responses.ItemsWrite[],
+			failed: string[]
+		},
+		error: unknown,
 		/** The path of the targeted library */
 		library: string
-	} & { data: { successful: Record<string, any>[], failed: Record<string, any>[] }, error: Error | null };
+	};
 
 
 	/** Signals a data update has terminated
@@ -218,8 +223,8 @@ function tagsModified(event: CustomEvent<Events.TagsModified>){
 		});
 	} else {
 		const itemsOutcome = successful.reduce((counts, res) => {
-			counts.success += Object.keys(res.data.successful).length;
-			counts.error += Object.keys(res.data.failed).length;
+			counts.success += Object.keys(res.successful).length;
+			counts.error += Object.keys(res.failed).length;
 			return counts;
 		}, { error: 0, success: 0 });
 

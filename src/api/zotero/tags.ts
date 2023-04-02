@@ -365,10 +365,10 @@ const useModifyTags = () => {
 		onSettled: (data = [], error, variables, _context) => {
 			const { into, library: { path }, tags } = variables;
 
-			const outcome = data.reduce<{ successful: unknown[], failed: unknown[] }>((obj, res) => {
+			const outcome = data.reduce<{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }>((obj, res) => {
 				/* istanbul ignore else */
 				if (res.status == "fulfilled") {
-					obj.successful.push(res.value);
+					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
 				}
@@ -384,14 +384,15 @@ const useModifyTags = () => {
 				});
 			}
 
-			emitCustomEvent("tags-modified", {
+			emitCustomEvent({
 				args: {
 					into,
 					tags
 				},
 				data: outcome,
 				error,
-				library: path
+				library: path,
+				_type: "tags-modified"
 			});
 		}
 	});
