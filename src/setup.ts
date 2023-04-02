@@ -1,7 +1,7 @@
 import { unmountComponentAtNode } from "react-dom";
-
 import { parseKeyCombo } from "@blueprintjs/core";
-import { Query, QueryClient, defaultShouldDehydrateQuery } from "@tanstack/react-query";
+import { Query, defaultShouldDehydrateQuery } from "@tanstack/react-query";
+import { PersistedClient } from "@tanstack/react-query-persist-client";
 
 import { cleanErrorIfAxios } from "./api/utils";
 import IDBDatabase from "./services/idb";
@@ -126,7 +126,7 @@ export function createPersisterWithIDB(database: IDBDatabase){
 	const reactQueryStore = database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 
 	return {
-		persistClient: async (client: QueryClient) => {
+		persistClient: async (client: PersistedClient) => {
 			try {
 				return await reactQueryStore.set(indexedDbKey, client);
 			} catch(e) {
