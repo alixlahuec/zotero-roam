@@ -2,13 +2,13 @@ import { H5, IconName, Intent } from "@blueprintjs/core";
 import { Query, QueryClient, QueryFilters } from "@tanstack/query-core";
 import zrToaster from "Components/ExtensionToaster";
 
-import { RelatedOptions, _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
-import IDBDatabase from "./services/idb";
-import { cleanBibliographyHTML, cleanErrorIfAxios, fetchBibEntries, fetchBibliography } from "./api/utils";
-import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
+import { RelatedOptions, _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "../public";
+import IDBDatabase from "../services/idb";
+import { cleanBibliographyHTML, cleanErrorIfAxios, fetchBibEntries, fetchBibliography } from "../api/utils";
+import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "../utils";
 import { findRoamBlock } from "Roam";
 
-import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "./constants";
+import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 
 import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, QueryDataCollections, QueryDataItems, QueryDataTags, QueryKeyItems, QueryKeyTags, QueryKeyCollections } from "Types/transforms";
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
@@ -16,7 +16,7 @@ import { ZoteroAPI } from "Types/externals";
 
 
 type ZoteroRoamConstructorArgs = {
-	idbDatabase: IDBDatabase | null,
+	idbDatabase?: IDBDatabase | null,
 	queryClient: QueryClient,
 	requests: UserRequests,
 	settings: UserSettings
@@ -323,7 +323,7 @@ export function _formatNotes(
 	/** The user's current settings */
 	{ annotationsSettings, notesSettings }: { annotationsSettings: SettingsAnnotations, notesSettings: SettingsNotes }
 ): RImportableElement[] {
-	if (!notes) {
+	if (!notes || notes.length == 0) {
 		return [];
 	} else {
 		const annotItems = notes

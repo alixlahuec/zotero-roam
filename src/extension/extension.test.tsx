@@ -1,11 +1,12 @@
 import { QueryClient } from "@tanstack/query-core";
 
 import { H5 } from "@blueprintjs/core";
-import { _formatPDFs, _getItemCreators, _getItemTags } from "../src/public";
-import { cleanBibliographyHTML, makeTagList } from "../src/api/utils";
-import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../src/utils";
+import { analyzeUserRequests, setupInitialSettings } from "../setup";
+import { _formatPDFs, _getItemCreators, _getItemTags } from "../public";
+import { cleanBibliographyHTML, makeTagList } from "../api/utils";
+import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
 
-import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from "../src/extension";
+import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from ".";
 import zrToaster from "Components/ExtensionToaster";
 
 import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
@@ -18,38 +19,44 @@ import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
 import { samplePDF } from "Mocks/zotero/pdfs";
 import { tags } from "Mocks/zotero/tags";
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
+import { QueryDataItems } from "Types/transforms";
+import { Mocks } from "Mocks/types";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
+const { userLibrary, groupLibrary } = libraries;
+const defaultReqs = [
+	{ dataURI: userLibrary.path + "/items", apikey: masterKey, name: "My user library" },
+	{ dataURI: groupLibrary.path + "/items", apikey: masterKey, name: "My group library" }
+];
+
+const initRequests = analyzeUserRequests(defaultReqs);
+const initSettings = setupInitialSettings({});
+
 
 describe("Formatting utils", () => {
 	const extension = new ZoteroRoam({
 		queryClient: new QueryClient(),
-		requests: {
-			libraries: []
-		},
-		settings: {
-			annotations: {},
-			notes: {},
-			typemap: {}
-		}
+		requests: initRequests,
+		settings: initSettings
 	});
     
 	describe("Notes & Annotations formatting", () => {
 		afterEach(() => {
 			// Reset the notes settings each time
-			extension.updateSetting("notes", {});
+			extension.updateSetting("notes", initSettings.notes);
 		});
 
 		test("Class method returns correct output", () => {
 			expect(extension.formatNotes([sampleNote, sampleAnnot]))
-				.toEqual(_formatNotes([sampleNote, sampleAnnot], null, { annotationsSettings: {}, notesSettings: {} }));
-			expect(extension.formatNotes(false))
+				.toEqual(_formatNotes([sampleNote, sampleAnnot], null, { annotationsSettings: initSettings.annotations, notesSettings: initSettings.notes }));
+			expect(extension.formatNotes([]))
 				.toEqual([]);
 		});
 
 		test("Sorted output", () => {
 			extension.updateSetting("notes", {
+				...initSettings.notes,
 				nest_preset: false,
 				nest_use: "preset"
 			});
@@ -78,6 +85,7 @@ describe("Formatting utils", () => {
 			const preset_string = "[[Notes]]";
 
 			extension.updateSetting("notes", {
+				...initSettings.notes,
 				nest_preset: preset_string,
 				nest_use: "preset"
 			});
@@ -99,6 +107,7 @@ describe("Formatting utils", () => {
 			const custom_string = "[[My Notes]]";
 
 			extension.updateSetting("notes", {
+				...initSettings.notes,
 				nest_char: custom_string,
 				nest_use: "custom"
 			});
@@ -118,18 +127,18 @@ describe("Formatting utils", () => {
 
 		test("Util returns nested output - with block checking", () => {
 			const custom_string = "[[My Notes]]";
-			const notesSettings = {
-				nest_char: custom_string,
-				nest_position: "top",
-				nest_preset: false,
-				nest_use: "custom"
-			};
 
 			const formattedOutput = formatItemNotes([sampleNote]);
 
 			expect(_formatNotes([sampleNote], uid_with_existing_block, {
-				annotationsSettings: {},
-				notesSettings
+				annotationsSettings: initSettings.annotations,
+				notesSettings: {
+					...initSettings.notes,
+					nest_char: custom_string,
+					nest_position: "top",
+					nest_preset: false,
+					nest_use: "custom"
+				}
 			})).toEqual(
 				formattedOutput.map(blck => ({
 					string: blck,
@@ -140,8 +149,14 @@ describe("Formatting utils", () => {
 			);
 			
 			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, {
-				annotationsSettings: {},
-				notesSettings
+				annotationsSettings: initSettings.annotations,
+				notesSettings: {
+					...initSettings.notes,
+					nest_char: custom_string,
+					nest_position: "top",
+					nest_preset: false,
+					nest_use: "custom"
+				}
 			})).toEqual(
 				formattedOutput.map(blck => ({
 					string: blck,
@@ -152,8 +167,14 @@ describe("Formatting utils", () => {
 			);
 
 			expect(_formatNotes([sampleNote], "uid without existing block", {
-				annotationsSettings: {},
-				notesSettings
+				annotationsSettings: initSettings.annotations,
+				notesSettings: {
+					...initSettings.notes,
+					nest_char: custom_string,
+					nest_position: "top",
+					nest_preset: false,
+					nest_use: "custom"
+				}
 			})).toEqual([
 				{
 					string: custom_string,
@@ -166,18 +187,18 @@ describe("Formatting utils", () => {
 
 		test("Util returns nested output - with block checking, with position", () => {
 			const custom_string = "[[My Notes]]";
-			const notesSettings = {
-				nest_char: custom_string,
-				nest_position: "bottom",
-				nest_preset: false,
-				nest_use: "custom"
-			};
 
 			const formattedOutput = formatItemNotes([sampleNote]);
 
 			expect(_formatNotes([sampleNote], uid_with_existing_block, {
-				annotationsSettings: {},
-				notesSettings
+				annotationsSettings: initSettings.annotations,
+				notesSettings: {
+					...initSettings.notes,
+					nest_char: custom_string,
+					nest_position: "bottom",
+					nest_preset: false,
+					nest_use: "custom"
+				}
 			})).toEqual(
 				formattedOutput.map(blck => ({
 					string: blck,
@@ -188,8 +209,14 @@ describe("Formatting utils", () => {
 			);
 
 			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, {
-				annotationsSettings: {},
-				notesSettings
+				annotationsSettings: initSettings.annotations,
+				notesSettings: {
+					...initSettings.notes,
+					nest_char: custom_string,
+					nest_position: "bottom",
+					nest_preset: false,
+					nest_use: "custom"
+				}
 			})).toEqual(
 				formattedOutput.map(blck => ({
 					string: blck,
@@ -209,12 +236,12 @@ describe("Formatting utils", () => {
 			.toEqual(_formatPDFs([samplePDF], "identity"));
 		expect(extension.formatPDFs([samplePDF], "string"))
 			.toEqual(_formatPDFs([samplePDF], "string"));
-		expect(extension.formatPDFs(false))
+		expect(extension.formatPDFs([]))
 			.toEqual("");
 	});
 
 	describe("Retrieving and formatting the date-added property of an item", () => {
-		const date = new Date([2022, 1, 1]);
+		const date = new Date(2022, 0, 1).toString();
 		const cases = [
 			[
 				"with default settings", 
@@ -226,13 +253,14 @@ describe("Formatting utils", () => {
 				{ brackets: false },
 				"January 1st, 2022"
 			]
-		];
+		] as const;
 
 		test.each(cases)(
 			"%# - %s",
 			(_id, config, expectation) => {
+				const sampleItem = items[0];
 				expect(extension.getItemDateAdded(
-					{ data: { dateAdded: date } },
+					{ ...sampleItem, data: { ...sampleItem.data, dateAdded: date } },
 					config
 				)).toBe(expectation);
 			}
@@ -249,15 +277,17 @@ describe("Formatting utils", () => {
 
 	describe("Retrieving publication details for an item", () => {
 		const cases = [
-			[{ data: { publicationTitle: "some publication" } }, "some publication"],
-			[{ data: { bookTitle: "some book" } }, "some book"],
-			[{ data: { university: "some university" } }, "some university"],
-			[{ data: {} }, ""]
-		];
+			[{ publicationTitle: "some publication", bookTitle: undefined, university: undefined }, "some publication"],
+			[{ publicationTitle: undefined, bookTitle: "some book", university: undefined }, "some book"],
+			[{ publicationTitle: undefined, bookTitle: undefined, university: "some university" }, "some university"],
+			[{ publicationTitle: undefined, bookTitle: undefined, university: undefined }, ""]
+		] as const;
     
 		test.each(cases)(
 			"%# - no brackets",
-			(item, expectation) => {
+			(itemData, expectation) => {
+				const sampleItem = items[0];
+				const item = { ...sampleItem, data: { ...sampleItem.data, ...itemData } };
 				expect(extension.getItemPublication(item, { brackets: false }))
 					.toBe(expectation);
 			}
@@ -265,56 +295,53 @@ describe("Formatting utils", () => {
     
 		test.each(cases)(
 			"%# - with brackets",
-			(item, expectation) => {
+			(itemData, expectation) => {
+				const sampleItem = items[0];
+				const item = { ...sampleItem, data: { ...sampleItem.data, ...itemData } };
 				expect(extension.getItemPublication(item))
 					.toBe(expectation ? `[[${expectation}]]` : "");
 			}
 		);
 	});
     
-	test("Retrieving the formatted type for an item", () => {
-		expect(extension.getItemType(
-			{ data: { itemType: "journalArticle" } },
-			{}
-		)).toBe("[[journalArticle]]");
+	describe("Retrieving the formatted type for an item", () => {
+		const cases = [
+			[{ itemType: "journalArticle" }, {}, "[[Article]]"],
+			[{ itemType: "journalArticle" }, { brackets: true }, "[[Article]]"],
+			[{ itemType: "bookSection" }, { brackets: false }, "Chapter"]
+		] as const;
 
-		expect(extension.getItemType(
-			{ data: { itemType: "journalArticle" } },
-			{ brackets: true }
-		)).toBe("[[journalArticle]]");
-    
-		expect(extension.getItemType(
-			{ data: { itemType: "bookSection" } },
-			{ brackets: false }
-		)).toBe("bookSection");
+		test.each(cases)(
+			"%#",
+			(itemData, config, expectation) => {
+				const sampleItem = items[0];
+				const item = { ...sampleItem, data: { ...sampleItem.data, ...itemData } };
+				expect(extension.getItemType(item, config))
+					.toBe(expectation);
+			}
+		);
 	});
 });
 
 describe("Retrieval utils", () => {
-	let client = null;
-	let extension = null;
+	let client: QueryClient;
+	let extension: ZoteroRoam;
 
 	beforeEach(() => {
 		client = new QueryClient();
 		extension = new ZoteroRoam({
 			queryClient: client,
-			requests: {
-				libraries: Object.values(libraries).map(lib => ({ apikey: masterKey, path: lib.path })),
-			},
-			settings: {
-				annotations: {},
-				notes: {},
-				typemap: {}
-			}
+			requests: initRequests,
+			settings: initSettings
 		}); 
 	});
 
 	test("Retrieving children data for an item", () => {
-		const targetLibrary = Object.values(libraries).find(lib => lib.type == samplePDF.library.type + "s" && lib.id == samplePDF.library.id);
-		const parentItem = items.find(it => it.data.key == samplePDF.data.parentItem);
+		const targetLibrary = Object.values(libraries).find(lib => lib.type == samplePDF.library.type + "s" && lib.id == samplePDF.library.id)!;
+		const parentItem = items.find(it => it.data.key == samplePDF.data.parentItem)!;
 		// getItemChildren() retrieves queries data by matching the data URI,
 		// so no need to reproduce the exact query key that would exist in prod
-		client.setQueryData(
+		client.setQueryData<QueryDataItems>(
 			["items", { dataURI: targetLibrary.path + "/items", library: targetLibrary.path }],
 			(_prev) => ({
 				data: [parentItem, samplePDF],
@@ -330,7 +357,7 @@ describe("Retrieval utils", () => {
 		Object.values(libraries).forEach(lib => {
 			const { path, version } = lib;
 			const [type, id] = path.split("/");
-			const colls = findCollections(type, id, 0);
+			const colls = findCollections(type as Mocks.Library["type"], Number(id), 0);
 
 			client.setQueryData(
 				["collections", { library: path }],
@@ -341,10 +368,10 @@ describe("Retrieval utils", () => {
 			);
 		});
 
-		const sample_item = items.find(it => it.data.collections.length > 0);
-		const collectionList = findCollections(sample_item.library.type + "s", sample_item.library.id, 0);
+		const sample_item = items.find(it => it.data.collections.length > 0)!;
+		const collectionList = findCollections(`${sample_item.library.type}s`, sample_item.library.id, 0);
 		const expectedColls = sample_item.data.collections
-			.map(key => collectionList.find(coll => coll.key == key).data.name);
+			.map(key => collectionList.find(coll => coll.key == key)!.data.name);
 
 		expect(extension.getItemCollections(sample_item, { return_as: "array", brackets: false }))
 			.toEqual(expectedColls);
@@ -357,21 +384,21 @@ describe("Retrieval utils", () => {
 		expect(extension.getItemCollections(sample_item, {}))
 			.toEqual(expectedColls.map(cl => `[[${cl}]]`).join(", "));
         
-		const item_without_collections = items.find(it => it.data.collections.length == 0);
+		const item_without_collections = items.find(it => it.data.collections.length == 0)!;
 		expect(extension.getItemCollections(item_without_collections, { brackets: false }))
 			.toEqual([]);
 
 	});
 
 	test("Retrieving creators data for an item", () => {
-		const sample_item = items.find(it => it.data.creators.length > 0);
+		const sample_item = items.find(it => it.data.creators.length > 0)!;
 		expect(extension.getItemCreators(sample_item, {}))
 			.toEqual(_getItemCreators(sample_item, {}));
 	});
 
 	test("Retrieving relations data for an item", () => {
-		const semanticItem = items.find(it => it.data.key == "_SEMANTIC_ITEM_");
-		const relatedItem = items.find(it => it.data.key == "PPD648N6");
+		const semanticItem = items.find(it => it.data.key == "_SEMANTIC_ITEM_")!;
+		const relatedItem = items.find(it => it.data.key == "PPD648N6")!;
 		// getItems() retrieves queries data with an inclusive query,
 		// so no need to reproduce the exact query key that would exist in prod
 		client.setQueryData(
@@ -392,7 +419,7 @@ describe("Retrieval utils", () => {
 			.toEqual(`[[@${relatedItem.key}]]`);
 		
 		// No relations
-		const noRelationsItem = items.find(it => JSON.stringify(it.data.relations) == "{}");
+		const noRelationsItem = items.find(it => JSON.stringify(it.data.relations) == "{}")!;
 		expect(extension.getItemRelated(noRelationsItem, { return_as: "array" }))
 			.toEqual([]);
 		expect(extension.getItemRelated(noRelationsItem, { return_as: "raw" }))
@@ -402,7 +429,7 @@ describe("Retrieval utils", () => {
 	});
 
 	test("Retrieving tags data for an item", () => {
-		const sample_item = items.find(it => it.data.tags.length > 0);
+		const sample_item = items.find(it => it.data.tags.length > 0)!;
 		expect(extension.getItemTags(sample_item, {}))
 			.toEqual(_getItemTags(sample_item, {}));
 	});
@@ -425,7 +452,7 @@ describe("Retrieval utils", () => {
 			const path = type + "s/" + id;
 			const itemKey = sample_bib.key;
 
-			const sample_item = findItems({ type: type + "s", id, since: 0 }).find(it => it.data.key == itemKey);
+			const sample_item = findItems({ type: `${type}s`, id, since: 0 }).find(it => it.data.key == itemKey)!;
 
 			const res = await extension.getItemCitation(sample_item, {});
 
@@ -521,12 +548,12 @@ describe("Retrieval utils", () => {
 });
 
 describe("Logger utils", () => {
-	let extension = null;
+	let extension: ZoteroRoam;
 	const client = new QueryClient();
 
 	beforeAll(() => {
 		jest.useFakeTimers()
-			.setSystemTime(new Date([2022, 4, 6]));
+			.setSystemTime(new Date(2022, 4, 6));
 	});
 
 	afterAll(() => {
@@ -536,14 +563,8 @@ describe("Logger utils", () => {
 	beforeEach(() => {
 		extension = new ZoteroRoam({
 			queryClient: client,
-			requests: {
-				libraries: Object.values(libraries).map(lib => ({ apikey: masterKey, path: lib.path })),
-			},
-			settings: {
-				annotations: {},
-				notes: {},
-				typemap: {}
-			}
+			requests: initRequests,
+			settings: initSettings
 		}); 
 	});
 
@@ -564,7 +585,7 @@ describe("Logger utils", () => {
 					...log_details,
 					intent: "danger",
 					level: "error",
-					timestamp: new Date([2022, 4, 6])
+					timestamp: new Date(2022, 4, 6)
 				}
 			]);
 	});
@@ -577,7 +598,7 @@ describe("Logger utils", () => {
 					...log_details,
 					intent: "primary",
 					level: "info",
-					timestamp: new Date([2022, 4, 6])
+					timestamp: new Date(2022, 4, 6)
 				}
 			]);
 	});
@@ -590,7 +611,7 @@ describe("Logger utils", () => {
 					...log_details,
 					intent: "warning",
 					level: "warning",
-					timestamp: new Date([2022, 4, 6])
+					timestamp: new Date(2022, 4, 6)
 				}
 			]);
 	});
@@ -600,7 +621,7 @@ describe("Logger utils", () => {
 describe("Custom class for logs", () => {
 	beforeAll(() => {
 		jest.useFakeTimers()
-			.setSystemTime(new Date([2022, 4, 6]));
+			.setSystemTime(new Date(2022, 4, 6));
 	});
 
 	afterAll(() => {
@@ -618,7 +639,7 @@ describe("Custom class for logs", () => {
 				level: "info",
 				message: "",
 				origin: "",
-				timestamp: new Date([2022, 4, 6])
+				timestamp: new Date(2022, 4, 6)
 			});
 	});
 
@@ -644,7 +665,7 @@ describe("Custom class for logs", () => {
 				level: "error",
 				message: "Failed to fetch",
 				origin: "API",
-				timestamp: new Date([2022, 4, 6])
+				timestamp: new Date(2022, 4, 6)
 			});
 	});
 
