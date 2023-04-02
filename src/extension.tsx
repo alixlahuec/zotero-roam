@@ -560,7 +560,7 @@ type SelectItemsReturn =
 
 /** Returns the current items in the query cache, with optional configuration */
 function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { queryClient }: { queryClient: QueryClient }): SelectItemsReturn {
-	const items = queryClient.getQueriesData<QueryDataItems>(filters || ["items"])
+	const items = queryClient.getQueriesData<QueryDataItems>({ queryKey: ["items"], ...filters })
 		.map(query => {
 			const [/* queryKey */, queryData] = query;
 			return queryData?.data || [];
