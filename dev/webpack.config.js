@@ -12,7 +12,7 @@ module.exports = {
 	resolve: {
         alias: {
             "Mocks": path.resolve("mocks"),
-            "Roam": path.resolve("src", "roam.js"),
+            "Roam": path.resolve("src", "roam.ts"),
 			"Components": path.resolve("src", "components"),
 			"Types": path.resolve("src", "types")
         },

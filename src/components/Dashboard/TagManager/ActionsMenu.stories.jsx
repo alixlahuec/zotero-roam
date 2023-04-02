@@ -69,6 +69,7 @@ Default.play = async ({ canvasElement }) => {
 			data: expect.objectContaining({ status: 204 }),
 			error: null,
 			library: userLibrary.path,
-			tags: ["history", "history", "HISTORY", "History"]
+			tags: ["history", "history", "HISTORY", "History"],
+			_type: "tags-deleted"
 		}));
 };

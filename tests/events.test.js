@@ -1,5 +1,5 @@
 import zrToaster from "Components/ExtensionToaster";
-import { emitCustomEvent, metadataAdded, notesAdded, tagsDeleted, tagsModified, writeFinished } from "../src/events";
+import { metadataAdded, notesAdded, tagsDeleted, tagsModified, writeFinished } from "../src/events";
 
 
 const showToasterFn = jest.spyOn(zrToaster, "show");
@@ -9,19 +9,6 @@ beforeEach(() => {
 		info: jest.fn(),
 		warn: jest.fn()
 	};
-});
-
-describe("Event emitter warns about unrecognized event names", () => {
-	beforeEach(() => {
-		window.zoteroRoam = {
-			warn: jest.fn()
-		};
-	});
-
-	test("The warn method is called, if defined", () => {
-		emitCustomEvent("unrecognized-event-name");
-		expect(window.zoteroRoam.warn).toHaveBeenCalled();
-	});
 });
 
 describe("metadataAdded", () => {
