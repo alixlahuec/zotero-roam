@@ -34,15 +34,14 @@ describe("Fetching mocked Citoid data", () => {
 	test.each(error_cases)(
 		"%# Successfully mocking Citoid error for %s",
 		async (identifier, itemData) => {
-			const { status, ...output } = itemData;
 			const res = await fetchCitoid(identifier)
 				.catch((error) => {
 					if (error.response) {
 						return error.response;
 					}
 				});
-			expect(res.status).toBe(status);
-			expect(res.data).toEqual([output]);
+			expect(res.status).toBe(itemData.status);
+			expect(res.data).toEqual([itemData]);
 		}
 	);
 
