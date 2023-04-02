@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { IDBPDatabase, deleteDB, openDB } from "idb";
+import { DBSchema, IDBPDatabase, deleteDB, openDB } from "idb";
 import { PersistedClient } from "@tanstack/react-query-persist-client";
 import { getGraphName } from "Roam";
 import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../constants";
@@ -9,9 +9,7 @@ const STORE_NAMES = [
 	IDB_REACT_QUERY_STORE_NAME
 ] as const;
 
-// ! This should extend DBSchema, but with current idb version that would cause a typecheck failure because of the KnownKeys generic.
-// TODO: Check if idb dependency can be updated to 6.1.0 +, where the issue has been fixed
-interface Schema /* extends DBSchema */{
+interface Schema extends DBSchema {
 	[IDB_REACT_QUERY_STORE_NAME]: {
 		key: string,
 		value: PersistedClient
