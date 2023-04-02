@@ -1,24 +1,32 @@
 /* istanbul ignore file */
-import { deleteDB, openDB } from "idb";
+import { IDBPDatabase, deleteDB, openDB } from "idb";
+import { PersistedClient } from "@tanstack/react-query-persist-client";
 import { getGraphName } from "Roam";
 import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 
 
 const STORE_NAMES = [
 	IDB_REACT_QUERY_STORE_NAME
-];
+] as const;
+
+// ! This should extend DBSchema, but with current idb version that would cause a typecheck failure because of the KnownKeys generic.
+// TODO: Check if idb dependency can be updated to 6.1.0 +, where the issue has been fixed
+interface Schema /* extends DBSchema */{
+	[IDB_REACT_QUERY_STORE_NAME]: {
+		key: string,
+		value: PersistedClient
+	}
+}
 
 /**
  * Opens the extension's interface with IndexedDB. This is the basis for managing local caching with React Query.
  */
 class IDBDatabase {
-	/** @private */
-	#db;
-	/** @private */
-	#dbName;
+	#db: Promise<IDBPDatabase<Schema>>;
+	#dbName: string;
 
 	constructor(){
-		let graphName = null;
+		let graphName = "";
 		try {
 			graphName = getGraphName();
 		} catch(_e){
@@ -28,7 +36,7 @@ class IDBDatabase {
 		const dbName = [IDB_DATABASE_NAME, graphName].filter(Boolean).join("_");
 
 		this.#dbName = dbName;
-		this.#db = openDB(this.#dbName, IDB_DATABASE_VERSION, {
+		this.#db = openDB<Schema>(this.#dbName, IDB_DATABASE_VERSION, {
 			upgrade: (database, _oldVersion, _newVersion, _transaction) => {
 				STORE_NAMES.forEach((storeName) => database.createObjectStore(storeName));
 			},
@@ -64,18 +72,18 @@ class IDBDatabase {
 	 * @param {String} storeName - The name of the targeted store
 	 * @returns
 	 */
-	selectStore(storeName){
+	selectStore<T extends keyof Schema>(storeName: T){
 		return {
-			get: async(key) => {
+			async get(key: Schema[T]["key"]): Promise<Schema[T]["value"]>{
 				return (await this.#db).get(storeName, key);
 			},
-			set: async(key, value) => {
+			async set(key: Schema[T]["key"], value: Schema[T]["value"]){
 				return (await this.#db).put(storeName, value, key);
 			},
-			delete: async(key) => {
+			async delete(key: Schema[T]["key"]){
 				return (await this.#db).delete(storeName, key);
 			},
-			clear: async() => {
+			async clear(){
 				return (await this.#db).clear(storeName);
 			}
 		};
