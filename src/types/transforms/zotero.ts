@@ -75,11 +75,11 @@ type ZItemBase = {
 	has_citekey: boolean
 };
 
-export type ZItem = ZoteroAPI.Item & ZItemBase;
 export type ZItemAnnotation = ZoteroAPI.ItemAnnotation & ZItemBase;
 export type ZItemAttachment = ZoteroAPI.ItemAttachment & ZItemBase;
 export type ZItemNote = ZoteroAPI.ItemNote & ZItemBase;
 export type ZItemTop = ZoteroAPI.ItemTop & ZItemBase;
+export type ZItem = ZItemAnnotation | ZItemAttachment | ZItemNote | ZItemTop;
 
 export interface ZLibraryContents {
 	items: ZItemTop[],
@@ -91,3 +91,11 @@ export interface ZLibrary {
 	apikey: string,
 	path: string
 }
+
+type RoamPage = { title: string, uid: string }
+type ZTagEntry = {
+	token: string,
+	roam: RoamPage[],
+	zotero: ZoteroAPI.Tag[]
+}
+export type ZTagList = Record<string, ZTagEntry[]>;

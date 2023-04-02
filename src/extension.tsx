@@ -10,7 +10,7 @@ import { findRoamBlock } from "Roam";
 
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "./constants";
 
-import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, QueryDataCollections, QueryDataItems, QueryDataTags, QueryKeyItems } from "Types/transforms";
+import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, QueryDataCollections, QueryDataItems, QueryDataTags, QueryKeyItems, QueryKeyTags, QueryKeyCollections } from "Types/transforms";
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
 import { ZoteroAPI } from "Types/externals";
 
@@ -428,7 +428,8 @@ async function _getItemCitation(item: ZItemTop, config: Partial<ZoteroAPI.Reques
 /** Retrieves the (cached) list of collections for a given library */
 function _getCollections(library: ZLibrary, { queryClient }: { queryClient: QueryClient }): ZoteroAPI.Collection[] {
 	const { /*apikey,*/ path } = library;
-	const datastore = queryClient.getQueryData<QueryDataCollections>(["collections", { library: path }]);
+	const queryKey: QueryKeyCollections = ["collections", { library: path }];
+	const datastore = queryClient.getQueryData<QueryDataCollections>(queryKey);
 	return datastore?.data || [];
 }
 
@@ -589,8 +590,9 @@ function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { quer
 
 /** Returns the (cached) map of tags for a given library */
 function _getTags(location: string, { libraries, queryClient }: { libraries: ZLibrary[], queryClient: QueryClient }) {
-	const library = libraries.find(lib => lib.path == location)!;
-	const { /*apikey,*/ path } = library;
-	const datastore = queryClient.getQueryData<QueryDataTags>(["tags", { library: path }])!;
+	const { /*apikey,*/ path } = libraries.find(lib => lib.path == location)!;
+	const queryKey: QueryKeyTags = ["tags", { library: path }];
+
+	const datastore = queryClient.getQueryData<QueryDataTags>(queryKey)!;
 	return datastore.data;
 }
