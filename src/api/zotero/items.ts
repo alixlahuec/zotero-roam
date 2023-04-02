@@ -13,6 +13,7 @@ import * as __thisModule from "./items";
 import { ZItem, ZLibrary } from "Types/transforms";
 import { ZoteroAPI } from "Types/externals";
 import { DataRequest } from "Types/extension";
+import { Maybe } from "Types/helpers";
 
 
 export type QueryKeyItems = ["items", string, Omit<DataRequest, "apikey" | "library">];
@@ -110,7 +111,7 @@ async function fetchBibliography(itemKey: string, library: ZLibrary, config: Par
  */
 async function fetchItems(
 	req: DataRequest & { since?: number },
-	{ match = [] }: { match: ZoteroAPI.Item[] },
+	{ match = [] }: { match: ZItem[] },
 	queryClient: QueryClient
 ): Promise<QueryDataItems> {
 	const { apikey, dataURI, library: { path }, since = 0 } = req;
@@ -124,13 +125,12 @@ async function fetchItems(
 		error: null,
 		library: path,
 		since,
-		success: null,
-		type: "items"
+		success: false
 	};
 
 	let response: unknown;
-	let modified: ZoteroAPI.Item[] | undefined;
-	let deleted: string[] | undefined;
+	let modified: Maybe<ZoteroAPI.Item[]>;
+	let deleted: Maybe<string[]>;
 
 	try {
 		const { data, headers, ...rest } = await zoteroClient.get<ZoteroAPI.Responses.ItemsGet>(`${dataURI}?${paramsQuery.toString()}`,
@@ -161,10 +161,12 @@ async function fetchItems(
 				// Refetch tags data
 				queryClient.refetchQueries(tagsQueryKey);
 
-				emitCustomEvent("update", {
+				emitCustomEvent({
 					...defaultOutcome,
 					data: modified,
-					success: true
+					success: true,
+					type: "items",
+					_type: "update"
 				});
 			}
 		}
@@ -184,10 +186,12 @@ async function fetchItems(
 				response
 			}
 		});
-		emitCustomEvent("update", {
+		emitCustomEvent({
 			...defaultOutcome,
 			error,
-			success: false
+			success: false,
+			type: "items",
+			_type: "update"
 		});
 		return Promise.reject(error);
 	}

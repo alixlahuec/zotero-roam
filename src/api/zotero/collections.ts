@@ -35,8 +35,7 @@ async function fetchCollections(
 		error: null,
 		library: path,
 		since,
-		success: null,
-		type: "collections"
+		success: false
 	};
 
 	let response: unknown;
@@ -67,10 +66,12 @@ async function fetchCollections(
 			const { collections = [] } = await fetchDeleted(library, since);
 			deleted = collections;
 
-			emitCustomEvent("update", {
+			emitCustomEvent({
 				...defaultOutcome,
 				data: modified,
-				success: true
+				success: true,
+				type: "collections",
+				_type: "update"
 			});
 		}
 
@@ -89,10 +90,12 @@ async function fetchCollections(
 				response
 			}
 		});
-		emitCustomEvent("update", {
+		emitCustomEvent({
 			...defaultOutcome,
 			error,
-			success: false
+			success: false,
+			type: "collections",
+			_type: "update"
 		});
 		return Promise.reject(error);
 	}

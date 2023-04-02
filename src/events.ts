@@ -1,7 +1,7 @@
 import zrToaster from "Components/ExtensionToaster";
 
 import { cleanErrorIfAxios, pluralize } from "./utils";
-import { ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
+import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import { CitoidAPI, ZoteroAPI } from "Types/externals";
 import { ArgsMetadataBlocks, ArgsMetadataSmartblock, OutcomeMetadataStatus, OutcomePage } from "Types/extension";
 
@@ -75,7 +75,7 @@ export namespace Events {
 		/** Indicates if the update was successful */
 		success: boolean
 	} & (
-			| { type: "items", data: ZItem[], error: null }
+			| { type: "items", data: ZoteroAPI.Item[], error: null }
 			| { type: "items", data: null, error: Error }
 			| { type: "collections", data: ZoteroAPI.Collection[], error: null }
 			| { type: "collections", data: null, error: Error }
