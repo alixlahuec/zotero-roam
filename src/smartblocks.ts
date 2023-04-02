@@ -100,7 +100,7 @@ const sbCommands = (): Record<string, Omit<SmartblocksPlugin.Command, "text">> =
 			help: "Returns the comma-separated list of the citekeys of a Zotero item's relations, if any. Options: brackets (`true`(default)|`false`).",
 			handler: (context) => (brackets = true) => {
 				const { item } = context.variables;
-				return window.zoteroRoam.getItemRelated(item, { return_as: "string", brackets });
+				return window.zoteroRoam.getItemRelated(item, { return_as: "string", brackets }) as string;
 			}
 		},
 		"ZOTEROITEMTAGS": {

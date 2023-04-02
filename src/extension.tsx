@@ -1,18 +1,18 @@
 import { H5, IconName, Intent } from "@blueprintjs/core";
+import { Query, QueryClient, QueryFilters } from "@tanstack/query-core";
 import zrToaster from "Components/ExtensionToaster";
 
 import { RelatedOptions, _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
+import IDBDatabase from "./services/idb";
 import { cleanBibliographyHTML, cleanErrorIfAxios, fetchBibEntries, fetchBibliography } from "./api/utils";
 import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "./utils";
 import { findRoamBlock } from "Roam";
 
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "./constants";
-import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary } from "Types/transforms";
-import IDBDatabase from "./services/idb";
-import { QueryClient, QueryFilters } from "@tanstack/query-core";
+
+import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, QueryDataCollections, QueryDataItems, QueryDataTags, QueryKeyItems } from "Types/transforms";
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
 import { ZoteroAPI } from "Types/externals";
-import { QueryDataCollections, QueryDataItems, QueryDataTags } from "Types/transforms";
 
 
 type ZoteroRoamConstructorArgs = {
@@ -433,22 +433,24 @@ function _getCollections(library: ZLibrary, { queryClient }: { queryClient: Quer
 }
 
 /** Returns the (cached) children for a given item */
-function _getItemChildren(item: ZItemTop, { queryClient }: { queryClient: QueryClient }): (ZItemAttachment | ZItemNote | ZItemAnnotation)[] {
+function _getItemChildren(item: ZItemTop, { queryClient }: { queryClient: QueryClient }) {
 	const location = item.library.type + "s/" + item.library.id;
-	return _getItems("children", { predicate: (queryKey) => queryKey[1].dataURI.startsWith(location) }, { queryClient })
-		.filter(el => el.data.parentItem == item.data.key);
+	return _getItems("children", {
+		predicate: (query: Query<unknown, unknown, QueryDataItems, QueryKeyItems>) => {
+			const { queryKey } = query;
+			return queryKey[1].dataURI.startsWith(location);
+		}
+	}, { queryClient })
+		.filter(el => el.data.parentItem == item.data.key) as (ZItemAttachment | ZItemNote | ZItemAnnotation)[];
 }
 
 
-type CollectionFormatOption = "array" | "string";
-type CollectionOptions<T extends CollectionFormatOption = CollectionFormatOption> = { brackets: boolean, return_as: T };
+type CollectionOptions = { brackets: boolean, return_as: "array" | "string" };
 
 /** Retrieves an item's collections' names, from a given list of collections
  * @param {{return_as?: ("string"|"array"), brackets?: Boolean}} config - Additional configuration 
  * @returns The names of the item's collections, if any
  */
-function _getItemCollections(item: ZItemTop, collectionList: ZoteroAPI.Collection[], { brackets, return_as }: CollectionOptions<"array">): string[];
-function _getItemCollections(item: ZItemTop, collectionList: ZoteroAPI.Collection[], { brackets, return_as }: CollectionOptions<"string">): string;
 function _getItemCollections(
 	item: ZItemTop,
 	collectionList: ZoteroAPI.Collection[],
@@ -515,7 +517,7 @@ export function _getItemMetadata(
 	if (item.data.tags.length > 0) { metadata.push(`Tags:: ${_getItemTags(item, { return_as: "string", brackets: true })}`); } // Tags, if any
 
 	if (pdfs.length > 0) {
-		metadata.push(`PDF links : ${_formatPDFs(pdfs, "links").join(", ")}`);
+		metadata.push(`PDF links : ${(_formatPDFs(pdfs, "links") as string[]).join(", ")}`);
 	}
 	if (notes.length > 0) {
 		const formattedOutput = _formatNotes(notes, null, { annotationsSettings, notesSettings });
@@ -547,19 +549,20 @@ function _getItemType(item: ZItemTop, { brackets = true }: { brackets?: boolean 
 
 
 type SelectItemsOption = "all" | "annotations" | "attachments" | "children" | "items" | "notes" | "pdfs";
+type SelectItemsReturn =
+	| ZItem[]
+	| ZItemAnnotation[]
+	| ZItemAttachment[]
+	| (ZItemAttachment | ZItemNote | ZItemAnnotation)[]
+	| ZItemTop[]
+	| (ZItemNote | ZItemAnnotation)[]
+	| ZItemAttachment[];
 
 /** Returns the current items in the query cache, with optional configuration */
-function _getItems(select: "all", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItem[];
-function _getItems(select: "annotations", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemAnnotation[];
-function _getItems(select: "attachments", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemAttachment[];
-function _getItems(select: "children", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): (ZItemAttachment | ZItemNote | ZItemAnnotation)[];
-function _getItems(select: "items", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemTop[];
-function _getItems(select: "notes", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): (ZItemNote | ZItemAnnotation)[];
-function _getItems(select: "pdfs", filters: QueryFilters, { queryClient }: { queryClient: QueryClient }): ZItemAttachment[];
-function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { queryClient }: { queryClient: QueryClient }) {
-	const items = queryClient.getQueriesData<QueryDataItems>({ ...filters, queryKey: ["items"] })
+function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { queryClient }: { queryClient: QueryClient }): SelectItemsReturn {
+	const items = queryClient.getQueriesData<QueryDataItems>(filters || ["items"])
 		.map(query => {
-			const [key, queryData] = query;
+			const [/* queryKey */, queryData] = query;
 			return queryData?.data || [];
 		})
 		.flat(1);
