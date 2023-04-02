@@ -6,7 +6,7 @@ import { citoidClient } from "../clients";
 import { emitCustomEvent } from "../../events";
 import { cleanErrorIfAxios } from "../../utils";
 
-import { CitoidAPI } from "Types/externals";
+import { CitoidAPI, ZoteroAPI } from "Types/externals";
 import { ZLibrary } from "Types/transforms/zotero";
 
 
@@ -116,10 +116,10 @@ const useImportCitoids = () => {
 		onSettled: (data = [], error, variables, _context) => {
 			const { collections, items, library: { path }, tags } = variables;
 
-			const outcome = data.reduce<{ successful: unknown[], failed: unknown[] }>((obj, res) => {
+			const outcome = data.reduce<{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }>((obj, res) => {
 				/* istanbul ignore else */
 				if (res.status == "fulfilled") {
-					obj.successful.push(res.value);
+					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
 				}
@@ -134,7 +134,8 @@ const useImportCitoids = () => {
 				});
 			}
 
-			emitCustomEvent("write", {
+			emitCustomEvent({
+				_type: "write",
 				args: {
 					collections,
 					items,
@@ -142,7 +143,7 @@ const useImportCitoids = () => {
 				},
 				data: outcome,
 				error,
-				library: path,
+				library: path
 			});
 		}
 	});

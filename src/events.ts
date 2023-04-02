@@ -89,12 +89,14 @@ export namespace Events {
 		_type: "write",
 		/** The input provided to the writing function */
 		args: { collections: string[], items: CitoidAPI.AsZotero[], tags: string[] },
+		data: {
+			successful: ZoteroAPI.Responses.ItemsWrite[],
+			failed: string[]
+		},
+		error: unknown,
 		/** The path of the targeted library */
 		library: string
-	} & (
-			| { data: { successful: ZoteroAPI.ItemTop[], failed: ZoteroAPI.ItemTop[] }, error: null }
-			| { data: null, error: Error }
-		);
+	};
 	
 	export type Details =
 		| MetadataAdded
@@ -248,7 +250,7 @@ function tagsModified(event: CustomEvent<Events.TagsModified>){
 function writeFinished(event: CustomEvent<Events.Write>){
 	/* eslint-disable-next-line prefer-const */
 	let { data, error, library } = event.detail;
-	const { failed = [], successful = [] } = data || {};
+	const { failed = [], successful = [] } = data;
 
 	error = cleanErrorIfAxios(error);
 
@@ -264,8 +266,8 @@ function writeFinished(event: CustomEvent<Events.Write>){
 		});
 	} else {
 		const itemsOutcome = successful.reduce((counts, res) => {
-			counts.success += Object.keys(res.data.successful).length;
-			counts.error += Object.keys(res.data.failed).length;
+			counts.success += Object.keys(res.successful).length;
+			counts.error += Object.keys(res.failed).length;
 			return counts;
 		}, { error: 0, success: 0 });
 
