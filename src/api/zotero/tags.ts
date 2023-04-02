@@ -120,7 +120,7 @@ async function deleteTags(tags: string[], library: ZLibrary, version: number) {
 
 	const tagList = tags.slice(0, 50).map(t => encodeURIComponent(t)).join(" || ");
 
-	return await zoteroClient.delete(
+	return await zoteroClient.delete<ZoteroAPI.Responses.TagsDelete>(
 		`${path}/tags`,
 		{
 			headers: {
@@ -313,11 +313,14 @@ const useDeleteTags = () => {
 				});
 			}
 
-			emitCustomEvent("tags-deleted", {
+			emitCustomEvent({
+				args: {
+					tags
+				},
 				data,
 				error,
 				library: path,
-				tags
+				_type: "tags-deleted"
 			});
 		}
 	});

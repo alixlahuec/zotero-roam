@@ -45,9 +45,10 @@ export namespace Events {
 		_type: "tags-deleted",
 		/** The input provided to the deleting function */
 		args: { tags: string[] },
+		data?: Record<string, any>, error: unknown,
 		/** The path of the targeted library */
 		library: string
-	} & ({ data: Record<string, any>, error: null } | { data?: Record<string, any>, error: Error });
+	};
 
 
 	/** Signals a tag modification has terminated
