@@ -6,7 +6,7 @@ import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } f
 
 
 const STORE_NAMES = [
-	IDB_REACT_QUERY_STORE_NAME,
+	IDB_REACT_QUERY_STORE_NAME
 ] as const;
 
 // ! This should extend DBSchema, but with current idb version that would cause a typecheck failure because of the KnownKeys generic.
