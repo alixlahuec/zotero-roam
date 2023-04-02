@@ -1,7 +1,8 @@
-import { useCallback, useState, ChangeEventHandler } from "react";
+import { ChangeEventHandler, useCallback, useState } from "react";
 
 
-/** Custom hook to work with component state that is based on a text input
+/**
+ * Custom hook to work with component state that is based on a text input
  */
 const useText = (initialState = "") => {
 	const [state, setState] = useState<string>(initialState);

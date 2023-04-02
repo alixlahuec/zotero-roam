@@ -1,16 +1,17 @@
 import { useCallback, useState } from "react";
 
 
-/** Custom hook for handling a numeric state
+/**
+ * Custom hook for using a numeric input
  */
-const useNumeric = (initialState = 0): [number, (valNum: number, valString: string) => void] => {
+const useNumeric = (initialState = 0) => {
 	const [state, setState] = useState<number>(initialState);
 
-	const set = useCallback((_valnum, valstring) => {
+	const set = useCallback((_valnum: number, valstring: string) => {
 		setState(Number(valstring));
 	}, []);
 
-	return [state, set];
+	return [state, set] as const;
 };
 
 export { useNumeric };

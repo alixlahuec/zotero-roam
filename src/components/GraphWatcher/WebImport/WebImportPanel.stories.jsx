@@ -94,6 +94,7 @@ WithInteractions.play = async({ args, canvasElement }) => {
 				failed: []
 			},
 			error: null,
-			library: userLibrary.path
+			library: userLibrary.path,
+			_type: "write"
 		});
 };

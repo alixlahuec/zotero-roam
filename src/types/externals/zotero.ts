@@ -144,7 +144,7 @@ export namespace ZoteroAPI {
 		data: ItemDataBase<ItemTopType> & {
 			abstractNote?: string,
 			bookTitle?: string,
-			collections?: string[],
+			collections: string[],
 			creators: Creator[],
 			DOI?: string,
 			extra: string,

@@ -1,15 +1,13 @@
 import { useCallback, useState } from "react";
 
 
-type IdentifyFn<T, V> = (item: T, val: V) => boolean;
-type RetrieveFn<T, V> = (val: V) => T;
+type IdentifyFn<T = any, V = any> = (item: T, val: V) => boolean;
+type RetrieveFn<T = any, V = any> = (val: V) => T;
 
-type UseMultiArgs<T, V> = Partial<{ start: T[], identify: IdentifyFn<T, V>, retrieve: RetrieveFn<T, V> }>;
+const defaultIdentify: IdentifyFn = (item, value) => item === value;
+const defaultRetrieve: RetrieveFn = (value) => value;
 
-const defaultIdentify: IdentifyFn<any, any> = (item, value) => item === value;
-const defaultRetrieve: RetrieveFn<any, any> = (value) => value;
-
-const addTo = <T,V>(state: T[], value: V, identify: IdentifyFn<T,V>, retrieve: RetrieveFn<T,V>) => {
+const addTo = <T = any, V = any>(state: T[], value: V, identify: IdentifyFn<T, V>, retrieve: RetrieveFn<T, V>) => {
 	if(state.find(item => identify(item, value))){
 		return state;
 	} else {
@@ -17,16 +15,17 @@ const addTo = <T,V>(state: T[], value: V, identify: IdentifyFn<T,V>, retrieve: R
 	}
 };
 
-const removeFrom = <T,V>(state: T[], value: V, identify: IdentifyFn<T,V>) => {
+const removeFrom = <T = any, V = any>(state: T[], value: V, identify: IdentifyFn<T, V>) => {
 	return state.filter(item => !identify(item, value));
 };
 
-/** Custom hook to handle state via a multi-select
+type UseMultiArgs<T,V> = Partial<{ start: T[], identify: IdentifyFn<T, V>, retrieve: RetrieveFn<T, V> }>;
+
+/**
+ * Custom hook to work with component state that is based on a multiple selection
  */
-const useMulti = <T, V>(
-	{ start = [], identify = defaultIdentify, retrieve = defaultRetrieve }: UseMultiArgs<T,V>
-) => {
-	const [state, setState] = useState<T[]>(start);
+const useMulti = <T = any, V = any>({ start = [], identify = defaultIdentify, retrieve = defaultRetrieve }: UseMultiArgs<T,V>) => {
+	const [state, setState] = useState(start);
 
 	const add = useCallback((val: V) => {
 		setState(prevState => addTo<T,V>(prevState, val, identify, retrieve));

@@ -80,7 +80,7 @@ describe("Enforcing a block-object format returns correct output", () => {
 
 	test("Passing an invalid element throws", () => {
 		expect(() => reformatImportableBlocks([23]))
-			.toThrow("All array items should be of type String or Object, not Number");
+			.toThrow("All array items should be of type String or Object, not number");
 	});
 });
 

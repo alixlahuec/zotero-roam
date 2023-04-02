@@ -1,4 +1,4 @@
-import { CitoidAPI, ZoteroAPI } from "Types/externals";
+import { CitoidAPI, SemanticScholarAPI, ZoteroAPI } from "Types/externals";
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 
 
@@ -44,6 +44,8 @@ export namespace Mocks {
 	export namespace RequestParams {
 		/* CITOID */
 		export type Citoid = Pick<_RequestParams, "identifier">;
+		/* SEMANTIC SCHOLAR */
+		export type SemanticScholarItem = Pick<_RequestParams, "pub" | "index">;
 		/* ZOTERO */
 		export type Bibliography = Pick<_RequestParams, "libraryType" | "libraryID" | "itemKey">;
 		export type Collections = Pick<_RequestParams, "libraryType" | "libraryID">;
@@ -63,6 +65,8 @@ export namespace Mocks {
 		};
 		export type CitoidSuccess = CitoidAPI.AsZotero;
 		export type Citoid = CitoidSuccess | CitoidError;
+		/* SEMANTIC SCHOLAR */
+		export type SemanticScholarItem = SemanticScholarAPI.Item;
 		/* ZOTERO */
 		export type Bibliography = ZoteroAPI.Responses.ItemGet<"bib">;
 		export type Collections = ZoteroAPI.Responses.Collections;
@@ -79,6 +83,9 @@ export namespace Mocks {
 type _RequestParams = {
 	/* CITOID */
 	identifier: string,
+	/* SEMANTIC SCHOLAR */
+	pub: string,
+	index: string,
 	/* ZOTERO */
 	apikey: string,
 	itemKey: string,

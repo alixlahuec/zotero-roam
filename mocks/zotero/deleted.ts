@@ -89,7 +89,7 @@ export const handleDeleted = rest.get<never, Mocks.RequestParams.Deleted, Mocks.
 		const since = Number(req.url.searchParams.get("since"));
 		const path = `${libraryType}/${libraryID}`;
 
-		const { collections = [], items = [] } = findDeleted({ path, since: Number(since) });
+		const { collections = [], items = [] } = findDeleted({ path, since });
 
 		return res(
 			ctx.json({

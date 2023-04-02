@@ -9,6 +9,13 @@ export namespace SmartblocksPlugin {
 		variables: Record<string, any>
 	}
 
+	export type ImportableBlock = {
+		children: ImportableBlock[]
+		text: string
+	} & Record<string, any>;
+
+	type ImportableElement = ImportableBlock | string;
+
 	/**
 	 * Parameters for triggering a SmartBlock. Both the SmartBlock and the target block can be described by either their Roam UID or their name; an identifier must be provided for each (`srcName` or `srcUid`; `targetName` or `targetUid`).
 	 * Additional `variables` can be passed to the SmartBlock context.
@@ -39,7 +46,11 @@ export namespace SmartblocksPlugin {
 		 * @see https://roamjs.com/extensions/smartblocks/developer_docs#nJ8-c8efE
 		 * @returns `0` if  no blocks were outputted, otherwise  the UID of the first outputted block
 		 */
-		triggerSmartblock: (sb: TriggerSmartblockArgs) => Promise<0 | string>
+		triggerSmartblock: (sb: TriggerSmartblockArgs) => Promise<0 | string>,
+		/** @see https://github.com/dvargas92495/roamjs-components/blob/7aeae1482714a4c829c8141667eb1d459403b4ec/src/util/registerSmartBlocksCommand.ts 
+		 * @param label - The label of the SmartBlock command to unregister
+		 */
+		unregisterCommand: (label: string) => void
 	}
 
 	/** 
@@ -52,7 +63,7 @@ export namespace SmartblocksPlugin {
 		/** A user-facing description for the command  */
 		help?: string,
 		/** The callback to execute when the command is run. It takes in a context object and returns a second callback. The second callback takes in a list of string arguments and returns the text or list of texts to be outputted by the command. */
-		handler: (ctx: CommandContext) => (...params: any[]) => string | string[] | Promise<string> | Promise<string[]>
+		handler: (ctx: CommandContext) => (...params: any[]) => ImportableElement | ImportableElement[] | Promise<ImportableElement> | Promise<ImportableElement[]>
 	}
 
 }

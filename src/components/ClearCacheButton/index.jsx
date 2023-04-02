@@ -14,7 +14,7 @@ function ClearCacheButton(){
 				window.zoteroRoam?.error?.({
 					origin: "Cache",
 					message: "Failed to update caching status",
-					detail: {
+					context: {
 						error: cleanErrorIfAxios(e)
 					}
 				});

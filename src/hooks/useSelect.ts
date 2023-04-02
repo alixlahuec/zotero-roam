@@ -1,16 +1,17 @@
 import { FormEventHandler, useCallback, useState } from "react";
 
 
+const defaultTransform = <T>(value: T) => value;
+
 type UseSelectArgs<T> = Partial<{
 	start: T | null,
 	transform: (arg: any) => T
 }>;
 
-const defaultTransform = <T>(value: T) => value;
-
-/** Custom hook for handling state via a target select
+/**
+ * Custom hook for working with component state that works with a target select
  */
-const useSelect = <T>({ start = null, transform = defaultTransform }: UseSelectArgs<T>) => {
+const useSelect = <T = any>({ start = null, transform = defaultTransform }: UseSelectArgs<T>) => {
 	const [state, setState] = useState(start);
 
 	const set = useCallback<FormEventHandler<HTMLInputElement>>((event) => {

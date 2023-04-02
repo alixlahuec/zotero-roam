@@ -43,7 +43,7 @@ function onload({ extensionAPI }){
 
 	setupPortals();
 
-	const { requests, settings } = initialize(INSTALL_CONTEXT, { extensionAPI });
+	const { requests, settings } = initialize({ context: INSTALL_CONTEXT, extensionAPI });
 
 	const idbDatabase = new IDBDatabase();
 

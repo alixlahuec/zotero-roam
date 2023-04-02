@@ -7,8 +7,7 @@ type Filter = {
 	value: string
 };
 
-/** Toggles the `active` property of a filter, based on its key.
- */
+/** Toggles the `active` property of a filter, based on its key. */
 const reducer = (filterList: Filter[], key: string) => {
 	return filterList.map(op => {
 		return op.value == key
@@ -17,7 +16,6 @@ const reducer = (filterList: Filter[], key: string) => {
 	});
 };
 
-/** Custom hook for handling a list of filters */
 const useFilterList = (filterList: Filter[]) => useReducer(reducer, filterList);
 
 export { useFilterList };
