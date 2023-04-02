@@ -98,9 +98,7 @@ export default class ZoteroRoam {
 	}
 
 	/* istanbul ignore next */
-	/** Retrieves the timestamp when the React Query client was last persisted to cache.
-	 * @returns {Promise<Number|void>}
-	 */
+	/** Retrieves the timestamp when the React Query client was last persisted to cache. */
 	async getDataCacheUpdatedAt(){
 		if(this.#db){
 			try {
@@ -116,6 +114,7 @@ export default class ZoteroRoam {
 				});
 			}
 		}
+		return null;
 	}
 
 	// To be called in the RequestsWidget
