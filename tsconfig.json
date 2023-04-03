@@ -25,6 +25,7 @@
         "src/**/*",
 		"loader.js",
 		"sandbox.js",
-		".storybook/**/*"
+		".storybook/**/*",
+		"tests/**/*"
     ]
 }
