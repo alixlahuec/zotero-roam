@@ -65,11 +65,12 @@ Default.play = async ({ canvasElement }) => {
 
 	await expect(document.dispatchEvent).toHaveBeenCalled();
 	await expect(document.dispatchEvent.mock.calls[0][0].detail)
-		.toEqual(expect.objectContaining({
-			data: expect.objectContaining({ status: 204 }),
+		.toEqual({
+			args: {
+				tags: ["history", "history", "HISTORY", "History"]
+			},
 			error: null,
 			library: userLibrary.path,
-			tags: ["history", "history", "HISTORY", "History"],
 			_type: "tags-deleted"
-		}));
+		});
 };

@@ -245,6 +245,8 @@ export namespace ZoteroAPI {
 
 		/** TAGS */
 		export type Tags = Tag[];
+		// TODO: Verify return type
+		export type TagsDelete = null;
 
 	}
 }
