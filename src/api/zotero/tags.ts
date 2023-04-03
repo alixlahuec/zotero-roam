@@ -317,7 +317,6 @@ const useDeleteTags = () => {
 				args: {
 					tags
 				},
-				data,
 				error,
 				library: path,
 				_type: "tags-deleted"
