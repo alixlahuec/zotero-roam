@@ -2,7 +2,7 @@ import zrToaster from "Components/ExtensionToaster";
 
 import { cleanErrorIfAxios } from "./api/utils";
 import { pluralize } from "./utils";
-import { ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
+import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import { CitoidAPI, ZoteroAPI } from "Types/externals";
 import { ArgsMetadataBlocks, ArgsMetadataSmartblock, OutcomeMetadataStatus, OutcomePage } from "Types/extension";
 
@@ -46,9 +46,10 @@ export namespace Events {
 		_type: "tags-deleted",
 		/** The input provided to the deleting function */
 		args: { tags: string[] },
+		data?: ZoteroAPI.Responses.TagsDelete, error: unknown,
 		/** The path of the targeted library */
 		library: string
-	} & ({ data: Record<string, any>, error: null } | { data?: Record<string, any>, error: Error });
+	};
 
 
 	/** Signals a tag modification has terminated
@@ -59,9 +60,14 @@ export namespace Events {
 		_type: "tags-modified",
 		/** The input provided to the modifying function */
 		args: { into: string, tags: string[] },
+		data: {
+			successful: ZoteroAPI.Responses.ItemsWrite[],
+			failed: string[]
+		},
+		error: unknown,
 		/** The path of the targeted library */
 		library: string
-	} & { data: { successful: Record<string, any>[], failed: Record<string, any>[] }, error: Error | null };
+	};
 
 
 	/** Signals a data update has terminated
@@ -76,7 +82,7 @@ export namespace Events {
 		/** Indicates if the update was successful */
 		success: boolean
 	} & (
-			| { type: "items", data: ZItem[], error: null }
+			| { type: "items", data: ZoteroAPI.Item[], error: null }
 			| { type: "items", data: null, error: Error }
 			| { type: "collections", data: ZoteroAPI.Collection[], error: null }
 			| { type: "collections", data: null, error: Error }
@@ -90,12 +96,14 @@ export namespace Events {
 		_type: "write",
 		/** The input provided to the writing function */
 		args: { collections: string[], items: CitoidAPI.AsZotero[], tags: string[] },
+		data: {
+			successful: ZoteroAPI.Responses.ItemsWrite[],
+			failed: string[]
+		},
+		error: unknown,
 		/** The path of the targeted library */
 		library: string
-	} & (
-			| { data: { successful: ZoteroAPI.ItemTop[], failed: ZoteroAPI.ItemTop[] }, error: null }
-			| { data: null, error: Error }
-		);
+	};
 	
 	export type Details =
 		| MetadataAdded
@@ -216,8 +224,8 @@ function tagsModified(event: CustomEvent<Events.TagsModified>){
 		});
 	} else {
 		const itemsOutcome = successful.reduce((counts, res) => {
-			counts.success += Object.keys(res.data.successful).length;
-			counts.error += Object.keys(res.data.failed).length;
+			counts.success += Object.keys(res.successful).length;
+			counts.error += Object.keys(res.failed).length;
 			return counts;
 		}, { error: 0, success: 0 });
 
@@ -249,7 +257,7 @@ function tagsModified(event: CustomEvent<Events.TagsModified>){
 function writeFinished(event: CustomEvent<Events.Write>){
 	/* eslint-disable-next-line prefer-const */
 	let { data, error, library } = event.detail;
-	const { failed = [], successful = [] } = data || {};
+	const { failed = [], successful = [] } = data;
 
 	error = cleanErrorIfAxios(error);
 
@@ -265,8 +273,8 @@ function writeFinished(event: CustomEvent<Events.Write>){
 		});
 	} else {
 		const itemsOutcome = successful.reduce((counts, res) => {
-			counts.success += Object.keys(res.data.successful).length;
-			counts.error += Object.keys(res.data.failed).length;
+			counts.success += Object.keys(res.successful).length;
+			counts.error += Object.keys(res.failed).length;
 			return counts;
 		}, { error: 0, success: 0 });
 

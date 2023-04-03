@@ -164,7 +164,7 @@ describe("tagsModified", () => {
 	test("hook behavior on partial success", () => {
 		const data = {
 			failed: ["SOME_KEY"],
-			successful: [{ data: { successful: { "ANOTHER_KEY": {} }, failed: {} } }]
+			successful: [{ successful: { "ANOTHER_KEY": {} }, failed: {} }]
 		};
 		tagsModified({ detail: { ...base, data } });
 		expect(window.zoteroRoam.warn).toHaveBeenCalledWith({
@@ -183,7 +183,7 @@ describe("tagsModified", () => {
 	test("hook behavior on full success", () => {
 		const data = {
 			failed: [],
-			successful: [{ data: { successful: { "ANOTHER_KEY": {} }, failed: {} } }]
+			successful: [{ successful: { "ANOTHER_KEY": {} }, failed: {} }]
 		};
 		tagsModified({ detail: { ...base, data } });
 		expect(showToasterFn).toHaveBeenCalledWith({
@@ -224,7 +224,7 @@ describe("writeFinished", () => {
 	test("hook behavior on partial success", () => {
 		const data = {
 			failed: ["SOME_KEY"],
-			successful: [{ data: { successful: { "ANOTHER_KEY": {} }, failed: {} } }]
+			successful: [{ successful: { "ANOTHER_KEY": {} }, failed: {} }]
 		};
 		writeFinished({ detail: { ...base, data } });
 		expect(window.zoteroRoam.warn).toHaveBeenCalledWith({
@@ -243,7 +243,7 @@ describe("writeFinished", () => {
 	test("hook behavior on full success", () => {
 		const data = {
 			failed: [],
-			successful: [{ data: { successful: { "SOME_KEY": {} }, failed: {} } }]
+			successful: [{ successful: { "SOME_KEY": {} }, failed: {} }]
 		};
 		writeFinished({ detail: { ...base, data } });
 		expect(showToasterFn).toHaveBeenCalledWith({
