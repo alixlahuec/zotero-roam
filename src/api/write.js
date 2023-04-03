@@ -29,10 +29,10 @@ const useDeleteTags = () => {
 			}
 
 			emitCustomEvent({
+				args: { tags },
 				data,
 				error,
 				library: path,
-				tags,
 				_type: "tags-deleted"
 			});
 		}
@@ -144,7 +144,7 @@ const useModifyTags = () => {
 			const outcome = data.reduce((obj, res) => {
 				/* istanbul ignore else */
 				if(res.status == "fulfilled"){
-					obj.successful.push(res.value);
+					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
 				}
