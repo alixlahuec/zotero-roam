@@ -1,47 +1,39 @@
+import { mock } from "jest-mock-extended";
 import zrToaster from "Components/ExtensionToaster";
-import { metadataAdded, notesAdded, tagsDeleted, tagsModified, writeFinished } from "../src/events";
+import ZoteroRoam from "../src/extension";
+import { Events, metadataAdded, notesAdded, tagsDeleted, tagsModified, writeFinished } from "../src/events";
+import { ZItemTop } from "Types/transforms";
 
 
 const showToasterFn = jest.spyOn(zrToaster, "show");
 beforeEach(() => {
-	window.zoteroRoam = {
-		error: jest.fn(),
-		info: jest.fn(),
-		warn: jest.fn()
-	};
+	window.zoteroRoam = mock<ZoteroRoam>();
 });
 
 describe("metadataAdded", () => {
-	const base = {
-		args: {
-			blocks: [],
-			uid: "SOME_UID"
-		},
-		page: { new: true, title: "@someCitekey", uid: "SOME_UID" },
-		raw: {
-			item: {},
-			notes: [],
-			pdfs: []
+	const mockEvent = (eventDetails: Partial<Events.MetadataAdded> = {}) => mock<CustomEvent<Events.MetadataAdded>>({
+		detail: {
+			page: { title: "@someCitekey" },
+			...eventDetails
 		}
-	};
+	});
 
 	test("hook behavior on error", () => {
-		const error = new Error("Some error");
-		metadataAdded({ detail: { ...base, error } });
+		metadataAdded(mockEvent({ error: new Error("Some error") }));
+
 		expect(window.zoteroRoam.error).toHaveBeenCalledWith({
 			origin: "API",
 			message: "Metadata import failed for @someCitekey",
-			context: {
-				...base,
+			context: expect.objectContaining({
 				error: "Some error"
-			},
+			}),
 			showToaster: true
 		});
 	});
 
 	test("hook behavior on success", () => {
-		const success = { data: [] };
-		metadataAdded({ detail: { ...base, success } });
+		metadataAdded(mockEvent({ error: null, success: true }));
+
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
 			message: "Metadata added to @someCitekey"
@@ -49,84 +41,82 @@ describe("metadataAdded", () => {
 	});
 
 	test("hook fallback", () => {
-		metadataAdded({ detail: base });
+		const evt = mockEvent({ error: null, success: null });
+		metadataAdded(evt);
+
 		expect(window.zoteroRoam.warn).toHaveBeenCalledWith({
 			origin: "API",
 			message: "Metadata import had uncertain outcome",
-			context: base
+			context: evt.detail
 		});
 	});
 });
 
 describe("notesAdded", () => {
-	const base = {
-		args: {
-			blocks: [],
-			uid: "SOME_UID"
-		},
-		page: { new: true, title: "@someCitekey", uid: "SOME_UID" },
-		raw: {
-			item: {},
-			notes: [{}]
+	const mockEvent = (eventDetails: Partial<Events.NotesAdded> = {}) => mock<CustomEvent<Events.NotesAdded>>({
+		detail: {
+			page: { title: "@someCitekey" },
+			...eventDetails
 		}
-	};
+	});
 
 	test("hook behavior on error", () => {
-		const error = new Error("Some error");
-		notesAdded({ detail: { ...base, error } });
+		notesAdded(mockEvent({ error: new Error("Some error") }));
+
 		expect(window.zoteroRoam.error).toHaveBeenCalledWith({
 			origin: "API",
 			message: "Notes import failed for @someCitekey",
-			context: {
-				...base,
+			context: expect.objectContaining({
 				error: "Some error"
-			},
+			}),
 			showToaster: true
 		});
 	});
 
 	test("hook behavior on success", () => {
-		const success = { data: [] };
-		notesAdded({ detail: { ...base, success } });
+		notesAdded(mockEvent({ error: null, success: true, raw: { item: mock<ZItemTop>(), notes: [] } }));
+
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
-			message: "Notes added to @someCitekey (1)"
+			message: "Notes added to @someCitekey (0)"
 		});
 	});
 
 	test("hook fallback", () => {
-		notesAdded({ detail: base });
+		const evt = mockEvent({ error: null, success: null });
+		notesAdded(evt);
+
 		expect(window.zoteroRoam.warn).toHaveBeenCalledWith({
 			origin: "API",
 			message: "Notes import had uncertain outcome",
-			context: base
+			context: evt.detail
 		});
 	});
 });
 
 describe("tagsDeleted", () => {
-	const base = {
-		args: { tags: [{}, {}] },
-		data: {},
-		library: "users/123456"
-	};
+	const mockEvent = (eventDetails: Partial<Events.TagsDeleted> = {}) => mock<CustomEvent<Events.TagsDeleted>>({
+		detail: {
+			library: "users/123456",
+			...eventDetails
+		}
+	});
 
 	test("hook behavior on error", () => {
-		const error = new Error("Some error");
-		tagsDeleted({ detail: { ...base, error } });
+		tagsDeleted(mockEvent({ error: new Error("Some error") }));
 		expect(window.zoteroRoam.error).toHaveBeenCalledWith({
 			origin: "API",
 			message: "Tag deletion failed",
-			context: {
-				...base,
+			context: expect.objectContaining({
 				error: "Some error"
-			},
+			}),
 			showToaster: true
 		});
 	});
 
 	test("hook behavior on success", () => {
-		tagsDeleted({ detail: base });
+		const evt = mockEvent({ args: { tags: ["some tag", "another tag"] }, error: null });
+		tagsDeleted(evt);
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
 			message: "2 tags deleted from users/123456"
@@ -135,28 +125,21 @@ describe("tagsDeleted", () => {
 });
 
 describe("tagsModified", () => {
-	const base = {
-		args: {
-			into: "HOUSING",
-			tags: ["housing", "Housing"]
-		},
-		data: {
-			failed: [],
-			successful: []
-		},
-		library: "users/123456"
-	};
+	const mockEvent = (eventDetails: Partial<Events.TagsModified> = {}) => mock<CustomEvent<Events.TagsModified>>({
+		detail: {
+			library: "users/123456",
+			...eventDetails
+		}
+	});
 
 	test("hook behavior on error", () => {
-		const error = new Error("Some error");
-		tagsModified({ detail: { ...base, error } });
+		tagsModified(mockEvent({ error: new Error("Some error") }));
 		expect(window.zoteroRoam.error).toHaveBeenCalledWith({
 			origin: "API",
 			message: "Tag modification failed",
-			context: {
-				...base,
+			context: expect.objectContaining({
 				error: "Some error"
-			},
+			}),
 			showToaster: true
 		});
 	});
@@ -164,18 +147,21 @@ describe("tagsModified", () => {
 	test("hook behavior on partial success", () => {
 		const data = {
 			failed: ["SOME_KEY"],
-			successful: [{ successful: { "ANOTHER_KEY": {} }, failed: {} }]
+			successful: [{
+				successful: { "ANOTHER_KEY": {} },
+				failed: {},
+				unchanged: {},
+				success: {}
+			}],
 		};
-		tagsModified({ detail: { ...base, data } });
+		tagsModified(mockEvent({ data }));
 		expect(window.zoteroRoam.warn).toHaveBeenCalledWith({
 			origin: "API",
 			message: "",
 			detail: "1 item modified in users/123456, with some problems. \n Check the extension's logs for more details.",
-			context: {
-				...base,
-				data,
-				error: undefined
-			},
+			context: expect.objectContaining({
+				data
+			}),
 			showToaster: true
 		});
 	});
@@ -183,9 +169,13 @@ describe("tagsModified", () => {
 	test("hook behavior on full success", () => {
 		const data = {
 			failed: [],
-			successful: [{ successful: { "ANOTHER_KEY": {} }, failed: {} }]
+			successful: [{
+				successful: { "ANOTHER_KEY": {} },
+				failed: {},
+				unchanged: {},
+				success: {} }]
 		};
-		tagsModified({ detail: { ...base, data } });
+		tagsModified(mockEvent({ data }));
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
 			message: "1 item successfully modified in users/123456."
@@ -194,29 +184,21 @@ describe("tagsModified", () => {
 });
 
 describe("writeFinished", () => {
-	const base = {
-		args: {
-			collections: [],
-			items: [{}],
-			tags: []
-		},
-		data: {
-			successful: [],
-			failed: []
-		},
-		library: "users/123456"
-	};
+	const mockEvent = (eventDetails: Partial<Events.Write> = {}) => mock<CustomEvent<Events.Write>>({
+		detail: {
+			library: "users/123456",
+			...eventDetails
+		}
+	});
 
 	test("hook behavior on error", () => {
-		const error = new Error("Some error");
-		writeFinished({ detail: { ...base, error } });
+		writeFinished(mockEvent({ error: new Error("Some error") }));
 		expect(window.zoteroRoam.error).toHaveBeenCalledWith({
 			origin: "API",
 			message: "Error sending data to Zotero",
-			context: {
-				...base,
+			context: expect.objectContaining({
 				error: "Some error"
-			},
+			}),
 			showToaster: true
 		});
 	});
@@ -224,18 +206,21 @@ describe("writeFinished", () => {
 	test("hook behavior on partial success", () => {
 		const data = {
 			failed: ["SOME_KEY"],
-			successful: [{ successful: { "ANOTHER_KEY": {} }, failed: {} }]
+			successful: [{
+				successful: { "ANOTHER_KEY": {} },
+				failed: {},
+				unchanged: {},
+				success: {}
+			}]
 		};
-		writeFinished({ detail: { ...base, data } });
+		writeFinished(mockEvent({ data }));
 		expect(window.zoteroRoam.warn).toHaveBeenCalledWith({
 			origin: "API",
 			message: "Unsuccessful when sending data to Zotero",
 			detail: "1 item added to users/123456, with some problems. \n Check the extension's logs for more details.",
-			context: {
-				...base,
-				data,
-				error: undefined
-			},
+			context: expect.objectContaining({
+				data
+			}),
 			showToaster: true
 		});
 	});
@@ -243,9 +228,14 @@ describe("writeFinished", () => {
 	test("hook behavior on full success", () => {
 		const data = {
 			failed: [],
-			successful: [{ successful: { "SOME_KEY": {} }, failed: {} }]
+			successful: [{
+				successful: { "SOME_KEY": {} },
+				failed: {},
+				unchanged: {},
+				success: {}
+			}]
 		};
-		writeFinished({ detail: { ...base, data } });
+		writeFinished(mockEvent({ data }));
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
 			message: "1 item added to users/123456."
