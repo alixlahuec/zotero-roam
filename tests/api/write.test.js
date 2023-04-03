@@ -88,9 +88,10 @@ describe("Mutation hooks for the Zotero API", () => {
 				{ throwOnError: true }
 			);
 
+			console.log(result.current.data);
+
 			expect(document.dispatchEvent.mock.calls[0][0].detail).toEqual({
 				args: { tags: ["systems"] },
-				data: result.current.data,
 				error: null,
 				library: userLibrary.path,
 				_type: "tags-deleted"

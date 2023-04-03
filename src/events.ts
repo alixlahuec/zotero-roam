@@ -45,7 +45,7 @@ export namespace Events {
 		_type: "tags-deleted",
 		/** The input provided to the deleting function */
 		args: { tags: string[] },
-		data?: Record<string, any>, error: unknown,
+		error: unknown,
 		/** The path of the targeted library */
 		library: string
 	};
