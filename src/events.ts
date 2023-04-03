@@ -46,7 +46,7 @@ export namespace Events {
 		_type: "tags-deleted",
 		/** The input provided to the deleting function */
 		args: { tags: string[] },
-		data?: ZoteroAPI.Responses.TagsDelete, error: unknown,
+		error: unknown,
 		/** The path of the targeted library */
 		library: string
 	};

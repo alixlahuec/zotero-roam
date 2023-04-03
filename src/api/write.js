@@ -30,7 +30,6 @@ const useDeleteTags = () => {
 
 			emitCustomEvent({
 				args: { tags },
-				data,
 				error,
 				library: path,
 				_type: "tags-deleted"
