@@ -156,7 +156,6 @@ const sbCommands = () => {
 			help: "Returns the comma-separated links to a list of Zotero PDFs",
 			handler: (context: SmartblocksPlugin.CommandContext) => () => {
 				const { pdfs = [] } = context.variables;
-				console.log(pdfs);
 				return window.zoteroRoam.formatPDFs(pdfs, "string") as string;
 			}
 		}
@@ -262,7 +261,7 @@ function reformatImportableBlocks(arr: RImportableElement[]): SBImportableBlock[
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  * @see https://github.com/dvargas92495/roamjs-components/blob/7aeae1482714a4c829c8141667eb1d459403b4ec/src/util/registerSmartBlocksCommand.ts
  */
-function registerSmartblockCommands() {
+function registerSmartblockCommands(){
 	const commands = sbCommands();
 
 	const register = () => {
@@ -299,7 +298,7 @@ function registerSmartblockCommands() {
 
 /* istanbul ignore next */
 /** Unregister the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph */
-function unregisterSmartblockCommands() {
+function unregisterSmartblockCommands(){
 	const commands = sbCommands();
 
 	if(window.roamjs?.extension?.smartblocks){
