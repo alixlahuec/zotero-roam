@@ -1,6 +1,5 @@
 import { makeEntityLinks, makeLibraryMetadata } from "./common";
-import { libraries } from "./libraries";
-import { Mocks } from "Mocks/types";
+import { Mocks, libraries } from "Mocks";
 
 
 const { userLibrary } = libraries;

@@ -1,6 +1,6 @@
 import { setupServer } from "msw/node";
 
-import { apiHandlers, fallbackHandler } from "Mocks/handlers";
+import { apiHandlers, fallbackHandler } from "Mocks";
 
 
 const server = setupServer(

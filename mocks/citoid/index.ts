@@ -1,5 +1,5 @@
 import { rest } from "msw";
-import { Mocks } from "Mocks/types";
+import { Mocks } from "Mocks";
 
 
 /* istanbul ignore next */

@@ -5,9 +5,7 @@ import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import NotesImport from "Components/NotesImport";
 
 import { importItemNotes } from "Mocks/roam";
-import { sampleAnnotLaterPage, sampleAnnotPrevPage } from "Mocks/zotero/annotations";
-import { items } from "Mocks/zotero/items";
-import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
+import { sampleAnnotLaterPage, sampleAnnotPrevPage, items, sampleNote, sampleOlderNote } from "Mocks";
 
 
 export default {

@@ -5,8 +5,7 @@ import {
 	formatZoteroAnnotations,
 	simplifyZoteroAnnotations } from "../../src/utils";
 
-import { sampleAnnot, sampleImageAnnot } from "Mocks/zotero/annotations";
-import { libraries } from "Mocks/zotero/libraries";
+import { libraries, sampleAnnot, sampleImageAnnot } from "Mocks";
 
 
 const { userLibrary } = libraries;

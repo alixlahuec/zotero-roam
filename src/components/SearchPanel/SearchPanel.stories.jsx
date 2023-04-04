@@ -3,7 +3,7 @@ import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import SearchPanel from ".";
 
-import { items } from "Mocks/zotero/items";
+import { items } from "Mocks";
 
 
 export default {

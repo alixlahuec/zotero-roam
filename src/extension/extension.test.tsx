@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/query-core";
-
 import { H5 } from "@blueprintjs/core";
 import { mock } from "jest-mock-extended";
+
 import { setupInitialSettings } from "../setup";
 import { _formatPDFs, _getItemCreators, _getItemTags } from "../public";
 import { cleanBibliographyHTML, makeTagList } from "../api/utils";
@@ -10,19 +10,11 @@ import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from
 import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from ".";
 import zrToaster from "Components/ExtensionToaster";
 
-import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
-import { entries, findItems, items } from "Mocks/zotero/items";
-import { apiKeys } from "Mocks/zotero/keys";
-import { findCollections } from "Mocks/zotero/collections";
-import { libraries } from "Mocks/zotero/libraries";
-import { sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage } from "Mocks/zotero/annotations";
-import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
-import { samplePDF } from "Mocks/zotero/pdfs";
-import { tags } from "Mocks/zotero/tags";
+import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, findCollections, libraries, sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage, sampleNote, sampleOlderNote, samplePDF, tags, Mocks } from "Mocks";
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
-import { QueryDataItems, ZItem, ZItemTop } from "Types/transforms";
-import { Mocks } from "Mocks/types";
+
 import { UserRequests, UserSettings } from "Types/extension";
+import { QueryDataItems, ZItem, ZItemTop } from "Types/transforms";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;

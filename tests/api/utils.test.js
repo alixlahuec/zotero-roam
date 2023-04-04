@@ -2,15 +2,8 @@ import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeItems } from "../../src/api/utils";
-import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
-import { findBibEntry, findItems, items } from "Mocks/zotero/items";
-import { findTags, tags } from "Mocks/zotero/tags";
-import { apiKeys } from "Mocks/zotero/keys";
-import { citoids } from "Mocks/citoid";
-import { deletions } from "Mocks/zotero/deleted";
-import { findCollections } from "Mocks/zotero/collections";
-import { libraries } from "Mocks/zotero/libraries";
-import { semantics } from "Mocks/semantic-scholar";
+
+import { apiKeys, bibs, citoids, deletions, findBibliographyEntry, findBibEntry, findCollections, findItems, findTags, items, libraries, semantics, tags } from "Mocks";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;

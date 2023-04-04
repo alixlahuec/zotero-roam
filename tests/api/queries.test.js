@@ -4,13 +4,7 @@ import { renderHook } from "@testing-library/react-hooks";
 import * as apiUtils from "../../src/api/utils";
 import { wrappedFetchItems, useQuery_Citoid, useQuery_Collections, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
 
-import { badIdentifier, goodIdentifier } from "Mocks/citoid";
-import { apiKeys } from "Mocks/zotero/keys";
-import { findCollections } from "Mocks/zotero/collections";
-import { findItems, items } from "Mocks/zotero/items";
-import { libraries } from "Mocks/zotero/libraries";
-import { semantics } from "Mocks/semantic-scholar";
-import { tags } from "Mocks/zotero/tags";
+import { apiKeys, badIdentifier, goodIdentifier, findCollections, findItems, items, libraries, semantics, tags } from "Mocks";
 
 
 const { makeTagList, parseSemanticDOIs } = apiUtils;
