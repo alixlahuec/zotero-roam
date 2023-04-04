@@ -1,6 +1,7 @@
 import { rest } from "msw";
 import { zotero } from "./common";
-import { Mocks, libraries } from "Mocks";
+import { libraries } from "./libraries";
+import { Mocks } from "Mocks";
 
 
 const { userLibrary, groupLibrary } = libraries;
