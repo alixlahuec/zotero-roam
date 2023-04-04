@@ -1,5 +1,8 @@
+import { mock } from "jest-mock-extended";
+import { Query } from "@tanstack/react-query";
 import { TYPEMAP_DEFAULT } from "../../src/constants";
 import { analyzeUserRequests, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
+import { UserDataRequest } from "Types/extension";
 import { apiKeys } from "Mocks/zotero/keys";
 import { libraries } from "Mocks/zotero/libraries";
 
@@ -22,6 +25,7 @@ describe("Parsing user data requests", () => {
 			{ dataURI: "users/12345/items" },
 			{ dataURI: "groups/98765/items/top" }
 		];
+
 		expect(() => analyzeUserRequests(reqs))
 			.toThrow("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 	});
@@ -31,6 +35,8 @@ describe("Parsing user data requests", () => {
 			{ dataURI: "users/12345/items" },
 			{ apikey: "XXXXXXXXXX" }
 		];
+
+		// @ts-expect-error "Test expects incomplete input"
 		expect(() => analyzeUserRequests(reqs))
 			.toThrow("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 	});
@@ -40,6 +46,7 @@ describe("Parsing user data requests", () => {
 			{ dataURI: "users/12345/items" },
 			{ dataURI: "groups/some_group_name/items", apikey: "XXXXXXXXXX" }
 		];
+
 		expect(() => analyzeUserRequests(reqs))
 			.toThrow("An incorrect data URI was provided for a request : groups/some_group_name/items. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials");
 	});
@@ -49,7 +56,8 @@ describe("Parsing user data requests", () => {
 			{ library: { type: "users", id: "username" }, apikey: "XXXXXXXXXX" },
 			{ library: { type: "groups", id: "123456" } }
 		];
-		expect(() => analyzeUserRequests(reqs))
+
+		expect(() => analyzeUserRequests(reqs as UserDataRequest[]))
 			.toThrow("A library ID is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 	});
 
@@ -58,6 +66,8 @@ describe("Parsing user data requests", () => {
 			{ library: { type: "libraryname", id: "12345" }, apikey: "XXXXXXXXXX" },
 			{ library: { type: "groups", id: "98765" } }
 		];
+
+		// @ts-expect-error "Tests bad input"
 		expect(() => analyzeUserRequests(reqs))
 			.toThrow("A library type is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
 	});
@@ -67,7 +77,8 @@ describe("Parsing user data requests", () => {
 			{ library: { type: "users", id: "123456" }, apikey: "XXXXXXXXXX" },
 			{ library: { type: "users", id: "123456" }, apikey: "XXXXXXXXXX", name: "duplicate lib" },
 		];
-		expect(() => analyzeUserRequests(reqs))
+
+		expect(() => analyzeUserRequests(reqs as UserDataRequest[]))
 			.toThrow("The same library was provided twice: users/123456.");
 	});
 
@@ -133,7 +144,7 @@ describe("Parsing user data requests", () => {
 			]
 		};
 
-		expect(analyzeUserRequests(reqs))
+		expect(analyzeUserRequests(reqs as UserDataRequest[]))
 			.toEqual(expected);
 
 	});
@@ -265,7 +276,7 @@ describe("Parsing initial user settings", () => {
 	};
 
 	it("should return defaults if given no settings", () => {
-		expect(JSON.stringify(setupInitialSettings({ dataRequests: [] })))
+		expect(JSON.stringify(setupInitialSettings({})))
 			.toEqual(JSON.stringify(defaults));
 	});
 });
@@ -276,7 +287,7 @@ describe("Parsing user shortcuts", () => {
 		[{ "copyDefault": "alt+E" }, { "copyDefault": "alt+E" }],
 		[{ "toggleDashboard": "alt+ +" }, {}],
 		[{ "goToItemPage": "" }, { "goToItemPage": "" }]
-	];
+	] as const;
 	test.each(cases)(
 		"%# - %s",
 		(input, expectation) => {
@@ -294,12 +305,13 @@ describe("Filtering queries for persistence", () => {
 		[{ queryKey: ["collections", { library: "users/123456" }], state: { status: "success" } }, true],
 		[{ queryKey: ["items", { library: "users/123456" }], state: { status: "success" } }, true],
 		[{ queryKey: ["tags", { library: "users/123456" }], state: { status: "success" } }, true]
-	];
+	] as const;
 
 	test.each(cases)(
 		"%#",
 		(query, is_allowed) => {
-			expect(shouldQueryBePersisted(query)).toBe(is_allowed);
+			const mockQuery = mock<Query<any,any,any,any>>(query);
+			expect(shouldQueryBePersisted(mockQuery)).toBe(is_allowed);
 		}
 	);
 });
