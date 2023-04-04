@@ -46,7 +46,7 @@ export namespace Events {
 		_type: "tags-deleted",
 		/** The input provided to the deleting function */
 		args: { tags: string[] },
-		error: unknown,
+		error: any,
 		/** The path of the targeted library */
 		library: string
 	};
@@ -64,7 +64,7 @@ export namespace Events {
 			successful: ZoteroAPI.Responses.ItemsWrite[],
 			failed: string[]
 		},
-		error: unknown,
+		error: any,
 		/** The path of the targeted library */
 		library: string
 	};
@@ -100,7 +100,7 @@ export namespace Events {
 			successful: ZoteroAPI.Responses.ItemsWrite[],
 			failed: string[]
 		},
-		error: unknown,
+		error: any,
 		/** The path of the targeted library */
 		library: string
 	};
