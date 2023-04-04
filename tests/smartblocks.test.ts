@@ -97,7 +97,7 @@ describe("Enforcing a block-object format returns correct output", () => {
 
 describe("All commands return correct output", () => {
 	let client: QueryClient;
-	let commands: typeof sbCommands;
+	let commands: ReturnType<typeof sbCommands>;
 
 	const mockContext = (vars: SmartblocksPlugin.CommandContext["variables"] = {}) => mock<SmartblocksPlugin.CommandContext>({
 		variables: { ...vars }
@@ -111,7 +111,7 @@ describe("All commands return correct output", () => {
 			settings: initSettings
 		});
 
-		commands = { ...sbCommands };
+		commands = sbCommands();
 	});
 
 	test("ZOTERORANDOMCITEKEY", () => {
