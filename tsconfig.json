@@ -8,6 +8,7 @@
 		"paths": {
 			"Components/*": ["./src/components/*"],
 			"Mocks/*": ["./mocks/*"],
+			"Mocks": ["./mocks"],
 			"Roam": ["./src/roam.ts"],
 			"Types/*": ["./src/types/*"]
 		},

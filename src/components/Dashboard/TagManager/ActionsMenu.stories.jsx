@@ -1,13 +1,11 @@
 import { useEffect } from "react";
-
 import { useQueryClient } from "@tanstack/react-query";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import ActionsMenu from "./ActionsMenu";
 
-import { apiKeys } from "Mocks/zotero/keys";
-import { libraries } from "Mocks/zotero/libraries";
+import { apiKeys, libraries } from "Mocks";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;

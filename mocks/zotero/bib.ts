@@ -3,8 +3,8 @@ import { rest } from "msw";
 import { makeEntityLinks, makeLibraryMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
 
-import { Mocks } from "../types";
 import { ObjValues } from "../../src/types/helpers";
+import { Mocks } from "Mocks";
 
 
 const { userLibrary } = libraries;

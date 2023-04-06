@@ -5,9 +5,7 @@ import * as apiUtils from "../../src/api/utils";
 import { fetchItems, fetchTags } from "../../src/api/utils";
 import { useDeleteTags, useImportCitoids, useModifyTags } from "../../src/api/write";
 
-import { apiKeys } from "Mocks/zotero/keys";
-import { libraries } from "Mocks/zotero/libraries";
-import { citoids, goodIdentifier } from "Mocks/citoid";
+import { apiKeys, citoids, goodIdentifier, libraries } from "Mocks";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;

@@ -1,8 +1,7 @@
 import { rest } from "msw";
-import { citoids, semanticIdentifier } from "../citoid";
 import { makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
-import { Mocks } from "Mocks/types";
+import { citoids, semanticIdentifier, Mocks } from "Mocks";
 import { ObjValues } from "Types/helpers";
 
 

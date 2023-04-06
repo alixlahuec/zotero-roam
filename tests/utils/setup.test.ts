@@ -1,10 +1,11 @@
 import { mock } from "jest-mock-extended";
 import { Query } from "@tanstack/react-query";
+
 import { TYPEMAP_DEFAULT } from "../../src/constants";
 import { analyzeUserRequests, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
+
+import { apiKeys, libraries } from "Mocks";
 import { UserDataRequest } from "Types/extension";
-import { apiKeys } from "Mocks/zotero/keys";
-import { libraries } from "Mocks/zotero/libraries";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;

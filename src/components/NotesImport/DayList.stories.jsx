@@ -1,12 +1,11 @@
 import { useCallback, useState } from "react";
-
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 
 import DayList from "Components/NotesImport/DayList";
 import { ListWrapper } from "Components/DataList";
 
-import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
+import { sampleNote, sampleOlderNote } from "Mocks";
 
 
 export default {
