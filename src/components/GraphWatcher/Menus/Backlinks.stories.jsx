@@ -1,10 +1,7 @@
 import { Backlinks } from "./CitekeyMenu";
-
 import { cleanSemanticItem } from "./helpers";
 
-import { citoids, semanticIdentifier } from "Mocks/citoid";
-import { items } from "Mocks/zotero/items";
-import { semantics } from "Mocks/semantic-scholar";
+import { citoids, semanticIdentifier, items, semantics } from "Mocks";
 
 
 const semanticCitoid = citoids[semanticIdentifier];

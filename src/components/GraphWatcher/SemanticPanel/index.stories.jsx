@@ -7,8 +7,8 @@ import { cleanSemantic } from "../Menus/helpers";
 import { parseDOI } from "../../../utils";
 import { parseSemanticDOIs } from "../../../api/semantic";
 
-import { semantics } from "Mocks/semantic-scholar";
-import { items } from "Mocks/zotero/items";
+import { items, semantics } from "Mocks";
+
 
 
 const semanticItem = items.find(it => it.key == "blochImplementingSocialInterventions2021");

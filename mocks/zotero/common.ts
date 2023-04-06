@@ -1,4 +1,4 @@
-import { Mocks } from "Mocks/types";
+import { Mocks } from "Mocks";
 
 
 export const zotero = (URI: string) => "https://api.zotero.org/" + URI;

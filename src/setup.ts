@@ -16,7 +16,7 @@ import {
 	TYPEMAP_DEFAULT
 } from "./constants";
 
-import { DataRequest, LegacyDataRequest, LegacyUserSettings, SettingsShortcuts, UserRequests, UserSettings } from "Types/extension";
+import { DataRequest, LegacyUserDataRequest, LegacyUserSettings, SettingsShortcuts, UserDataRequest, UserRequests, UserSettings } from "Types/extension";
 import { ZLibrary } from "Types/transforms";
 import { Roam } from "Types/externals";
 
@@ -29,7 +29,7 @@ type InstallArgs =
 	}
 
 /** Generates a data requests configuration object */
-export function analyzeUserRequests(requests: LegacyDataRequest|(LegacyDataRequest|DataRequest)[]): UserRequests{
+export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserDataRequest|UserDataRequest)[]): UserRequests{
 	const reqs = (Array.isArray(requests))
 		? requests
 		: [requests];
@@ -47,9 +47,9 @@ export function analyzeUserRequests(requests: LegacyDataRequest|(LegacyDataReque
 			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 		} else {
 			const dataRequests = reqs.map((req) => {
-				const { apikey, dataURI, name = "" } = req;
-				if("library" in req){
-					const { id, type } = req.library;
+				if ("library" in req) {
+					const { apikey, library, name = "" } = req;
+					const { id, type } = library;
                     
 					if(!id || isNaN(Number(id))){
 						throw new Error("A library ID is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
@@ -71,6 +71,7 @@ export function analyzeUserRequests(requests: LegacyDataRequest|(LegacyDataReque
 						name
 					};
 				} else {
+					const { apikey, dataURI, name = "" } = req;
 
 					if(!dataURI){
 						throw new Error("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");

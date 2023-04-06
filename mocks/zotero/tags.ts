@@ -2,7 +2,7 @@ import { rest } from "msw";
 import { zotero } from "./common";
 import { libraries } from "./libraries";
 import { searchEngine } from "../../src/utils";
-import { Mocks } from "../types";
+import { Mocks } from "Mocks";
 
 
 const { userLibrary, groupLibrary } = libraries;

@@ -1,43 +1,30 @@
 import { QueryClient } from "@tanstack/query-core";
-
 import { H5 } from "@blueprintjs/core";
-import { makeTagList } from "../api/zotero";
-import { cleanBibliographyHTML, formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
-import { analyzeUserRequests, setupInitialSettings } from "../setup";
-import { _formatPDFs, _getItemCreators, _getItemTags } from "../public";
+import { mock } from "jest-mock-extended";
 
-import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from ".";
 import zrToaster from "Components/ExtensionToaster";
 
-import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
-import { entries, findItems, items } from "Mocks/zotero/items";
-import { apiKeys } from "Mocks/zotero/keys";
-import { findCollections } from "Mocks/zotero/collections";
-import { libraries } from "Mocks/zotero/libraries";
-import { sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage } from "Mocks/zotero/annotations";
-import { sampleNote, sampleOlderNote } from "Mocks/zotero/notes";
-import { samplePDF } from "Mocks/zotero/pdfs";
-import { tags } from "Mocks/zotero/tags";
+import { makeTagList } from "../api/zotero";
+import { _formatPDFs, _getItemCreators, _getItemTags } from "../public";
+import { setupInitialSettings } from "../setup";
+import { cleanBibliographyHTML, formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
+import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from ".";
+
+import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, findCollections, libraries, sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage, sampleNote, sampleOlderNote, samplePDF, tags, Mocks } from "Mocks";
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
-import { QueryDataItems } from "Types/transforms";
-import { Mocks } from "Mocks/types";
+
+import { UserRequests, UserSettings } from "Types/extension";
+import { QueryDataItems, ZItem, ZItemTop } from "Types/transforms";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
-const { userLibrary, groupLibrary } = libraries;
-const defaultReqs = [
-	{ dataURI: userLibrary.path + "/items", apikey: masterKey, name: "My user library" },
-	{ dataURI: groupLibrary.path + "/items", apikey: masterKey, name: "My group library" }
-];
-
-const initRequests = analyzeUserRequests(defaultReqs);
 const initSettings = setupInitialSettings({});
 
 
 describe("Formatting utils", () => {
 	const extension = new ZoteroRoam({
 		queryClient: new QueryClient(),
-		requests: initRequests,
+		requests: mock<UserRequests>({ libraries: [] }),
 		settings: initSettings
 	});
     
@@ -127,19 +114,20 @@ describe("Formatting utils", () => {
 
 		test("Util returns nested output - with block checking", () => {
 			const custom_string = "[[My Notes]]";
-
-			const formattedOutput = formatItemNotes([sampleNote]);
-
-			expect(_formatNotes([sampleNote], uid_with_existing_block, {
-				annotationsSettings: initSettings.annotations,
-				notesSettings: {
+			const mockSettings = {
+				annotationsSettings: mock<UserSettings["annotations"]>(),
+				notesSettings: mock<UserSettings["notes"]>({
 					...initSettings.notes,
 					nest_char: custom_string,
 					nest_position: "top",
 					nest_preset: false,
 					nest_use: "custom"
-				}
-			})).toEqual(
+				})
+			};
+
+			const formattedOutput = formatItemNotes([sampleNote]);
+
+			expect(_formatNotes([sampleNote], uid_with_existing_block, mockSettings)).toEqual(
 				formattedOutput.map(blck => ({
 					string: blck,
 					text: blck,
@@ -148,16 +136,7 @@ describe("Formatting utils", () => {
 				}))
 			);
 			
-			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, {
-				annotationsSettings: initSettings.annotations,
-				notesSettings: {
-					...initSettings.notes,
-					nest_char: custom_string,
-					nest_position: "top",
-					nest_preset: false,
-					nest_use: "custom"
-				}
-			})).toEqual(
+			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings)).toEqual(
 				formattedOutput.map(blck => ({
 					string: blck,
 					text: blck,
@@ -166,16 +145,7 @@ describe("Formatting utils", () => {
 				}))
 			);
 
-			expect(_formatNotes([sampleNote], "uid without existing block", {
-				annotationsSettings: initSettings.annotations,
-				notesSettings: {
-					...initSettings.notes,
-					nest_char: custom_string,
-					nest_position: "top",
-					nest_preset: false,
-					nest_use: "custom"
-				}
-			})).toEqual([
+			expect(_formatNotes([sampleNote], "uid without existing block", mockSettings)).toEqual([
 				{
 					string: custom_string,
 					text: custom_string,
@@ -186,45 +156,38 @@ describe("Formatting utils", () => {
 		});
 
 		test("Util returns nested output - with block checking, with position", () => {
-			const custom_string = "[[My Notes]]";
+			const mockSettings = {
+				annotationsSettings: mock<UserSettings["annotations"]>(),
+				notesSettings: mock<UserSettings["notes"]>({
+					...initSettings.notes,
+					nest_char: "[[My Notes]]",
+					nest_position: "bottom",
+					nest_preset: false,
+					nest_use: "custom"
+				})
+			};
 
 			const formattedOutput = formatItemNotes([sampleNote]);
 
-			expect(_formatNotes([sampleNote], uid_with_existing_block, {
-				annotationsSettings: initSettings.annotations,
-				notesSettings: {
-					...initSettings.notes,
-					nest_char: custom_string,
-					nest_position: "bottom",
-					nest_preset: false,
-					nest_use: "custom"
-				}
-			})).toEqual(
-				formattedOutput.map(blck => ({
-					string: blck,
-					text: blck,
-					order: 0,
-					parentUID: existing_block_uid
-				}))
-			);
+			expect(_formatNotes([sampleNote], uid_with_existing_block, mockSettings))
+				.toEqual(
+					formattedOutput.map(blck => ({
+						string: blck,
+						text: blck,
+						order: 0,
+						parentUID: existing_block_uid
+					}))
+				);
 
-			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, {
-				annotationsSettings: initSettings.annotations,
-				notesSettings: {
-					...initSettings.notes,
-					nest_char: custom_string,
-					nest_position: "bottom",
-					nest_preset: false,
-					nest_use: "custom"
-				}
-			})).toEqual(
-				formattedOutput.map(blck => ({
-					string: blck,
-					text: blck,
-					order: 2,
-					parentUID: existing_block_uid_with_children
-				}))
-			);
+			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings))
+				.toEqual(
+					formattedOutput.map(blck => ({
+						string: blck,
+						text: blck,
+						order: 2,
+						parentUID: existing_block_uid_with_children
+					}))
+				);
 		});
 
 	});
@@ -242,6 +205,7 @@ describe("Formatting utils", () => {
 
 	describe("Retrieving and formatting the date-added property of an item", () => {
 		const date = new Date(2022, 0, 1).toString();
+		const mockItem = mock<ZItem>({ data: { dateAdded: date } });
 		const cases = [
 			[
 				"with default settings", 
@@ -258,24 +222,21 @@ describe("Formatting utils", () => {
 		test.each(cases)(
 			"%# - %s",
 			(_id, config, expectation) => {
-				const sampleItem = items[0];
-				expect(extension.getItemDateAdded(
-					{ ...sampleItem, data: { ...sampleItem.data, dateAdded: date } },
-					config
-				)).toBe(expectation);
+				expect(extension.getItemDateAdded(mockItem, config)).toBe(expectation);
 			}
 		);
 	});
 
 	test("Retrieving the links to an item", () => {
-		const sampleItem = items[0];
-		expect(extension.getItemLink(sampleItem, "local"))
-			.toBe(getLocalLink(sampleItem));
-		expect(extension.getItemLink(sampleItem, "web"))
-			.toBe(getWebLink(sampleItem));
+		const mockItem = mock<ZItemTop>();
+		expect(extension.getItemLink(mockItem, "local"))
+			.toBe(getLocalLink(mockItem));
+		expect(extension.getItemLink(mockItem, "web"))
+			.toBe(getWebLink(mockItem));
 	});
 
 	describe("Retrieving publication details for an item", () => {
+		const makeMock = (itemData: Partial<ZItemTop["data"]>) => mock<ZItemTop>({ data: { ...itemData } });
 		const cases = [
 			[{ publicationTitle: "some publication", bookTitle: undefined, university: undefined }, "some publication"],
 			[{ publicationTitle: undefined, bookTitle: "some book", university: undefined }, "some book"],
@@ -286,9 +247,8 @@ describe("Formatting utils", () => {
 		test.each(cases)(
 			"%# - no brackets",
 			(itemData, expectation) => {
-				const sampleItem = items[0];
-				const item = { ...sampleItem, data: { ...sampleItem.data, ...itemData } };
-				expect(extension.getItemPublication(item, { brackets: false }))
+				const mockItem = makeMock(itemData);
+				expect(extension.getItemPublication(mockItem, { brackets: false }))
 					.toBe(expectation);
 			}
 		);
@@ -296,9 +256,8 @@ describe("Formatting utils", () => {
 		test.each(cases)(
 			"%# - with brackets",
 			(itemData, expectation) => {
-				const sampleItem = items[0];
-				const item = { ...sampleItem, data: { ...sampleItem.data, ...itemData } };
-				expect(extension.getItemPublication(item))
+				const mockItem = makeMock(itemData);
+				expect(extension.getItemPublication(mockItem))
 					.toBe(expectation ? `[[${expectation}]]` : "");
 			}
 		);
@@ -314,9 +273,8 @@ describe("Formatting utils", () => {
 		test.each(cases)(
 			"%#",
 			(itemData, config, expectation) => {
-				const sampleItem = items[0];
-				const item = { ...sampleItem, data: { ...sampleItem.data, ...itemData } };
-				expect(extension.getItemType(item, config))
+				const mockItem = mock<ZItemTop>({ data: { ...itemData } });
+				expect(extension.getItemType(mockItem, config))
 					.toBe(expectation);
 			}
 		);
@@ -331,8 +289,10 @@ describe("Retrieval utils", () => {
 		client = new QueryClient();
 		extension = new ZoteroRoam({
 			queryClient: client,
-			requests: initRequests,
-			settings: initSettings
+			requests: mock<UserRequests>({
+				libraries: Object.values(libraries).map(lib => ({ apikey: masterKey, path: lib.path }))
+			}),
+			settings: mock<UserSettings>()
 		}); 
 	});
 
@@ -563,8 +523,8 @@ describe("Logger utils", () => {
 	beforeEach(() => {
 		extension = new ZoteroRoam({
 			queryClient: client,
-			requests: initRequests,
-			settings: initSettings
+			requests: mock<UserRequests>(),
+			settings: mock<UserSettings>()
 		}); 
 	});
 

@@ -1,9 +1,7 @@
 import { getPDFLink } from "../../../utils";
 import { cleanLibraryPDF, identifyPDFConnections } from "./helpers";
 
-import { items } from "Mocks/zotero/items";
-import { sampleAnnot } from "Mocks/zotero/annotations";
-import { samplePDF } from "Mocks/zotero/pdfs";
+import { items, sampleAnnot, samplePDF } from "Mocks";
 
 
 test("Identifies the connections of a PDF item", () => {

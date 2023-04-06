@@ -3,8 +3,7 @@ import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import WebImportPanel from "./WebImportPanel";
 
-import { badIdentifier, citoids, goodIdentifier } from "Mocks/citoid";
-import { libraries } from "Mocks/zotero/libraries";
+import { badIdentifier, citoids, goodIdentifier, libraries } from "Mocks";
 
 
 const { userLibrary } = libraries;

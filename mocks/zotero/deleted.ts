@@ -1,7 +1,7 @@
 import { rest } from "msw";
 import { makeCollection, makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
-import { Mocks } from "../types";
+import { Mocks } from "Mocks";
 
 
 const { userLibrary, groupLibrary } = libraries;

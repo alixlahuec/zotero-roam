@@ -5,9 +5,7 @@ import * as itemUtils from "../../src/api/zotero/items";
 import * as citoidUtils from "../../src/api/citoid";
 import * as tagsUtils from "../../src/api/zotero/tags";
 
-import { apiKeys } from "Mocks/zotero/keys";
-import { libraries } from "Mocks/zotero/libraries";
-import { citoids, goodIdentifier } from "Mocks/citoid";
+import { apiKeys, citoids, goodIdentifier, libraries } from "Mocks";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
