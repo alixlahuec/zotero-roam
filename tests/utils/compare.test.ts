@@ -4,6 +4,8 @@ import {
 	sortCollections,
 	sortElems } from "../../src/utils";
 
+import { ZoteroAPI } from "Types/externals";
+
 
 test("Sorts Zotero items by publication year & creators", () => {
 	const a = { meta: { creatorSummary: "Smith et al.", parsedDate: "" } };
@@ -13,22 +15,22 @@ test("Sorts Zotero items by publication year & creators", () => {
 	const e = { meta: { creatorSummary: "Chen and Talmanes", parsedDate: "2021" } };
 
 	expect([
-		[a,b].sort(compareItemsByYear),
-		[a,c].sort(compareItemsByYear),
-		[c,a].sort(compareItemsByYear),
-		[b,c].sort(compareItemsByYear),
-		[c,d].sort(compareItemsByYear),
-		[d,c].sort(compareItemsByYear),
-		[d,e].sort(compareItemsByYear),
+		[a, b].sort(compareItemsByYear),
+		[a, c].sort(compareItemsByYear),
+		[c, a].sort(compareItemsByYear),
+		[b, c].sort(compareItemsByYear),
+		[c, d].sort(compareItemsByYear),
+		[d, c].sort(compareItemsByYear),
+		[d, e].sort(compareItemsByYear),
 	])
 		.toEqual([
-			[b,a],
-			[c,a],
-			[c,a],
-			[c,b],
-			[d,c],
-			[d,c],
-			[e,d],
+			[b, a],
+			[c, a],
+			[c, a],
+			[c, b],
+			[d, c],
+			[d, c],
+			[e, d],
 		]);
 });
 
@@ -53,7 +55,7 @@ describe("Zotero collections sorting", () => {
 	});
 
 	it("correctly sorts an array of Zotero collections", () => {
-		const colls = [
+		const colls: ZoteroAPI.Collection[] = [
 			{
 				"key": "N7W92H48",
 				"version": 1,

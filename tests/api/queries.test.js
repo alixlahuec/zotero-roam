@@ -214,7 +214,7 @@ describe("Wrapper for fetching items", () => {
 	test("Fetching items when query cache is empty", async() => {
 		await wrappedFetchItems(sample_req, client);
 
-		expect(fetchItemsSpy).toHaveBeenCalledWith({ ...sample_req, since: undefined }, { match: undefined }, client);
+		expect(fetchItemsSpy).toHaveBeenCalledWith({ ...sample_req, since: 0 }, { match: [] }, client);
 	});
 
 	test("Fetching items when query cache has version data", async() => {

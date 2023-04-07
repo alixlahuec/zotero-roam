@@ -1,7 +1,7 @@
 import { 
 	categorizeLibraryItems, 
-	cleanAuthorLastName,
-	cleanAuthorsNames, 
+	getAuthorLastName,
+	makeAuthorsSummary, 
 	cleanLibrary, 
 	cleanSemantic, 
 	identifyChildren } from "../../src/utils";
@@ -39,44 +39,44 @@ test("Categorizes Zotero items", () => {
 
 describe("Extracting authors' last names", () => {
 	it("extracts from single names", () => {
-		expect(cleanAuthorLastName("WHO")).toBe("WHO");
+		expect(getAuthorLastName("WHO")).toBe("WHO");
 	});
 	it("extracts from simple names", () => {
-		expect(cleanAuthorLastName("Serena Chen")).toBe("Chen");
+		expect(getAuthorLastName("Serena Chen")).toBe("Chen");
 	});
 
 	it("extracts from names with hyphen", () => {
-		expect(cleanAuthorLastName("Bo-yeong Kim")).toBe("Kim");
+		expect(getAuthorLastName("Bo-yeong Kim")).toBe("Kim");
 	});
 
 	it("extracts from names with particle", () => {
-		expect(cleanAuthorLastName("Tomas de Koon")).toBe("de Koon");
+		expect(getAuthorLastName("Tomas de Koon")).toBe("de Koon");
 	});
 
 	it("extracts from names with middle name", () => {
-		expect(cleanAuthorLastName("Kelsey S. Dickson")).toBe("Dickson");
+		expect(getAuthorLastName("Kelsey S. Dickson")).toBe("Dickson");
 	});
 });
 
 describe("Formatting authorship data", () => {
 	it("returns an empty string when given an empty input", () => {
-		expect(cleanAuthorsNames([])).toBe("");
+		expect(makeAuthorsSummary([])).toBe("");
 	});
 
 	it("formats correctly with 1 author", () => {
-		expect(cleanAuthorsNames(["Dickson"])).toBe("Dickson");
+		expect(makeAuthorsSummary(["Dickson"])).toBe("Dickson");
 	});
 
 	it("formats correctly with 2 authors", () => {
-		expect(cleanAuthorsNames(["Dickson", "Sklar"])).toBe("Dickson & Sklar");
+		expect(makeAuthorsSummary(["Dickson", "Sklar"])).toBe("Dickson & Sklar");
 	});
 
 	it("formats correctly with 3 authors", () => {
-		expect(cleanAuthorsNames(["Dickson", "Sklar", "Chen"])).toBe("Dickson, Sklar & Chen");
+		expect(makeAuthorsSummary(["Dickson", "Sklar", "Chen"])).toBe("Dickson, Sklar & Chen");
 	});
 
 	it("formats correctly with 4+ authors", () => {
-		expect(cleanAuthorsNames(["Dickson", "Chen", "de Koon", "Sklar"])).toBe("Dickson et al.");
+		expect(makeAuthorsSummary(["Dickson", "Chen", "de Koon", "Sklar"])).toBe("Dickson et al.");
 	});
 });
 
@@ -118,7 +118,7 @@ test("Simplifies Zotero item metadata", () => {
 
 test("Simplifies SemanticScholar item metadata", () => {
 	const { citations, references } = Object.values(semantics)[0];
-	expect(cleanSemantic([], { citations, references }, new Map()))
+	expect(cleanSemantic({ items: [], notes: [], pdfs: [] }, { citations, references }, new Map()))
 		.toEqual({
 			citations: [
 				{

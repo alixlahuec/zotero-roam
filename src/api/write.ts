@@ -2,6 +2,28 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTags, writeItems } from "./utils";
 import { emitCustomEvent } from "../events";
 
+import { QueryDataItems, QueryDataTags, ZLibrary } from "Types/transforms";
+import { CitoidAPI, ZoteroAPI } from "Types/externals";
+
+
+type ImportCitoidsArgs = {
+	collections: string[],
+	items: CitoidAPI.AsZotero[],
+	library: ZLibrary,
+	tags: string[];
+};
+
+type DeleteTagsArgs = {
+	library: ZLibrary,
+	tags: string[]
+};
+
+type ModifyTagsArgs = {
+	into: string,
+	library: ZLibrary,
+	tags: string[]
+};
+
 /** React Query custom mutation hook for deleting tags from a Zotero library.
  * @fires zotero-roam:write
  * @returns 
@@ -9,19 +31,19 @@ import { emitCustomEvent } from "../events";
 const useDeleteTags = () => {
 	const client = useQueryClient();
 
-	return useMutation((variables) => {
+	return useMutation((variables: DeleteTagsArgs) => {
 		const { library: { apikey, path }, tags } = variables;
-		const { lastUpdated: version } = client.getQueryData(["tags", { library: path }]);
+		const { lastUpdated: version = 0 } = client.getQueryData<QueryDataTags>(["tags", { library: path }]) || {};
 
 		return deleteTags(tags, { apikey, path }, version);
 	}, {
-		onSettled: (data, error, variables, _context) => {
+		onSettled: (_data, error, variables, _context) => {
 			const { library: { path }, tags } = variables;
 
-			if(!error){
+			if (!error) {
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
-				client.invalidateQueries([ "items", path ], {
+				client.invalidateQueries(["items", path], {
 					refetchType: "all"
 				}, {
 					throwOnError: true
@@ -29,7 +51,9 @@ const useDeleteTags = () => {
 			}
 
 			emitCustomEvent({
-				args: { tags },
+				args: {
+					tags
+				},
 				error,
 				library: path,
 				_type: "tags-deleted"
@@ -45,7 +69,7 @@ const useDeleteTags = () => {
 const useImportCitoids = () => {
 	const client = useQueryClient();
 
-	return useMutation((variables) => {
+	return useMutation((variables: ImportCitoidsArgs) => {
 		const { collections = [], items, library, tags = [] } = variables;
 
 		// Transform the data for import
@@ -61,32 +85,32 @@ const useImportCitoids = () => {
 					tags: clean_tags
 				};
 			});
-		
-		return writeItems(dataList, library);
 
+		return writeItems<CitoidAPI.AsZotero>(dataList, library);
 	}, {
-		onSettled: (data, error, variables, _context) => {
+		onSettled: (data = [], error, variables, _context) => {
 			const { collections, items, library: { path }, tags } = variables;
 
-			const outcome = data.reduce((obj, res) => {
+			const outcome = data.reduce <{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }> ((obj, res) => {
 				/* istanbul ignore else */
-				if(res.status == "fulfilled"){
+				if (res.status == "fulfilled") {
 					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
 				}
 				return obj;
-			},{ successful: [], failed: [] });
+			}, { successful: [], failed: [] });
 
-			if(!error && outcome.successful.length > 0){
+			if (!error && outcome.successful.length > 0) {
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
-				client.invalidateQueries([ "items", path ], {
+				client.invalidateQueries(["items", path], {
 					refetchType: "all"
 				});
 			}
 
 			emitCustomEvent({
+				_type: "write",
 				args: {
 					collections,
 					items,
@@ -94,8 +118,7 @@ const useImportCitoids = () => {
 				},
 				data: outcome,
 				error,
-				library: path,
-				_type: "write"
+				library: path
 			});
 		}
 	});
@@ -108,10 +131,10 @@ const useImportCitoids = () => {
 const useModifyTags = () => {
 	const client = useQueryClient();
 
-	return useMutation((variables) => {
+	return useMutation((variables: ModifyTagsArgs) => {
 		const { into, library: { apikey, path }, tags } = variables;
-		const dataList = [];
-		const libItems = client.getQueriesData(["items", path])
+		const dataList: Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">[] = [];
+		const libItems = client.getQueriesData<QueryDataItems>(["items", path])
 			.map(query => (query[1] || {}).data || []).flat(1)
 			.filter(i => !["attachment", "note", "annotation"].includes(i.data.itemType) && i.data.tags.length > 0);
 
@@ -135,26 +158,26 @@ const useModifyTags = () => {
 			}
 		});
 
-		return writeItems(dataList, { apikey, path });
+		return writeItems<Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">>(dataList, { apikey, path });
 	}, {
-		onSettled: (data, error, variables, _context) => {
+		onSettled: (data = [], error, variables, _context) => {
 			const { into, library: { path }, tags } = variables;
 
-			const outcome = data.reduce((obj, res) => {
+			const outcome = data.reduce<{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }>((obj, res) => {
 				/* istanbul ignore else */
-				if(res.status == "fulfilled"){
+				if (res.status == "fulfilled") {
 					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
 				}
 				return obj;
-			},{ successful: [], failed: [] });
+			}, { successful: [], failed: [] });
 
 			/* istanbul ignore if */
-			if(outcome.successful.length > 0){
+			if (outcome.successful.length > 0) {
 				// If any item was modified, invalidate item queries for the targeted library
 				// Data can't be updated through cache modification because of the library version
-				client.invalidateQueries([ "items", path ], {
+				client.invalidateQueries(["items", path], {
 					refetchType: "all"
 				});
 			}

@@ -21,7 +21,7 @@ export default {
 	component: SemanticPanel,
 	args: {
 		isOpen: true,
-		items: cleanSemantic([], semanticData, new Map()),
+		items: cleanSemantic({ items: [], notes: [], pdfs: [] }, semanticData, new Map()),
 		onClose: () => {},
 		show: {
 			title: "@" + semanticItem.key,

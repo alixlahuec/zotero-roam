@@ -34,7 +34,7 @@ describe("Splitting HTML notes", () => {
 
 	test("Incorrect type of separator provided - function throws", () => {
 		expect(() => splitNotes([notes[0]], ["abc"]))
-			.toThrow("Input is of type Array, expected String");
+			.toThrow("Input is of type object, expected String");
 	});
 
 	test("Simple separator", () => {

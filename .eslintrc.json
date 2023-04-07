@@ -89,6 +89,7 @@
             "always"
         ],
         "prefer-const": "warn",
+		"prefer-rest-params": "off",
         "quotes": [
             "error",
             "double"

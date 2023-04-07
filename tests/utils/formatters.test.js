@@ -51,12 +51,12 @@ describe("Creating DNPs", () => {
 describe("Reading DNPs", () => {
 	it("parses correctly into a Date", () => {
 		const dnp = "January 1st, 2022";
-		expect(readDNP(dnp)).toEqual(new Date([2022, 1, 1]));
+		expect(readDNP(dnp)).toEqual(new Date(2022, 0, 1));
 	});
 
 	it("parses correctly into a Date array", () => {
 		const dnp = "January 1st, 2022";
-		expect(readDNP(dnp, { as_date: false })).toEqual([2022, 1, 1]);
+		expect(readDNP(dnp, { as_date: false })).toEqual([2022, 0, 1]);
 	});
 });
 
@@ -248,6 +248,7 @@ describe("Creating a dictionary", () => {
 
 	test("Bad inputs are detected", () => {
 		const arr = [{ some: "prop" }];
+		// @ts-expect-error Test checks for bad input handling
 		expect(() => makeDictionary(arr))
 			.toThrow("Could not add {\"some\":\"prop\"} to dictionary");
 	});

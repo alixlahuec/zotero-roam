@@ -2,8 +2,12 @@ import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeItems } from "../../src/api/utils";
+import { makeDictionary } from "../../src/utils";
 
-import { apiKeys, bibs, citoids, deletions, findBibliographyEntry, findBibEntry, findCollections, findItems, findTags, items, libraries, semantics, tags } from "Mocks";
+import { apiKeys, bibs, citoids, deletions, findBibliographyEntry, findBibEntry, findCollections, findItems, findTags, items, libraries, semantics, tags, Mocks } from "Mocks";
+
+import { ZoteroAPI } from "Types/externals";
+import { isFulfilled } from "Types/helpers";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -54,10 +58,10 @@ test("Extracting citekeys for Zotero items", () => {
 });
 
 describe("Comparing tag entries", () => {
-	const tag1 = { tag: "some_tag", meta: { numItems: 3, type: 0 } };
-	const tag2 = { tag: "some_tag", meta: { numItems: 2, type: 0 } };
-	const tag3 = { tag: "some_tag", meta: { numItems: 6, type: 1 } };
-	const tag4 = { tag: "other_tag", meta: { numItems: 4, type: 1 } };
+	const tag1 = { tag: "some_tag", meta: { numItems: 3, type: 0 } } as ZoteroAPI.Tag;
+	const tag2 = { tag: "some_tag", meta: { numItems: 2, type: 0 } } as ZoteroAPI.Tag;
+	const tag3 = { tag: "some_tag", meta: { numItems: 6, type: 1 } } as ZoteroAPI.Tag;
+	const tag4 = { tag: "other_tag", meta: { numItems: 4, type: 1 } } as ZoteroAPI.Tag;
 
 	const cases = [
 		[[tag1, tag2], true],
@@ -68,7 +72,7 @@ describe("Comparing tag entries", () => {
 		[[tag3, tag4], false]
 	];
 
-	test.each(cases)(
+	test.each(cases as [[ZoteroAPI.Tag, ZoteroAPI.Tag], boolean][])(
 		"Tag comparison %#",
 		(tags_to_compare, are_duplicates) => {
 			expect(areTagsDuplicate(...tags_to_compare)).toBe(are_duplicates);
@@ -76,10 +80,12 @@ describe("Comparing tag entries", () => {
 	);
 
 	test("Inputs with incorrect format are detected", () => {
+		// @ts-expect-error Test checks for bad input handling
 		expect(() => areTagsDuplicate(tag1, "some_text"))
 			.toThrow("Received bad input: \"some_text\", expected a Zotero tag");
-		
+
 		const tag_with_error = { tag: "some_tag", meta: { numItems: 4 } };
+		// @ts-expect-error Test checks for bad input handling
 		expect(() => areTagsDuplicate(tag1, tag_with_error))
 			.toThrow(`Received bad input: ${JSON.stringify(tag_with_error)}, expected the tag to have a type`);
 	});
@@ -103,7 +109,7 @@ describe("Building tag maps", () => {
 	});
 
 	test("New entries are added correctly", () => {
-		updateTagMap(tagMap, { tag: "a_new_tag", meta: { numItems: 2, type: 1 } });
+		updateTagMap(tagMap, { tag: "a_new_tag", meta: { numItems: 2, type: 1 } } as ZoteroAPI.Tag);
 		expect(tagMap.has("a_new_tag"))
 			.toBe(true);
 		expect(tagMap.get("a_new_tag"))
@@ -111,7 +117,7 @@ describe("Building tag maps", () => {
 	});
 
 	test("New entries are appended correctly - Object entries", () => {
-		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 1 } });
+		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 1 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("some_tag")).toBeInstanceOf(Array);
 		expect(tagMap.get("some_tag").length).toBe(2);
 		expect(tagMap.get("some_tag"))
@@ -122,12 +128,12 @@ describe("Building tag maps", () => {
 	});
 
 	test("New entries are appended correctly - Array entries", () => {
-		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 7, type: 2 } });
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 7, type: 2 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("other_tag").length).toBe(3);
 	});
 
 	test("Duplicates are prevented - Object entries", () => {
-		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 0 } });
+		updateTagMap(tagMap, { tag: "some_tag", meta: { numItems: 4, type: 0 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("some_tag"))
 			.toEqual({ tag: "some_tag", meta: { numItems: 4, type: 0 } });
 	});
@@ -135,34 +141,35 @@ describe("Building tag maps", () => {
 	test("Duplicates are prevented - Array entries", () => {
 		expect(tagMap.get("other_tag").length).toBe(2);
 
-		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 3, type: 0 } });
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 3, type: 0 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("other_tag").length).toBe(2);
 
-		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 11, type: 1 } });
+		updateTagMap(tagMap, { tag: "other_tag", meta: { numItems: 11, type: 1 } } as ZoteroAPI.Tag);
 		expect(tagMap.get("other_tag").length).toBe(2);
 	});
 
 	test("Badly constructed maps are detected", () => {
 		const map_with_error = new Map([
 			["some_tag", "some text"],
-			["other_tag", { tag: "other_tag", meta: { numItems: 3, type: 0 } }]
+			["other_tag", "other_text"]
 		]);
 
+		// @ts-expect-error Test checks for bad input handling
 		expect(() => updateTagMap(map_with_error, { tag: "some_tag", meta: { numItems: 8, type: 1 } }))
-			.toThrow("Map entry is of unexpected type String, expected Array or Object");
+			.toThrow("Map entry is of unexpected type string, expected Array or Object");
 	});
 });
 
 describe("Creating formatted tag lists", () => {
 	const cases = Object.entries(libraries);
 
-	function setExpectations(path, list){
+	function setExpectations(path: string, list: ReturnType<typeof makeDictionary>) {
 		const output = {};
 		Object.entries(list).map(([initial, tokens]) => {
 			output[initial] = tokens.map(token => ({
 				token,
 				roam: [],
-				zotero: findTags(path, token).reverse().sort((a,b) => a.tag < b.tag ? 1 : -1)
+				zotero: findTags(path, token).reverse().sort((a, b) => a.tag < b.tag ? 1 : -1)
 			}));
 		});
 		return output;
@@ -190,21 +197,21 @@ describe("Creating formatted tag lists", () => {
 
 test("Merging data updates", () => {
 	const itemsList = [
-		{ data: { key: "ABC" } },
-		{ data: { key: "DEF" } },
-		{ data: { key: "GHI" } }
+		{ data: { key: "ABC" }, key: "someCitekey" },
+		{ data: { key: "DEF" }, key: "DEF" },
+		{ data: { key: "GHI" }, key: "GHI" }
 	];
 
 	expect(matchWithCurrentData(
-		{ 
-			modified: [itemsList[1]], 
-			deleted: [] 
-		}, 
-		[itemsList[0]], 
+		{
+			modified: [itemsList[1]],
+			deleted: []
+		},
+		[itemsList[0]],
 		{ with_citekey: false }
 	))
 		.toEqual([itemsList[0], itemsList[1]]);
-    
+
 	expect(matchWithCurrentData(
 		{
 			modified: [itemsList[2]],
@@ -216,15 +223,15 @@ test("Merging data updates", () => {
 		.toEqual(itemsList);
 
 	expect(matchWithCurrentData(
-		{ 
-			modified: [], 
+		{
+			modified: [],
 			deleted: [itemsList[0].data.key]
-		}, 
-		[itemsList[0]], 
+		},
+		[itemsList[0]],
 		{ with_citekey: false }
 	))
 		.toEqual([]);
-    
+
 	expect(matchWithCurrentData(
 		{
 			modified: [itemsList[1]],
@@ -233,7 +240,7 @@ test("Merging data updates", () => {
 		itemsList,
 		{ with_citekey: false }
 	))
-		.toEqual(itemsList.slice(0,2));
+		.toEqual(itemsList.slice(0, 2));
 });
 
 test("Selecting and formatting Semantic DOIs", () => {
@@ -256,8 +263,8 @@ test("Selecting and formatting Semantic DOIs", () => {
 describe("Fetching mocked API Key permissions", () => {
 	const cases = Object.entries(apiKeys);
 	test.each(cases)(
-		"%# Fetching permissions for %s", 
-		async(_keyName, expectation) => {
+		"%# Fetching permissions for %s",
+		async (_keyName, expectation) => {
 			const permissions = await fetchPermissions(expectation.key);
 			expect(permissions).toEqual(expectation);
 		}
@@ -268,7 +275,7 @@ describe("Fetching mocked bibliography", () => {
 	const cases = Object.entries(bibs);
 	test.each(cases)(
 		"%# Fetching bibliography as bib for %s",
-		async(_bibName, entry) => {
+		async (_bibName, entry) => {
 			const path = getLibraryPath(entry.library);
 
 			const bibliography = await fetchBibliography(entry.key, { apikey: masterKey, path }, {});
@@ -284,13 +291,13 @@ describe("Fetching mocked bibliography entries", () => {
 
 	test.each(cases)(
 		"%# Fetching a bibliography entry from %s",
-		async(_libName, libraryDetails) => {
+		async (_libName, libraryDetails) => {
 			const { type, id, path } = libraryDetails;
 			const sample_item = findItems({ type, id, since: 0 })[0];
 
 			const res = await fetchBibEntries([sample_item.data.key], { apikey: masterKey, path });
 
-			const sample_bib = findBibEntry({ type, id, key: sample_item.data.key });
+			const sample_bib = findBibEntry({ type, id, key: sample_item.data.key })!;
 
 			expect(res).toBe(sample_bib.biblatex);
 		}
@@ -310,7 +317,7 @@ describe("Fetching mocked collections", () => {
 
 	test.each(cases)(
 		"%# Fetching collections for %s",
-		async(_libName, libraryDetails) => {
+		async (_libName, libraryDetails) => {
 			const { id, path, type, version } = libraryDetails;
 			const libraryObj = {
 				apikey: masterKey,
@@ -320,8 +327,8 @@ describe("Fetching mocked collections", () => {
 			const allCollections = findCollections(type, id, 0);
 
 			const sinceEver = await fetchCollections(
-				libraryObj, 
-				0, 
+				libraryObj,
+				0,
 				{ match: [] }
 			);
 			expect(sinceEver).toEqual({
@@ -330,8 +337,8 @@ describe("Fetching mocked collections", () => {
 			});
 
 			const sinceLatest = await fetchCollections(
-				libraryObj, 
-				version, 
+				libraryObj,
+				version,
 				{ match: sinceEver.data }
 			);
 			expect(sinceLatest).toEqual({
@@ -340,7 +347,7 @@ describe("Fetching mocked collections", () => {
 			});
 
 			// To cover fetchAdditionalData
-			const mockAdditional = await fetchAdditionalData(
+			const mockAdditional = await fetchAdditionalData<ZoteroAPI.Responses.Collections>(
 				{ apikey: masterKey, dataURI: `${path}/collections`, since: 0 },
 				allCollections.length + 100
 			);
@@ -354,7 +361,7 @@ describe("Fetching mocked deleted entities", () => {
 
 	test.each(cases)(
 		"%# Fetching entities deleted from %s",
-		async(_libName, libraryDetails) => {
+		async (_libName, libraryDetails) => {
 			const { path } = libraryDetails;
 			const deleted = await fetchDeleted({ apikey: masterKey, path }, 0);
 			expect(deleted).toEqual({
@@ -368,7 +375,7 @@ describe("Fetching mocked deleted entities", () => {
 
 	test.each(cases)(
 		"%# Checking that no entities are versioned over latest in %s",
-		async(_libName, libraryDetails) => {
+		async (_libName, libraryDetails) => {
 			const { path, version } = libraryDetails;
 			const deleted = await fetchDeleted({ apikey: masterKey, path }, version);
 			expect(deleted).toEqual({
@@ -387,13 +394,20 @@ describe("Fetching mocked items", () => {
 
 	test.each(cases)(
 		"%# Fetching items for %s",
-		async(_libName, libraryDetails) => {
+		async (_libName, libraryDetails) => {
 			const { type, id, path, version } = libraryDetails;
-			
+
 			const itemData = findItems({ type, id, since: 0 });
 
+			const library = {
+				id: `${id}`,
+				path,
+				type,
+				uri: `${path}/items`
+			};
+
 			const sinceEver = await fetchItems(
-				{ apikey: masterKey, dataURI: `${path}/items`, library: libraryDetails, since: 0 },
+				{ apikey: masterKey, dataURI: `${path}/items`, library, name: "", since: 0 },
 				{ match: [] },
 				queryClient
 			);
@@ -403,7 +417,7 @@ describe("Fetching mocked items", () => {
 			});
 
 			const sinceLatest = await fetchItems(
-				{ apikey: masterKey, dataURI: `${path}/items`, library: libraryDetails, since: version },
+				{ apikey: masterKey, dataURI: `${path}/items`, library, name: "", since: version },
 				{ match: itemData },
 				queryClient
 			);
@@ -420,17 +434,16 @@ describe("Updating mocked items", () => {
 
 	test.each(cases)(
 		"%# Updating an item from %s",
-		async(_libName, libraryDetails) => {
+		async (_libName, libraryDetails) => {
 			const { type, id, path } = libraryDetails;
 			const sample_item = findItems({ type, id, since: 0 })[0];
-			const sample_tags = [{ tag: "TEST_TAG", type: 0 }];
 
-			const res = await writeItems(
-				[{ key: sample_item.data.key, version: sample_item.version, tags: sample_tags }],
+			const res = await writeItems<Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">>(
+				[{ key: sample_item.data.key, version: sample_item.version, tags: [{ tag: "TEST_TAG", type: 0 }] }],
 				{ apikey: masterKey, path });
 
-			const data = res.map(rq => rq.value.data);
-            
+			const data = res.filter(isFulfilled).map(rq => rq.value.data);
+
 			expect(data).toEqual([{
 				failed: {},
 				unchanged: {},
@@ -442,17 +455,17 @@ describe("Updating mocked items", () => {
 						...sample_item,
 						data: {
 							...sample_item.data,
-							tags: sample_tags
+							tags: [{ tag: "TEST_TAG", type: 0 }]
 						}
 					}
 				}
 			}]);
 
-			const resWithFailure = await writeItems(
-				[{ key: sample_item.data.key, version: sample_item.version - 1, tags: sample_tags }],
+			const resWithFailure = await writeItems<Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">>(
+				[{ key: sample_item.data.key, version: sample_item.version - 1, tags: [{ tag: "TEST_TAG", type: 0 }] }],
 				{ apikey: masterKey, path });
 
-			const dataWithFailure = resWithFailure.map(rq => rq.value.data);
+			const dataWithFailure = resWithFailure.filter(isFulfilled).map(rq => rq.value.data);
 
 			expect(dataWithFailure).toEqual([{
 				failed: {
@@ -473,7 +486,7 @@ describe("Fetching mocked tags", () => {
 
 	test.each(cases)(
 		"%# Fetching tags for %s",
-		async(_libName, libraryDetails) => {
+		async (_libName, libraryDetails) => {
 			const { path, version } = libraryDetails;
 			const tagData = await fetchTags({ apikey: masterKey, path });
 			expect(tagData).toEqual({
@@ -489,12 +502,12 @@ describe("Deleting mocked tags", () => {
 
 	test.each(cases)(
 		"%# Deleting tags in %s",
-		async(_libName, libraryDetails) => {
+		async (_libName, libraryDetails) => {
 			const { path, version } = libraryDetails;
-            
+
 			const deleteExpired = await deleteTags(["systems"], { apikey: masterKey, path }, version - 10)
 				.catch((error) => {
-					if(error.response){
+					if (error.response) {
 						return error.response;
 					}
 				});
@@ -507,19 +520,24 @@ describe("Deleting mocked tags", () => {
 });
 
 describe("Fetching mocked Citoid data", () => {
-	const { success_cases, error_cases } = Object.entries(citoids).reduce((obj, entry) => {
-		const { status = 200 } = entry[1];
-		if(status == 200){
-			obj.success_cases.push(entry);
-		} else {
-			obj.error_cases.push(entry);
-		}
-		return obj;
-	}, { success_cases: [], error_cases: [] });
+	function isFailure(response: Mocks.Responses.Citoid): response is Mocks.Responses.CitoidError {
+		return (response as Mocks.Responses.CitoidError).status !== undefined;
+	}
+
+	const { success_cases, error_cases } = Object.entries(citoids)
+		.reduce<{ success_cases: [string, Mocks.Responses.CitoidSuccess][], error_cases: [string, Mocks.Responses.CitoidError][] }>((obj, entry) => {
+			const [identifier, res] = entry;
+			if (isFailure(res)) {
+				obj.error_cases.push([identifier, res]);
+			} else {
+				obj.success_cases.push([identifier, res]);
+			}
+			return obj;
+		}, { success_cases: [], error_cases: [] });
 
 	test.each(success_cases)(
 		"%# Successfully mocking Citoid data for %s",
-		async(identifier, itemData) => {
+		async (identifier, itemData) => {
 			const { status, ...output } = itemData;
 			const citoid = await fetchCitoid(identifier);
 			expect(citoid).toEqual({
@@ -531,10 +549,10 @@ describe("Fetching mocked Citoid data", () => {
 
 	test.each(error_cases)(
 		"%# Successfully mocking Citoid error for %s",
-		async(identifier, itemData) => {
+		async (identifier, itemData) => {
 			const res = await fetchCitoid(identifier)
 				.catch((error) => {
-					if(error.response){
+					if (error.response) {
 						return error.response;
 					}
 				});
@@ -549,9 +567,9 @@ describe("Fetching mocked Semantic data", () => {
 	const cases = Object.entries(semantics);
 	test.each(cases)(
 		"%# Successfully mocking Semantic data for %s",
-		async(doi, semanticData) => {
+		async (doi, semanticData) => {
 			const { citations, references } = semanticData;
-			
+
 			const res = await fetchSemantic(doi);
 
 			expect(res).toEqual({

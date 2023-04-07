@@ -54,6 +54,7 @@ export interface ZSimplifiedAnnotation {
 	raw: ZItemAnnotation,
 	sortIndex: number[],
 	tags: string[],
+	tags_string: string,
 	text: string | null,
 	type: "highlight" | "image"
 }
@@ -81,6 +82,11 @@ export type ZItemNote = ZoteroAPI.ItemNote & ZItemBase;
 export type ZItemTop = ZoteroAPI.ItemTop & ZItemBase;
 export type ZItem = ZItemAnnotation | ZItemAttachment | ZItemNote | ZItemTop;
 
+export const isZAnnotation = (item: ZItem): item is ZItemAnnotation => item.data.itemType === "annotation";
+export const isZNote = (item: ZItem): item is ZItemNote => item.data.itemType === "note";
+export const isZNoteOrAnnotation = (item: ZItem): item is ZItemAnnotation | ZItemNote => isZAnnotation(item) || isZNote(item);
+export const isZAttachment = (item: ZItem): item is ZItemAttachment => item.data.itemType === "attachment";
+
 export interface ZLibraryContents {
 	items: ZItemTop[],
 	notes: (ZItemAnnotation | ZItemNote)[],
@@ -92,10 +98,25 @@ export interface ZLibrary {
 	path: string
 }
 
+export interface ZEnrichedCollection extends ZoteroAPI.Collection {
+	depth: number
+}
+
 type RoamPage = { title: string, uid: string }
-type ZTagEntry = {
+
+export type ZTagEntry = {
 	token: string,
 	roam: RoamPage[],
 	zotero: ZoteroAPI.Tag[]
 }
 export type ZTagList = Record<string, ZTagEntry[]>;
+
+export type ZTagMap = Map<string, (ZoteroAPI.Tag | ZoteroAPI.Tag[])>
+
+export type ZTagDictionary = Record<string, string[]>;
+
+export type ZLinkType = "local" | "web";
+export type ZLinkOptions = {
+	format: "markdown" | "target",
+	text: string
+};
