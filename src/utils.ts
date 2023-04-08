@@ -535,7 +535,7 @@ function formatItemNotes(notes: ZItemNote[], separator = "\n"): string[] {
 		.filter(b => b.trim());
 }
 
-type ZItemReferenceFormat = "inline" | "tag" | "pageref" | "citation" | "popover" | "zettlr" | "citekey";
+type ZItemReferenceFormat = "inline" | "tag" | "pageref" | "citation" | "popover" | "zettlr" | "citekey" | "key";
 
 /** Converts an item into a given string format
  * @param item - The item to convert 
@@ -543,7 +543,7 @@ type ZItemReferenceFormat = "inline" | "tag" | "pageref" | "citation" | "popover
  * @param config - Additional parameters 
  * @returns The formatted reference
  */
-function formatItemReference(item: ZItemTop, format: ZItemReferenceFormat, { accent_class = "zr-accent-1" }: { accent_class?: string } = {}){
+function formatItemReference(item: ZItemTop, format: ZItemReferenceFormat | string | any, { accent_class = "zr-accent-1" }: { accent_class?: string } = {}){
 	const key = item.key;
 	const title = item.data.title;
 	const authors = item.meta.creatorSummary || "";

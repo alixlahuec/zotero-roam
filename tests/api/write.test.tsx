@@ -1,11 +1,14 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react-hooks";
 
+import { mock } from "jest-mock-extended";
 import * as apiUtils from "../../src/api/utils";
 import { fetchItems, fetchTags } from "../../src/api/utils";
 import { useDeleteTags, useImportCitoids, useModifyTags } from "../../src/api/write";
 
 import { apiKeys, citoids, goodIdentifier, libraries } from "Mocks";
+import { DataRequest } from "Types/extension";
+import { isFulfilled } from "Types/helpers";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -25,7 +28,7 @@ const queryClient = new QueryClient({
 });
 
 queryClient.invalidateQueries = jest.fn();
-document.dispatchEvent = jest.fn();
+const dispatchEventSpy = jest.spyOn(document, "dispatchEvent");
 
 // https://tkdodo.eu/blog/testing-react-query
 const wrapper = ({ children }) => {
@@ -82,9 +85,7 @@ describe("Mutation hooks for the Zotero API", () => {
 				{ throwOnError: true }
 			);
 
-			console.log(result.current.data);
-
-			expect(document.dispatchEvent.mock.calls[0][0].detail).toEqual({
+			expect((dispatchEventSpy.mock.calls[0][0] as CustomEvent).detail).toEqual({
 				args: { tags: ["systems"] },
 				error: null,
 				library: userLibrary.path,
@@ -142,7 +143,7 @@ describe("Mutation hooks for the Zotero API", () => {
 				{ refetchType: "all" }
 			);
 
-			expect(document.dispatchEvent.mock.calls[0][0].detail).toEqual({
+			expect((dispatchEventSpy.mock.calls[0][0] as CustomEvent).detail).toEqual({
 				args: {
 					collections: [],
 					items: [citoids[goodIdentifier]],
@@ -150,7 +151,7 @@ describe("Mutation hooks for the Zotero API", () => {
 				},
 				data: {
 					failed: [],
-					successful: result.current.data.map(res => res.value.data)
+					successful: result.current.data?.filter(isFulfilled).map(res => res.value.data)
 				},
 				error: null,
 				library: userLibrary.path,
@@ -161,10 +162,11 @@ describe("Mutation hooks for the Zotero API", () => {
 
 	describe("useModifyTags", () => {
 		const writeItemsSpy = jest.spyOn(apiUtils, "writeItems");
+		const sample_req = mock<DataRequest>({ apikey: masterKey, dataURI: `${groupLibrary.path}/items`, library: { path: groupLibrary.path } });
 
 		beforeEach(() => {
 			return fetchItems(
-				{ apikey: masterKey, dataURI: `${groupLibrary.path}/items`, library: groupLibrary, since: 0 },
+				{ ...sample_req, since: 0 },
 				{ match: [] },
 				queryClient
 			).then((mockData) => queryClient.setQueryData(["items", groupLibrary.path, {}], () => mockData));
@@ -207,14 +209,14 @@ describe("Mutation hooks for the Zotero API", () => {
 				{ refetchType: "all" }
 			);
 
-			expect(document.dispatchEvent.mock.calls[0][0].detail).toEqual({
+			expect((dispatchEventSpy.mock.calls[0][0] as CustomEvent).detail).toEqual({
 				args: {
 					into: "HOUSING",
 					tags: ["housing"]
 				},
 				data: {
 					failed: [],
-					successful: result.current.data.map(res => res.value.data)
+					successful: result.current.data?.filter(isFulfilled).map(res => res.value.data)
 				},
 				error: null,
 				library: groupLibrary.path,

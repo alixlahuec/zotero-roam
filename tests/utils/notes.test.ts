@@ -1,5 +1,7 @@
+import { mock } from "jest-mock-extended";
 import { formatItemNotes, formatZoteroNotes, simplifyZoteroNotes, splitNotes } from "../../src/utils";
 import { libraries, sampleNote } from "Mocks";
+import { ZItemNote } from "Types/transforms";
 
 
 const { userLibrary } = libraries;
@@ -22,17 +24,19 @@ test("Simplifies notes", () => {
 });
 
 describe("Splitting HTML notes", () => {
-	const notes = [
+	const notes = ([
 		{ data: { note: "<div>Some text</div>\n<div>Some other text</div>" } },
 		{ data: { note: "<p>Some paragraph</p><ul><li>Some element</li></ul><p>Another paragraph</p>" } }
-	];
+	] as const).map(it => mock<ZItemNote>(it));
 
 	test("No separator provided - function throws", () => {
+		// @ts-expect-error "Test expects bad input"
 		expect(() => splitNotes([notes[0]]))
 			.toThrow();
 	});
 
 	test("Incorrect type of separator provided - function throws", () => {
+		// @ts-expect-error "Test expects bad input"
 		expect(() => splitNotes([notes[0]], ["abc"]))
 			.toThrow("Input is of type object, expected String");
 	});
@@ -68,14 +72,14 @@ describe("Splitting HTML notes", () => {
 });
 
 describe("Parsing HTML notes", () => {
-	const notes = [
+	const notes = ([
 		{ data: { note: "<h1>Note Title</h1><div class=\"div-class\"><span>Lorem ipsum</span></div>" } },
 		{ data: { note: "Click <a href=\"https://example.com\">here</a> to open a link" } },
 		{ data: { note: "See <a class=\"link-class\" href=\"https://example.com\">there</a> for a link with attributes" } },
 		{ data: { note: "\n\nSome text\n" } },
 		{ data: { note: "<ul><li>Some element</li></ul>\n\n<div>A paragraph</div>" } },
 		{ data: { note: "<p>Some text</p>\n<ul>\n<li>\nSome element\n</li>\n<li>\nAnother element\n</li>\n<li>\nA third element\n</li>\n</ul>\n<p>Some content</p>\n" } }
-	];	
+	] as const).map(it => mock<ZItemNote>(it));
 
 	it("cleans markup from rich tags", () => {
 		expect(formatZoteroNotes([notes[0]]))

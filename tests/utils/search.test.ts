@@ -3,6 +3,7 @@ import { searchEngine } from "../../src/utils";
 
 describe("Search engine inputs", () => {
 	it("rejects invalid search inputs", () => {
+		// @ts-expect-error "Test expects bad input"
 		expect(() => searchEngine("query", { text: "" }))
 			.toThrow("Unexpected input type Object : target should be a String or an Array");
 	});

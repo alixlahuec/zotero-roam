@@ -18,7 +18,7 @@ describe("Extracts annotation indices from string", () => {
 	const indices = [
 		["00001|00002|00003", [1, 2, 3]],
 		["00045|00056|00067", [45, 56, 67]]
-	];
+	] as const;
 
 	test.each(indices)(
 		"%# - %s",

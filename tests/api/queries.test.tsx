@@ -1,10 +1,13 @@
+import { ReactChildren } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook } from "@testing-library/react-hooks";
+import { WrapperComponent, renderHook } from "@testing-library/react-hooks";
 
+import { mock } from "jest-mock-extended";
 import * as apiUtils from "../../src/api/utils";
 import { wrappedFetchItems, useQuery_Citoid, useQuery_Collections, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
 
 import { apiKeys, badIdentifier, goodIdentifier, findCollections, findItems, items, libraries, semantics, tags } from "Mocks";
+import { DataRequest } from "Types/extension";
 
 
 const { makeTagList, parseSemanticDOIs } = apiUtils;
@@ -19,7 +22,7 @@ const {
 } = libraries;
 
 // https://tkdodo.eu/blog/testing-react-query
-const wrapper = ({ children }) => {
+const wrapper: WrapperComponent<{ children: ReactChildren }> = ({ children }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: {
@@ -61,7 +64,7 @@ describe("Hook for citoid queries", () => {
 
 	test.each(cases)(
 		"%s",
-		async(_id, urls, options, expectation) => {
+		async(_id, urls: string[], options: Record<string, any>, expectation) => {
 			const { result, waitFor } = renderHook(() => useQuery_Citoid(urls, options), { wrapper });
 
 			await waitFor(
@@ -119,11 +122,10 @@ describe("Hook for collections queries", () => {
 
 describe("Hook for items queries", () => {
 	it("returns fetch results", async() => {
-		const reqs = Object.values(libraries).map((lib) => ({
+		const reqs = Object.values(libraries).map((lib) => mock<DataRequest>({
 			apikey: masterKey,
 			dataURI: `${lib.path}/items`,
-			library: lib.path,
-			name: ""
+			library: { path: lib.path },
 		}));
 
 		const { result, waitFor } = renderHook(() => useQuery_Items(reqs, {}), { wrapper });
@@ -196,14 +198,14 @@ describe("Hook for writeable libraries", () => {
 });
 
 describe("Wrapper for fetching items", () => {
-	let client = null;
-	const sample_req = {
+	let client: QueryClient;
+	const sample_req = mock<DataRequest>({
 		library: {
 			path: userPath
 		},
 		apikey: masterKey,
 		dataURI: userPath + "/items"
-	};
+	});
 	const { apikey, library, ...identifiers } = sample_req;
 	const fetchItemsSpy = jest.spyOn(apiUtils, "fetchItems");
 

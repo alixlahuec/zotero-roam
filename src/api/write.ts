@@ -4,6 +4,7 @@ import { emitCustomEvent } from "../events";
 
 import { QueryDataItems, QueryDataTags, ZLibrary } from "Types/transforms";
 import { CitoidAPI, ZoteroAPI } from "Types/externals";
+import { isFulfilled } from "Types/helpers";
 
 
 type ImportCitoidsArgs = {
@@ -93,7 +94,7 @@ const useImportCitoids = () => {
 
 			const outcome = data.reduce <{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }> ((obj, res) => {
 				/* istanbul ignore else */
-				if (res.status == "fulfilled") {
+				if (isFulfilled(res)) {
 					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
@@ -165,7 +166,7 @@ const useModifyTags = () => {
 
 			const outcome = data.reduce<{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }>((obj, res) => {
 				/* istanbul ignore else */
-				if (res.status == "fulfilled") {
+				if (isFulfilled(res)) {
 					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
