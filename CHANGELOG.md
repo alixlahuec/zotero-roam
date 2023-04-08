@@ -1,6 +1,12 @@
 ## Changelog
 
-### [0.7.14](https://github.com/alixlahuec/zotero-roam/compare/0.7.13...0.7.14) - 
+### [0.7.15](https://github.com/alixlahuec/zotero-roam/compare/0.7.14...0.7.15) - 
+
+#### Bug Fixes
+
+- \(deps): update dependency idb to ^6.1.5 ([`#253`](https://github.com/alixlahuec/zotero-roam/pull/253))
+
+### [0.7.14](https://github.com/alixlahuec/zotero-roam/compare/0.7.13...0.7.14) -  2023-04-08 
 
 ### [0.7.13](https://github.com/alixlahuec/zotero-roam/compare/0.7.12...0.7.13) -  2023-03-22 
 
