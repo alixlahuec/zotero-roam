@@ -26,15 +26,15 @@ test("Categorizes Zotero items", () => {
 	expect(categorizeLibraryItems(testItems))
 		.toEqual({
 			items: [
-				{ data: { itemType: "journalArticle" } },
-				{ data: { itemType: "podcast" } }
+				testItems[0],
+				testItems[1]
 			],
 			notes: [
-				{ data: { itemType: "note" } },
-				{ data: { itemType: "annotation" } }
+				testItems[2],
+				testItems[3]
 			],
 			pdfs: [
-				{ data: { itemType: "attachment", contentType: "application/pdf" } }
+				testItems[4]
 			]
 		});
 });
