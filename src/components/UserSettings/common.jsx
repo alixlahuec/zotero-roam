@@ -4,8 +4,6 @@ import { Children, cloneElement, isValidElement, useCallback, useMemo } from "re
 import { Button, Checkbox, Classes, Code, ControlGroup, H4, H5, Icon, InputGroup, Menu, MenuItem, NumericInput, Switch, TextArea } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 
-import { InputMultiSelect, TagsSelector } from "Components/Inputs";
-
 import { useBool } from "../../hooks";
 import { CustomClasses } from "../../constants";
 
@@ -118,18 +116,6 @@ Definition.propTypes = {
 	text: string
 };
 
-const MultiInput = ({ options, setValue, value, ...props }) => {
-	return <InputMultiSelect className={CustomClasses.TEXT_SMALL} options={options} setValue={setValue} value={value} {...props} />;
-};
-MultiInput.propTypes = {
-	options: arrayOf(shape({
-		label: string,
-		value: string
-	})),
-	setValue: func,
-	value: arrayOf(string)
-};
-
 const NumericSelect = ({ description = null, label, setValue, title = null, value, ...extraProps }) => {
 	const handler = useCallback((num, _numAsString) => setValue(num), [setValue]);
 
@@ -147,26 +133,6 @@ NumericSelect.propTypes = {
 	setValue: func,
 	title: node,
 	value: number
-};
-
-const RoamTagsInput = ({ description = null, onChange, title = null, value }) => {
-	const selectTag = useCallback((val) => {
-		onChange(Array.from(new Set([...value, val])));
-	}, [onChange, value]);
-
-	const removeTag = useCallback((val) => {
-		onChange(value.filter(v => v != val));
-	}, [onChange, value]);
-
-	return <RowCol title={title} description={description} >
-		<TagsSelector className={CustomClasses.TEXT_SMALL} onRemove={removeTag} onSelect={selectTag} selectedTags={value} />
-	</RowCol>;
-};
-RoamTagsInput.propTypes = {
-	description: node,
-	onChange: func,
-	title: string,
-	value: arrayOf(string)
 };
 
 const BetterSelect = ({ buttonProps = {}, menuProps, onSelect, options, popoverTargetProps, selectedValue, ...extraProps }) => {
@@ -395,9 +361,7 @@ Toggle.propTypes = {
 
 export {
 	Definition,
-	MultiInput,
 	NumericSelect,
-	RoamTagsInput,
 	RowCol,
 	RowGroup,
 	RowGroupOption,

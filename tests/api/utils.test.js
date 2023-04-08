@@ -2,15 +2,8 @@ import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeItems } from "../../src/api/utils";
-import { bibs, findBibliographyEntry } from "Mocks/zotero/bib";
-import { findBibEntry, findItems, items } from "Mocks/zotero/items";
-import { findTags, tags } from "Mocks/zotero/tags";
-import { apiKeys } from "Mocks/zotero/keys";
-import { citoids } from "Mocks/citoid";
-import { deletions } from "Mocks/zotero/deleted";
-import { findCollections } from "Mocks/zotero/collections";
-import { libraries } from "Mocks/zotero/libraries";
-import { semantics } from "Mocks/semantic-scholar";
+
+import { apiKeys, bibs, citoids, deletions, findBibliographyEntry, findBibEntry, findCollections, findItems, findTags, items, libraries, semantics, tags } from "Mocks";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -430,9 +423,10 @@ describe("Updating mocked items", () => {
 		async(_libName, libraryDetails) => {
 			const { type, id, path } = libraryDetails;
 			const sample_item = findItems({ type, id, since: 0 })[0];
+			const sample_tags = [{ tag: "TEST_TAG", type: 0 }];
 
 			const res = await writeItems(
-				[{ key: sample_item.data.key, version: sample_item.version, tags: [{ tag: "TEST_TAG", type: 0 }] }],
+				[{ key: sample_item.data.key, version: sample_item.version, tags: sample_tags }],
 				{ apikey: masterKey, path });
 
 			const data = res.map(rq => rq.value.data);
@@ -447,14 +441,15 @@ describe("Updating mocked items", () => {
 					0: {
 						...sample_item,
 						data: {
-							tags: [{ tag: "TEST_TAG", type: 0 }]
+							...sample_item.data,
+							tags: sample_tags
 						}
 					}
 				}
 			}]);
 
 			const resWithFailure = await writeItems(
-				[{ key: sample_item.data.key, version: sample_item.version - 1, tags: [{ tag: "TEST_TAG", type: 0 }] }],
+				[{ key: sample_item.data.key, version: sample_item.version - 1, tags: sample_tags }],
 				{ apikey: masterKey, path });
 
 			const dataWithFailure = resWithFailure.map(rq => rq.value.data);
@@ -464,7 +459,7 @@ describe("Updating mocked items", () => {
 					0: sample_item.data.key
 				},
 				unchanged: {
-					0: sample_item
+					0: sample_item.data.key
 				},
 				success: {},
 				successful: {}
@@ -537,15 +532,14 @@ describe("Fetching mocked Citoid data", () => {
 	test.each(error_cases)(
 		"%# Successfully mocking Citoid error for %s",
 		async(identifier, itemData) => {
-			const { status, ...output } = itemData;
 			const res = await fetchCitoid(identifier)
 				.catch((error) => {
 					if(error.response){
 						return error.response;
 					}
 				});
-			expect(res.status).toBe(status);
-			expect(res.data).toEqual([output]);
+			expect(res.status).toBe(itemData.status);
+			expect(res.data).toEqual([itemData]);
 		}
 	);
     

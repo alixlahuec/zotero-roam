@@ -5,9 +5,7 @@ import * as apiUtils from "../../src/api/utils";
 import { fetchItems, fetchTags } from "../../src/api/utils";
 import { useDeleteTags, useImportCitoids, useModifyTags } from "../../src/api/write";
 
-import { apiKeys } from "Mocks/zotero/keys";
-import { libraries } from "Mocks/zotero/libraries";
-import { citoids, goodIdentifier } from "Mocks/citoid";
+import { apiKeys, citoids, goodIdentifier, libraries } from "Mocks";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -84,11 +82,13 @@ describe("Mutation hooks for the Zotero API", () => {
 				{ throwOnError: true }
 			);
 
+			console.log(result.current.data);
+
 			expect(document.dispatchEvent.mock.calls[0][0].detail).toEqual({
-				data: result.current.data,
+				args: { tags: ["systems"] },
 				error: null,
 				library: userLibrary.path,
-				tags: ["systems"]
+				_type: "tags-deleted"
 			});
 		});
 	});
@@ -150,10 +150,11 @@ describe("Mutation hooks for the Zotero API", () => {
 				},
 				data: {
 					failed: [],
-					successful: result.current.data.map(res => res.value)
+					successful: result.current.data.map(res => res.value.data)
 				},
 				error: null,
-				library: userLibrary.path
+				library: userLibrary.path,
+				_type: "write"
 			});
 		});
 	});
@@ -213,10 +214,11 @@ describe("Mutation hooks for the Zotero API", () => {
 				},
 				data: {
 					failed: [],
-					successful: result.current.data.map(res => res.value)
+					successful: result.current.data.map(res => res.value.data)
 				},
 				error: null,
-				library: groupLibrary.path
+				library: groupLibrary.path,
+				_type: "tags-modified"
 			});
 		});
 	});

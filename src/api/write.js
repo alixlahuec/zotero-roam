@@ -28,11 +28,11 @@ const useDeleteTags = () => {
 				});
 			}
 
-			emitCustomEvent("tags-deleted", {
-				data,
+			emitCustomEvent({
+				args: { tags },
 				error,
 				library: path,
-				tags
+				_type: "tags-deleted"
 			});
 		}
 	});
@@ -71,7 +71,7 @@ const useImportCitoids = () => {
 			const outcome = data.reduce((obj, res) => {
 				/* istanbul ignore else */
 				if(res.status == "fulfilled"){
-					obj.successful.push(res.value);
+					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
 				}
@@ -86,7 +86,7 @@ const useImportCitoids = () => {
 				});
 			}
 
-			emitCustomEvent("write", {
+			emitCustomEvent({
 				args: {
 					collections,
 					items,
@@ -95,6 +95,7 @@ const useImportCitoids = () => {
 				data: outcome,
 				error,
 				library: path,
+				_type: "write"
 			});
 		}
 	});
@@ -142,7 +143,7 @@ const useModifyTags = () => {
 			const outcome = data.reduce((obj, res) => {
 				/* istanbul ignore else */
 				if(res.status == "fulfilled"){
-					obj.successful.push(res.value);
+					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
 				}
@@ -158,14 +159,15 @@ const useModifyTags = () => {
 				});
 			}
 
-			emitCustomEvent("tags-modified", {
+			emitCustomEvent({
 				args: {
 					into,
 					tags
 				},
 				data: outcome,
 				error,
-				library: path
+				library: path,
+				_type: "tags-modified"
 			});
 		}
 	});

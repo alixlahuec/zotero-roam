@@ -33,7 +33,7 @@ module.exports = merge(baseConfig, {
 	resolve: {
 		alias: {
 			"Mocks": path.resolve("mocks"),
-			"Roam": path.resolve("mocks", "roam.js"),
+			"Roam": path.resolve("mocks", "roam.ts"),
 			"Components": path.resolve("src", "components"),
 			"Types": path.resolve("src", "types")
 		},

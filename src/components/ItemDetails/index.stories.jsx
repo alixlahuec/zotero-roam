@@ -3,7 +3,7 @@ import { userEvent, waitFor, within } from "@storybook/testing-library";
 import ItemDetails from ".";
 
 import { cleanLibraryItem } from "../../utils";
-import { items } from "Mocks/zotero/items";
+import { items } from "Mocks";
 
 
 const sampleShortcuts = {

@@ -1,6 +1,6 @@
 import { cleanLibraryItem } from "../../utils";
 import { formatItemReferenceWithDefault } from "./utils";
-import { items } from "Mocks/zotero/items";
+import { items } from "Mocks";
 
 
 describe("Item reference formatting - with preset", () => {

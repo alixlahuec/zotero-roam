@@ -1,7 +1,7 @@
 import { ListWrapper } from "Components/DataList";
 import LogEntry from ".";
 
-import { ZoteroRoamLog } from "../../../../src/extension";
+import { ZoteroRoamLog } from "../../../extension";
 
 
 export default {

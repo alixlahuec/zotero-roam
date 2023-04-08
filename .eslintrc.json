@@ -162,7 +162,8 @@
 		"@typescript-eslint/no-var-requires": "off",
 		"@typescript-eslint/no-empty-function": "off",
 		"@typescript-eslint/no-namespace": "off",
-		"@typescript-eslint/no-explicit-any": "off" // TODO: re-enable later in TS migration
+		"@typescript-eslint/no-explicit-any": "off", // TODO: re-enable later in TS migration
+		"@typescript-eslint/no-non-null-assertion": "off"
     },
     "settings": {
         "react": {
@@ -178,7 +179,7 @@
             "alias": {
 				"map": [
 					["Mocks", "./mocks"],
-					["Roam", "./src/roam.js"],
+					["Roam", "./src/roam.ts"],
 					["Components", "./src/components"],
 					["Types", "./src/types"]
 				],

@@ -3,8 +3,7 @@ import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import WebImportPanel from "./WebImportPanel";
 
-import { badIdentifier, citoids, goodIdentifier } from "Mocks/citoid";
-import { libraries } from "Mocks/zotero/libraries";
+import { badIdentifier, citoids, goodIdentifier, libraries } from "Mocks";
 
 
 const { userLibrary } = libraries;
@@ -88,12 +87,22 @@ WithInteractions.play = async({ args, canvasElement }) => {
 				tags: []
 			},
 			data: {
-				successful: expect.arrayContaining([
-					expect.objectContaining({ status: 200 })
-				]),
+				successful: [{
+					failed: {},
+					success: {
+						0: expect.stringContaining("")
+					},
+					successful: {
+						0: expect.objectContaining({
+							data: expect.objectContaining(items[0])
+						})
+					},
+					unchanged: {}
+				}],
 				failed: []
 			},
 			error: null,
-			library: userLibrary.path
+			library: userLibrary.path,
+			_type: "write"
 		});
 };

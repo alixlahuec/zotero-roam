@@ -1,13 +1,11 @@
 import { useEffect } from "react";
-
 import { useQueryClient } from "@tanstack/react-query";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import ActionsMenu from "./ActionsMenu";
 
-import { apiKeys } from "Mocks/zotero/keys";
-import { libraries } from "Mocks/zotero/libraries";
+import { apiKeys, libraries } from "Mocks";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -65,10 +63,12 @@ Default.play = async ({ canvasElement }) => {
 
 	await expect(document.dispatchEvent).toHaveBeenCalled();
 	await expect(document.dispatchEvent.mock.calls[0][0].detail)
-		.toEqual(expect.objectContaining({
-			data: expect.objectContaining({ status: 204 }),
+		.toEqual({
+			args: {
+				tags: ["history", "history", "HISTORY", "History"]
+			},
 			error: null,
 			library: userLibrary.path,
-			tags: ["history", "history", "HISTORY", "History"]
-		}));
+			_type: "tags-deleted"
+		});
 };

@@ -1,44 +1,13 @@
-import { func as funcType, node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
-import { Definition, RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect } from "../common";
-
-import * as customPropTypes from "../../../propTypes";
+import { useMemo } from "react";
+import { Definition, RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect , SettingsManager } from "Components/UserSettings";
 
 
-const AnnotationsSettings = createContext({});
-
-const AnnotationsProvider = ({ children, init, updater }) => {
-	const [annotations, _setAnnotations] = useState(init);
-
-	const setAnnotations = useCallback((updateFn) => {
-		_setAnnotations((prevState) => {
-			const update = updateFn(prevState);
-			updater(update);
-			window?.zoteroRoam?.updateSetting?.("annotations", update);
-			return update;
-		});
-	}, [updater]);
-
-	const contextValue = useMemo(() => [annotations, setAnnotations], [annotations, setAnnotations]);
-
-	return (
-		<AnnotationsSettings.Provider value={contextValue}>
-			{children}
-		</AnnotationsSettings.Provider>
-	);
-};
-AnnotationsProvider.propTypes = {
-	children: node,
-	init: customPropTypes.annotationsSettingsType,
-	updater: funcType
-};
-
-const useAnnotationsSettings = () => {
-	const context = useContext(AnnotationsSettings);
-
-	return context;
-};
+const { Provider: AnnotationsProvider, useSettings: useAnnotationsSettings } = new SettingsManager({
+	/* istanbul ignore next */
+	afterUpdate: (_prevState, update) => {
+		window?.zoteroRoam?.updateSetting?.("annotations", update);
+	}
+});
 
 const GROUP_BY_OPTIONS = [
 	{ label: "Group by date added", value: "dateAdded" },

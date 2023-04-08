@@ -1,17 +1,10 @@
 /* istanbul ignore file */
 import { QueryClient } from "@tanstack/react-query";
 
-import { sampleAnnot, sampleImageAnnot } from "./mocks/zotero/annotations";
-import { apiKeys } from "./mocks/zotero/keys";
-import { findCollections } from "./mocks/zotero/collections";
-import { findItems } from "./mocks/zotero/items";
-import { libraries } from "./mocks/zotero/libraries";
-import { sampleNote } from "./mocks/zotero/notes";
-import { samplePDF } from "./mocks/zotero/pdfs";
-
 import ZoteroRoam from "./src/extension";
 import { initialize } from "./src/setup";
 import { simplifyZoteroAnnotations } from "./src/utils";
+import { apiKeys, findCollections, findItems, libraries, sampleAnnot, sampleImageAnnot, sampleNote, samplePDF } from "Mocks";
 
 
 const { keyWithFullAccess: masterKey } = apiKeys;
@@ -24,13 +17,14 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 	constructor({ annotations = {}, metadata = {} }){
 		const INSTALL_CONTEXT = "sandbox";
 
-		const { requests, settings } = initialize(INSTALL_CONTEXT, {
+		const { requests, settings } = initialize({
+			context: INSTALL_CONTEXT,
 			manualSettings: {
 				dataRequests: [
 					{ 
 						apikey: masterKey,
 						library: {
-							type: userLibrary.type + "s",
+							type: userLibrary.type,
 							id: userLibrary.id
 						}
 					}

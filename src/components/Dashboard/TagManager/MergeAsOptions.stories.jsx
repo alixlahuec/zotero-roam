@@ -1,12 +1,10 @@
 import { Menu } from "@blueprintjs/core";
-
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import MergeAsOptions from "./MergeAsOptions";
 
-import { apiKeys } from "Mocks/zotero/keys";
-import { libraries } from "Mocks/zotero/libraries";
+import { apiKeys, libraries } from "Mocks";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -64,6 +62,7 @@ Default.play = async({ args, canvasElement }) => {
 				failed: []
 			},
 			error: null,
-			library: userLibrary.path
+			library: userLibrary.path,
+			_type: "tags-modified"
 		});
 };
