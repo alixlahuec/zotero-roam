@@ -1,12 +1,13 @@
 import { getInitialedPages } from "Roam";
 import { searchEngine } from "../../../utils";
+import { ZTagEntry, ZTagList, ZTagStats, ZTagSuggestion } from "Types/transforms";
 
 
 /** Compiles statistics about tags (automatic vs manual, in Roam vs not in Roam, totals)
- * @param {TagEntry[]} tagListData - The list of matched tags, as returned by {@link matchTagData}
+ * @param tagListData - The list of matched tags, as returned by {@link matchTagData}
  * @returns 
  */
-function getTagStats(tagListData){
+function getTagStats(tagListData: ZTagEntry[]): ZTagStats{
 	return tagListData.map(t => {
 		return {
 			nTags: t.zotero.length,
@@ -22,32 +23,22 @@ function getTagStats(tagListData){
 	{ nTags: 0, nAuto: 0, nRoam: 0, nTotal: tagListData.length });
 }
 
-/** Compiles the usage count for a given tag. This returns the number of Zotero items which use the tag, with an option to add +1 if the tag has a Roam page.
- * @param {TagEntry} entry - The targeted tag
- * @param {{count_roam: Boolean}} config - Additional config 
- * @returns {Integer}
- */
-function getTagUsage(entry, { count_roam = false } = {}){
+/** Compiles the usage count for a given tag. This returns the number of Zotero items which use the tag, with an option to add +1 if the tag has a Roam page. */
+function getTagUsage(entry: ZTagEntry, { count_roam = false }: { count_roam?: boolean } = {}): number{
 	return entry.zotero.reduce((count, tag) => {
 		return count + tag.meta.numItems;
 	}, 0) + (count_roam ? entry.roam.length : 0);
 }
 
-/** Evaluates if a given tag is a singleton (i.e, has a single version in Zotero and Roam).
- * @param {TagEntry} entry - The targeted tag
- * @returns 
- */
-function isSingleton(entry){
+/** Evaluates if a given tag is a singleton (i.e, has a single version in Zotero and Roam). */
+function isSingleton(entry: ZTagEntry): boolean{
 	return entry.zotero.length == 1 && (entry.roam.length == 0 || (entry.roam.length == 1 && entry.zotero[0].tag == entry.roam[0].title));
 }
 
-/** Emits a suggestion, if possible, for handling a given tag.
- * @param {TagEntry} entry - The targeted tag
- * @returns 
- */
-function makeSuggestionFor(entry){
+/** Emits a suggestion, if possible, for handling a given tag. */
+function makeSuggestionFor(entry: ZTagEntry): ZTagSuggestion{
 	const roamTags = entry.roam.map((el) => el.title);
-	const zoteroTags = entry.zotero.reduce((arr, el) => {
+	const zoteroTags = entry.zotero.reduce<string[]>((arr, el) => {
 		if (roamTags.includes(el.tag) || arr.includes(el.tag)) {
 		// Do nothing
 		} else {
@@ -104,11 +95,8 @@ function makeSuggestionFor(entry){
 	}
 }
 
-/** Matches Zotero tags with existing Roam pages
- * @param {Object.<string, TagEntry[]>} tagList - The list of tokenized Zotero tags
- * @returns {Promise<TagEntry[]>}
- */
-function matchTagData(tagList){
+/** Matches Zotero tags with existing Roam pages */
+function matchTagData(tagList: ZTagList): Promise<ZTagEntry[]>{
 	return new Promise((resolve) => {
 		setTimeout(() => {
 			const data = Object.keys(tagList).map(initial => {
@@ -138,12 +126,10 @@ function matchTagData(tagList){
 	});
 }
 
-/** Sorts Zotero tags
- * @param {TagEntry[]} tagList - The list of Zotero tags to sort
- * @param {("alphabetical"|"roam"|"usage")} by - The type of sorting to use
- * @returns 
- */
-function sortTags(tagList, by = "alphabetical"){
+type TagsSortBy = "alphabetical" | "roam" | "usage";
+
+/** Sorts Zotero tags */
+function sortTags(tagList: ZTagEntry[], by: TagsSortBy = "alphabetical"){
 	const arr = [...tagList];
 	switch(by){
 	case "usage":

@@ -1,4 +1,6 @@
+import { mock } from "jest-mock-extended";
 import { getTagStats, getTagUsage, isSingleton, makeSuggestionFor, matchTagData, sortTags } from "./utils";
+import { ZTagEntry, ZTagList } from "Types/transforms";
 
 
 jest.mock("Roam", () => ({
@@ -29,7 +31,7 @@ const tagList = [
 			{ tag: "Culture", meta: { type: 1, numItems: 1 } }
 		]
 	}
-];
+].map(it => mock<ZTagEntry>(it));
 
 test("Collects tag stats", () => {
 	expect(getTagStats(tagList))
@@ -47,14 +49,24 @@ test("Counts tag usage", () => {
 	expect(getTagUsage(tagList[2])).toBe(8);
 });
 
-test("Identifies singleton tags", () => {
-	expect(isSingleton({ roam: [], zotero: [{ tag: "culture" }] })).toBe(true);
-	expect(isSingleton({ roam: [{ title: "culture" }], zotero: [{ tag: "culture" }] })).toBe(true);
-	expect(isSingleton({ roam: [{ title: "Culture" }], zotero: [{ tag: "culture" }] })).toBe(false);
-	expect(isSingleton({ roam: [], zotero: [{ tag: "culture" }, { tag: "Culture" }] })).toBe(false);
+describe("Identifies singleton tags", () => {
+	const cases = [
+		[{ roam: [], zotero: [{ tag: "culture" }] }, true],
+		[{ roam: [{ title: "culture" }], zotero: [{ tag: "culture" }] }, true],
+		[{ roam: [{ title: "Culture" }], zotero: [{ tag: "culture" }] }, false],
+		[{ roam: [], zotero: [{ tag: "culture" }, { tag: "Culture" }] }, false]
+	] as const;
+
+	test.each(cases)(
+		"%s",
+		(tagEntry, expectation) => {
+			const mockTag = mock<ZTagEntry>(tagEntry as any);
+			expect(isSingleton(mockTag)).toBe(expectation);
+		}
+	);
 });
 
-test("Makes correct suggestions for tags", () => {
+describe("Makes correct suggestions for tags", () => {
 	expect(makeSuggestionFor(tagList[0]))
 		.toEqual({
 			recommend: "TODO",
@@ -82,45 +94,51 @@ test("Makes correct suggestions for tags", () => {
 				zotero: ["culture", "Culture"]
 			}
 		});
-    
-	expect(makeSuggestionFor({
-		roam: [],
-		zotero: [{ tag: "PKM" }]
-	}))
-		.toEqual({
-			recommend: "PKM",
-			type: null,
-			use: {
+	
+	const cases = [
+		[
+			{ roam: [], zotero: [{ tag: "PKM" }] },
+			{
+				recommend: "PKM",
+				type: null,
+				use: { roam: [], zotero: ["PKM"] }
+			}
+		],
+		[
+			{
 				roam: [],
-				zotero: ["PKM"]
+				zotero: [{ tag: "PKM", meta: { type: 0 } }, { tag: "PKM", meta: { type: 1 } }]
+			},
+			{
+				recommend: "PKM",
+				type: "auto",
+				use: { roam: [], zotero: ["PKM"] }
 			}
-		});
+		],
+		[
+			{
+				roam: [{ title: "housing" }, { title: "Housing" }],
+				zotero: [{ tag: "housing" }]
+			},
+			{
+				recommend: null,
+				type: "manual",
+				use: {
+					roam: ["housing", "Housing"],
+					zotero: []
+				}
+			}
+		]
+	] as const;
     
-	expect(makeSuggestionFor({
-		roam: [],
-		zotero: [{ tag: "PKM", meta: { type: 0 } }, { tag: "PKM", meta: { type: 1 } }]
-	}))
-		.toEqual({
-			recommend: "PKM",
-			type: "auto",
-			use: {
-				roam: [],
-				zotero: ["PKM"]
-			}
-		});
-    
-	expect(makeSuggestionFor({
-		roam: [{ title: "housing" }, { title: "Housing" }],
-		zotero: [{ tag: "housing" }]
-	}))
-		.toEqual({
-			recommend: null,
-			type: "manual",
-			use: {
-				roam: ["housing", "Housing"],
-				zotero: []
-			}
-		});
+	test.each(cases)(
+		"%s",
+		(tagEntry, expectation) => {
+			const mockTag = mock<ZTagEntry>(tagEntry as any);
+			expect(makeSuggestionFor(mockTag)).toEqual(expectation);
+		}
+	);
+
 });
 
 test("Match Zotero tags with Roam pages", async() => {
@@ -132,7 +150,7 @@ test("Match Zotero tags with Roam pages", async() => {
 		]
 	};
 
-	await expect(matchTagData(tags))
+	await expect(matchTagData(mock<ZTagList>(tags)))
 		.resolves
 		.toEqual([
 			{ token: "culture", roam: [{ title: "culture", uid: "abcdef" }], zotero: [{ tag: "culture" }] },

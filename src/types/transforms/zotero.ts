@@ -116,6 +116,22 @@ export type ZTagMap = Map<string, (ZoteroAPI.Tag | ZoteroAPI.Tag[])>
 
 export type ZTagDictionary = Record<string, string[]>;
 
+export type ZTagStats = {
+	nAuto: number,
+	nRoam: number,
+	nTags: number,
+	nTotal: number
+};
+
+export type ZTagSuggestion = {
+	recommend: string | null,
+	type: "auto" | "manual" | null,
+	use: {
+		roam: string[],
+		zotero: string[]
+	}
+};
+
 export type ZLinkType = "local" | "web";
 export type ZLinkOptions = {
 	format: "markdown" | "target",
