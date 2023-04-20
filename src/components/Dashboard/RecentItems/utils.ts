@@ -1,12 +1,14 @@
 import { getCitekeyPagesWithEditTime } from "Roam";
 import { identifyChildren } from "../../../utils";
+import { ZDataViewContents, ZLibraryContents, ZLogItem } from "Types/transforms";
+
 
 /** Categorizes a list of Zotero items by recent activity
- * @param {{items: ZoteroAPI.ItemTop[], pdfs: ZoteroAPI.ItemAttachment[], notes: (ZoteroAPI.ItemNote|ZoteroAPI.ItemAnnotation)[]}} itemList - The list of Zotero items
- * @param {Number} asRecentAs - The number of days up to which activity should be considered recent
+ * @param itemList - The list of Zotero items
+ * @param asRecentAs - The number of days up to which activity should be considered recent
  * @returns The categorized list of items
  */
-function makeLogFromItems(itemList, asRecentAs = 7){
+function makeLogFromItems(itemList: ZLibraryContents, asRecentAs = 7){
 	return new Promise((resolve) => {
 		setTimeout(() => {
 			const { items = [], pdfs = [], notes =[] } = itemList;
@@ -22,17 +24,17 @@ function makeLogFromItems(itemList, asRecentAs = 7){
 			recent.setDate(today.getDate() - asRecentAs);
 			recent.setHours(0,0,0);
 			
-			const dateView = items.reduce((log, item) => {
+			const dateView = items.reduce<ZDataViewContents>((log, item) => {
 				const itemKey = item.key;
 				const location = item.library.type + "s/" + item.library.id;
 				const creator = item.meta.creatorSummary || "";
 				const pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
 
 				// Obtain data for the item's Roam page (if it exists)
-				const rPage = citPages.has("@" + itemKey) ? citPages.get("@" + itemKey) : {};
-				const { edited = null, uid = false } = rPage;
+				const rPage = citPages.get("@" + itemKey);
+				const { edited = null, uid = false } = rPage || {};
 				const zotero_last_edit = new Date(item.data.dateModified);
-				const last_combined_edit = new Date(Math.max(...[edited, zotero_last_edit].filter(Boolean)));
+				const last_combined_edit = new Date(Math.max(...[edited, zotero_last_edit].filter(Boolean).map(d => Number(d))));
 
 				if(last_combined_edit <= recent){
 					return log;
@@ -41,7 +43,7 @@ function makeLogFromItems(itemList, asRecentAs = 7){
 					const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
 
 					// Push simplified data to the log
-					const entry = {
+					const entry: ZLogItem = {
 						abstract: item.data.abstractNote || "",
 						children,
 						edited: last_combined_edit,
@@ -77,7 +79,7 @@ function makeLogFromItems(itemList, asRecentAs = 7){
 			});
 
 			Object.values(dateView)
-				.filter(val => val.constructor === Array)
+				.filter(Array.isArray)
 				.forEach(arr => arr.sort((a,b) => (a.edited < b.edited ? 1 : -1)));
 
 			resolve(dateView);

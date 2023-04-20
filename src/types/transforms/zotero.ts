@@ -121,3 +121,27 @@ export type ZLinkOptions = {
 	format: "markdown" | "target",
 	text: string
 };
+
+export type ZLogItem = {
+	abstract: string,
+	children: {
+		notes: (ZItemNote | ZItemAnnotation)[],
+		pdfs: ZItemAttachment[]
+	},
+	edited: Date,
+	inGraph: string | false,
+	itemType: ZItemTop["data"]["itemType"],
+	key: string,
+	location: string,
+	meta: string,
+	publication: string,
+	raw: ZItemTop,
+	title: string
+};
+
+export type ZDataViewContents = {
+	today: ZLogItem[],
+	yesterday: ZLogItem[],
+	recent: ZLogItem[],
+	numItems: number
+};
