@@ -25,7 +25,7 @@ export interface ZCleanItemTop {
 	year: string,
 	zotero: { local: string, web: string },
 	_multiField: string,
-	raw: ZoteroAPI.ItemTop
+	raw: ZItemTop
 }
 
 export interface ZCleanItemPDF {
@@ -33,8 +33,9 @@ export interface ZCleanItemPDF {
 	key: string,
 	link: string,
 	parent: ZoteroAPI.ItemTop | Record<string, never>,
+	tags: string[],
 	title: string,
-	raw: ZoteroAPI.ItemAttachment
+	raw: ZItemAttachment
 }
 
 export interface ZSimplifiedAnnotation {

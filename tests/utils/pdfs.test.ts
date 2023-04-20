@@ -29,6 +29,7 @@ test("Formats PDF metadata", () => {
 			key: samplePDF.data.key,
 			link: getPDFLink(samplePDF, "href"),
 			parent,
+			tags: samplePDF.data.tags.map(t => t.tag),
 			title: samplePDF.data.title,
 			raw: samplePDF
 		});

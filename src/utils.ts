@@ -161,7 +161,8 @@ function cleanLibraryPDF(pdf: ZItemAttachment, parent: (ZItemTop | Record<string
 		link: getPDFLink(pdf, "href"),
 		parent,
 		title: pdf.data.filename || pdf.data.title,
-		raw: pdf
+		raw: pdf,
+		tags: pdf.data.tags.map(t => t.tag)
 	};
 }
 

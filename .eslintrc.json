@@ -81,7 +81,6 @@
         "no-implicit-coercion": "warn",
         "no-label-var": "error",
         "no-param-reassign": "error",
-        "no-shadow": "error",
         "no-unused-vars": "off",
         "no-var": "error",
         "object-curly-spacing": [
