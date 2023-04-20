@@ -1,9 +1,8 @@
-/** Creates a reference to a simplified item with default format
- * @param {Object} simplifiedItem - An item as returned by {@link cleanLibrary} 
- * @param {SettingsCopy} copySettings - The user's `copy` settings
- * @returns {String} The formatted reference to the item
- */
-function formatItemReferenceWithDefault(simplifiedItem, copySettings){
+import { SettingsCopy } from "Types/extension";
+import { ZCleanItemTop } from "Types/transforms";
+
+/** Creates a reference to a simplified item with default format */
+function formatItemReferenceWithDefault(simplifiedItem: ZCleanItemTop, copySettings: SettingsCopy): string {
 	const { authors, key, title, year } = simplifiedItem;
 	const { preset, template, useAsDefault } = copySettings;
 
@@ -30,12 +29,15 @@ function formatItemReferenceWithDefault(simplifiedItem, copySettings){
 	}
 }
 
-/** Converts a simplified item into a given string format for clipboard copy
- * @param {Object} simplifiedItem - An item as returned by {@link cleanLibrary} 
- * @param {("citation"|"citekey"|"page-reference"|"raw"|"tag")} format - The format preset to be used.
- * @returns {String} The formatted reference to the item
- */
-function formatItemReferenceForCopy(simplifiedItem, format){
+type ItemReferenceFormat =
+	| "citation"
+	| "citekey"
+	| "page-reference"
+	| "raw"
+	| "tag";
+
+/** Converts a simplified item into a given string format for clipboard copy */
+function formatItemReferenceForCopy(simplifiedItem: ZCleanItemTop, format: ItemReferenceFormat): string{
 	const citekey = simplifiedItem.key;
 	const pageRef = "[[@" + citekey + "]]";
 
