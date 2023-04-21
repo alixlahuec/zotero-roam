@@ -1,5 +1,6 @@
 import { mock } from "jest-mock-extended";
 import { getTagStats, getTagUsage, isSingleton, makeSuggestionFor, matchTagData, sortTags } from "./utils";
+import { ZoteroAPI } from "Types/externals";
 import { ZTagEntry, ZTagList } from "Types/transforms";
 
 
@@ -141,21 +142,25 @@ describe("Makes correct suggestions for tags", () => {
 
 });
 
-test("Match Zotero tags with Roam pages", async() => {
+test("Match Zotero tags with Roam pages", async () => {
+	const mockTag1 = mock<ZoteroAPI.Tag>({ tag: "culture" });
+	const mockTag2 = mock<ZoteroAPI.Tag>({ tag: "stocks" });
+	const mockTag3 = mock<ZoteroAPI.Tag>({ tag: "systems" });
+
 	const tags = {
-		"c": [{ token: "culture", roam: [], zotero: [{ tag: "culture" }] }],
+		"c": [{ token: "culture", roam: [], zotero: [mockTag1] }],
 		"s": [
-			{ token: "stocks", roam: [], zotero: [{ tag: "stocks" }] },
-			{ token: "systems", roam: [], zotero: [{ tag: "systems" }] }
+			{ token: "stocks", roam: [], zotero: [mockTag2] },
+			{ token: "systems", roam: [], zotero: [mockTag3] }
 		]
 	};
 
-	await expect(matchTagData(mock<ZTagList>(tags)))
+	await expect(matchTagData(tags as ZTagList))
 		.resolves
 		.toEqual([
-			{ token: "culture", roam: [{ title: "culture", uid: "abcdef" }], zotero: [{ tag: "culture" }] },
-			{ token: "stocks", roam: [], zotero: [{ tag: "stocks" }] },
-			{ token: "systems", roam: [{ title: "systems", uid: "pqrst" }], zotero: [{ tag: "systems" }] }
+			{ token: "culture", roam: [{ title: "culture", uid: "abcdef" }], zotero: [mockTag1] },
+			{ token: "stocks", roam: [], zotero: [mockTag2] },
+			{ token: "systems", roam: [{ title: "systems", uid: "pqrst" }], zotero: [mockTag3] }
 		]);
 });
 
