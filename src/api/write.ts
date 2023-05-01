@@ -92,7 +92,7 @@ const useImportCitoids = () => {
 		onSettled: (data = [], error, variables, _context) => {
 			const { collections, items, library: { path }, tags } = variables;
 
-			const outcome = data.reduce <{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }> ((obj, res) => {
+			const outcome = data.reduce<{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }>((obj, res) => {
 				/* istanbul ignore else */
 				if (isFulfilled(res)) {
 					obj.successful.push(res.value.data);
@@ -102,7 +102,7 @@ const useImportCitoids = () => {
 				return obj;
 			}, { successful: [], failed: [] });
 
-			if (!error && outcome.successful.length > 0) {
+			if(!error && outcome.successful.length > 0){
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries(["items", path], {
@@ -166,7 +166,7 @@ const useModifyTags = () => {
 
 			const outcome = data.reduce<{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }>((obj, res) => {
 				/* istanbul ignore else */
-				if (isFulfilled(res)) {
+				if(isFulfilled(res)){
 					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
@@ -175,7 +175,7 @@ const useModifyTags = () => {
 			}, { successful: [], failed: [] });
 
 			/* istanbul ignore if */
-			if (outcome.successful.length > 0) {
+			if(outcome.successful.length > 0){
 				// If any item was modified, invalidate item queries for the targeted library
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries(["items", path], {

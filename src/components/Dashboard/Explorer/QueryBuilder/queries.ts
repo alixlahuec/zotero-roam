@@ -2,13 +2,13 @@ import { makeDNP, searchEngine } from "../../../../utils";
 import { ZCleanItemPDF, ZCleanItemTop } from "Types/transforms";
 
 
-export type QueryTerm<T extends QueryInputType | null = QueryInputType | null> = {
+export type QueryTerm<T extends InputEnum | null = InputEnum | null> = {
 	property: string,
 	relationship: string,
-	value: T extends QueryInputType ? QueryValueTypes[T] : null
+	value: T extends InputEnum ? InputValuesMap[T] : null
 };
 
-enum QueryInputType {
+enum InputEnum {
 	DATE = "date",
 	DATE_RANGE = "date-range",
 	MULTISELECT = "multiselect",
@@ -16,22 +16,22 @@ enum QueryInputType {
 	TEXT = "text"
 }
 
-type QueryValueTypes = {
-	[QueryInputType.DATE]: Date | null,
-	[QueryInputType.DATE_RANGE]: [Date | null, Date | null],
-	[QueryInputType.MULTISELECT]: string[],
-	[QueryInputType.SELECT]: string,
-	[QueryInputType.TEXT]: string
+type InputValuesMap = {
+	[InputEnum.DATE]: Date | null,
+	[InputEnum.DATE_RANGE]: [Date | null, Date | null],
+	[InputEnum.MULTISELECT]: string[],
+	[InputEnum.SELECT]: string,
+	[InputEnum.TEXT]: string
 };
 
 type SupportedItemType = ZCleanItemTop | ZCleanItemPDF;
 
-type QueryOperatorWithValue<T extends QueryInputType> = {
+type QueryOperatorWithValue<T extends InputEnum> = {
 	checkInput: (value: any) => boolean,
-	defaultInput: QueryValueTypes[T],
+	defaultInput: InputValuesMap[T],
 	inputType: T,
-	testItem: (item: SupportedItemType, value: QueryValueTypes[T]) => boolean
-} & (QueryValueTypes[T] extends string ? object : { stringify: (value: QueryValueTypes[T]) => string })
+	testItem: (item: SupportedItemType, value: InputValuesMap[T]) => boolean
+} & (InputValuesMap[T] extends string ? object : { stringify: (value: InputValuesMap[T]) => string })
 
 type QueryOperatorWithoutValue = {
 	checkInput: () => boolean,
@@ -40,19 +40,19 @@ type QueryOperatorWithoutValue = {
 	testItem: (item: SupportedItemType) => boolean
 };
 
-type QueryOperator<T extends QueryInputType | null> = T extends QueryInputType ? QueryOperatorWithValue<T> : QueryOperatorWithoutValue;
+type QueryOperator<T extends InputEnum | null> = T extends InputEnum ? QueryOperatorWithValue<T> : QueryOperatorWithoutValue;
 
 const defaultQueryTerm: QueryTerm<null> = { property: "Citekey", relationship: "exists", value: null };
 
 // TODO: delete this once InputComponent has been converted to TS
 const types = ["date", "date-range", "multiselect", "select", "text", null];
 
-const queries: Record<string, Record<string, QueryOperator<QueryInputType | null>>> = {
+const queries: Record<string, Record<string, QueryOperator<InputEnum | null>>> = {
 	"Abstract": {
 		"contains": {
 			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
-			inputType: QueryInputType.TEXT,
+			inputType: InputEnum.TEXT,
 			testItem: (item: ZCleanItemTop, value = "") => {
 				if(!item.abstract){ return false; }
 				return searchEngine(value, item.abstract);
@@ -61,7 +61,7 @@ const queries: Record<string, Record<string, QueryOperator<QueryInputType | null
 		"does not contain": {
 			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
-			inputType: QueryInputType.TEXT,
+			inputType: InputEnum.TEXT,
 			testItem: (item: ZCleanItemTop, value = "") => {
 				if(!item.abstract){ return false; }
 				if(!value){ return true; }
@@ -113,7 +113,7 @@ const queries: Record<string, Record<string, QueryOperator<QueryInputType | null
 		"before": {
 			checkInput: (value) => value instanceof Date,
 			defaultInput: new Date(),
-			inputType: QueryInputType.DATE,
+			inputType: InputEnum.DATE,
 			stringify: (value) => makeDNP(value, { brackets: false }),
 			testItem: (item, value) => {
 				if(value == null){
@@ -128,7 +128,7 @@ const queries: Record<string, Record<string, QueryOperator<QueryInputType | null
 		"after": {
 			checkInput: (value) => value instanceof Date,
 			defaultInput: new Date(),
-			inputType: QueryInputType.DATE,
+			inputType: InputEnum.DATE,
 			stringify: (value) => makeDNP(value, { brackets: false }),
 			testItem: (item, value) => {
 				if(value == null){
@@ -143,7 +143,7 @@ const queries: Record<string, Record<string, QueryOperator<QueryInputType | null
 		"between": {
 			checkInput: (value) => value?.constructor === Array && value.length == 2 && value.every(d => d == null || d?.constructor === Date),
 			defaultInput: [null, null],
-			inputType: QueryInputType.DATE_RANGE,
+			inputType: InputEnum.DATE_RANGE,
 			stringify: (value) => {
 				return value.map(val => {
 					return val ? makeDNP(val, { brackets: false }) : "...";
@@ -178,14 +178,14 @@ const queries: Record<string, Record<string, QueryOperator<QueryInputType | null
 		"is any of": {
 			checkInput: (value) => value?.constructor === Array && value.length > 0 && value.every(el => el?.constructor === String),
 			defaultInput: [],
-			inputType: QueryInputType.MULTISELECT,
+			inputType: InputEnum.MULTISELECT,
 			stringify: (value) => value.join(", "),
 			testItem: (item: ZCleanItemTop, value) => value.includes(item.itemType)
 		},
 		"is not": {
 			checkInput: (value) => value?.constructor === Array && value.length > 0 && value.every(el => el?.constructor === String),
 			defaultInput: [],
-			inputType: QueryInputType.MULTISELECT,
+			inputType: InputEnum.MULTISELECT,
 			stringify: (value) => value.join(", "),
 			testItem: (item: ZCleanItemTop, value) => !value.includes(item.itemType)
 		}
@@ -236,7 +236,7 @@ const queries: Record<string, Record<string, QueryOperator<QueryInputType | null
 		"include": {
 			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
-			inputType: QueryInputType.MULTISELECT,
+			inputType: InputEnum.MULTISELECT,
 			stringify: (value) => value.join(", "),
 			testItem: (item, value = []) => {
 				if(item.tags.length == 0 || value.length == 0){ return false; }
@@ -246,7 +246,7 @@ const queries: Record<string, Record<string, QueryOperator<QueryInputType | null
 		"include any of": {
 			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
-			inputType: QueryInputType.MULTISELECT,
+			inputType: InputEnum.MULTISELECT,
 			stringify: (value) => value.join(", "),
 			testItem: (item, value = []) => {
 				if(item.tags.length == 0 || value.length == 0){ return false; }
@@ -255,7 +255,7 @@ const queries: Record<string, Record<string, QueryOperator<QueryInputType | null
 		"do not include": {
 			checkInput: (value) => value?.constructor === Array && (value.length == 0 || value.every(el => el?.constructor === String)),
 			defaultInput: [],
-			inputType: QueryInputType.MULTISELECT,
+			inputType: InputEnum.MULTISELECT,
 			stringify: (value) => value.join(", "),
 			testItem: (item, value) => {
 				if(item.tags.length == 0 || value.length == 0){ return true; }
@@ -267,13 +267,13 @@ const queries: Record<string, Record<string, QueryOperator<QueryInputType | null
 		"contains": {
 			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
-			inputType: QueryInputType.TEXT,
+			inputType: InputEnum.TEXT,
 			testItem: (item, value = "") => searchEngine(value, item.title)
 		},
 		"does not contain": {
 			checkInput: (value) => value?.constructor === String,
 			defaultInput: "",
-			inputType: QueryInputType.TEXT,
+			inputType: InputEnum.TEXT,
 			testItem: (item, value) => !searchEngine(value, item.title)
 		}
 	}
