@@ -1,4 +1,4 @@
-import { Mocks } from "Mocks/types";
+import { Mocks } from "Mocks";
 
 
 const configLibrary = (type: Mocks.Library["type"], id: number, name: string, version: number): Mocks.Library => {

@@ -4,7 +4,7 @@ import { expect } from "@storybook/jest";
 import RelatedPanel from ".";
 import { cleanRelatedItem } from "../Menus/utils";
 
-import { items } from "Mocks/zotero/items";
+import { items } from "Mocks";
 
 
 export default {

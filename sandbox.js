@@ -1,17 +1,10 @@
 /* istanbul ignore file */
 import { QueryClient } from "@tanstack/react-query";
 
-import { sampleAnnot, sampleImageAnnot } from "./mocks/zotero/annotations";
-import { apiKeys } from "./mocks/zotero/keys";
-import { findCollections } from "./mocks/zotero/collections";
-import { findItems } from "./mocks/zotero/items";
-import { libraries } from "./mocks/zotero/libraries";
-import { sampleNote } from "./mocks/zotero/notes";
-import { samplePDF } from "./mocks/zotero/pdfs";
-
 import ZoteroRoam from "./src/extension";
 import { initialize } from "./src/setup";
 import { simplifyZoteroAnnotations } from "./src/utils";
+import { apiKeys, findCollections, findItems, libraries, sampleAnnot, sampleImageAnnot, sampleNote, samplePDF } from "Mocks";
 
 
 const { keyWithFullAccess: masterKey } = apiKeys;

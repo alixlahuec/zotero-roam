@@ -225,7 +225,7 @@ const cleanSemanticItem = {
 };
 
 /**
- * @see cleanSemanticMatch
+ * @see matchSemanticEntry
  */
 const cleanSemanticReturnType = shape({
 	...cleanSemanticItem,

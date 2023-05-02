@@ -3,7 +3,7 @@ import LibraryQueryList from "./LibraryQueryList";
 import { useBool } from "../../hooks";
 
 import { cleanLibrary } from "../../utils";
-import { items } from "Mocks/zotero/items";
+import { items } from "Mocks";
 
 
 // Provide one Roam citekey to have in-graph state in story

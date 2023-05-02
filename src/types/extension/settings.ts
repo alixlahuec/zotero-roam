@@ -7,9 +7,9 @@ import { SBConfig, ZLibrary } from "../transforms";
 /**
  * Legacy format for data requests. Should be assumed to be used by all users loading the extension via `roam/js`.
  */
-export interface LegacyDataRequest {
+export interface LegacyUserDataRequest {
 	/** The API key to be used */
-	apikey: string,
+	apikey?: string,
 	/** The data URI to be used
 	 * @example "users/123456/items"
 	*/
@@ -18,6 +18,15 @@ export interface LegacyDataRequest {
 	name?: string,
 	/** Additional parameters for the request */
 	params?: string
+}
+
+export interface UserDataRequest {
+	apikey?: string,
+	library: {
+		id: string,
+		type: "groups" | "users"
+	},
+	name?: string
 }
 
 /** 
@@ -225,5 +234,5 @@ export type InitSettings = {
 } & UserSettings;
 
 export type LegacyUserSettings = {
-	dataRequests: LegacyDataRequest[]
+	dataRequests: LegacyUserDataRequest[]
 } & UserSettings

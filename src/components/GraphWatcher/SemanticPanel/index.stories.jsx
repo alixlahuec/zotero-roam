@@ -6,8 +6,8 @@ import SemanticPanel from ".";
 import { cleanSemantic, parseDOI } from "../../../utils";
 import { parseSemanticDOIs } from "../../../api/utils";
 
-import { semantics } from "Mocks/semantic-scholar";
-import { items } from "Mocks/zotero/items";
+import { items, semantics } from "Mocks";
+
 
 
 const semanticItem = items.find(it => it.key == "blochImplementingSocialInterventions2021");
@@ -21,7 +21,7 @@ export default {
 	component: SemanticPanel,
 	args: {
 		isOpen: true,
-		items: cleanSemantic([], semanticData, new Map()),
+		items: cleanSemantic({ items: [], notes: [], pdfs: [] }, semanticData, new Map()),
 		onClose: () => {},
 		show: {
 			title: "@" + semanticItem.key,

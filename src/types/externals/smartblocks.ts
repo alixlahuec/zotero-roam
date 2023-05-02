@@ -2,7 +2,7 @@ export namespace SmartblocksPlugin {
 	/**
 	 * The context passed to a SmartBlock command
 	 */
-	interface CommandContext {
+	export interface CommandContext {
 		/** The UID of the block where the SmartBlock was triggered */
 		targetUid: string,
 		/** Variables passed to the command */

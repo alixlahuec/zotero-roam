@@ -18,7 +18,7 @@ import { withRoamCitekeys } from "./withRoamCitekeys";
 import { withUserSettings } from "./withUserSettings";
 
 import { A11Y_RULES } from "./a11y-rules";
-import { fallbackHandler, roamAssetsHandler, sciteApiHandler, sciteAssetsHandler, apiHandlers } from "Mocks/handlers";
+import { fallbackHandler, roamAssetsHandler, sciteApiHandler, sciteAssetsHandler, apiHandlers } from "Mocks";
 
 
 // Initialize MSW

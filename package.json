@@ -1,6 +1,6 @@
 {
     "name": "@alixlahuec/zotero-roam",
-    "version": "0.7.13",
+    "version": "0.7.14",
     "description": "Connector to Zotero for Roam Research users",
     "license": "Apache-2.0",
     "author": {
@@ -38,7 +38,7 @@
         "version-release:latest": "npm run version-release",
         "version-release:beta": "npm run version-release -- --preRelease=beta",
         "publish-release": "release-it --config dev/.release-it.cjs --ci --npm.skipChecks --no-increment",
-        "publish-release:latest": "npm run publish-release -- --git.requireBranch=main --github.autoGenerate",
+        "publish-release:latest": "npm run publish-release -- --git.requireBranch=main",
         "publish-release:beta": "npm run publish-release -- --git.requireBranch=beta --preRelease=beta --github.releaseNotes=\"echo\"",
         "release:preview": "release-it --config dev/.release-it.cjs --dry-run"
     },
@@ -103,6 +103,7 @@
         "jest": "^28.1.3",
         "jest-environment-jsdom": "^28.1.3",
         "jest-junit": "^15.0.0",
+        "jest-mock-extended": "^3.0.4",
         "jest-runner-eslint": "^2.0.0",
         "jest-transform-css": "^6.0.1",
         "mini-css-extract-plugin": "^2.7.5",
