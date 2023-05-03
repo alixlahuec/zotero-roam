@@ -101,6 +101,7 @@
         "sort-imports": "off",
         "react/jsx-uses-react": "off",
 		"react/no-unknown-property": "off",
+		"react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
         "import/newline-after-import": ["error", { "count": 2 }],
         "import/no-unresolved": ["warn", { "amd": true, "commonjs": true }],
