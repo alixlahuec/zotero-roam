@@ -1,18 +1,21 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, ComponentProps } from "react";
+import { Meta, Story } from "@storybook/react";
 
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import { TagsSelector } from ".";
 
 
+type Props = ComponentProps<typeof TagsSelector>;
+
 export default {
 	component: TagsSelector,
 	args: {
 		selectedTags: ["history", "12th century"]
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	const [tags, setTags] = useState(args.selectedTags || []);
 	const addTag = useCallback((tag) => setTags(prev => Array.from(new Set([...prev, tag]))), []);
 	const removeTag = useCallback((tag) => setTags(prev => prev.filter(it => it != tag)), []);
@@ -23,7 +26,7 @@ const Template = (args) => {
 export const WithInteractions = Template.bind({});
 WithInteractions.play = async({ canvasElement }) => {
 	const canvas = within(canvasElement);
-	const frame = within(canvasElement.parentElement);
+	const frame = within(canvasElement.parentElement!);
 
 	await userEvent.type(canvas.getByLabelText("Add tags from Roam"), "new tag");
 
