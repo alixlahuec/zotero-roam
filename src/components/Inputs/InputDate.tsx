@@ -1,11 +1,11 @@
+import { Icon } from "@blueprintjs/core";
 import { DateInput, DateInputProps, DateRange, DateRangeInput, DateRangeInputProps } from "@blueprintjs/datetime";
-import { IPopoverProps, Icon } from "@blueprintjs/core";
 
 import { makeDNP } from "../../utils";
 import { CustomClasses } from "../../constants";
 
 
-const popoverProps: Partial<IPopoverProps> = {
+const popoverProps: DateInputProps["popoverProps"] = {
 	canEscapeKeyClose: false,
 	fill: true,
 	minimal: true,

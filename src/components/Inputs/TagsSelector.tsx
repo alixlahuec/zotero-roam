@@ -1,10 +1,9 @@
 import { memo, useCallback, useState } from "react";
-import { IPopoverProps, MenuItem, TagInputProps } from "@blueprintjs/core";
-import { ItemRenderer, MultiSelect, MultiSelectProps } from "@blueprintjs/select";
+import { MenuItem } from "@blueprintjs/core";
+import { MultiSelect, MultiSelectProps } from "@blueprintjs/select";
 
 import { getAllPages } from "Roam";
 import { searchEngine } from "../../utils";
-
 import { CustomClasses } from "../../constants";
 
 
@@ -14,7 +13,7 @@ type SelectorProps = MultiSelectProps<Tag>;
 
 const MAX_RESULTS = 30;
 
-const popoverProps: Partial<IPopoverProps> = {
+const popoverProps: SelectorProps["popoverProps"] = {
 	canEscapeKeyClose: false,
 	className: "zr-input-tags",
 	fill: true,
@@ -22,7 +21,7 @@ const popoverProps: Partial<IPopoverProps> = {
 	popoverClassName: CustomClasses.POPOVER
 };
 
-const tagInputProps: Partial<TagInputProps> = {
+const tagInputProps: SelectorProps["tagInputProps"] = {
 	inputProps: {
 		"aria-label": "Add tags from Roam",
 		placeholder: "Add tag",
