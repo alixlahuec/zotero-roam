@@ -1,14 +1,16 @@
-import { useState } from "react";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { useState, ComponentProps } from "react";
+import { Meta, Story } from "@storybook/react";
 
 import { InputDateSingle } from ".";
 
 
+type Props = ComponentProps<typeof InputDateSingle>;
+
 export default {
 	component: InputDateSingle
-} as ComponentMeta<typeof InputDateSingle>;
+} as Meta<Props>;
 
-const Template: ComponentStory<typeof InputDateSingle> = (args) => {
+const Template: Story<Props> = (args) => {
 	const { value: valueFromArgs, setValue: setFromArgs, ...argList } = args;
 	const [value, setValue] = useState(valueFromArgs || undefined);
 	return <InputDateSingle value={value} setValue={setValue} {...argList}/>;
