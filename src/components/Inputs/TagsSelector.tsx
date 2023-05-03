@@ -34,31 +34,35 @@ const tagInputProps: Partial<TagInputProps> = {
 	}
 };
 
-const createNewItemFromQuery = (tag: Tag) => tag;
+const staticProps: Partial<SelectorProps> & Pick<SelectorProps, "itemRenderer" | "tagRenderer"> = {
 
-const createNewItemRenderer: SelectorProps["createNewItemRenderer"] = (query, active, handleClick) => {
-	return <MenuItem aria-selected={active} htmlTitle={"Add tag, " + `'${query}'`} icon="small-plus" onClick={handleClick} text={query} />;
+	createNewItemFromQuery: (tag) => tag,
+
+	createNewItemRenderer: (query, active, handleClick) => (
+		<MenuItem aria-selected={active} htmlTitle={"Add tag, " + `'${query}'`} icon="small-plus" onClick={handleClick} text={query} />
+	),
+
+	itemRenderer: (item, itemProps) => {
+		const { handleClick, modifiers: { active } } = itemProps;
+		return <MenuItem aria-selected={active} key={item} onClick={handleClick} text={item} />;
+	},
+
+	itemListPredicate: (query, items) => {
+		return items.filter(item => searchEngine(
+			query,
+			item, {
+				any_case: true,
+				match: "partial",
+				search_compounds: true,
+				word_order: "loose"
+			}))
+			.sort((a, b) => a.length < b.length ? -1 : 1)
+			.slice(0, MAX_RESULTS);
+	},
+
+	tagRenderer: (tag) => tag
+
 };
-
-const itemRenderer: ItemRenderer<Tag> = (item, itemProps) => {
-	const { handleClick, modifiers: { active } } = itemProps;
-	return <MenuItem aria-selected={active} key={item} onClick={handleClick} text={item} />;
-};
-
-const itemListPredicate: SelectorProps["itemListPredicate"] = (query, items) => {
-	return items.filter(item => searchEngine(
-		query,
-		item, {
-			any_case: true,
-			match: "partial",
-			search_compounds: true,
-			word_order: "loose"
-		}))
-		.sort((a, b) => a.length < b.length ? -1 : 1)
-		.slice(0, MAX_RESULTS);
-};
-
-const tagRenderer = (tag: Tag) => tag;
 
 
 type OwnProps = {
@@ -66,7 +70,8 @@ type OwnProps = {
 	onSelect: (val: Tag) => void,
 	selectedTags: Tag[]
 };
-const TagsSelector = memo<OwnProps & Omit<MultiSelectProps<Tag>, "onItemSelect" | "onRemove" | "itemRenderer" | "items" | "tagRenderer">>(
+
+const TagsSelector = memo<OwnProps & Partial<SelectorProps>>(
 	function TagsSelector(props) {
 		const { selectedTags, onRemove, onSelect, ...extraProps } = props;
 		const [roamPages,] = useState(() => getAllPages()); // https://tkdodo.eu/blog/things-to-know-about-use-state
@@ -77,13 +82,9 @@ const TagsSelector = memo<OwnProps & Omit<MultiSelectProps<Tag>, "onItemSelect" 
 		return (
 			<MultiSelect<Tag>
 				className={CustomClasses.TEXT_SMALL}
-				createNewItemFromQuery={createNewItemFromQuery}
 				createNewItemPosition="first"
-				createNewItemRenderer={createNewItemRenderer}
 				fill={true}
 				initialContent={null}
-				itemListPredicate={itemListPredicate}
-				itemRenderer={itemRenderer}
 				items={roamPages}
 				onItemSelect={addTag}
 				onRemove={removeTag}
@@ -94,7 +95,7 @@ const TagsSelector = memo<OwnProps & Omit<MultiSelectProps<Tag>, "onItemSelect" 
 				resetOnSelect={true}
 				selectedItems={selectedTags}
 				tagInputProps={tagInputProps}
-				tagRenderer={tagRenderer}
+				{...staticProps}
 				{...extraProps}
 			/>
 		);
