@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { IPopoverProps, Icon, MenuItem } from "@blueprintjs/core";
+import { Icon, MenuItem } from "@blueprintjs/core";
 import { MultiSelect, MultiSelectProps } from "@blueprintjs/select";
 
 import { searchEngine } from "../../utils";
@@ -13,7 +13,7 @@ type Option = {
 
 type SelectorProps = MultiSelectProps<Option>;
 
-const popoverProps: Partial<IPopoverProps> = {
+const popoverProps: SelectorProps["popoverProps"] = {
 	canEscapeKeyClose: false,
 	fill: true,
 	minimal: true,
@@ -29,18 +29,19 @@ const tagInputProps: SelectorProps["tagInputProps"] = {
 	placeholder: "Click to add an element"
 };
 
-const itemPredicate: SelectorProps["itemPredicate"] = (query, item) => {
-	return searchEngine(query, item.label,
-		{
-			any_case: true,
-			match: "partial",
-			search_compounds: false,
-			word_order: "loose"
-		}
-	);
+const staticProps: Partial<SelectorProps> & Pick<SelectorProps, "tagRenderer"> = {
+	itemPredicate: (query, item) => {
+		return searchEngine(query, item.label,
+			{
+				any_case: true,
+				match: "partial",
+				search_compounds: false,
+				word_order: "loose"
+			}
+		);
+	},
+	tagRenderer: (item) => item.label
 };
-
-const tagRenderer: SelectorProps["tagRenderer"] = (item) => { return item.label; };
 
 
 type OwnProps = {
@@ -51,8 +52,8 @@ type OwnProps = {
 
 function InputMultiSelect({ options = [], value = [], setValue, ...props }: OwnProps & Partial<SelectorProps>){
 	const selectedItems = useMemo(() => options.filter(op => value.includes(op.value)), [options, value]);
-	const onItemSelect = useCallback((item, _event) => setValue([...value, item.value]), [setValue, value]);
-	const onRemove = useCallback((item, _index) => setValue(value.filter(val => val != item.value)), [setValue, value]);
+	const onItemSelect = useCallback<SelectorProps["onItemSelect"]>((item, _event) => setValue([...value, item.value]), [setValue, value]);
+	const onRemove = useCallback<NonNullable<SelectorProps["onRemove"]>>((item, _index) => setValue(value.filter(val => val != item.value)), [setValue, value]);
 
 	const itemRenderer = useCallback<SelectorProps["itemRenderer"]>((item, itemProps) => {
 		const { handleClick, /*modifiers: { active }*/ } = itemProps;
@@ -64,7 +65,6 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }: OwnP
 	return <MultiSelect<Option>
 		className={CustomClasses.TEXT_SMALL}
 		initialContent={null}
-		itemPredicate={itemPredicate}
 		itemRenderer={itemRenderer}
 		itemsEqual="value"
 		items={options}
@@ -75,7 +75,7 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }: OwnP
 		resetOnSelect={true}
 		selectedItems={selectedItems}
 		tagInputProps={tagInputProps}
-		tagRenderer={tagRenderer}
+		{...staticProps}
 		{...props}
 	/>;
 }

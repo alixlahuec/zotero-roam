@@ -13,7 +13,7 @@ const popoverProps: Partial<IPopoverProps> = {
 	popoverClassName: [CustomClasses.POPOVER, CustomClasses.DATE_PICKER].join(" ")
 };
 
-const dateProps: Pick<DateInputProps, "formatDate" | "parseDate"> = {
+const staticProps: Pick<DateInputProps, "formatDate" | "parseDate"> = {
 	formatDate: (date/*, locale */) => makeDNP(date, { brackets: false }),
 	parseDate: (str) => new Date(str)
 };
@@ -26,7 +26,6 @@ type InputDateSingleProps = {
 
 function InputDateSingle({ value, setValue }: InputDateSingleProps) {
 	return <DateInput
-		{...dateProps}
 		className={CustomClasses.DATE_INPUT}
 		closeOnSelection={true}
 		highlightCurrentDay={true}
@@ -36,6 +35,7 @@ function InputDateSingle({ value, setValue }: InputDateSingleProps) {
 		rightElement={<Icon icon="timeline-events" />}
 		shortcuts={false}
 		value={value}
+		{...staticProps}
 	/>;
 }
 
@@ -47,7 +47,6 @@ type InputDateRangeProps = {
 
 function InputDateRange({ value, setValue }: InputDateRangeProps) {
 	return <DateRangeInput
-		{...dateProps}
 		className={CustomClasses.DATE_INPUT_RANGE}
 		closeOnSelection={true}
 		highlightCurrentDay={true}
@@ -55,6 +54,7 @@ function InputDateRange({ value, setValue }: InputDateRangeProps) {
 		popoverProps={popoverProps}
 		shortcuts={false}
 		value={value}
+		{...staticProps}
 	/>;
 }
 
