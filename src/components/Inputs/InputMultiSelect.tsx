@@ -1,23 +1,26 @@
-import { arrayOf, func, shape, string } from "prop-types";
 import { useCallback, useMemo } from "react";
-
-import { Icon, MenuItem } from "@blueprintjs/core";
-import { MultiSelect } from "@blueprintjs/select";
+import { IPopoverProps, Icon, MenuItem } from "@blueprintjs/core";
+import { MultiSelect, MultiSelectProps } from "@blueprintjs/select";
 
 import { searchEngine } from "../../utils";
-
 import { CustomClasses } from "../../constants";
 
 
-const popoverProps = {
+type Option = {
+	label: string,
+	value: string
+};
+
+type SelectorProps = MultiSelectProps<Option>;
+
+const popoverProps: Partial<IPopoverProps> = {
 	canEscapeKeyClose: false,
 	fill: true,
-	matchTargetWidth: true,
 	minimal: true,
 	popoverClassName: CustomClasses.POPOVER
 };
 
-const tagInputProps = {
+const tagInputProps: SelectorProps["tagInputProps"] = {
 	inputProps: {
 		autoComplete: "off",
 		placeholder: "Add...",
@@ -26,8 +29,8 @@ const tagInputProps = {
 	placeholder: "Click to add an element"
 };
 
-function itemPredicate(query, item) {
-	return searchEngine(query, item.label, 
+const itemPredicate: SelectorProps["itemPredicate"] = (query, item) => {
+	return searchEngine(query, item.label,
 		{
 			any_case: true,
 			match: "partial",
@@ -35,23 +38,30 @@ function itemPredicate(query, item) {
 			word_order: "loose"
 		}
 	);
-}
+};
 
-function tagRenderer(item){ return item.label; }
+const tagRenderer: SelectorProps["tagRenderer"] = (item) => { return item.label; };
 
-function InputMultiSelect({ options = [], value = [], setValue, ...props }){
+
+type OwnProps = {
+	options: Option[],
+	value: Option["value"][],
+	setValue: (value: Option["value"][]) => void
+};
+
+function InputMultiSelect({ options = [], value = [], setValue, ...props }: OwnProps & Partial<SelectorProps>){
 	const selectedItems = useMemo(() => options.filter(op => value.includes(op.value)), [options, value]);
 	const onItemSelect = useCallback((item, _event) => setValue([...value, item.value]), [setValue, value]);
 	const onRemove = useCallback((item, _index) => setValue(value.filter(val => val != item.value)), [setValue, value]);
 
-	const itemRenderer = useCallback((item, itemProps) => {
+	const itemRenderer = useCallback<SelectorProps["itemRenderer"]>((item, itemProps) => {
 		const { handleClick, /*modifiers: { active }*/ } = itemProps;
 		const isSelected = value.includes(item.value);
 
 		return <MenuItem aria-selected={isSelected} key={item.value} labelElement={isSelected ? <Icon icon="small-tick" /> : null} onClick={handleClick} text={item.label} />;
 	}, [value]);
 
-	return <MultiSelect
+	return <MultiSelect<Option>
 		className={CustomClasses.TEXT_SMALL}
 		initialContent={null}
 		itemPredicate={itemPredicate}
@@ -69,10 +79,5 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }){
 		{...props}
 	/>;
 }
-InputMultiSelect.propTypes = {
-	options: arrayOf(shape({ label: string, value: string })),
-	value: arrayOf(string),
-	setValue: func
-};
 
 export { InputMultiSelect };

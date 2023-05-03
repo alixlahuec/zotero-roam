@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, ComponentProps } from "react";
+import { Meta, Story } from "@storybook/react";
 
 import { InputMultiSelect } from ".";
 
+
+type Props = ComponentProps<typeof InputMultiSelect>;
 
 export default {
 	component: InputMultiSelect,
@@ -12,9 +15,9 @@ export default {
 			{ label: "TODO", value: "TODO" }
 		]
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	const { value: valueFromArgs, setValue: setFromArgs, ...argList } = args;
 	const [selected, setSelected] = useState(valueFromArgs || []);
 	return <InputMultiSelect value={selected} setValue={setSelected} {...argList} />;
