@@ -1,14 +1,11 @@
-import { arrayOf, func, instanceOf } from "prop-types";
-
-import { DateInput, DateRangeInput } from "@blueprintjs/datetime";
-import { Icon } from "@blueprintjs/core";
+import { DateInput, DateInputProps, DateRangeInput, DateRangeInputProps } from "@blueprintjs/datetime";
+import { IPopoverProps, Icon } from "@blueprintjs/core";
 
 import { makeDNP } from "../../utils";
-
 import { CustomClasses } from "../../constants";
 
 
-const popoverProps = {
+const popoverProps: Partial<IPopoverProps> = {
 	canEscapeKeyClose: false,
 	fill: true,
 	minimal: true,
@@ -16,12 +13,18 @@ const popoverProps = {
 	popoverClassName: [CustomClasses.POPOVER, CustomClasses.DATE_PICKER].join(" ")
 };
 
-const dateProps = {
+const dateProps: Pick<DateInputProps, "formatDate" | "parseDate"> = {
 	formatDate: (date/*, locale */) => makeDNP(date, { brackets: false }),
 	parseDate: (str) => new Date(str)
 };
 
-function InputDateSingle({ value, setValue }){
+
+type InputDateSingleProps = {
+	value: Date,
+	setValue: NonNullable<DateInputProps["onChange"]>
+};
+
+function InputDateSingle({ value, setValue }: InputDateSingleProps) {
 	return <DateInput
 		{...dateProps}
 		className={CustomClasses.DATE_INPUT}
@@ -35,12 +38,14 @@ function InputDateSingle({ value, setValue }){
 		value={value}
 	/>;
 }
-InputDateSingle.propTypes = {
-	value: instanceOf(Date),
-	setValue: func
+
+
+type InputDateRangeProps = {
+	value: [Date, Date],
+	setValue: NonNullable<DateRangeInputProps["onChange"]>
 };
 
-function InputDateRange({ value, setValue }){
+function InputDateRange({ value, setValue }: InputDateRangeProps) {
 	return <DateRangeInput
 		{...dateProps}
 		className={CustomClasses.DATE_INPUT_RANGE}
@@ -52,10 +57,6 @@ function InputDateRange({ value, setValue }){
 		value={value}
 	/>;
 }
-InputDateRange.propTypes = {
-	value: arrayOf(instanceOf(Date)),
-	setValue: func
-};
 
 export {
 	InputDateSingle,
