@@ -1,4 +1,4 @@
-import { DateInput, DateInputProps, DateRangeInput, DateRangeInputProps } from "@blueprintjs/datetime";
+import { DateInput, DateInputProps, DateRange, DateRangeInput, DateRangeInputProps } from "@blueprintjs/datetime";
 import { IPopoverProps, Icon } from "@blueprintjs/core";
 
 import { makeDNP } from "../../utils";
@@ -41,7 +41,7 @@ function InputDateSingle({ value, setValue }: InputDateSingleProps) {
 
 
 type InputDateRangeProps = {
-	value: [Date, Date],
+	value: DateRange,
 	setValue: NonNullable<DateRangeInputProps["onChange"]>
 };
 
