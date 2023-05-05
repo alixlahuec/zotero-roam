@@ -1,14 +1,20 @@
+import { ComponentProps } from "react";
+
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { useFilterList } from "../../../hooks";
-import FilterSelect from "Components/DataList/FilterSelect";
+import { Meta, Story } from "@storybook/react";
 
+import { useFilterList } from "../../../hooks";
+import FilterSelect from ".";
+
+
+type Props = ComponentProps<typeof FilterSelect>;
 
 export default {
 	component: FilterSelect
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	const [filterList, toggleFilter] = useFilterList(args.options);
 
 	return <FilterSelect options={filterList} toggleFilter={toggleFilter} />;
@@ -36,13 +42,13 @@ Default.args = {
 };
 Default.play = async({ canvasElement }) => {
 	const canvas = within(canvasElement);
-	const frame = within(canvasElement.parentElement);
+	const frame = within(canvasElement.parentElement!);
 
 	const filterBtn = canvas.getByRole("button", { name: "Filter 1" });
 
 	await userEvent.click(filterBtn);
 
-	const filterOption = frame.getByTitle("Influential").parentElement;
+	const filterOption = frame.getByTitle("Influential").parentElement!;
 
 	await expect(filterOption).toHaveAttribute("aria-selected", "false");
 
