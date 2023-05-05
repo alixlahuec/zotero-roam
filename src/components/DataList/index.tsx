@@ -1,30 +1,33 @@
-import { func, node, number, oneOf, string } from "prop-types";
-import { memo, useCallback, useMemo } from "react";
-
+import { FC, memo, useCallback, useMemo } from "react";
 import { Button, ControlGroup } from "@blueprintjs/core";
 
 import { pluralize } from "../../utils";
-
 import { CustomClasses } from "../../constants";
 
 import "./index.css";
 
 
-const ListItem = ({ className, children, ...rest }) => 
+type ListItemProps = { className: string };
+
+const ListItem: FC<ListItemProps & JSX.IntrinsicElements["li"]> = ({ className, children, ...rest }) => (
 	<li className={[className, CustomClasses.DATALIST_ITEM].filter(Boolean).join(" ")} {...rest}>
 		{children}
-	</li>;
-ListItem.propTypes = {
-	className: string,
-	children: node
+	</li>
+);
+
+
+const ListWrapper: FC = ({ children }) => <ul className={CustomClasses.DATALIST_WRAPPER}>{children}</ul>;
+
+
+type PaginationProps = {
+	arrows?: "first" | "last",
+	currentPage: number,
+	itemsPerPage?: number,
+	nbItems: number,
+	setCurrentPage: (value: number) => void
 };
 
-const ListWrapper = ({ children }) => <ul className={CustomClasses.DATALIST_WRAPPER}>{children}</ul>;
-ListWrapper.propTypes = {
-	children: node
-};
-
-const Pagination = memo(function Pagination({ arrows = "last", currentPage, itemsPerPage = 30, nbItems, setCurrentPage }){
+const Pagination = memo<PaginationProps>(function Pagination({ arrows = "last", currentPage, itemsPerPage = 30, nbItems, setCurrentPage }){
 	const nbPages = useMemo(() => nbItems == 0 ? 0 : Math.ceil(nbItems / itemsPerPage), [itemsPerPage, nbItems]);
 	const goToNext = useCallback(() => {
 		if(currentPage < nbPages){
@@ -59,18 +62,9 @@ const Pagination = memo(function Pagination({ arrows = "last", currentPage, item
 			: null}
 	</div>;
 });
-Pagination.propTypes = {
-	arrows: oneOf(["first", "last"]),
-	currentPage: number,
-	itemsPerPage: number,
-	nbItems: number,
-	setCurrentPage: func
-};
 
-const Toolbar = ({ children }) => <div className={CustomClasses.DATALIST_TOOLBAR}>{children}</div>;
-Toolbar.propTypes = {
-	children: node
-};
+
+const Toolbar: FC = ({ children }) => <div className={CustomClasses.DATALIST_TOOLBAR}>{children}</div>;
 
 
 export {
