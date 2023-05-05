@@ -15,6 +15,7 @@
         "alwaysStrict": false,
 		"noImplicitAny": false,
 		"skipLibCheck": true,
+		"strictBindCallApply": true,
         "strictNullChecks": true,
         "allowJs": true,
 		"checkJs": true,
