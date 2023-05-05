@@ -1,19 +1,22 @@
-import { useCallback, useState } from "react";
+import { ComponentProps, useCallback, useState } from "react";
+import { Meta, Story } from "@storybook/react";
 import SortButtons from ".";
 
+
+type Props = ComponentProps<typeof SortButtons>;
 
 export default { 
 	component: SortButtons,
 	args: {
 		name: "item-sort"
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	const [selected, setSelected] = useState("published");
 	const onSelect = useCallback((val) => setSelected(val), []);
 
-	return <SortButtons onSelect={onSelect} selectedOption={selected} {...args} />;
+	return <SortButtons {...args} onSelect={onSelect} selectedOption={selected} />;
 };
 
 export const WithIcons = Template.bind({});
