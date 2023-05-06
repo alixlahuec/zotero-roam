@@ -61,6 +61,7 @@ jobs:
         with:
           directory: ./coverage/
           verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   makeRelease:
     if: contains(github.event.head_commit.message, 'chore(release):')
