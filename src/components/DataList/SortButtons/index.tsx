@@ -1,15 +1,25 @@
-import { arrayOf, bool, func, shape, string } from "prop-types";
 import { memo, useCallback } from "react";
-
-import { ButtonGroup, Icon } from "@blueprintjs/core";
+import { ButtonGroup, Icon, IconName } from "@blueprintjs/core";
 
 import { CustomClasses } from "../../../constants";
 
 import "./index.css";
 
 
-function SortButton(props){
-	const { icon, isSelected, label, name, onClick, value } = props;
+type SortOption = {
+	icon?: IconName | null,
+	label: string,
+	value: string
+};
+
+type SortButtonOwnProps = {
+	isSelected: boolean,
+	name: string,
+	onClick: (value: SortOption["value"]) => void,
+};
+
+function SortButton(props: SortButtonOwnProps & SortOption){
+	const { icon = null, isSelected, label, name, onClick, value } = props;
 	const uniqueId = [name, value].join("_");
 
 	const handleClick = useCallback(() => onClick(value), [onClick, value]);
@@ -22,16 +32,16 @@ function SortButton(props){
 		</span>
 	);
 }
-SortButton.propTypes = {
-	icon: string,
-	isSelected: bool,
-	label: string,
+
+
+type SortButtonsProps = {
 	name: string,
-	onClick: func,
-	value: string
+	onSelect: (value: SortOption["value"]) => void,
+	options: SortOption[],
+	selectedOption: SortOption["value"]
 };
 
-const SortButtons = memo(function SortButtons(props){
+const SortButtons = memo<SortButtonsProps>(function SortButtons(props){
 	const { name, onSelect, options, selectedOption } = props;
 	return (
 		<ButtonGroup minimal={true} >
@@ -41,15 +51,5 @@ const SortButtons = memo(function SortButtons(props){
 		</ButtonGroup>
 	);
 });
-SortButtons.propTypes = {
-	name: string,
-	onSelect: func,
-	options: arrayOf(shape({
-		icon: string,
-		label: string,
-		value: string
-	})),
-	selectedOption: string
-};
 
 export default SortButtons;

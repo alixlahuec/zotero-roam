@@ -15,7 +15,7 @@ import { useFilterList, usePagination, useText } from "../../../hooks";
 import { CustomClasses } from "../../../constants";
 
 import * as customPropTypes from "../../../propTypes";
-import FilterButtons from "Components/DataList/FilterSelect";
+import FilterSelect from "Components/DataList/FilterSelect";
 
 
 const itemsPerPage = 30;
@@ -108,7 +108,7 @@ const SemanticPagination = memo(function SemanticPagination(props){
 	return (
 		<div className="rendered-div">
 			<Toolbar>
-				<FilterButtons options={filterList} toggleFilter={handleFilter} />
+				<FilterSelect options={filterList} toggleFilter={handleFilter} />
 				<InputGroup
 					aria-label="Search by title, authors (last names), or year"
 					autoComplete="off"
