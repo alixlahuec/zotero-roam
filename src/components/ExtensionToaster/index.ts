@@ -2,8 +2,7 @@ import { Toaster } from "@blueprintjs/core";
 
 
 const zrToaster = Toaster.create({
-	className: "zr-toaster",
-	timeout: 1500
+	className: "zr-toaster"
 });
 
 export default zrToaster;
