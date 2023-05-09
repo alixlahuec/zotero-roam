@@ -1,21 +1,20 @@
-import { bool, func, object } from "prop-types";
-
-import { Button, Classes, Drawer, Tab, Tabs } from "@blueprintjs/core";
+import { Button, Classes, Drawer, DrawerProps, Tab, Tabs } from "@blueprintjs/core";
 import { ErrorBoundary } from "Components/Errors";
 
 import { CustomClasses } from "../../constants";
-
 import "./index.css";
 
 
-function RawItem({ item }){
-	return <pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "  ")}</pre>;
-}
-RawItem.propTypes = {
-	item: object
+type ItemProps = {
+	item: Record<string, any>
 };
 
-function DataDrawer({ item, isOpen, onClose }){
+function RawItem({ item }: ItemProps){
+	return <pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "  ")}</pre>;
+}
+
+
+function DataDrawer({ item, isOpen, onClose }: ItemProps & Pick<DrawerProps, "isOpen" | "onClose">){
 	return (
 		<Drawer
 			canEscapeKeyClose={false}
@@ -35,10 +34,5 @@ function DataDrawer({ item, isOpen, onClose }){
 		</Drawer>
 	);
 }
-DataDrawer.propTypes = {
-	item: object,
-	isOpen: bool,
-	onClose: func
-};
 
 export default DataDrawer;
