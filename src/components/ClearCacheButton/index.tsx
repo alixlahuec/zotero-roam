@@ -6,7 +6,7 @@ import { cleanErrorIfAxios } from "../../api/utils";
 
 
 function ClearCacheButton(){
-	const [dataIsCached, { set: setDataIsCached }] = useBool(null);
+	const [dataIsCached, { set: setDataIsCached }] = useBool();
 	const updateCacheStatus = useCallback(() => {
 		window.zoteroRoam?.isDataCached?.()
 			.then(status => setDataIsCached(status))
@@ -44,7 +44,7 @@ function ClearCacheButton(){
 			.then(() => updateCacheStatus());
 	}, [updateCacheStatus]);
 
-	return <Button loading={dataIsCached == null} onClick={clearCache} {...buttonProps} />;
+	return <Button loading={dataIsCached == undefined} onClick={clearCache} {...buttonProps} />;
 }
 
 export default ClearCacheButton;

@@ -1,24 +1,24 @@
-import { arrayOf, bool, func, object, oneOfType } from "prop-types";
 import { memo, useMemo } from "react";
-
-import { Button, ButtonGroup, Classes, Dialog, Drawer, Icon, Tab, Tabs, Tag } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Dialog, Drawer, DrawerProps, Icon, Tab, Tabs, Tag } from "@blueprintjs/core";
 
 import ButtonLink from "Components/ButtonLink";
 import { ErrorBoundary } from "Components/Errors";
 import { useNotesSettings } from "Components/UserSettings";
 
 import { useBool } from "../../hooks";
-
 import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
 
 import { CustomClasses } from "../../constants";
-
-import * as customPropTypes from "../../propTypes";
+import { ZItemAnnotation, ZItemNote, ZSimplifiedAnnotation, ZSimplifiedNote, isZAnnotation, isZNote } from "Types/transforms";
 
 import "./index.css";
 
 
-function ShowRaw({ item }){
+type ShowRawProps = {
+	item: ZItemAnnotation | ZItemNote
+};
+
+function ShowRaw({ item }: ShowRawProps){
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 
 	return <>
@@ -30,11 +30,13 @@ function ShowRaw({ item }){
 		</Dialog>
 	</>;
 }
-ShowRaw.propTypes = {
-	item: object
+
+
+type AnnotationProps = {
+	annot: ZSimplifiedAnnotation
 };
 
-function Annotation({ annot }){
+function Annotation({ annot }: AnnotationProps){
 	const { color, comment, date_modified, link_page, link_pdf, page_label, raw, tags, text, type } = annot;
 
 	// https://shannonpayne.com.au/how-to-create-a-low-highlight-text-effect-using-css/
@@ -61,14 +63,17 @@ function Annotation({ annot }){
 		</div>
 	</div>;
 }
-Annotation.propTypes = {
-	annot: customPropTypes.cleanAnnotationItemType
+
+
+type NoteProps = {
+	note: ZSimplifiedNote
 };
 
-function Note({ note }){
+function Note({ note }: NoteProps){
 	const { date_modified, link_note, raw, tags } = note;
 	const [notesSettings] = useNotesSettings();
 
+	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings), [notesSettings, raw]);
 
 	return <div className={["zr-drawer--notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
@@ -89,34 +94,40 @@ function Note({ note }){
 		</div>
 	</div>;
 }
-Note.propTypes = {
-	note: customPropTypes.cleanNoteItemType
+
+
+type PanelAnnotationsProps = {
+	annots: ZItemAnnotation[]
 };
 
-function PanelAnnotations({ annots }){
+function PanelAnnotations({ annots }: PanelAnnotationsProps){
 	const clean_annotations = simplifyZoteroAnnotations(annots)
 		.sort((a,b) => compareAnnotationIndices(a.sortIndex, b.sortIndex));
 
-	return clean_annotations.map(annot => <Annotation key={annot.key} annot={annot} /> );
+	return <>{clean_annotations.map(annot => <Annotation key={annot.key} annot={annot} /> )}</>;
 }
-PanelAnnotations.propTypes = {
-	annots: arrayOf(customPropTypes.zoteroAnnotationType)
+
+
+type PanelNotesProps = {
+	notes: ZItemNote[]
 };
 
-function PanelNotes({ notes }){
+function PanelNotes({ notes }: PanelNotesProps){
 	const clean_notes = simplifyZoteroNotes(notes);
 
-	return clean_notes.map(nt => <Note key={nt.key} note={nt} />);
+	return <>{clean_notes.map(nt => <Note key={nt.key} note={nt} />)}</>;
 }
-PanelNotes.propTypes = {
-	notes: arrayOf(customPropTypes.zoteroItemType)
+
+
+type NotesDrawerProps = {
+	notes: (ZItemAnnotation|ZItemNote)[]
 };
 
-const NotesDrawer = memo(function NotesDrawer(props){
+const NotesDrawer = memo<NotesDrawerProps & Pick<DrawerProps, "isOpen" | "onClose">>(function NotesDrawer(props){
 	const { isOpen, notes, onClose } = props;
 
-	const annots = useMemo(() => notes.filter(n => n.data.itemType == "annotation"), [notes]);
-	const noteItems = useMemo(() => notes.filter(n => n.data.itemType == "note"), [notes]);
+	const annots = useMemo(() => notes.filter(isZAnnotation), [notes]);
+	const noteItems = useMemo(() => notes.filter(isZNote), [notes]);
 
 	return (
 		<Drawer
@@ -138,10 +149,6 @@ const NotesDrawer = memo(function NotesDrawer(props){
 		</Drawer>
 	);
 });
-NotesDrawer.propTypes = {
-	isOpen: bool,
-	notes: arrayOf(oneOfType([customPropTypes.zoteroAnnotationType, customPropTypes.zoteroItemType])),
-	onClose: func
-};
+
 
 export default NotesDrawer;

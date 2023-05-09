@@ -1,7 +1,14 @@
+import { ComponentProps } from "react";
+import { Meta, Story } from "@storybook/react";
+import { mock } from "jest-mock-extended";
+
 import NotesDrawer from ".";
+import { ZItemAnnotation, ZItemNote } from "Types/transforms";
 
 
-const note1 = {
+type Props = ComponentProps<typeof NotesDrawer>;
+
+const note1 = mock<ZItemNote>({
 	data: {
 		dateAdded: "2022-01-01T12:00:00Z",
 		dateModified: "2022-01-01T12:00:00Z",
@@ -15,9 +22,9 @@ const note1 = {
 		id: 12345,
 		type: "user"
 	}
-};
+});
 
-const note2 = {
+const note2 = mock<ZItemNote>({
 	data: {
 		dateAdded: "2022-01-01T12:00:00Z",
 		dateModified: "2022-01-01T12:00:00Z",
@@ -31,9 +38,9 @@ const note2 = {
 		id: 56789,
 		type: "group"
 	}
-};
+});
 
-const annot1 = {
+const annot1 = mock<ZItemAnnotation>({
 	"key": "JQ47EB9W",
 	"library": {
 		"type": "user",
@@ -54,9 +61,9 @@ const annot1 = {
 		"dateAdded": "2022-03-18T13:12:23Z",
 		"dateModified": "2022-03-18T13:12:23Z"
 	}
-};
+});
 
-const annot2 = {
+const annot2 = mock<ZItemAnnotation>({
 	"key": "ETMYR9QI",
 	"library": {
 		"type": "user",
@@ -76,7 +83,7 @@ const annot2 = {
 		"dateAdded": "2022-03-31T11:47:39Z",
 		"dateModified": "2022-03-31T11:48:01Z"
 	}
-};
+});
 
 export default {
 	component: NotesDrawer,
@@ -98,9 +105,9 @@ export default {
 			}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => <NotesDrawer {...args} />;
+const Template: Story<Props> = (args) => <NotesDrawer {...args} />;
 
 export const NotesOnly = Template.bind({});
 NotesOnly.args = {

@@ -4,7 +4,7 @@ import { AnchorButton, AnchorButtonProps } from "@blueprintjs/core";
 
 type OwnProps = {
 	href: string,
-	minimal: AnchorButtonProps["minimal"]
+	minimal?: AnchorButtonProps["minimal"]
 };
 
 const ButtonLink: FC<OwnProps & Partial<AnchorButtonProps>> = (props) => {

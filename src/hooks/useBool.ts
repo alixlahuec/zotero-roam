@@ -1,19 +1,17 @@
 import { useCallback, useState } from "react";
 
 
-type Value = boolean | null;
-
 /** 
  * Custom hook for handling component state that takes a boolean
 */
-const useBool = (initialState: Value = false) => {
-	const [state, setState] = useState<Value>(initialState);
+const useBool = (initialState?: boolean) => {
+	const [state, setState] = useState(initialState);
 	
 	const toggle = useCallback(() => {
 		setState(prevState => !prevState);
 	}, []);
-    
-	const set = useCallback((value: Value) => {
+
+	const set = useCallback((value: boolean) => {
 		setState(value);
 	}, []);
 
