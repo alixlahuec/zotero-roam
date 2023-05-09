@@ -1,8 +1,13 @@
-import { bool, node, string } from "prop-types";
-import { AnchorButton } from "@blueprintjs/core";
+import { FC } from "react";
+import { AnchorButton, AnchorButtonProps } from "@blueprintjs/core";
 
 
-function ButtonLink(props) {
+type OwnProps = {
+	href: string,
+	minimal: AnchorButtonProps["minimal"]
+};
+
+const ButtonLink: FC<OwnProps & Partial<AnchorButtonProps>> = (props) => {
 	const { children = null, href, minimal = true, ...otherProps } = props;
 	
 	return (
@@ -10,11 +15,6 @@ function ButtonLink(props) {
 			{children}
 		</AnchorButton>
 	);
-}
-ButtonLink.propTypes = {
-	children: node,
-	href: string,
-	minimal: bool
 };
 
 export default ButtonLink;
