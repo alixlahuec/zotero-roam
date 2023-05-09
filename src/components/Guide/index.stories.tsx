@@ -1,11 +1,15 @@
+import { ComponentProps } from "react";
+import { Meta, Story } from "@storybook/react";
 import { Guide, Link } from ".";
 
 
+type Props = ComponentProps<typeof Guide>;
+
 export default {
 	component: Guide
-};
+} as Meta<Props>;
 
-const Template = (args) => <Guide {...args} />;
+const Template: Story<Props> = (args) => <Guide {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
