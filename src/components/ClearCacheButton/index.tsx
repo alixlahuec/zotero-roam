@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { Button } from "@blueprintjs/core";
+import { Button, Intent } from "@blueprintjs/core";
 
 import { useBool } from "../../hooks";
 import { cleanErrorIfAxios } from "../../api/utils";
@@ -26,7 +26,7 @@ function ClearCacheButton(){
 	const buttonProps = useMemo(() => {
 		if(dataIsCached){
 			return {
-				intent: "warning",
+				intent: Intent.WARNING,
 				text: "Clear cache",
 				title: "Click to clear the extension's data cache"
 			};
