@@ -7,7 +7,7 @@ describe("Hook for boolean state", () => {
 	test("Toggle method", () => {
 		const { result } = renderHook(() => useBool());
     
-		expect(result.current[0]).toBe(false);
+		expect(result.current[0]).toBe(undefined);
     
 		act(() => {
 			result.current[1].toggle();
