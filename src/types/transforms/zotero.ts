@@ -87,6 +87,7 @@ export const isZAnnotation = (item: ZItem): item is ZItemAnnotation => item.data
 export const isZNote = (item: ZItem): item is ZItemNote => item.data.itemType === "note";
 export const isZNoteOrAnnotation = (item: ZItem): item is ZItemAnnotation | ZItemNote => isZAnnotation(item) || isZNote(item);
 export const isZAttachment = (item: ZItem): item is ZItemAttachment => item.data.itemType === "attachment";
+export const isZItemTop = (item: ZItem): item is ZItemTop => !(isZAttachment(item) || isZNoteOrAnnotation(item));
 
 export interface ZLibraryContents {
 	items: ZItemTop[],
