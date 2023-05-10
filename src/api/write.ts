@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTags, writeItems } from "./utils";
 import { emitCustomEvent } from "../events";
 
-import { QueryDataItems, QueryDataTags, ZLibrary } from "Types/transforms";
+import { QueryDataItems, QueryDataTags, ZLibrary, isZItemTop } from "Types/transforms";
 import { CitoidAPI, ZoteroAPI } from "Types/externals";
 import { isFulfilled } from "Types/helpers";
 
@@ -137,7 +137,8 @@ const useModifyTags = () => {
 		const dataList: Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">[] = [];
 		const libItems = client.getQueriesData<QueryDataItems>(["items", path])
 			.map(query => (query[1] || {}).data || []).flat(1)
-			.filter(i => !["attachment", "note", "annotation"].includes(i.data.itemType) && i.data.tags.length > 0);
+			.filter(isZItemTop)
+			.filter(i => i.data.tags.length > 0);
 
 		libItems.forEach(i => {
 			const itemTags = i.data.tags;

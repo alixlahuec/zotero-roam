@@ -10,7 +10,7 @@ import { findRoamBlock } from "Roam";
 
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 
-import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, QueryDataCollections, QueryDataItems, QueryDataTags, QueryKeyItems, QueryKeyTags, QueryKeyCollections, ZLinkType, ZLinkOptions, isZAnnotation, isZNote } from "Types/transforms";
+import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, QueryDataCollections, QueryDataItems, QueryDataTags, QueryKeyItems, QueryKeyTags, QueryKeyCollections, ZLinkType, ZLinkOptions, isZAnnotation, isZNote, isZItemTop, isZAttachment } from "Types/transforms";
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
 import { ZoteroAPI } from "Types/externals";
 
@@ -563,15 +563,15 @@ function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { quer
 
 	switch (select) {
 	case "items":
-		return items.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType));
+		return items.filter(isZItemTop);
 	case "attachments":
-		return items.filter(it => it.data.itemType == "attachment");
+		return items.filter(isZAttachment);
 	case "children":
 		return items.filter(it => ["note", "annotation"].includes(it.data.itemType) || (it.data.itemType == "attachment" && it.data.contentType == "application/pdf"));
 	case "annotations":
-		return items.filter(it => it.data.itemType == "annotation");
+		return items.filter(isZAnnotation);
 	case "notes":
-		return items.filter(it => it.data.itemType == "note");
+		return items.filter(isZNote);
 	case "pdfs":
 		return items.filter(it => it.data.itemType == "attachment" && it.data.contentType == "application/pdf");
 	case "all":
