@@ -11,6 +11,7 @@ import { CustomClasses } from "../../constants";
 import { TributeJS } from "Types/externals/tribute";
 import { QueryDataItems, isZItemTop } from "Types/transforms";
 import "./index.css";
+import { AutocompleteItemFormat, DataRequest } from "Types/extension";
 
 
 type Option = {
@@ -52,16 +53,18 @@ const tributeConfig: TributeCollection<Option> = {
 	}
 };
 
-type ItemsSelector = (datastore: QueryDataItems) => Option[];
-
 /** Custom hook to retrieve library items and return them in a convenient format for the Tribute, sorted by last-modified
- * @param {DataRequest[]} reqs - The data requests to use to retrieve items 
- * @param {AutocompleteItemFormat} format - The format the item should be pasted as
- * @param {AutocompleteItemFormat} display - The format the item should be displayed in 
- * @returns {{key: String, itemType: String, source: ("zotero"), value: String, display: String}[]} The array of Tribute entries
+ * @returns The array of Tribute entries
  */
-const useGetItems = (reqs, format = "citekey", display = "citekey") => {
-	const select = useCallback<ItemsSelector>((datastore) => {
+const useGetItems = (
+	/** The targeted data requests  */
+	reqs: DataRequest[],
+	/** The format the item should be pasted as */
+	format: AutocompleteItemFormat = "citekey",
+	/** The format the item should be displayed in */
+	display: AutocompleteItemFormat = "citekey"
+): Option[] => {
+	const select = useCallback((datastore: QueryDataItems) => {
 		return datastore.data
 			? datastore.data
 				.filter(isZItemTop)
@@ -83,8 +86,7 @@ const useGetItems = (reqs, format = "citekey", display = "citekey") => {
 		notifyOnChangeProps: ["data"] 
 	});
 
-	// * Type casting is necessary here -- intellisense doesn't take `select` into account
-	const data = useMemo(() => itemQueries.map(q => q.data || []).flat(1) as any as ReturnType<ItemsSelector>, [itemQueries]);
+	const data = useMemo(() => itemQueries.map(q => q.data || []).flat(1), [itemQueries]);
     
 	return data;
 };
