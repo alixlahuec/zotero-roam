@@ -1,5 +1,4 @@
 import { Meta, Story } from "@storybook/react";
-import { mock } from "jest-mock-extended";
 
 import ClearCacheButton from "Components/ClearCacheButton";
 import ZoteroRoam from "../../extension";
@@ -15,7 +14,7 @@ export default {
 		(Story, context) => {
 			const { parameters: { returnDataIsCached } } = context;
 
-			window.zoteroRoam = mock<ZoteroRoam>({
+			window.zoteroRoam = {
 				isDataCached: () => {
 					return new Promise((resolve) => {
 						setTimeout(() => {
@@ -23,7 +22,7 @@ export default {
 						}, 0);
 					});
 				}
-			});
+			} as ZoteroRoam;
 
 			return <Story />;
 		}
