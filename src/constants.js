@@ -6,6 +6,11 @@ export const EXTENSION_PORTAL_ID = "zotero-roam-portal";
 /** @constant {String} The HTML id for the extension's icon's container */
 export const EXTENSION_SLOT_ID = "zotero-roam-slot";
 
+
+/** @constant {Number} The default timeout (in ms) for toasts */
+export const DEFAULT_TOAST_TIMEOUT = 1500;
+
+
 /** @constant {String} The name for the extension's idb database */
 export const IDB_DATABASE_NAME = "ZOTERO_ROAM";
 /** @constant {Number} The current version for the extension's idb database */
@@ -14,6 +19,7 @@ export const IDB_DATABASE_VERSION = 1;
 export const IDB_REACT_QUERY_STORE_NAME = "REACT_QUERY";
 /** @constant {String} The key name for the client in the React Query store */
 export const IDB_REACT_QUERY_CLIENT_KEY = "REACT_QUERY_CLIENT";
+
 
 /* istanbul ignore file */
 export const TYPEMAP_DEFAULT = {
@@ -53,6 +59,7 @@ export const TYPEMAP_DEFAULT = {
 	videoRecording: "Recording",
 	webpage: "Webpage"
 };
+
 
 export const CustomClasses = {
 	DATALIST_ITEM: "zr-datalist--item",

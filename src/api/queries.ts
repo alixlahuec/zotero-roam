@@ -1,18 +1,14 @@
 import { useMemo } from "react";
-import { QueryClient, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, UseQueryOptions, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 import { fetchCitoid, fetchCollections, fetchItems, fetchPermissions, fetchSemantic, fetchTags } from "./utils";
 
-import { QueryDataCollections, QueryDataItems, QueryKeyCitoid, QueryKeyCollections, QueryKeyItems, QueryKeyPermissions, QueryKeySemantic, QueryKeyTags, ZLibrary } from "Types/transforms";
+import { QueryDataCitoid, QueryDataCollections, QueryDataItems, QueryDataPermissions, QueryDataSemantic, QueryDataTags, QueryKeyCitoid, QueryKeyCollections, QueryKeyItems, QueryKeyPermissions, QueryKeySemantic, QueryKeyTags, ZLibrary } from "Types/transforms";
 import { DataRequest } from "Types/extension";
 
 
-/** Wrapper for retrieving items data, based on contents of the query cache.
- * @param req - The parameters of the request
- * @param queryClient - The current React Query client
- * @returns 
- */
+/** Wrapper for retrieving items data, based on contents of the query cache. */
 async function wrappedFetchItems(req: DataRequest, queryClient: QueryClient) {
 	const { apikey, library: { path }, ...identifiers } = req;
 	const queryKey: QueryKeyItems = ["items", path, { ...identifiers }];
@@ -23,11 +19,13 @@ async function wrappedFetchItems(req: DataRequest, queryClient: QueryClient) {
 /** React Query custom hook for retrieving Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity` and `staleTime = 10min`.
  *  There is no refetch scheduled, since the data should not change over the course of a session.
  *  Requests are retried only once (except for 404 errors, which should never be retried).
- * @param urls - The targeted URLs 
- * @param opts - Optional configuration to use with the queries
- * @returns The React Queries for the given URLs' Wikipedia metadata
  */
-const useQuery_Citoid = (urls: string[], opts: Record<string, any> = {}) => {
+const useQuery_Citoid = <TData = QueryDataCitoid>(
+	/** The targeted URLs */
+	urls: string[],
+	/** Optional configuration to use with the queries */
+	opts: Omit<UseQueryOptions<QueryDataCitoid, unknown, TData, QueryKeyCitoid>, "queryKey" | "queryFn"> = {}
+) => {
 	// Defaults for this query
 	const {
 		cacheTime = Infinity,
@@ -54,12 +52,13 @@ const useQuery_Citoid = (urls: string[], opts: Record<string, any> = {}) => {
 	});
 };
 
-/** React Query custom hook for retrieving Zotero collections. By default, `staleTime = 5 min` and `refetchInterval = 5 min`.
- * @param libraries - The targeted Zotero libraries 
- * @param opts - Optional configuration to use with the queries 
- * @returns The React Queries for the given libraries' collections
- */
-const useQuery_Collections = (libraries: ZLibrary[], opts: Record<string, any> = {}) => {
+/** React Query custom hook for retrieving Zotero collections. By default, `staleTime = 5 min` and `refetchInterval = 5 min`. */
+const useQuery_Collections = <TData = QueryDataCollections>(
+	/** The targeted Zotero libraries */
+	libraries: ZLibrary[],
+	/** Optional configuration to use with the queries */
+	opts: Omit<UseQueryOptions<QueryDataCollections, unknown, TData, QueryKeyCollections>, "queryKey" | "queryFn"> = {}
+) => {
 	// Defaults for this query
 	const { staleTime = 1000 * 60 * 5, refetchInterval = 1000 * 60 * 5, ...rest } = opts;
 	// Factory
@@ -81,12 +80,13 @@ const useQuery_Collections = (libraries: ZLibrary[], opts: Record<string, any> =
 	});
 };
 
-/** React Query custom hook for retrieving Zotero items. By default, `staleTime = 1 min` and `refetchInterval = 1 min`.
- * @param reqs - The targeted data requests
- * @param opts - Optional configuration to use with the queries
- * @returns The React Queries for the given data requests
- */
-const useQuery_Items = (reqs: DataRequest[], opts: Record<string, any> = {}) => {
+/** React Query custom hook for retrieving Zotero items. By default, `staleTime = 1 min` and `refetchInterval = 1 min`. */
+const useQuery_Items = <TData = QueryDataItems>(
+	/** The targeted data requests */
+	reqs: DataRequest[],
+	/** Optional configuration to use with the queries */
+	opts: Omit<UseQueryOptions<QueryDataItems, unknown, TData, QueryKeyItems>, "queryKey" | "queryFn"> = {}
+) => {
 	const client = useQueryClient();
 	const queriesDefs = useMemo(() => {
 		// Defaults for this query
@@ -109,12 +109,13 @@ const useQuery_Items = (reqs: DataRequest[], opts: Record<string, any> = {}) => 
 	});
 };
 
-/** React Query custom hook for retrieving permissions for Zotero API keys. By default, `staleTime = 1 hour` and `refetchInterval = 1 hour`.
- * @param keys - The targeted Zotero API keys 
- * @param opts - Optional configuration to use with the queries 
- * @returns The React Queries for the given API keys' permissions
- */
-const useQuery_Permissions = (keys: string[], opts: Record<string, any> = {}) => {
+/** React Query custom hook for retrieving permissions for Zotero API keys. By default, `staleTime = 1 hour` and `refetchInterval = 1 hour`. */
+const useQuery_Permissions = <TData = QueryDataPermissions>(
+	/** The targeted API keys */
+	keys: string[],
+	/** Optional configuration to use with the queries */
+	opts: Omit<UseQueryOptions<QueryDataPermissions, unknown, TData, QueryKeyPermissions>, "queryKey" | "queryFn"> = {}
+) => {
 	// Defaults for this query
 	const { staleTime = 1000 * 60 * 60, refetchInterval = 1000 * 60 * 60, ...rest } = opts;
 	// Factory
@@ -135,11 +136,13 @@ const useQuery_Permissions = (keys: string[], opts: Record<string, any> = {}) =>
 
 /** React Query custom hook for retrieving Semantic Scholar citation data by DOI. By default, `cacheTime = Infinity`.
  * There is no refetch scheduled, since the data should not change over the course of a session.
- * @param doi - The targeted DOI 
- * @param opts - Optional configuration to use with the queries 
- * @returns The React Query for the given DOI's Semantic Scholar data
  */
-const useQuery_Semantic = (doi: string, opts: Record<string, any> = {}) => {
+const useQuery_Semantic = <TData = QueryDataSemantic>(
+	/** The targeted DOI */
+	doi: string,
+	/** Optional configuration to use with the queries */
+	opts: Omit<UseQueryOptions<QueryDataSemantic, unknown, TData, QueryKeySemantic>, "queryKey" | "queryFn"> = {}
+) => {
 	// Defaults for this query
 	const { cacheTime = Infinity, ...rest } = opts;
 	// Factory
@@ -154,11 +157,13 @@ const useQuery_Semantic = (doi: string, opts: Record<string, any> = {}) => {
 
 /** React Query custom hook for retrieving Zotero tags. By default, `staleTime = 3 min`.
  *  Refetching is managed by {@link useQuery_Items}.
- * @param libraries - The targeted Zotero libraries 
- * @param opts - Optional configuration to use with the queries 
- * @returns The React Queries for the given libraries' tags
  */
-const useQuery_Tags = (libraries: ZLibrary[], opts: Record<string, any> = {}) => {
+const useQuery_Tags = <TData = QueryDataTags>(
+	/** The targeted Zotero libraries */
+	libraries: ZLibrary[],
+	/** Optional configuration to use with the queries */
+	opts: Omit<UseQueryOptions<QueryDataTags, unknown, TData, QueryKeyTags>, "queryKey" | "queryFn"> = {}
+) => {
 	const queriesDefs = useMemo(() => {
 		// Defaults for this query
 		const { staleTime = 1000 * 60 * 3, ...rest } = opts;

@@ -578,7 +578,7 @@ function formatItemReference(item: ZItemTop, format: ZItemReferenceFormat | stri
 		year
 	};
 
-	let output = TEMPLATES_MAPPING[format] || format || "{{citekey}}";
+	let output: string = TEMPLATES_MAPPING[format] || format || "{{citekey}}";
 
 	for(const prop in specs){
 		output = output.replaceAll(`{{${prop}}}`, `${specs[prop]}`);

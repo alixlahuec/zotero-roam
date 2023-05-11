@@ -31,6 +31,10 @@ RoamCitekeysProvider.propTypes = {
 const useRoamCitekeys = () => {
 	const context = useContext(RoamCitekeys);
 
+	if (!context) {
+		throw new Error("No context provided");
+	}
+
 	return context;
 };
 
