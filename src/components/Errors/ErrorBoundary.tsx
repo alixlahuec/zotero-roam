@@ -1,11 +1,13 @@
-import { Component } from "react";
+import { Component, ReactNode } from "react";
 
 import { ErrorCallout } from "./ErrorCallout";
 
 import { cleanErrorIfAxios } from "../../api/utils";
 
 
-type OwnProps = Record<string, never>;
+type OwnProps = {
+	children?: ReactNode
+};
 
 type OwnState = {
 	error: any | null,
