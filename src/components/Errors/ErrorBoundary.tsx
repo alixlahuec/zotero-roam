@@ -1,13 +1,19 @@
-import { node } from "prop-types";
 import { Component } from "react";
 
-import ErrorCallout from "./ErrorCallout";
+import { ErrorCallout } from "./ErrorCallout";
 
-import { cleanErrorIfAxios } from "../../../src/api/utils";
+import { cleanErrorIfAxios } from "../../api/utils";
 
 
-class ErrorBoundary extends Component {
-	constructor(props) {
+type OwnProps = Record<string, never>;
+
+type OwnState = {
+	error: any | null,
+	errorInfo: any | null
+};
+
+class ErrorBoundary extends Component<OwnProps, OwnState> {
+	constructor(props: OwnProps) {
 		super(props);
 		this.state = { error: null, errorInfo: null };
 	}
@@ -34,8 +40,5 @@ class ErrorBoundary extends Component {
 			: this.props.children;
 	}
 }
-ErrorBoundary.propTypes = {
-	children: node
-};
 
 export { ErrorBoundary };
