@@ -10,6 +10,7 @@ import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Ta
 import { useBool } from "../../hooks";
 import { makeTimestamp } from "../../utils";
 
+import { AsBoolean } from "Types/helpers";
 import { QueryDataCollections, QueryDataItems, QueryDataPermissions, QueryDataTags } from "Types/transforms";
 import "./index.css";
 
@@ -68,7 +69,7 @@ type QueriesStatusIconProps = {
 
 function QueriesStatusIcon(props: QueriesStatusIconProps) {
 	const { queries } = props;
-	const updated = queries.map(q => q.dataUpdatedAt).filter(Boolean);
+	const updated = queries.map(q => q.dataUpdatedAt).filter(AsBoolean);
 	const timestamp = updated.length > 0 ? <span zr-role="timestamp">{makeTimestamp(Math.max(...updated))}</span> : null;
 
 	const isFetching = queries.some(q => q.isFetching);

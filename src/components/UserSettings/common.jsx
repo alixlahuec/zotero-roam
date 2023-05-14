@@ -6,6 +6,7 @@ import { Select } from "@blueprintjs/select";
 
 import { useBool } from "../../hooks";
 import { CustomClasses } from "../../constants";
+import { AsBoolean } from "Types/helpers";
 
 
 const popoverProps = {
@@ -68,10 +69,10 @@ const RowGroupOption = ({ alignToBaseline = false, children, description = null,
 	const isSelected = useMemo(() => selected == id, [id, selected]);
 	const onChange = useCallback(() => handleSelect(id), [handleSelect, id]);
 
-	return <div className={["zr-settings-rowgroup--option", alignToBaseline && "align-items-baseline"].filter(Boolean).join(" ")} >
+	return <div className={["zr-settings-rowgroup--option", alignToBaseline && "align-items-baseline"].filter(AsBoolean).join(" ")} >
 		<Checkbox
 			checked={selected == id}
-			className={["zr-settings-rowgroup--option-label", isSelected && "selected"].filter(Boolean).join(" ")}
+			className={["zr-settings-rowgroup--option-label", isSelected && "selected"].filter(AsBoolean).join(" ")}
 			inline={false}
 			labelElement={<div>
 				<OptionTitle>{options[id]}</OptionTitle>

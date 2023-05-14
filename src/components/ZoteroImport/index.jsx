@@ -16,6 +16,7 @@ import { sortCollections } from "../../utils";
 
 import * as customPropTypes from "../../propTypes";
 import { CustomClasses } from "../../constants";
+import { AsBoolean } from "Types/helpers";
 
 import "./index.css";
 
@@ -28,7 +29,7 @@ const ImportButton = memo(function ImportButton(props) {
 		select: (data) => data.item
 	});
 	const isDataReady = citoidQueries.every(q => q.data);
-	const citoids = citoidQueries.map(q => q.data).filter(Boolean);
+	const citoids = citoidQueries.map(q => q.data).filter(AsBoolean);
 
 	const { mutate, status } = useImportCitoids();
 

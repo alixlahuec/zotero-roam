@@ -1,7 +1,7 @@
 import zrToaster from "Components/ExtensionToaster";
 import { SettingsAnnotations, SettingsNotes } from "Types/extension";
 import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
-import { ExcludesFalse } from "Types/helpers";
+import { AsBoolean } from "Types/helpers";
 import { RCitekeyPages, RImportableBlock, ZCleanItemPDF, ZCleanItemTop, ZEnrichedCollection, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZSimplifiedNote, ZTagDictionary, isZAnnotation, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
 import { SCleanItem, SEnrichedItem, SRelatedEntries } from "Types/transforms/semantic";
 
@@ -39,7 +39,7 @@ function categorizeLibraryItems(datastore: ZItem[]): ZLibraryContents{
 
 /** Extracts an author's last name */
 function getAuthorLastName(name: string): string {
-	const components = name.replaceAll(".", " ").split(" ").filter(Boolean);
+	const components = name.replaceAll(".", " ").split(" ").filter(AsBoolean);
 	if (components.length == 1) {
 		return components[0];
 	} else {
@@ -96,7 +96,7 @@ function cleanLibraryItem(item: ZItemTop, pdfs: ZItemAttachment[] = [], notes: (
 	
 	const creators = item.data.creators.map(cre => {
 		return {
-			full: "name" in cre ? cre.name : [cre.firstName, cre.lastName].filter(Boolean).join(" ") || "",
+			full: "name" in cre ? cre.name : [cre.firstName, cre.lastName].filter(AsBoolean).join(" ") || "",
 			last: ("lastName" in cre ? cre.lastName : cre.name) || "",
 			role: cre.creatorType || ""
 		};
@@ -127,7 +127,7 @@ function cleanLibraryItem(item: ZItemTop, pdfs: ZItemAttachment[] = [], notes: (
 		itemType: item.data.itemType,
 		key: item.key,
 		location: item.library.type + "s/" + item.library.id,
-		meta: [authors, pub_year].filter(Boolean).join(" "),
+		meta: [authors, pub_year].filter(AsBoolean).join(" "),
 		publication: item.data.publicationTitle || item.data.bookTitle || item.data.university || "",
 		tags: tags,
 		title: item.data.title,
@@ -148,7 +148,7 @@ function cleanLibraryItem(item: ZItemTop, pdfs: ZItemAttachment[] = [], notes: (
 		clean_item.title, 
 		clean_item.tags.map(tag => `#${tag}`).join(", "),
 		clean_item.key
-	].filter(Boolean).join(" ");
+	].filter(AsBoolean).join(" ");
 
 	return clean_item;
 }
@@ -222,7 +222,7 @@ function cleanSemanticItem(item: SemanticScholarAPI.RelatedPaper): SCleanItem {
 		clean_item.authorsString,
 		clean_item.year,
 		clean_item.title
-	].filter(Boolean).join(" ");
+	].filter(AsBoolean).join(" ");
 
 	return clean_item;
 }
@@ -511,7 +511,7 @@ function formatItemAnnotations(
 								template_highlight
 							}
 						))
-						.filter(Boolean as any as ExcludesFalse)
+						.filter(AsBoolean)
 				};
 			})
 			.filter(date => date.children.length > 0);
@@ -520,7 +520,7 @@ function formatItemAnnotations(
 			.map(ann => formatAnnotationWithParams(ann, { 
 				template_comment, 
 				template_highlight }))
-			.filter(Boolean as any as ExcludesFalse);
+			.filter(AsBoolean);
 	}
 }
 
@@ -553,7 +553,7 @@ function formatItemReference(item: ZItemTop, format: ZItemReferenceFormat | stri
 		: isNaN(Number(new Date(item.meta.parsedDate)))
 			? ""
 			: (new Date(item.meta.parsedDate)).getUTCFullYear();
-	const summary = [authors, year ? `(${year})` : ""].filter(Boolean).join(" ");
+	const summary = [authors, year ? `(${year})` : ""].filter(AsBoolean).join(" ");
 	const citekey = "@" + key;
 	const summary_or_key = summary || key;
 
@@ -795,7 +795,7 @@ function makeDateFromAgo(date: Date | any){
 		const monthDay =`${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}`;
 		const maybeYear = thisdate.getFullYear() != today.getFullYear() ? thisdate.getFullYear() : false;
 
-		return [monthDay, maybeYear].filter(Boolean).join(" ");
+		return [monthDay, maybeYear].filter(AsBoolean).join(" ");
 	}
 }
 
@@ -1217,9 +1217,9 @@ function splitNotes(notes: ZItemNote[], separator: string): string[][] {
 	if(result && htmlTag){
 		// eslint-disable-next-line no-useless-escape
 		const tagRegex = new RegExp(`<\/?${htmlTag}>|<${htmlTag} .+?>`, "g");
-		return notes.map(n => n.data.note.split(tagRegex).filter(Boolean));
+		return notes.map(n => n.data.note.split(tagRegex).filter(AsBoolean));
 	} else {
-		return notes.map(n => n.data.note.split(separator).filter(Boolean));
+		return notes.map(n => n.data.note.split(separator).filter(AsBoolean));
 	}
 }
 

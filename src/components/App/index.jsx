@@ -18,6 +18,7 @@ import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, 
 import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } from "../../setup";
 
 import * as customPropTypes from "../../propTypes";
+import { AsBoolean } from "Types/helpers";
 
 
 const openSearchCommand = "zoteroRoam : Open Search Panel";
@@ -173,7 +174,7 @@ class App extends Component {
 				} else {
 					return false;
 				}
-			}).filter(Boolean);
+			}).filter(AsBoolean);
 
 		return (
 			<HotkeysTarget2 hotkeys={hotkeys} options={this.hotkeysOptions}>

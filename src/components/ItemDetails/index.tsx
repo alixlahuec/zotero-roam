@@ -17,6 +17,7 @@ import { useBool } from "../../hooks";
 import { CustomClasses } from "../../constants";
 import { ZCleanItemTop } from "Types/transforms";
 import "./index.css";
+import { AsBoolean } from "Types/helpers";
 
 
 type ItemReferenceFormat = "citation" | "citekey" | "page-reference" | "tag";
@@ -177,7 +178,7 @@ function CopyButtons(props: CopyButtonsProps){
 				} else {
 					return false;
 				}
-			}).filter(Boolean);
+			}).filter(AsBoolean);
 
 	}, [citekey, copyAsDefault, item, sanitizedShortcuts]);
 
@@ -363,7 +364,7 @@ const ItemDetails = memo<ItemDetailsProps>(function ItemDetails({ closeDialog, i
 				} else {
 					return false;
 				}
-			}).filter(Boolean);
+			}).filter(AsBoolean);
 
 	}, [children.notes, importMetadata, inGraph, navigateToPage, sanitizedShortcuts, toggleNotes]);
 

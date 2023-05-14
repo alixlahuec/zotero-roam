@@ -3,6 +3,7 @@ import { DBSchema, IDBPDatabase, deleteDB, openDB } from "idb";
 import { PersistedClient } from "@tanstack/react-query-persist-client";
 import { getGraphName } from "Roam";
 import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../constants";
+import { AsBoolean } from "Types/helpers";
 
 
 const STORE_NAMES = [
@@ -31,7 +32,7 @@ class IDBDatabase {
 			// Do nothing
 		}
 
-		const dbName = [IDB_DATABASE_NAME, graphName].filter(Boolean).join("_");
+		const dbName = [IDB_DATABASE_NAME, graphName].filter(AsBoolean).join("_");
 
 		this.#dbName = dbName;
 		this.#db = openDB<Schema>(this.#dbName, IDB_DATABASE_VERSION, {
