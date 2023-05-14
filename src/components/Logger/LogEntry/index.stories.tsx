@@ -1,14 +1,18 @@
+import { ComponentProps } from "react";
+import { Meta, Story } from "@storybook/react";
 import { ListWrapper } from "Components/DataList";
+
 import LogEntry from ".";
+import { ZoteroRoamLog, LogConfig, LogLevel } from "../../../extension";
 
-import { ZoteroRoamLog } from "../../../extension";
 
+type Props = ComponentProps<typeof LogEntry>;
 
 export default {
 	component: LogEntry
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props & { __log_props: LogConfig, __log_level: LogLevel }> = (args) => {
 	const { __log_props, __log_level } = args;
 	const log = new ZoteroRoamLog(__log_props, __log_level);
 

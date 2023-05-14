@@ -1,9 +1,13 @@
+import { ComponentProps } from "react";
 import { expect } from "@storybook/jest";
 import { userEvent, within } from "@storybook/testing-library";
+import { Meta, Story } from "@storybook/react";
+
 import Logger from ".";
+import ZoteroRoam, { ZoteroRoamLog } from "../../extension";
 
-import { ZoteroRoamLog } from "../../extension";
 
+type Props = ComponentProps<typeof Logger>;
 
 export default {
 	component: Logger,
@@ -11,9 +15,9 @@ export default {
 		isOpen: true,
 		onClose: () => {}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	window.zoteroRoam = {
 		logs: [
 			new ZoteroRoamLog({
@@ -38,7 +42,7 @@ const Template = (args) => {
 				context: {}
 			}, "info")
 		],
-	};
+	} as ZoteroRoam;
 
 	return <Logger {...args} />;
 };
@@ -53,7 +57,7 @@ WithInteractions.play = async({ canvasElement }) => {
 		.not
 		.toBeInTheDocument();
 
-	const showAllToggle = canvas.getByRole("switch", { name: "Show all entries" });
+	const showAllToggle = canvas.getByRole("switch", { name: "Show all entries" }) as HTMLInputElement;
 
 	await expect(showAllToggle.checked)
 		.toBe(false);

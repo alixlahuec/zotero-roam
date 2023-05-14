@@ -250,7 +250,7 @@ export default class ZoteroRoam {
 	}
 }
 
-type LogConfig = {
+export type LogConfig = {
 	context?: Record<string, any>,
 	detail?: string,
 	origin?: string,
@@ -258,7 +258,7 @@ type LogConfig = {
 	showToaster?: number | boolean
 };
 
-type LogLevel = "error" | "info" | "warning";
+export type LogLevel = "error" | "info" | "warning";
 
 /**
  * Creates a log entry for the extension. This is meant to provide users with information about different events (e.g errors when fetching data), through an optional toast and more detailed logs.
@@ -269,7 +269,7 @@ export class ZoteroRoamLog {
 	message: string;
 	detail: string;
 	context: Record<string, any>;
-	intent: Intent | null;
+	intent: Intent | undefined;
 	timestamp: Date;
 
 	#LEVELS_MAPPING: Record<LogLevel, Intent> = {
@@ -291,7 +291,7 @@ export class ZoteroRoamLog {
 		this.message = message;
 		this.detail = detail;
 		this.context = context;
-		this.intent = this.#LEVELS_MAPPING[level] || null;
+		this.intent = this.#LEVELS_MAPPING[level] || undefined;
 		this.timestamp = new Date();
 
 		if(showToaster){

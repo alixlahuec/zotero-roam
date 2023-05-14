@@ -1,22 +1,20 @@
-import { arrayOf, bool, func } from "prop-types";
 import { memo, useEffect, useMemo, useState } from "react";
-
 import { Classes, NonIdealState, Spinner, Switch } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import LogEntry from "./LogEntry";
 
-import { useBool, usePagination } from "../../../src/hooks";
+import { ZoteroRoamLog } from "../../extension";
+import { useBool, usePagination } from "../../hooks";
 
-import * as customPropTypes from "../../propTypes";
-import { CustomClasses } from "../../../src/constants";
+import { CustomClasses } from "../../constants";
 import "./index.css";
 
 
 const itemsPerPage = 20;
 
-function LoggerList({ items }){
+function LoggerList({ items }: { items: ZoteroRoamLog[]}){
 	const [showAllEntries, { toggle: toggleShowAll }] = useBool(false);
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 
@@ -51,12 +49,15 @@ function LoggerList({ items }){
 		</Toolbar>
 	</div>;
 }
-LoggerList.propTypes = {
-	items: arrayOf(customPropTypes.logEntry),
+
+
+type LoggerProps = {
+	isOpen: boolean,
+	onClose: () => void
 };
 
-const Logger = memo(function Logger({ isOpen, onClose }){
-	const [logData, setLogData] = useState(null);
+const Logger = memo(function Logger({ isOpen, onClose }: LoggerProps){
+	const [logData, setLogData] = useState<ZoteroRoamLog[] | null>(null);
 
 	useEffect(() => {
 		try {
@@ -76,15 +77,11 @@ const Logger = memo(function Logger({ isOpen, onClose }){
 			onClose={onClose} >
 			<div className={ Classes.DIALOG_BODY }>
 				{logData == null
-					? <Spinner size={15} title="Loading logs..." />
+					? <Spinner size={15} />
 					: <LoggerList items={logData} />}
 			</div>
 		</AuxiliaryDialog>
 	);
 });
-Logger.propTypes = {
-	isOpen: bool,
-	onClose: func
-};
 
 export default Logger;
