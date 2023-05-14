@@ -110,7 +110,7 @@ const SemanticPanel = memo(function SemanticPanel(props){
 	}, [addToImport, itemsForImport, removeFromImport, setItemsForImport]);
 
 	const handleClose = useCallback(() => {
-		setItemsForImport();
+		setItemsForImport([]);
 		onClose();
 	}, [onClose, setItemsForImport]);
 

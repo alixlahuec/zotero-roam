@@ -131,7 +131,7 @@ describe("Hook for multiple selection state", () => {
 		expect(result.current[0]).toEqual(["Enforced", "value"]);
 
 		act(() => {
-			result.current[1].set();
+			result.current[1].set([]);
 		});
 
 		expect(result.current[0]).toEqual([]);
@@ -200,7 +200,7 @@ test("Hook for pagination", () => {
 
 describe("Hook for single selection state", () => {
 	test("Behavior with base config", () => {
-		const { result } = renderHook(() => useSelect({}));
+		const { result } = renderHook(() => useSelect({ start: null }));
 
 		expect(result.current[0]).toBe(null);
 
@@ -218,7 +218,7 @@ describe("Hook for single selection state", () => {
 			};
 		}
 
-		const { result } = renderHook(() => useSelect({ transform }));
+		const { result } = renderHook(() => useSelect({ start: null, transform }));
 
 		expect(result.current[0]).toBe(null);
 

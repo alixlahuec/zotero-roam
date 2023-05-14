@@ -24,7 +24,7 @@ type UseMultiArgs<T,V> = Partial<{ start: T[], identify: IdentifyFn<T, V>, retri
 /**
  * Custom hook to work with component state that is based on a multiple selection
  */
-const useMulti = <T = any, V = any>({ start = [], identify = defaultIdentify, retrieve = defaultRetrieve }: UseMultiArgs<T,V>) => {
+const useMulti = <T = any, V = T>({ start = [], identify = defaultIdentify, retrieve = defaultRetrieve }: UseMultiArgs<T,V>) => {
 	const [state, setState] = useState(start);
 
 	const add = useCallback((val: V) => {
@@ -45,8 +45,8 @@ const useMulti = <T = any, V = any>({ start = [], identify = defaultIdentify, re
 		});
 	}, [identify, retrieve]);
 
-	const set = useCallback((value?: T[]) => {
-		setState(value || []);
+	const set = useCallback((value: T[]) => {
+		setState(value);
 	}, []);
 
 	return [state, { set, toggle, add, remove }] as const;
