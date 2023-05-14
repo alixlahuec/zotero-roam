@@ -94,7 +94,7 @@ const WebImportPanel = memo(function WebImportPanel(props){
 	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data);
 
 	const handleClose = useCallback(() => {
-		setSelected();
+		setSelected([]);
 		onClose();
 	}, [onClose, setSelected]);
 

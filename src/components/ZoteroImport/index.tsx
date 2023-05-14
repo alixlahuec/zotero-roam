@@ -97,16 +97,16 @@ const ImportPanel = memo<ImportPanelOwnProps & ZoteroImportProps>(function Impor
 		start: libraries[0],
 		transform: (path) => libraries.find(lib => lib.path == path)!
 	});
-	const [selectedColls, { set: setSelectedColls, toggle: onCollSelect }] = useMulti({
+	const [selectedColls, { set: setSelectedColls, toggle: onCollSelect }] = useMulti<string>({
 		start: []
 	});
-	const [selectedTags, { add: onTagSelect, remove: onTagRemove }] = useMulti({
+	const [selectedTags, { add: onTagSelect, remove: onTagRemove }] = useMulti<string>({
 		start: []
 	});
 
 	const onLibChange = useCallback((event) => {
 		handleLibSelection(event);
-		setSelectedColls();
+		setSelectedColls([]);
 	}, [handleLibSelection, setSelectedColls]);
 
 	const selectedLibCollections = useMemo(() => {
