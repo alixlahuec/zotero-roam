@@ -5,9 +5,9 @@ import { useFilterList, useBool, useMulti, useNumeric, usePagination, useSelect,
 
 describe("Hook for boolean state", () => {
 	test("Toggle method", () => {
-		const { result } = renderHook(() => useBool());
+		const { result } = renderHook(() => useBool(false));
     
-		expect(result.current[0]).toBe(undefined);
+		expect(result.current[0]).toBe(false);
     
 		act(() => {
 			result.current[1].toggle();
@@ -17,7 +17,7 @@ describe("Hook for boolean state", () => {
 	});
 
 	test("Set method", () => {
-		const { result } = renderHook(() => useBool());
+		const { result } = renderHook(() => useBool(false));
         
 		act(() => {
 			result.current[1].set(true);
