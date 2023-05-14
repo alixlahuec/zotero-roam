@@ -1,8 +1,7 @@
-import { array, func, objectOf, oneOf } from "prop-types";
 import { memo, useCallback, useContext, useEffect, useMemo } from "react";
-
-import { Button, Classes, Divider, Icon, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
+import { Button, Classes, Divider, Icon, IconName, IconProps, Intent, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
+import { QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
 
 import { ExtensionContext } from "Components/App";
 import { useOtherSettings, useRequestsSettings } from "Components/UserSettings";
@@ -11,14 +10,24 @@ import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Ta
 import { useBool } from "../../hooks";
 import { makeTimestamp } from "../../utils";
 
+import { QueryDataCollections, QueryDataItems, QueryDataPermissions, QueryDataTags } from "Types/transforms";
 import "./index.css";
+
+
+type QueriesList = {
+	"Permissions": UseQueryResult<QueryDataPermissions>[],
+	"Collections": UseQueryResult<QueryDataCollections>[],
+	"Tags": UseQueryResult<QueryDataTags>[],
+	"Items": UseQueryResult<QueryDataItems>[]
+};
 
 
 const betaTag = <Tag intent="primary" minimal={true}>Beta</Tag>;
 
 const isCurrentlyDark = () => document.getElementsByTagName("body")[0].getAttribute("zr-dark-theme") == "true";
 
-function DarkThemeToggle (){
+function DarkThemeToggle() {
+	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ darkTheme }] = useOtherSettings();
 	const [useDark, { set: setUseDark, toggle: toggleDark }] = useBool(darkTheme);
 	
@@ -52,7 +61,12 @@ const IconTooltipFooter = memo(function IconTooltipFooter() {
 	</div>;
 });
 
-function QueriesStatusIcon(props) {
+
+type QueriesStatusIconProps = {
+	queries: UseQueryResult[]
+};
+
+function QueriesStatusIcon(props: QueriesStatusIconProps) {
 	const { queries } = props;
 	const updated = queries.map(q => q.dataUpdatedAt).filter(Boolean);
 	const timestamp = updated.length > 0 ? <span zr-role="timestamp">{makeTimestamp(Math.max(...updated))}</span> : null;
@@ -68,24 +82,25 @@ function QueriesStatusIcon(props) {
 		});
 	}, [queries]);
 
-	let iconProps = {};
-	if(isSuccess){
+	let icon: IconName = "blank";
+	let iconProps: Partial<IconProps> = {};
+	if (isSuccess) {
+		icon = "tick";
 		iconProps = {
-			icon: "tick",
-			intent: "success",
+			intent: Intent.SUCCESS,
 			color: "#00e676",
 			title: "The last update was successful"
 		};
-	} else if(isLoadingError){
+	} else if (isLoadingError) {
+		icon = "delete";
 		iconProps = {
-			icon: "delete",
-			intent: "danger",
+			intent: Intent.DANGER,
 			title: "The extension was unable to retrieve the data"
 		};
-	} else if(isRefetchError){
+	} else if (isRefetchError) {
+		icon = "error";
 		iconProps = {
-			icon: "error",
-			intent: "warning",
+			intent: Intent.WARNING,
 			title: "The last update was unsuccessful"
 		};
 	}
@@ -93,18 +108,20 @@ function QueriesStatusIcon(props) {
 	return (
 		<span zr-role="status">
 			{timestamp}
-			{isFetching ? <Spinner size={16} title="Loading data..." /> : <Icon size={16} {...iconProps} /> }
+			{isFetching ? <Spinner size={16} /> : <Icon size={16} icon={icon} {...iconProps} /> }
 			<Button minimal={true} onClick={refreshData} disabled={isFetching} title="Refresh data">
 				<Icon size={16} icon="refresh" />
 			</Button>
 		</span>
 	);
 }
-QueriesStatusIcon.propTypes = {
-	queries: array
+
+
+type QueriesStatusListProps = {
+	queries: QueriesList
 };
 
-function QueriesStatusList(props){
+function QueriesStatusList(props: QueriesStatusListProps){
 	const { queries } = props;
 	return (
 		<ul className={Classes.LIST_UNSTYLED}>
@@ -119,20 +136,26 @@ function QueriesStatusList(props){
 		</ul>
 	);
 }
-QueriesStatusList.propTypes = {
-	queries: objectOf(array)
+
+
+type ExtensionIconProps = {
+	openDashboard: () => void,
+	openLogger: () => void,
+	openSearchPanel: () => void,
+	openSettingsPanel: () => void,
+	status: "on" | "off" | "disabled",
+	toggleExtension: () => void
 };
 
-const ExtensionIcon = memo(function ExtensionIcon(props) {
+const ExtensionIcon = memo<ExtensionIconProps>(function ExtensionIcon(props) {
 	const { openDashboard, openLogger, openSearchPanel, openSettingsPanel, status, toggleExtension } = props;
+	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ apiKeys, dataRequests, libraries }] = useRequestsSettings();
     
-	const queryOpts = useMemo(() => {
-		return {
-			enabled: status == "on",
-			notifyOnChangeProps: ["dataUpdatedAt", "status", "isFetching"]
-		};
-	}, [status]);
+	const queryOpts = useMemo<Pick<QueryObserverOptions, "enabled" | "notifyOnChangeProps">>(() => ({
+		enabled: status == "on",
+		notifyOnChangeProps: ["dataUpdatedAt", "status", "isFetching"]
+	}), [status]);
 
 	const itemQueries = useQuery_Items(dataRequests, queryOpts);
 	const permissionQueries = useQuery_Permissions(apiKeys, queryOpts);
@@ -197,8 +220,8 @@ const ExtensionIcon = memo(function ExtensionIcon(props) {
 				content={contextMenu}
 			>
 				<Button id="zotero-roam-icon"
-					status={status}
-					data-status={data_status}
+					data-extension-status={status}
+					data-fetching-status={data_status}
 					disabled={status == "disabled"}
 					icon={button_icon}
 					minimal={true} 
@@ -210,13 +233,5 @@ const ExtensionIcon = memo(function ExtensionIcon(props) {
 		</Tooltip2>
 	);
 });
-ExtensionIcon.propTypes = {
-	openDashboard: func,
-	openLogger: func,
-	openSearchPanel: func,
-	openSettingsPanel: func,
-	status: oneOf(["on", "off", "disabled"]),
-	toggleExtension: func
-};
 
 export default ExtensionIcon;

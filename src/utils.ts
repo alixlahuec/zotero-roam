@@ -836,7 +836,7 @@ function makeOrdinal(i: number): string {
  * @param date - The date to convert 
  * @returns A timestamp in text format, HH:MM
  */
-function makeTimestamp(date: Date | string){
+function makeTimestamp(date: Date | string | number){
 	const d = date.constructor === Date ? date : new Date(date);
 	return `${d.getHours()}:${("0" + d.getMinutes()).slice(-2)}`;
 }
