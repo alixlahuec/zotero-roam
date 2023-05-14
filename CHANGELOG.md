@@ -1,6 +1,8 @@
 ## Changelog
 
-### [0.7.14](https://github.com/alixlahuec/zotero-roam/compare/0.7.13...0.7.14) - 
+### [0.7.15](https://github.com/alixlahuec/zotero-roam/compare/0.7.14...0.7.15) - 
+
+### [0.7.14](https://github.com/alixlahuec/zotero-roam/compare/0.7.13...0.7.14) -  2023-04-08 
 
 ### [0.7.13](https://github.com/alixlahuec/zotero-roam/compare/0.7.12...0.7.13) -  2023-03-22 
 
@@ -22,7 +24,6 @@
 
 -  excessive API calls due to broken `since` param ([`#176`](https://github.com/alixlahuec/zotero-roam/pull/176))
 -  styling of multiselect input in Explorer ([`#173`](https://github.com/alixlahuec/zotero-roam/pull/173))
-- \(deps): update dependency axios-retry to ^3.4.0 ([`#169`](https://github.com/alixlahuec/zotero-roam/pull/169))
 -  tags with hyphen and special characters aren't processed correctly ([`#153`](https://github.com/alixlahuec/zotero-roam/pull/153))
 
 ### [0.7.10](https://github.com/alixlahuec/zotero-roam/compare/0.7.9...0.7.10) -  2022-12-15 
@@ -77,16 +78,11 @@
 
 ### [0.7.4](https://github.com/alixlahuec/zotero-roam/compare/0.7.3...0.7.4) -  2022-09-30 
 
-#### Bug Fixes
-
-- \(deps): update dependency @tanstack/react-query to ^4.7.1 ([`#64`](https://github.com/alixlahuec/zotero-roam/pull/64))
-
 ### [0.7.3](https://github.com/alixlahuec/zotero-roam/compare/0.7.2...0.7.3) -  2022-09-17 
 
 #### Bug Fixes
 
 -  dataRequests not processed in manual setup when specified as an Object ([`#61`](https://github.com/alixlahuec/zotero-roam/pull/61))
-- \(deps): update sentry to ^7.12.1 ([`#44`](https://github.com/alixlahuec/zotero-roam/pull/44))
 
 ### [0.7.2](https://github.com/alixlahuec/zotero-roam/compare/0.7.1...0.7.2) -  2022-09-11 
 
