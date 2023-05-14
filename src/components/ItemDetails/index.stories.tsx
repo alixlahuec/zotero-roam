@@ -1,10 +1,14 @@
+import { ComponentProps } from "react";
 import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
-import ItemDetails from ".";
+import { Meta, Story } from "@storybook/react";
 
+import ItemDetails from ".";
 import { cleanLibraryItem } from "../../utils";
 import { items } from "Mocks";
 
+
+type Props = ComponentProps<typeof ItemDetails>;
 
 const sampleShortcuts = {
 	"copyDefault": "alt+D",
@@ -22,7 +26,7 @@ export default {
 	args: {
 		onClose: () => {},
 		item: cleanLibraryItem(
-			items.find(it => it.key == "pintoExploringDifferentMethods2021"),
+			items.find(it => it.key == "pintoExploringDifferentMethods2021")!,
 			[],
 			[],
 			new Map([]))
@@ -37,9 +41,9 @@ export default {
 			typemap: {}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => <ItemDetails {...args} />;
+const Template: Story<Props> = (args) => <ItemDetails {...args} />;
 
 export const Default = Template.bind({});
 
