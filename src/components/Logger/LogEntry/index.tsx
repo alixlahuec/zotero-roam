@@ -1,17 +1,21 @@
 import { memo, useMemo } from "react";
-
 import { Button, Classes, Collapse, Tag } from "@blueprintjs/core";
 
-import { makeTimestamp } from "../../../../src/utils";
-import { useBool } from "../../../../src/hooks";
 import { ListItem } from "Components/DataList";
 
-import * as customPropTypes from "../../../propTypes";
-import { CustomClasses } from "../../../../src/constants";
+import { ZoteroRoamLog } from "../../../extension";
+import { makeTimestamp } from "../../../utils";
+import { useBool } from "../../../hooks";
+
+import { CustomClasses } from "../../../constants";
 import "./index.css";
 
 
-const LogEntry = memo(function LogEntry({ log }){
+type OwnProps = {
+	log: ZoteroRoamLog
+};
+
+const LogEntry = memo<OwnProps>(function LogEntry({ log }){
 	const [isContextOpen, { toggle: toggleContext }] = useBool(false);
 	const hasContext = useMemo(() => JSON.stringify(log.context || {}) != "{}", [log.context]);
 
@@ -39,8 +43,5 @@ const LogEntry = memo(function LogEntry({ log }){
 		</div>
 	</ListItem>;
 });
-LogEntry.propTypes = {
-	log: customPropTypes.logEntry
-};
 
 export default LogEntry;
