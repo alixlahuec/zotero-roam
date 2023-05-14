@@ -1,7 +1,6 @@
-import { arrayOf, bool, func, shape, string } from "prop-types";
 import { memo, useCallback, useMemo } from "react";
 
-import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
+import { Button, ButtonGroup, Intent, Spinner } from "@blueprintjs/core";
 
 import { ErrorBoundary, NoWriteableLibraries } from "Components/Errors";
 import { TagsSelector } from "Components/Inputs";
@@ -14,14 +13,23 @@ import { useImportCitoids } from "../../api/write";
 import { useMulti, useSelect } from "../../hooks";
 import { sortCollections } from "../../utils";
 
-import * as customPropTypes from "../../propTypes";
 import { CustomClasses } from "../../constants";
+import { ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
+import { ZLibrary } from "Types/transforms";
 
 import "./index.css";
 
 
-const ImportButton = memo(function ImportButton(props) {
+type ImportButtonOwnProps = {
+	importProps: {
+		collections: string[],
+		library: ZLibrary,
+		tags: string[]
+	}
+};
+
+const ImportButton = memo<ImportButtonOwnProps & ZoteroImportProps>(function ImportButton(props) {
 	const { identifiers, importProps, isActive, resetImport } = props;
 
 	const citoidQueries = useQuery_Citoid(identifiers, { 
@@ -55,17 +63,17 @@ const ImportButton = memo(function ImportButton(props) {
 		} else if(status == "error") {
 			return {
 				disabled: true,
-				intent: "danger",
-				rightIcon: "error",
+				intent: Intent.DANGER,
+				rightIcon: "error" as const,
 				text: "Error",
 				title: "Error while importing items"
 			};
 		} else {
 			return {
 				disabled: !isActive,
-				intent: "primary",
+				intent: Intent.PRIMARY,
 				loading: !isDataReady,
-				rightIcon: "chevron-right",
+				rightIcon: "chevron-right" as const,
 				text: "Send to Zotero",
 				title: isDataReady ? "Import items to Zotero" : "Loading items data..."
 			};
@@ -76,22 +84,18 @@ const ImportButton = memo(function ImportButton(props) {
 		<Button className={[CustomClasses.TEXT_SMALL, "zr-import--trigger"].join(" ")} onClick={triggerImport} {...buttonProps} />
 	);
 });
-ImportButton.propTypes = {
-	identifiers: arrayOf(string),
-	importProps: shape({
-		collections: arrayOf(string),
-		library: customPropTypes.zoteroLibraryType,
-		tags: arrayOf(string)
-	}),
-	isActive: bool,
-	resetImport: func
+
+
+type ImportPanelOwnProps = {
+	collections: ZoteroAPI.Collection[],
+	libraries: ZLibrary[]
 };
 
-const ImportPanel = memo(function ImportPanel(props) {
+const ImportPanel = memo<ImportPanelOwnProps & ZoteroImportProps>(function ImportPanel(props) {
 	const { collections, identifiers, isActive, libraries, resetImport } = props;
-	const [selectedLib, handleLibSelection] = useSelect({
+	const [selectedLib, handleLibSelection] = useSelect<ZLibrary>({
 		start: libraries[0],
-		transform: (path) => libraries.find(lib => lib.path == path)
+		transform: (path) => libraries.find(lib => lib.path == path)!
 	});
 	const [selectedColls, { set: setSelectedColls, toggle: onCollSelect }] = useMulti({
 		start: []
@@ -153,16 +157,17 @@ const ImportPanel = memo(function ImportPanel(props) {
 	);
 
 });
-ImportPanel.propTypes = {
-	collections: arrayOf(customPropTypes.zoteroCollectionType),
-	identifiers: arrayOf(string),
-	isActive: bool,
-	libraries: arrayOf(customPropTypes.zoteroLibraryType),
-	resetImport: func
+
+
+type ZoteroImportProps = {
+	identifiers: string[],
+	isActive: boolean,
+	resetImport: () => void
 };
 
-const ZoteroImport = memo(function ZoteroImport(props) {
+const ZoteroImport = memo<ZoteroImportProps>(function ZoteroImport(props) {
 	const { identifiers, isActive, resetImport } = props;
+	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ libraries }] = useRequestsSettings();
 
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
@@ -177,7 +182,7 @@ const ZoteroImport = memo(function ZoteroImport(props) {
 
 	return (
 		isLoading
-			? <Spinner title="Checking for writeable libraries" />
+			? <Spinner />
 			: writeableLibraries.length == 0
 				? <NoWriteableLibraries /> 
 				: <ImportPanel 
@@ -188,10 +193,6 @@ const ZoteroImport = memo(function ZoteroImport(props) {
 					resetImport={resetImport} />
 	);
 });
-ZoteroImport.propTypes = {
-	identifiers: arrayOf(string),
-	isActive: bool,
-	resetImport: func
-};
+
 
 export default ZoteroImport;
