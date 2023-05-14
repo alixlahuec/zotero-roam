@@ -1,5 +1,6 @@
 import { getLocalLink, getWebLink, makeDNP, parseDOI } from "./utils";
 import { SmartblocksPlugin } from "Types/externals";
+import { AsBoolean } from "Types/helpers";
 import { RImportableElement, SBConfig, SBImportableBlock, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 
 
@@ -169,7 +170,7 @@ const sbCommands = () => {
  */
 function processQuery(query: string, props: string[]): boolean{
 	// eslint-disable-next-line no-useless-escape
-	const components = query.split(/([\|\&]?)([^\&\|\(\)]+|\(.+\))([\|\&]?)/).filter(Boolean);
+	const components = query.split(/([\|\&]?)([^\&\|\(\)]+|\(.+\))([\|\&]?)/).filter(AsBoolean);
 	if(components.includes("|")){
 		return eval_or(components.filter(c => c != "|"), props);
 	} else {

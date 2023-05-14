@@ -9,6 +9,7 @@ import { defaultQueryTerm, queries } from "../queries";
 import { useBool } from "../../../../../hooks";
 
 import { CustomClasses } from "../../../../../constants";
+import { AsBoolean } from "Types/helpers";
 
 
 function makeValueString({ property, relationship, value }){
@@ -24,7 +25,7 @@ function makeValueString({ property, relationship, value }){
 function joinTerm(term){
 	const { property, relationship/*, value */ } = term;
 	const valueString = makeValueString(term); 
-	return [property, relationship, valueString].filter(Boolean).join(" ");
+	return [property, relationship, valueString].filter(AsBoolean).join(" ");
 }
 
 function makeTermString(term, useOR, { parentheses = true } = {}){

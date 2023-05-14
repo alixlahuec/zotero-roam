@@ -1,5 +1,6 @@
 import { getCitekeyPagesWithEditTime } from "Roam";
 import { identifyChildren } from "../../../utils";
+import { AsBoolean } from "Types/helpers";
 import { ZDataViewContents, ZLibraryContents, ZLogItem } from "Types/transforms";
 
 
@@ -34,7 +35,7 @@ function makeLogFromItems(itemList: ZLibraryContents, asRecentAs = 7){
 				const rPage = citPages.get("@" + itemKey);
 				const { edited = null, uid = false } = rPage || {};
 				const zotero_last_edit = new Date(item.data.dateModified);
-				const last_combined_edit = new Date(Math.max(...[edited, zotero_last_edit].filter(Boolean).map(d => Number(d))));
+				const last_combined_edit = new Date(Math.max(...[edited, zotero_last_edit].filter(AsBoolean).map(d => Number(d))));
 
 				if(last_combined_edit <= recent){
 					return log;
@@ -51,7 +52,7 @@ function makeLogFromItems(itemList: ZLibraryContents, asRecentAs = 7){
 						itemType: item.data.itemType,
 						key: itemKey,
 						location,
-						meta: [creator, pub_year].filter(Boolean).join(" "),
+						meta: [creator, pub_year].filter(AsBoolean).join(" "),
 						publication: item.data.publicationTitle || item.data.bookTitle || item.data.university || "",
 						raw: item,
 						title: item.data.title || "",
