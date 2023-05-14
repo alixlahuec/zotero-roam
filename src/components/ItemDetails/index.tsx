@@ -1,45 +1,33 @@
-import { func, node, object, oneOf, string } from "prop-types";
-import { memo, useCallback, useMemo } from "react";
-
+import { FC, memo, useCallback, useMemo } from "react";
 import { Classes, Menu, MenuDivider, MenuItem, Tag, useHotkeys } from "@blueprintjs/core";
 
-import { validateShortcuts } from "../../setup";
 import DataDrawer from "Components/DataDrawer";
 import { ErrorBoundary } from "Components/Errors";
 import NotesDrawer from "Components/NotesDrawer";
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import ShortcutSequence from "Components/ShortcutSequence";
+import { useAnnotationsSettings, useCopySettings, useMetadataSettings, useNotesSettings, useShortcutsSettings, useTypemapSettings } from "Components/UserSettings";
 
+import { validateShortcuts } from "../../setup";
 import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
 import { formatItemReferenceWithDefault } from "Components/SearchPanel/utils";
-
-import { useAnnotationsSettings, useCopySettings, useMetadataSettings, useNotesSettings, useShortcutsSettings, useTypemapSettings } from "Components/UserSettings";
 import { useBool } from "../../hooks";
 
-
-
-import { useRoamCitekeys } from "Components/RoamCitekeysContext";
-
-
-
 import { CustomClasses } from "../../constants";
-
-import * as customPropTypes from "../../propTypes";
-
+import { ZCleanItemTop } from "Types/transforms";
 import "./index.css";
+
+
+type ItemReferenceFormat = "citation" | "citekey" | "page-reference" | "tag";
 
 
 const popoverProps = {
 	popoverClassName: CustomClasses.POPOVER
 };
 
-/** Creates a formatted reference to an item
- * @param {String} citekey - The item's citekey
- * @param {("citation"|"citekey"|"page-reference"|"tag")} format 
- * @param {ZoteroAPI.ItemTop} item - The Zotero item
- * @returns The formatted reference
- */
-const makeItemReference = (citekey, format, item) => {
+/** Creates a formatted reference to an item */
+const makeItemReference = (citekey: string, format: ItemReferenceFormat, item: ZCleanItemTop) => {
 	const pageRef = "[[@" + citekey + "]]";
 	switch(format){
 	case "page-reference":
@@ -54,11 +42,13 @@ const makeItemReference = (citekey, format, item) => {
 	}
 };
 
-function CopyOption(props){
+
+function CopyOption(props: CopyButtonsProps & { format: ItemReferenceFormat }){
 	const { citekey, format, item } = props;
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
 	// TODO: move validation step upstream
+	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const textOutput = useMemo(() => makeItemReference(citekey, format, item), [citekey, format, item]);
@@ -97,21 +87,24 @@ function CopyOption(props){
   
 	return <MenuItem htmlTitle={textOutput} labelElement={label} onClick={formatCitekey} text={textOutput} />;
 }
-CopyOption.propTypes = {
+
+
+type CopyButtonsProps = {
 	citekey: string,
-	format: oneOf(["citation", "citekey", "page-reference", "tag"]),
-	item: object
+	item: ZCleanItemTop
 };
 
-function CopyButtons(props){
+function CopyButtons(props: CopyButtonsProps){
 	const { citekey, item } = props;
 	const [copySettings] = useCopySettings();
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
 	// TODO: move validation step upstream
+	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const defaultCopyText = useMemo(() => {
+		// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 		return formatItemReferenceWithDefault(item, copySettings);
 	}, [copySettings, item]);
 
@@ -120,17 +113,17 @@ function CopyButtons(props){
 	}, [defaultCopyText]);
 
 	const optionsMenu = useMemo(() => {
-		let standardOptions = ["citation", "citekey", "page-reference", "tag"];
-        
-		if(copySettings.useAsDefault == "preset"){
+		let standardOptions = ["citation", "citekey", "page-reference", "tag"] as const;
+
+		// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
+		if (copySettings.useAsDefault == "preset") {
+			// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 			standardOptions = standardOptions.filter(op => op != copySettings.preset);
 		}
-
-		standardOptions = standardOptions.map(op => <CopyOption key={op} citekey={citekey} format={op} item={item} />);
 		
 		return <>
 			<MenuItem htmlTitle={defaultCopyText} labelElement={<Tag intent="success" minimal={true}>Default</Tag>} onClick={copyAsDefault} text={defaultCopyText} />
-			{standardOptions}
+			{standardOptions.map(op => <CopyOption key={op} citekey={citekey} format={op} item={item} />)}
 		</>;
 	}, [citekey, copyAsDefault, copySettings, defaultCopyText, item]);
 
@@ -200,24 +193,27 @@ function CopyButtons(props){
 		{optionsMenu}
 	</MenuItem>;
 }
-CopyButtons.propTypes = {
-	citekey: string,
-	item: customPropTypes.cleanLibraryItemType
-};
 
-function Metadata({ direction = "row", label, children }){
+
+type MetadataProps = {
+	direction?: "col" | "row",
+	label: string
+}
+
+const Metadata: FC<MetadataProps> = ({ direction = "row", label, children }) => {
 	return <div zr-role={"metadata-" + direction}>
 		<span className={CustomClasses.TEXT_AUXILIARY}>{label}</span>
 		<div>{children}</div>
 	</div>;
-}
-Metadata.propTypes = {
-	children: node,
-	direction: oneOf(["col", "row"]),
-	label: string
 };
 
-const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
+
+type ItemDetailsProps = {
+	closeDialog: () => void,
+	item: ZCleanItemTop
+};
+
+const ItemDetails = memo<ItemDetailsProps>(function ItemDetails({ closeDialog, item }) {
 	const {
 		abstract, 
 		authors, 
@@ -243,6 +239,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
 	// TODO: move validation step upstream
+	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 	const [typemap] = useTypemapSettings();
 
@@ -250,6 +247,7 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 
 	const importMetadata = useCallback(async() => {
 		const { pdfs = [], notes = [] } = children;
+		// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 		const outcome = await importItemMetadata({ item: item.raw, pdfs, notes }, inGraph, metadataSettings, typemap, notesSettings, annotationsSettings);
 		if(outcome.success){
 			updateRoamCitekeys();
@@ -257,7 +255,8 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 		return outcome;
 	}, [annotationsSettings, children, inGraph, item.raw, metadataSettings, notesSettings, typemap, updateRoamCitekeys]);
 
-	const importNotes = useCallback(async() => {
+	const importNotes = useCallback(async () => {
+		// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 		const outcome = await importItemNotes({ item, notes: children.notes }, inGraph, notesSettings, annotationsSettings);
 		if(outcome.success){
 			updateRoamCitekeys();
@@ -431,9 +430,5 @@ const ItemDetails = memo(function ItemDetails({ closeDialog, item }) {
 		</ErrorBoundary>
 	</div>;
 });
-ItemDetails.propTypes = {
-	closeDialog: func,
-	item: customPropTypes.cleanLibraryItemType
-};
 
 export default ItemDetails;

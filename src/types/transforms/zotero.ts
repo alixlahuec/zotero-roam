@@ -8,8 +8,8 @@ export interface ZCleanItemTop {
 	authorsLastNames: string[],
 	authorsRoles: string[],
 	children: {
-		notes: (ZoteroAPI.ItemAnnotation|ZoteroAPI.ItemNote)[],
-		pdfs: ZoteroAPI.ItemAttachment[]
+		notes: (ZItemAnnotation|ZItemNote)[],
+		pdfs: ZItemAttachment[]
 	},
 	createdByUser: string | null,
 	inGraph: string | false,

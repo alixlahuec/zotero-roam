@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Intent } from "@blueprintjs/core";
 
-import { useBool } from "../../hooks";
 import { cleanErrorIfAxios } from "../../api/utils";
 
 
 function ClearCacheButton(){
-	const [dataIsCached, { set: setDataIsCached }] = useBool();
+	const [dataIsCached, setDataIsCached] = useState<boolean>();
 	const updateCacheStatus = useCallback(() => {
 		window.zoteroRoam?.isDataCached?.()
 			.then(status => setDataIsCached(status))

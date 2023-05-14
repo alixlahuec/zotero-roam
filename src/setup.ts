@@ -409,8 +409,8 @@ export function unmountExtensionIfExists(){
 
 }
 
-export function validateShortcuts(shortcuts: SettingsShortcuts){
-	const output = {};
+export function validateShortcuts(shortcuts: SettingsShortcuts): SettingsShortcuts{
+	const output: SettingsShortcuts = {};
 
 	Object.keys(shortcuts).forEach((key) => {
 		const combo = shortcuts[key];
