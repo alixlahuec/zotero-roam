@@ -15,9 +15,9 @@ import { formatItemReferenceWithDefault } from "Components/SearchPanel/utils";
 import { useBool } from "../../hooks";
 
 import { CustomClasses } from "../../constants";
+import { AsBoolean } from "Types/helpers";
 import { ZCleanItemTop } from "Types/transforms";
 import "./index.css";
-import { AsBoolean } from "Types/helpers";
 
 
 type ItemReferenceFormat = "citation" | "citekey" | "page-reference" | "tag";
