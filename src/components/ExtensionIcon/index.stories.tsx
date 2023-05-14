@@ -1,10 +1,14 @@
+import { ComponentProps } from "react";
 import { screen, userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
+import { Meta, Story } from "@storybook/react";
 
 import ExtensionIcon from ".";
 import { useToggle } from "../../hooks";
 import { sleep } from "../../../.storybook/utils";
 
+
+type Props = ComponentProps<typeof ExtensionIcon>;
 
 export default {
 	component: ExtensionIcon,
@@ -25,17 +29,17 @@ export default {
 			darkTheme: false
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
-	const [status, toggleStatus] = useToggle({
+const Template: Story<Props> = (args) => {
+	const [status, toggleStatus] = useToggle<Props["status"]>({
 		start: "on",
 		options: ["on", "off"]
 	});
 	return <ExtensionIcon {...args} status={status} toggleExtension={toggleStatus} />;
 };
 
-const DisabledTemplate = (args) => {
+const DisabledTemplate: Story<Props> = (args) => {
 	return <ExtensionIcon {...args} status="disabled" />;
 };
 

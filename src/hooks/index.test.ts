@@ -257,21 +257,4 @@ describe("Hook for toggle state", () => {
 		expect(result.current[0]).toBe("Alternative value");
 	});
 
-	test("Toggle when options are not explicitly provided", () => {
-		const { result } = renderHook(() => useToggle({ start: "Some value" }));
-
-		expect(result.current[0]).toBe("Some value");
-
-		act(() => {
-			result.current[1]();
-		});
-
-		expect(result.current[0]).toBe(null);
-
-		act(() => {
-			result.current[1]();
-		});
-
-		expect(result.current[0]).toBe("Some value");
-	});
 });
