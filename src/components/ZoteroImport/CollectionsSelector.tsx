@@ -1,12 +1,17 @@
-import { array, bool, func, object } from "prop-types";
 import { memo, useCallback } from "react";
-
 import { Checkbox, Spinner } from "@blueprintjs/core";
 
 import { CustomClasses } from "../../constants";
+import { ZEnrichedCollection } from "Types/transforms";
 
 
-const CollectionOption = memo(function CollectionOption(props) {
+type OptionProps = {
+	collection: ZEnrichedCollection,
+	isChecked: boolean,
+	onSelect: (value: string) => void
+};
+
+const CollectionOption = memo<OptionProps>(function CollectionOption(props) {
 	const { collection, isChecked, onSelect } = props;
 	const { data: { name }, depth, key } = collection;
 
@@ -24,27 +29,25 @@ const CollectionOption = memo(function CollectionOption(props) {
 		/>
 	);
 });
-CollectionOption.propTypes = {
-	collection: object,
-	isChecked: bool,
-	onSelect: func
+
+
+type SelectorProps = {
+	collections: ZEnrichedCollection[],
+	onSelect: (value: string) => void,
+	selectedCollections: string[]
 };
 
-const CollectionsSelector = memo(function CollectionsSelector(props) {
+const CollectionsSelector = memo<SelectorProps>(function CollectionsSelector(props) {
 	const { collections, onSelect, selectedCollections } = props;
 
 	return (
 		collections.length == 0
-			? <Spinner size={12} title="Checking for collections in library" />
+			? <Spinner size={12} />
 			: <div className="options-collections-list">
 				{collections.map(coll => <CollectionOption key={coll.key} collection={coll} isChecked={selectedCollections.includes(coll.key)} onSelect={onSelect} />)}
 			</div>
 	);
 });
-CollectionsSelector.propTypes = {
-	collections: array,
-	onSelect: func,
-	selectedCollections: array
-};
+
 
 export default CollectionsSelector;
