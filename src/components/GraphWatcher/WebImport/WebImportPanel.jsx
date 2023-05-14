@@ -15,6 +15,7 @@ import { useTypemapSettings } from "Components/UserSettings";
 import { pluralize } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
+import { AsBoolean } from "Types/helpers";
 
 
 function useGetCitoids(urls, opts = {}) {
@@ -25,7 +26,7 @@ function useGetCitoids(urls, opts = {}) {
 			
 			return {
 				abstract: item.abstractNote || "",
-				creators: item.creators?.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
+				creators: item.creators?.map(cre => cre.name || [cre.firstName, cre.lastName].filter(AsBoolean).join(" ")).join(", "),
 				itemType: item.itemType, 
 				publication: item.publicationTitle || item.bookTitle || item.websiteTitle || "",
 				title: item.title,

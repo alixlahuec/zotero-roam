@@ -4,18 +4,16 @@ import { memo, useCallback, useMemo } from "react";
 import { InputGroup, NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
+import FilterSelect from "Components/DataList/FilterSelect";
 import { SemanticGuide } from "Components/Guide";
 import SemanticItem from "./SemanticItem";
 
 import { searchEngine } from "../../../utils";
 import { useFilterList, usePagination, useText } from "../../../hooks";
 
-
-
 import { CustomClasses } from "../../../constants";
-
 import * as customPropTypes from "../../../propTypes";
-import FilterSelect from "Components/DataList/FilterSelect";
+import { AsBoolean } from "Types/helpers";
 
 
 const itemsPerPage = 30;
@@ -127,7 +125,7 @@ const SemanticPagination = memo(function SemanticPagination(props){
 						{queriedItems
 							.slice(...pageLimits)
 							.map(el => 
-								<Item key={[el.doi, el.url, el.title].filter(Boolean).join("-")} 
+								<Item key={[el.doi, el.url, el.title].filter(AsBoolean).join("-")} 
 									item={el} selectProps={selectProps} type={type} />)}
 					</ListWrapper>
 				}

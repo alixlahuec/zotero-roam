@@ -4,13 +4,14 @@ import { Button, ControlGroup } from "@blueprintjs/core";
 import { pluralize } from "../../utils";
 import { CustomClasses } from "../../constants";
 
+import { AsBoolean } from "Types/helpers";
 import "./index.css";
 
 
 type ListItemProps = { className: string };
 
 const ListItem: FC<ListItemProps & JSX.IntrinsicElements["li"]> = ({ className, children, ...rest }) => (
-	<li className={[className, CustomClasses.DATALIST_ITEM].filter(Boolean).join(" ")} {...rest}>
+	<li className={[className, CustomClasses.DATALIST_ITEM].filter(AsBoolean).join(" ")} {...rest}>
 		{children}
 	</li>
 );

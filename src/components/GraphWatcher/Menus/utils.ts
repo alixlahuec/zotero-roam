@@ -2,8 +2,8 @@ import { menuClasses, menuPrefix } from "../classes";
 import { findRoamPage } from "Roam";
 
 import { identifyChildren, makeTimestamp, readDNP } from "../../../utils";
-import { RCitekeyPages, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
-import { SCleanRelatedItem } from "Types/transforms/semantic";
+import { AsBoolean } from "Types/helpers";
+import { RCitekeyPages, SCleanRelatedItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 
 
 const dnpRegex = new RegExp(/(.+) ([0-9]+).{2}, ([0-9]{4})/);
@@ -67,7 +67,7 @@ function cleanRelatedItem(
 		itemType: item.data.itemType,
 		key: item.key,
 		location,
-		meta: [creator, pub_year].filter(Boolean).join(" "),
+		meta: [creator, pub_year].filter(AsBoolean).join(" "),
 		raw: item,
 		timestamp: makeTimestamp(item.data.dateAdded),
 		title: item.data.title || ""
