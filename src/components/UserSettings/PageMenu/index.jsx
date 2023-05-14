@@ -52,7 +52,7 @@ function PageMenuWidget(){
 		<RowCol title="Elements" >
 			<InputMultiSelect fill={true} openOnKeyDown={false} options={ELEM_OPTIONS} setValue={handlers.updateMenuElems} value={defaults} />
 		</RowCol>
-		<SingleInput description="Select when contextual menus should be shown. By default, menus are displayed if the page title is longer than 5 characters." menuTitle="Select whether to show the page menu" onChange={handlers.updateMenuTrigger} options={TRIGGER_OPTIONS} title="Show menus" value={trigger} />
+		<SingleInput description="Select when contextual menus should be shown. By default, menus are displayed if the page title is longer than 5 characters." menuTitle="Select whether to show the page menu" onSelect={handlers.updateMenuTrigger} options={TRIGGER_OPTIONS} title="Show menus" value={trigger} />
 	</>;
 }
 

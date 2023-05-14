@@ -83,7 +83,7 @@ function AutocompleteWidget(){
 			options={DISPLAY_USE_OPTIONS}
 			selected={display_use} >
 			<RowGroupOption id="preset">
-				<SingleInput menuTitle="Select a display preset" onChange={handlers.updateDisplay} options={DISPLAY_OPTIONS} value={display} />
+				<SingleInput menuTitle="Select a display preset" onSelect={handlers.updateDisplay} options={DISPLAY_OPTIONS} value={display} />
 			</RowGroupOption>
 			<RowGroupOption alignToBaseline={true} id="custom" description={AUTOCOMPLETE_REPLACEMENTS} >
 				<TextField ifEmpty={true} label="Enter a custom template" onChange={handlers.updateDisplayChar} placeholder="e.g, {{key}}" value={display_char} />
@@ -95,7 +95,7 @@ function AutocompleteWidget(){
 			options={FORMAT_USE_OPTIONS}
 			selected={format_use} >
 			<RowGroupOption id="preset">
-				<SingleInput menuTitle="Select a format preset" onChange={handlers.updateFormat} options={FORMAT_OPTIONS} value={format} />
+				<SingleInput menuTitle="Select a format preset" onSelect={handlers.updateFormat} options={FORMAT_OPTIONS} value={format} />
 			</RowGroupOption>
 			<RowGroupOption alignToBaseline={true} id="custom" description={AUTOCOMPLETE_REPLACEMENTS} >
 				<TextField ifEmpty={true} label="Enter a custom template" onChange={handlers.updateFormatChar} placeholder="e.g, {{key}}" value={format_char} />

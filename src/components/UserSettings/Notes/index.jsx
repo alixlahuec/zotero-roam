@@ -96,7 +96,7 @@ function NotesWidget(){
 			options={SPLIT_USE_OPTIONS}
 			selected={split_use} >
 			<RowGroupOption id="preset">
-				<SingleInput menuTitle="Select a separator preset" onChange={handlers.updateSplitPreset} options={SPLIT_PRESET_OPTIONS} value={split_preset} />
+				<SingleInput menuTitle="Select a separator preset" onSelect={handlers.updateSplitPreset} options={SPLIT_PRESET_OPTIONS} value={split_preset} />
 			</RowGroupOption>
 			<RowGroupOption id="custom" description="Special characters, like \n, are not allowed." >
 				<TextField ifEmpty={true} label="Enter a custom separator" onChange={handlers.updateSplitChar} placeholder="e.g, </p>" value={split_char} />
@@ -127,13 +127,13 @@ function NotesWidget(){
 			options={NEST_USE_OPTIONS}
 			selected={nest_use}>
 			<RowGroupOption id="preset">
-				<SingleInput menuTitle="Select a nesting preset" onChange={handlers.updateNestPreset} options={NEST_PRESET_OPTIONS} value={nest_preset} />
+				<SingleInput menuTitle="Select a nesting preset" onSelect={handlers.updateNestPreset} options={NEST_PRESET_OPTIONS} value={nest_preset} />
 			</RowGroupOption>
 			<RowGroupOption id="custom" description="Enter the contents of the block under which notes should be nested">
 				<TextField ifEmpty={true} label="Enter the block's contents" onChange={handlers.updateNestChar} placeholder="e.g, [[Notes]]" value={nest_char} />
 			</RowGroupOption>
 		</RowGroup>
-		<SingleInput description="The position at which to insert the blocks" menuTitle="Select a position" onChange={handlers.updateNestPosition} options={NEST_POSITION_OPTIONS} title="Position" value={nest_position} />
+		<SingleInput description="The position at which to insert the blocks" menuTitle="Select a position" onSelect={handlers.updateNestPosition} options={NEST_POSITION_OPTIONS} title="Position" value={nest_position} />
 	</>;
 }
 

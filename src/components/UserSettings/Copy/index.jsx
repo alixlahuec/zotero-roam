@@ -86,13 +86,13 @@ function CopyWidget(){
 			options={USE_OPTIONS}
 			selected={useAsDefault} >
 			<RowGroupOption id="preset">
-				<SingleInput menuTitle="Select a formatting preset" onChange={handlers.updatePresetFormat} options={PRESET_OPTIONS} value={preset} />
+				<SingleInput menuTitle="Select a formatting preset" onSelect={handlers.updatePresetFormat} options={PRESET_OPTIONS} value={preset} />
 			</RowGroupOption>
 			<RowGroupOption alignToBaseline={true} id="template" description={COPY_REPLACEMENTS} >
 				<TextField ifEmpty={true} label="Enter a custom formatting template" onChange={handlers.updateTemplate} value={template} />
 			</RowGroupOption>
 		</RowGroup>
-		<SingleInput description="The key to hold to override QuickCopy" menuTitle="Select an override key for Quick Copy" onChange={handlers.updateOverrideKey} options={OVERRIDE_KEY_OPTIONS} title="Override Key" value={overrideKey} />
+		<SingleInput description="The key to hold to override QuickCopy" menuTitle="Select an override key for Quick Copy" onSelect={handlers.updateOverrideKey} options={OVERRIDE_KEY_OPTIONS} title="Override Key" value={overrideKey} />
 		<Toggle description="Should QuickCopy be enabled by default?" isChecked={useQuickCopy} label="Toggle 'use quick copy by default' setting" onChange={handlers.toggleQuickCopy} title="Use Quick Copy (default)" />
 	</>;
 }
