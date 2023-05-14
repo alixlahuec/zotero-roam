@@ -1,14 +1,14 @@
 import { bool, func, object, shape } from "prop-types";
 import { memo, useMemo } from "react";
-
 import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprintjs/core";
 
-import { validateShortcuts } from "../../setup";
 import { useShortcutsSettings } from "Components/UserSettings";
 
-import { dialogLabel } from "./classes";
+import { validateShortcuts } from "../../setup";
 
+import { dialogLabel } from "./classes";
 import { CustomClasses } from "../../constants";
+import { AsBoolean } from "Types/helpers";
 
 
 const SearchInputGroup = memo(function SearchInputGroup(props) {
@@ -69,7 +69,7 @@ const SearchInputGroup = memo(function SearchInputGroup(props) {
 				} else {
 					return false;
 				}
-			}).filter(Boolean);
+			}).filter(AsBoolean);
 		
 	}, [searchbar, sanitizedShortcuts, toggleQC]);
 

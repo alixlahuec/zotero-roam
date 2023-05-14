@@ -2,9 +2,13 @@ import zrToaster from "Components/ExtensionToaster";
 
 import { cleanErrorIfAxios } from "./api/utils";
 import { pluralize } from "./utils";
+
+import { DEFAULT_TOAST_TIMEOUT } from "./constants";
+
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import { CitoidAPI, ZoteroAPI } from "Types/externals";
 import { ArgsMetadataBlocks, ArgsMetadataSmartblock, OutcomeMetadataStatus, OutcomePage } from "Types/extension";
+
 
 
 export namespace Events {
@@ -142,7 +146,8 @@ function metadataAdded(event: CustomEvent<Events.MetadataAdded>){
 	} else if (success) {
 		zrToaster.show({
 			intent: "success",
-			message: "Metadata added to " + title
+			message: "Metadata added to " + title,
+			timeout: DEFAULT_TOAST_TIMEOUT
 		});
 	} else {
 		window.zoteroRoam?.warn?.({
@@ -169,7 +174,8 @@ function notesAdded(event: CustomEvent<Events.NotesAdded>){
 	} else if (success) {
 		zrToaster.show({
 			intent: "success",
-			message: "Notes added to " + title + ` (${notes.length})`
+			message: "Notes added to " + title + ` (${notes.length})`,
+			timeout: DEFAULT_TOAST_TIMEOUT
 		});
 	} else {
 		window.zoteroRoam?.warn?.({
@@ -198,7 +204,8 @@ function tagsDeleted(event: CustomEvent<Events.TagsDeleted>){
 	} else {
 		zrToaster.show({
 			intent: "success",
-			message: pluralize(tags.length, "tag", ` deleted from ${library}`)
+			message: pluralize(tags.length, "tag", ` deleted from ${library}`),
+			timeout: DEFAULT_TOAST_TIMEOUT
 		});
 	}
 }
@@ -234,7 +241,8 @@ function tagsModified(event: CustomEvent<Events.TagsModified>){
 		if (isFullSuccess) {
 			zrToaster.show({
 				intent: "success",
-				message: pluralize(itemsOutcome.success, "item", ` successfully modified in ${library}.`)
+				message: pluralize(itemsOutcome.success, "item", ` successfully modified in ${library}.`),
+				timeout: DEFAULT_TOAST_TIMEOUT
 			});
 		} else {
 			window.zoteroRoam?.warn?.({
@@ -283,7 +291,8 @@ function writeFinished(event: CustomEvent<Events.Write>){
 		if (isFullSuccess) {
 			zrToaster.show({
 				intent: "success",
-				message: pluralize(itemsOutcome.success, "item", ` added to ${library}.`)
+				message: pluralize(itemsOutcome.success, "item", ` added to ${library}.`),
+				timeout: DEFAULT_TOAST_TIMEOUT
 			});
 		} else {
 			window.zoteroRoam?.warn?.({

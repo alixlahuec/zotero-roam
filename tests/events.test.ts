@@ -2,6 +2,7 @@ import { mock } from "jest-mock-extended";
 import zrToaster from "Components/ExtensionToaster";
 import ZoteroRoam from "../src/extension";
 import { Events, metadataAdded, notesAdded, tagsDeleted, tagsModified, writeFinished } from "../src/events";
+import { DEFAULT_TOAST_TIMEOUT } from "../src/constants";
 import { ZItemTop } from "Types/transforms";
 
 
@@ -36,7 +37,8 @@ describe("metadataAdded", () => {
 
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
-			message: "Metadata added to @someCitekey"
+			message: "Metadata added to @someCitekey",
+			timeout: DEFAULT_TOAST_TIMEOUT
 		});
 	});
 
@@ -78,7 +80,8 @@ describe("notesAdded", () => {
 
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
-			message: "Notes added to @someCitekey (0)"
+			message: "Notes added to @someCitekey (0)",
+			timeout: DEFAULT_TOAST_TIMEOUT
 		});
 	});
 
@@ -119,7 +122,8 @@ describe("tagsDeleted", () => {
 		tagsDeleted(evt);
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
-			message: "2 tags deleted from users/123456"
+			message: "2 tags deleted from users/123456",
+			timeout: DEFAULT_TOAST_TIMEOUT
 		});
 	});
 });
@@ -178,7 +182,8 @@ describe("tagsModified", () => {
 		tagsModified(mockEvent({ data }));
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
-			message: "1 item successfully modified in users/123456."
+			message: "1 item successfully modified in users/123456.",
+			timeout: DEFAULT_TOAST_TIMEOUT
 		});
 	});
 });
@@ -238,7 +243,8 @@ describe("writeFinished", () => {
 		writeFinished(mockEvent({ data }));
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
-			message: "1 item added to users/123456."
+			message: "1 item added to users/123456.",
+			timeout: DEFAULT_TOAST_TIMEOUT
 		});
 	});
 });

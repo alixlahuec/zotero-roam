@@ -10,7 +10,7 @@ import { findRoamBlock } from "Roam";
 
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 
-import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, QueryDataCollections, QueryDataItems, QueryDataTags, QueryKeyItems, QueryKeyTags, QueryKeyCollections } from "Types/transforms";
+import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, QueryDataCollections, QueryDataItems, QueryDataTags, QueryKeyItems, QueryKeyTags, QueryKeyCollections, ZLinkType, ZLinkOptions, isZAnnotation, isZNote, isZItemTop, isZAttachment } from "Types/transforms";
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
 import { ZoteroAPI } from "Types/externals";
 
@@ -250,7 +250,7 @@ export default class ZoteroRoam {
 	}
 }
 
-type LogConfig = {
+export type LogConfig = {
 	context?: Record<string, any>,
 	detail?: string,
 	origin?: string,
@@ -258,7 +258,7 @@ type LogConfig = {
 	showToaster?: number | boolean
 };
 
-type LogLevel = "error" | "info" | "warning";
+export type LogLevel = "error" | "info" | "warning";
 
 /**
  * Creates a log entry for the extension. This is meant to provide users with information about different events (e.g errors when fetching data), through an optional toast and more detailed logs.
@@ -269,7 +269,7 @@ export class ZoteroRoamLog {
 	message: string;
 	detail: string;
 	context: Record<string, any>;
-	intent: Intent | null;
+	intent: Intent | undefined;
 	timestamp: Date;
 
 	#LEVELS_MAPPING: Record<LogLevel, Intent> = {
@@ -291,7 +291,7 @@ export class ZoteroRoamLog {
 		this.message = message;
 		this.detail = detail;
 		this.context = context;
-		this.intent = this.#LEVELS_MAPPING[level] || null;
+		this.intent = this.#LEVELS_MAPPING[level] || undefined;
 		this.timestamp = new Date();
 
 		if(showToaster){
@@ -326,10 +326,10 @@ export function _formatNotes(
 		return [];
 	} else {
 		const annotItems = notes
-			.filter(n => n.data.itemType == "annotation")
+			.filter(isZAnnotation)
 			.sort((a,b) => compareAnnotationRawIndices(a.data.annotationSortIndex, b.data.annotationSortIndex));
 		const noteItems = notes
-			.filter(n => n.data.itemType == "note")
+			.filter(isZNote)
 			.sort((a, b) => a.data.dateAdded < b.data.dateAdded ? -1 : 1);
 		const formattedOutput = [
 			...formatZoteroAnnotations(annotItems, annotationsSettings),
@@ -417,7 +417,7 @@ async function _getBibEntries(citekeys: string[], { libraries, queryClient }: { 
 /** Returns an item's formatted bibliography as returned by the Zotero API */
 async function _getItemCitation(item: ZItemTop, config: Partial<ZoteroAPI.Requests.BibliographyArgs> = {}, { libraries }: { libraries: ZLibrary[] }): Promise<string> {
 	const location = item.library.type + "s/" + item.library.id;
-	const library = libraries.find(lib => lib.path == location);
+	const library = libraries.find(lib => lib.path == location)!;
 
 	const bib = await fetchBibliography(item.data.key, library, config);
 	return cleanBibliographyHTML(bib);
@@ -438,7 +438,7 @@ function _getItemChildren(item: ZItemTop, { queryClient }: { queryClient: QueryC
 	return _getItems("children", {
 		predicate: (query: Query<unknown, unknown, QueryDataItems, QueryKeyItems>) => {
 			const { queryKey } = query;
-			return queryKey[1].dataURI.startsWith(location);
+			return queryKey[2].dataURI.startsWith(location);
 		}
 	}, { queryClient })
 		.filter(el => el.data.parentItem == item.data.key) as (ZItemAttachment | ZItemNote | ZItemAnnotation)[];
@@ -485,14 +485,8 @@ function _getItemDateAdded(item: ZItem, { brackets = true }: { brackets?: boolea
 	return makeDNP(item.data.dateAdded, { brackets });
 }
 
-
-type LinkType = "local" | "web";
-type LinkOptions = {
-	format: "markdown" | "target",
-	text: string
-};
 /** Returns a link for the item (web or local) */
-function _getItemLink(item: ZItemTop, type: LinkType = "local", config: Partial<LinkOptions> = {}){
+function _getItemLink(item: ZItemTop, type: ZLinkType = "local", config: Partial<ZLinkOptions> = {}){
 	return (type == "local")
 		? getLocalLink(item, config)
 		: getWebLink(item, config);
@@ -569,15 +563,15 @@ function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { quer
 
 	switch (select) {
 	case "items":
-		return items.filter(it => !["attachment", "note", "annotation"].includes(it.data.itemType));
+		return items.filter(isZItemTop);
 	case "attachments":
-		return items.filter(it => it.data.itemType == "attachment");
+		return items.filter(isZAttachment);
 	case "children":
 		return items.filter(it => ["note", "annotation"].includes(it.data.itemType) || (it.data.itemType == "attachment" && it.data.contentType == "application/pdf"));
 	case "annotations":
-		return items.filter(it => it.data.itemType == "annotation");
+		return items.filter(isZAnnotation);
 	case "notes":
-		return items.filter(it => it.data.itemType == "note");
+		return items.filter(isZNote);
 	case "pdfs":
 		return items.filter(it => it.data.itemType == "attachment" && it.data.contentType == "application/pdf");
 	case "all":

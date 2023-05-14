@@ -1,7 +1,8 @@
 import { findRoamPage } from "Roam";
 import { getPDFLink } from "./utils";
-import { ZItem, ZItemAttachment, ZItemTop } from "Types/transforms";
 import { ZoteroAPI } from "Types/externals";
+import { AsBoolean } from "Types/helpers";
+import { ZItem, ZItemAttachment, ZItemTop } from "Types/transforms";
 
 
 type PDFFormatOption = "links" | "identity" | "string";
@@ -45,7 +46,7 @@ function _getItemCreators(item: ZItemTop, { return_as = "string", brackets = tru
 	const creatorsInfoList = item.data.creators.map(creator => {
 		const nameTag = "name" in creator
 			? creator.name
-			: `${[creator.firstName, creator.lastName].filter(Boolean).join(" ")}`;
+			: `${[creator.firstName, creator.lastName].filter(AsBoolean).join(" ")}`;
 		return {
 			name: nameTag,
 			type: creator.creatorType,

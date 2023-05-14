@@ -98,7 +98,7 @@ export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserD
 				}
 			});
 
-			const apiKeys = Array.from(new Set(dataRequests.map(req => req.apikey))).filter(Boolean);
+			const apiKeys = Array.from(new Set(dataRequests.map(req => req.apikey)));
 			const libraries = dataRequests.reduce<ZLibrary[]>((arr, req) => {
 				const { library: { path }, apikey } = req;
 				const has_lib = arr.find(lib => lib.path == path);
@@ -409,8 +409,8 @@ export function unmountExtensionIfExists(){
 
 }
 
-export function validateShortcuts(shortcuts: SettingsShortcuts){
-	const output = {};
+export function validateShortcuts(shortcuts: SettingsShortcuts): SettingsShortcuts{
+	const output: SettingsShortcuts = {};
 
 	Object.keys(shortcuts).forEach((key) => {
 		const combo = shortcuts[key];

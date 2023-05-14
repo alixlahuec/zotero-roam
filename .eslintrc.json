@@ -81,7 +81,6 @@
         "no-implicit-coercion": "warn",
         "no-label-var": "error",
         "no-param-reassign": "error",
-        "no-shadow": "error",
         "no-unused-vars": "off",
         "no-var": "error",
         "object-curly-spacing": [
@@ -89,6 +88,7 @@
             "always"
         ],
         "prefer-const": "warn",
+		"prefer-rest-params": "off",
         "quotes": [
             "error",
             "double"
@@ -101,6 +101,7 @@
         "sort-imports": "off",
         "react/jsx-uses-react": "off",
 		"react/no-unknown-property": "off",
+		"react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
         "import/newline-after-import": ["error", { "count": 2 }],
         "import/no-unresolved": ["warn", { "amd": true, "commonjs": true }],
@@ -155,6 +156,7 @@
 				"pathGroupsExcludedImportTypes": ["react", "react-dom", "@blueprintjs/*", "Components/*", "Roam", "*/constants", "*/propTypes"]
 			}
 		],
+		"@typescript-eslint/ban-ts-comment": "off", // TODO: disable later in TS migration
 		"@typescript-eslint/no-unused-vars": [
             "error",
             { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }

@@ -15,6 +15,7 @@ import { useTypemapSettings } from "Components/UserSettings";
 import { pluralize } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
+import { AsBoolean } from "Types/helpers";
 
 
 function useGetCitoids(urls, opts = {}) {
@@ -25,7 +26,7 @@ function useGetCitoids(urls, opts = {}) {
 			
 			return {
 				abstract: item.abstractNote || "",
-				creators: item.creators?.map(cre => cre.name || [cre.firstName, cre.lastName].filter(Boolean).join(" ")).join(", "),
+				creators: item.creators?.map(cre => cre.name || [cre.firstName, cre.lastName].filter(AsBoolean).join(" ")).join(", "),
 				itemType: item.itemType, 
 				publication: item.publicationTitle || item.bookTitle || item.websiteTitle || "",
 				title: item.title,
@@ -93,7 +94,7 @@ const WebImportPanel = memo(function WebImportPanel(props){
 	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data);
 
 	const handleClose = useCallback(() => {
-		setSelected();
+		setSelected([]);
 		onClose();
 	}, [onClose, setSelected]);
 
@@ -127,7 +128,7 @@ const WebImportPanel = memo(function WebImportPanel(props){
 						</div>
 					</div>
 					<div className="zr-webimport-panel--side" tabIndex={0}>
-						<ZoteroImport identifiers={selected} isActive={has_selected_items} resetImport={setSelected} />
+						<ZoteroImport identifiers={selected} isActive={has_selected_items} resetImport={() => setSelected([])} />
 					</div>
 				</ErrorBoundary>
 			</div>
