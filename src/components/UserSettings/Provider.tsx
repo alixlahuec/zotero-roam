@@ -24,7 +24,7 @@ const UserSettingsProvider: FC<OwnProps> = ({ extensionAPI = {}, children, init 
 	return <>
 		{SETTINGS_CONFIG.reduceRight((acc: ReactChildren, provider) => {
 			const { component: Comp, id } = provider;
-			return <Comp children={acc} init={init[id]} updater={(val) => updater(id, val)} />;
+			return <Comp init={init[id]} updater={(val) => updater(id, val)}>{acc}</Comp>;
 		}, children)}
 	</>;
 };
