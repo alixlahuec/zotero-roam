@@ -1,10 +1,13 @@
-
+import { ComponentProps } from "react";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { SettingsDialog } from ".";
+import { Meta, Story } from "@storybook/react";
 
+import { SettingsDialog } from ".";
 import { OVERRIDE_KEY_OPTIONS } from "./Copy";
 
+
+type Props = ComponentProps<typeof SettingsDialog>;
 
 export default {
 	component: SettingsDialog,
@@ -74,9 +77,9 @@ export default {
 			}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => <SettingsDialog {...args} />;
+const Template: Story<Props> = (args) => <SettingsDialog {...args} />;
 
 export const Default = Template.bind({});
 
@@ -89,7 +92,7 @@ WithInteractions.parameters = {
 WithInteractions.play = async({ canvasElement, parameters }) => {
 	const { userSettings } = parameters;
 	const canvas = within(canvasElement);
-	const frame = within(canvasElement.parentElement);
+	const frame = within(canvasElement.parentElement!);
 
 	const navigateToTab = async(name) => {
 		const tab = canvas.getByRole("tab", { name });
@@ -99,7 +102,7 @@ WithInteractions.play = async({ canvasElement, parameters }) => {
 	// Other settings
 	await navigateToTab("Other");
 
-	const autoloadSwitch = canvas.getByRole("switch", { name: "Toggle 'autoload' setting" });
+	const autoloadSwitch = canvas.getByRole("switch", { name: "Toggle 'autoload' setting" }) as HTMLInputElement;
 	await expect(autoloadSwitch.checked)
 		.toBe(userSettings.other.autoload);
 	await userEvent.click(autoloadSwitch);
@@ -110,7 +113,7 @@ WithInteractions.play = async({ canvasElement, parameters }) => {
 	// Autocomplete settings
 	await navigateToTab("Autocomplete");
 	
-	const autocompleteTrigger = canvas.getByTitle("Enter a trigger for the 'autocomplete' feature");
+	const autocompleteTrigger = canvas.getByTitle("Enter a trigger for the 'autocomplete' feature") as HTMLInputElement;
 	await expect(autocompleteTrigger.value)
 		.toBe(userSettings.autocomplete.trigger);
 
@@ -124,7 +127,7 @@ WithInteractions.play = async({ canvasElement, parameters }) => {
 	
 	const qcOverrideKey = canvas.getByTitle("Select an override key for Quick Copy");
 	await expect(qcOverrideKey.innerText)
-		.toBe(OVERRIDE_KEY_OPTIONS.find(op => op.value == userSettings.copy.overrideKey).label);
+		.toBe(OVERRIDE_KEY_OPTIONS.find(op => op.value == userSettings.copy.overrideKey)!.label);
 	
 	await userEvent.click(qcOverrideKey);
 	const overrideMenu = frame.getByRole("list", { name: "Select an override key for Quick Copy" });
