@@ -20,7 +20,7 @@ import { ZCleanItemTop } from "Types/transforms";
 import "./index.css";
 
 
-type ItemReferenceFormat = "citation" | "citekey" | "page-reference" | "tag";
+type ItemCopyFormat = "citation" | "citekey" | "page-reference" | "tag";
 
 
 const popoverProps = {
@@ -28,7 +28,7 @@ const popoverProps = {
 };
 
 /** Creates a formatted reference to an item */
-const makeItemReference = (citekey: string, format: ItemReferenceFormat, item: ZCleanItemTop) => {
+const makeItemReference = (citekey: string, format: ItemCopyFormat, item: ZCleanItemTop) => {
 	const pageRef = "[[@" + citekey + "]]";
 	switch(format){
 	case "page-reference":
@@ -44,7 +44,7 @@ const makeItemReference = (citekey: string, format: ItemReferenceFormat, item: Z
 };
 
 
-function CopyOption(props: CopyButtonsProps & { format: ItemReferenceFormat }){
+function CopyOption(props: CopyButtonsProps & { format: ItemCopyFormat }){
 	const { citekey, format, item } = props;
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
@@ -111,7 +111,7 @@ function CopyButtons(props: CopyButtonsProps){
 	}, [defaultCopyText]);
 
 	const optionsMenu = useMemo(() => {
-		let standardOptions: ItemReferenceFormat[] = ["citation", "citekey", "page-reference", "tag"];
+		let standardOptions: ItemCopyFormat[] = ["citation", "citekey", "page-reference", "tag"];
 
 		if (copySettings.useAsDefault == "preset") {
 			standardOptions = standardOptions.filter(op => op != copySettings.preset);
