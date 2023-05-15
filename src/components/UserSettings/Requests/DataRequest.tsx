@@ -1,21 +1,21 @@
 import { useMemo } from "react";
 
-import { Tag } from "@blueprintjs/core";
+import { IconName, Tag } from "@blueprintjs/core";
 
 import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
 
 
-const obfuscate = (val) => "*".repeat(val.length);
+const obfuscate = (val: string) => "*".repeat(val.length);
 
 function DataRequest({ request }){
 	const { apikey, dataURI, library: { path, type } } = request;
 
 	const libContents = useMemo(() => {
 		const tagProps = (type == "users")
-			? { icon: "user", htmlTitle: "User library" }
+			? { icon: "user" as IconName, htmlTitle: "User library" }
 			: (type == "groups")
-				? { icon: "people", htmlTitle: "Group library" }
+				? { icon: "people" as IconName, htmlTitle: "Group library" }
 				: {};
 		return <Tag minimal={true} {...tagProps}>{path}</Tag>;
 	}, [path, type]);

@@ -1,42 +1,54 @@
-import { any, arrayOf, func, number, shape } from "prop-types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
-import { Button, Classes, ControlGroup, FormGroup, H6, InputGroup, MenuItem } from "@blueprintjs/core";
-import { Select } from "@blueprintjs/select";
-
-import { ErrorCallout } from "Components/Errors";
+import { Button, ButtonProps, Classes, ControlGroup, FormGroup, H6, InputGroup, InputGroupProps, MenuItem } from "@blueprintjs/core";
+import { Select, SelectProps } from "@blueprintjs/select";
+import { Placement } from "@blueprintjs/popover2";
 
 import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "Components/Dashboard/Explorer/QueryBuilder/utils";
+import { ErrorCallout } from "Components/Errors";
+
 import { analyzeUserRequests } from "../../../setup";
 
-import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
-
+import { DataRequest, UserDataRequest, UserRequests } from "Types/extension";
+import { ZoteroAPI } from "Types/externals";
 import "./index.css";
 
 
-const popoverProps = {
-	canEscapeKeyClose: false,
-	minimal: true,
-	placement: "bottom-right",
-	popoverClassName: CustomClasses.POPOVER,
-	targetProps: {
-		title: "Select the type of library you want to use"
+type LibraryOption = { label: string, value: ZoteroAPI.LibraryTypeURI };
+
+type LibrarySelectorProps = SelectProps<LibraryOption>;
+
+const librarySelectStaticProps: Partial<LibrarySelectorProps> & Pick<LibrarySelectorProps, "itemRenderer"> = {
+	itemRenderer: (item, itemProps) => {
+		const { handleClick/*, modifiers: { active }*/ } = itemProps;
+
+		return <MenuItem key={item.value} onClick={handleClick} text={item.label} />;
+	},
+	popoverProps: {
+		canEscapeKeyClose: false,
+		minimal: true,
+		placement: "bottom-right" as Placement,
+		popoverClassName: CustomClasses.POPOVER,
+		targetProps: {
+			title: "Select the type of library you want to use"
+		}
 	}
 };
 
-function renderAsMenuItem(item, itemProps) {
-	const { handleClick/*, modifiers: { active }*/ } = itemProps;
-
-	return <MenuItem key={item.value} onClick={handleClick} text={item.label} />;
-}
-
-const LIB_TYPE_OPTIONS = [
+const LIB_TYPE_OPTIONS: LibraryOption[] = [
 	{ label: "User library", value: "users" },
 	{ label: "Group library", value: "groups" }
 ];
 
-function DataRequestForm({ inputRef = null, pos, req, updateReq }){
+
+type DataRequestFormProps = {
+	inputRef?: InputGroupProps["inputRef"],
+	pos: number | "new",
+	req: UserDataRequest,
+	updateReq: (value: UserDataRequest) => void
+};
+
+function DataRequestForm({ inputRef = undefined, pos, req, updateReq }: DataRequestFormProps){
 	const { apikey, library: { type, id }, name } = req;
 
 	const changeHandlers = useMemo(() => {
@@ -70,10 +82,9 @@ function DataRequestForm({ inputRef = null, pos, req, updateReq }){
 			<ControlGroup>
 				<Select
 					filterable={false}
-					itemRenderer={renderAsMenuItem}
 					items={LIB_TYPE_OPTIONS}
 					onItemSelect={changeHandlers.updateLibraryType} 
-					popoverProps={popoverProps} >
+					{...librarySelectStaticProps} >
 					<Button 
 						active={true}
 						className={CustomClasses.TEXT_SMALL} 
@@ -94,14 +105,9 @@ function DataRequestForm({ inputRef = null, pos, req, updateReq }){
 		</FormGroup>
 	</>;
 }
-DataRequestForm.propTypes = {
-	inputRef: any,
-	pos: number,
-	req: customPropTypes.dataRequestType,
-	updateReq: func
-};
 
-const defaultReq = {
+
+const DEFAULT_REQ: UserDataRequest = {
 	apikey: "",
 	library: {
 		type: "users",
@@ -110,27 +116,38 @@ const defaultReq = {
 	name: ""
 };
 
-function NewRequest({ addReq, inputRef }){
-	const [req, updateReq] = useState(defaultReq);
+type NewRequestProps = {
+	addReq: (value: UserDataRequest) => void,
+	inputRef?: InputGroupProps["inputRef"]
+};
+
+function NewRequest({ addReq, inputRef }: NewRequestProps){
+	const [req, updateReq] = useState(DEFAULT_REQ);
 
 	const addToReqList = useCallback(() => {
 		addReq(req);
-		updateReq(defaultReq);
+		updateReq(DEFAULT_REQ);
 	}, [addReq, req]);
 
 	return <div className="zr-data-request new">
 		<ControlGroup>
 			<DataRequestForm inputRef={inputRef} pos="new" req={req} updateReq={updateReq} />
-			<Button className={[CustomClasses.TEXT_SMALL, Classes.FIXED]} intent="success" minimal={true} onClick={addToReqList} text="Add" title="Add the request" />
+			<Button className={[CustomClasses.TEXT_SMALL, Classes.FIXED].join(" ")} intent="success" minimal={true} onClick={addToReqList} text="Add" title="Add the request" />
 		</ControlGroup>
 	</div>;
 }
-NewRequest.propTypes = {
-	addReq: func,
-	inputRef: any
+
+
+type ExistingRequestProps = {
+	handlers: {
+		removeReq: ButtonProps["onClick"],
+		updateReq: (value: UserDataRequest) => void
+	},
+	pos: number,
+	req: UserDataRequest
 };
 
-function ExistingRequest({ handlers, pos, req }){
+function ExistingRequest({ handlers, pos, req }: ExistingRequestProps){
 	const { removeReq, updateReq } = handlers;
 
 	return <div className="zr-data-request existing" >
@@ -140,19 +157,18 @@ function ExistingRequest({ handlers, pos, req }){
 		</ControlGroup>
 	</div>;
 }
-ExistingRequest.propTypes = {
-	handlers: shape({
-		removeReq: func,
-		updateReq: func
-	}),
-	pos: number,
-	req: customPropTypes.dataRequestType
+
+
+type RequestsEditorProps = {
+	closeDialog: () => void,
+	dataRequests: DataRequest[],
+	updateRequests: (value: UserRequests) => void
 };
 
-function RequestsEditor({ closeDialog, dataRequests = [], updateRequests }){
+function RequestsEditor({ closeDialog, dataRequests = [], updateRequests }: RequestsEditorProps){
 	const [reqList, setReqList] = useState(dataRequests);
 	const [validationError, setValidationError] = useState(null);
-	const newReqField = useRef();
+	const newReqField = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		setValidationError(null);
@@ -201,10 +217,6 @@ function RequestsEditor({ closeDialog, dataRequests = [], updateRequests }){
 		</div>
 	</>;
 }
-RequestsEditor.propTypes = {
-	closeDialog: func,
-	dataRequests: arrayOf(customPropTypes.dataRequestType),
-	updateRequests: func
-};
+
 
 export default RequestsEditor;

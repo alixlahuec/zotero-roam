@@ -1,13 +1,17 @@
-import { useState } from "react";
-
+import { ComponentProps, useState } from "react";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, within } from "@storybook/testing-library";
-
-import { analyzeUserRequests } from "../../../setup";
+import { Meta, Story } from "@storybook/react";
 
 import RequestsEditor from "./RequestsEditor";
+import { analyzeUserRequests } from "../../../setup";
+import { apiKeys, libraries } from "Mocks/zotero";
 
 
+const { keyWithFullAccess: { key: masterKey } } = apiKeys;
+const { userLibrary: { path: userPath }, groupLibrary: { path: groupPath } } = libraries;
+
+type Props = ComponentProps<typeof RequestsEditor>;
 
 export default {
 	component: RequestsEditor,
@@ -17,20 +21,22 @@ export default {
 	argTypes: {
 		closeDialog: { action: true }
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	const { dataRequests, ...rest } = args;
 	const [requests, setRequests] = useState(() => analyzeUserRequests(dataRequests));
 	return <RequestsEditor {...rest} dataRequests={requests.dataRequests} updateRequests={setRequests} />;
 };
 
+const defaultReqs = [
+	{ dataURI: userPath + "/items", apikey: masterKey, name: "My user library" },
+	{ dataURI: groupPath + "/items", apikey: masterKey, name: "My group library" }
+];
+
 export const Default = Template.bind({});
 Default.args = {
-	dataRequests: [
-		{ library: { type: "users", id: "12345" } },
-		{ library: { type: "groups", id: "54321" }, name: "My group library", apikey: "ABCD1234" }
-	]
+	dataRequests: analyzeUserRequests(defaultReqs).dataRequests
 };
 
 export const NoRequests = Template.bind({});
@@ -41,7 +47,7 @@ NoRequests.play = async({ args, canvasElement }) => {
 	const canvas = within(canvasElement);
 
 	const existingLibs = canvasElement.querySelectorAll(".zr-data-request.existing");
-	const newLibForm = within(canvasElement.querySelector(".zr-data-request.new"));
+	const newLibForm = within(canvasElement.querySelector(".zr-data-request.new")!);
 
 	await expect(existingLibs.length).toBe(0);
 	await expect(newLibForm.getByRole("textbox", { name: "Library" }))
@@ -60,7 +66,7 @@ NoRequests.play = async({ args, canvasElement }) => {
 	await userEvent.click(validateButton);
 	await expect(canvas.queryByRole("heading", { name: "Error" })).toBeInTheDocument();
 
-	const firstLibForm = within(canvasElement.querySelector(".zr-data-request.existing"));
+	const firstLibForm = within(canvasElement.querySelector(".zr-data-request.existing")!);
 	// const libTypeControl = firstLibForm.getByRole("button", { name: "users" });
 	const libIDInput = firstLibForm.getByRole("textbox", { name: "Library" });
 	const apikeyInput = firstLibForm.getByRole("textbox", { name: "API Key" });

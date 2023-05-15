@@ -9,7 +9,7 @@ import { useBool } from "../../../hooks";
 import { CustomClasses } from "../../../constants";
 
 
-const { Provider: RequestsProvider, useSettings: useRequestsSettings } = new SettingsManager({
+const { Provider: RequestsProvider, useSettings: useRequestsSettings } = new SettingsManager<"requests">({
 	/* istanbul ignore next */
 	afterUpdate: (prevState, update) => {
 		window?.zoteroRoam?.updateLibraries?.(update.libraries);
