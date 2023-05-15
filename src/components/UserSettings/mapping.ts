@@ -11,9 +11,17 @@ import { TypemapProvider, TypemapWidget } from "./Typemap";
 import { WebImportProvider, WebImportWidget } from "./WebImport";
 
 import { RequestsProvider, RequestsWidget } from "./Requests";
+import { SettingsProvider } from "./SettingsManager";
+import { InitSettings } from "Types/extension";
 
 
-export const SETTINGS_CONFIG = [
+type SettingsConfig = {
+	component: SettingsProvider<keyof InitSettings>,
+	id: keyof InitSettings,
+	widget: () => JSX.Element | JSX.Element[]
+}[];
+
+export const SETTINGS_CONFIG: SettingsConfig = [
 	{
 		component: RequestsProvider,
 		id: "requests",
