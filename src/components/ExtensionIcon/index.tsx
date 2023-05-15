@@ -28,7 +28,6 @@ const betaTag = <Tag intent="primary" minimal={true}>Beta</Tag>;
 const isCurrentlyDark = () => document.getElementsByTagName("body")[0].getAttribute("zr-dark-theme") == "true";
 
 function DarkThemeToggle() {
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ darkTheme }] = useOtherSettings();
 	const [useDark, { set: setUseDark, toggle: toggleDark }] = useBool(darkTheme);
 	

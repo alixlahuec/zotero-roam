@@ -69,7 +69,6 @@ const CitekeyPopover = memo<OwnProps>(function CitekeyPopover(props) {
 	}, [item]);
 
 	const importMetadata = useCallback(async () => {
-		// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 		const outcome = await importItemMetadata({ item, pdfs, notes }, inGraph, metadataSettings, typemap, notesSettings, annotationsSettings);
 		if(outcome.success && outcome.page.new){
 			updateRoamCitekeys();

@@ -1,5 +1,6 @@
 import { ZoteroAPI } from "../externals";
 import { SBConfig, ZLibrary } from "../transforms";
+import { ZItemReferenceFormat } from "./misc";
 
 
 /* -------------------------------------------------------------- */
@@ -90,18 +91,16 @@ export interface SettingsAnnotations {
 	__with: "formatted" | "raw"
 }
 
-export type AutocompleteItemFormat = "citekey" | "key" | "inline" | "tag" | "pageref" | "citation" | "popover" | "zettlr";
-
 /** Settings for the Autocomplete feature */
 export interface SettingsAutocomplete {
 	/** The preset to use to show suggestions */
-	display: AutocompleteItemFormat,
+	display: ZItemReferenceFormat,
 	/** The custom template to use to show suggestions */
 	display_char: string,
 	/** The type of formatter to use to show suggestions */
 	display_use: "preset" | "custom",
 	/** The preset to use to insert suggestions */
-	format: AutocompleteItemFormat,
+	format: ZItemReferenceFormat,
 	/** The custom template to use to insert suggestions */
 	format_char: string,
 	/** The type of formatter to use to show suggestions */

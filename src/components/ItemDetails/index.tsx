@@ -49,7 +49,6 @@ function CopyOption(props: CopyButtonsProps & { format: ItemReferenceFormat }){
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
 	// TODO: move validation step upstream
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const textOutput = useMemo(() => makeItemReference(citekey, format, item), [citekey, format, item]);
@@ -101,11 +100,9 @@ function CopyButtons(props: CopyButtonsProps){
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
 	// TODO: move validation step upstream
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 
 	const defaultCopyText = useMemo(() => {
-		// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 		return formatItemReferenceWithDefault(item, copySettings);
 	}, [copySettings, item]);
 
@@ -114,11 +111,9 @@ function CopyButtons(props: CopyButtonsProps){
 	}, [defaultCopyText]);
 
 	const optionsMenu = useMemo(() => {
-		let standardOptions = ["citation", "citekey", "page-reference", "tag"] as const;
+		let standardOptions: ItemReferenceFormat[] = ["citation", "citekey", "page-reference", "tag"];
 
-		// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 		if (copySettings.useAsDefault == "preset") {
-			// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 			standardOptions = standardOptions.filter(op => op != copySettings.preset);
 		}
 		
@@ -240,7 +235,6 @@ const ItemDetails = memo<ItemDetailsProps>(function ItemDetails({ closeDialog, i
 	const [shortcuts] = useShortcutsSettings();
 	// Only pass valid hotkey combos
 	// TODO: move validation step upstream
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const sanitizedShortcuts = useMemo(() => validateShortcuts(shortcuts), [shortcuts]);
 	const [typemap] = useTypemapSettings();
 
@@ -248,7 +242,6 @@ const ItemDetails = memo<ItemDetailsProps>(function ItemDetails({ closeDialog, i
 
 	const importMetadata = useCallback(async() => {
 		const { pdfs = [], notes = [] } = children;
-		// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 		const outcome = await importItemMetadata({ item: item.raw, pdfs, notes }, inGraph, metadataSettings, typemap, notesSettings, annotationsSettings);
 		if(outcome.success){
 			updateRoamCitekeys();
@@ -257,8 +250,7 @@ const ItemDetails = memo<ItemDetailsProps>(function ItemDetails({ closeDialog, i
 	}, [annotationsSettings, children, inGraph, item.raw, metadataSettings, notesSettings, typemap, updateRoamCitekeys]);
 
 	const importNotes = useCallback(async () => {
-		// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
-		const outcome = await importItemNotes({ item, notes: children.notes }, inGraph, notesSettings, annotationsSettings);
+		const outcome = await importItemNotes({ item: item.raw, notes: children.notes }, inGraph, notesSettings, annotationsSettings);
 		if(outcome.success){
 			updateRoamCitekeys();
 		}

@@ -73,7 +73,6 @@ function Note({ note }: NoteProps){
 	const { date_modified, link_note, raw, tags } = note;
 	const [notesSettings] = useNotesSettings();
 
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings), [notesSettings, raw]);
 
 	return <div className={["zr-drawer--notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
