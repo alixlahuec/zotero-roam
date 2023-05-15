@@ -1,8 +1,9 @@
 import { useMemo } from "react";
+import { Intent } from "@blueprintjs/core";
 import { RowGroup, RowGroupOption, SingleInput, TextField, TextWithSelect, SettingsManager } from "Components/UserSettings";
 
 
-const { Provider: NotesProvider, useSettings: useNotesSettings } = new SettingsManager({
+const { Provider: NotesProvider, useSettings: useNotesSettings } = new SettingsManager<"notes">({
 	/* istanbul ignore next */
 	afterUpdate: (_prevState, update) => {
 		window?.zoteroRoam?.updateSetting?.("notes", update);
@@ -86,7 +87,7 @@ function NotesWidget(){
 	}, [setOpts]);
 
 	const customFuncButtonProps = useMemo(() => ({
-		intent: "primary"
+		intent: Intent.PRIMARY
 	}), []);
 
 	return <>

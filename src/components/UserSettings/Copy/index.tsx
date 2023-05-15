@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Definition, RowGroup, RowGroupOption, SingleInput, TextField, Toggle, SettingsManager } from "Components/UserSettings";
 
 
-const { Provider: CopyProvider, useSettings: useCopySettings } = new SettingsManager();
+const { Provider: CopyProvider, useSettings: useCopySettings } = new SettingsManager<"copy">();
 
 const PRESET_OPTIONS = [
 	{ label: "Citation", value: "citation" },

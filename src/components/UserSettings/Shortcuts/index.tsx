@@ -5,7 +5,7 @@ import { TextField, SettingsManager } from "Components/UserSettings";
 import { camelToTitleCase } from "../../../utils";
 
 
-const { Provider: ShortcutsProvider, useSettings: useShortcutsSettings } = new SettingsManager();
+const { Provider: ShortcutsProvider, useSettings: useShortcutsSettings } = new SettingsManager<"shortcuts">();
 
 const validateUserInput = (input) => {
 	if(input == ""){ return true; }

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { SettingsManager, Definition, RowGroup, RowGroupOption, SingleInput, TextField } from "Components/UserSettings";
 
 
-const { Provider: AutocompleteProvider, useSettings: useAutocompleteSettings } = new SettingsManager();
+const { Provider: AutocompleteProvider, useSettings: useAutocompleteSettings } = new SettingsManager<"autocomplete">();
 
 const DISPLAY_OPTIONS = [
 	{ label: "Citekey", value: "citekey" },

@@ -4,7 +4,7 @@ import { TextField , SettingsManager } from "Components/UserSettings";
 import { camelToTitleCase } from "../../../utils";
 
 
-const { Provider: TypemapProvider, useSettings: useTypemapSettings } = new SettingsManager({
+const { Provider: TypemapProvider, useSettings: useTypemapSettings } = new SettingsManager<"typemap">({
 	/* istanbul ignore next */
 	afterUpdate: (_prevState, update) => {
 		window?.zoteroRoam?.updateSetting?.("typemap", update);

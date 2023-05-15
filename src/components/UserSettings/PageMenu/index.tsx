@@ -3,7 +3,7 @@ import { InputMultiSelect } from "Components/Inputs";
 import { RowCol, SingleInput, SettingsManager } from "Components/UserSettings";
 
 
-const { Provider: PageMenuProvider, useSettings: usePageMenuSettings } = new SettingsManager();
+const { Provider: PageMenuProvider, useSettings: usePageMenuSettings } = new SettingsManager<"pageMenu">();
 
 const ELEM_OPTIONS = [
 	{ label: "Metadata import", value: "addMetadata" }, 

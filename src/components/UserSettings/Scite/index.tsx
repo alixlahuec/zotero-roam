@@ -3,7 +3,7 @@ import SciteBadge from "Components/SciteBadge";
 import { NumericSelect, SingleInput, Toggle , SettingsManager } from "Components/UserSettings";
 
 
-const { Provider: SciteProvider, useSettings: useSciteSettings } = new SettingsManager();
+const { Provider: SciteProvider, useSettings: useSciteSettings } = new SettingsManager<"sciteBadge">();
 
 const EXAMPLE_DOI = "10.1126/science.1179052";
 

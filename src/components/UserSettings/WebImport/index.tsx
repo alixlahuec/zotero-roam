@@ -3,7 +3,7 @@ import { TagsSelector } from "Components/Inputs";
 import { RowCol, SettingsManager } from "Components/UserSettings";
 
 
-const { Provider: WebImportProvider, useSettings: useWebImportSettings } = new SettingsManager();
+const { Provider: WebImportProvider, useSettings: useWebImportSettings } = new SettingsManager<"webimport">();
 
 function WebImportWidget(){
 	const [

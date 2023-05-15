@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { Definition, RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect , SettingsManager } from "Components/UserSettings";
+import { Intent } from "@blueprintjs/core";
+import { Definition, RowCol, RowGroup, RowGroupOption, SingleInput, TextAreaInput, TextWithSelect, SettingsManager } from "Components/UserSettings";
 
 
-const { Provider: AnnotationsProvider, useSettings: useAnnotationsSettings } = new SettingsManager({
+const { Provider: AnnotationsProvider, useSettings: useAnnotationsSettings } = new SettingsManager<"annotations">({
 	/* istanbul ignore next */
 	afterUpdate: (_prevState, update) => {
 		window?.zoteroRoam?.updateSetting?.("annotations", update);
@@ -74,7 +75,7 @@ function AnnotationsWidget(){
 	}, [setOpts]);
 
 	const customFuncButtonProps = useMemo(() => ({
-		intent: "primary"
+		intent: Intent.PRIMARY
 	}), []);
 
 	return <>
@@ -90,7 +91,7 @@ function AnnotationsWidget(){
 			options={USE_OPTIONS} 
 			selected={use}>
 			<RowGroupOption id="default">
-				<SingleInput menuTitle="Select whether annotations should be grouped" onChange={handlers.updateGroupBy} options={GROUP_BY_OPTIONS} value={group_by} />
+				<SingleInput menuTitle="Select whether annotations should be grouped" onSelect={handlers.updateGroupBy} options={GROUP_BY_OPTIONS} value={group_by} />
 			</RowGroupOption>
 			<RowGroupOption id="function" description="Enter the inputs and name of your custom function.">
 				<TextWithSelect 
