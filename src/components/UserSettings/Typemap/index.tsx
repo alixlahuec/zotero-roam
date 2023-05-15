@@ -24,9 +24,11 @@ function TypemapWidget(){
 		}));
 	}, [setOpts]);
 
-	return Object.keys(typemap).map(type => (
-		<TextField key={type} ifEmpty={true} label={"Enter a mapping for" + camelToTitleCase(type)} onChange={(val) => updateValue(type, val)} title={type} value={typemap[type]} />
-	));
+	return <>
+		{Object.keys(typemap).map(type => (
+			<TextField key={type} ifEmpty={true} label={"Enter a mapping for" + camelToTitleCase(type)} onChange={(val) => updateValue(type, val)} title={type} value={typemap[type]} />
+		))}
+	</>;
 }
 
 export {

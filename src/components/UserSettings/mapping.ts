@@ -18,7 +18,7 @@ import { InitSettings } from "Types/extension";
 type SettingsConfig = {
 	component: SettingsProvider<keyof InitSettings>,
 	id: keyof InitSettings,
-	widget: () => JSX.Element | JSX.Element[]
+	widget: () => JSX.Element
 }[];
 
 export const SETTINGS_CONFIG: SettingsConfig = [

@@ -31,9 +31,11 @@ function ShortcutsWidget(){
 		}));
 	}, [setOpts]);
 
-	return Object.keys(shortcuts).map(cmd => (
-		<TextField key={cmd} ifEmpty={true} label={"Enter a keyboard shortcut to use to" + camelToTitleCase(cmd)} onChange={(val) => updateValue(cmd, val)} title={camelToTitleCase(cmd)} validate={validateUserInput} value={shortcuts[cmd]} />
-	));
+	return <>
+		{Object.keys(shortcuts).map(cmd => (
+			<TextField key={cmd} ifEmpty={true} label={"Enter a keyboard shortcut to use to" + camelToTitleCase(cmd)} onChange={(val) => updateValue(cmd, val)} title={camelToTitleCase(cmd)} validate={validateUserInput} value={shortcuts[cmd]} />
+		))}
+	</>;
 }
 
 export {
