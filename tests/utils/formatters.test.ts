@@ -224,6 +224,7 @@ describe("Formatting Zotero item references", () => {
 	});
 
 	it("uses the citekey format as fallback", () => {
+		// @ts-expect-error "Test expects bad input"
 		expect(formatItemReference(item, false)).toBe("@scottOrganizationalCulture2003");
 	});
 });
