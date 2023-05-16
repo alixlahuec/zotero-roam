@@ -34,8 +34,8 @@ export default {
 
 const Template: Story<Props> = (args) => {
 	const [status, toggleStatus] = useToggle<Props["status"]>({
-		start: "on",
-		options: ["on", "off"]
+		start: ExtensionStatusEnum.ON,
+		options: [ExtensionStatusEnum.ON, ExtensionStatusEnum.OFF]
 	});
 	return <ExtensionIcon {...args} status={status} toggleExtension={toggleStatus} />;
 };
