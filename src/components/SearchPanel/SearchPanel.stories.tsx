@@ -1,17 +1,21 @@
+import { ComponentProps } from "react";
 import { expect } from "@storybook/jest";
+import { Meta, Story } from "@storybook/react";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import SearchPanel from ".";
-
 import { items } from "Mocks";
+import { ExtensionStatusEnum } from "Types/extension";
 
+
+type Props = ComponentProps<typeof SearchPanel>;
 
 export default {
 	component: SearchPanel,
 	args: {
 		isOpen: true,
 		onClose: () => {},
-		status: "on"
+		status: ExtensionStatusEnum.ON
 	},
 	parameters: {
 		userSettings: {
@@ -27,14 +31,14 @@ export default {
 			}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => <SearchPanel {...args} />;
+const Template: Story<Props> = (args) => <SearchPanel {...args} />;
 
 export const Default = Template.bind({});
 
 export const WithRoamCitekey = Template.bind({});
-WithRoamCitekey.args = {
+WithRoamCitekey.parameters = {
 	roamCitekeys: [
 		["@" + items[0].key, "_some_uid_"]
 	]

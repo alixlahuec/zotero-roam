@@ -1,25 +1,23 @@
-import { bool, func, oneOf } from "prop-types";
 import { memo, useCallback, useMemo } from "react";
 
-import DialogOverlay from "Components/DialogOverlay";
+import DialogOverlay, { DialogOverlayProps } from "Components/DialogOverlay";
 import { ErrorBoundary } from "Components/Errors";
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
+import { useCopySettings, useRequestsSettings } from "Components/UserSettings";
 import LibraryQueryList from "./LibraryQueryList";
 
 import { useBool } from "../../hooks";
-import { useCopySettings, useRequestsSettings } from "Components/UserSettings";
 import { useQuery_Items } from "../../api/queries";
-
-import { useRoamCitekeys } from "Components/RoamCitekeysContext";
-
 import { cleanLibrary } from "../../utils";
 
 import { dialogClass, dialogLabel } from "./classes";
-
+import { QueryDataItems, RCitekeyPages } from "Types/transforms";
+import { DataRequest, ExtensionStatusEnum } from "Types/extension";
 import "./index.css";
 
 
-function useGetItems(reqs, roamCitekeys, opts = {}){
-	const select = useCallback((datastore) => {
+function useGetItems(reqs: DataRequest[], roamCitekeys: RCitekeyPages, opts = {}){
+	const select = useCallback((datastore: QueryDataItems) => {
 		return datastore.data
 			? cleanLibrary(datastore.data, roamCitekeys)
 			: [];
@@ -36,14 +34,19 @@ function useGetItems(reqs, roamCitekeys, opts = {}){
 	return itemData;
 }
 
-const SearchPanel = memo(function SearchPanel({ isOpen, onClose, status }) {
+
+type SearchPanelProps = {
+	status: ExtensionStatusEnum
+} & Pick<DialogOverlayProps, "isOpen" | "onClose">;
+
+const SearchPanel = memo<SearchPanelProps>(function SearchPanel({ isOpen, onClose, status }) {
 	const [{ useQuickCopy }] = useCopySettings();
 	const [{ dataRequests }] = useRequestsSettings();
 	const [roamCitekeys,] = useRoamCitekeys();
 
 	const [quickCopyActive, { toggle: toggleQuickCopy }] = useBool(useQuickCopy); // Is QuickCopy active by default ?
 
-	const items = useGetItems(dataRequests, roamCitekeys, { enabled: status == "on" });
+	const items = useGetItems(dataRequests, roamCitekeys, { enabled: status == ExtensionStatusEnum.ON });
 
 	return (
 		<DialogOverlay
@@ -63,10 +66,6 @@ const SearchPanel = memo(function SearchPanel({ isOpen, onClose, status }) {
 	);
 
 });
-SearchPanel.propTypes = {
-	isOpen: bool,
-	onClose: func,
-	status: oneOf(["on", "off", "disabled"])
-};
+
 
 export default SearchPanel;

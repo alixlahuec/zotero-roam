@@ -1,6 +1,5 @@
-import { bool, func, object, shape } from "prop-types";
-import { memo, useMemo } from "react";
-import { Button, Classes, Icon, InputGroup, Switch, useHotkeys } from "@blueprintjs/core";
+import { RefObject, memo, useMemo } from "react";
+import { Button, Classes, Icon, InputGroup, InputGroupProps2, Switch, useHotkeys } from "@blueprintjs/core";
 
 import { useShortcutsSettings } from "Components/UserSettings";
 
@@ -11,7 +10,19 @@ import { CustomClasses } from "../../constants";
 import { AsBoolean } from "Types/helpers";
 
 
-const SearchInputGroup = memo(function SearchInputGroup(props) {
+type OwnProps = {
+	handleClose: () => void,
+	handleKeyDown: Exclude<InputGroupProps2["onKeyDown"], undefined>,
+	handleKeyUp: Exclude<InputGroupProps2["onKeyUp"], undefined>,
+	handleQueryChange: Exclude<InputGroupProps2["onChange"], undefined>,
+	quickCopyProps: {
+		isActive: boolean,
+		toggle: () => void
+	},
+	searchbar: RefObject<HTMLInputElement>
+};
+
+const SearchInputGroup = memo<OwnProps>(function SearchInputGroup(props) {
 	const { handleClose, 
 		handleKeyDown, handleKeyUp, handleQueryChange, 
 		quickCopyProps: { isActive: isQCActive, toggle: toggleQC }, 
@@ -49,7 +60,7 @@ const SearchInputGroup = memo(function SearchInputGroup(props) {
 		const configs = {
 			"focusSearchBar": {
 				label: "Focus the searchbar",
-				onKeyDown: () => searchbar.current.focus()
+				onKeyDown: () => searchbar?.current?.focus()
 			},
 			"toggleQuickCopy": {
 				label: "Toggle QuickCopy",
@@ -93,16 +104,7 @@ const SearchInputGroup = memo(function SearchInputGroup(props) {
 		/>
 	)	;
 });
-SearchInputGroup.propTypes = {
-	handleClose: func,
-	handleKeyDown: func,
-	handleKeyUp: func,
-	handleQueryChange: func,
-	quickCopyProps: shape({
-		isActive: bool,
-		toggle: func
-	}),
-	searchbar: object
-};
 
+
+export type SearchInputGroupProps = OwnProps;
 export default SearchInputGroup;

@@ -7,7 +7,7 @@ import { RCitekeyPages } from "Types/transforms";
 
 export const withRoamCitekeys: DecoratorFn = (Story, context) => {
 	const { args, parameters } = context;
-	const [citekeys,] = useState<RCitekeyPages>(new Map(args.roamCitekeys || []));
+	const [citekeys,] = useState<RCitekeyPages>(new Map(parameters.roamCitekeys || []));
     
 	const contextValue = useMemo(() => [citekeys, () => {}] as const, [citekeys]);
 
