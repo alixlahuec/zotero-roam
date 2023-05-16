@@ -10,6 +10,7 @@ import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Ta
 import { useBool } from "../../hooks";
 import { makeTimestamp } from "../../utils";
 
+import { ExtensionStatusEnum } from "Types/extension";
 import { AsBoolean } from "Types/helpers";
 import { QueryDataCollections, QueryDataItems, QueryDataPermissions, QueryDataTags } from "Types/transforms";
 import "./index.css";
@@ -143,7 +144,7 @@ type ExtensionIconProps = {
 	openLogger: () => void,
 	openSearchPanel: () => void,
 	openSettingsPanel: () => void,
-	status: "on" | "off" | "disabled",
+	status: ExtensionStatusEnum,
 	toggleExtension: () => void
 };
 
@@ -153,7 +154,7 @@ const ExtensionIcon = memo<ExtensionIconProps>(function ExtensionIcon(props) {
 	const [{ apiKeys, dataRequests, libraries }] = useRequestsSettings();
     
 	const queryOpts = useMemo<Pick<QueryObserverOptions, "enabled" | "notifyOnChangeProps">>(() => ({
-		enabled: status == "on",
+		enabled: status == ExtensionStatusEnum.ON,
 		notifyOnChangeProps: ["dataUpdatedAt", "status", "isFetching"]
 	}), [status]);
 
@@ -168,7 +169,7 @@ const ExtensionIcon = memo<ExtensionIconProps>(function ExtensionIcon(props) {
 	const allowContext = itemQueries.some(q => q.data);
 
 	const data_status = useMemo(() => hasLoadingError ? "error" : ((isCurrentlyLoading && isCurrentlyFetching) ? "loading" : "ready"), [isCurrentlyFetching, isCurrentlyLoading, hasLoadingError]);
-	const button_icon = useMemo(() => status == "disabled" ? "warning-sign" : hasLoadingError ? "issue" : "manual", [hasLoadingError, status]);
+	const button_icon = useMemo(() => status == ExtensionStatusEnum.DISABLED ? "warning-sign" : hasLoadingError ? "issue" : "manual", [hasLoadingError, status]);
 
 	const queries = useMemo(() => {
 		return {
@@ -182,9 +183,9 @@ const ExtensionIcon = memo<ExtensionIconProps>(function ExtensionIcon(props) {
 	const tooltipContent = useMemo(() => {
 		return <>
 			<span><strong>Status : </strong> {status}</span>
-			{status == "disabled" && <Button aria-haspopup="dialog" icon="warning-sign" intent="warning" minimal={true} onClick={openSettingsPanel} text="Click to finish setting up zoteroRoam" title="Click to open zoteroRoam settings" />}
+			{status == ExtensionStatusEnum.DISABLED && <Button aria-haspopup="dialog" icon="warning-sign" intent="warning" minimal={true} onClick={openSettingsPanel} text="Click to finish setting up zoteroRoam" title="Click to open zoteroRoam settings" />}
 			<Divider />
-			{status == "on"
+			{status == ExtensionStatusEnum.ON
 				? <>
 					<span className="zr-icon-tooltip-body">
 						<QueriesStatusList queries={queries} />
@@ -222,13 +223,13 @@ const ExtensionIcon = memo<ExtensionIconProps>(function ExtensionIcon(props) {
 				<Button id="zotero-roam-icon"
 					data-extension-status={status}
 					data-fetching-status={data_status}
-					disabled={status == "disabled"}
+					disabled={status == ExtensionStatusEnum.DISABLED}
 					icon={button_icon}
 					minimal={true} 
 					small={true}
 					onClick={toggleExtension}
 					aria-haspopup="true"
-					title={status == "disabled" ? "zoteroRoam is disabled" : "Click to toggle the zoteroRoam extension"} />
+					title={status == ExtensionStatusEnum.DISABLED ? "zoteroRoam is disabled" : "Click to toggle the zoteroRoam extension"} />
 			</ContextMenu2>
 		</Tooltip2>
 	);
