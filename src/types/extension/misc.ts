@@ -1,0 +1,1 @@
+export type ZItemReferenceFormat = "inline" | "tag" | "pageref" | "citation" | "popover" | "zettlr" | "citekey" | "key";

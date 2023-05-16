@@ -22,6 +22,7 @@ type ProviderProps<K extends keyof InitSettings> = {
 	updater: (prevState: InitSettings[K]) => void
 };
 
+export type SettingsProvider<K extends keyof InitSettings> = FC<ProviderProps<K>>;
 
 class SettingsManager<K extends keyof InitSettings> {
 	context: ContextType<K>;
@@ -32,7 +33,7 @@ class SettingsManager<K extends keyof InitSettings> {
 		this.hooks = hooks;
 	}
 
-	Provider: FC<ProviderProps<K>> = ({ children, init, updater }) => {
+	Provider: SettingsProvider<K> = ({ children, init, updater }) => {
 		const [settings, _setSettings] = useState<InitSettings[K]>(init);
 
 		const setSettings = useCallback<ContextSetter<K>>((updateFn) => {

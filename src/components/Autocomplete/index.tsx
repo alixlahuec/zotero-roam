@@ -11,7 +11,7 @@ import { CustomClasses } from "../../constants";
 import { TributeJS } from "Types/externals/tribute";
 import { QueryDataItems, isZItemTop } from "Types/transforms";
 import "./index.css";
-import { AutocompleteItemFormat, DataRequest } from "Types/extension";
+import { DataRequest, ZItemReferenceFormat } from "Types/extension";
 
 
 type Option = {
@@ -60,9 +60,9 @@ const useGetItems = (
 	/** The targeted data requests  */
 	reqs: DataRequest[],
 	/** The format the item should be pasted as */
-	format: AutocompleteItemFormat = "citekey",
+	format: ZItemReferenceFormat | string = "citekey",
 	/** The format the item should be displayed in */
-	display: AutocompleteItemFormat = "citekey"
+	display: ZItemReferenceFormat | string = "citekey"
 ): Option[] => {
 	const select = useCallback((datastore: QueryDataItems) => {
 		return datastore.data
@@ -94,7 +94,6 @@ const useGetItems = (
 const Autocomplete = memo(function Autocomplete() {
 	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ dataRequests }] = useRequestsSettings();
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ trigger, display_char, display_use = "preset", display = "citekey", format_char, format_use = "preset", format = "citation" }] = useAutocompleteSettings();
 
 	const display_as = useMemo(() => (display_use == "preset") ? display : display_char, [display, display_char, display_use]);

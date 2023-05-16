@@ -1,5 +1,5 @@
 import zrToaster from "Components/ExtensionToaster";
-import { SettingsAnnotations, SettingsNotes } from "Types/extension";
+import { SettingsAnnotations, SettingsNotes, ZItemReferenceFormat } from "Types/extension";
 import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
 import { RCitekeyPages, RImportableBlock, ZCleanItemPDF, ZCleanItemTop, ZEnrichedCollection, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZSimplifiedNote, ZTagDictionary, isZAnnotation, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
@@ -536,7 +536,6 @@ function formatItemNotes(notes: ZItemNote[], separator = "\n"): string[] {
 		.filter(b => b.trim());
 }
 
-type ZItemReferenceFormat = "inline" | "tag" | "pageref" | "citation" | "popover" | "zettlr" | "citekey" | "key";
 
 /** Converts an item into a given string format
  * @param item - The item to convert 
@@ -544,7 +543,7 @@ type ZItemReferenceFormat = "inline" | "tag" | "pageref" | "citation" | "popover
  * @param config - Additional parameters 
  * @returns The formatted reference
  */
-function formatItemReference(item: ZItemTop, format: ZItemReferenceFormat | string | any, { accent_class = "zr-accent-1" }: { accent_class?: string } = {}){
+function formatItemReference(item: ZItemTop, format: ZItemReferenceFormat | string, { accent_class = "zr-accent-1" }: { accent_class?: string } = {}){
 	const key = item.key;
 	const title = item.data.title;
 	const authors = item.meta.creatorSummary || "";
