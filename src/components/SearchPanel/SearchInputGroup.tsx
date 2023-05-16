@@ -1,5 +1,5 @@
 import { RefObject, memo, useMemo } from "react";
-import { Button, ButtonProps, Classes, Icon, InputGroup, InputGroupProps2, Switch, useHotkeys } from "@blueprintjs/core";
+import { Button, Classes, Icon, InputGroup, InputGroupProps2, Switch, useHotkeys } from "@blueprintjs/core";
 
 import { useShortcutsSettings } from "Components/UserSettings";
 
@@ -11,7 +11,7 @@ import { AsBoolean } from "Types/helpers";
 
 
 type OwnProps = {
-	handleClose: ButtonProps["onClick"],
+	handleClose: () => void,
 	handleKeyDown: Exclude<InputGroupProps2["onKeyDown"], undefined>,
 	handleKeyUp: Exclude<InputGroupProps2["onKeyUp"], undefined>,
 	handleQueryChange: Exclude<InputGroupProps2["onChange"], undefined>,
@@ -106,4 +106,5 @@ const SearchInputGroup = memo<OwnProps>(function SearchInputGroup(props) {
 });
 
 
+export type SearchInputGroupProps = OwnProps;
 export default SearchInputGroup;
