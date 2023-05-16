@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Button, ButtonProps, Classes, ControlGroup, FormGroup, H6, InputGroup, InputGroupProps, MenuItem } from "@blueprintjs/core";
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button, ButtonProps, Classes, ControlGroup, FormGroup, H6, InputGroup, MenuItem } from "@blueprintjs/core";
 import { Select, SelectProps } from "@blueprintjs/select";
 import { Placement } from "@blueprintjs/popover2";
 
@@ -42,7 +42,7 @@ const LIB_TYPE_OPTIONS: LibraryOption[] = [
 
 
 type DataRequestFormProps = {
-	inputRef?: InputGroupProps["inputRef"],
+	inputRef?: RefObject<HTMLInputElement>,
 	pos: number | "new",
 	req: UserDataRequest,
 	updateReq: (value: UserDataRequest) => void
@@ -118,7 +118,7 @@ const DEFAULT_REQ: UserDataRequest = {
 
 type NewRequestProps = {
 	addReq: (value: UserDataRequest) => void,
-	inputRef?: InputGroupProps["inputRef"]
+	inputRef?: RefObject<HTMLInputElement>
 };
 
 function NewRequest({ addReq, inputRef }: NewRequestProps){
