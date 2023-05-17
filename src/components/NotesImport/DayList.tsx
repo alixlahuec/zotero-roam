@@ -1,13 +1,22 @@
-import { arrayOf, func, shape, string } from "prop-types";
 import { useCallback, useMemo } from "react";
-
 import { Checkbox, Classes, H6 } from "@blueprintjs/core";
 import NotesImportItem from "Components/NotesImport/Item";
 
-import * as customPropTypes from "../../propTypes";
+import { ZItemAnnotation, ZItemNote } from "Types/transforms";
 
 
-function DayList({ date, itemSelectProps, notes, selectedKeys }) {
+type OwnProps = {
+	date: string,
+	itemSelectProps: {
+		bulkCheck: (value: string[]) => void,
+		bulkUncheck: (value: string[]) => void,
+		toggleNoteSelection: (value: string) => void
+	},
+	notes: (ZItemAnnotation | ZItemNote)[],
+	selectedKeys: string[]
+};
+
+function DayList({ date, itemSelectProps, notes, selectedKeys }: OwnProps) {
 	const { bulkCheck, bulkUncheck, toggleNoteSelection } = itemSelectProps;
 	const is_day_checked = useMemo(() => notes.every(nt => selectedKeys.includes(nt.data.key)), [notes, selectedKeys]);
 	const has_single_child = notes.length == 1;
@@ -37,15 +46,6 @@ function DayList({ date, itemSelectProps, notes, selectedKeys }) {
 		</div>
 	</li>;
 }
-DayList.propTypes = {
-	date: string,
-	itemSelectProps: shape({
-		bulkCheck: func,
-		bulkUncheck: func,
-		toggleNoteSelection: func
-	}),
-	notes: arrayOf(customPropTypes.zoteroItemType),
-	selectedKeys: arrayOf(string)
-};
+
 
 export default DayList;
