@@ -1,4 +1,3 @@
-import { arrayOf, func, string, shape } from "prop-types";
 import { useCallback, useMemo } from "react";
 
 import { Button, Classes, Tag } from "@blueprintjs/core";
@@ -6,23 +5,32 @@ import { Button, Classes, Tag } from "@blueprintjs/core";
 import { ListWrapper, Toolbar } from "Components/DataList";
 import { ErrorBoundary } from "Components/Errors";
 import { useAnnotationsSettings, useNotesSettings } from "Components/UserSettings";
-import DayList from "./DayList";
+import DayList, { DayListProps } from "./DayList";
 
 import { importItemNotes } from "Roam";
-import { makeDNP } from "../../../src/utils";
-import { useMulti } from "../../../src/hooks";
+import { makeDNP } from "../../utils";
+import { useMulti } from "../../hooks";
 
-import { CustomClasses } from "../../../src/constants";
-import * as customPropTypes from "../../propTypes";
+import { CustomClasses } from "../../constants";
+import { ZItemAnnotation, ZItemNote, ZItemTop } from "Types/transforms";
 import "./index.css";
 
 
-function NotesList({ notes, selectedKeys, selectProps }){
+type NotesListProps = {
+	notes: (ZItemAnnotation | ZItemNote)[],
+	selectedKeys: string[],
+	selectProps: {
+		setSelectedKeys: (value: string[]) => void,
+		toggleNoteSelection: (value: string) => void
+	}
+};
+
+function NotesList({ notes, selectedKeys, selectProps }: NotesListProps){
 	const { setSelectedKeys, toggleNoteSelection } = selectProps;
 	const grouped_notes = useMemo(() => {
 		const day_dict = notes
 			.sort((a, b) => new Date(a.data.dateAdded) > new Date(b.data.dateAdded) ? -1 : 1)
-			.reduce((dict, elem) => {
+			.reduce<Record<string, (ZItemAnnotation|ZItemNote)[]>>((dict, elem) => {
 				const ymd = new Date(elem.data.dateAdded).toLocaleDateString("en-CA");
 				if (dict[ymd]) {
 					dict[ymd].push(elem);
@@ -32,47 +40,43 @@ function NotesList({ notes, selectedKeys, selectProps }){
 				return dict;
 			}, {});
 		return Object.keys(day_dict)
-			.sort((a, b) => new Date(a.split("-")) > new Date(b.split("-")) ? -1 : 1)
+			.sort((a, b) => new Date(a) > new Date(b) ? -1 : 1)
 			.map(date => ({
 				date: makeDNP(date, { brackets: false }),
 				notes: day_dict[date]
 			}));
 	}, [notes]);
 
-	const bulkCheck = useCallback((keys) => {
-		const toAdd = keys.filter(k => !selectedKeys.includes(k));
-		setSelectedKeys([...selectedKeys, ...toAdd]);
-	}, [selectedKeys, setSelectedKeys]);
-
-	const bulkUncheck = useCallback((keys) => {
-		setSelectedKeys(selectedKeys.filter(k => !keys.includes(k)));
-	}, [selectedKeys, setSelectedKeys]);
-
-	const itemSelectProps = useMemo(() => ({
-		bulkCheck,
-		bulkUncheck,
+	const itemSelectProps = useMemo<DayListProps["itemSelectProps"]>(() => ({
+		bulkCheck: (keys) => {
+			const toAdd = keys.filter(k => !selectedKeys.includes(k));
+			setSelectedKeys([...selectedKeys, ...toAdd]);
+		},
+		bulkUncheck: (keys) => {
+			setSelectedKeys(selectedKeys.filter(k => !keys.includes(k)));
+		},
 		toggleNoteSelection
-	}), [bulkCheck, bulkUncheck, toggleNoteSelection]);
+	}), [selectedKeys, setSelectedKeys, toggleNoteSelection]);
 
 	return <ListWrapper>
 		{grouped_notes.map(entry => <DayList key={entry.date} date={entry.date} notes={entry.notes} itemSelectProps={itemSelectProps} selectedKeys={selectedKeys} />)}
 	</ListWrapper>;
 }
-NotesList.propTypes = {
-	notes: arrayOf(customPropTypes.zoteroItemType),
-	selectedKeys: arrayOf(string),
-	selectProps: shape({
-		setSelectedKeys: func,
-		toggleNoteSelection: func
-	})
+
+
+type NotesImportProps = {
+	closeDialog: () => void,
+	item: ZItemTop,
+	notes: (ZItemAnnotation | ZItemNote)[],
+	pageUID: string
 };
 
-function NotesImport({ closeDialog, item, notes, pageUID }){
+function NotesImport({ closeDialog, item, notes, pageUID }: NotesImportProps){
 	const [annotationsSettings] = useAnnotationsSettings();
 	const [notesSettings] = useNotesSettings();
 
 	const [selectedKeys, { set, toggle }] = useMulti({
-		start: () => notes.map(nt => nt.data.key)
+		start: notes.map(nt => nt.data.key)
 	});
 
 	const handleToggleAll = useCallback(() => {
@@ -112,11 +116,6 @@ function NotesImport({ closeDialog, item, notes, pageUID }){
 		</ErrorBoundary>
 	</div>;
 }
-NotesImport.propTypes = {
-	closeDialog: func,
-	item: customPropTypes.zoteroItemType,
-	notes: arrayOf(customPropTypes.zoteroItemType),
-	pageUID: string
-};
+
 
 export default NotesImport;

@@ -1,6 +1,7 @@
-import { useCallback, useState } from "react";
+import { ComponentProps, useCallback, useState } from "react";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
+import { Meta, Story } from "@storybook/react";
 
 import DayList from "Components/NotesImport/DayList";
 import { ListWrapper } from "Components/DataList";
@@ -8,15 +9,17 @@ import { ListWrapper } from "Components/DataList";
 import { sampleNote, sampleOlderNote } from "Mocks";
 
 
+type Props = ComponentProps<typeof DayList>;
+
 export default {
 	component: DayList,
 	args: {
 		date: "April 6th, 2022",
 		notes: [sampleOlderNote, sampleNote]
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	const [selectedKeys, setSelectedKeys] = useState(() => args.selectedKeys || []);
 	const bulkCheck = useCallback(() => setSelectedKeys(args.notes.map(nt => nt.data.key)), [args.notes]);
 	const bulkUncheck = useCallback(() => setSelectedKeys([]), []);
@@ -40,15 +43,15 @@ export const WithInteractions = Template.bind({});
 WithInteractions.play = async({ args, canvasElement }) => {
 	const canvas = within(canvasElement);
 
-	await expect(canvas.getAllByRole("checkbox").every(box => !box.checked)).toBe(true);
+	await expect(canvas.getAllByRole<HTMLInputElement>("checkbox").every(box => !box.checked)).toBe(true);
 
 	const dayCheckbox = canvas.getByRole("checkbox", { name: args.date });
 
 	await userEvent.click(dayCheckbox);
 
-	await expect(canvas.getAllByRole("checkbox").every(box => box.checked)).toBe(true);
+	await expect(canvas.getAllByRole<HTMLInputElement>("checkbox").every(box => box.checked)).toBe(true);
 
 	await userEvent.click(dayCheckbox);
 
-	await expect(canvas.getAllByRole("checkbox").every(box => !box.checked)).toBe(true);
+	await expect(canvas.getAllByRole<HTMLInputElement>("checkbox").every(box => !box.checked)).toBe(true);
 };

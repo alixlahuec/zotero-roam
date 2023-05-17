@@ -1,6 +1,4 @@
-import { bool, func } from "prop-types";
 import { useCallback, useMemo } from "react";
-
 import { Classes, Checkbox, Tag } from "@blueprintjs/core";
 
 import { ListItem } from "Components/DataList";
@@ -8,11 +6,11 @@ import { ListItem } from "Components/DataList";
 import { formatItemNotes, simplifyZoteroAnnotations } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
-import * as customPropTypes from "../../../propTypes";
+import { ZItemAnnotation, ZItemNote, isZNote } from "Types/transforms";
 import "./index.css";
 
 
-function Annotation({ annotation }){
+function Annotation({ annotation }: { annotation: ZItemAnnotation}){
 	const { color, comment, text, type } = useMemo(() => simplifyZoteroAnnotations([annotation])[0], [annotation]);
 	
 	// https://shannonpayne.com.au/how-to-create-a-low-highlight-text-effect-using-css/
@@ -26,26 +24,29 @@ function Annotation({ annotation }){
 		{comment && <div title={comment} className={[CustomClasses.TEXT_SECONDARY, Classes.TEXT_OVERFLOW_ELLIPSIS].join(" ")}>{comment}</div>}
 	</div>;
 }
-Annotation.propTypes = {
-	annotation: customPropTypes.zoteroAnnotationType
-};
 
-function Note({ note }){
+
+function Note({ note }: { note: ZItemNote }){
 	const notesContent = useMemo(() => formatItemNotes([note]).join(" "), [note]);
 	
 	return <div className={[CustomClasses.TEXT_SMALL, CustomClasses.TEXT_AUXILIARY].join(" ")} zr-role="note-contents">
 		<p title={notesContent}>{notesContent}</p>
 	</div>;
 }
-Note.propTypes = {
-	note: customPropTypes.zoteroItemType
+
+
+type NotesImportItemProps = {
+	note: ZItemAnnotation | ZItemNote,
+	isSelected: boolean,
+	isSingleChild: boolean,
+	onToggle: (value: string) => void
 };
 
-function NotesImportItem({ note, isSelected, isSingleChild, onToggle }) {
+function NotesImportItem({ note, isSelected, isSingleChild, onToggle }: NotesImportItemProps) {
 	const handleToggle = useCallback(() => onToggle(note.data.key), [note.data.key, onToggle]);
 
 	const itemContents = useMemo(() => {
-		if(note.data.itemType == "note"){
+		if(isZNote(note)){
 			return <Note note={note} />;
 		} else {
 			return <Annotation annotation={note} />;
@@ -70,11 +71,6 @@ function NotesImportItem({ note, isSelected, isSingleChild, onToggle }) {
 		</div>
 	</ListItem>;
 }
-NotesImportItem.propTypes = {
-	isSelected: bool,
-	isSingleChild: bool,
-	note: customPropTypes.zoteroItemType,
-	onToggle: func
-};
+
 
 export default NotesImportItem;
