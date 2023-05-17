@@ -53,7 +53,7 @@ WithInteractions.play = async({ args, canvasElement, parameters }) => {
 
 	await expect(importItemNotes).toHaveBeenCalledWith(
 		{ item: items[0], notes: [sampleNote] },
-		null,
+		"some_uid",
 		userSettings.notes,
 		userSettings.annotations
 	);
