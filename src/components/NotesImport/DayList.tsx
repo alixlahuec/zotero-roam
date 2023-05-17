@@ -5,7 +5,7 @@ import NotesImportItem from "Components/NotesImport/Item";
 import { ZItemAnnotation, ZItemNote } from "Types/transforms";
 
 
-type OwnProps = {
+export type DayListProps = {
 	date: string,
 	itemSelectProps: {
 		bulkCheck: (value: string[]) => void,
@@ -16,7 +16,7 @@ type OwnProps = {
 	selectedKeys: string[]
 };
 
-function DayList({ date, itemSelectProps, notes, selectedKeys }: OwnProps) {
+function DayList({ date, itemSelectProps, notes, selectedKeys }: DayListProps) {
 	const { bulkCheck, bulkUncheck, toggleNoteSelection } = itemSelectProps;
 	const is_day_checked = useMemo(() => notes.every(nt => selectedKeys.includes(nt.data.key)), [notes, selectedKeys]);
 	const has_single_child = notes.length == 1;
