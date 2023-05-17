@@ -102,7 +102,7 @@ WithInteractions.play = async({ canvasElement, parameters }) => {
 	// Other settings
 	await navigateToTab("Other");
 
-	const autoloadSwitch = canvas.getByRole("switch", { name: "Toggle 'autoload' setting" }) as HTMLInputElement;
+	const autoloadSwitch = canvas.getByRole<HTMLInputElement>("switch", { name: "Toggle 'autoload' setting" });
 	await expect(autoloadSwitch.checked)
 		.toBe(userSettings.other.autoload);
 	await userEvent.click(autoloadSwitch);
@@ -113,7 +113,7 @@ WithInteractions.play = async({ canvasElement, parameters }) => {
 	// Autocomplete settings
 	await navigateToTab("Autocomplete");
 	
-	const autocompleteTrigger = canvas.getByTitle("Enter a trigger for the 'autocomplete' feature") as HTMLInputElement;
+	const autocompleteTrigger = canvas.getByTitle<HTMLInputElement>("Enter a trigger for the 'autocomplete' feature");
 	await expect(autocompleteTrigger.value)
 		.toBe(userSettings.autocomplete.trigger);
 

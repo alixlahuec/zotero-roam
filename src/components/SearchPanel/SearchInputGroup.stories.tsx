@@ -48,7 +48,7 @@ WithInteractions.play = async ({ canvasElement, parameters }) => {
 	const canvas = within(canvasElement);
 
 	// Hotkey for toggling QuickCopy
-	const qcSwitch = canvas.getByRole("switch") as HTMLInputElement;
+	const qcSwitch = canvas.getByRole<HTMLInputElement>("switch");
 
 	await expect(qcSwitch.checked)
 		.toBe(copy.useQuickCopy);

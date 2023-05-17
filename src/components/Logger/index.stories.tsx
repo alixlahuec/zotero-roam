@@ -57,7 +57,7 @@ WithInteractions.play = async({ canvasElement }) => {
 		.not
 		.toBeInTheDocument();
 
-	const showAllToggle = canvas.getByRole("switch", { name: "Show all entries" }) as HTMLInputElement;
+	const showAllToggle = canvas.getByRole<HTMLInputElement>("switch", { name: "Show all entries" });
 
 	await expect(showAllToggle.checked)
 		.toBe(false);
