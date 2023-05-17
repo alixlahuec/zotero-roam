@@ -1,13 +1,12 @@
-import { arrayOf, bool, shape, string } from "prop-types";
 import { memo, useCallback, useMemo, useState } from "react";
-
-import { Button, ButtonGroup, Card, Classes, Collapse, Tag } from "@blueprintjs/core";
+import { Button, ButtonGroup, Card, Classes, Collapse, IconName, Tag } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import ButtonLink from "Components/ButtonLink";
 import CitekeyPopover from "Components/CitekeyPopover";
 import { ErrorBoundary, ErrorCallout } from "Components/Errors";
 import ItemDetails from "Components/ItemDetails";
+import NotesImport from "Components/NotesImport";
 import SciteBadge from "Components/SciteBadge";
 import SemanticPanel from "../SemanticPanel";
 import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, usePageMenuSettings, useSciteSettings, useTypemapSettings } from "Components/UserSettings";
@@ -22,12 +21,10 @@ import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getP
 import { findRoamPage, importItemMetadata } from "Roam";
 
 import { CustomClasses } from "../../../constants";
-
-import * as customPropTypes from "../../../propTypes";
-import NotesImport from "Components/NotesImport";
+import { SEnrichedItemInLibrary, ZCleanItemTop, ZItemAnnotation, ZItemNote, ZItemTop, ZLibraryContents } from "Types/transforms";
 
 
-function BacklinksItem({ entry }) {
+function BacklinksItem({ entry }: { entry: SEnrichedItemInLibrary}) {
 	const { _type, inLibrary, inGraph } = entry;
 	const { children: { pdfs, notes }, raw: item } = inLibrary;
 	const { key, data, meta } = item;
@@ -62,11 +59,15 @@ function BacklinksItem({ entry }) {
 		</li>
 	);
 }
-BacklinksItem.propTypes = {
-	entry: customPropTypes.cleanSemanticReturnType.isRequired
+
+
+type BacklinksProps = {
+	isOpen: boolean,
+	items: SEnrichedItemInLibrary[],
+	origin: string
 };
 
-const Backlinks = memo(function Backlinks(props) {
+const Backlinks = memo<BacklinksProps>(function Backlinks(props) {
 	const { isOpen, items = [], origin } = props;
 
 	if(items.length == 0){
@@ -84,7 +85,7 @@ const Backlinks = memo(function Backlinks(props) {
 				<div className="zr-citekey-menu--backlinks" >
 					{references.length > 0 
 						? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="references">
-							{references.map((ref) => <BacklinksItem key={ref.doi} entry={ref} />)}
+							{references.map((ref) => <BacklinksItem key={`${ref.doi}`} entry={ref} />)}
 						</ul> 
 						: null}
 					{(references.length > 0 && citations.length > 0)
@@ -92,7 +93,7 @@ const Backlinks = memo(function Backlinks(props) {
 						: null}
 					{citations.length > 0 
 						? <ul className={Classes.LIST_UNSTYLED} zr-role="sublist" list-type="citations">
-							{citations.map((cit) => <BacklinksItem key={cit.doi} entry={cit} />)}
+							{citations.map((cit) => <BacklinksItem key={`${cit.doi}`} entry={cit} />)}
 						</ul> 
 						: null}
 				</div>
@@ -100,16 +101,19 @@ const Backlinks = memo(function Backlinks(props) {
 		);
 	}
 });
-Backlinks.propTypes = {
-	isOpen: bool,
-	items: arrayOf(customPropTypes.cleanSemanticReturnType),
-	origin: string
+
+
+type RelatedItemsBarProps = {
+	doi: string,
+	itemList: ZLibraryContents,
+	origin: string,
+	title: string
 };
 
-function RelatedItemsBar(props) {
+function RelatedItemsBar(props: RelatedItemsBarProps) {
 	const { doi, itemList, origin, title } = props;
 	const [roamCitekeys,] = useRoamCitekeys();
-	const { isLoading, isError, data = {}, error } = useQuery_Semantic(doi);
+	const { isLoading, isError, data, error } = useQuery_Semantic(doi);
 	
 	const [isBacklinksListOpen, { toggle: toggleBacklinks }] = useBool(false);
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
@@ -131,8 +135,8 @@ function RelatedItemsBar(props) {
 		openDialog();
 	}, [title, openDialog]);
 
-	const refCount = data.references?.length || 0;
-	const citCount = data.citations?.length || 0;
+	const refCount = (data || {}).references?.length || 0;
+	const citCount = (data || {}).citations?.length || 0;
 
 	const cleanSemanticData = useMemo(() => {
 		if(!data){
@@ -142,7 +146,7 @@ function RelatedItemsBar(props) {
 				references: []
 			};
 		} else {
-			const { citations = [], references = [] } = data;
+			const { citations, references } = data;
 			return cleanSemantic(itemList, { citations, references }, roamCitekeys);
 		}
 	}, [data, itemList, roamCitekeys]);
@@ -156,7 +160,7 @@ function RelatedItemsBar(props) {
 				text: "No related library items"
 			}
 			: {
-				icon: isBacklinksListOpen ? "caret-down" : "caret-right",
+				icon: (isBacklinksListOpen ? "caret-down" : "caret-right") as IconName,
 				text: pluralize(cleanSemanticData.backlinks.length, "related library item")
 			};
 	}, [cleanSemanticData.backlinks.length, isBacklinksListOpen]);
@@ -185,18 +189,9 @@ function RelatedItemsBar(props) {
 		</div>
 	);
 }
-RelatedItemsBar.propTypes = {
-	doi: string,
-	itemList: shape({
-		items: arrayOf(customPropTypes.zoteroItemType),
-		pdfs: arrayOf(customPropTypes.zoteroItemType),
-		notes: arrayOf(customPropTypes.zoteroItemType),
-	}),
-	origin: string,
-	title: string
-};
 
-function ViewItem({ item }) {
+
+function ViewItem({ item }: { item: ZCleanItemTop}) {
 	const [isPanelOpen, { on: openPanel, off: closePanel }] = useBool(false);
 
 	return (
@@ -214,11 +209,15 @@ function ViewItem({ item }) {
 		</>
 	);
 }
-ViewItem.propTypes = {
-	item: customPropTypes.cleanLibraryItemType
+
+
+type ViewNotesProps = {
+	item: ZItemTop,
+	notes: (ZItemAnnotation | ZItemNote)[],
+	pageUID: string | false
 };
 
-function ViewNotes({ item, notes, pageUID }){
+function ViewNotes({ item, notes, pageUID }: ViewNotesProps){
 	const [isPanelOpen, { on: openPanel, off: closePanel }] = useBool(false);
 
 	return <>
@@ -232,13 +231,14 @@ function ViewNotes({ item, notes, pageUID }){
 		</AuxiliaryDialog>
 	</>;
 }
-ViewNotes.propTypes = {
-	item: customPropTypes.zoteroItemType,
-	notes: arrayOf(customPropTypes.zoteroItemType),
-	pageUID: string
+
+
+type CitekeyMenuProps = {
+	item: ZItemTop,
+	itemList: ZLibraryContents
 };
 
-const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
+const CitekeyMenu = memo<CitekeyMenuProps>(function CitekeyMenu({ item, itemList }) {
 	const [annotationsSettings] = useAnnotationsSettings();
 	const [metadataSettings] = useMetadataSettings();
 	const [notesSettings] = useNotesSettings();
@@ -374,14 +374,7 @@ const CitekeyMenu = memo(function CitekeyMenu({ item, itemList }) {
 		</ErrorBoundary>
 	);
 });
-CitekeyMenu.propTypes = {
-	item: customPropTypes.zoteroItemType,
-	itemList: shape({
-		items: arrayOf(customPropTypes.zoteroItemType),
-		pdfs: arrayOf(customPropTypes.zoteroItemType),
-		notes: arrayOf(customPropTypes.zoteroItemType),
-	})
-};
+
 
 export default CitekeyMenu;
 export { Backlinks };

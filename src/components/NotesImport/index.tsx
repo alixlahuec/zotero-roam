@@ -68,7 +68,7 @@ type NotesImportProps = {
 	closeDialog: () => void,
 	item: ZItemTop,
 	notes: (ZItemAnnotation | ZItemNote)[],
-	pageUID: string
+	pageUID: string | false
 };
 
 function NotesImport({ closeDialog, item, notes, pageUID }: NotesImportProps){

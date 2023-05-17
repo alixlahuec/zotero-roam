@@ -13,7 +13,7 @@ type OwnProps = {
 	ariaLabelledBy?: string,
 	className: string,
 	extraClasses?: string[],
-	label: string
+	label?: string
 };
 
 const AuxiliaryDialog: FC<OwnProps & Pick<DialogProps, "isOpen" | "onClose" | "title">> = (props) => {

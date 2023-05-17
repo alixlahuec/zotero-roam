@@ -1,5 +1,4 @@
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "./zotero";
-import { ZoteroAPI } from "Types/externals";
 
 
 type SLinkType = "arxiv" | "connected-papers" | "google-scholar" | "semantic-scholar";
@@ -36,17 +35,27 @@ export interface SCleanRelatedItem {
 	title: string
 }
 
-export interface SEnrichedItem extends SCleanItem {
+interface SEnrichedItemBase extends SCleanItem {
 	inGraph: false | string,
-	inLibrary: false | {
-		children: { notes: (ZoteroAPI.ItemAnnotation | ZoteroAPI.ItemNote)[], pdfs: ZoteroAPI.ItemAttachment[] },
-		raw: ZoteroAPI.ItemTop
-	},
 	_type?: "citing" | "cited"
 }
+
+export interface SEnrichedItemInLibrary extends SEnrichedItemBase {
+	inLibrary: {
+		children: { notes: (ZItemAnnotation | ZItemNote)[], pdfs: ZItemAttachment[] },
+		raw: ZItemTop
+	}
+}
+export const isSBacklink = (item: SEnrichedItem): item is SEnrichedItemInLibrary => item.inLibrary != false;
+
+interface SEnrichedItemOutsideLibrary extends SEnrichedItemBase {
+	inLibrary: false
+}
+
+export type SEnrichedItem = SEnrichedItemInLibrary | SEnrichedItemOutsideLibrary;
 
 export interface SRelatedEntries {
 	citations: SEnrichedItem[],
 	references: SEnrichedItem[],
-	backlinks: SEnrichedItem[]
+	backlinks: SEnrichedItemInLibrary[]
 }

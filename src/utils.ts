@@ -3,7 +3,7 @@ import { SettingsAnnotations, SettingsNotes, ZItemReferenceFormat } from "Types/
 import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
 import { RCitekeyPages, RImportableBlock, ZCleanItemPDF, ZCleanItemTop, ZEnrichedCollection, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZSimplifiedNote, ZTagDictionary, isZAnnotation, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
-import { SCleanItem, SEnrichedItem, SRelatedEntries } from "Types/transforms/semantic";
+import { SCleanItem, SEnrichedItem, SRelatedEntries, isSBacklink } from "Types/transforms/semantic";
 
 
 /** Converts a string from camelCase to Title Case
@@ -296,7 +296,7 @@ function cleanSemantic(
 	return {
 		citations: clean_citations,
 		references: clean_references,
-		backlinks: [...clean_references, ...clean_citations].filter(item => item.inLibrary)
+		backlinks: [...clean_references, ...clean_citations].filter(isSBacklink)
 	};
 }
 

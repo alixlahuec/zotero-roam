@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { ComponentProps, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
+import { Meta, Story } from "@storybook/react";
 
 import CitekeyMenu from "./CitekeyMenu";
 import { parseDOI } from "../../../utils";
@@ -9,6 +10,8 @@ import { parseSemanticDOIs } from "../../../api/utils";
 import { sleep } from "../../../../.storybook/utils";
 import { items, sampleNote, samplePDF, semantics } from "Mocks";
 
+
+type Props = ComponentProps<typeof CitekeyMenu>;
 
 export default {
 	component: CitekeyMenu,
@@ -34,13 +37,13 @@ export default {
 			typemap: {}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	const client = useQueryClient();
 
 	useEffect(() => {
-		const doi = parseDOI(args.item.data.DOI);
+		const doi = parseDOI(args.item.data.DOI) as string;
 		const { citations, references } = semantics[doi];
 		client.setQueryData(["semantic", { doi }], {
 			doi,
