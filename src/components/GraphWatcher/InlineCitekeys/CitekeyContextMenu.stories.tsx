@@ -1,10 +1,13 @@
-import { useRef } from "react";
+import { ComponentProps, useRef } from "react";
+import { Meta, Story } from "@storybook/react";
 
 import { CitekeyContextMenu, useGetItems } from ".";
 import { useRequestsSettings } from "Components/UserSettings";
 
 import { items } from "Mocks";
 
+
+type Props = ComponentProps<typeof CitekeyContextMenu>;
 
 export default {
 	component: CitekeyContextMenu,
@@ -36,11 +39,11 @@ export default {
 			typemap: {}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	const [{ dataRequests }] = useRequestsSettings();
-	const targetElement = useRef();
+	const targetElement = useRef<HTMLElement>(null);
 	const itemsMap = useGetItems(dataRequests);
 	const citekey = "@" + items[0].key;
 	

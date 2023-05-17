@@ -1,7 +1,5 @@
-import { bool, func, instanceOf, number, object, shape } from "prop-types";
 import { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
 import { ExtensionContext } from "Components/App";
@@ -14,25 +12,38 @@ import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
 import { importItemMetadata } from "Roam";
 
+import { DataRequest } from "Types/extension";
+import { QueryDataItems, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import "./index.css";
 
-/** Custom hook to retrieve library items and return a Map with their data & formatted citation
- * @param {DataRequest[]} reqs - The data requests to use to retrieve items
- * @returns {Map<String,
- * {citation: String, 
- * data: {
- * children: {pdfs: Array, notes: Array}, 
- * location: String,
- * raw: Object,
- * weblink: Object|Boolean, 
- * zotero: {local: String, web: String}}}>} The map of current library items
- */
-const useGetItems = (reqs) => {
-	const select = useCallback((datastore) => {
+
+type Citekey = string;
+type Item = {
+	citation: string,
+	data: {
+		children: {
+			pdfs: ZItemAttachment[],
+			notes: (ZItemAnnotation | ZItemNote)[]
+		},
+		location: string,
+		raw: ZItemTop,
+		weblink: false | { href: string, title: string },
+		zotero: {
+			local: string,
+			web: string
+		}
+	}
+};
+type ItemsMap = Map<Citekey, Item>
+
+
+/** Custom hook to retrieve library items and return a Map with their data & formatted citation */
+const useGetItems = (reqs: DataRequest[]): ItemsMap => {
+	const select = useCallback((datastore: QueryDataItems) => {
 		if (datastore.data) {
 			const lib = categorizeLibraryItems(datastore.data);
 
-			return lib.items.map(item => {
+			return lib.items.map<[string, Item]>(item => {
 				const hasURL = item.data.url;
 				const hasDOI = parseDOI(item.data.DOI);
 				const weblink = hasURL
@@ -76,7 +87,19 @@ const useGetItems = (reqs) => {
 	return new Map(data);
 };
 
-const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
+
+type CitekeyContextMenuProps = {
+	coords: {
+		left: number,
+		top: number
+	},
+	isOpen: boolean,
+	itemsMap: ItemsMap,
+	onClose: () => void,
+	target: HTMLElement | null
+};
+
+const CitekeyContextMenu = memo<CitekeyContextMenuProps>(function CitekeyContextMenu(props) {
 	const { coords, isOpen, itemsMap, onClose, target } = props;
 	const [annotationsSettings] = useAnnotationsSettings();
 	const [metadataSettings] = useMetadataSettings();
@@ -84,14 +107,14 @@ const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 	const [typemap] = useTypemapSettings();
 	const [isNotesDrawerOpen, { on: showNotesDrawer, off: closeDrawer }] = useBool(false);
 
-	const citekey = target?.parentElement.dataset.linkTitle;
-	const pageUID = target?.parentElement.dataset.linkUid;
+	const citekey = target?.parentElement?.dataset.linkTitle;
+	const pageUID = target?.parentElement?.dataset.linkUid || false;
 
-	const itemData = useMemo(() => {
+	const itemData = useMemo<Item["data"] | null>(() => {
 		if(citekey){
-			return itemsMap.get(citekey).data;
+			return itemsMap.get(citekey)!.data;
 		} else {
-			return {};
+			return null;
 		}
 	}, [citekey, itemsMap]);
 
@@ -99,7 +122,7 @@ const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 		setTimeout(() => {
 			try{
 				// Hide default Roam context menu
-				document.querySelector("body > .bp3-context-menu+.bp3-portal").style.display = "none";
+				document.querySelector<HTMLElement>("body > .bp3-context-menu+.bp3-portal")!.style.display = "none";
 			} catch(e){
 				// Do nothing
 			}
@@ -107,10 +130,12 @@ const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 	}, []);
 
 	const importMetadata = useCallback(() => {
-		const { pdfs = [], notes = [] } = itemData.children;
-		importItemMetadata({ item: itemData.raw, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings, annotationsSettings);
-		onClose();
-	}, [annotationsSettings, itemData.raw, itemData.children, metadataSettings, notesSettings, onClose, pageUID, typemap]);
+		if (itemData) {
+			const { pdfs = [], notes = [] } = itemData.children;
+			importItemMetadata({ item: itemData.raw, pdfs, notes }, pageUID, metadataSettings, typemap, notesSettings, annotationsSettings);
+			onClose();	
+		}
+	}, [annotationsSettings, itemData, metadataSettings, notesSettings, onClose, pageUID, typemap]);
 
 	const closeNotesDrawer = useCallback(() => {
 		closeDrawer();
@@ -118,16 +143,15 @@ const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 	}, [onClose, closeDrawer]);
 
 	const pdfChildren = useMemo(() => {
-		if(!(itemData?.children?.pdfs?.length > 0)){
+		if (!itemData || itemData.children.pdfs.length == 0) {
 			return null;
 		} else {
-			const { pdfs = [] } = itemData.children;
 			const libLoc = itemData.location.startsWith("groups/") ? itemData.location : "library";
 			
 			return (
 				<>
 					<MenuDivider title="PDF Attachments" />
-					{pdfs.map((p,i) => {
+					{itemData.children.pdfs.map((p,i) => {
 						const pdfHref = (["linked_file", "imported_file", "imported_url"].includes(p.data.linkMode)) ? `zotero://open-pdf/${libLoc}/items/${p.data.key}` : p.data.url;
 						return <MenuItem key={i} className="zr-context-menu--option" 
 							href={pdfHref} 
@@ -139,14 +163,12 @@ const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 				</>
 			);
 		}
-	}, [itemData.children, itemData.location]);
+	}, [itemData]);
 
 	const notesChildren = useMemo(() => {
-		if(!(itemData?.children?.notes?.length > 0)){
+		if(!itemData || itemData.children.notes.length == 0){
 			return null;
 		} else {
-			const { notes = [] } = itemData.children;
-
 			return (
 				<>
 					<MenuDivider />
@@ -156,11 +178,11 @@ const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 						onClick={showNotesDrawer}
 						shouldDismissPopover={false}
 					/>
-					<NotesDrawer isOpen={isNotesDrawerOpen} notes={notes} onClose={closeNotesDrawer} />
+					<NotesDrawer isOpen={isNotesDrawerOpen} notes={itemData.children.notes} onClose={closeNotesDrawer} />
 				</>
 			);
 		}
-	}, [closeNotesDrawer, isNotesDrawerOpen, itemData.children, showNotesDrawer]);
+	}, [closeNotesDrawer, isNotesDrawerOpen, itemData, showNotesDrawer]);
 
 	return (
 		<Overlay
@@ -178,16 +200,18 @@ const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 						intent="primary" 
 						onClick={importMetadata} />
 					<MenuDivider />
-					<MenuItem className="zr-context-menu-option" 
-						icon="application"
-						text="Open in Zotero"
-						href={itemData.zotero?.local}
-					/>
-					<MenuItem className="zr-context-menu-option"
-						icon="cloud"
-						text="Open in Zotero (web)"
-						href={itemData.zotero?.web}
-					/>
+					{itemData &&
+						<MenuItem className="zr-context-menu-option"
+							icon="application"
+							text="Open in Zotero"
+							href={itemData.zotero.local}
+						/>}
+					{itemData &&
+						<MenuItem className="zr-context-menu-option"
+							icon="cloud"
+							text="Open in Zotero (web)"
+							href={itemData.zotero.web}
+						/>}
 					{pdfChildren}
 					{notesChildren}
 				</Menu>
@@ -195,16 +219,7 @@ const CitekeyContextMenu = memo(function CitekeyContextMenu(props) {
 		</Overlay>
 	);
 });
-CitekeyContextMenu.propTypes = {
-	coords: shape({
-		left: number,
-		top: number
-	}),
-	isOpen: bool,
-	itemsMap: instanceOf(Map),
-	onClose: func,
-	target: object
-};
+
 
 /* istanbul ignore next */
 const InlineCitekeys = memo(function InlineCitekeys() {
@@ -214,15 +229,15 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 
 	const [isContextMenuOpen, setContextMenuOpen] = useState(false);
 	const [contextMenuCoordinates, setContextMenuCoordinates] = useState({ left: 0, top: 0 });
-	const [contextMenuTarget, setContextMenuTarget] = useState(null);
+	const [contextMenuTarget, setContextMenuTarget] = useState<HTMLElement | null>(null);
 
 	const itemsMap = useGetItems(dataRequests);
     
-	const openContextMenu = useCallback((e) => {
+	const openContextMenu = useCallback((e: MouseEvent) => {
 		e.preventDefault();
 		const { pageX: left, pageY: top, target } = e;
 		setContextMenuCoordinates({ left, top });
-		setContextMenuTarget(target);
+		setContextMenuTarget(target as HTMLElement);
 		setContextMenuOpen(true);
 	}, []);
 
@@ -237,7 +252,7 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 		for(let i=0;i<refCitekeys.length;i++){
 			const refCitekeyElement = refCitekeys[i];
 			const linkElement = refCitekeyElement.getElementsByClassName("rm-page-ref")[0];
-			const citekey = refCitekeyElement.getAttribute("data-link-title");
+			const citekey = refCitekeyElement.getAttribute("data-link-title")!;
 
 			const prev_status = refCitekeyElement.getAttribute("data-in-library");
 			const current_status = itemsMap.has(citekey).toString();
@@ -252,7 +267,7 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 					continue;
 				} else if(current_status == "true"){
 					if(render_inline == true){
-						linkElement.textContent = itemsMap.get(citekey).citation;
+						linkElement.textContent = itemsMap.get(citekey)!.citation;
 					}
 					linkElement.addEventListener("contextmenu", openContextMenu);
 				} else {
@@ -290,10 +305,10 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 
 		refCitekeys.forEach(ck => {
 			const linkElement = ck.getElementsByClassName("rm-page-ref")[0];
-			const citekey = ck.getAttribute("data-link-title");
+			const citekey = ck.getAttribute("data-link-title")!;
 			const inLibrary = ck.getAttribute("data-in-library") == "true";
 			linkElement.textContent = inLibrary
-				? itemsMap.get(citekey).citation
+				? itemsMap.get(citekey)!.citation
 				: citekey;
 		});
 	}, [render_inline, itemsMap]);
@@ -306,7 +321,7 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 				itemsMap={itemsMap}
 				onClose={closeContextMenu}
 				target={contextMenuTarget} />, 
-			document.getElementById(portalId))
+			document.getElementById(portalId)!)
 	);
 });
 
