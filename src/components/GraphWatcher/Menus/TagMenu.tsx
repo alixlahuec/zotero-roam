@@ -20,15 +20,17 @@ export type TagMenuProps = {
 function TagMenu(props: TagMenuProps){
 	const { inAbstract = [], tag, tagged = [] } = props;
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
-	const [isShowing, setShowing] = useState<ShowPropertiesRelated>(() => ({
+	const [isShowing, setShowing] = useState<ShowPropertiesRelated>();
+
+	const hasTaggedItems = tagged.length > 0;
+	const hasAbstracts = inAbstract.length > 0;
+
+	const fallbackShowProps = useMemo<ShowPropertiesRelated>(() => ({
 		title: tag,
 		type: tagged.length > 0
 			? ShowTypeRelated.WITH_TAG
 			: ShowTypeRelated.WITH_ABSTRACT
-	}));
-
-	const hasTaggedItems = tagged.length > 0;
-	const hasAbstracts = inAbstract.length > 0;
+	}), [tag, tagged.length]);
 
 	const showAbstracts = useCallback(() => {
 		openDialog();
@@ -63,9 +65,9 @@ function TagMenu(props: TagMenuProps){
 			{(hasTaggedItems || hasAbstracts) &&
 				<RelatedPanel
 					isOpen={isDialogOpen}
-					items={isShowing.type == ShowTypeRelated.WITH_TAG ? tagged : inAbstract} 
+					items={(isShowing || fallbackShowProps).type == ShowTypeRelated.WITH_TAG ? tagged : inAbstract} 
 					onClose={closeDialog}
-					show={isShowing} />}
+					show={isShowing || fallbackShowProps} />}
 		</>
 	);
 }
