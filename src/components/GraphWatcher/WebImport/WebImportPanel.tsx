@@ -13,13 +13,13 @@ import { pluralize } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
 import { AsBoolean } from "Types/helpers";
-import { CitoidAPI } from "Types/externals";
+import { ZoteroAPI } from "Types/externals";
 
 
 type WebImportItem = {
 	abstract: string,
 	creators: string,
-	itemType: CitoidAPI.AsZotero["data"]["itemType"], //! FIX TYPING
+	itemType: ZoteroAPI.ItemTop["data"]["itemType"],
 	publication: string,
 	title: string,
 	url: string
@@ -33,7 +33,13 @@ function useGetCitoids(urls: string[], opts = {}) {
 			
 			return {
 				abstract: item.abstractNote || "",
-				creators: item.creators?.map(cre => cre.name || [cre.firstName, cre.lastName].filter(AsBoolean).join(" ")).join(", "),
+				creators: item.creators?.map(cre => {
+					if ("name" in cre) {
+						return cre.name;
+					} else {
+						return [cre.firstName, cre.lastName].filter(AsBoolean).join(" ");
+					}
+				}).join(", "),
 				itemType: item.itemType, 
 				publication: item.publicationTitle || item.bookTitle || item.websiteTitle || "",
 				title: item.title,
