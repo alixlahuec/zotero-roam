@@ -7,7 +7,7 @@ const findWebimportDivs = () => {
 	return Array.from(document.querySelectorAll(`[class="${webimportClass}"]`));
 };
 
-const setWebimportDivs = (tags) => {
+const setWebimportDivs = (tags: string[]) => {
 	// Old blocks - are they still valid ?
 	findWebimportDivs()
 		.filter(b => !matchArrays(tags, JSON.parse(b.parentElement?.getAttribute("data-page-links") || "[]")))

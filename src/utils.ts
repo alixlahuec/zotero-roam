@@ -686,7 +686,7 @@ function getWebLink(item: ZItemTop, { format = "markdown", text = "Web library" 
  * @see https://stackoverflow.com/questions/51958759/how-can-i-test-the-equality-of-two-nodelists
  * @returns `true` if the NodeList has changed ; `false` otherwise
  */
-function hasNodeListChanged(prev: NodeList, current: NodeList): boolean {
+function hasNodeListChanged(prev: ArrayLike<Element>, current: ArrayLike<Element>): boolean {
 	const arrPrev = Array.from(prev);
 	const arrCurrent = Array.from(current);
 	return (arrPrev.length + arrCurrent.length) != 0 && (arrPrev.length !== arrCurrent.length || arrPrev.some((el, i) => el !== arrCurrent[i]));

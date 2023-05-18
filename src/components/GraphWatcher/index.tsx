@@ -17,8 +17,12 @@ const GraphWatcher = memo(function GraphWatcher(){
 	// From React Docs : https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
 	// https://jasonwatmore.com/post/2021/08/27/react-how-to-check-if-a-component-is-mounted-or-unmounted
 	const mounted = useRef(false);
-	const [{ citekeyMenus, dnpMenus, tagMenus }, setMenus] = useState({ citekeyMenus: [], dnpMenus: [], tagMenus: [] });
-	const [webimports, setWebimports] = useState([]);
+	const [{ citekeyMenus, dnpMenus, tagMenus }, setMenus] = useState<{
+		citekeyMenus: Element[],
+		dnpMenus: Element[],
+		tagMenus: Element[]
+	}>({ citekeyMenus: [], dnpMenus: [], tagMenus: [] });
+	const [webimports, setWebimports] = useState<ArrayLike<Element>>([]);
 	const [{ trigger }] = useAutocompleteSettings();
 	const [{ tags }] = useWebImportSettings();
 

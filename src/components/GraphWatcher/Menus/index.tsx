@@ -58,7 +58,7 @@ function CitekeyMenuFactory({ menus }: { menus: Element[] }){
 		}
 	}, [citekeyItems, itemList, menus, trigger]);
 
-	return citekeyMenus;
+	return <>{citekeyMenus}</>;
 }
 
 
@@ -110,7 +110,7 @@ function DNPMenuFactory({ menus }: { menus: Element[] }){
 		}
 	}, [itemList, menus, roamCitekeys, trigger]);
 
-	return dnpPortals;
+	return <>{dnpPortals}</>;
 }
 
 
@@ -183,7 +183,7 @@ function TagMenuFactory({ menus }: { menus: Element[] }){
 		}
 	}, [itemList, menus, roamCitekeys, trigger, with_tags_or_abstract]);
 
-	return tagPortals;
+	return <>{tagPortals}</>;
 }
 
 
