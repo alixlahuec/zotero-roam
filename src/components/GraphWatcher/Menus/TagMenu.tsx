@@ -1,38 +1,40 @@
-import { arrayOf, string } from "prop-types";
 import { useCallback, useMemo, useState } from "react";
-
 import { Button } from "@blueprintjs/core";
 
 import RelatedPanel from "../RelatedPanel";
 
 import { useBool } from "../../../hooks";
-
 import { pluralize } from "../../../utils";
 
-import * as customPropTypes from "../../../propTypes";
+import { ShowPropertiesRelated, ShowTypeRelated } from "../types";
+import { SCleanRelatedItem } from "Types/transforms";
 
+
+export type TagMenuProps = {
+	inAbstract: SCleanRelatedItem[],
+	tag: string,
+	tagged: SCleanRelatedItem[]
+};
 
 /* istanbul ignore next */
-function TagMenu(props){
+function TagMenu(props: TagMenuProps){
 	const { inAbstract = [], tag, tagged = [] } = props;
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
-	const [isShowing, setShowing] = useState(null);
+	const [isShowing, setShowing] = useState<ShowPropertiesRelated>(() => ({
+		title: tag,
+		type: tagged.length > 0
+			? ShowTypeRelated.WITH_TAG
+			: ShowTypeRelated.WITH_ABSTRACT
+	}));
 
 	const hasTaggedItems = tagged.length > 0;
 	const hasAbstracts = inAbstract.length > 0;
-
-	const defaultShowProps = useMemo(() => {
-		return {
-			title: tag,
-			type: hasTaggedItems ? "with_tag" : "with_abstract"
-		};
-	}, [hasTaggedItems, tag]);
 
 	const showAbstracts = useCallback(() => {
 		openDialog();
 		setShowing({
 			title: tag,
-			type: "with_abstract"
+			type: ShowTypeRelated.WITH_ABSTRACT
 		});
 	}, [tag, openDialog]);
 
@@ -40,7 +42,7 @@ function TagMenu(props){
 		openDialog();
 		setShowing({
 			title: tag,
-			type: "with_tag"
+			type: ShowTypeRelated.WITH_TAG
 		});
 	}, [tag, openDialog]);
 
@@ -54,26 +56,19 @@ function TagMenu(props){
 
 	return (
 		<>
-			{hasTaggedItems
-				? <Button minimal={true} icon="manual" onClick={showTagged}>{taggedLabel}</Button>
-				: null}
-			{hasAbstracts
-				? <Button minimal={true} icon="manually-entered-data" onClick={showAbstracts}>{abstractsLabel}</Button>
-				: null}
-			{hasTaggedItems || hasAbstracts
-				? <RelatedPanel
+			{hasTaggedItems &&
+				<Button minimal={true} icon="manual" onClick={showTagged}>{taggedLabel}</Button>}
+			{hasAbstracts &&
+				<Button minimal={true} icon="manually-entered-data" onClick={showAbstracts}>{abstractsLabel}</Button>}
+			{(hasTaggedItems || hasAbstracts) &&
+				<RelatedPanel
 					isOpen={isDialogOpen}
-					items={(isShowing || defaultShowProps).type == "with_tag" ? tagged : inAbstract} 
+					items={isShowing.type == ShowTypeRelated.WITH_TAG ? tagged : inAbstract} 
 					onClose={closeDialog}
-					show={isShowing || defaultShowProps} />
-				: null}
+					show={isShowing} />}
 		</>
 	);
 }
-TagMenu.propTypes = {
-	inAbstract: arrayOf(customPropTypes.cleanRelatedItemType),
-	tag: string,
-	tagged: arrayOf(customPropTypes.cleanRelatedItemType)
-};
+
 
 export default TagMenu;

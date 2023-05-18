@@ -1,12 +1,18 @@
+import { ComponentProps } from "react";
+import { Meta, Story } from "@storybook/react";
+
 import { Backlinks } from "./CitekeyMenu";
 import { cleanSemanticItem } from "../../../utils";
 
 import { citoids, semanticIdentifier, items, semantics } from "Mocks";
+import { SEnrichedItemTypeEnum } from "Types/transforms";
 
+
+type Props = ComponentProps<typeof Backlinks>;
 
 const semanticCitoid = citoids[semanticIdentifier];
-const semanticEntry = Object.values(semantics)[0].references.find(ref => ref.title == semanticCitoid.title);
-const semanticItem = items.find(it => it.data.title == semanticCitoid.title);
+const semanticEntry = Object.values(semantics)[0].references.find(ref => ref.title == semanticCitoid.title)!;
+const semanticItem = items.find(it => it.data.title == semanticCitoid.title)!;
 
 export default {
 	component: Backlinks,
@@ -22,9 +28,9 @@ export default {
 			typemap: {}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => <Backlinks {...args} />;
+const Template: Story<Props> = (args) => <Backlinks {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
@@ -39,7 +45,7 @@ Default.args = {
 				},
 				raw: semanticItem
 			},
-			_type: "cited"
+			_type: SEnrichedItemTypeEnum.CITED
 		},
 		{
 			...cleanSemanticItem(semanticEntry),
@@ -51,7 +57,7 @@ Default.args = {
 				},
 				raw: semanticItem
 			},
-			_type: "citing"
+			_type: SEnrichedItemTypeEnum.CITING
 		}
 	]
 };

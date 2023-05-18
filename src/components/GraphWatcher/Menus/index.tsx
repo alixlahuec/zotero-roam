@@ -1,24 +1,22 @@
 /* istanbul ignore file */
-import { arrayOf, object } from "prop-types";
 import { createPortal } from "react-dom";
 import { useMemo } from "react";
 
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
+import { usePageMenuSettings, useRequestsSettings } from "Components/UserSettings";
 import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
-import { usePageMenuSettings, useRequestsSettings } from "Components/UserSettings";
 import { useQuery_Items } from "../../../api/queries";
-
-import { useRoamCitekeys } from "Components/RoamCitekeysContext";
-
 import { categorizeLibraryItems } from "../../../utils";
 import { cleanRelatedItem } from "./utils";
 
 import "./index.css";
+import { SCleanRelatedItem } from "Types/transforms";
 
 
-function CitekeyMenuFactory({ menus }){
+function CitekeyMenuFactory({ menus }: { menus: Element[] }){
 	const [{ trigger }] = usePageMenuSettings();
 	const [{ dataRequests }] = useRequestsSettings();
 
@@ -49,23 +47,22 @@ function CitekeyMenuFactory({ menus }){
 					const item = citekeyItems.find(it => it.key == menu.getAttribute("data-citekey"));
 					return { div: menu, item };
 				})
-				.filter(menu => menu.item)
 				.map((menu, i) => {
-					const { item, div } = menu;
-					return (
-						createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} />, div)
-					);
+					if (menu.item) {
+						const { item, div } = menu;
+						return (
+							createPortal(<CitekeyMenu key={i} item={item} itemList={itemList} />, div)
+						);	
+					}
 				});
 		}
 	}, [citekeyItems, itemList, menus, trigger]);
 
 	return citekeyMenus;
 }
-CitekeyMenuFactory.propTypes = { 
-	menus: arrayOf(object)
-};
 
-function DNPMenuFactory({ menus }){
+
+function DNPMenuFactory({ menus }: { menus: Element[] }){
 	const [{ trigger }] = usePageMenuSettings();
 	const [{ dataRequests }] = useRequestsSettings();
 	const [roamCitekeys,] = useRoamCitekeys();
@@ -86,7 +83,7 @@ function DNPMenuFactory({ menus }){
 		} else {
 			return menus
 				.filter(_menu => {
-					if(trigger.constructor === Boolean){
+					if(typeof(trigger) == "boolean"){
 						return trigger;
 					} else {
 						// If trigger isn't a Boolean, set default behavior
@@ -95,19 +92,19 @@ function DNPMenuFactory({ menus }){
 					}
 				})
 				.map(menu => {
-					const title = menu.getAttribute("data-title");
-					const dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date"))).toDateString();
+					const title = menu.getAttribute("data-title")!;
+					const dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date")!)).toDateString();
 					const added = items
 						.filter(it => new Date(it.data.dateAdded).toDateString() == dnp_date)
 						.map(it => cleanRelatedItem(it, { pdfs, notes }, roamCitekeys));
-					return { div: menu, added, date: dnp_date, title };
+					return { div: menu, added, title };
 				})
 				.filter(menu => menu.added)
 				.map((menu, i) => {
-					const { added, date, div, title } = menu;
+					const { added, div, title } = menu;
 					return (
 						createPortal(<DNPMenu key={i} 
-							added={added} date={date} title={title} />, div)
+							added={added} title={title} />, div)
 					);
 				});
 		}
@@ -115,11 +112,9 @@ function DNPMenuFactory({ menus }){
 
 	return dnpPortals;
 }
-DNPMenuFactory.propTypes = { 
-	menus: arrayOf(object)
-};
 
-function TagMenuFactory({ menus }){
+
+function TagMenuFactory({ menus }: { menus: Element[] }){
 	const [{ trigger }] = usePageMenuSettings();
 	const [{ dataRequests }] = useRequestsSettings();
 	const [roamCitekeys,] = useRoamCitekeys();
@@ -154,18 +149,18 @@ function TagMenuFactory({ menus }){
 		} else {
 			return menus
 				.filter(menu => {
-					if(trigger.constructor === Boolean){
+					if(typeof(trigger) == "boolean"){
 						return trigger;
 					} else {
 						// If trigger isn't a Boolean, set default behavior
 						// i.e page menus are shown only if the page title is > 5 characters
-						const title = menu.getAttribute("data-title");
+						const title = menu.getAttribute("data-title")!;
 						return title.length > 5;
 					}
 				})
 				.map(menu => {
-					const title = menu.getAttribute("data-title");
-					const results = with_tags_or_abstract.reduce((obj, item) => {
+					const title = menu.getAttribute("data-title")!;
+					const results = with_tags_or_abstract.reduce<{ with_tags: SCleanRelatedItem[], with_abstract: SCleanRelatedItem[] }>((obj, item) => {
 						if(item.abstract.includes(title)){
 							obj.with_abstract.push(cleanRelatedItem(item.itemData, { pdfs, notes }, roamCitekeys));
 						}
@@ -190,9 +185,7 @@ function TagMenuFactory({ menus }){
 
 	return tagPortals;
 }
-TagMenuFactory.propTypes = { 
-	menus: arrayOf(object)
-};
+
 
 export {
 	CitekeyMenuFactory,
