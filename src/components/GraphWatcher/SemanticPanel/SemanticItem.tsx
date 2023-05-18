@@ -4,6 +4,7 @@ import { Button, Classes, Icon, Tag } from "@blueprintjs/core";
 import CitekeyPopover from "Components/CitekeyPopover";
 
 import { CustomClasses } from "../../../constants";
+import { ShowTypeSemantic } from "../types";
 import { SEnrichedItem } from "Types/transforms";
 
 
@@ -13,7 +14,7 @@ type OwnProps = {
 	inGraph: string | false,
 	isSelected: boolean,
 	item: SEnrichedItem,
-	type: "is_reference" | "is_citation"
+	type: ShowTypeSemantic
 };
 
 const SemanticItem = memo<OwnProps>(function SemanticItem(props) {
@@ -92,7 +93,7 @@ const SemanticItem = memo<OwnProps>(function SemanticItem(props) {
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{ display: "flex" }}>
 						<div className="zr-related-item-contents--metadata">
-							{item.authors && <span className={type == "is_reference" ? CustomClasses.TEXT_ACCENT_1 : CustomClasses.TEXT_ACCENT_2}>{item.authors}</span>}
+							{item.authors && <span className={type == ShowTypeSemantic.REFERENCES ? CustomClasses.TEXT_ACCENT_1 : CustomClasses.TEXT_ACCENT_2}>{item.authors}</span>}
 							{item.meta && <span className={CustomClasses.TEXT_SECONDARY}>{item.meta}</span>}
 							{item.isInfluential
 								? <Icon className="zr-related-item--decorating-icon" color="#f8c63a" htmlTitle="This item was classified as influential by Semantic Scholar" icon="trending-up" />

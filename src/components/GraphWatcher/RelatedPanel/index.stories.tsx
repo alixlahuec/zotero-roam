@@ -1,11 +1,15 @@
+import { ComponentProps } from "react";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
+import { Meta, Story } from "@storybook/react";
 
 import RelatedPanel from ".";
 import { cleanRelatedItem } from "../Menus/utils";
 
 import { items } from "Mocks";
 
+
+type Props = ComponentProps<typeof RelatedPanel>;
 
 export default {
 	component: RelatedPanel,
@@ -26,9 +30,9 @@ export default {
 			typemap: {}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => <RelatedPanel {...args} />;
+const Template: Story<Props> = (args) => <RelatedPanel {...args} />;
 
 export const Default = Template.bind({});
 

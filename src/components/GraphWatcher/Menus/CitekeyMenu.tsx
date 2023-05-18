@@ -21,7 +21,7 @@ import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getP
 import { findRoamPage, importItemMetadata } from "Roam";
 
 import { CustomClasses } from "../../../constants";
-import { ShowTypeEnum } from "../SemanticPanel/types";
+import { ShowPropertiesSemantic, ShowTypeSemantic } from "../types";
 import { SEnrichedItemInLibrary, ZCleanItemTop, ZItemAnnotation, ZItemNote, ZItemTop, ZLibraryContents } from "Types/transforms";
 
 
@@ -118,12 +118,12 @@ function RelatedItemsBar(props: RelatedItemsBarProps) {
 	
 	const [isBacklinksListOpen, { toggle: toggleBacklinks }] = useBool(false);
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
-	const [isShowing, setShowing] = useState<{ title: string, type: ShowTypeEnum }>({ title, type: ShowTypeEnum.REFERENCES });
+	const [isShowing, setShowing] = useState<ShowPropertiesSemantic>({ title, type: ShowTypeSemantic.REFERENCES });
 
 	const showReferences = useCallback(() => {
 		setShowing({
 			title,
-			type: ShowTypeEnum.REFERENCES
+			type: ShowTypeSemantic.REFERENCES
 		});
 		openDialog();
 	}, [title, openDialog]);
@@ -131,7 +131,7 @@ function RelatedItemsBar(props: RelatedItemsBarProps) {
 	const showCitations = useCallback(() => {
 		setShowing({
 			title,
-			type: ShowTypeEnum.CITATIONS
+			type: ShowTypeSemantic.CITATIONS
 		});
 		openDialog();
 	}, [title, openDialog]);

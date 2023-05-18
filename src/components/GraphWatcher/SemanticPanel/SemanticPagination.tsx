@@ -10,6 +10,7 @@ import { searchEngine } from "../../../utils";
 import { Filter, useFilterList, usePagination, useText } from "../../../hooks";
 
 import { CustomClasses } from "../../../constants";
+import { ShowTypeSemantic } from "../types";
 import { AsBoolean } from "Types/helpers";
 import { SEnrichedItem, isSBacklink } from "Types/transforms";
 
@@ -73,7 +74,7 @@ type ItemProps = {
 		items: SEnrichedItem[],
 		resetImport: () => void
 	},
-	type: "is_reference" | "is_citation"
+	type: ShowTypeSemantic
 };
 
 function Item({ item, selectProps, type }: ItemProps){

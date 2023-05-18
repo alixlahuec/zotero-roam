@@ -1,6 +1,4 @@
-import { arrayOf, bool, func, oneOf, oneOfType, shape, string } from "prop-types";
 import { memo, useEffect, useMemo } from "react";
-
 import { Button, Classes } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
@@ -8,18 +6,22 @@ import CitekeyPopover from "Components/CitekeyPopover";
 import { ErrorBoundary } from "Components/Errors";
 
 import { useBool } from "../../../hooks";
-
 import { pluralize, sortElems } from "../../../utils";
 
-import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
-
+import { ShowPropertiesRelated, ShowTypeRelated } from "../types";
+import { SCleanRelatedItem } from "Types/transforms";
 import "./index.css";
 
 
-const labelId = "zr-related-panel-label";
+const PANEL_LABEL_ID = "zr-related-panel-label";
 
-const Abstract = memo(function Abstract({ abstract, allAbstractsShown }) {
+type AbstractProps = {
+	abstract: string,
+	allAbstractsShown: boolean
+};
+
+const Abstract = memo<AbstractProps>(function Abstract({ abstract, allAbstractsShown }) {
 	const [isVisible, { set: setVisible, toggle: toggleAbstract }] = useBool(allAbstractsShown);
 
 	useEffect(() => {
@@ -46,30 +48,36 @@ const Abstract = memo(function Abstract({ abstract, allAbstractsShown }) {
 		);
 	}
 });
-Abstract.propTypes = {
-	abstract: string,
-	allAbstractsShown: bool
+
+
+type TimestampProps = {
+	timestamp: string,
+	type: ShowTypeRelated
 };
 
-const Timestamp = memo(function Timestamp({ timestamp, type }){
+const Timestamp = memo<TimestampProps>(function Timestamp({ timestamp, type }){
 	return type == "added_on"
 		? <span className={[Classes.MENU_ITEM_LABEL, CustomClasses.TEXT_SMALL, "zr-related-item--timestamp"].join(" ")}>
 			{timestamp}
 		</span>
 		: null;
 });
-Timestamp.propTypes = {
-	timestamp: string,
-	type: oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
+
+
+type RelatedItemProps = {
+	allAbstractsShown: boolean,
+	closeDialog: () => void,
+	item: SCleanRelatedItem,
+	type: ShowTypeRelated
 };
 
-const RelatedItem = memo(function RelatedItem(props) {
-	const { allAbstractsShown, closeDialog, inGraph, item, type } = props;
+const RelatedItem = memo<RelatedItemProps>(function RelatedItem(props) {
+	const { allAbstractsShown, closeDialog, item, type } = props;
 	const { children: { pdfs, notes }, raw } = item;
 
 	return (
-		<li className="zr-related-item" data-in-graph={(inGraph != false).toString()}>
-			<div className={ Classes.MENU_ITEM } label={item.key}>
+		<li className="zr-related-item" data-in-graph={(item.inGraph != false).toString()}>
+			<div className={ Classes.MENU_ITEM }>
 				<Timestamp timestamp={item.timestamp} type={type} />
 				<div className={[Classes.FILL, "zr-related-item-contents"].join(" ")}>
 					<div className={ Classes.FILL } style={{ display: "flex" }}>
@@ -80,7 +88,7 @@ const RelatedItem = memo(function RelatedItem(props) {
 						<span className="zr-related-item-contents--actions">
 							<CitekeyPopover 
 								closeDialog={closeDialog} 
-								inGraph={inGraph} 
+								inGraph={item.inGraph} 
 								item={raw}
 								notes={notes} 
 								pdfs={pdfs} />
@@ -92,72 +100,69 @@ const RelatedItem = memo(function RelatedItem(props) {
 		</li>
 	);
 });
-RelatedItem.propTypes = {
-	allAbstractsShown: bool,
-	closeDialog: func,
-	inGraph: oneOfType([string, oneOf([false])]),
-	item: customPropTypes.cleanRelatedItemType,
-	type: oneOf(["added_on", "with_abstract", "with_tag", "is_citation", "is_reference"])
-};
 
-const RelatedList = memo(function RelatedList(props) {
+
+type RelatedListProps = {
+	items: SCleanRelatedItem[]
+} & Omit<RelatedItemProps, "item">;
+
+const RelatedList = memo<RelatedListProps>(function RelatedList(props) {
 	const { allAbstractsShown, closeDialog, items, type } = props;
 
 	const sortedItems = useMemo(() => {
-		const sort = type == "added_on" ? "added" : "meta";
+		const sort = type == ShowTypeRelated.ADDED_ON ? "added" : "meta";
 		return sortElems(items, sort);
 	}, [items, type]);
 
 	return (
 		<ul className={Classes.LIST_UNSTYLED}>
-			{sortedItems.map(it => {
-				return <RelatedItem key={[it.location, it.key].join("-")} 
+			{sortedItems.map(it => (
+				<RelatedItem key={[it.location, it.key].join("-")} 
 					allAbstractsShown={allAbstractsShown} 
 					closeDialog={closeDialog}
-					inGraph={it.inGraph} 
 					item={it}
-					type={type} />;
-			})
-			}
+					type={type} />
+			))}
 		</ul>
 	);
 });
-RelatedList.propTypes = {
-	allAbstractsShown: bool,
-	closeDialog: func,
-	items: arrayOf(customPropTypes.cleanRelatedItemType),
-	type: oneOf(["added_on", "with_abstract", "with_tag"])
+
+
+type RelatedPanelProps = {
+	isOpen: boolean,
+	items: SCleanRelatedItem[],
+	onClose: () => void,
+	show: ShowPropertiesRelated
 };
 
-const RelatedPanel = memo(function RelatedPanel(props) {
+const RelatedPanel = memo<RelatedPanelProps>(function RelatedPanel(props) {
 	const { isOpen, items, onClose, show } = props;
 	const [isShowingAllAbstracts, { toggle: toggleAbstracts }] = useBool(false);
 
 	const relationship = useMemo(() => {
 		const { title, type } = show;
 		switch(type){
-		case "added_on":
+		case ShowTypeRelated.ADDED_ON:
 			return {
 				string: "item",
 				suffix: " added on " + title
 			};
-		case "with_abstract":
+		case ShowTypeRelated.WITH_ABSTRACT:
 			return {
 				string: "abstract",
 				suffix: " containing " + title
 			};
-		case "with_tag":
+		case ShowTypeRelated.WITH_TAG:
+		default:
 			return {
 				string: "item",
 				suffix: " tagged with " + title
 			};
-		default:
-            //
 		}
 	}, [show]);
 
 	const panelLabel = useMemo(() => {
-		return <h5 id={labelId} className="panel-tt">{pluralize(items.length, relationship.string, relationship.suffix)}</h5>;
+		return <h5 id={PANEL_LABEL_ID} className="panel-tt">{pluralize(items.length, relationship.string, relationship.suffix)}</h5>;
 	}, [items.length, relationship]);
 
 	const headerRight = useMemo(() => {
@@ -170,7 +175,7 @@ const RelatedPanel = memo(function RelatedPanel(props) {
 
 	return (
 		<AuxiliaryDialog
-			ariaLabelledBy={labelId}
+			ariaLabelledBy={PANEL_LABEL_ID}
 			className="related"
 			isOpen={isOpen}
 			onClose={onClose}
@@ -202,14 +207,6 @@ const RelatedPanel = memo(function RelatedPanel(props) {
 		</AuxiliaryDialog>
 	);
 });
-RelatedPanel.propTypes = {
-	isOpen: bool,
-	items: arrayOf(customPropTypes.cleanRelatedItemType),
-	onClose: func,
-	show: shape({
-		title: string,
-		type: oneOf(["added_on", "with_abstract", "with_tag"])
-	})
-};
+
 
 export default RelatedPanel;

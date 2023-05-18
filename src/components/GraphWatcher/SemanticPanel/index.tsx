@@ -10,7 +10,7 @@ import { pluralize, sortElems } from "../../../utils";
 import { useMulti } from "../../../hooks";
 
 import { CustomClasses } from "../../../constants";
-import { ShowTypeEnum } from "./types";
+import { ShowTypeSemantic } from "../types";
 import { SEnrichedItem, SRelatedEntries } from "Types/transforms";
 import "./index.css";
 
@@ -18,7 +18,7 @@ import "./index.css";
 const labelId = "zr-semantic-panel-label";
 
 type SemanticTabListProps = {
-	defaultTab: ShowTypeEnum,
+	defaultTab: ShowTypeSemantic,
 	items: SRelatedEntries,
 	onClose: () => void,
 	selectProps: SemanticPaginationProps["selectProps"],
@@ -59,20 +59,20 @@ const SemanticTabList = memo<SemanticTabListProps>(function SemanticTabList(prop
 
 	return (
 		<Tabs id="zr-semantic-panel" className={CustomClasses.TABS} selectedTabId={isActiveTab} onChange={selectTab} animate={false}>
-			<Tab id="is_reference" 
+			<Tab id={ShowTypeSemantic.REFERENCES} 
 				panel={<SemanticPagination
 					items={references}
 					selectProps={selectProps}
-					type="is_reference"
+					type={ShowTypeSemantic.REFERENCES}
 				/>} 
 				disabled={references.length == 0}
 				title={references_title}
 			/>
-			<Tab id="is_citation" 
+			<Tab id={ShowTypeSemantic.CITATIONS}
 				panel={<SemanticPagination
 					items={citations}
 					selectProps={selectProps}
-					type="is_citation"
+					type={ShowTypeSemantic.CITATIONS}
 				/>}
 				disabled={citations.length == 0}
 				title={citations_title}
@@ -91,7 +91,7 @@ type SemanticPanelProps = {
 	onClose: () => void,
 	show: {
 		title: string,
-		type: ShowTypeEnum
+		type: ShowTypeSemantic
 	}
 };
 
