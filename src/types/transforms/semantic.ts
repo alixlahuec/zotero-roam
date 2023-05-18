@@ -35,9 +35,14 @@ export interface SCleanRelatedItem {
 	title: string
 }
 
+export enum SEnrichedItemTypeEnum {
+	CITED = "cited",
+	CITING = "citing"
+}
+
 interface SEnrichedItemBase extends SCleanItem {
 	inGraph: false | string,
-	_type?: "citing" | "cited"
+	_type?: SEnrichedItemTypeEnum
 }
 
 export interface SEnrichedItemInLibrary extends SEnrichedItemBase {
@@ -46,16 +51,21 @@ export interface SEnrichedItemInLibrary extends SEnrichedItemBase {
 		raw: ZItemTop
 	}
 }
-export const isSBacklink = (item: SEnrichedItem): item is SEnrichedItemInLibrary => item.inLibrary != false;
 
 interface SEnrichedItemOutsideLibrary extends SEnrichedItemBase {
 	inLibrary: false
 }
 
-export type SEnrichedItem = SEnrichedItemInLibrary | SEnrichedItemOutsideLibrary;
+type SEnrichedItemWithLibrary = SEnrichedItemInLibrary | SEnrichedItemOutsideLibrary;
+export type SEnrichedItemCitation = SEnrichedItemWithLibrary /*& { _type: SEnrichedItemTypeEnum.CITING }*/
+export type SEnrichedItemReference = SEnrichedItemWithLibrary /*& { _type: SEnrichedItemTypeEnum.CITED }*/
+export type SEnrichedItem = SEnrichedItemCitation | SEnrichedItemReference;
+export const isSBacklink = (item: SEnrichedItem): item is SEnrichedItemInLibrary => item.inLibrary != false;
+export const isSCitation = (item: SEnrichedItem): item is SEnrichedItemCitation => item._type == SEnrichedItemTypeEnum.CITING;
+export const isSReference = (item: SEnrichedItem): item is SEnrichedItemReference => item._type == SEnrichedItemTypeEnum.CITED;
 
 export interface SRelatedEntries {
-	citations: SEnrichedItem[],
-	references: SEnrichedItem[],
+	citations: SEnrichedItemCitation[],
+	references: SEnrichedItemReference[],
 	backlinks: SEnrichedItemInLibrary[]
 }

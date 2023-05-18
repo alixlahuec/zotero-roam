@@ -1,15 +1,22 @@
-import { bool, func, oneOf, oneOfType, string } from "prop-types";
 import { memo, useCallback, useMemo } from "react";
-
 import { Button, Classes, Icon, Tag } from "@blueprintjs/core";
 
 import CitekeyPopover from "Components/CitekeyPopover";
 
-import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
+import { SEnrichedItem } from "Types/transforms";
 
 
-const SemanticItem = memo(function SemanticItem(props) {
+type OwnProps = {
+	handleRemove: (value: SEnrichedItem) => void,
+	handleSelect: (value: SEnrichedItem) => void,
+	inGraph: string | false,
+	isSelected: boolean,
+	item: SEnrichedItem,
+	type: "is_reference" | "is_citation"
+};
+
+const SemanticItem = memo<OwnProps>(function SemanticItem(props) {
 	const { handleRemove, handleSelect, inGraph, isSelected, item, type } = props;
 	const { inLibrary } = item;
 
@@ -78,7 +85,7 @@ const SemanticItem = memo(function SemanticItem(props) {
 
 	return (
 		<li className="zr-related-item" data-semantic-type={type} data-in-library={inLibrary != false} data-in-graph={inGraph != false}>
-			<div className={ Classes.MENU_ITEM } label={item.doi || item.title}>
+			<div className={ Classes.MENU_ITEM }>
 				<span className={[Classes.MENU_ITEM_LABEL, CustomClasses.TEXT_SMALL, "zr-related-item--timestamp"].join(" ")}>
 					{item.year}
 				</span>
@@ -103,13 +110,6 @@ const SemanticItem = memo(function SemanticItem(props) {
 		</li>
 	);
 });
-SemanticItem.propTypes = {
-	handleRemove: func,
-	handleSelect: func,
-	inGraph: oneOfType([string, oneOf([false])]),
-	isSelected: bool,
-	item: customPropTypes.cleanSemanticReturnType,
-	type: oneOf(["is_reference", "is_citation"])
-};
+
 
 export default SemanticItem;

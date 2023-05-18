@@ -1,17 +1,19 @@
+import { ComponentProps } from "react";
 import { expect } from "@storybook/jest";
 import { userEvent, within } from "@storybook/testing-library";
+import { Meta, Story } from "@storybook/react";
 
 import SemanticPanel from ".";
-
 import { cleanSemantic, parseDOI } from "../../../utils";
 import { parseSemanticDOIs } from "../../../api/utils";
 
 import { items, semantics } from "Mocks";
 
 
+type Props = ComponentProps<typeof SemanticPanel>;
 
-const semanticItem = items.find(it => it.key == "blochImplementingSocialInterventions2021");
-const itemDOI = parseDOI(semanticItem.data.DOI);
+const semanticItem = items.find(it => it.key == "blochImplementingSocialInterventions2021")!;
+const itemDOI = parseDOI(semanticItem.data.DOI) as string;
 const { citations, references } = semantics[itemDOI];
 const semanticData = {
 	citations: parseSemanticDOIs(citations),
@@ -31,16 +33,16 @@ export default {
 	argTypes: {
 		onClose: { action: true }
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => <SemanticPanel {...args} />;
+const Template: Story<Props> = (args) => <SemanticPanel {...args} />;
 
 export const Default = Template.bind({});
 
 export const WithInteractions = Template.bind({});
 WithInteractions.play = async({ args, canvasElement }) => {
 	const canvas = within(canvasElement);
-	const frame = within(canvasElement.parentElement);
+	const frame = within(canvasElement.parentElement!);
 
 	await expect(canvas.queryByText("No results found")).not.toBeInTheDocument();
 
@@ -48,7 +50,7 @@ WithInteractions.play = async({ args, canvasElement }) => {
 
 	await userEvent.click(filterBtn);
 
-	const filterOption = frame.getByTitle("Highly Influential").parentElement;
+	const filterOption = frame.getByTitle<HTMLButtonElement>("Highly Influential").parentElement!;
 
 	await userEvent.click(filterOption);
 
@@ -56,11 +58,11 @@ WithInteractions.play = async({ args, canvasElement }) => {
 
 	await userEvent.click(filterBtn);
 
-	const doiFilterOption = frame.getByTitle("Has DOI").parentElement;
+	const doiFilterOption = frame.getByTitle<HTMLButtonElement>("Has DOI").parentElement!;
 
 	await userEvent.click(doiFilterOption);
 
-	const searchbar = canvasElement.querySelector(`#semantic-search--${args.show.type}`);
+	const searchbar = canvasElement.querySelector<HTMLInputElement>(`#semantic-search--${args.show.type}`)!;
 
 	await userEvent.type(searchbar, "some text");
 

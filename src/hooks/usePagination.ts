@@ -7,7 +7,7 @@ import { useCallback, useMemo, useState } from "react";
 const usePagination = ({ itemsPerPage = 20 }: { itemsPerPage?: number }) => {
 	const [currentPage, setPage] = useState<number>(1);
 
-	const pageLimits = useMemo(() => [
+	const pageLimits = useMemo<[number, number]>(() => [
 		itemsPerPage*(currentPage - 1), 
 		itemsPerPage*currentPage
 	], [currentPage, itemsPerPage]);

@@ -1,6 +1,4 @@
-import { arrayOf, func, oneOf, shape } from "prop-types";
 import { memo, useCallback, useMemo } from "react";
-
 import { InputGroup, NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
@@ -9,28 +7,29 @@ import { SemanticGuide } from "Components/Guide";
 import SemanticItem from "./SemanticItem";
 
 import { searchEngine } from "../../../utils";
-import { useFilterList, usePagination, useText } from "../../../hooks";
+import { Filter, useFilterList, usePagination, useText } from "../../../hooks";
 
 import { CustomClasses } from "../../../constants";
-import * as customPropTypes from "../../../propTypes";
 import { AsBoolean } from "Types/helpers";
+import { SEnrichedItem, isSBacklink } from "Types/transforms";
 
 
 const itemsPerPage = 30;
 
-const SEMANTIC_FILTER_OPTIONS = [
+const SEMANTIC_FILTER_OPTIONS: Filter[] = [
 	{ active: false, label: "In Library", value: "library" },
 	{ active: false, label: "Highly Influential", value: "influential" },
 	{ active: false, label: "Has DOI", value: "doi" }
 ];
-function filter(items, filterList){
+
+function filter(items: SEnrichedItem[], filterList: Filter[]){
 	let arr = [...items];
 	const activeFilters = filterList.filter(op => op.active == true);
 
 	activeFilters.forEach(op => {
 		switch(op.value){
 		case "library":
-			arr = arr.filter(item => item.inLibrary);
+			arr = arr.filter(isSBacklink);
 			break;
 		case "influential":
 			arr = arr.filter(item => item.isInfluential);
@@ -52,7 +51,7 @@ function filter(items, filterList){
 	return arr;
 }
 
-function search(query, items){
+function search(query: string, items: SEnrichedItem[]){
 	return items.filter(it => searchEngine(
 		query, 
 		it._multiField,
@@ -65,7 +64,19 @@ function search(query, items){
 	));
 }
 
-function Item({ item, selectProps, type }){
+
+type ItemProps = {
+	item: SEnrichedItem,
+	selectProps: {
+		handleRemove: (value: SEnrichedItem) => void,
+		handleSelect: (value: SEnrichedItem) => void,
+		items: SEnrichedItem[],
+		resetImport: () => void
+	},
+	type: "is_reference" | "is_citation"
+};
+
+function Item({ item, selectProps, type }: ItemProps){
 	const { handleRemove, handleSelect, items: selectedItems } = selectProps;
 	const isSelected = selectedItems.findIndex(i => i.doi == item.doi || i.url == item.url) >= 0;
 
@@ -77,18 +88,13 @@ function Item({ item, selectProps, type }){
 		item={item} 
 		type={type} />;
 }
-Item.propTypes = {
-	item: customPropTypes.cleanSemanticReturnType,
-	selectProps: shape({
-		handleRemove: func,
-		handleSelect: func,
-		items: arrayOf(customPropTypes.cleanSemanticReturnType),
-		resetImport: func
-	}),
-	type: oneOf(["is_citation", "is_reference"])
-};
 
-const SemanticPagination = memo(function SemanticPagination(props){
+
+export type SemanticPaginationProps = {
+	items: SEnrichedItem[],
+} & Pick<ItemProps, "selectProps" | "type">;
+
+const SemanticPagination = memo<SemanticPaginationProps>(function SemanticPagination(props){
 	const { items, selectProps, type } = props;
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [query, onQueryChange] = useText("");
@@ -142,15 +148,6 @@ const SemanticPagination = memo(function SemanticPagination(props){
 		</div>
 	);
 });
-SemanticPagination.propTypes = {
-	items: arrayOf(customPropTypes.cleanSemanticReturnType),
-	selectProps: shape({
-		handleRemove: func,
-		handleSelect: func,
-		items: arrayOf(customPropTypes.cleanSemanticReturnType),
-		resetImport: func
-	}),
-	type: oneOf(["is_citation", "is_reference"])
-};
+
 
 export default SemanticPagination;

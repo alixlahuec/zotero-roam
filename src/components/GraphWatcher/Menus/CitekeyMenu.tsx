@@ -21,6 +21,7 @@ import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getP
 import { findRoamPage, importItemMetadata } from "Roam";
 
 import { CustomClasses } from "../../../constants";
+import { ShowTypeEnum } from "../SemanticPanel/types";
 import { SEnrichedItemInLibrary, ZCleanItemTop, ZItemAnnotation, ZItemNote, ZItemTop, ZLibraryContents } from "Types/transforms";
 
 
@@ -117,12 +118,12 @@ function RelatedItemsBar(props: RelatedItemsBarProps) {
 	
 	const [isBacklinksListOpen, { toggle: toggleBacklinks }] = useBool(false);
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
-	const [isShowing, setShowing] = useState({ title, type: "is_reference" });
+	const [isShowing, setShowing] = useState<{ title: string, type: ShowTypeEnum }>({ title, type: ShowTypeEnum.REFERENCES });
 
 	const showReferences = useCallback(() => {
 		setShowing({
 			title,
-			type: "is_reference"
+			type: ShowTypeEnum.REFERENCES
 		});
 		openDialog();
 	}, [title, openDialog]);
@@ -130,7 +131,7 @@ function RelatedItemsBar(props: RelatedItemsBarProps) {
 	const showCitations = useCallback(() => {
 		setShowing({
 			title,
-			type: "is_citation"
+			type: ShowTypeEnum.CITATIONS
 		});
 		openDialog();
 	}, [title, openDialog]);
@@ -353,7 +354,7 @@ const CitekeyMenu = memo<CitekeyMenuProps>(function CitekeyMenu({ item, itemList
 	return (
 		<ErrorBoundary>
 			{doiHeader}
-			<Card elevation={0} className="zr-citekey-menu" label={"Citekey menu for" + item.key}>
+			<Card elevation={0} className="zr-citekey-menu">
 				<div className="zr-citekey-menu--header">
 					<ButtonGroup className="zr-citekey-menu--actions" minimal={true} role="menubar">
 						{defaults.includes("addMetadata")

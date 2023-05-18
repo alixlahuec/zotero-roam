@@ -1,26 +1,31 @@
-import { arrayOf, bool, func, oneOf, shape, string } from "prop-types";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-
 import { Button, Classes, Icon, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import { ErrorBoundary } from "Components/Errors";
-import SemanticPagination from "./SemanticPagination";
+import SemanticPagination, { SemanticPaginationProps } from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
 import { pluralize, sortElems } from "../../../utils";
 import { useMulti } from "../../../hooks";
 
 import { CustomClasses } from "../../../constants";
-
-import * as customPropTypes from "../../../propTypes";
-
+import { ShowTypeEnum } from "./types";
+import { SEnrichedItem, SRelatedEntries } from "Types/transforms";
 import "./index.css";
 
 
 const labelId = "zr-semantic-panel-label";
 
-const SemanticTabList = memo(function SemanticTabList(props) {
+type SemanticTabListProps = {
+	defaultTab: ShowTypeEnum,
+	items: SRelatedEntries,
+	onClose: () => void,
+	selectProps: SemanticPaginationProps["selectProps"],
+	title: string
+};
+
+const SemanticTabList = memo<SemanticTabListProps>(function SemanticTabList(props) {
 	const { defaultTab, items, onClose, selectProps, title } = props;
 	const [isActiveTab, setActiveTab] = useState(defaultTab);
 	
@@ -78,22 +83,21 @@ const SemanticTabList = memo(function SemanticTabList(props) {
 		</Tabs>
 	);
 });
-SemanticTabList.propTypes = {
-	defaultTab: string,
-	items: customPropTypes.cleanSemanticReturnObjectType,
-	onClose: func,
-	selectProps: shape({
-		handleRemove: func,
-		handleSelect: func,
-		items: arrayOf(customPropTypes.cleanSemanticReturnType),
-		resetImport: func
-	}),
-	title: string
+
+
+type SemanticPanelProps = {
+	isOpen: boolean,
+	items: SRelatedEntries,
+	onClose: () => void,
+	show: {
+		title: string,
+		type: ShowTypeEnum
+	}
 };
 
-const SemanticPanel = memo(function SemanticPanel(props){
+const SemanticPanel = memo<SemanticPanelProps>(function SemanticPanel(props){
 	const { isOpen, items, onClose, show } = props;
-	const [itemsForImport, { set: setItemsForImport, add: addToImport, remove: removeFromImport }] = useMulti({
+	const [itemsForImport, { set: setItemsForImport, add: addToImport, remove: removeFromImport }] = useMulti<SEnrichedItem>({
 		start: [],
 		identify: (item, value) => item.doi == value.doi && item.url == value.url
 	});
@@ -139,14 +143,6 @@ const SemanticPanel = memo(function SemanticPanel(props){
 		</AuxiliaryDialog>
 	);
 });
-SemanticPanel.propTypes = {
-	isOpen: bool,
-	items: customPropTypes.cleanSemanticReturnObjectType,
-	onClose: func,
-	show: shape({
-		title: string,
-		type: oneOf(["is_citation", "is_reference"])
-	})
-};
+
 
 export default SemanticPanel;

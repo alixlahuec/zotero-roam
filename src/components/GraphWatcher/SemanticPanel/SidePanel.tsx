@@ -1,15 +1,18 @@
-import { arrayOf, func, shape } from "prop-types";
 import { memo, useCallback, useMemo } from "react";
-
 import { Button, ButtonGroup, Classes } from "@blueprintjs/core";
 
 import ZoteroImport from "Components/ZoteroImport";
 
-import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
+import { SEnrichedItem } from "Types/transforms";
 
 
-const SelectedImportItem = memo(function SelectedImportItem(props) {
+type SelectedImportItemProps = {
+	handleRemove: (value: SEnrichedItem) => void,
+	item: SEnrichedItem
+};
+
+const SelectedImportItem = memo<SelectedImportItemProps>(function SelectedImportItem(props) {
 	const { handleRemove, item } = props;
 
 	const removeItemFromImport = useCallback(() => {
@@ -30,12 +33,18 @@ const SelectedImportItem = memo(function SelectedImportItem(props) {
 		</li>
 	);
 });
-SelectedImportItem.propTypes = {
-	handleRemove: func,
-	item: customPropTypes.cleanSemanticReturnType
+
+
+type SidePanelProps = {
+	selectProps: {
+		handleRemove: (value: SEnrichedItem) => void,
+		handleSelect: (value: SEnrichedItem) => void, // ? Is this here for a reason?
+		items: SEnrichedItem[],
+		resetImport: () => void
+	}
 };
 
-const SidePanel = memo(function SidePanel({ selectProps }) {
+const SidePanel = memo<SidePanelProps>(function SidePanel({ selectProps }) {
 	const { handleRemove, items, resetImport } = selectProps;
 
 	const importActive = items.length > 0;
@@ -53,13 +62,6 @@ const SidePanel = memo(function SidePanel({ selectProps }) {
 		</div>
 	);
 });
-SidePanel.propTypes = {
-	selectProps: shape({
-		handleRemove: func,
-		handleSelect: func,
-		items: arrayOf(customPropTypes.cleanSemanticReturnType),
-		resetImport: func
-	})
-};
+
 
 export default SidePanel;
