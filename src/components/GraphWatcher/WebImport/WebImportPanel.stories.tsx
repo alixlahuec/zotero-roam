@@ -1,12 +1,15 @@
+import { ComponentProps } from "react";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { Meta, Story } from "@storybook/react";
 
 import WebImportPanel from "./WebImportPanel";
-
 import { badIdentifier, citoids, goodIdentifier, libraries } from "Mocks";
 
 
 const { userLibrary } = libraries;
+
+type Props = ComponentProps<typeof WebImportPanel>;
 
 export default {
 	component: WebImportPanel,
@@ -19,9 +22,9 @@ export default {
 			typemap: {}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => <WebImportPanel {...args} />;
+const Template: Story<Props> = (args) => <WebImportPanel {...args} />;
 
 export const WithValidLink = Template.bind({});
 WithValidLink.args = {
@@ -57,7 +60,7 @@ WithInteractions.play = async({ args, canvasElement }) => {
 	});
 
 	const firstCitoid = await canvas.findByRole("listitem", { name: args.urls[0], queryFallbacks: true });
-	const citoidCheckbox = within(firstCitoid).getByRole("checkbox").nextElementSibling;
+	const citoidCheckbox = within(firstCitoid).getByRole<HTMLInputElement>("checkbox").nextElementSibling!;
 
 	await userEvent.click(citoidCheckbox);
 
@@ -79,7 +82,7 @@ WithInteractions.play = async({ args, canvasElement }) => {
 		timeout: 3000 
 	});
 
-	await expect(document.dispatchEvent.mock.calls[0][0].detail)
+	await expect((document.dispatchEvent as any).mock.calls[0][0].detail) //! FIX TYPING
 		.toEqual({
 			args: {
 				collections: [],

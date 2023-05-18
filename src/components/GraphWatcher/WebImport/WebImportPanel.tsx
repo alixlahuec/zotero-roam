@@ -1,24 +1,31 @@
-import { arrayOf, bool, func, object, string } from "prop-types";
 import { memo, useCallback } from "react";
-
 import { Button, Checkbox, Classes, Tag } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
-import { CitoidGuide } from "Components/Guide";
 import { ErrorBoundary } from "Components/Errors";
+import { CitoidGuide } from "Components/Guide";
+import { useTypemapSettings } from "Components/UserSettings";
 import ZoteroImport from "Components/ZoteroImport";
 
 import { useMulti } from "../../../hooks";
 import { useQuery_Citoid } from "../../../api/queries";
-import { useTypemapSettings } from "Components/UserSettings";
-
 import { pluralize } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
 import { AsBoolean } from "Types/helpers";
+import { CitoidAPI } from "Types/externals";
 
 
-function useGetCitoids(urls, opts = {}) {
+type WebImportItem = {
+	abstract: string,
+	creators: string,
+	itemType: CitoidAPI.AsZotero["data"]["itemType"], //! FIX TYPING
+	publication: string,
+	title: string,
+	url: string
+};
+
+function useGetCitoids(urls: string[], opts = {}) {
 	return useQuery_Citoid(urls, {
 		...opts,
 		select: (data) => {
@@ -31,13 +38,20 @@ function useGetCitoids(urls, opts = {}) {
 				publication: item.publicationTitle || item.bookTitle || item.websiteTitle || "",
 				title: item.title,
 				url: query
-			};
+			} as WebImportItem;
 		},
 		notifyOnChangeProps: ["data", "isLoading"]
 	});
 }
 
-const WebImportItem = memo(function WebImportItem(props){
+
+type WebImportItemProps = {
+	isSelected: boolean,
+	item: WebImportItem,
+	onSelect: (value: string) => void
+};
+
+const WebImportItem = memo<WebImportItemProps>(function WebImportItem(props){
 	const { isSelected, item, onSelect } = props;
 	const [typemap] = useTypemapSettings();
 
@@ -76,22 +90,24 @@ const WebImportItem = memo(function WebImportItem(props){
 		</li>
 	);
 });
-WebImportItem.propTypes = {
-	isSelected: bool,
-	item: object,
-	onSelect: func
+
+
+type WebImportPanelProps = {
+	isOpen: boolean,
+	onClose: () => void,
+	urls: string[]
 };
 
-const WebImportPanel = memo(function WebImportPanel(props){
+const WebImportPanel = memo<WebImportPanelProps>(function WebImportPanel(props){
 	const { isOpen, onClose, urls } = props;
-	const [selected, { set: setSelected, toggle: onItemSelect }] = useMulti({
+	const [selected, { set: setSelected, toggle: onItemSelect }] = useMulti<string>({
 		start: []
 	});
 	const has_selected_items = selected.length > 0;
 
 	const citoidQueries = useGetCitoids(urls, { enabled: isOpen });
 	const noQueriesLoaded = citoidQueries.every(q => q.isLoading);
-	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data);
+	const citoids = citoidQueries.filter(q => q.isSuccess).map(q => q.data).filter(AsBoolean);
 
 	const handleClose = useCallback(() => {
 		setSelected([]);
@@ -135,10 +151,6 @@ const WebImportPanel = memo(function WebImportPanel(props){
 		</AuxiliaryDialog>
 	);
 });
-WebImportPanel.propTypes = {
-	isOpen: bool,
-	onClose: func,
-	urls: arrayOf(string)
-};
+
 
 export default WebImportPanel;
