@@ -13,13 +13,13 @@ import { pluralize } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
 import { AsBoolean } from "Types/helpers";
-import { ZoteroAPI } from "Types/externals";
+import { CitoidAPI } from "Types/externals";
 
 
 type WebImportItem = {
 	abstract: string,
 	creators: string,
-	itemType: ZoteroAPI.ItemTop["data"]["itemType"],
+	itemType: CitoidAPI.AsZotero["itemType"],
 	publication: string,
 	title: string,
 	url: string
