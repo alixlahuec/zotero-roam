@@ -520,12 +520,12 @@ describe("Deleting mocked tags", () => {
 });
 
 describe("Fetching mocked Citoid data", () => {
-	function isFailure(response: Mocks.Responses.Citoid): response is Mocks.Responses.CitoidError {
+	function isFailure(response: typeof citoids[keyof typeof citoids]): response is Mocks.Responses.CitoidError {
 		return (response as Mocks.Responses.CitoidError).status !== undefined;
 	}
 
 	const { success_cases, error_cases } = Object.entries(citoids)
-		.reduce<{ success_cases: [string, Mocks.Responses.CitoidSuccess][], error_cases: [string, Mocks.Responses.CitoidError][] }>((obj, entry) => {
+		.reduce<{ success_cases: [string, Mocks.Responses.CitoidSuccess[number]][], error_cases: [string, Mocks.Responses.CitoidError][] }>((obj, entry) => {
 			const [identifier, res] = entry;
 			if (isFailure(res)) {
 				obj.error_cases.push([identifier, res]);
