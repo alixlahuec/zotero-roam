@@ -82,7 +82,7 @@ WithInteractions.play = async({ args, canvasElement }) => {
 		timeout: 3000 
 	});
 
-	await expect((document.dispatchEvent as any).mock.calls[0][0].detail) //! FIX TYPING
+	await expect((document.dispatchEvent as jest.Mock).mock.calls[0][0].detail)
 		.toEqual({
 			args: {
 				collections: [],
