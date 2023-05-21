@@ -1,20 +1,24 @@
-import { arrayOf, bool, func, shape, string } from "prop-types";
-import { useCallback, useEffect, useMemo, useRef } from "react";
-
+import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef } from "react";
 import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag, UL } from "@blueprintjs/core";
+import { MutationStatus } from "@tanstack/react-query";
 
-import { useBool ,useText } from "../../../hooks";
+import { useBool, useText } from "../../../hooks";
 import { useModifyTags } from "../../../api/write";
 
+import { ZLibrary, ZTagSuggestion } from "Types/transforms";
 
-import * as customPropTypes from "../../../propTypes";
 
+type CustomInputProps = {
+	handleChange: ChangeEventHandler<HTMLInputElement>,
+	status: MutationStatus,
+	value: string
+};
 
-function CustomInput({ handleChange, status, value }){
-	const inputField = useRef();
+function CustomInput({ handleChange, status, value }: CustomInputProps){
+	const inputField = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		inputField.current.focus();
+		inputField?.current?.focus();
 	}, []);
 
 	return <InputGroup
@@ -26,13 +30,15 @@ function CustomInput({ handleChange, status, value }){
 		value={value}
 	/>;
 }
-CustomInput.propTypes = {
-	handleChange: func,
-	status: string,
-	value: string
+
+
+type MergeAsCustomProps = {
+	disabled: boolean,
+	library: ZLibrary,
+	tags: string[]
 };
 
-function MergeAsCustom({ disabled, library, tags }){
+function MergeAsCustom({ disabled, library, tags }: MergeAsCustomProps){
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 	const [value, onValueChange] = useText("");
 	const { mutate, status } = useModifyTags();
@@ -78,13 +84,14 @@ function MergeAsCustom({ disabled, library, tags }){
 		</>
 	);
 }
-MergeAsCustom.propTypes ={
-	disabled: bool,
-	library: customPropTypes.zoteroLibraryType,
-	tags: arrayOf(string)
+
+
+type MergeAsOptionsProps = {
+	library: ZLibrary,
+	options: ZTagSuggestion["use"]
 };
 
-function MergeAsOptions({ library, options }) {
+function MergeAsOptions({ library, options }: MergeAsOptionsProps) {
 	const { roam = [], zotero = [] } = options;
 	const tagList = useMemo(() => [...roam, ...zotero], [roam, zotero]);
 	const { mutate, status } = useModifyTags();
@@ -121,12 +128,6 @@ function MergeAsOptions({ library, options }) {
 		</>
 	);
 }
-MergeAsOptions.propTypes = {
-	library: customPropTypes.zoteroLibraryType,
-	options: shape({
-		roam: arrayOf(string),
-		zotero: arrayOf(string)
-	})
-};
+
 
 export default MergeAsOptions;
