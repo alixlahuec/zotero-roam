@@ -1,16 +1,22 @@
-import { arrayOf, bool, oneOf, oneOfType, shape, string } from "prop-types";
 import { useCallback } from "react";
-
 import { Menu, MenuItem } from "@blueprintjs/core";
 
 import MergeAsOptions from "./MergeAsOptions";
+
 import { useDeleteTags } from "../../../api/write";
 
-import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
+import { ZLibrary, ZTagSuggestion } from "Types/transforms";
 
 
-function ActionsMenu({ deleteTags = true, library, mergeAs = true, suggestion }) {
+type OwnProps = {
+	deleteTags: boolean,
+	library: ZLibrary,
+	mergeAs: boolean,
+	suggestion: ZTagSuggestion
+};
+
+function ActionsMenu({ deleteTags = true, library, mergeAs = true, suggestion }: OwnProps) {
 	const { mutate, status } = useDeleteTags();
 
 	const triggerDelete = useCallback(() => {
@@ -33,18 +39,6 @@ function ActionsMenu({ deleteTags = true, library, mergeAs = true, suggestion })
 		</Menu>
 	);
 }
-ActionsMenu.propTypes = {
-	deleteTags: bool,
-	library: customPropTypes.zoteroLibraryType,
-	mergeAs: bool,
-	suggestion: shape({
-		recommend: oneOfType([string, oneOf([null])]),
-		type: oneOf(["auto", "manual", null]),
-		use: shape({
-			roam: arrayOf(string),
-			zotero: arrayOf(string)
-		})
-	})
-};
+
 
 export default ActionsMenu;

@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { ComponentProps, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
+import { Meta, Story } from "@storybook/react";
 import ActionsMenu from "./ActionsMenu";
 
 import { apiKeys, libraries } from "Mocks";
@@ -11,14 +12,16 @@ import { apiKeys, libraries } from "Mocks";
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary } = libraries;
 
+type Props = ComponentProps<typeof ActionsMenu>;
+
 export default {
 	component: ActionsMenu,
 	args: {
 		library: { apikey: masterKey, path: userLibrary.path }
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => {
+const Template: Story<Props> = (args) => {
 	const client = useQueryClient();
 
 	useEffect(() => {
@@ -62,7 +65,7 @@ Default.play = async ({ canvasElement }) => {
 	});
 
 	await expect(document.dispatchEvent).toHaveBeenCalled();
-	await expect(document.dispatchEvent.mock.calls[0][0].detail)
+	await expect((document.dispatchEvent as jest.Mock).mock.calls[0][0].detail)
 		.toEqual({
 			args: {
 				tags: ["history", "history", "HISTORY", "History"]
