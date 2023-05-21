@@ -141,7 +141,7 @@ const useQuery_Semantic = <TData = QueryDataSemantic>(
 	/** The targeted DOI */
 	doi: string,
 	/** Optional configuration to use with the queries */
-	opts: Omit<UseQueryOptions<QueryDataSemantic, unknown, TData, QueryKeySemantic>, "queryKey" | "queryFn"> = {}
+	opts: Omit<UseQueryOptions<QueryDataSemantic, Error, TData, QueryKeySemantic>, "queryKey" | "queryFn"> = {}
 ) => {
 	// Defaults for this query
 	const { cacheTime = Infinity, ...rest } = opts;

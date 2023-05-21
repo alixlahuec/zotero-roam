@@ -3,7 +3,7 @@ import { SettingsAnnotations, SettingsNotes, ZItemReferenceFormat } from "Types/
 import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
 import { RCitekeyPages, RImportableBlock, ZCleanItemPDF, ZCleanItemTop, ZEnrichedCollection, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZSimplifiedNote, ZTagDictionary, isZAnnotation, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
-import { SCleanItem, SEnrichedItem, SRelatedEntries } from "Types/transforms/semantic";
+import { SCleanItem, SEnrichedItem, SEnrichedItemCitation, SEnrichedItemReference, SEnrichedItemTypeEnum, SRelatedEntries, isSBacklink } from "Types/transforms/semantic";
 
 
 /** Converts a string from camelCase to Title Case
@@ -277,26 +277,26 @@ function cleanSemantic(
 	// * Note: DOIs from the Semantic Scholar queries are sanitized at fetch
 	const { citations = [], references = [] } = semantic;
 
-	const clean_citations: SEnrichedItem[] = citations.map((cit) => {
+	const clean_citations: SEnrichedItemCitation[] = citations.map((cit) => {
 		const cleanProps = matchSemanticEntry(cit, { items: itemsWithDOIs, pdfs, notes }, roamCitekeys);
 		return {
 			...cleanProps,
-			_type: "citing"
+			_type: SEnrichedItemTypeEnum.CITING
 		};
 	});
 
-	const clean_references: SEnrichedItem[] = references.map((ref) => {
+	const clean_references: SEnrichedItemReference[] = references.map((ref) => {
 		const cleanProps = matchSemanticEntry(ref, { items: itemsWithDOIs, pdfs, notes }, roamCitekeys);
 		return {
 			...cleanProps,
-			_type: "cited"
+			_type: SEnrichedItemTypeEnum.CITED
 		};
 	});
 
 	return {
 		citations: clean_citations,
 		references: clean_references,
-		backlinks: [...clean_references, ...clean_citations].filter(item => item.inLibrary)
+		backlinks: [...clean_references, ...clean_citations].filter(isSBacklink)
 	};
 }
 
@@ -686,7 +686,7 @@ function getWebLink(item: ZItemTop, { format = "markdown", text = "Web library" 
  * @see https://stackoverflow.com/questions/51958759/how-can-i-test-the-equality-of-two-nodelists
  * @returns `true` if the NodeList has changed ; `false` otherwise
  */
-function hasNodeListChanged(prev: NodeList, current: NodeList): boolean {
+function hasNodeListChanged(prev: ArrayLike<Element>, current: ArrayLike<Element>): boolean {
 	const arrPrev = Array.from(prev);
 	const arrCurrent = Array.from(current);
 	return (arrPrev.length + arrCurrent.length) != 0 && (arrPrev.length !== arrCurrent.length || arrPrev.some((el, i) => el !== arrCurrent[i]));
@@ -1201,7 +1201,7 @@ function sortCollections(arr: ZoteroAPI.Collection[]): ZEnrichedCollection[] {
 /** Sorts an array of objects on a given string key, in A-Z order
  * @returns The sorted array
  */
-function sortElems(arr: Record<string, any>[], sort: string) {
+function sortElems<T extends Record<string, any>[]>(arr: T, sort: string) {
 	return arr.sort((a, b) => (`${a[sort]}`.toLowerCase() < `${b[sort]}`.toLowerCase()) ? -1 : 1);
 }
 

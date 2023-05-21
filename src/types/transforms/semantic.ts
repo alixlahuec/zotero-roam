@@ -1,5 +1,4 @@
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "./zotero";
-import { ZoteroAPI } from "Types/externals";
 
 
 type SLinkType = "arxiv" | "connected-papers" | "google-scholar" | "semantic-scholar";
@@ -36,17 +35,37 @@ export interface SCleanRelatedItem {
 	title: string
 }
 
-export interface SEnrichedItem extends SCleanItem {
-	inGraph: false | string,
-	inLibrary: false | {
-		children: { notes: (ZoteroAPI.ItemAnnotation | ZoteroAPI.ItemNote)[], pdfs: ZoteroAPI.ItemAttachment[] },
-		raw: ZoteroAPI.ItemTop
-	},
-	_type?: "citing" | "cited"
+export enum SEnrichedItemTypeEnum {
+	CITED = "cited",
+	CITING = "citing"
 }
 
+interface SEnrichedItemBase extends SCleanItem {
+	inGraph: false | string,
+	_type?: SEnrichedItemTypeEnum
+}
+
+export interface SEnrichedItemInLibrary extends SEnrichedItemBase {
+	inLibrary: {
+		children: { notes: (ZItemAnnotation | ZItemNote)[], pdfs: ZItemAttachment[] },
+		raw: ZItemTop
+	}
+}
+
+interface SEnrichedItemOutsideLibrary extends SEnrichedItemBase {
+	inLibrary: false
+}
+
+type SEnrichedItemWithLibrary = SEnrichedItemInLibrary | SEnrichedItemOutsideLibrary;
+export type SEnrichedItemCitation = SEnrichedItemWithLibrary /*& { _type: SEnrichedItemTypeEnum.CITING }*/
+export type SEnrichedItemReference = SEnrichedItemWithLibrary /*& { _type: SEnrichedItemTypeEnum.CITED }*/
+export type SEnrichedItem = SEnrichedItemCitation | SEnrichedItemReference;
+export const isSBacklink = (item: SEnrichedItem): item is SEnrichedItemInLibrary => item.inLibrary != false;
+export const isSCitation = (item: SEnrichedItem): item is SEnrichedItemCitation => item._type == SEnrichedItemTypeEnum.CITING;
+export const isSReference = (item: SEnrichedItem): item is SEnrichedItemReference => item._type == SEnrichedItemTypeEnum.CITED;
+
 export interface SRelatedEntries {
-	citations: SEnrichedItem[],
-	references: SEnrichedItem[],
-	backlinks: SEnrichedItem[]
+	citations: SEnrichedItemCitation[],
+	references: SEnrichedItemReference[],
+	backlinks: SEnrichedItemInLibrary[]
 }

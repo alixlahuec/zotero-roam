@@ -129,8 +129,9 @@ export namespace ZoteroAPI {
 			 * @example "application/pdf"
 			 */
 			contentType: string,
-			parentItem: string
-		} & Record<string, any>
+			parentItem: string,
+			[x: string]: any
+		}
 	}
 
 	export interface ItemNote extends Base {
@@ -142,21 +143,16 @@ export namespace ZoteroAPI {
 
 	export interface ItemTop extends Base {
 		data: ItemDataBase<ItemTopType> & {
-			abstractNote?: string,
-			bookTitle?: string,
 			collections: string[],
 			creators: Creator[],
-			DOI?: string,
 			extra: string,
-			publicationTitle?: string,
-			title: string,
-			university?: string,
-			url?: string
-		} & Record<string, any>,
+			title: string
+		} & { [P in _ItemTopDataFields]?: any },
 		meta: {
 			creatorSummary: string,
 			numChildren: number,
-			parsedDate: string
+			parsedDate: string,
+			[x: string]: any
 		} & Record<string, any>
 	}
 
@@ -334,3 +330,115 @@ type _ItemTopType =
 	| "tvBroadcast"
 	| "videoRecording"
 	| "webpage";
+
+type _ItemTopDataFields =
+	| "numPages"
+	| "numberOfVolumes"
+	| "abstractNote"
+	| "accessDate"
+	| "applicationNumber"
+	| "archive"
+	| "archiveID"
+	| "artworkSize"
+	| "assignee"
+	| "billNumber"
+	| "blogTitle"
+	| "bookTitle"
+	| "callNumber"
+	| "caseName"
+	| "citationKey"
+	| "code"
+	| "codeNumber"
+	| "codePages"
+	| "codeVolume"
+	| "committee"
+	| "company"
+	| "conferenceName"
+	| "country"
+	| "court"
+	| "DOI"
+	| "date"
+	| "dateDecided"
+	| "dateEnacted"
+	| "dictionaryTitle"
+	| "distributor"
+	| "docketNumber"
+	| "documentNumber"
+	| "edition"
+	| "encyclopediaTitle"
+	| "episodeNumber"
+	| "extra"
+	| "audioFileType"
+	| "filingDate"
+	| "firstPage"
+	| "videoRecordingFormat"
+	| "audioRecordingFormat"
+	| "format"
+	| "forumTitle"
+	| "genre"
+	| "history"
+	| "ISBN"
+	| "ISSN"
+	| "identifier"
+	| "institution"
+	| "issue"
+	| "issueDate"
+	| "issuingAuthority"
+	| "journalAbbreviation"
+	| "label"
+	| "language"
+	| "legalStatus"
+	| "legislativeBody"
+	| "libraryCatalog"
+	| "archiveLocation"
+	| "artworkMedium"
+	| "interviewMedium"
+	| "meetingName"
+	| "nameOfAct"
+	| "network"
+	| "number"
+	| "organization"
+	| "pages"
+	| "patentNumber"
+	| "place"
+	| "postType"
+	| "priorityNumbers"
+	| "proceedingsTitle"
+	| "programmingLanguage"
+	| "programTitle"
+	| "publicLawNumber"
+	| "publicationTitle"
+	| "publisher"
+	| "references"
+	| "repositoryLocation"
+	| "reportNumber"
+	| "reportType"
+	| "reporter"
+	| "reporterVolume"
+	| "repository"
+	| "rights"
+	| "runningTime"
+	| "scale"
+	| "section"
+	| "series"
+	| "seriesNumber"
+	| "seriesText"
+	| "seriesTitle"
+	| "session"
+	| "shortTitle"
+	| "status"
+	| "studio"
+	| "subject"
+	| "system"
+	| "letterType"
+	| "manuscriptType"
+	| "mapType"
+	| "thesisType"
+	| "presentationType"
+	| "type"
+	| "url"
+	| "university"
+	| "versionNumber"
+	| "volume"
+	| "websiteTitle"
+	| "websiteType";
