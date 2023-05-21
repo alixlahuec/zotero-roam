@@ -25,7 +25,7 @@ const staticProps: Partial<SelectorProps> & Pick<SelectorProps, "itemRenderer"> 
 type OwnProps = {
 	libProps: {
 		currentLibrary: ZLibrary,
-		onSelect: () => void,
+		onSelect: (value: string) => void,
 		options: string[]
 	}
 };
@@ -50,4 +50,5 @@ const LibrarySelect = memo<OwnProps>(function LibrarySelect({ libProps }){
 });
 
 
+export type LibrarySelectProps = OwnProps;
 export default LibrarySelect;

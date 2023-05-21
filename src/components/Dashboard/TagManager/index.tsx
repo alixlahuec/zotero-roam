@@ -1,22 +1,23 @@
-import { arrayOf, func, objectOf, shape, string } from "prop-types";
 import { useCallback, useMemo, useState } from "react";
-
 import { Spinner, Tab, Tabs } from "@blueprintjs/core";
 
 import { ErrorBoundary, NoWriteableLibraries } from "Components/Errors";
 import { useRequestsSettings } from "Components/UserSettings";
-import LibrarySelect from "../LibrarySelect";
+import LibrarySelect, { LibrarySelectProps } from "../LibrarySelect";
 import TagsDatalist from "./TagsDatalist";
 
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 
-import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
-
+import { ZLibrary, ZTagList } from "Types/transforms";
 import "./index.css";
 
 
-function TagLists({ items, libProps }){
+type TagListsProps = {
+	items: ZTagList | undefined
+} & Pick<LibrarySelectProps, "libProps">;
+
+function TagLists({ items, libProps }: TagListsProps){
 	const [activeTab, setActiveTab] = useState("suggestions");
 	const selectTab = useCallback((newtab, _prevtab, _event) => setActiveTab(newtab), []);
   
@@ -29,27 +30,23 @@ function TagLists({ items, libProps }){
 			renderActiveTabPanelOnly={false}
 			selectedTabId={activeTab} >
 			<Tab id="suggestions" title="Suggestions" 
-				panel={<TagsDatalist filter="suggestions" items={items} libProps={libProps} />} 
+				panel={<TagsDatalist filter="suggestions" items={items} library={libProps.currentLibrary} />} 
 			/>
 			<Tab id="all-items" title="All tags" 
-				panel={<TagsDatalist filter="all" items={items} libProps={libProps} />} 
+				panel={<TagsDatalist filter="all" items={items} library={libProps.currentLibrary} />} 
 			/>
 			<Tabs.Expander />
 			<LibrarySelect libProps={libProps} />
 		</Tabs>
 	);
 }
-TagLists.propTypes = {
-	items: objectOf(arrayOf(customPropTypes.taglistEntry)),
-	libProps: shape({
-		currentLibrary: customPropTypes.zoteroLibraryType,
-		onSelect: func,
-		options: arrayOf(string)
-	}),
-	onClose: func
+
+
+type TabContentsProps = {
+	libraries: ZLibrary[]
 };
 
-function TabContents({ libraries }){
+function TabContents({ libraries }: TabContentsProps){
 	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);
 
 	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
@@ -58,7 +55,7 @@ function TabContents({ libraries }){
 	})[0];
 	
 	const libOptions = useMemo(() => libraries.map(lib => lib.path), [libraries]);
-	const handleLibrarySelect = useCallback((path) => setSelectedLibrary(libraries.find(lib => lib.path == path)), [libraries]);
+	const handleLibrarySelect = useCallback((path) => setSelectedLibrary(libraries.find(lib => lib.path == path)!), [libraries]);
 	const libProps = useMemo(() => {
 		return {
 			currentLibrary: selectedLibrary,
@@ -69,13 +66,11 @@ function TabContents({ libraries }){
 
 	return <div>
 		{isLoading
-			? <Spinner title="Loading tags..." />
+			? <Spinner />
 			: <TagLists items={data} libProps={libProps} /> }
 	</div>;
 }
-TabContents.propTypes = {
-	libraries: arrayOf(customPropTypes.zoteroLibraryType)
-};
+
 
 function TagManager(){
 	const [{ libraries }] = useRequestsSettings();
@@ -83,7 +78,7 @@ function TagManager(){
 
 	return <ErrorBoundary>
 		{isLoading
-			? <Spinner title="Loading libraries..." />
+			? <Spinner />
 			: writeableLibraries.length == 0
 				? <NoWriteableLibraries />
 				: <TabContents libraries={writeableLibraries} />}

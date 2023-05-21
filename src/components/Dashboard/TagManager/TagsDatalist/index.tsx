@@ -26,15 +26,11 @@ const sortOptions: SortOption[] = [
 
 type OwnProps = {
 	filter: "all" | "suggestions",
-	items: ZTagList,
-	libProps: {
-		currentLibrary: ZLibrary,
-		onSelect: () => void,
-		options: string[]
-	}
+	items: ZTagList | undefined,
+	library: ZLibrary
 };
 
-const TagsDatalist = memo<OwnProps>(function TagsDatalist({ filter, items, libProps }){
+const TagsDatalist = memo<OwnProps>(function TagsDatalist({ filter, items, library }){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [sortBy, setSortBy] = useState<TagsSortBy>("usage");
 	const [matchedTags, setMatchedTags] = useState<ZTagEntry[]>();
@@ -90,8 +86,8 @@ const TagsDatalist = memo<OwnProps>(function TagsDatalist({ filter, items, libPr
 								.slice(...pageLimits)
 								.map(el =>
 									filter == "suggestions" 
-										? <ItemSuggestion key={el.token} entry={el} library={libProps.currentLibrary} /> 
-										: <ItemEntry key={el.token} entry={el} library={libProps.currentLibrary} />)}
+										? <ItemSuggestion key={el.token} entry={el} library={library} /> 
+										: <ItemEntry key={el.token} entry={el} library={library} />)}
 						</ListWrapper>
 					}
 				</div>
