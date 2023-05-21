@@ -1,14 +1,16 @@
-import { number, shape } from "prop-types";
 import { memo } from "react";
-
 import { ProgressBar } from "@blueprintjs/core";
 
 import { CustomClasses } from "../../../../constants";
-
+import { ZTagStats } from "Types/transforms";
 import "./index.css";
 
 
-const Stats = memo(function Stats({ stats }){
+type OwnProps = {
+	stats: ZTagStats
+};
+
+const Stats = memo<OwnProps>(function Stats({ stats }){
 	if(!stats){
 		return null;
 	} else {
@@ -35,13 +37,6 @@ const Stats = memo(function Stats({ stats }){
 		);
 	}
 });
-Stats.propTypes = {
-	stats: shape({
-		nAuto: number,
-		nRoam: number,
-		nTags: number,
-		nTotal: number
-	})
-};
+
 
 export default Stats;
