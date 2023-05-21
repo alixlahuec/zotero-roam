@@ -124,14 +124,29 @@ export type ZTagStats = {
 	nTotal: number
 };
 
-export type ZTagSuggestion = {
-	recommend: string | null,
-	type: "auto" | "manual" | null,
+export type ZTagSuggestionBase = {
 	use: {
 		roam: string[],
 		zotero: string[]
 	}
 };
+
+export type ZTagSuggestionAuto = {
+	recommend: string,
+	type: "auto"
+} & ZTagSuggestionBase;
+
+export type ZTagSuggestionManual = {
+	recommend: string | null,
+	type: "manual"
+} & ZTagSuggestionBase;
+
+export type ZTagSuggestionNone = {
+	recommend: string | null,
+	type: null
+} & ZTagSuggestionBase;
+
+export type ZTagSuggestion = ZTagSuggestionAuto | ZTagSuggestionManual | ZTagSuggestionNone;
 
 export type ZLinkType = "local" | "web";
 export type ZLinkOptions = {

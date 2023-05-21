@@ -1,6 +1,4 @@
-import { arrayOf, oneOf, oneOfType, shape, string } from "prop-types";
 import { useCallback, useMemo } from "react";
-
 import { Button, ButtonGroup, Menu } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
@@ -8,16 +6,19 @@ import ActionsMenu from "../ActionsMenu";
 import MergeAsOptions from "../MergeAsOptions";
 
 import { useModifyTags } from "../../../../api/write";
-
 import { makeSuggestionFor } from "../utils";
 
-import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
-
+import { ZLibrary, ZTagEntry, ZTagSuggestionAuto, ZTagSuggestionManual } from "Types/transforms";
 import "./index.css";
 
 
-function AutoMerge({ library, suggestion }){
+type AutoMergeProps = {
+	library: ZLibrary,
+	suggestion: ZTagSuggestionAuto
+};
+
+function AutoMerge({ library, suggestion }: AutoMergeProps){
 	const { recommend, use } = suggestion;
 	const { mutate, status } = useModifyTags();
 
@@ -58,19 +59,14 @@ function AutoMerge({ library, suggestion }){
 		{...buttonProps}
 	/>;
 }
-AutoMerge.propTypes = {
-	library: customPropTypes.zoteroLibraryType,
-	suggestion: shape({
-		recommend: oneOfType([string, oneOf([null])]),
-		type: oneOf(["auto", "manual", null]),
-		use: shape({
-			roam: arrayOf(string),
-			zotero: arrayOf(string)
-		})
-	})
+
+
+type ManualMergeProps = {
+	library: ZLibrary,
+	suggestion: ZTagSuggestionManual
 };
 
-function ManualMerge({ library, suggestion }){
+function ManualMerge({ library, suggestion }: ManualMergeProps){
 	return <Popover2
 		content={<Menu><MergeAsOptions library={library} options={suggestion.use} /></Menu>}
 		interactionKind="click"
@@ -79,19 +75,14 @@ function ManualMerge({ library, suggestion }){
 		<Button className={["zr-tag-suggestion--merge-as", CustomClasses.TEXT_SMALL].join(" ")} rightIcon="caret-down" text="Merge as ..." />
 	</Popover2>;
 }
-ManualMerge.propTypes = {
-	library: customPropTypes.zoteroLibraryType,
-	suggestion: shape({
-		recommend: oneOfType([string, oneOf([null])]),
-		type: oneOf(["auto", "manual", null]),
-		use: shape({
-			roam: arrayOf(string),
-			zotero: arrayOf(string)
-		})
-	})
+
+
+type SuggestProps = {
+	entry: ZTagEntry,
+	library: ZLibrary
 };
 
-function Suggest({ entry, library }){
+function Suggest({ entry, library }: SuggestProps){
 	const suggestion = makeSuggestionFor(entry);
 	switch(suggestion.type){
 	case "auto":
@@ -113,9 +104,6 @@ function Suggest({ entry, library }){
 		return null;
 	}
 }
-Suggest.propTypes = {
-	entry: customPropTypes.taglistEntry,
-	library: customPropTypes.zoteroLibraryType
-};
+
 
 export default Suggest;
