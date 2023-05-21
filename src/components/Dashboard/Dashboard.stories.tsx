@@ -1,8 +1,12 @@
+import { ComponentProps } from "react";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
+import { Meta, Story } from "@storybook/react";
 
 import Dashboard from ".";
 
+
+type Props = ComponentProps<typeof Dashboard>;
 
 export default {
 	component: Dashboard,
@@ -26,9 +30,9 @@ export default {
 			typemap: {}
 		}
 	}
-};
+} as Meta<Props>;
 
-const Template = (args) => <Dashboard {...args} />;
+const Template: Story<Props> = (args) => <Dashboard {...args} />;
 
 export const Default = Template.bind({});
 Default.parameters = {
