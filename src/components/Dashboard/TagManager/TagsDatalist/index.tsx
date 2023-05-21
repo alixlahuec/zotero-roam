@@ -1,30 +1,44 @@
-import { arrayOf, func, objectOf, oneOf, shape, string } from "prop-types";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-
 import { NonIdealState, Spinner } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
+import SortButtons, { SortOption } from "Components/DataList/SortButtons";
 import ItemEntry from "./ItemEntry";
 import ItemSuggestion from "./ItemSuggestion";
-import SortButtons from "Components/DataList/SortButtons";
 import Stats from "../Stats";
 
-import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
+import { TagsSortBy, getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
 import { usePagination } from "../../../../hooks";
 
-import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
-
+import { ZLibrary, ZTagEntry, ZTagList, ZTagStats } from "Types/transforms";
 import "./index.css";
 
 
 const itemsPerPage = 30;
 
-const TagsDatalist = memo(function TagsDatalist({ filter, items, libProps }){
+const sortOptions: SortOption[] = [
+	{ icon: "sort-desc", label: "Most Used", value: "usage" },
+	{ icon: "sort-alphabetical", label: "Name", value: "alphabetical" },
+	{ icon: "star", label: "In Roam", value: "roam" }
+];
+
+
+type OwnProps = {
+	filter: "all" | "suggestions",
+	items: ZTagList,
+	libProps: {
+		currentLibrary: ZLibrary,
+		onSelect: () => void,
+		options: string[]
+	}
+};
+
+const TagsDatalist = memo<OwnProps>(function TagsDatalist({ filter, items, libProps }){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
-	const [sortBy, setSortBy] = useState("usage");
-	const [matchedTags, setMatchedTags] = useState(null);
-	const [stats, setStats] = useState(null);
+	const [sortBy, setSortBy] = useState<TagsSortBy>("usage");
+	const [matchedTags, setMatchedTags] = useState<ZTagEntry[]>();
+	const [stats, setStats] = useState<ZTagStats>();
 
 	useEffect(() => {
 		if(items) {
@@ -37,13 +51,13 @@ const TagsDatalist = memo(function TagsDatalist({ filter, items, libProps }){
 		}
 	}, [items, setCurrentPage]);
 
-	const filteredItems = useMemo(() => {
+	const filteredItems = useMemo<ZTagEntry[]>(() => {
 		if(!matchedTags){
 			return [];
 		} else {
 			if(filter == "suggestions"){
 				return matchedTags.filter(el => !isSingleton(el));
-			} else if(filter == "all"){
+			} else {
 				return matchedTags;
 			}
 		}
@@ -53,18 +67,12 @@ const TagsDatalist = memo(function TagsDatalist({ filter, items, libProps }){
 		setSortBy(() => value);
 		setCurrentPage(1);
 	}, [setCurrentPage]);
-    
-	const sortOptions = useMemo(() => [
-		{ icon: "sort-desc", label: "Most Used", value: "usage" },
-		{ icon: "sort-alphabetical", label: "Name", value: "alphabetical" },
-		{ icon: "star", label: "In Roam", value: "roam" }
-	], []);
 
 	const sortedItems = useMemo(() => sortTags(filteredItems, sortBy), [filteredItems, sortBy]);
 
 	return (
 		matchedTags == null
-			? <Spinner size={15} title="Loading tags data..." />
+			? <Spinner size={15} />
 			: <div className="zr-tagmanager--datalist" >
 				<Toolbar>
 					<SortButtons name={"zr-tagmanager-sort-" + filter} onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
@@ -91,14 +99,6 @@ const TagsDatalist = memo(function TagsDatalist({ filter, items, libProps }){
 			</div>
 	);
 });
-TagsDatalist.propTypes = {
-	filter: oneOf(["all", "suggestions"]),
-	items: objectOf(arrayOf(customPropTypes.taglistEntry)),
-	libProps: shape({
-		currentLibrary: customPropTypes.zoteroLibraryType,
-		onSelect: func,
-		options: arrayOf(string)
-	})
-};
+
 
 export default TagsDatalist;

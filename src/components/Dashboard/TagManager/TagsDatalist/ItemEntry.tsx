@@ -1,5 +1,4 @@
 import { memo } from "react";
-
 import { Icon } from "@blueprintjs/core";
 
 import ActionsMenu from "../ActionsMenu";
@@ -10,11 +9,16 @@ import ZoteroTag from "./ZoteroTag";
 import { getTagUsage, isSingleton, makeSuggestionFor } from "../utils";
 import { pluralize } from "../../../../utils";
 
-import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
+import { ZLibrary, ZTagEntry } from "Types/transforms";
 
 
-const ItemEntry = memo(function ItemEntry({ entry, library }){
+type OwnProps = {
+	entry: ZTagEntry,
+	library: ZLibrary
+};
+
+const ItemEntry = memo<OwnProps>(function ItemEntry({ entry, library }){
 	const is_singleton = isSingleton(entry);
 	const suggestion = makeSuggestionFor(entry);
 	const usage = getTagUsage(entry);
@@ -43,9 +47,6 @@ const ItemEntry = memo(function ItemEntry({ entry, library }){
 		</ListItem>
 	);
 });
-ItemEntry.propTypes = {
-	entry: customPropTypes.taglistEntry,
-	library: customPropTypes.zoteroLibraryType
-};
+
 
 export default ItemEntry;

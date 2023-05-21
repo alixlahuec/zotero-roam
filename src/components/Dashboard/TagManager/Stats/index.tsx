@@ -7,7 +7,7 @@ import "./index.css";
 
 
 type OwnProps = {
-	stats: ZTagStats
+	stats?: ZTagStats
 };
 
 const Stats = memo<OwnProps>(function Stats({ stats }){

@@ -126,7 +126,7 @@ function matchTagData(tagList: ZTagList): Promise<ZTagEntry[]>{
 	});
 }
 
-type TagsSortBy = "alphabetical" | "roam" | "usage";
+export type TagsSortBy = "alphabetical" | "roam" | "usage";
 
 /** Sorts Zotero tags */
 function sortTags(tagList: ZTagEntry[], by: TagsSortBy = "alphabetical"){

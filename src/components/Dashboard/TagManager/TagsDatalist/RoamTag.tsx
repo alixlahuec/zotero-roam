@@ -1,9 +1,12 @@
-import { string } from "prop-types";
-
 import { Tag } from "@blueprintjs/core";
 
 
-function RoamTag({ text, uid = null }){
+type OwnProps = {
+	text: string,
+	uid: string | null
+};
+
+function RoamTag({ text, uid = null }: OwnProps){
 	return (
 		<Tag 
 			active={true}
@@ -15,9 +18,6 @@ function RoamTag({ text, uid = null }){
 		</Tag>
 	);
 }
-RoamTag.propTypes = {
-	text: string,
-	uid: string
-};
+
 
 export default RoamTag;

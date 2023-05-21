@@ -6,7 +6,7 @@ import { CustomClasses } from "../../../constants";
 import "./index.css";
 
 
-type SortOption = {
+export type SortOption = {
 	icon?: IconName | null,
 	label: string,
 	value: string

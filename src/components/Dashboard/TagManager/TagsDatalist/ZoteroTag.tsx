@@ -1,9 +1,12 @@
 import { Tag } from "@blueprintjs/core";
+import { ZoteroAPI } from "Types/externals";
 
-import * as customPropTypes from "../../../../propTypes";
 
+type OwnProps = {
+	tagElement: ZoteroAPI.Tag
+};
 
-function ZoteroTag({ tagElement }){
+function ZoteroTag({ tagElement }: OwnProps){
 	const { tag, meta: { numItems, type = 0 } } = tagElement;
 
 	return (
@@ -17,8 +20,6 @@ function ZoteroTag({ tagElement }){
 		</Tag>
 	);
 }
-ZoteroTag.propTypes = {
-	tagElement: customPropTypes.zoteroTagType
-};
+
 
 export default ZoteroTag;

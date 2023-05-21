@@ -1,5 +1,4 @@
 import { memo } from "react";
-
 import { Icon, Tag } from "@blueprintjs/core";
 
 import { ListItem } from "Components/DataList";
@@ -7,11 +6,16 @@ import Suggest from "../Suggest";
 
 import { pluralize } from "../../../../utils";
 
-import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
+import { ZLibrary, ZTagEntry } from "Types/transforms";
 
 
-const ItemSuggestion = memo(function ItemSuggestion({ entry, library }){
+type OwnProps = {
+	entry: ZTagEntry,
+	library: ZLibrary
+};
+
+const ItemSuggestion = memo<OwnProps>(function ItemSuggestion({ entry, library }){
 
 	return (
 		<ListItem className="zr-tag-suggestion" data-token={entry.token} in-graph={(entry.roam.length > 0).toString()}>
@@ -37,9 +41,6 @@ const ItemSuggestion = memo(function ItemSuggestion({ entry, library }){
 		</ListItem>
 	);
 });
-ItemSuggestion.propTypes = {
-	entry: customPropTypes.taglistEntry,
-	library: customPropTypes.zoteroLibraryType
-};
+
 
 export default ItemSuggestion;
