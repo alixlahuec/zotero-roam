@@ -10,9 +10,9 @@ import { ZLibrary, ZTagSuggestion } from "Types/transforms";
 
 
 type OwnProps = {
-	deleteTags: boolean,
+	deleteTags?: boolean,
 	library: ZLibrary,
-	mergeAs: boolean,
+	mergeAs?: boolean,
 	suggestion: ZTagSuggestion
 };
 
