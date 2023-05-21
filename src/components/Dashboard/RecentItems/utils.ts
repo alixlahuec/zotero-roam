@@ -10,7 +10,7 @@ import { ZDataViewContents, ZLibraryContents, ZLogItem } from "Types/transforms"
  * @returns The categorized list of items
  */
 function makeLogFromItems(itemList: ZLibraryContents, asRecentAs = 7){
-	return new Promise((resolve) => {
+	return new Promise<ZDataViewContents>((resolve) => {
 		setTimeout(() => {
 			const { items = [], pdfs = [], notes =[] } = itemList;
 			const citPages = getCitekeyPagesWithEditTime();

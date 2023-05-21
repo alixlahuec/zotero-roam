@@ -1,17 +1,21 @@
-import { bool, func, string } from "prop-types";
 import { memo, useEffect } from "react";
 import { Button } from "@blueprintjs/core";
 
 import CitekeyPopover from "Components/CitekeyPopover";
 import { ListItem } from "Components/DataList";
+
 import { useBool } from "../../../hooks";
 
 import { CustomClasses } from "../../../constants";
+import { ZLogItem } from "Types/transforms";
 
-import * as customPropTypes from "../../../propTypes";
 
+type AbstractProps = {
+	abstract: string,
+	allAbstractsShown: boolean
+};
 
-function Abstract({ abstract, allAbstractsShown }){
+function Abstract({ abstract, allAbstractsShown }: AbstractProps){
 	const [isVisible, { set: setVisible, toggle: toggleAbstract }] = useBool(allAbstractsShown);
 	
 	useEffect(() => {
@@ -38,12 +42,15 @@ function Abstract({ abstract, allAbstractsShown }){
 		);
 	}
 }
-Abstract.propTypes = {
-	abstract: string,
-	allAbstractsShown: bool
+
+
+type LogItemProps = {
+	allAbstractsShown: boolean,
+	item: ZLogItem,
+	onClose: () => void
 };
 
-const LogItem = memo(function LogItem({ allAbstractsShown, item, onClose }){
+const LogItem = memo<LogItemProps>(function LogItem({ allAbstractsShown, item, onClose }){
 	const { abstract, children, inGraph, itemType, meta, publication, raw, title } = item;
 
 	return <ListItem className="zr-log-entry" data-in-graph={(inGraph != false).toString()}>
@@ -58,10 +65,6 @@ const LogItem = memo(function LogItem({ allAbstractsShown, item, onClose }){
 		<Abstract abstract={abstract} allAbstractsShown={allAbstractsShown} />
 	</ListItem>;
 });
-LogItem.propTypes = {
-	allAbstractsShown: bool,
-	item: customPropTypes.cleanRecentItemType,
-	onClose: func
-};
+
 
 export default LogItem;
