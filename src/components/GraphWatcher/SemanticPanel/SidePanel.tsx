@@ -38,7 +38,6 @@ const SelectedImportItem = memo<SelectedImportItemProps>(function SelectedImport
 type SidePanelProps = {
 	selectProps: {
 		handleRemove: (value: SEnrichedItem) => void,
-		handleSelect: (value: SEnrichedItem) => void, // ? Is this here for a reason?
 		items: SEnrichedItem[],
 		resetImport: () => void
 	}
