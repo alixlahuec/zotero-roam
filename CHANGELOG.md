@@ -1,6 +1,8 @@
 ## Changelog
 
-### [0.7.15](https://github.com/alixlahuec/zotero-roam/compare/0.7.14...0.7.15) - 
+### [0.7.16](https://github.com/alixlahuec/zotero-roam/compare/0.7.15...0.7.16) - 
+
+### [0.7.15](https://github.com/alixlahuec/zotero-roam/compare/0.7.14...0.7.15) -  2023-05-14 
 
 ### [0.7.14](https://github.com/alixlahuec/zotero-roam/compare/0.7.13...0.7.14) -  2023-04-08 
 
