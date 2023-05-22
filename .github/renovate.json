@@ -53,6 +53,7 @@
 			"@storybook/addon-interactions",
 			"@storybook/addon-links",
 			"@storybook/cli",
+			"@storybook/react",
 			"@storybook/react-webpack5"
 		]
 	}
