@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import NotesImport from "Components/NotesImport";
@@ -31,7 +31,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	return <AuxiliaryDialog className="import-item-notes" isOpen={true} label="Import notes">
 		<NotesImport {...args} />
 	</AuxiliaryDialog>;

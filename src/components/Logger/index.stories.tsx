@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { expect } from "@storybook/jest";
 import { userEvent, within } from "@storybook/testing-library";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import Logger from ".";
 import ZoteroRoam, { ZoteroRoamLog } from "../../extension";
@@ -17,7 +17,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	window.zoteroRoam = {
 		logs: [
 			new ZoteroRoamLog({

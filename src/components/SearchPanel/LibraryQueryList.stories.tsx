@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import LibraryQueryList from "./LibraryQueryList";
 
 import { useBool } from "../../hooks";
@@ -33,7 +33,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const [qcActive, { toggle: toggleQC }] = useBool(false);
 
 	return <LibraryQueryList {...args} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} items={cleanItems} />;

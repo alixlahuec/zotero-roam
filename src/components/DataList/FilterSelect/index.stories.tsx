@@ -2,7 +2,7 @@ import { ComponentProps } from "react";
 
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { useFilterList } from "../../../hooks";
 import FilterSelect from ".";
@@ -14,7 +14,7 @@ export default {
 	component: FilterSelect
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const [filterList, toggleFilter] = useFilterList(args.options);
 
 	return <FilterSelect options={filterList} toggleFilter={toggleFilter} />;

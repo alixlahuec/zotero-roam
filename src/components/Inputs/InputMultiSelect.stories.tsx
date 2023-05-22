@@ -1,5 +1,5 @@
 import { useState, ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { InputMultiSelect } from ".";
 
@@ -17,7 +17,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const { value: valueFromArgs, setValue: setFromArgs, ...argList } = args;
 	const [selected, setSelected] = useState(valueFromArgs || []);
 	return <InputMultiSelect value={selected} setValue={setSelected} {...argList} />;

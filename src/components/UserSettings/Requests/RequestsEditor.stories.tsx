@@ -1,7 +1,7 @@
 import { ComponentProps, useState } from "react";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, within } from "@storybook/testing-library";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import RequestsEditor from "./RequestsEditor";
 import { analyzeUserRequests } from "../../../setup";
@@ -23,7 +23,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const { dataRequests, ...rest } = args;
 	const [requests, setRequests] = useState(() => analyzeUserRequests(dataRequests));
 	return <RequestsEditor {...rest} dataRequests={requests.dataRequests} updateRequests={setRequests} />;

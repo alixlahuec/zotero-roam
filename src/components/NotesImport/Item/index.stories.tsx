@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 import { Classes } from "@blueprintjs/core";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import NotesImportItem from "Components/NotesImport/Item";
 import { useBool } from "../../../hooks";
@@ -13,7 +13,7 @@ export default {
 	component: NotesImportItem
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const [isSelected, { toggle }] = useBool(args.isSelected || false);
 
 	return <ul className={Classes.LIST_UNSTYLED}>

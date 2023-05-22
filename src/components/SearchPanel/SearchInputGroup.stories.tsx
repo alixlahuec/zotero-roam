@@ -2,7 +2,7 @@ import { ComponentProps, useRef } from "react";
 import { HotkeysProvider } from "@blueprintjs/core";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import SearchInputGroup from "./SearchInputGroup";
 import { useBool } from "../../hooks";
@@ -31,7 +31,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const searchbar = useRef<HTMLInputElement>(null);
 	const [qcActive, { toggle: toggleQC }] = useBool(false);
 

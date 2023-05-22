@@ -1,5 +1,5 @@
 import { ComponentProps, useRef } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { CitekeyContextMenu, useGetItems } from ".";
 import { useRequestsSettings } from "Components/UserSettings";
@@ -41,7 +41,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const [{ dataRequests }] = useRequestsSettings();
 	const targetElement = useRef<HTMLElement>(null);
 	const itemsMap = useGetItems(dataRequests);

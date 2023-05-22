@@ -1,5 +1,5 @@
 import { useState, ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { InputText } from ".";
 
@@ -10,7 +10,7 @@ export default {
 	component: InputText
 } as Meta<Props>;
 
-const Template: Story<Props & { defaultValue: Props["value"] }> = (args) => {
+const Template: StoryFn<Props & { defaultValue: Props["value"] }> = (args) => {
 	const { defaultValue = "", ...argList } = args;
 	const [value, setValue] = useState(defaultValue);
 	return <InputText {...argList} value={value} setValue={setValue} />;

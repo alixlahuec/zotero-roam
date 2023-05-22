@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import SearchPanel from ".";
@@ -33,7 +33,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <SearchPanel {...args} />;
+const Template: StoryFn<Props> = (args) => <SearchPanel {...args} />;
 
 export const Default = Template.bind({});
 

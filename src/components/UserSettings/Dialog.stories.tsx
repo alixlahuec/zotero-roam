@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { SettingsDialog } from ".";
 import { OVERRIDE_KEY_OPTIONS } from "./Copy";
@@ -79,7 +79,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <SettingsDialog {...args} />;
+const Template: StoryFn<Props> = (args) => <SettingsDialog {...args} />;
 
 export const Default = Template.bind({});
 

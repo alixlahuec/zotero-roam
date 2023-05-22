@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import ClearCacheButton from "Components/ClearCacheButton";
 import ZoteroRoam from "../../extension";
@@ -29,7 +29,7 @@ export default {
 	]
 } as Meta;
 
-const Template: Story = () => <ClearCacheButton />;
+const Template: StoryFn = () => <ClearCacheButton />;
 
 export const NoData = Template.bind({});
 NoData.parameters = {

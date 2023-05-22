@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import ShortcutSequence from ".";
 
 
@@ -9,7 +9,7 @@ export default {
 	component: ShortcutSequence,
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <ShortcutSequence {...args} />;
+const Template: StoryFn<Props> = (args) => <ShortcutSequence {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

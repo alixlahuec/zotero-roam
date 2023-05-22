@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { ErrorCallout } from ".";
 
 
@@ -9,7 +9,7 @@ export default {
 	component: ErrorCallout
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <ErrorCallout {...args} />;
+const Template: StoryFn<Props> = (args) => <ErrorCallout {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

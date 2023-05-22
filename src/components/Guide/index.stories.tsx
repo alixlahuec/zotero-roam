@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { Guide, Link } from ".";
 
 
@@ -9,7 +9,7 @@ export default {
 	component: Guide
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <Guide {...args} />;
+const Template: StoryFn<Props> = (args) => <Guide {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

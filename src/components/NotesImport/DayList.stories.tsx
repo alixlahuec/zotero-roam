@@ -1,7 +1,7 @@
 import { ComponentProps, useCallback, useState } from "react";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import DayList from "Components/NotesImport/DayList";
 import { ListWrapper } from "Components/DataList";
@@ -19,7 +19,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const [selectedKeys, setSelectedKeys] = useState(() => args.selectedKeys || []);
 	const bulkCheck = useCallback(() => setSelectedKeys(args.notes.map(nt => nt.data.key)), [args.notes]);
 	const bulkUncheck = useCallback(() => setSelectedKeys([]), []);

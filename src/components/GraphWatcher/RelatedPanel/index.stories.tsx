@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import RelatedPanel from ".";
 import { cleanRelatedItem } from "../Menus/utils";
@@ -32,7 +32,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <RelatedPanel {...args} />;
+const Template: StoryFn<Props> = (args) => <RelatedPanel {...args} />;
 
 export const Default = Template.bind({});
 

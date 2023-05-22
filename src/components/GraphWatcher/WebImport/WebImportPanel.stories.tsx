@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import WebImportPanel from "./WebImportPanel";
 import { badIdentifier, citoids, goodIdentifier, libraries } from "Mocks";
@@ -24,7 +24,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <WebImportPanel {...args} />;
+const Template: StoryFn<Props> = (args) => <WebImportPanel {...args} />;
 
 export const WithValidLink = Template.bind({});
 WithValidLink.args = {

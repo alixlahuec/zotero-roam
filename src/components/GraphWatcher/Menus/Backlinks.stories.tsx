@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { Backlinks } from "./CitekeyMenu";
 import { cleanSemanticItem } from "../../../utils";
@@ -30,7 +30,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <Backlinks {...args} />;
+const Template: StoryFn<Props> = (args) => <Backlinks {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

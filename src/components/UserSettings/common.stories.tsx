@@ -1,7 +1,7 @@
 import { ComponentProps, useState } from "react";
 import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { TextField } from "./common";
 
 
@@ -16,7 +16,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const [val, setVal] = useState(() => args.value);
 	return <div className="zr-settings-panel">
 		<TextField {...args} value={val} onChange={setVal} />

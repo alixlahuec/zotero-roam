@@ -1,5 +1,5 @@
 import { useCallback, useState, ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
@@ -15,7 +15,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const [tags, setTags] = useState(args.selectedTags || []);
 	const addTag = useCallback((tag) => setTags(prev => Array.from(new Set([...prev, tag]))), []);
 	const removeTag = useCallback((tag) => setTags(prev => prev.filter(it => it != tag)), []);

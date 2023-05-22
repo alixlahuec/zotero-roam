@@ -1,5 +1,5 @@
 import { useState, ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { InputDateRange } from ".";
 
@@ -10,7 +10,7 @@ export default {
 	component: InputDateRange,
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const { value: valueFromArgs, setValue: setFromArgs, ...argList } = args;
 	const [value, setValue] = useState(valueFromArgs || [null, null]);
 	return <InputDateRange value={value} setValue={setValue} {...argList}/>;

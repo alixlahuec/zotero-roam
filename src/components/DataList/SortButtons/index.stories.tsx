@@ -1,5 +1,5 @@
 import { ComponentProps, useCallback, useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import SortButtons from ".";
 
 
@@ -12,7 +12,7 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
+const Template: StoryFn<Props> = (args) => {
 	const [selected, setSelected] = useState("published");
 	const onSelect = useCallback((val) => setSelected(val), []);
 
