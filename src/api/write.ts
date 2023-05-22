@@ -87,7 +87,7 @@ const useImportCitoids = () => {
 				};
 			});
 
-		return writeItems<CitoidAPI.AsZotero>(dataList, library);
+		return writeItems<Omit<CitoidAPI.AsZotero, "version">>(dataList, library);
 	}, {
 		onSettled: (data = [], error, variables, _context) => {
 			const { collections, items, library: { path }, tags } = variables;

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { AnchorHTMLAttributes, FC } from "react";
 import { AnchorButton, AnchorButtonProps } from "@blueprintjs/core";
 
 
@@ -7,7 +7,7 @@ type OwnProps = {
 	minimal?: AnchorButtonProps["minimal"]
 };
 
-const ButtonLink: FC<OwnProps & Partial<AnchorButtonProps>> = (props) => {
+const ButtonLink: FC<OwnProps & Partial<AnchorButtonProps> & Partial<AnchorHTMLAttributes<HTMLAnchorElement>>> = (props) => {
 	const { children = null, href, minimal = true, ...otherProps } = props;
 	
 	return (

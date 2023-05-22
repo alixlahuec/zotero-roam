@@ -543,17 +543,17 @@ function _getItemType(item: ZItemTop, { brackets = true }: { brackets?: boolean 
 
 
 type SelectItemsOption = "all" | "annotations" | "attachments" | "children" | "items" | "notes" | "pdfs";
-type SelectItemsReturn =
-	| ZItem[]
-	| ZItemAnnotation[]
-	| ZItemAttachment[]
-	| (ZItemAttachment | ZItemNote | ZItemAnnotation)[]
-	| ZItemTop[]
-	| (ZItemNote | ZItemAnnotation)[]
-	| ZItemAttachment[];
 
+function _getItems(select: "all", filters: QueryFilters, { queryClient }): ZItem[];
+function _getItems(select: "annotations", filters: QueryFilters, { queryClient }): ZItemAnnotation[];
+function _getItems(select: "attachments", filters: QueryFilters, { queryClient }): ZItemAttachment[];
+function _getItems(select: "children", filters: QueryFilters, { queryClient }): (ZItemAttachment | ZItemNote | ZItemAnnotation)[];
+function _getItems(select: "items", filters: QueryFilters, { queryClient }): ZItemTop[];
+function _getItems(select: "notes", filters: QueryFilters, { queryClient }): (ZItemNote | ZItemAnnotation)[];
+function _getItems(select: "pdfs", filters: QueryFilters, { queryClient }): ZItemAttachment[];
+function _getItems(select: SelectItemsOption, filters: QueryFilters, { queryClient }): ZItem[];
 /** Returns the current items in the query cache, with optional configuration */
-function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { queryClient }: { queryClient: QueryClient }): SelectItemsReturn {
+function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { queryClient }: { queryClient: QueryClient }): ZItem[] {
 	const items = queryClient.getQueriesData<QueryDataItems>({ queryKey: ["items"], ...filters })
 		.map(query => {
 			const [/* queryKey */, queryData] = query;

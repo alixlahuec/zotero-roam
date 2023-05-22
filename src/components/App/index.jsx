@@ -19,6 +19,7 @@ import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } fro
 
 import * as customPropTypes from "../../propTypes";
 import { AsBoolean } from "Types/helpers";
+import { ExtensionStatusEnum } from "Types/extension";
 
 
 const openSearchCommand = "zoteroRoam : Open Search Panel";
@@ -141,12 +142,12 @@ class App extends Component {
 			this.setState((_prev) => {
 				queryClient.clear();
 				return {
-					status: "disabled"
+					status: ExtensionStatusEnum.DISABLED
 				};
 			});
 		} else if(prevProps.requests.dataRequests.length == 0 && this.props.requests.dataRequests.length > 0){
 			this.setState((_prev) => ({
-				status: "on"
+				status: ExtensionStatusEnum.ON
 			}));
 		}
 		// In the case of a change in requests, the old requests should become inactive & be eventually cleared
@@ -188,7 +189,7 @@ class App extends Component {
 							status={status} 
 							toggleExtension={this.toggleExtension} />
 						<RoamCitekeysProvider>
-							{status == "on" ? <GraphWatcher /> : null}
+							{status == ExtensionStatusEnum.ON ? <GraphWatcher /> : null}
 							<SearchPanel
 								isOpen={isSearchPanelOpen}
 								onClose={this.closeSearchPanel}
@@ -206,12 +207,12 @@ class App extends Component {
 	toggleExtension() {
 		this.setState((prevState) => {
 			const { status } = prevState;
-			if (status == "on") {
+			if (status == ExtensionStatusEnum.ON) {
 				// Aka, turning off the extension
 				queryClient.clear();
 			}
 			return {
-				status: status == "off" ? "on" : "off"
+				status: status == ExtensionStatusEnum.OFF ? ExtensionStatusEnum.ON : ExtensionStatusEnum.OFF
 			};
 		});
 	}
@@ -231,7 +232,7 @@ class App extends Component {
 	}
 
 	toggleSearchPanel() {
-		if(this.state.status == "on"){
+		if (this.state.status == ExtensionStatusEnum.ON){
 			this.setState((prev) => ({ isSearchPanelOpen: !prev.isSearchPanelOpen }));
 		}
 	}
@@ -245,7 +246,7 @@ class App extends Component {
 	}
 
 	toggleDashboard(){
-		if(this.state.status == "on"){
+		if (this.state.status == ExtensionStatusEnum.ON){
 			this.setState((prev) => ({ isDashboardOpen: !prev.isDashboardOpen }));
 		}
 	}

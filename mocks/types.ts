@@ -63,7 +63,7 @@ export namespace Mocks {
 			type: string,
 			uri: string
 		};
-		export type CitoidSuccess = CitoidAPI.AsZotero;
+		export type CitoidSuccess = CitoidAPI.AsZotero[];
 		export type Citoid = CitoidSuccess | CitoidError;
 		/* SEMANTIC SCHOLAR */
 		export type SemanticScholarItem = SemanticScholarAPI.Item;

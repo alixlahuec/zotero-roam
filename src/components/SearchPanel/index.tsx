@@ -1,0 +1,71 @@
+import { memo, useCallback, useMemo } from "react";
+
+import DialogOverlay, { DialogOverlayProps } from "Components/DialogOverlay";
+import { ErrorBoundary } from "Components/Errors";
+import { useRoamCitekeys } from "Components/RoamCitekeysContext";
+import { useCopySettings, useRequestsSettings } from "Components/UserSettings";
+import LibraryQueryList from "./LibraryQueryList";
+
+import { useBool } from "../../hooks";
+import { useQuery_Items } from "../../api/queries";
+import { cleanLibrary } from "../../utils";
+
+import { dialogClass, dialogLabel } from "./classes";
+import { QueryDataItems, RCitekeyPages } from "Types/transforms";
+import { DataRequest, ExtensionStatusEnum } from "Types/extension";
+import "./index.css";
+
+
+function useGetItems(reqs: DataRequest[], roamCitekeys: RCitekeyPages, opts = {}){
+	const select = useCallback((datastore: QueryDataItems) => {
+		return datastore.data
+			? cleanLibrary(datastore.data, roamCitekeys)
+			: [];
+	}, [roamCitekeys]);
+
+	const itemQueries = useQuery_Items(reqs, {
+		...opts,
+		notifyOnChangeProps: ["data"],
+		select
+	});
+
+	const itemData = useMemo(() => itemQueries.map(q => q.data || []).flat(1), [itemQueries]);
+
+	return itemData;
+}
+
+
+type SearchPanelProps = {
+	status: ExtensionStatusEnum
+} & Pick<DialogOverlayProps, "isOpen" | "onClose">;
+
+const SearchPanel = memo<SearchPanelProps>(function SearchPanel({ isOpen, onClose, status }) {
+	const [{ useQuickCopy }] = useCopySettings();
+	const [{ dataRequests }] = useRequestsSettings();
+	const [roamCitekeys,] = useRoamCitekeys();
+
+	const [quickCopyActive, { toggle: toggleQuickCopy }] = useBool(useQuickCopy); // Is QuickCopy active by default ?
+
+	const items = useGetItems(dataRequests, roamCitekeys, { enabled: status == ExtensionStatusEnum.ON });
+
+	return (
+		<DialogOverlay
+			ariaLabelledBy={dialogLabel}
+			className={dialogClass}
+			isOpen={isOpen}
+			lazy={false}
+			onClose={onClose} >
+			<ErrorBoundary>
+				<LibraryQueryList 
+					handleClose={onClose}
+					isOpen={isOpen}
+					items={items}
+					quickCopyProps={{ isActive: quickCopyActive, toggle: toggleQuickCopy }} />
+			</ErrorBoundary>
+		</DialogOverlay>
+	);
+
+});
+
+
+export default SearchPanel;

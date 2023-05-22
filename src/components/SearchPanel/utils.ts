@@ -29,15 +29,12 @@ function formatItemReferenceWithDefault(simplifiedItem: ZCleanItemTop, copySetti
 	}
 }
 
-type ItemReferenceFormat =
-	| "citation"
-	| "citekey"
-	| "page-reference"
-	| "raw"
-	| "tag";
 
 /** Converts a simplified item into a given string format for clipboard copy */
-function formatItemReferenceForCopy(simplifiedItem: ZCleanItemTop, format: ItemReferenceFormat): string{
+function formatItemReferenceForCopy(
+	simplifiedItem: ZCleanItemTop,
+	format: "citation" | "citekey" | "page-reference" | "raw" | "tag"
+): string{
 	const citekey = simplifiedItem.key;
 	const pageRef = "[[@" + citekey + "]]";
 

@@ -8,7 +8,7 @@ const addSampleMetadata = () => ({
 	version: 0
 });
 
-const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ...props }: Partial<Mocks.Responses.CitoidSuccess>) => ({
+const addCitoidMetadata = ({ creators, date, itemType, tags = [], title, url, ...props }: Partial<Mocks.Responses.CitoidSuccess[number]>) => ({
 	...addSampleMetadata,
 	creators,
 	date,
@@ -48,7 +48,7 @@ const data = {
 			title: "Chloe for COVID-19: Evolution of an Intelligent Conversational Agent to Address Infodemic Management Needs During the COVID-19 Pandemic",
 			url: goodIdentifier
 		})
-	} as Mocks.Responses.CitoidSuccess,
+	} as Mocks.Responses.CitoidSuccess[number],
 	[badIdentifier]: {
 		status: 500,
 		method: "get",
@@ -82,7 +82,7 @@ const data = {
 			url: "https://www.annfammed.org/content/14/2/102",
 			volume: "14"
 		})
-	} as Mocks.Responses.CitoidSuccess,
+	} as Mocks.Responses.CitoidSuccess[number],
 	[semanticNotAddedIdentifier]: {
 		...addCitoidMetadata({
 			abstractNote: "<p>Health extension programs represent an opportunity for practice-based research networks (PBRNs) and primary care practices to develop collaborations reaching beyond the clinic walls to address the upstream social determinants of health and engage in community-based research. The Health Extension Regional Officers (HEROs) program at the University of New Mexico described in this issue of the <i>JABFM</i> is an innovative model with a bidirectional approach to linking academic health centers to community-based practices and organizations. Health extension programs are local, influenced by history, relationships, and support. Oregon9s health extension workforce represents a diverse group that includes practice facilitators, community health workers, and Cooperative Extension agents. PBRNs are measuring success in terms of collaboration across a spectrum of health activities. The Oregon Rural Practice-based Research Network uses a “Four Pillars” model of community engagement, practice transformation, research, and education to involve researchers, health policy experts, educators, and health extension workers to improve community health.</p>",
@@ -100,17 +100,17 @@ const data = {
 			url: "https://doi.org/10.3122/jabfm.2017.01.160355",
 			volume: "30"
 		})
-	} as Mocks.Responses.CitoidSuccess
+	} as Mocks.Responses.CitoidSuccess[number]
 };
 
 export const handleCitoid = rest.get<never, Mocks.RequestParams.Citoid, Mocks.Responses.Citoid>(
 	"https://en.wikipedia.org/api/rest_v1/data/citation/zotero/:identifier",
 	(req, res, ctx) => {
 		const { identifier } = req.params;
-		const output = data[decodeURIComponent(`${identifier}`)] as Mocks.Responses.Citoid;
+		const output = data[decodeURIComponent(`${identifier}`)];
 		return res(
 			ctx.status(output.status || 200),
-			ctx.json([output as Omit<Mocks.Responses.Citoid, "status">])
+			ctx.json([output])
 		);
 	}
 );

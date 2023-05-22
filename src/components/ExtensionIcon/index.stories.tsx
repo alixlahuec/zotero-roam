@@ -6,6 +6,7 @@ import { Meta, Story } from "@storybook/react";
 import ExtensionIcon from ".";
 import { useToggle } from "../../hooks";
 import { sleep } from "../../../.storybook/utils";
+import { ExtensionStatusEnum } from "Types/extension";
 
 
 type Props = ComponentProps<typeof ExtensionIcon>;
@@ -33,14 +34,14 @@ export default {
 
 const Template: Story<Props> = (args) => {
 	const [status, toggleStatus] = useToggle<Props["status"]>({
-		start: "on",
-		options: ["on", "off"]
+		start: ExtensionStatusEnum.ON,
+		options: [ExtensionStatusEnum.ON, ExtensionStatusEnum.OFF]
 	});
 	return <ExtensionIcon {...args} status={status} toggleExtension={toggleStatus} />;
 };
 
 const DisabledTemplate: Story<Props> = (args) => {
-	return <ExtensionIcon {...args} status="disabled" />;
+	return <ExtensionIcon {...args} status={ExtensionStatusEnum.DISABLED} />;
 };
 
 export const Disabled = DisabledTemplate.bind({});
