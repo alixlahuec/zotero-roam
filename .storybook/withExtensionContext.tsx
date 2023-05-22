@@ -3,7 +3,7 @@ import { ExtensionContext } from "Components/App";
 
 
 const defaultContext = {
-	portalId: "root",
+	portalId: "storybook-root",
 	version: "VERSION"
 };
 
