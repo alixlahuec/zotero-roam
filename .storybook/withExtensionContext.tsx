@@ -1,13 +1,14 @@
-import { DecoratorFn } from "@storybook/react";
+import { Decorator } from "@storybook/react";
 import { ExtensionContext } from "Components/App";
+import { ExtensionContextValue } from "Types/extension";
 
 
-const defaultContext = {
+const defaultContext: ExtensionContextValue = {
 	portalId: "storybook-root",
 	version: "VERSION"
 };
 
-export const withExtensionContext: DecoratorFn = (Story, context) => {
+export const withExtensionContext: Decorator<{ extensionContext: ExtensionContextValue }> = (Story, context) => {
 	const { args: { extensionContext = {} }/*, parameters */ } = context;
     
 	return (
