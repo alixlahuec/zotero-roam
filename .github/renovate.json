@@ -52,10 +52,8 @@
 			"@storybook/addon-essentials",
 			"@storybook/addon-interactions",
 			"@storybook/addon-links",
-			"@storybook/builder-webpack5",
 			"@storybook/cli",
-			"@storybook/manager-webpack5",
-			"@storybook/react"
+			"@storybook/react-webpack5"
 		]
 	}
   ]
