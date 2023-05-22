@@ -34,7 +34,7 @@ export const postRender: TestHook = async (page: Page, _context) => {
 		}
 	};
 
-	await checkA11y(page, "#root", config);
+	await checkA11y(page, "#storybook-root", config);
 
 	// To write violations to JSON files:
 	//
@@ -44,7 +44,7 @@ export const postRender: TestHook = async (page: Page, _context) => {
 	//     fs.unlinkSync(path);
 	// }
 
-	// const violations = await getViolations(page, '#root', config);
+	// const violations = await getViolations(page, '#storybook-root', config);
 
 	// if(violations.length > 0) {
 	//     await new Promise((resolve, reject) => {
