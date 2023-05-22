@@ -6,10 +6,10 @@ import { CustomClasses } from "../../../constants";
 import "./index.css";
 
 
-export type SortOption = {
+export type SortOption<T = string> = {
 	icon?: IconName | null,
 	label: string,
-	value: string
+	value: T
 };
 
 type SortButtonOwnProps = {

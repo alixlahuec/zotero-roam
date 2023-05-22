@@ -7,32 +7,33 @@ import ItemEntry from "./ItemEntry";
 import ItemSuggestion from "./ItemSuggestion";
 import Stats from "../Stats";
 
-import { TagsSortBy, getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
+import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
 import { usePagination } from "../../../../hooks";
 
 import { CustomClasses } from "../../../../constants";
+import { TagManagerFilter, TagManagerSortBy } from "../types";
 import { ZLibrary, ZTagEntry, ZTagList, ZTagStats } from "Types/transforms";
 import "./index.css";
 
 
 const itemsPerPage = 30;
 
-const sortOptions: SortOption[] = [
-	{ icon: "sort-desc", label: "Most Used", value: "usage" },
-	{ icon: "sort-alphabetical", label: "Name", value: "alphabetical" },
-	{ icon: "star", label: "In Roam", value: "roam" }
+const sortOptions: SortOption<TagManagerSortBy>[] = [
+	{ icon: "sort-desc", label: "Most Used", value: TagManagerSortBy.USAGE },
+	{ icon: "sort-alphabetical", label: "Name", value: TagManagerSortBy.ALPHABETICAL },
+	{ icon: "star", label: "In Roam", value: TagManagerSortBy.ROAM }
 ];
 
 
 type OwnProps = {
-	filter: "all" | "suggestions",
+	filter: TagManagerFilter,
 	items: ZTagList | undefined,
 	library: ZLibrary
 };
 
 const TagsDatalist = memo<OwnProps>(function TagsDatalist({ filter, items, library }){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
-	const [sortBy, setSortBy] = useState<TagsSortBy>("usage");
+	const [sortBy, setSortBy] = useState<TagManagerSortBy>(TagManagerSortBy.USAGE);
 	const [matchedTags, setMatchedTags] = useState<ZTagEntry[]>();
 	const [stats, setStats] = useState<ZTagStats>();
 
@@ -51,7 +52,7 @@ const TagsDatalist = memo<OwnProps>(function TagsDatalist({ filter, items, libra
 		if(!matchedTags){
 			return [];
 		} else {
-			if(filter == "suggestions"){
+			if(filter == TagManagerFilter.SUGGESTIONS){
 				return matchedTags.filter(el => !isSingleton(el));
 			} else {
 				return matchedTags;
@@ -85,13 +86,13 @@ const TagsDatalist = memo<OwnProps>(function TagsDatalist({ filter, items, libra
 							{sortedItems
 								.slice(...pageLimits)
 								.map(el =>
-									filter == "suggestions" 
+									filter == TagManagerFilter.SUGGESTIONS
 										? <ItemSuggestion key={el.token} entry={el} library={library} /> 
 										: <ItemEntry key={el.token} entry={el} library={library} />)}
 						</ListWrapper>
 					}
 				</div>
-				{filter == "all" && <Stats stats={stats} />}
+				{filter == TagManagerFilter.ALL && <Stats stats={stats} />}
 			</div>
 	);
 });

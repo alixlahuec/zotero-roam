@@ -10,11 +10,13 @@ import { ZLibrary } from "Types/transforms";
 type SelectorProps = SelectProps<string>;
 
 const staticProps: Partial<SelectorProps> & Pick<SelectorProps, "itemRenderer"> = {
+	filterable: false,
 	itemRenderer: (item, itemProps) => {
 		const { handleClick/*, modifiers: { active }*/ } = itemProps;
 
 		return <MenuItem key={item} onClick={handleClick} text={item} />;
 	},
+	matchTargetWidth: true,
 	popoverProps: {
 		minimal: true,
 		placement: "bottom-right" as Placement,
@@ -25,8 +27,8 @@ const staticProps: Partial<SelectorProps> & Pick<SelectorProps, "itemRenderer"> 
 type OwnProps = {
 	libProps: {
 		currentLibrary: ZLibrary,
-		onSelect: (value: string) => void,
-		options: string[]
+		onSelect: SelectorProps["onItemSelect"],
+		options: SelectorProps["items"]
 	}
 };
 
@@ -34,10 +36,8 @@ const LibrarySelect = memo<OwnProps>(function LibrarySelect({ libProps }){
 	const { currentLibrary: { path }, onSelect, options } = libProps;
 
 	return (
-		<Select
-			filterable={false}
-			items={options} 
-			matchTargetWidth={true}
+		<Select<string>
+			items={options}
 			onItemSelect={onSelect}
 			{...staticProps} >
 			<Button 

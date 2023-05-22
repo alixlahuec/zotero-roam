@@ -9,8 +9,26 @@ import TagsDatalist from "./TagsDatalist";
 import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 
 import { CustomClasses } from "../../../constants";
+import { TagManagerFilter, TagManagerTab } from "./types";
 import { ZLibrary, ZTagList } from "Types/transforms";
 import "./index.css";
+
+
+type TabElementProps = {
+	filterValue: TagManagerFilter,
+	id: TagManagerTab,
+	items: ZTagList | undefined,
+	library: ZLibrary,
+	title: string
+};
+
+function TabElement({ filterValue, id, items, library, title }: TabElementProps) {
+	return <Tab
+		id={id}
+		panel={<TagsDatalist filter={filterValue} items={items} library={library} />}
+		title={title}
+	/>;
+}
 
 
 type TagListsProps = {
@@ -29,12 +47,16 @@ function TagLists({ items, libProps }: TagListsProps){
 			onChange={selectTab}
 			renderActiveTabPanelOnly={false}
 			selectedTabId={activeTab} >
-			<Tab id="suggestions" title="Suggestions" 
-				panel={<TagsDatalist filter="suggestions" items={items} library={libProps.currentLibrary} />} 
-			/>
-			<Tab id="all-items" title="All tags" 
-				panel={<TagsDatalist filter="all" items={items} library={libProps.currentLibrary} />} 
-			/>
+			<TabElement id={TagManagerTab.SUGGESTIONS}
+				filterValue={TagManagerFilter.SUGGESTIONS}
+				items={items}
+				library={libProps.currentLibrary}
+				title="Suggestions" />
+			<TabElement id={TagManagerTab.ALL}
+				filterValue={TagManagerFilter.ALL}
+				items={items}
+				library={libProps.currentLibrary}
+				title="All tags" />
 			<Tabs.Expander />
 			<LibrarySelect libProps={libProps} />
 		</Tabs>
