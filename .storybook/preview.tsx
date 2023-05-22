@@ -33,7 +33,7 @@ const withTheme: Decorator = (Story: StoryFn, context: StoryContext) => {
 	const [{ theme }, /* updateGlobals */] = useGlobals();
 
 	useEffect(() => {
-		document.getElementById("root")?.parentElement?.setAttribute("zr-dark-theme", (theme == "dark").toString());
+		document.getElementById("storybook-root")?.parentElement?.setAttribute("zr-dark-theme", (theme == "dark").toString());
 	}, [theme]);
 
 	return <div className="zr-" 
