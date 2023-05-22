@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { Button, ButtonGroup, Menu } from "@blueprintjs/core";
+import { Button, ButtonGroup, ButtonProps, IconName, Intent, Menu } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import ActionsMenu from "../ActionsMenu";
@@ -30,28 +30,29 @@ function AutoMerge({ library, suggestion }: AutoMergeProps){
 		});
 	}, [library, mutate, recommend, use]);
 
-	const buttonProps = useMemo(() => {
+	const buttonProps = useMemo<Partial<ButtonProps>>(() => {
 		if(status == "error"){
 			return {
 				disabled: true,
-				icon: "warning",
-				intent: "danger"
+				icon: "warning" as IconName,
+				intent: Intent.DANGER
 			};
 		} else if(status == "success"){
 			return {
 				disabled: true,
-				icon: "tick",
-				intent: "success",
+				icon: "tick" as IconName,
+				intent: Intent.SUCCESS,
 				text: "Merged"
 			};
 		} else {
-			return {};
+			return {
+				icon: "many-to-one" as IconName
+			};
 		}
 	}, [status]);
 
 	return <Button
 		className={["zr-tag-suggestion--auto-merge", CustomClasses.TEXT_SMALL].join(" ")}
-		icon="many-to-one"
 		loading={status == "loading"}
 		onClick={triggerMerge}
 		text="Auto-merge"
