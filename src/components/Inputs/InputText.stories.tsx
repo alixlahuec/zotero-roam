@@ -10,9 +10,8 @@ export default {
 	component: InputText,
 	decorators: [
 		(Story, context) => {
-			const { args } = context;
-			const [value, setValue] = useState(args.value || "");
-			return <Story {...context} value={value} setValue={setValue} />;
+			const [value, setValue] = useState(context.args.value || "");
+			return <Story {...context} args={{ ...context.args, value, setValue }} />;
 		}
 	]
 } as Meta<Props>;

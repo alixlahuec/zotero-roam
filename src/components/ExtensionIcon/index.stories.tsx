@@ -39,11 +39,11 @@ export const Disabled: StoryObj<Props> = {
 export const WithInteractions: StoryObj<Props> = {
 	decorators: [
 		(Story, context) => {
-			const [status, toggleStatus] = useToggle<Props["status"]>({
+			const [status, toggleExtension] = useToggle<Props["status"]>({
 				start: ExtensionStatusEnum.ON,
 				options: [ExtensionStatusEnum.ON, ExtensionStatusEnum.OFF]
 			});
-			return <Story {...context} status={status} toggleExtension={toggleStatus} />;
+			return <Story {...context} args={{ ...context.args, status, toggleExtension }} />;
 		}
 	],
 	play: async ({ canvasElement }) => {

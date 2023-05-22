@@ -22,9 +22,12 @@ export default {
 		(Story, context) => {
 			const [qcActive, { toggle: toggleQC }] = useBool(false);
 
-			return (
-				<Story {...context} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} items={cleanItems} />
-			);
+			return <Story {...context}
+				args={{
+					...context.args,
+					quickCopyProps: { isActive: qcActive, toggle: toggleQC },
+					items: cleanItems
+				}} />;
 		}
 	],
 	parameters: {

@@ -12,10 +12,10 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const [selected, setSelected] = useState("published");
+			const [selectedOption, setSelected] = useState("published");
 			const onSelect = useCallback((val) => setSelected(val), []);
 
-			return <Story {...context} onSelect={onSelect} selectedOption={selected} />;
+			return <Story {...context} args={{ ...context.args, onSelect, selectedOption }} />;
 		}
 	]
 } as Meta<Props>;

@@ -16,11 +16,10 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const { args } = context;
-			const [val, setVal] = useState(() => args.value);
+			const [value, setValue] = useState(() => context.args.value);
 			return (
 				<div className="zr-settings-panel">
-					<Story {...context} value={val} onChange={setVal} />
+					<Story {...context} args={{ ...context.args, value, onChange: setValue }} />
 				</div>
 			);
 		}

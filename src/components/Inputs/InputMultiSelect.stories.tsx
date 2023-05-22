@@ -17,9 +17,8 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const { args } = context;
-			const [selected, setSelected] = useState(args.value || []);
-			return <Story {...context} value={selected} setValue={setSelected} />;
+			const [selected, setSelected] = useState(context.args.value || []);
+			return <Story {...context} args={{ ...context.args, value: selected, setValue: setSelected }} />;
 		}
 	]
 } as Meta<Props>;

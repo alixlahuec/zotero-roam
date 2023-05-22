@@ -13,12 +13,10 @@ export default {
 	component: NotesImportItem,
 	decorators: [
 		(Story, context) => {
-			const { args } = context;
-			const [isSelected, { toggle }] = useBool(args.isSelected || false);
-
+			const [isSelected, { toggle }] = useBool(context.args.isSelected || false);
 			return (
 				<ul className={Classes.LIST_UNSTYLED}>
-					<Story {...context} isSelected={isSelected} onToggle={toggle} />
+					<Story {...context} args={{ ...context.args, isSelected, onToggle: toggle }} />
 				</ul>
 			);
 		}

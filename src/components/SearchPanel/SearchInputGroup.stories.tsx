@@ -25,10 +25,12 @@ export default {
 
 			return (
 				<HotkeysProvider dialogProps={{ globalGroupName: "zoteroRoam" }}>
-					<Story
-						{...context}
-						quickCopyProps={{ isActive: qcActive, toggle: toggleQC }}
-						searchbar={searchbar}
+					<Story {...context}
+						args={{
+							...context.args,
+							quickCopyProps: { isActive: qcActive, toggle: toggleQC },
+							searchbar
+						}}
 					/>
 				</HotkeysProvider>
 			);

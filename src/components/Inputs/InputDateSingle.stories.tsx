@@ -10,9 +10,8 @@ export default {
 	component: InputDateSingle,
 	decorators: [
 		(Story, context) => {
-			const { args } = context;
-			const [value, setValue] = useState(args.value || undefined);
-			return <Story {...context} value={value} setValue={setValue} />;
+			const [value, setValue] = useState(context.args.value || undefined);
+			return <Story {...context} args={{ ...context.args, value, setValue }} />;
 		}
 	]
 } as Meta<Props>;

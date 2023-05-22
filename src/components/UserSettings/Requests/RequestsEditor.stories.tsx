@@ -23,12 +23,14 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const { args } = context;
-			const { dataRequests } = args;
+			const { dataRequests } = context.args;
 			const [requests, setRequests] = useState(() => analyzeUserRequests(dataRequests));
-			return (
-				<Story {...context} dataRequests={requests.dataRequests} updateRequests={setRequests} />
-			);
+			return <Story {...context}
+				args={{
+					...context.args,
+					dataRequests: requests.dataRequests,
+					updateRequests: setRequests
+				}} />;
 		}
 	]
 } as Meta<Props>;

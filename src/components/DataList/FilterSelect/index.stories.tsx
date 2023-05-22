@@ -13,9 +13,8 @@ export default {
 	component: FilterSelect,
 	decorators: [
 		(Story, context) => {
-			const { args } = context;
-			const [filterList, toggleFilter] = useFilterList(args.options);
-			return <Story {...context} options={filterList} toggleFilter={toggleFilter} />;
+			const [filterList, toggleFilter] = useFilterList(context.args.options);
+			return <Story {...context} args={{ ...context.args, options: filterList, toggleFilter }} />;
 		}
 	]
 } as Meta<Props>;

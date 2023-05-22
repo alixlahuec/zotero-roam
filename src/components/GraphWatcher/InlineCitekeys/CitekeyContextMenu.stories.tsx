@@ -31,7 +31,7 @@ export default {
 					<span data-link-title={citekey} data-link-uid="abcdef">
 						<span ref={targetElement}>{citekey}</span>
 					</span>
-					<Story {...context} itemsMap={itemsMap} target={targetElement.current} />
+					<Story {...context} args={{ ...context.args, itemsMap, target: targetElement.current }} />
 				</>
 			);
 		}

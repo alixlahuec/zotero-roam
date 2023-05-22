@@ -20,7 +20,7 @@ export default {
 			const addTag = useCallback((tag) => setTags((prev) => Array.from(new Set([...prev, tag]))), []);
 			const removeTag = useCallback((tag) => setTags((prev) => prev.filter((it) => it != tag)), []);
 
-			return <Story {...context} onRemove={removeTag} onSelect={addTag} selectedTags={tags} />;
+			return <Story {...context} args={{ ...context.args, onRemove: removeTag, onSelect: addTag, selectedTags: tags }} />;
 		}
 	]
 } as Meta<Props>;

@@ -19,11 +19,10 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const { args } = context;
-			const [selectedKeys, setSelectedKeys] = useState(() => args.selectedKeys || []);
+			const [selectedKeys, setSelectedKeys] = useState(() => context.args.selectedKeys || []);
 			const bulkCheck = useCallback(
-				() => setSelectedKeys(args.notes.map((nt) => nt.data.key)),
-				[args.notes]
+				() => setSelectedKeys(context.args.notes.map((nt) => nt.data.key)),
+				[context.args.notes]
 			);
 			const bulkUncheck = useCallback(() => setSelectedKeys([]), []);
 
@@ -40,11 +39,12 @@ export default {
 
 			return (
 				<ListWrapper>
-					<Story
-						{...context}
-						itemSelectProps={{ bulkCheck, bulkUncheck, toggleNoteSelection }}
-						selectedKeys={selectedKeys}
-					/>
+					<Story {...context}
+						args={{
+							...context.args,
+							itemSelectProps: { bulkCheck, bulkUncheck, toggleNoteSelection },
+							selectedKeys
+						}} />
 				</ListWrapper>
 			);
 		}
