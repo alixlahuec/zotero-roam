@@ -1,5 +1,5 @@
-import { ReactElement, memo, useCallback, useEffect, useState } from "react";
-import { Classes, Icon, IconName, Tab, Tabs } from "@blueprintjs/core";
+import { memo, useCallback, useEffect, useState } from "react";
+import { Classes, Icon, Tab, TabProps, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import Explorer from "./Explorer";
@@ -16,28 +16,10 @@ enum DashboardTab {
 	TAG_MANAGER = "tag-manager"
 }
 
-
-type TabElementProps = {
-	id: DashboardTab,
-	htmlTitle: string,
-	icon: IconName,
-	panel: ReactElement,
-	title: string
+const tabStaticProps: Partial<TabProps> = {
+	className: "zr-dashboard-tab",
+	panelClassName: "zr-dashboard-panel"
 };
-
-function TabElement({ id, htmlTitle, icon, panel, title }: TabElementProps) {
-	return <Tab
-		id={id}
-		className="zr-dashboard-tab"
-		panelClassName="zr-dashboard-panel"
-		panel={panel}
-		title={<>
-			<Icon htmlTitle={htmlTitle} icon={icon} />
-			<span>{title}</span>
-		</>}
-	/>;
-}
-
 
 type TabListProps = {
 	defaultTab: DashboardTab,
@@ -56,22 +38,10 @@ const TabList = memo<TabListProps>(function TabList(props){
 
 	return(
 		<Tabs animate={false} className={[CustomClasses.TABS, "zr-dashboard-tabs-wrapper"].join(" ")} id="zr-dashboard--tabs" onChange={selectTab} selectedTabId={isActiveTab} vertical={true} >
-			<TabElement id={DashboardTab.RECENT_ITEMS}
-				htmlTitle="Recent Items"
-				icon="history"
-				panel={<RecentItems onClose={onClose} />}
-				title="Recent Items" />
-			<TabElement id={DashboardTab.TAG_MANAGER}
-				htmlTitle="Tag Manager"
-				icon="tag"
-				panel={<TagManager />}
-				title="Tag Manager" />
+			<Tab id="recent-items" panel={<RecentItems onClose={onClose} />} title={<><Icon htmlTitle="Recent Items" icon="history" /><span>Recent Items</span></>} {...tabStaticProps} />
+			<Tab id="tag-manager" panel={<TagManager />} title={<><Icon htmlTitle="Tag Manager" icon="tag" /><span>Tag Manager</span></>} {...tabStaticProps} />
 			<Tabs.Expander />
-			<TabElement id={DashboardTab.EXPLORER}
-				htmlTitle="Explorer"
-				icon="code-block"
-				panel={<Explorer onClose={onClose} />}
-				title="Explorer" />
+			<Tab id="explorer" panel={<Explorer onClose={onClose} />} title={<><Icon htmlTitle="Explorer" icon="code-block" /><span>Explorer</span></>} {...tabStaticProps} />
 		</Tabs>
 	);
 });

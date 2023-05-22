@@ -14,21 +14,24 @@ import { ZLibrary, ZTagList } from "Types/transforms";
 import "./index.css";
 
 
-type TabElementProps = {
+type TabConfig = {
 	filterValue: TagManagerFilter,
 	id: TagManagerTab,
-	items: ZTagList | undefined,
-	library: ZLibrary,
 	title: string
 };
 
-function TabElement({ filterValue, id, items, library, title }: TabElementProps) {
-	return <Tab
-		id={id}
-		panel={<TagsDatalist filter={filterValue} items={items} library={library} />}
-		title={title}
-	/>;
-}
+const TABS_LIST: TabConfig[] = [
+	{
+		id: TagManagerTab.SUGGESTIONS,
+		filterValue: TagManagerFilter.SUGGESTIONS,
+		title: "Suggestions"
+	},
+	{
+		id: TagManagerTab.ALL,
+		filterValue: TagManagerFilter.ALL,
+		title: "All tags"
+	}
+];
 
 
 type TagListsProps = {
@@ -47,16 +50,12 @@ function TagLists({ items, libProps }: TagListsProps){
 			onChange={selectTab}
 			renderActiveTabPanelOnly={false}
 			selectedTabId={activeTab} >
-			<TabElement id={TagManagerTab.SUGGESTIONS}
-				filterValue={TagManagerFilter.SUGGESTIONS}
-				items={items}
-				library={libProps.currentLibrary}
-				title="Suggestions" />
-			<TabElement id={TagManagerTab.ALL}
-				filterValue={TagManagerFilter.ALL}
-				items={items}
-				library={libProps.currentLibrary}
-				title="All tags" />
+			{TABS_LIST.map((config) => (
+				<Tab key={config.id}
+					id={config.id}
+					panel={<TagsDatalist filter={config.filterValue} items={items} library={libProps.currentLibrary} />}
+					title={config.title} />
+			))}
 			<Tabs.Expander />
 			<LibrarySelect libProps={libProps} />
 		</Tabs>
