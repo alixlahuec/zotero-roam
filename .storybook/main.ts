@@ -1,15 +1,22 @@
 import * as path from "path";
+import { StorybookConfig } from "@storybook/react-webpack5";
 
 
-module.exports = {
-	"stories": ["../src/**/*.stories.@(js|jsx|ts|tsx)", "../stories/*.stories.@(js|jsx|ts|tsx)"],
-	"addons": ["@storybook/addon-a11y", "@storybook/addon-controls", "@storybook/addon-coverage", "@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions"],
-	"framework": "@storybook/react",
-	features: {
-		interactionsDebugger: true,
-	},
-	core: {
-		builder: "webpack5"
+const config: StorybookConfig = {
+	stories: ["../src/**/*.stories.@(js|jsx|ts|tsx)", "../stories/*.stories.@(js|jsx|ts|tsx)"],
+	addons: [
+		"@storybook/addon-a11y",
+		"@storybook/addon-controls",
+		"@storybook/addon-coverage",
+		"@storybook/addon-links",
+		"@storybook/addon-essentials",
+		"@storybook/addon-interactions"
+	],
+	framework: {
+		name: "@storybook/react-webpack5",
+		options: {
+			legacyRootApi: true
+		}
 	},
 	staticDirs: ["../public"],
 	/* eslint-disable-next-line require-await */
@@ -26,5 +33,7 @@ module.exports = {
 				}
 			}
 		};
-	},
+	}
 };
+
+export default config;

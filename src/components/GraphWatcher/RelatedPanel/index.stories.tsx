@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import RelatedPanel from ".";
 import { cleanRelatedItem } from "../Menus/utils";
@@ -16,7 +16,7 @@ export default {
 	args: {
 		isOpen: true,
 		onClose: () => {},
-		items: items.slice(0,2).map(it => cleanRelatedItem(it, { pdfs: [], notes: [] }, new Map())),
+		items: items.slice(0, 2).map((it) => cleanRelatedItem(it, { pdfs: [], notes: [] }, new Map())),
 		show: {
 			title: "January 1st, 2022",
 			type: "added_on"
@@ -32,22 +32,16 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <RelatedPanel {...args} />;
+export const Default: StoryObj<Props> = {};
 
-export const Default = Template.bind({});
+export const WithInteractions: StoryObj<Props> = {
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-export const WithInteractions = Template.bind({});
-WithInteractions.play = async({ canvasElement }) => {
-	const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole("button", { name: "Show abstracts" }));
 
-	await userEvent.click(canvas.getByRole("button", { name: "Show abstracts" }));
-
-	await waitFor(() => expect(
-		canvas.getByRole(
-			"button",
-			{
-				name: "Hide abstracts"
-			}
-		)
-	).toBeInTheDocument());
+		await waitFor(() => expect(canvas.getByRole("button", { name: "Hide abstracts" }))
+			.toBeInTheDocument()
+		);
+	}
 };

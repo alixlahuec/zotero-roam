@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
 import SearchPanel from ".";
@@ -33,37 +33,31 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <SearchPanel {...args} />;
+export const Default: StoryObj<Props> = {};
 
-export const Default = Template.bind({});
-
-export const WithRoamCitekey = Template.bind({});
-WithRoamCitekey.parameters = {
-	roamCitekeys: [
-		["@" + items[0].key, "_some_uid_"]
-	]
+export const WithRoamCitekey: StoryObj<Props> = {
+	parameters: {
+		roamCitekeys: [["@" + items[0].key, "_some_uid_"]]
+	}
 };
 
-export const WithLookup = Template.bind({});
-WithLookup.play = async ({ canvasElement }) => {
-	const canvas = within(canvasElement);
+export const WithLookup: StoryObj<Props> = {
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-	await userEvent.type(canvas.getByPlaceholderText("Search in abstract, title, authors (last names), year, tags, or citekey"), items[0].key);
+		await userEvent.type(
+			canvas.getByPlaceholderText(
+				"Search in abstract, title, authors (last names), year, tags, or citekey"
+			),
+			items[0].key
+		);
 
-	await waitFor(() => expect(
-		canvas.getAllByRole(
-			"menuitem"
-		).length
-	)
-		.toBe(1));
+		await waitFor(() => expect(canvas.getAllByRole("menuitem").length).toBe(1));
 
-	const resultItem = canvas.getByRole("menuitem");
+		const resultItem = canvas.getByRole("menuitem");
 
-	await userEvent.click(resultItem);
+		await userEvent.click(resultItem);
 
-	await waitFor(() => expect(
-		canvas.getByText(items[0].data.title)
-	)
-		.toBeInTheDocument());
-
+		await waitFor(() => expect(canvas.getByText(items[0].data.title)).toBeInTheDocument());
+	}
 };
