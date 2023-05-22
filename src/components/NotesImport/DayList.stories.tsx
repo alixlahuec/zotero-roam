@@ -1,7 +1,7 @@
 import { ComponentProps, useCallback, useState } from "react";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import DayList from "Components/NotesImport/DayList";
 import { ListWrapper } from "Components/DataList";
@@ -16,42 +16,63 @@ export default {
 	args: {
 		date: "April 6th, 2022",
 		notes: [sampleOlderNote, sampleNote]
-	}
+	},
+	decorators: [
+		(Story, context) => {
+			const { args } = context;
+			const [selectedKeys, setSelectedKeys] = useState(() => args.selectedKeys || []);
+			const bulkCheck = useCallback(
+				() => setSelectedKeys(args.notes.map((nt) => nt.data.key)),
+				[args.notes]
+			);
+			const bulkUncheck = useCallback(() => setSelectedKeys([]), []);
+
+			const toggleNoteSelection = useCallback(
+				(key) => {
+					if (!selectedKeys.includes(key)) {
+						setSelectedKeys([...selectedKeys, key]);
+					} else {
+						setSelectedKeys(selectedKeys.filter((k) => k != key));
+					}
+				},
+				[selectedKeys]
+			);
+
+			return (
+				<ListWrapper>
+					<Story
+						{...context}
+						itemSelectProps={{ bulkCheck, bulkUncheck, toggleNoteSelection }}
+						selectedKeys={selectedKeys}
+					/>
+				</ListWrapper>
+			);
+		}
+	]
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => {
-	const [selectedKeys, setSelectedKeys] = useState(() => args.selectedKeys || []);
-	const bulkCheck = useCallback(() => setSelectedKeys(args.notes.map(nt => nt.data.key)), [args.notes]);
-	const bulkUncheck = useCallback(() => setSelectedKeys([]), []);
+export const Default: StoryObj<Props> = {};
 
-	const toggleNoteSelection = useCallback((key) => {
-		if(!selectedKeys.includes(key)){
-			setSelectedKeys([...selectedKeys, key]);
-		} else {
-			setSelectedKeys(selectedKeys.filter(k => k != key));
-		}
-	}, [selectedKeys]);
+export const WithInteractions: StoryObj<Props> = {
+	play: async ({ args, canvasElement }) => {
+		const canvas = within(canvasElement);
 
-	return <ListWrapper>
-		<DayList {...args} itemSelectProps={{ bulkCheck, bulkUncheck, toggleNoteSelection }} selectedKeys={selectedKeys} />
-	</ListWrapper>;
-};
+		await expect(
+			canvas.getAllByRole<HTMLInputElement>("checkbox").every((box) => !box.checked)
+		).toBe(true);
 
-export const Default = Template.bind({});
+		const dayCheckbox = canvas.getByRole("checkbox", { name: args.date });
 
-export const WithInteractions = Template.bind({});
-WithInteractions.play = async({ args, canvasElement }) => {
-	const canvas = within(canvasElement);
+		await userEvent.click(dayCheckbox);
 
-	await expect(canvas.getAllByRole<HTMLInputElement>("checkbox").every(box => !box.checked)).toBe(true);
+		await expect(
+			canvas.getAllByRole<HTMLInputElement>("checkbox").every((box) => box.checked)
+		).toBe(true);
 
-	const dayCheckbox = canvas.getByRole("checkbox", { name: args.date });
+		await userEvent.click(dayCheckbox);
 
-	await userEvent.click(dayCheckbox);
-
-	await expect(canvas.getAllByRole<HTMLInputElement>("checkbox").every(box => box.checked)).toBe(true);
-
-	await userEvent.click(dayCheckbox);
-
-	await expect(canvas.getAllByRole<HTMLInputElement>("checkbox").every(box => !box.checked)).toBe(true);
+		await expect(
+			canvas.getAllByRole<HTMLInputElement>("checkbox").every((box) => !box.checked)
+		).toBe(true);
+	}
 };

@@ -1,5 +1,5 @@
 import { useState, ComponentProps } from "react";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { InputDateSingle } from ".";
 
@@ -7,24 +7,27 @@ import { InputDateSingle } from ".";
 type Props = ComponentProps<typeof InputDateSingle>;
 
 export default {
-	component: InputDateSingle
+	component: InputDateSingle,
+	decorators: [
+		(Story, context) => {
+			const { args } = context;
+			const [value, setValue] = useState(args.value || undefined);
+			return <Story {...context} value={value} setValue={setValue} />;
+		}
+	]
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => {
-	const { value: valueFromArgs, setValue: setFromArgs, ...argList } = args;
-	const [value, setValue] = useState(valueFromArgs || undefined);
-	return <InputDateSingle value={value} setValue={setValue} {...argList}/>;
+export const WithDate: StoryObj<Props> = {
+	args: {
+		value: new Date(2022, 0, 1)
+	}
 };
 
-export const WithDate = Template.bind({});
-WithDate.args = {
-	value: new Date(2022, 0, 1)
+export const WithError: StoryObj<Props> = {
+	args: {
+		// @ts-expect-error "Story expects bad input"
+		value: new Date(undefined)
+	}
 };
 
-export const WithError = Template.bind({});
-WithError.args = {
-	// @ts-expect-error "Story expects bad input"
-	value: new Date(undefined)
-};
-
-export const Empty = Template.bind({});
+export const Empty: StoryObj<Props> = {};

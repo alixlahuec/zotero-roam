@@ -1,13 +1,19 @@
 import { ComponentProps } from "react";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import NotesImport from "Components/NotesImport";
 
 import { importItemNotes } from "Mocks/roam";
-import { sampleAnnotLaterPage, sampleAnnotPrevPage, items, sampleNote, sampleOlderNote } from "Mocks";
+import {
+	sampleAnnotLaterPage,
+	sampleAnnotPrevPage,
+	items,
+	sampleNote,
+	sampleOlderNote
+} from "Mocks";
 
 
 type Props = ComponentProps<typeof NotesImport>;
@@ -23,6 +29,13 @@ export default {
 	argTypes: {
 		closeDialog: { action: true }
 	},
+	decorators: [
+		(Story, context) => (
+			<AuxiliaryDialog className="import-item-notes" isOpen={true} label="Import notes">
+				<Story {...context} />
+			</AuxiliaryDialog>
+		)
+	],
 	parameters: {
 		userSettings: {
 			annotations: {},
@@ -31,32 +44,28 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => {
-	return <AuxiliaryDialog className="import-item-notes" isOpen={true} label="Import notes">
-		<NotesImport {...args} />
-	</AuxiliaryDialog>;
-};
+export const Default: StoryObj<Props> = {};
 
-export const Default = Template.bind({});
+export const WithInteractions: StoryObj<Props> = {
+	args: {
+		notes: [sampleNote]
+	},
 
-export const WithInteractions = Template.bind({});
-WithInteractions.args = {
-	notes: [sampleNote]
-};
-WithInteractions.play = async({ args, canvasElement, parameters }) => {
-	const { userSettings } = parameters;
-	const frame = within(canvasElement.parentElement!);
+	play: async ({ args, canvasElement, parameters }) => {
+		const { userSettings } = parameters;
+		const frame = within(canvasElement.parentElement!);
 
-	await userEvent.click(frame.getByRole("button", { name: "Import notes 1" }));
+		await userEvent.click(frame.getByRole("button", { name: "Import notes 1" }));
 
-	await waitFor(() => expect(importItemNotes).toHaveBeenCalled(), { timeout: 1000 });
+		await waitFor(() => expect(importItemNotes).toHaveBeenCalled(), { timeout: 1000 });
 
-	await expect(importItemNotes).toHaveBeenCalledWith(
-		{ item: items[0], notes: [sampleNote] },
-		"some_uid",
-		userSettings.notes,
-		userSettings.annotations
-	);
+		await expect(importItemNotes).toHaveBeenCalledWith(
+			{ item: items[0], notes: [sampleNote] },
+			"some_uid",
+			userSettings.notes,
+			userSettings.annotations
+		);
 
-	await expect(args.closeDialog).toHaveBeenCalled();
+		await expect(args.closeDialog).toHaveBeenCalled();
+	}
 };

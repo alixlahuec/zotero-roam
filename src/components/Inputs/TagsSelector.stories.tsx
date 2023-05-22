@@ -1,8 +1,8 @@
 import { useCallback, useState, ComponentProps } from "react";
-import { Meta, StoryFn } from "@storybook/react";
-
+import { Meta, StoryObj } from "@storybook/react";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
+
 import { TagsSelector } from ".";
 
 
@@ -12,27 +12,30 @@ export default {
 	component: TagsSelector,
 	args: {
 		selectedTags: ["history", "12th century"]
-	}
+	},
+	decorators: [
+		(Story, context) => {
+			const { args } = context;
+			const [tags, setTags] = useState(args.selectedTags || []);
+			const addTag = useCallback((tag) => setTags((prev) => Array.from(new Set([...prev, tag]))), []);
+			const removeTag = useCallback((tag) => setTags((prev) => prev.filter((it) => it != tag)), []);
+
+			return <Story {...context} onRemove={removeTag} onSelect={addTag} selectedTags={tags} />;
+		}
+	]
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => {
-	const [tags, setTags] = useState(args.selectedTags || []);
-	const addTag = useCallback((tag) => setTags(prev => Array.from(new Set([...prev, tag]))), []);
-	const removeTag = useCallback((tag) => setTags(prev => prev.filter(it => it != tag)), []);
+export const WithInteractions: StoryObj<Props> = {
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const frame = within(canvasElement.parentElement!);
 
-	return <TagsSelector onRemove={removeTag} onSelect={addTag} selectedTags={tags} />;
-};
+		await userEvent.type(canvas.getByLabelText("Add tags from Roam"), "new tag");
 
-export const WithInteractions = Template.bind({});
-WithInteractions.play = async({ canvasElement }) => {
-	const canvas = within(canvasElement);
-	const frame = within(canvasElement.parentElement!);
+		const createNewTagOption = frame.getByTitle("Add tag, 'new tag'");
 
-	await userEvent.type(canvas.getByLabelText("Add tags from Roam"), "new tag");
+		await expect(createNewTagOption).toBeInTheDocument();
 
-	const createNewTagOption = frame.getByTitle("Add tag, 'new tag'");
-
-	await expect(createNewTagOption).toBeInTheDocument();
-
-	await userEvent.click(createNewTagOption);
+		await userEvent.click(createNewTagOption);
+	}
 };

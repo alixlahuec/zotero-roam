@@ -1,5 +1,5 @@
 import { ComponentProps, useRef } from "react";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { CitekeyContextMenu, useGetItems } from ".";
 import { useRequestsSettings } from "Components/UserSettings";
@@ -19,6 +19,23 @@ export default {
 		isOpen: true,
 		onClose: () => {}
 	},
+	decorators: [
+		(Story, context) => {
+			const [{ dataRequests }] = useRequestsSettings();
+			const targetElement = useRef<HTMLElement>(null);
+			const itemsMap = useGetItems(dataRequests);
+			const citekey = "@" + items[0].key;
+
+			return (
+				<>
+					<span data-link-title={citekey} data-link-uid="abcdef">
+						<span ref={targetElement}>{citekey}</span>
+					</span>
+					<Story {...context} itemsMap={itemsMap} target={targetElement.current} />
+				</>
+			);
+		}
+	],
 	parameters: {
 		a11y: {
 			config: {
@@ -41,18 +58,4 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => {
-	const [{ dataRequests }] = useRequestsSettings();
-	const targetElement = useRef<HTMLElement>(null);
-	const itemsMap = useGetItems(dataRequests);
-	const citekey = "@" + items[0].key;
-	
-	return <>
-		<span data-link-title={citekey} data-link-uid="abcdef">
-			<span ref={targetElement}>{citekey}</span>
-		</span>
-		<CitekeyContextMenu {...args} itemsMap={itemsMap} target={targetElement.current} />
-	</>;
-};
-
-export const Default = Template.bind({});
+export const Default: StoryObj<Props> = {};

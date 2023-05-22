@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { Backlinks } from "./CitekeyMenu";
 import { cleanSemanticItem } from "../../../utils";
@@ -11,8 +11,8 @@ import { SEnrichedItemTypeEnum } from "Types/transforms";
 type Props = ComponentProps<typeof Backlinks>;
 
 const semanticCitoid = citoids[semanticIdentifier];
-const semanticEntry = Object.values(semantics)[0].references.find(ref => ref.title == semanticCitoid.title)!;
-const semanticItem = items.find(it => it.data.title == semanticCitoid.title)!;
+const semanticEntry = Object.values(semantics)[0].references.find((ref) => ref.title == semanticCitoid.title)!;
+const semanticItem = items.find((it) => it.data.title == semanticCitoid.title)!;
 
 export default {
 	component: Backlinks,
@@ -30,34 +30,33 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => <Backlinks {...args} />;
-
-export const Default = Template.bind({});
-Default.args = {
-	items: [
-		{
-			...cleanSemanticItem(semanticEntry),
-			inGraph: false,
-			inLibrary: {
-				children: {
-					pdfs: [],
-					notes: []
+export const Default: StoryObj<Props> = {
+	args: {
+		items: [
+			{
+				...cleanSemanticItem(semanticEntry),
+				inGraph: false,
+				inLibrary: {
+					children: {
+						pdfs: [],
+						notes: []
+					},
+					raw: semanticItem
 				},
-				raw: semanticItem
+				_type: SEnrichedItemTypeEnum.CITED
 			},
-			_type: SEnrichedItemTypeEnum.CITED
-		},
-		{
-			...cleanSemanticItem(semanticEntry),
-			inGraph: false,
-			inLibrary: {
-				children: {
-					pdfs: [],
-					notes: []
+			{
+				...cleanSemanticItem(semanticEntry),
+				inGraph: false,
+				inLibrary: {
+					children: {
+						pdfs: [],
+						notes: []
+					},
+					raw: semanticItem
 				},
-				raw: semanticItem
-			},
-			_type: SEnrichedItemTypeEnum.CITING
-		}
-	]
+				_type: SEnrichedItemTypeEnum.CITING
+			}
+		]
+	}
 };

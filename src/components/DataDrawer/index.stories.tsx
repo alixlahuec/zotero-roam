@@ -1,7 +1,6 @@
 import { ComponentProps } from "react";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import DataDrawer from ".";
-
 import { items } from "Mocks";
 
 
@@ -16,6 +15,4 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => <DataDrawer {...args} />;
-
-export const Default = Template.bind({});
+export const Default: StoryObj<Props> = {};

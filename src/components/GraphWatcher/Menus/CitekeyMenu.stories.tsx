@@ -2,7 +2,7 @@ import { ComponentProps, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import CitekeyMenu from "./CitekeyMenu";
 import { parseDOI } from "../../../utils";
@@ -16,20 +16,54 @@ type Props = ComponentProps<typeof CitekeyMenu>;
 export default {
 	component: CitekeyMenu,
 	args: {
-		item: items.find(it => it.key == "blochImplementingSocialInterventions2021"),
+		item: items.find((it) => it.key == "blochImplementingSocialInterventions2021"),
 		itemList: {
 			items,
 			pdfs: [samplePDF],
 			notes: [sampleNote]
 		}
 	},
+	decorators: [
+		(Story, context) => {
+			const { args } = context;
+			const client = useQueryClient();
+
+			useEffect(() => {
+				const doi = parseDOI(args.item.data.DOI) as string;
+				const { citations, references } = semantics[doi];
+				client.setQueryData(["semantic", { doi }], {
+					doi,
+					citations: parseSemanticDOIs(citations),
+					references: parseSemanticDOIs(references)
+				});
+
+				return () => {
+					client.clear();
+				};
+			}, [client, args.item]);
+
+			return <Story {...context} />;
+		}
+	],
 	parameters: {
 		userSettings: {
 			annotations: {},
 			metadata: {},
 			notes: {},
 			pageMenu: {
-				defaults: ["addMetadata", "importNotes", "viewItemInfo", "openZoteroLocal", "openZoteroWeb", "pdfLinks", "sciteBadge", "connectedPapers", "semanticScholar", "googleScholar", "citingPapers"],
+				defaults: [
+					"addMetadata",
+					"importNotes",
+					"viewItemInfo",
+					"openZoteroLocal",
+					"openZoteroWeb",
+					"pdfLinks",
+					"sciteBadge",
+					"connectedPapers",
+					"semanticScholar",
+					"googleScholar",
+					"citingPapers"
+				],
 				trigger: "default"
 			},
 			sciteBadge: {},
@@ -39,43 +73,24 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => {
-	const client = useQueryClient();
+export const Default: StoryObj<Props> = {};
 
-	useEffect(() => {
-		const doi = parseDOI(args.item.data.DOI) as string;
-		const { citations, references } = semantics[doi];
-		client.setQueryData(["semantic", { doi }], {
-			doi,
-			citations: parseSemanticDOIs(citations),
-			references: parseSemanticDOIs(references)
-		});
+export const WithInteractions: StoryObj<Props> = {
+	play: async ({ args, canvasElement }) => {
+		const canvas = within(canvasElement);
 
-		return () => {
-			client.clear();
-		};
-	}, [client, args.item]);
+		await sleep(2000);
 
-	return <CitekeyMenu {...args} />;
-};
+		const refButton = await canvas.findByRole("menuitem", { name: "Show references" });
 
-export const Default = Template.bind({});
+		await userEvent.click(refButton);
 
-export const WithInteractions = Template.bind({});
-WithInteractions.play = async({ args, canvasElement }) => {
-	const canvas = within(canvasElement);
+		await waitFor(async () => expect(await canvas.findByRole("dialog", { name: "Works related to @" + args.item.key }))
+			.toBeInTheDocument()
+		);
 
-	await sleep(2000);
+		await userEvent.click(canvas.getAllByText("Add to Zotero")[0]);
 
-	const refButton = await canvas.findByRole("menuitem", { name: "Show references" });
-
-	await userEvent.click(refButton);
-
-	await waitFor(async() => expect(await canvas.findByRole("dialog", { name: "Works related to @" + args.item.key }))
-		.toBeInTheDocument()
-	);
-    
-	await userEvent.click(canvas.getAllByText("Add to Zotero")[0]);
-
-	await waitFor(() => expect(canvas.getByText("Send to Zotero")));
+		await waitFor(() => expect(canvas.getByText("Send to Zotero")));
+	}
 };

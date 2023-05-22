@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import NotesDrawer from ".";
 import { sampleAnnot, sampleAnnotLaterPage, sampleNote, sampleOlderNote } from "Mocks/zotero";
 
@@ -28,19 +28,20 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => <NotesDrawer {...args} />;
-
-export const NotesOnly = Template.bind({});
-NotesOnly.args = {
-	notes: [sampleNote, sampleOlderNote]
+export const NotesOnly: StoryObj<Props> = {
+	args: {
+		notes: [sampleNote, sampleOlderNote]
+	}
 };
 
-export const AnnotsOnly = Template.bind({});
-AnnotsOnly.args = {
-	notes: [sampleAnnot, sampleAnnotLaterPage]
+export const AnnotsOnly: StoryObj<Props> = {
+	args: {
+		notes: [sampleAnnot, sampleAnnotLaterPage]
+	}
 };
 
-export const NotesAndAnnots = Template.bind({});
-NotesAndAnnots.args = {
-	notes: [sampleNote, sampleOlderNote, sampleAnnot, sampleAnnotLaterPage]
+export const NotesAndAnnots: StoryObj<Props> = {
+	args: {
+		notes: [sampleNote, sampleOlderNote, sampleAnnot, sampleAnnotLaterPage]
+	}
 };

@@ -1,5 +1,5 @@
 import { useState, ComponentProps } from "react";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { InputText } from ".";
 
@@ -7,16 +7,14 @@ import { InputText } from ".";
 type Props = ComponentProps<typeof InputText>;
 
 export default {
-	component: InputText
+	component: InputText,
+	decorators: [
+		(Story, context) => {
+			const { args } = context;
+			const [value, setValue] = useState(args.value || "");
+			return <Story {...context} value={value} setValue={setValue} />;
+		}
+	]
 } as Meta<Props>;
 
-const Template: StoryFn<Props & { defaultValue: Props["value"] }> = (args) => {
-	const { defaultValue = "", ...argList } = args;
-	const [value, setValue] = useState(defaultValue);
-	return <InputText {...argList} value={value} setValue={setValue} />;
-};
-
-export const Default = Template.bind({});
-Default.args = {
-
-};
+export const Default: StoryObj<Props> = {};

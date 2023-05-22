@@ -250,7 +250,7 @@ export default class ZoteroRoam {
 	}
 }
 
-export type LogConfig = {
+type LogConfig = {
 	context?: Record<string, any>,
 	detail?: string,
 	origin?: string,
@@ -258,7 +258,7 @@ export type LogConfig = {
 	showToaster?: number | boolean
 };
 
-export type LogLevel = "error" | "info" | "warning";
+type LogLevel = "error" | "info" | "warning";
 
 /**
  * Creates a log entry for the extension. This is meant to provide users with information about different events (e.g errors when fetching data), through an optional toast and more detailed logs.

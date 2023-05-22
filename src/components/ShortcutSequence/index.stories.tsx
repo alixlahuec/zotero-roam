@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import ShortcutSequence from ".";
 
 
@@ -9,10 +9,9 @@ export default {
 	component: ShortcutSequence,
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => <ShortcutSequence {...args} />;
-
-export const Default = Template.bind({});
-Default.args = {
-	action: "do something",
-	text: "alt+Q"
+export const Default: StoryObj<Props> = {
+	args: {
+		action: "do something",
+		text: "alt+Q"
+	}
 };

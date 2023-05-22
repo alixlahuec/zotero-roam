@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import { NoWriteableLibraries } from ".";
 
 
@@ -9,4 +9,4 @@ export default {
 	component: NoWriteableLibraries
 } as Meta<Props>;
 
-export const Default: StoryFn<Props> = () => <NoWriteableLibraries />;
+export const Default: StoryObj<Props> = {};

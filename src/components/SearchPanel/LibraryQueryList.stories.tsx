@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import LibraryQueryList from "./LibraryQueryList";
 
 import { useBool } from "../../hooks";
@@ -18,6 +18,15 @@ export default {
 		handleClose: () => {},
 		isOpen: true
 	},
+	decorators: [
+		(Story, context) => {
+			const [qcActive, { toggle: toggleQC }] = useBool(false);
+
+			return (
+				<Story {...context} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} items={cleanItems} />
+			);
+		}
+	],
 	parameters: {
 		userSettings: {
 			copy: {
@@ -33,10 +42,4 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: StoryFn<Props> = (args) => {
-	const [qcActive, { toggle: toggleQC }] = useBool(false);
-
-	return <LibraryQueryList {...args} quickCopyProps={{ isActive: qcActive, toggle: toggleQC }} items={cleanItems} />;
-};
-
-export const WithItems = Template.bind({});
+export const WithItems: StoryObj<Props> = {};
