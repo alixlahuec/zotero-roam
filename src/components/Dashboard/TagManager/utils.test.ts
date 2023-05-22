@@ -1,5 +1,6 @@
 import { mock } from "jest-mock-extended";
 import { getTagStats, getTagUsage, isSingleton, makeSuggestionFor, matchTagData, sortTags } from "./utils";
+import { TagManagerSortBy } from "./types";
 import { ZoteroAPI } from "Types/externals";
 import { ZTagEntry, ZTagList } from "Types/transforms";
 
@@ -165,10 +166,10 @@ test("Match Zotero tags with Roam pages", async () => {
 });
 
 test("Sorts tags list", () => {
-	expect(sortTags(tagList, "alphabetical"))
+	expect(sortTags(tagList, TagManagerSortBy.ALPHABETICAL))
 		.toEqual(tagList);
-	expect(sortTags(tagList, "roam"))
+	expect(sortTags(tagList, TagManagerSortBy.ROAM))
 		.toEqual([tagList[0], tagList[1], tagList[2]]);
-	expect(sortTags(tagList, "usage"))
+	expect(sortTags(tagList, TagManagerSortBy.USAGE))
 		.toEqual([tagList[1], tagList[2], tagList[0]]);
 });
