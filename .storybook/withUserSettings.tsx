@@ -1,4 +1,4 @@
-import { DecoratorFn } from "@storybook/react";
+import { Decorator } from "@storybook/react";
 
 import { UserSettingsProvider } from "Components/UserSettings";
 import { analyzeUserRequests, setupInitialSettings } from "../src/setup";
@@ -22,7 +22,7 @@ const init = {
 	...initSettings
 };
 
-export const withUserSettings: DecoratorFn = (Story, context) => {
+export const withUserSettings: Decorator = (Story, context) => {
 	const { parameters: { userSettings = {} } } = context;
 
 	return <UserSettingsProvider init={{ ...init, ...userSettings }}>

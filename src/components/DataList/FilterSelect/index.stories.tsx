@@ -1,8 +1,7 @@
 import { ComponentProps } from "react";
-
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { useFilterList } from "../../../hooks";
 import FilterSelect from ".";
@@ -11,48 +10,49 @@ import FilterSelect from ".";
 type Props = ComponentProps<typeof FilterSelect>;
 
 export default {
-	component: FilterSelect
-} as Meta<Props>;
-
-const Template: Story<Props> = (args) => {
-	const [filterList, toggleFilter] = useFilterList(args.options);
-
-	return <FilterSelect options={filterList} toggleFilter={toggleFilter} />;
-};
-
-export const Default = Template.bind({});
-Default.args = {
-	options: [
-		{
-			active: false,
-			label: "Influential",
-			value: "influential"
-		},
-		{
-			active: true,
-			label: "In Library",
-			value: "inLibrary"
-		},
-		{
-			active: false,
-			label: "In Roam",
-			value: "inRoam"
+	component: FilterSelect,
+	decorators: [
+		(Story, context) => {
+			const [filterList, toggleFilter] = useFilterList(context.args.options);
+			return <Story {...context} args={{ ...context.args, options: filterList, toggleFilter }} />;
 		}
 	]
-};
-Default.play = async({ canvasElement }) => {
-	const canvas = within(canvasElement);
-	const frame = within(canvasElement.parentElement!);
+} as Meta<Props>;
 
-	const filterBtn = canvas.getByRole("button", { name: "Filter 1" });
+export const Default: StoryObj<Props> = {
+	args: {
+		options: [
+			{
+				active: false,
+				label: "Influential",
+				value: "influential"
+			},
+			{
+				active: true,
+				label: "In Library",
+				value: "inLibrary"
+			},
+			{
+				active: false,
+				label: "In Roam",
+				value: "inRoam"
+			}
+		]
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const frame = within(canvasElement.parentElement!);
 
-	await userEvent.click(filterBtn);
+		const filterBtn = canvas.getByRole("button", { name: "Filter 1" });
 
-	const filterOption = frame.getByTitle("Influential").parentElement!;
+		await userEvent.click(filterBtn);
 
-	await expect(filterOption).toHaveAttribute("aria-selected", "false");
+		const filterOption = frame.getByTitle("Influential").parentElement!;
 
-	await userEvent.click(filterOption);
+		await expect(filterOption).toHaveAttribute("aria-selected", "false");
 
-	await expect(filterOption).toHaveAttribute("aria-selected", "true");
+		await userEvent.click(filterOption);
+
+		await expect(filterOption).toHaveAttribute("aria-selected", "true");
+	}
 };
