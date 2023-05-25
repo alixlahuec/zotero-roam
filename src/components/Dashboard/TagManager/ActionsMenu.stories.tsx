@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { expect, jest } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import ActionsMenu from "./ActionsMenu";
 
 import { apiKeys, libraries } from "Mocks";
@@ -18,60 +18,62 @@ export default {
 	component: ActionsMenu,
 	args: {
 		library: { apikey: masterKey, path: userLibrary.path }
-	}
+	},
+	decorators: [
+		(Story, context) => {
+			const client = useQueryClient();
+			
+			useEffect(() => {
+				client.setQueryData(["tags", { library: userLibrary.path }], {
+					data: {},
+					lastUpdated: userLibrary.version
+				});
+
+				return () => {
+					client.clear();
+				};
+			}, [client]);
+
+			return <Story {...context} />;
+		}
+	]
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
-	const client = useQueryClient();
-
-	useEffect(() => {
-		client.setQueryData(["tags", { library: userLibrary.path }], {
-			data: {},
-			lastUpdated: userLibrary.version
-		});
-
-		return () => {
-			client.clear();
-		};
-	}, [client]);
-
-	return <ActionsMenu {...args} />;
-};
-
-export const Default = Template.bind({});
-Default.args = {
-	suggestion: {
-		recommend: "history",
-		type: "auto",
-		use: {
-			roam: ["history"],
-			zotero: ["history", "HISTORY", "History"]
+export const Default: StoryObj<Props> = {
+	args: {
+		suggestion: {
+			recommend: "history",
+			type: "auto",
+			use: {
+				roam: ["history"],
+				zotero: ["history", "HISTORY", "History"]
+			}
 		}
-	}
-};
-Default.play = async ({ canvasElement }) => {
-	document.dispatchEvent = jest.fn();
+	},
+	play: async ({ canvasElement }) => {
+		document.dispatchEvent = jest.fn();
 
-	const canvas = within(canvasElement);
-	await userEvent.click(canvas.getByText("Delete tag(s)"));
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByText("Delete tag(s)"));
 
-	await waitFor(() => expect(
-		canvas.getByText(
-			"Deleted"
-		)
-	).toBeInTheDocument(),
-	{
-		timeout: 3000
-	});
-
-	await expect(document.dispatchEvent).toHaveBeenCalled();
-	await expect((document.dispatchEvent as jest.Mock).mock.calls[0][0].detail)
-		.toEqual({
-			args: {
-				tags: ["history", "history", "HISTORY", "History"]
-			},
-			error: null,
-			library: userLibrary.path,
-			_type: "tags-deleted"
+		await waitFor(() => expect(
+			canvas.getByText(
+				"Deleted"
+			)
+		).toBeInTheDocument(),
+		{
+			timeout: 3000
 		});
+
+		await expect(document.dispatchEvent).toHaveBeenCalled();
+		await expect((document.dispatchEvent as jest.Mock).mock.calls[0][0].detail)
+			.toEqual({
+				args: {
+					tags: ["history", "history", "HISTORY", "History"]
+				},
+				error: null,
+				library: userLibrary.path,
+				_type: "tags-deleted"
+			});
+	}
 };

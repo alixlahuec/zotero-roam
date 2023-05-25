@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import Dashboard from ".";
 
@@ -32,46 +32,46 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => <Dashboard {...args} />;
-
-export const Default = Template.bind({});
-Default.parameters = {
-	chromatic: {
-		disableSnapshot: true
+export const Default: StoryObj<Props> = {
+	parameters: {
+		chromatic: {
+			disableSnapshot: true
+		}
 	}
 };
 
-export const VisitTabs = Template.bind({});
-VisitTabs.play = async ({ canvasElement }) => {
-	const canvas = within(canvasElement);
-	await userEvent.click(canvas.getByRole("tab", { name: "Tag Manager" }));
+export const VisitTabs: StoryObj<Props> = {
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole("tab", { name: "Tag Manager" }));
 
-	await waitFor(() => expect(
-		canvas.getByRole(
-			"tab",
-			{
-				name: "Suggestions"
-			}
-		)
-	).toBeInTheDocument(),
-	{
-		timeout: 3000
-	});
+		await waitFor(() => expect(
+			canvas.getByRole(
+				"tab",
+				{
+					name: "Suggestions"
+				}
+			)
+		).toBeInTheDocument(),
+		{
+			timeout: 3000
+		});
 
-	await userEvent.click(canvas.getByRole("tab", { name: "Explorer" }));
+		await userEvent.click(canvas.getByRole("tab", { name: "Explorer" }));
 
-	await waitFor(() => expect(
-		canvas.getByRole(
-			"button",
-			{
-				name: "Set filter"
-			}
-		)
-	).toBeInTheDocument(),
-	{
-		timeout: 3000
-	});
+		await waitFor(() => expect(
+			canvas.getByRole(
+				"button",
+				{
+					name: "Set filter"
+				}
+			)
+		).toBeInTheDocument(),
+		{
+			timeout: 3000
+		});
 
-	await userEvent.click(canvas.getByRole("tab", { name: "PDFs" }));
+		await userEvent.click(canvas.getByRole("tab", { name: "PDFs" }));
 
+	}
 };
