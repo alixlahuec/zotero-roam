@@ -1,5 +1,5 @@
 import { useState, ComponentProps } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { InputDateRange } from ".";
 
@@ -8,27 +8,30 @@ type Props = ComponentProps<typeof InputDateRange>;
 
 export default {
 	component: InputDateRange,
+	decorators: [
+		(Story, context) => {
+			const [value, setValue] = useState(context.args.value || [null, null]);
+			return <Story {...context} args={{ ...context.args, value, setValue }} />;
+		}
+	]
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
-	const { value: valueFromArgs, setValue: setFromArgs, ...argList } = args;
-	const [value, setValue] = useState(valueFromArgs || [null, null]);
-	return <InputDateRange value={value} setValue={setValue} {...argList}/>;
+export const StartDateOnly: StoryObj<Props> = {
+	args: {
+		value: [new Date(2022, 0, 1), null]
+	}
 };
 
-export const StartDateOnly = Template.bind({});
-StartDateOnly.args = {
-	value: [new Date(2022, 0, 1), null]
+export const EndDateOnly: StoryObj<Props> = {
+	args: {
+		value: [null, new Date(2022, 3, 1)]
+	}
 };
 
-export const EndDateOnly = Template.bind({});
-EndDateOnly.args = {
-	value: [null, new Date(2022, 3, 1)]
+export const StartAndEndDates: StoryObj<Props> = {
+	args: {
+		value: [new Date(2022, 0, 1), new Date(2022, 3, 1)]
+	}
 };
 
-export const StartAndEndDates = Template.bind({});
-StartAndEndDates.args = {
-	value: [new Date(2022, 0, 1), new Date(2022, 3, 1)]
-};
-
-export const Empty = Template.bind({});
+export const Empty: StoryObj<Props> = {};

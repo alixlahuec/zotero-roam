@@ -1,4 +1,7 @@
-export const A11Y_RULES = [
+import { ConfigOptions } from "axe-playwright/dist/types";
+
+
+export const A11Y_RULES: ConfigOptions["rules"] = [
 	{
 		id: "color-contrast",
 		// axe-playwright currently generates inconsistent results for color contrast.

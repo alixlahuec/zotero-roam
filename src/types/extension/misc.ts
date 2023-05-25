@@ -1,3 +1,8 @@
+export type ExtensionContextValue = {
+	portalId: string,
+	version: string
+};
+
 export enum ExtensionStatusEnum {
 	DISABLED = "disabled",
 	OFF = "off",

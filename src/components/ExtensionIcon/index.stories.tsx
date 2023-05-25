@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { screen, userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import ExtensionIcon from ".";
 import { useToggle } from "../../hooks";
@@ -32,39 +32,37 @@ export default {
 	}
 } as Meta<Props>;
 
-const Template: Story<Props> = (args) => {
-	const [status, toggleStatus] = useToggle<Props["status"]>({
-		start: ExtensionStatusEnum.ON,
-		options: [ExtensionStatusEnum.ON, ExtensionStatusEnum.OFF]
-	});
-	return <ExtensionIcon {...args} status={status} toggleExtension={toggleStatus} />;
+export const Disabled: StoryObj<Props> = {
+	render: (args) => <ExtensionIcon {...args} status={ExtensionStatusEnum.DISABLED} />
 };
 
-const DisabledTemplate: Story<Props> = (args) => {
-	return <ExtensionIcon {...args} status={ExtensionStatusEnum.DISABLED} />;
-};
+export const WithInteractions: StoryObj<Props> = {
+	decorators: [
+		(Story, context) => {
+			const [status, toggleExtension] = useToggle<Props["status"]>({
+				start: ExtensionStatusEnum.ON,
+				options: [ExtensionStatusEnum.ON, ExtensionStatusEnum.OFF]
+			});
+			return <Story {...context} args={{ ...context.args, status, toggleExtension }} />;
+		}
+	],
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const icon = canvas.getByRole("button", { name: "Click to toggle the zoteroRoam extension" });
 
-export const Disabled = DisabledTemplate.bind({});
+		await sleep(2000);
 
-export const WithInteractions = Template.bind({});
-WithInteractions.play = async({ canvasElement }) => {
-	const canvas = within(canvasElement);
-	const icon = canvas.getByRole("button", { name: "Click to toggle the zoteroRoam extension" });
+		await userEvent.hover(icon);
 
-	await sleep(2000);
+		await waitFor(() => expect(canvas.getByText("Docs"))
+			.toBeInTheDocument());
 
-	await userEvent.hover(icon);
+		await sleep(1000);
 
-	await waitFor(() => expect(canvas.getByText("Docs"))
-		.toBeInTheDocument());
-    
-	await sleep(1000);
+		await userEvent.click(icon, { button: 2 });
 
-	await userEvent.click(icon, { button: 2 });
-
-	await waitFor(() => expect(screen.getByText("Dashboard"))
-		.toBeInTheDocument(),
-	{
-		timeout: 2000
-	});
+		await waitFor(() => expect(screen.getByText("Dashboard"))
+			.toBeInTheDocument(),
+		{ timeout: 2000 });
+	}
 };

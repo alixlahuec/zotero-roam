@@ -1,8 +1,8 @@
 import { HotkeysProvider } from "@blueprintjs/core";
-import { DecoratorFn } from "@storybook/react";
+import { Decorator } from "@storybook/react";
 
 
-export const withHotkeysProvider: DecoratorFn = (Story, context) => {
+export const withHotkeysProvider: Decorator = (Story, context) => {
 	const { args, parameters } = context;
 	return <HotkeysProvider dialogProps={{ globalGroupName: "zoteroRoam" }}>
 		<Story {...{ args, parameters }} />
