@@ -6,14 +6,17 @@ import { ListItem } from "Components/DataList";
 import NotesDrawer from "Components/NotesDrawer";
 
 import { useBool } from "../../../../hooks";
-
 import { pluralize } from "../../../../utils";
 
-import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
+import { ZCleanItemPDF } from "Types/transforms";
 
 
-function PDFElement({ item }){
+type OwnProps = {
+	item: ZCleanItemPDF
+};
+
+function PDFElement({ item }: OwnProps){
 	const [isDataDrawerOpen, { on: openDataDrawer, off: closeDataDrawer }] = useBool(false);
 	const [isNotesDrawerOpen, { on: openNotesDrawer, off: closeNotesDrawer }] = useBool(false);
 
@@ -35,8 +38,6 @@ function PDFElement({ item }){
 		{item.annotations.length > 0 && <NotesDrawer notes={item.annotations} isOpen={isNotesDrawerOpen} onClose={closeNotesDrawer} />}
 	</>;
 }
-PDFElement.propTypes = {
-	item: customPropTypes.cleanLibraryPDFType
-};
+
 
 export default PDFElement;

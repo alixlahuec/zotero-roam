@@ -1,6 +1,4 @@
-import { arrayOf } from "prop-types";
 import { useEffect } from "react";
-
 import { NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
@@ -8,13 +6,17 @@ import PDFElement from "./PDFElement";
 
 import { usePagination } from "../../../../hooks";
 
-import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
+import { ZCleanItemPDF } from "Types/transforms";
 
 
 const itemsPerPage = 20;
 
-function QueryPDFs({ items }){
+type OwnProps = {
+	items: ZCleanItemPDF[]
+};
+
+function QueryPDFs({ items }: OwnProps){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 
 	useEffect(() => {
@@ -42,8 +44,6 @@ function QueryPDFs({ items }){
 		</Toolbar>
 	</div>;
 }
-QueryPDFs.propTypes = {
-	items: arrayOf(customPropTypes.cleanLibraryPDFType)
-};
+
 
 export default QueryPDFs;

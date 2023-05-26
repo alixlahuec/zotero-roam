@@ -29,10 +29,10 @@ export interface ZCleanItemTop {
 }
 
 export interface ZCleanItemPDF {
-	annotations: ZoteroAPI.ItemAnnotation[],
+	annotations: ZItemAnnotation[],
 	key: string,
 	link: string,
-	parent: ZoteroAPI.ItemTop | Record<string, never>,
+	parent: ZItemTop | Record<string, never>,
 	tags: string[],
 	title: string,
 	raw: ZItemAttachment
