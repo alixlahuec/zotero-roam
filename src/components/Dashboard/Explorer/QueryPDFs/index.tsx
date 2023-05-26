@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { NonIdealState } from "@blueprintjs/core";
+import { useEffect, useState } from "react";
+import { NonIdealState, Spinner } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import PDFElement from "./PDFElement";
@@ -7,16 +7,35 @@ import PDFElement from "./PDFElement";
 import { usePagination } from "../../../../hooks";
 
 import { CustomClasses } from "../../../../constants";
-import { ZCleanItemPDF } from "Types/transforms";
+import { cleanLibraryPDF, identifyPDFConnections } from "../../../../utils";
+import { ZCleanItemPDF, ZLibraryContents } from "Types/transforms";
+
+
+function cleanLibraryData_PDF(itemList: ZLibraryContents): Promise<ZCleanItemPDF[]>{
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			const data = itemList.pdfs
+				.map(pdf => {
+					const itemKey = pdf.data.key;
+					const parentKey = pdf.data.parentItem;
+					const location = pdf.library.type + "s/" + pdf.library.id;
+					const { parent, annotations } = identifyPDFConnections(itemKey, parentKey, location, { items: itemList.items, notes: itemList.notes });
+					
+					return cleanLibraryPDF(pdf, parent, annotations);
+				});
+			resolve(data);
+		}, 0);
+	});
+}
 
 
 const itemsPerPage = 20;
 
-type OwnProps = {
+type QueryPDFsListProps = {
 	items: ZCleanItemPDF[]
 };
 
-function QueryPDFs({ items }: OwnProps){
+function QueryPDFsList({ items }: QueryPDFsListProps){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 
 	useEffect(() => {
@@ -43,6 +62,24 @@ function QueryPDFs({ items }: OwnProps){
 			/>
 		</Toolbar>
 	</div>;
+}
+
+
+function QueryPDFs({ itemList }) {
+	const [items, setItems] = useState<ZCleanItemPDF[] | null>(null);
+
+	useEffect(() => {
+		if(itemList){
+			cleanLibraryData_PDF(itemList)
+				.then(data => {
+					setItems(data);
+				});
+		}
+	}, [itemList]);
+
+	return items == null
+		? <Spinner size={15} />
+		: <QueryPDFsList items={items} />;
 }
 
 
