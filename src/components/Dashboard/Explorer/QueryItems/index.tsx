@@ -1,6 +1,4 @@
-import { func } from "prop-types";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 import { NonIdealState } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
@@ -12,18 +10,23 @@ import { usePagination } from "../../../../hooks";
 import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../QueryBuilder/utils";
 import { runQuerySet } from "../QueryBuilder/queries";
 
-import * as customPropTypes from "../../../../propTypes";
 import { CustomClasses } from "../../../../constants";
-
+import { QueryTermListRecursive } from "../QueryBuilder/types";
+import { ZCleanItemTop } from "Types/transforms";
 import "./index.css";
 
 
 const itemsPerPage = 20;
 
-function QueryItems({ items, onClose }){
+type QueryItemsProps = {
+	items: ZCleanItemTop[],
+	onClose: () => void
+};
+
+function QueryItems({ items, onClose }: QueryItemsProps){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [useOR, /*setUseOR*/] = useState(true);
-	const [queryTerms, setQueryTerms] = useState([]);
+	const [queryTerms, setQueryTerms] = useState<QueryTermListRecursive[][]>([]);
 
 	const addQueryTerm = useCallback((val) => setQueryTerms(prev => addElemToArray(prev, [val])), []);
 	const removeQueryTerm = useCallback((index) => setQueryTerms(prev => removeArrayElemAt(prev, index)), []);
@@ -65,9 +68,6 @@ function QueryItems({ items, onClose }){
 		</Toolbar>
 	</div>;
 }
-QueryItems.propTypes = {
-	items: customPropTypes.cleanLibraryReturnArrayType,
-	onClose: func
-};
+
 
 export default QueryItems;

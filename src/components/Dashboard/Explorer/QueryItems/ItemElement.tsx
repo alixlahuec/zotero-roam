@@ -1,5 +1,3 @@
-import { func } from "prop-types";
-
 import { Button } from "@blueprintjs/core";
 
 import CitekeyPopover from "Components/CitekeyPopover";
@@ -11,11 +9,15 @@ import { pluralize } from "../../../../utils";
 import { useBool } from "../../../../hooks";
 
 import { CustomClasses } from "../../../../constants";
+import { ZCleanItemTop } from "Types/transforms";
 
-import * as customPropTypes from "../../../../propTypes";
 
+type OwnProps = {
+	item: ZCleanItemTop,
+	onClose: () => void
+};
 
-function ItemElement({ item, onClose }){
+function ItemElement({ item, onClose }: OwnProps){
 	const { children, inGraph, itemType, meta, publication, raw, title } = item;
 	const [isDataDrawerOpen, { on: openDataDrawer, off: closeDataDrawer }] = useBool(false);
 	const [isNotesDrawerOpen, { on: openNotesDrawer, off: closeNotesDrawer }] = useBool(false);
@@ -39,9 +41,5 @@ function ItemElement({ item, onClose }){
 		{children.notes.length > 0 && <NotesDrawer notes={children.notes} isOpen={isNotesDrawerOpen} onClose={closeNotesDrawer} />}
 	</>;
 }
-ItemElement.propTypes = {
-	item: customPropTypes.cleanLibraryItemType,
-	onClose: func
-};
 
 export default ItemElement;
