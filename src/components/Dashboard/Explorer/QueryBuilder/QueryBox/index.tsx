@@ -1,4 +1,3 @@
-import { array, bool, func, shape } from "prop-types";
 import { Fragment, useCallback } from "react";
 import { Button } from "@blueprintjs/core";
 
@@ -8,9 +7,21 @@ import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "../uti
 import { defaultQueryTerm } from "../queries";
 
 import { CustomClasses } from "../../../../../constants";
+import { QueryTerm, QueryTermListRecursive } from "../types";
 
 
-function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = true }){
+type OwnProps = {
+	handlers: {
+		removeSelf: () => void,
+		updateSelf: (value: QueryTerm[]) => void
+	},
+	isFirstChild: boolean,
+	isOnlyChild: boolean,
+	terms?: (QueryTerm | QueryTermListRecursive)[],
+	useOR?: boolean
+};
+
+function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = true }: OwnProps){
 	const { removeSelf, updateSelf } = handlers;
 
 	const addTerm = useCallback(() => {
@@ -46,7 +57,7 @@ function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = tru
 
 					return (
 						<Fragment key={index}>
-							{tm.constructor === Array
+							{Array.isArray(tm)
 								? <QueryBox terms={tm} {...termProps} />
 								: <QueryEntry term={tm} {...termProps} />}
 						</Fragment>
@@ -59,15 +70,6 @@ function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = tru
 		<Button className={["zr-query-box--add-sibling", CustomClasses.TEXT_SMALL].join(" ")} minimal={true} onClick={addTerm} rightIcon="small-plus" small={true} text={(useOR ? "OR" : "AND")} />
 	</>;
 }
-QueryBox.propTypes = {
-	handlers: shape({
-		removeSelf: func,
-		updateSelf: func
-	}),
-	isFirstChild: bool,
-	isOnlyChild: bool,
-	terms: array,
-	useOR: bool
-};
+
 
 export default QueryBox;

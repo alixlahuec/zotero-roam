@@ -1,20 +1,20 @@
-import { any, bool, func, oneOf, shape, string } from "prop-types";
 import { useCallback } from "react";
-
-import { Button, MenuItem } from "@blueprintjs/core";
+import { Button, Intent, MenuItem } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
+import { Placement } from "@blueprintjs/popover2";
 
 import InputComponent from "../InputComponent";
 
-import { defaultQueryTerm, queries } from "../queries";
+import { QueryOperator, defaultQueryTerm, queries } from "../queries";
 import { returnSiblingArray } from "../utils";
 
 import { CustomClasses } from "../../../../../constants";
+import { QueryProperty, QueryTerm } from "../types";
 
 
 const popoverProps = {
 	minimal: true,
-	placement: "bottom",
+	placement: "bottom" as Placement,
 	popoverClassName: CustomClasses.POPOVER
 };
 
@@ -38,7 +38,19 @@ function itemRenderer(item, itemProps) {
 	return <MenuItem key={item} onClick={handleClick} text={item} />;
 }
 
-function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }){
+
+type OwnProps = {
+	handlers: {
+		removeSelf: () => void,
+		updateSelf: (value: QueryTerm | QueryTerm[]) => void
+	},
+	isFirstChild: boolean,
+	isOnlyChild: boolean,
+	term: QueryTerm,
+	useOR?: boolean
+};
+
+function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }: OwnProps){
 	const { removeSelf, updateSelf } = handlers;
 	const { property, relationship, value = "" } = term;
 
@@ -48,19 +60,25 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 
 	const handlePropChange = useCallback((update) => updateSelf({ ...term, ...update }), [term, updateSelf]);
 
-	const handlePropertyChange = useCallback((newProp) => {
-		const updates = { property: newProp };
+	const handlePropertyChange = useCallback((newProp: QueryProperty) => {
+		const updates: Partial<QueryTerm> = { property: newProp };
+		const newOperatorList = queries[newProp] as typeof queries[keyof typeof queries];
 		// Update relationship also, if necessary
-		if(!Object.keys(queries[newProp]).includes(relationship)){ updates.relationship = Object.keys(queries[newProp])[0]; }
+		if(!(relationship in newOperatorList)){ updates.relationship = Object.keys(newOperatorList)[0]; }
 		// Update value also, if necessary
-		if(updates.relationship && !queries[newProp][updates.relationship].checkInput(value)) { updates.value = queries[newProp][updates.relationship].defaultInput; }
+		if (updates.relationship) {
+			const newOperator = newOperatorList[updates.relationship] as QueryOperator;
+			if (!newOperator.checkInput(value)) { updates.value = newOperator.defaultInput; }
+		}
 
 		handlePropChange(updates);
 	}, [handlePropChange, relationship, value]);
-	const handleRelationshipChange = useCallback((newRel) => {
-		const updates = { relationship: newRel };
+
+	const handleRelationshipChange = useCallback((newRel: string) => {
+		const updates: Partial<QueryTerm> = { relationship: newRel };
+		const newOperator = queries[property][newRel] as QueryOperator;
 		// Update value also, if necessary
-		if(!queries[property][newRel].checkInput(value)) { updates.value = queries[property][newRel].defaultInput; }
+		if(!newOperator.checkInput(value)) { updates.value = newOperator.defaultInput; }
 
 		handlePropChange(updates);
 	}, [handlePropChange, property, value]);
@@ -85,7 +103,7 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 				popoverProps={relationshipPopoverProps} >
 				<Button minimal={true} rightIcon="caret-down" text={relationship} />
 			</Select>
-			<InputComponent property={property} relationship={relationship} value={value} setValue={handleValueChange} />
+			<InputComponent inputType={queries[property][relationship].inputType} value={value} setValue={handleValueChange} />
 		</div>
 		{isOnlyChild
 			? null
@@ -96,23 +114,10 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 					onClick={addSiblingTerm} 
 					small={true} 
 					text={(useOR ? "OR" : "AND")} />
-				<Button className="zr-query-entry--remove-self" icon={isOnlyChild ? "cross" : "small-cross"} intent={isOnlyChild ? null : "danger"} minimal={true} onClick={removeSelf} title="Remove query term" />
+				<Button className="zr-query-entry--remove-self" icon={isOnlyChild ? "cross" : "small-cross"} intent={isOnlyChild ? undefined : Intent.DANGER} minimal={true} onClick={removeSelf} title="Remove query term" />
 			</div>}
 	</div>;
 }
-QueryEntry.propTypes = {
-	handlers: shape({
-		removeSelf: func,
-		updateSelf: func
-	}),
-	isFirstChild: bool,
-	isOnlyChild: bool,
-	term: shape({
-		property: oneOf(Object.keys(queries)),
-		relationship: string,
-		value: any
-	}),
-	useOR: bool
-};
+
 
 export default QueryEntry;
