@@ -13,23 +13,9 @@ type Option = {
 
 type SelectorProps = MultiSelectProps<Option>;
 
-const popoverProps: SelectorProps["popoverProps"] = {
-	canEscapeKeyClose: false,
-	fill: true,
-	minimal: true,
-	popoverClassName: CustomClasses.POPOVER
-};
-
-const tagInputProps: SelectorProps["tagInputProps"] = {
-	inputProps: {
-		autoComplete: "off",
-		placeholder: "Add...",
-		spellCheck: "false"
-	},
-	placeholder: "Click to add an element"
-};
-
 const staticProps: Partial<SelectorProps> & Pick<SelectorProps, "tagRenderer"> = {
+	className: CustomClasses.TEXT_SMALL,
+	initialContent: null,
 	itemPredicate: (query, item) => {
 		return searchEngine(query, item.label,
 			{
@@ -40,17 +26,34 @@ const staticProps: Partial<SelectorProps> & Pick<SelectorProps, "tagRenderer"> =
 			}
 		);
 	},
+	itemsEqual: "value",
+	openOnKeyDown: true,
+	popoverProps: {
+		canEscapeKeyClose: false,
+		fill: true,
+		minimal: true,
+		popoverClassName: CustomClasses.POPOVER
+	},
+	resetOnSelect: true,
+	tagInputProps: {
+		inputProps: {
+			autoComplete: "off",
+			placeholder: "Add...",
+			spellCheck: "false"
+		},
+		placeholder: "Click to add an element"
+	},
 	tagRenderer: (item) => item.label
 };
 
 
 type OwnProps = {
-	options: Option[],
+	options: SelectorProps["items"],
 	value: Option["value"][],
 	setValue: (value: Option["value"][]) => void
 };
 
-function InputMultiSelect({ options = [], value = [], setValue, ...props }: OwnProps & Partial<SelectorProps>){
+function InputMultiSelect({ options = [], value = [], setValue, ...extraProps }: OwnProps & Partial<SelectorProps>){
 	const selectedItems = useMemo(() => options.filter(op => value.includes(op.value)), [options, value]);
 	const onItemSelect = useCallback<SelectorProps["onItemSelect"]>((item, _event) => setValue([...value, item.value]), [setValue, value]);
 	const onRemove = useCallback<NonNullable<SelectorProps["onRemove"]>>((item, _index) => setValue(value.filter(val => val != item.value)), [setValue, value]);
@@ -63,21 +66,15 @@ function InputMultiSelect({ options = [], value = [], setValue, ...props }: OwnP
 	}, [value]);
 
 	return <MultiSelect<Option>
-		className={CustomClasses.TEXT_SMALL}
-		initialContent={null}
 		itemRenderer={itemRenderer}
-		itemsEqual="value"
 		items={options}
 		onItemSelect={onItemSelect}
 		onRemove={onRemove}
-		openOnKeyDown={true}
-		popoverProps={popoverProps}
-		resetOnSelect={true}
 		selectedItems={selectedItems}
-		tagInputProps={tagInputProps}
 		{...staticProps}
-		{...props}
+		{...extraProps}
 	/>;
 }
 
+export type InputMultiSelectProps = OwnProps;
 export { InputMultiSelect };
