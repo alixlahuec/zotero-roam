@@ -25,7 +25,7 @@ test("Correctly adds sibling to an element", () => {
 });
 
 test("Updates value of array element", () => {
-	const arr = ["a", "b", "c"];
+	const arr: any[] = ["a", "b", "c"];
 	expect(updateArrayElemAt(arr, 0, { id: 123 })).toEqual([{ id: 123 }, "b", "c"]);
 	expect(updateArrayElemAt(arr, 3, { id: 456 })).toEqual(["a", "b", "c", { id: 456 }]);
 });
