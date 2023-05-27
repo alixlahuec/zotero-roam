@@ -32,9 +32,6 @@ export type QueryProperty =
 	| "Tags"
 	| "Title";
 
-// export type QueryValidRelationships<P extends QueryPropertyEnum = QueryPropertyEnum> = keyof typeof queries[P];
-// export type QueryTerm2<P extends QueryPropertyEnum, R extends QueryValidRelationships<P>> = typeof queries[P][R];
-
 export type QueryTerm = {
 	property: QueryProperty,
 	relationship: string,

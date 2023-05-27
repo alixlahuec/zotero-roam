@@ -21,6 +21,22 @@ enum TabsEnum {
 	PDFS = "pdfs"
 }
 
+type TabConfig = {
+	show: TabsEnum,
+	title: string
+};
+
+const TABS_LIST: TabConfig[] = [
+	{
+		show: TabsEnum.ITEMS,
+		title: "Items"
+	},
+	{
+		show: TabsEnum.PDFS,
+		title: "PDFs"
+	}
+];
+
 
 type TabContentsProps = {
 	itemList: ZLibraryContents,
@@ -54,12 +70,11 @@ function ExplorerTabs({ itemList, onClose }: ExplorerTabsProps){
 			onChange={selectTab}
 			renderActiveTabPanelOnly={false}
 			selectedTabId={activeTab} >
-			<Tab id={TabsEnum.ITEMS} title="Items" 
-				panel={<TabContents itemList={itemList} onClose={onClose} show={TabsEnum.ITEMS} />} 
-			/>
-			<Tab id={TabsEnum.PDFS} title="PDFs" 
-				panel={<TabContents itemList={itemList} onClose={onClose} show={TabsEnum.PDFS} />} 
-			/>
+			{TABS_LIST.map((config) => (
+				<Tab key={config.show} id={config.show}
+					panel={<TabContents itemList={itemList} onClose={onClose} show={config.show} />}
+					title={config.title} />
+			))}
 		</Tabs>
 	);
 }

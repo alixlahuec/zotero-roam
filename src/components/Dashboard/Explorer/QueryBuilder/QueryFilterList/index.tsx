@@ -13,7 +13,7 @@ import { AsBoolean } from "Types/helpers";
 
 
 function makeValueString({ property, relationship, value }: QueryTerm): string{
-	if((value) == null){
+	if(value == null){
 		return "";
 	} else {
 		// @ts-ignore TODO: fix typing of value in optional chaining
