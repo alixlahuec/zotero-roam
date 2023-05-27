@@ -3,7 +3,7 @@
  * @param elem - The element to add
  * @returns 
  */
-function addElemToArray(arr: any[], elem: any){
+function addElemToArray<T,V>(arr: T[], elem: V): (T | V)[]{
 	return [...arr, elem];
 }
 
@@ -12,7 +12,7 @@ function addElemToArray(arr: any[], elem: any){
  * @param index - The index of the element to remove
  * @returns 
  */
-function removeArrayElemAt(arr: any[], index: number){
+function removeArrayElemAt<T>(arr: T[], index: number): T[]{
 	return [...arr.slice(0, index), ...arr.slice(index + 1, arr.length)];
 }
 
@@ -21,8 +21,8 @@ function removeArrayElemAt(arr: any[], index: number){
  * @param sibling - The sibling to add
  * @returns 
  */
-function returnSiblingArray(elem: any | any[], sibling: any){
-	if(elem.constructor === Array){
+function returnSiblingArray<T,V>(elem: T | T[], sibling: V): (T | V)[]{
+	if(Array.isArray(elem)){
 		return addElemToArray(elem, sibling);
 	} else {
 		return [elem, sibling];
@@ -35,7 +35,7 @@ function returnSiblingArray(elem: any | any[], sibling: any){
  * @param value - The new value of the element
  * @returns 
  */
-function updateArrayElemAt(arr: any[], index: number, value: any){
+function updateArrayElemAt<T,V extends T>(arr: T[], index: number, value: V): T[]{
 	return [...arr.slice(0, index), value, ...arr.slice(index + 1, arr.length)];
 }
 

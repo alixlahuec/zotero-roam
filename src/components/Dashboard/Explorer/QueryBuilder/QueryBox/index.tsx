@@ -13,7 +13,7 @@ import { QueryTerm, QueryTermListRecursive } from "../types";
 type OwnProps = {
 	handlers: {
 		removeSelf: () => void,
-		updateSelf: (value: QueryTerm[]) => void
+		updateSelf: (value: (QueryTerm | QueryTermListRecursive)[]) => void
 	},
 	isFirstChild: boolean,
 	isOnlyChild: boolean,
@@ -28,11 +28,11 @@ function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = tru
 		updateSelf(returnSiblingArray(terms, defaultQueryTerm));
 	}, [terms, updateSelf]);
 
-	const removeTerm = useCallback((index) => {
+	const removeTerm = useCallback((index: number) => {
 		updateSelf(removeArrayElemAt(terms, index));
 	}, [terms, updateSelf]);
 
-	const updateTerm = useCallback((index, value) => {
+	const updateTerm = useCallback((index: number, value: QueryTerm | QueryTermListRecursive) => {
 		updateSelf(updateArrayElemAt(terms, index, value));
 	}, [terms, updateSelf]);
 
