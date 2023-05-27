@@ -26,7 +26,7 @@ function PDFElement({ item }: OwnProps){
 				<div zr-role="item-details">
 					<span className={CustomClasses.TEXT_AUXILIARY} zr-role="item-title">{item.title}</span>
 					{item.parent.key && <span className={CustomClasses.TEXT_ACCENT_1}>@{item.parent.key}</span>}
-					<Button className={CustomClasses.TEXT_SMALL} icon="eye-open" minimal={true} onClick={openDataDrawer} />
+					<Button className={CustomClasses.TEXT_SMALL} icon="eye-open" minimal={true} onClick={openDataDrawer} title="Show the item's raw metadata" />
 					{item.annotations.length > 0
 						? <Button className={CustomClasses.TEXT_SMALL} icon="duplicate" minimal={true} text={pluralize(item.annotations.length, "linked note")} onClick={openNotesDrawer} />
 						: null}
