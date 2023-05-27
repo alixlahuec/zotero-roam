@@ -72,7 +72,7 @@ const TagsDatalist = memo<OwnProps>(function TagsDatalist({ filter, items, libra
 			? <Spinner size={15} />
 			: <div className="zr-tagmanager--datalist" >
 				<Toolbar>
-					<SortButtons name={"zr-tagmanager-sort-" + filter} onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
+					<SortButtons<TagManagerSortBy> name={"zr-tagmanager-sort-" + filter} onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
 					<Pagination 
 						currentPage={currentPage} 
 						itemsPerPage={itemsPerPage} 
