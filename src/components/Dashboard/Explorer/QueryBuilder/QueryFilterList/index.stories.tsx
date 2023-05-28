@@ -15,7 +15,7 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const [terms, dispatch] = useArrayReducer<QueryTermListRecursive[]>([]);
+			const [terms, dispatch] = useArrayReducer<QueryTermListRecursive[]>(context.args.terms);
 			return <Story {...context} args={{ ...context.args, dispatch, terms }} />;
 		}
 	]
