@@ -7,7 +7,7 @@ export type QueryBoxAction =
 
 export type QueryEntryAction =
 	| { type: "removeSelf" }
-	| { type: "updateSelf", value: QueryTerm };
+	| { type: "updateSelf", value: QueryTerm | QueryTerm[] };
 
 export type QueryTermAction<T extends QueryTerm | QueryTermListRecursive> =
 	| { type: "removeSelf" }

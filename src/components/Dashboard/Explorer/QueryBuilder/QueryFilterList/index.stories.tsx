@@ -1,8 +1,9 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import QueryFilterList from ".";
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../../../../../utils";
+import { useArrayReducer } from "../../../../../hooks";
+import { QueryTermListRecursive } from "../types";
 
 
 type Props = ComponentProps<typeof QueryFilterList>;
@@ -14,15 +15,8 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const [terms, setTerms] = useState(context.args.terms);
-
-			const handlers = {
-				addTerm: (val) => setTerms(prev => addElemToArray(prev, [val])),
-				removeTerm: (index) => setTerms(prev => removeArrayElemAt(prev, index)),
-				updateTerm: (index, val) => setTerms(prev => updateArrayElemAt(prev, index, val))
-			};
-
-			return <Story {...context} args={{ ...context.args, handlers, terms }} />;
+			const [terms, dispatch] = useArrayReducer<QueryTermListRecursive[]>([]);
+			return <Story {...context} args={{ ...context.args, dispatch, terms }} />;
 		}
 	]
 } as Meta<Props>;

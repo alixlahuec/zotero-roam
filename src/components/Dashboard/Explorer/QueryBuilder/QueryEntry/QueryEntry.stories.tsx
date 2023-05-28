@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps, useReducer } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import QueryEntry from "./QueryEntry";
 
@@ -16,13 +16,17 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const [term, setTerm] = useState(context.args.term);
-			const handlers = {
-				removeSelf: () => {},
-				updateSelf: (val) => setTerm(val)
-			};
+			const [term, dispatch] = useReducer((_state, action) => {
+				switch (action.type) {
+				case "updateSelf":
+					return action.value;
+				case "removeSelf":
+				default:
+					return;
+				}
+			}, context.args.term);
 
-			return <Story {...context} args={{ ...context.args, handlers, term }} />;
+			return <Story {...context} args={{ ...context.args, dispatch, term }} />;
 		}
 	]
 } as Meta<Props>;

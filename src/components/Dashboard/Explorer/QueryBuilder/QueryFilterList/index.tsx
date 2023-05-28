@@ -29,7 +29,7 @@ function joinTerm(term: QueryTerm): string{
 	return [property, relationship, valueString].filter(AsBoolean).join(" ");
 }
 
-function makeTermString(term: QueryTerm | QueryTermListRecursive, useOR: boolean, { parentheses = true }: { parentheses?: boolean } = {}): string {
+function makeTermString(term: QueryTerm | QueryTermListRecursive | (QueryTerm | QueryTermListRecursive)[], useOR: boolean, { parentheses = true }: { parentheses?: boolean } = {}): string {
 	if (Array.isArray(term)) {
 		const output = term
 			.map(tm => makeTermString(tm, !useOR))
@@ -85,12 +85,12 @@ function AddTerm({ addTerm, buttonProps = {}, useOR }: AddTermProps){
 
 type TermAction =
 	| { type: "removeSelf" }
-	| { type: "updateSelf", value: QueryTermListRecursive };
+	| { type: "updateSelf", value: (QueryTerm | QueryTermListRecursive)[] };
 
 type TermTagProps = {
 	dispatch: Dispatch<TermAction>,
 	isLast: boolean,
-	term: QueryTermListRecursive,
+	term: (QueryTerm | QueryTermListRecursive)[],
 	useOR: boolean
 };
 
