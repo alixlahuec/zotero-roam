@@ -1,11 +1,11 @@
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Button, ButtonProps, Classes, ControlGroup, FormGroup, H6, InputGroup, MenuItem } from "@blueprintjs/core";
+import { Dispatch, RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button, Classes, ControlGroup, FormGroup, H6, InputGroup, MenuItem } from "@blueprintjs/core";
 import { Select, SelectProps } from "@blueprintjs/select";
 import { Placement } from "@blueprintjs/popover2";
 
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../../../utils";
 import { ErrorCallout } from "Components/Errors";
 
+import { ArrayAction, useArrayReducer } from "../../../hooks";
 import { analyzeUserRequests } from "../../../setup";
 
 import { CustomClasses } from "../../../constants";
@@ -117,17 +117,17 @@ const DEFAULT_REQ: UserDataRequest = {
 };
 
 type NewRequestProps = {
-	addReq: (value: UserDataRequest) => void,
+	dispatch: Dispatch<ArrayAction<UserDataRequest>>,
 	inputRef?: RefObject<HTMLInputElement>
 };
 
-function NewRequest({ addReq, inputRef }: NewRequestProps){
+function NewRequest({ dispatch, inputRef }: NewRequestProps){
 	const [req, updateReq] = useState(DEFAULT_REQ);
 
 	const addToReqList = useCallback(() => {
-		addReq(req);
+		dispatch({ type: "add", value: req });
 		updateReq(DEFAULT_REQ);
-	}, [addReq, req]);
+	}, [dispatch, req]);
 
 	return <div className="zr-data-request new">
 		<ControlGroup>
@@ -138,22 +138,27 @@ function NewRequest({ addReq, inputRef }: NewRequestProps){
 }
 
 
+type RequestAction =
+	| { type: "removeSelf" }
+	| { type: "updateSelf", value: UserDataRequest };
+
 type ExistingRequestProps = {
-	handlers: {
-		removeReq: ButtonProps["onClick"],
-		updateReq: (value: UserDataRequest) => void
-	},
+	dispatch: Dispatch<RequestAction>,
 	pos: number,
 	req: UserDataRequest
 };
 
-function ExistingRequest({ handlers, pos, req }: ExistingRequestProps){
-	const { removeReq, updateReq } = handlers;
-
+function ExistingRequest({ dispatch, pos, req }: ExistingRequestProps) {
 	return <div className="zr-data-request existing" >
 		<ControlGroup>
-			<DataRequestForm pos={pos} req={req} updateReq={updateReq} />
-			<Button className={Classes.FIXED} icon="remove" intent="danger" minimal={true} onClick={removeReq} title="Remove the request" />
+			<DataRequestForm pos={pos} req={req}
+				updateReq={(value) => dispatch({ type: "updateSelf", value })} />
+			<Button className={Classes.FIXED}
+				icon="remove"
+				intent="danger"
+				minimal={true}
+				onClick={() => dispatch({ type: "removeSelf" })}
+				title="Remove the request" />
 		</ControlGroup>
 	</div>;
 }
@@ -165,8 +170,8 @@ type RequestsEditorProps = {
 	updateRequests: (value: UserRequests) => void
 };
 
-function RequestsEditor({ closeDialog, dataRequests = [], updateRequests }: RequestsEditorProps){
-	const [reqList, setReqList] = useState(dataRequests);
+function RequestsEditor({ closeDialog, dataRequests = [], updateRequests }: RequestsEditorProps) {
+	const [reqList, dispatch] = useArrayReducer<DataRequest | UserDataRequest>(dataRequests);
 	const [validationError, setValidationError] = useState(null);
 	const newReqField = useRef<HTMLInputElement>(null);
 
@@ -178,19 +183,16 @@ function RequestsEditor({ closeDialog, dataRequests = [], updateRequests }: Requ
 		newReqField?.current?.focus();
 	}, []);
 
-	const addReq = useCallback((val) => {
-		setReqList((prevState) => addElemToArray(
-			prevState, 
-			val
-		));
-	}, []);
-
-	const makeHandlersForReq = useCallback((ind) => {
-		return {
-			removeReq: () => setReqList((prevState) => removeArrayElemAt(prevState, ind)),
-			updateReq: (val) => setReqList((prevState) => updateArrayElemAt(prevState, ind, val))
-		};
-	}, []);
+	const requestDispatch = useCallback((index, action) => {
+		switch (action.type) {
+		case "removeSelf":
+			return dispatch({ type: "remove", index });
+		case "updateSelf":
+			return dispatch({ type: "update", index, value: action.value });
+		default:
+			return;
+		}
+	}, [dispatch]);
 
 	const updateIfValid = useCallback(() => {
 		try {
@@ -204,9 +206,9 @@ function RequestsEditor({ closeDialog, dataRequests = [], updateRequests }: Requ
 
 	return <>
 		<div className={Classes.DIALOG_BODY}>
-			{reqList.map((req, i) => <ExistingRequest key={i} pos={i} req={req} handlers={makeHandlersForReq(i)} />)}
+			{reqList.map((req, i) => <ExistingRequest key={i} pos={i} req={req} dispatch={(action) => requestDispatch(i, action)} />)}
 			<H6>Add a new request</H6>
-			<NewRequest addReq={addReq} inputRef={newReqField} />
+			<NewRequest dispatch={dispatch} inputRef={newReqField} />
 			{validationError && <ErrorCallout error={validationError} />}
 		</div>
 		<div className={Classes.DIALOG_FOOTER}>
