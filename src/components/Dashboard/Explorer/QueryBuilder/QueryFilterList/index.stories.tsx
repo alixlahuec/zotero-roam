@@ -2,7 +2,7 @@ import { ComponentProps, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import QueryFilterList from ".";
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../utils";
+import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../../../../../utils";
 
 
 type Props = ComponentProps<typeof QueryFilterList>;

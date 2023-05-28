@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { Dispatch, useCallback } from "react";
 import { Button, Intent, MenuItem } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 import { Placement } from "@blueprintjs/popover2";
@@ -10,6 +10,7 @@ import { returnSiblingArray } from "../utils";
 
 import { CustomClasses } from "../../../../../constants";
 import { QueryProperty, QueryTerm } from "../types";
+import { QueryEntryAction } from "../QueryFilterList/types";
 
 
 const popoverProps = {
@@ -40,25 +41,25 @@ function itemRenderer(item, itemProps) {
 
 
 type OwnProps = {
-	handlers: {
-		removeSelf: () => void,
-		updateSelf: (value: QueryTerm | QueryTerm[]) => void
-	},
+	dispatch: Dispatch<QueryEntryAction>,
 	isFirstChild: boolean,
 	isOnlyChild: boolean,
 	term: QueryTerm,
 	useOR?: boolean
 };
 
-function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }: OwnProps){
-	const { removeSelf, updateSelf } = handlers;
+function QueryEntry({ dispatch, isFirstChild, isOnlyChild, term, useOR = false }: OwnProps){
 	const { property, relationship, value = "" } = term;
 
 	const addSiblingTerm = useCallback(() => {
-		updateSelf(returnSiblingArray(term, defaultQueryTerm));
-	}, [term, updateSelf]);
+		dispatch({ type: "updateSelf", value: returnSiblingArray(term, defaultQueryTerm) });
+	}, [dispatch, term]);
 
-	const handlePropChange = useCallback((update) => updateSelf({ ...term, ...update }), [term, updateSelf]);
+	const removeSelf = useCallback(() => dispatch({ type: "removeSelf" }), [dispatch]);
+
+	const handleUpdate = useCallback((update) => {
+		dispatch({ type: "updateSelf", value: { ...term, ...update } });
+	}, [dispatch, term]);
 
 	const handlePropertyChange = useCallback((newProp: QueryProperty) => {
 		const updates: Partial<QueryTerm> = { property: newProp };
@@ -71,8 +72,8 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 			if (!newOperator.checkInput(value)) { updates.value = newOperator.defaultInput; }
 		}
 
-		handlePropChange(updates);
-	}, [handlePropChange, relationship, value]);
+		handleUpdate(updates);
+	}, [handleUpdate, relationship, value]);
 
 	const handleRelationshipChange = useCallback((newRel: string) => {
 		const updates: Partial<QueryTerm> = { relationship: newRel };
@@ -80,9 +81,10 @@ function QueryEntry({ handlers, isFirstChild, isOnlyChild, term, useOR = false }
 		// Update value also, if necessary
 		if(!newOperator.checkInput(value)) { updates.value = newOperator.defaultInput; }
 
-		handlePropChange(updates);
-	}, [handlePropChange, property, value]);
-	const handleValueChange = useCallback((val) => handlePropChange({ value: val }), [handlePropChange]);
+		handleUpdate(updates);
+	}, [handleUpdate, property, value]);
+
+	const handleValueChange = useCallback((val) => handleUpdate({ value: val }), [handleUpdate]);
 
 	return <div className="zr-query-entry">
 		{!isFirstChild && <span zr-role="query-entry-operator">{useOR ? "AND" : "OR"}</span>}

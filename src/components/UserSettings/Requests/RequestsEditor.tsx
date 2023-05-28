@@ -3,7 +3,7 @@ import { Button, ButtonProps, Classes, ControlGroup, FormGroup, H6, InputGroup, 
 import { Select, SelectProps } from "@blueprintjs/select";
 import { Placement } from "@blueprintjs/popover2";
 
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "Components/Dashboard/Explorer/QueryBuilder/utils";
+import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../../../utils";
 import { ErrorCallout } from "Components/Errors";
 
 import { analyzeUserRequests } from "../../../setup";

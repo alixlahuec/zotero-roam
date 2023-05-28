@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NonIdealState, Spinner } from "@blueprintjs/core";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
@@ -6,8 +6,7 @@ import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import ItemElement from "./ItemElement";
 import QueryFilterList from "../QueryBuilder/QueryFilterList";
 
-import { usePagination } from "../../../../hooks";
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../QueryBuilder/utils";
+import { useArrayReducer, usePagination } from "../../../../hooks";
 import { runQuerySet } from "../QueryBuilder/queries";
 import { cleanLibraryItem, identifyChildren } from "../../../../utils";
 
@@ -44,17 +43,7 @@ type QueryItemsListProps = {
 function QueryItemsList({ items, onClose }: QueryItemsListProps){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
 	const [useOR, /*setUseOR*/] = useState(true);
-	const [queryTerms, setQueryTerms] = useState<QueryTermListRecursive[][]>([]);
-
-	const addQueryTerm = useCallback((val) => setQueryTerms(prev => addElemToArray(prev, [val])), []);
-	const removeQueryTerm = useCallback((index) => setQueryTerms(prev => removeArrayElemAt(prev, index)), []);
-	const handleQueryTermChange = useCallback((index, value) => setQueryTerms(prev => updateArrayElemAt(prev, index, value)), []);
-
-	const handlers = useMemo(() => ({
-		addTerm: addQueryTerm,
-		removeTerm: removeQueryTerm,
-		updateTerm: handleQueryTermChange
-	}), [addQueryTerm, removeQueryTerm, handleQueryTermChange]);
+	const [queryTerms, dispatch] = useArrayReducer<QueryTermListRecursive[]>([]);
 
 	const queriedItems = useMemo(() => items.filter(it => runQuerySet(queryTerms, useOR, it)), [items, queryTerms, useOR]);
 
@@ -64,7 +53,7 @@ function QueryItemsList({ items, onClose }: QueryItemsListProps){
 
 	return <div className="zr-query-builder">
 		<Toolbar>
-			<QueryFilterList handlers={handlers} terms={queryTerms} useOR={useOR} />
+			<QueryFilterList dispatch={dispatch} terms={queryTerms} useOR={useOR} />
 		</Toolbar>
 		<div className="zr-queryitems--datalist">
 			{queriedItems.length == 0

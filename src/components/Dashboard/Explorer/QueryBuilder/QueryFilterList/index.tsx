@@ -1,14 +1,16 @@
-import { useCallback, useMemo, useState } from "react";
+import { Dispatch, useCallback, useState } from "react";
 import { Button, ButtonProps, Classes, Dialog, Tag } from "@blueprintjs/core";
 
 import QueryBox from "../QueryBox";
 
-import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "../utils";
+import { returnSiblingArray } from "../utils";
 import { defaultQueryTerm, queries } from "../queries";
-import { useBool } from "../../../../../hooks";
+import { ArrayAction, useBool } from "../../../../../hooks";
+import { removeArrayElemAt, updateArrayElemAt } from "../../../../../utils";
 
 import { CustomClasses } from "../../../../../constants";
 import { QueryTerm, QueryTermListRecursive } from "../types";
+import { QueryBoxAction } from "./types";
 import { AsBoolean } from "Types/helpers";
 
 
@@ -49,11 +51,15 @@ function AddTerm({ addTerm, buttonProps = {}, useOR }: AddTermProps){
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 	const [term, setTerm] = useState([defaultQueryTerm]);
 
-	const handlers = useMemo(() => {
-		return {
-			removeSelf: () => {},
-			updateSelf: (val) => setTerm(val)
-		};
+	const queryBoxDispatch = useCallback((action) => {
+		switch (action.type) {
+		case "removeSelf":
+			return;
+		case "updateSelf":
+			return setTerm(action.value);
+		default:
+			return;
+		}
 	}, []);
 
 	const addToQuery = useCallback(() => {
@@ -65,7 +71,7 @@ function AddTerm({ addTerm, buttonProps = {}, useOR }: AddTermProps){
 		<Button className={CustomClasses.TEXT_SMALL} minimal={true} onClick={openDialog} rightIcon="small-plus" small={true} {...buttonProps} />
 		<Dialog canEscapeKeyClose={false} className="zr-query-term-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
 			<div className={Classes.DIALOG_BODY}>
-				<QueryBox handlers={handlers} isFirstChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
+				<QueryBox dispatch={queryBoxDispatch} isFirstChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
 			</div>
 			<div className={Classes.DIALOG_FOOTER}>
 				<div className={Classes.DIALOG_FOOTER_ACTIONS}>
@@ -77,41 +83,45 @@ function AddTerm({ addTerm, buttonProps = {}, useOR }: AddTermProps){
 	</>;
 }
 
+type TermAction =
+	| { type: "removeSelf" }
+	| { type: "updateSelf", value: QueryTermListRecursive };
 
 type TermTagProps = {
-	handlers: {
-		removeSelf: () => void,
-		updateSelf: (value: QueryTermListRecursive) => void
-	},
+	dispatch: Dispatch<TermAction>,
 	isLast: boolean,
 	term: QueryTermListRecursive,
 	useOR: boolean
 };
 
-function TermTag({ handlers, isLast, term, useOR }: TermTagProps){
-	const { removeSelf, updateSelf } = handlers;
+function TermTag({ dispatch, isLast, term, useOR }: TermTagProps){
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 
 	const removeSelfCleanly = useCallback(() => {
 		closeDialog();
-		removeSelf();
-	}, [closeDialog, removeSelf]);
+		dispatch({ type: "removeSelf" });
+	}, [closeDialog, dispatch]);
 
-	const handlersForDialog = useMemo(() => {
-		return {
-			removeSelf: () => removeSelfCleanly(),
-			updateSelf
-		};
-	}, [removeSelfCleanly, updateSelf]);
+	const queryBoxDispatch = useCallback<Dispatch<QueryBoxAction>>((action) => {
+		switch (action.type) {
+		case "removeSelf":
+			removeSelfCleanly();
+			break;
+		case "updateSelf":
+			return dispatch({ type: "updateSelf", value: action.value });
+		default:
+			return;
+		}
+	}, [dispatch, removeSelfCleanly]);
 
 	return <>
-		<Tag zr-role="filter-tag" interactive={true} minimal={true} onClick={openDialog} onRemove={removeSelf} >
+		<Tag zr-role="filter-tag" interactive={true} minimal={true} onClick={openDialog} onRemove={removeSelfCleanly} >
 			{makeTermString(term, !useOR, { parentheses: false })}
 		</Tag>
 		{!isLast && <span className={CustomClasses.TEXT_AUXILIARY} zr-role="filter-operator">{useOR ? "OR" : "AND"}</span>}
 		<Dialog canEscapeKeyClose={false} className="zr-query-term-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
 			<div className={Classes.DIALOG_BODY}>
-				<QueryBox handlers={handlersForDialog} isFirstChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
+				<QueryBox dispatch={queryBoxDispatch} isFirstChild={true} isOnlyChild={true} terms={term} useOR={!useOR} />
 			</div>
 			<div className={Classes.DIALOG_FOOTER}>
 				<div className={Classes.DIALOG_FOOTER_ACTIONS}>
@@ -124,65 +134,43 @@ function TermTag({ handlers, isLast, term, useOR }: TermTagProps){
 }
 
 
-type FilterElementsProps = {
-	filter: QueryTermListRecursive[],
-	handlers: {
-		removeTerm: (index: number) => void,
-		updateTerm: (index: number, value: QueryTerm[]) => void
-	},
-	useOR: boolean
-};
-
-function FilterElements({ filter, handlers, useOR }: FilterElementsProps){
-	const { removeTerm, updateTerm } = handlers;
-
-	const makeHandlersForChild = useCallback((index) => {
-		return {
-			removeSelf: () => removeTerm(index),
-			updateSelf: (value) => updateTerm(index, value)
-		};
-	}, [removeTerm, updateTerm]);
-	
-	return <>
-		{filter.map((term, index) => {
-			const elemHandlers = makeHandlersForChild(index);
-			return <TermTag key={index} handlers={elemHandlers} isLast={index == filter.length - 1} term={term} useOR={useOR} />;
-		})}
-	</>;
-}
-
+type FilterAction =
+	| { type: "removeSelf" }
+	| { type: "add", value: QueryTermListRecursive }
+	| { type: "remove", index: number }
+	| { type: "update", index: number, value: QueryTermListRecursive };
 
 type FilterProps = {
+	dispatch: Dispatch<FilterAction>,
 	filter: QueryTermListRecursive[],
-	handlers: {
-		removeSelf: () => void,
-		addTerm: (value: QueryTermListRecursive) => void,
-		removeTerm: (index: number) => void,
-		updateTerm: (index: number, value: QueryTermListRecursive) => void
-	},
 	isOnlyChild: boolean,
 	useOR: boolean
 };
 
-function Filter({ filter, handlers, isOnlyChild, useOR }: FilterProps){
-	const { removeSelf, addTerm, removeTerm, updateTerm } = handlers;
+function Filter({ dispatch, filter, isOnlyChild, useOR }: FilterProps) {
+	const addTerm = useCallback((value) => dispatch({ type: "add", value }), [dispatch]);
+	const removeSelf = useCallback(() => dispatch({ type: "removeSelf" }), [dispatch]);
 
-	const handlersForChild = useMemo<FilterElementsProps["handlers"]>(() => {
-		return {
-			removeTerm: (index) => {
-				if(filter.length == 1){
-					removeSelf();
-				} else {
-					removeTerm(index);
-				}
-			},
-			updateTerm
-		};
-	}, [filter.length, removeSelf, removeTerm, updateTerm]);
+	const termDispatch = useCallback((index, action) => {
+		switch (action.type) {
+		case "updateSelf":
+			return dispatch({ type: "update", index, value: action.value });
+		case "removeSelf":
+			if (filter.length == 1) {
+				return dispatch({ type: "removeSelf" });
+			} else {
+				return dispatch({ type: "remove", index });
+			}
+		default:
+			return;
+		}
+	}, [dispatch, filter.length]);
 
 	return <>
 		<div className="zr-query-filter--elements">
-			<FilterElements handlers={handlersForChild} filter={filter} useOR={useOR} />
+			{filter.map((term, index) => {
+				return <TermTag key={index} dispatch={(action) => termDispatch(index, action)} isLast={index == filter.length - 1} term={term} useOR={useOR} />;
+			})}
 			<AddTerm addTerm={addTerm} buttonProps={{ intent: "primary", text: useOR ? "OR" : "AND" }} useOR={!useOR} />
 		</div>
 		{!isOnlyChild && <Button className="zr-filter--remove-self" icon="small-cross" minimal={true} onClick={removeSelf} title="Remove query group" />}
@@ -191,34 +179,36 @@ function Filter({ filter, handlers, isOnlyChild, useOR }: FilterProps){
 
 
 type QueryFilterListProps = {
-	handlers: {
-		addTerm,
-		removeTerm,
-		updateTerm
-	},
+	dispatch: Dispatch<ArrayAction<QueryTermListRecursive[]>>,
 	terms: QueryTermListRecursive[][],
 	useOR: boolean
 };
 
-function QueryFilterList({ handlers, terms, useOR }: QueryFilterListProps){
-	const { addTerm, removeTerm, updateTerm } = handlers;
+function QueryFilterList({ dispatch, terms, useOR }: QueryFilterListProps) {
+	const addTerm = useCallback((value) => dispatch({ type: "add", value }), [dispatch]);
 
-	const makeHandlersForChild = useCallback((index) => {
+	const filterDispatch = useCallback((index, action) => {
 		const child = terms[index];
-		return {
-			removeSelf: () => removeTerm(index),
-			addTerm: (val) => updateTerm(index, returnSiblingArray(child, val)),
-			removeTerm: (subindex) => updateTerm(index, removeArrayElemAt(child, subindex)),
-			updateTerm: (subindex, value) => updateTerm(index, updateArrayElemAt(child, subindex, value))
-		};
-	}, [removeTerm, terms, updateTerm]);
+
+		switch (action.type) {
+		case "removeSelf":
+			return dispatch({ type: "remove", index });
+		case "add":
+			return dispatch({ type: "update", index, value: [returnSiblingArray(child, action.value)] });
+		case "remove":
+			return dispatch({ type: "update", index, value: removeArrayElemAt(child, action.index) });
+		case "update":
+			return dispatch({ type: "update", index, value: updateArrayElemAt(child, action.index, action.value) });
+		default:
+			return;			
+		}
+	}, [dispatch, terms]);
 
 	return <div className="zr-query-filters">
 		{terms.map((term, index) => {
-			const elemHandlers = makeHandlersForChild(index);
 			return <div className="zr-query-filter" key={index}>
 				{index > 0 && <span zr-role="filter-list-operator">{useOR ? "OR" : "AND"}</span>}
-				<Filter handlers={elemHandlers} isOnlyChild={terms.length == 1} filter={term} useOR={!useOR} />
+				<Filter dispatch={(action) => filterDispatch(index, action)} isOnlyChild={terms.length == 1} filter={term} useOR={!useOR} />
 			</div>;
 		})}
 		<AddTerm addTerm={addTerm} buttonProps={{ text: terms.length == 0 ? "Set filter" : (useOR ? "OR" : "AND") }} useOR={!useOR} />
