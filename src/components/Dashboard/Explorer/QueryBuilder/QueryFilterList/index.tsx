@@ -9,8 +9,7 @@ import { ArrayAction, useBool } from "../../../../../hooks";
 import { removeArrayElemAt, updateArrayElemAt } from "../../../../../utils";
 
 import { CustomClasses } from "../../../../../constants";
-import { QueryTerm, QueryTermListRecursive } from "../types";
-import { QueryBoxAction } from "./types";
+import { QueryTerm, QueryTermListRecursive, QueryBoxAction } from "../types";
 import { AsBoolean } from "Types/helpers";
 
 

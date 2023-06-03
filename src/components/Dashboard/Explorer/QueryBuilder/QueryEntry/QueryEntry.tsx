@@ -9,8 +9,7 @@ import { QueryOperator, defaultQueryTerm, queries } from "../queries";
 import { returnSiblingArray } from "../utils";
 
 import { CustomClasses } from "../../../../../constants";
-import { QueryProperty, QueryTerm } from "../types";
-import { QueryEntryAction } from "../QueryFilterList/types";
+import { QueryProperty, QueryTerm, QueryEntryAction } from "../types";
 
 
 const popoverProps = {
