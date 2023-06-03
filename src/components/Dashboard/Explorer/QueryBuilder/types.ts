@@ -41,3 +41,15 @@ export type QueryTerm = {
 export type QueryTermListRecursive = QueryTerm[] | QueryTermListRecursive[];
 
 export type SupportedItemType = ZCleanItemTop | ZCleanItemPDF;
+
+export type QueryBoxAction =
+	| { type: "removeSelf" }
+	| { type: "updateSelf", value: (QueryTerm | QueryTermListRecursive)[] };
+
+export type QueryEntryAction =
+	| { type: "removeSelf" }
+	| { type: "updateSelf", value: QueryTerm | QueryTerm[] };
+
+export type QueryTermAction<T extends QueryTerm | QueryTermListRecursive> =
+	| { type: "removeSelf" }
+	| { type: "updateSelf", value: T };

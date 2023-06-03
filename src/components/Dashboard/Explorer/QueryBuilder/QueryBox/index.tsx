@@ -1,47 +1,38 @@
-import { Fragment, useCallback } from "react";
+import { Dispatch, Fragment, useCallback } from "react";
 import { Button } from "@blueprintjs/core";
 
 import QueryEntry from "../QueryEntry/QueryEntry";
 
-import { removeArrayElemAt, returnSiblingArray, updateArrayElemAt } from "../utils";
+import { returnSiblingArray } from "../utils";
 import { defaultQueryTerm } from "../queries";
+import { removeArrayElemAt, updateArrayElemAt } from "../../../../../utils";
 
 import { CustomClasses } from "../../../../../constants";
-import { QueryTerm, QueryTermListRecursive } from "../types";
+import { QueryTerm, QueryTermListRecursive, QueryBoxAction, QueryTermAction } from "../types";
 
 
 type OwnProps = {
-	handlers: {
-		removeSelf: () => void,
-		updateSelf: (value: (QueryTerm | QueryTermListRecursive)[]) => void
-	},
+	dispatch: Dispatch<QueryBoxAction>,
 	isFirstChild: boolean,
 	isOnlyChild: boolean,
 	terms?: (QueryTerm | QueryTermListRecursive)[],
 	useOR?: boolean
 };
 
-function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = true }: OwnProps){
-	const { removeSelf, updateSelf } = handlers;
+function QueryBox({ dispatch, isFirstChild, isOnlyChild, terms = [], useOR = true }: OwnProps) {
+	const removeSelf = useCallback(() => dispatch({ type: "removeSelf" }), [dispatch]);
+	const addTerm = useCallback(() => dispatch({ type: "updateSelf", value: returnSiblingArray(terms, defaultQueryTerm) }), [dispatch, terms]);
 
-	const addTerm = useCallback(() => {
-		updateSelf(returnSiblingArray(terms, defaultQueryTerm));
-	}, [terms, updateSelf]);
-
-	const removeTerm = useCallback((index: number) => {
-		updateSelf(removeArrayElemAt(terms, index));
-	}, [terms, updateSelf]);
-
-	const updateTerm = useCallback((index: number, value: QueryTerm | QueryTermListRecursive) => {
-		updateSelf(updateArrayElemAt(terms, index, value));
-	}, [terms, updateSelf]);
-
-	const makeHandlersForChild = useCallback((index) => {
-		return {
-			removeSelf: () => removeTerm(index),
-			updateSelf: (value) => updateTerm(index, value)
-		};
-	}, [removeTerm, updateTerm]);
+	const termDispatch = useCallback(<T extends QueryTerm | QueryTermListRecursive>(index, action: QueryTermAction<T>) => {
+		switch (action.type) {
+		case "removeSelf":
+			return dispatch({ type: "updateSelf", value: removeArrayElemAt(terms, index) });
+		case "updateSelf":
+			return dispatch({ type: "updateSelf", value: updateArrayElemAt(terms, index, action.value) });
+		default:
+			return;
+		}
+	}, [dispatch, terms]);
 
 	return <>
 		<div className="zr-query-box">
@@ -49,7 +40,7 @@ function QueryBox({ handlers, isFirstChild, isOnlyChild, terms = [], useOR = tru
 			<div>
 				{terms.map((tm, index) => {
 					const termProps = {
-						handlers: makeHandlersForChild(index),
+						dispatch: (action) => termDispatch(index, action),
 						isFirstChild: index == 0,
 						isOnlyChild: terms.length == 1,
 						useOR: !useOR

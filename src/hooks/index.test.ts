@@ -1,7 +1,47 @@
 import { ChangeEvent, FormEvent } from "react";
 import { act, renderHook } from "@testing-library/react-hooks";
-import { useFilterList, useBool, useMulti, useNumeric, usePagination, useSelect, useText, useToggle } from ".";
+import { useFilterList, useBool, useMulti, useNumeric, usePagination, useSelect, useText, useToggle, useArrayReducer } from ".";
 
+
+describe("Hook for array reducer", () => {
+	const initialState = ["some value", "another value"];
+
+	test("Add an element", () => {
+		const { result } = renderHook(() => useArrayReducer(initialState));
+
+		act(() => {
+			result.current[1]({ type: "add", value: "added value" });
+		});
+
+		expect(result.current[0])
+			.toEqual([
+				...initialState,
+				"added value"
+			]);
+	});
+
+	test("Remove an element", () => {
+		const { result } = renderHook(() => useArrayReducer(initialState));
+
+		act(() => {
+			result.current[1]({ type: "remove", index: 1 });
+		});
+
+		expect(result.current[0])
+			.toEqual([initialState[0]]);
+	});
+
+	test("Update an element", () => {
+		const { result } = renderHook(() => useArrayReducer(initialState));
+
+		act(() => {
+			result.current[1]({ type: "update", index: 0, value: "replaced value" });
+		});
+
+		expect(result.current[0])
+			.toEqual(["replaced value", initialState[1]]);
+	});
+});
 
 describe("Hook for boolean state", () => {
 	test("Toggle method", () => {

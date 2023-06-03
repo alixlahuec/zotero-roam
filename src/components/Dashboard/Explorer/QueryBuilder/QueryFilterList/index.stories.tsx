@@ -1,8 +1,10 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+import { userEvent, within } from "@storybook/testing-library";
 
 import QueryFilterList from ".";
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt } from "../utils";
+import { useArrayReducer } from "../../../../../hooks";
+import { QueryTermListRecursive } from "../types";
 
 
 type Props = ComponentProps<typeof QueryFilterList>;
@@ -14,15 +16,8 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const [terms, setTerms] = useState(context.args.terms);
-
-			const handlers = {
-				addTerm: (val) => setTerms(prev => addElemToArray(prev, [val])),
-				removeTerm: (index) => setTerms(prev => removeArrayElemAt(prev, index)),
-				updateTerm: (index, val) => setTerms(prev => updateArrayElemAt(prev, index, val))
-			};
-
-			return <Story {...context} args={{ ...context.args, handlers, terms }} />;
+			const [terms, dispatch] = useArrayReducer<QueryTermListRecursive[]>(context.args.terms);
+			return <Story {...context} args={{ ...context.args, dispatch, terms }} />;
 		}
 	]
 } as Meta<Props>;
@@ -39,5 +34,28 @@ export const Default: StoryObj<Props> = {
 				[{ property: "Title", relationship: "contains", value: "history" }]
 			]
 		]
+	}
+};
+
+export const WithInteractions: StoryObj<Props> = {
+	...Default,
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const frame = within(canvasElement.parentElement!);
+
+		// Remove a term
+		const removeTermButton = canvas.getByText("Item added before April 1st, 2022").nextElementSibling!;
+		await userEvent.click(removeTermButton);
+
+		// Click on a term to open a query box
+		const filterTerm = canvas.getByText("Abstract contains history");
+		await userEvent.click(filterTerm);
+		const termDialog = frame.getByRole("dialog");
+		// Add a sibling term
+		const addSibling = within(termDialog).getByRole("button", { name: "AND" });
+		await userEvent.click(addSibling);
+		// Remove the first term
+		const removeFirstTerm = within(termDialog).getAllByRole("button", { name: "Remove query term" })[0];
+		await userEvent.click(removeFirstTerm);
 	}
 };

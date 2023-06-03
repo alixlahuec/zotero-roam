@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps, useReducer } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import QueryBox from ".";
 
@@ -12,14 +12,18 @@ export default {
 	},
 	decorators: [
 		(Story, context) => {
-			const [termList, setTermList] = useState(context.args.terms);
-			const handlers = {
-				removeSelf: () => {},
-				updateSelf: (val) => setTermList(val)
-			};
+			const [termList, dispatch] = useReducer((_state, action) => {
+				switch (action.type) {
+				case "updateSelf":
+					return action.value;
+				case "removeSelf":
+				default:
+					return;
+				}
+			}, context.args.terms);
 
 			return <div style={{ maxWidth: "550px" }}>
-				<Story {...context} args={{ ...context.args, handlers, terms: termList }} />
+				<Story {...context} args={{ ...context.args, dispatch, terms: termList }} />
 			</div>;
 		}
 	]
