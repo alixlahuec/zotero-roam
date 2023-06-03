@@ -54,7 +54,8 @@
 			"@storybook/addon-links",
 			"@storybook/cli",
 			"@storybook/react",
-			"@storybook/react-webpack5"
+			"@storybook/react-webpack5",
+			"storybook"
 		]
 	}
   ]
