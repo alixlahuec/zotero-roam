@@ -108,7 +108,7 @@
         "mini-css-extract-plugin": "^2.7.5",
         "msw": "^0.47.3",
         "msw-storybook-addon": "^1.8.0",
-        "release-it": "^15.10.3",
+        "release-it": "^15.10.5",
         "storybook": "^7.0.18",
         "storybook-mock-date-decorator": "^1.0.0",
         "style-loader": "^3.3.3",
