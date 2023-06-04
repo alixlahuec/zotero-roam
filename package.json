@@ -105,7 +105,7 @@
         "jest-mock-extended": "^3.0.4",
         "jest-runner-eslint": "^2.0.0",
         "jest-transform-css": "^6.0.1",
-        "mini-css-extract-plugin": "^2.7.5",
+        "mini-css-extract-plugin": "^2.7.6",
         "msw": "^0.47.3",
         "msw-storybook-addon": "^1.8.0",
         "release-it": "^15.10.5",
