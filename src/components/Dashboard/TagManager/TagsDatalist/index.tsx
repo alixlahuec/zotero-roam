@@ -18,7 +18,7 @@ import "./index.css";
 
 const itemsPerPage = 30;
 
-const sortOptions: SortOption<TagManagerSortBy>[] = [
+const SORT_OPTIONS: SortOption<TagManagerSortBy>[] = [
 	{ icon: "sort-desc", label: "Most Used", value: TagManagerSortBy.USAGE },
 	{ icon: "sort-alphabetical", label: "Name", value: TagManagerSortBy.ALPHABETICAL },
 	{ icon: "star", label: "In Roam", value: TagManagerSortBy.ROAM }
@@ -72,7 +72,7 @@ const TagsDatalist = memo<OwnProps>(function TagsDatalist({ filter, items, libra
 			? <Spinner size={15} />
 			: <div className="zr-tagmanager--datalist" >
 				<Toolbar>
-					<SortButtons<TagManagerSortBy> name={"zr-tagmanager-sort-" + filter} onSelect={handleSort} options={sortOptions} selectedOption={sortBy} />
+					<SortButtons<TagManagerSortBy> name={"zr-tagmanager-sort-" + filter} onSelect={handleSort} options={SORT_OPTIONS} selectedOption={sortBy} />
 					<Pagination 
 						currentPage={currentPage} 
 						itemsPerPage={itemsPerPage} 
