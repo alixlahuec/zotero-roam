@@ -1,8 +1,6 @@
 /* istanbul ignore file */
-import { bool, instanceOf, node, object } from "prop-types";
-import { Component, createContext, useMemo } from "react";
-
-import { HotkeysTarget2 } from "@blueprintjs/core";
+import { Component, FC, createContext, useContext, useMemo } from "react";
+import { HotkeyConfig, HotkeysTarget2, UseHotkeysOptions } from "@blueprintjs/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
@@ -15,17 +13,28 @@ import SearchPanel from "Components/SearchPanel";
 import { SettingsDialog, useOtherSettings, useRequestsSettings, useShortcutsSettings } from "Components/UserSettings";
 
 import { addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
+import IDBDatabase from "../../services/idb";
 import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } from "../../setup";
 
-import * as customPropTypes from "../../propTypes";
 import { AsBoolean } from "Types/helpers";
-import { ExtensionStatusEnum } from "Types/extension";
+import { ExtensionContextValue, ExtensionStatusEnum, SettingsOther, SettingsShortcuts, UserRequests } from "Types/extension";
+import { Roam } from "Types/externals";
 
 
 const openSearchCommand = "zoteroRoam : Open Search Panel";
 const openDashboardCommand = "zoteroRoam : Open Dashboard";
 
-const ExtensionContext = createContext();
+const ExtensionContext = createContext<ExtensionContextValue | null>(null);
+
+const useExtensionContext = () => {
+	const context = useContext(ExtensionContext);
+
+	if (!context) {
+		throw new Error("No context provided");
+	}
+
+	return context;
+};
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -40,7 +49,12 @@ const queryClient = new QueryClient({
 	}
 });
 
-const QCProvider = ({ children, idbDatabase }) => {
+
+type QCProviderProps = {
+	idbDatabase: IDBDatabase
+}
+
+const QCProvider: FC<QCProviderProps> = ({ children, idbDatabase }) => {
 	const [{ cacheEnabled }] = useOtherSettings();
 	const persister = useMemo(() => createPersisterWithIDB(idbDatabase), [idbDatabase]);
 	const persisterProps = useMemo(() => ({
@@ -65,13 +79,16 @@ const QCProvider = ({ children, idbDatabase }) => {
 	return <Provider client={queryClient} {...persisterProps}>{children}</Provider>;
 
 };
-QCProvider.propTypes = {
-	children: node,
-	idbDatabase: instanceOf(IDBDatabase)
+
+
+type AppWrapperProps = {
+	extension: ExtensionContextValue,
+	extensionAPI?: Roam.ExtensionAPI,
+	idbDatabase: IDBDatabase
 };
 
 // https://stackoverflow.com/questions/63431873/using-multiple-context-in-a-class-component
-const AppWrapper = (props) => {
+const AppWrapper = (props: AppWrapperProps) => {
 	const [{ autoload }] = useOtherSettings();
 	const [requests] = useRequestsSettings();
 	const [shortcuts] = useShortcutsSettings();
@@ -83,7 +100,26 @@ const AppWrapper = (props) => {
 	return <App autoload={autoload} requests={requests} shortcuts={sanitizedShortcuts} {...props} />;
 };
 
-class App extends Component {
+
+type AppProps = {
+	autoload: SettingsOther["autoload"],
+	extension: ExtensionContextValue,
+	extensionAPI?: Roam.ExtensionAPI,
+	idbDatabase: IDBDatabase,
+	requests: UserRequests,
+	shortcuts: SettingsShortcuts
+};
+
+type AppState = {
+	isDashboardOpen: boolean,
+	isLoggerOpen: boolean,
+	isSearchPanelOpen: boolean,
+	isSettingsPanelOpen: boolean,
+	lastCursorLocation: ReturnType<typeof getCurrentCursorLocation>,
+	status: ExtensionStatusEnum
+};
+
+class App extends Component<AppProps, AppState> {
 	constructor(props){
 		super(props);
 		this.state = {
@@ -94,10 +130,10 @@ class App extends Component {
 			lastCursorLocation: null,
 			status: (
 				this.props.requests.dataRequests.length == 0
-					? "disabled"
+					? ExtensionStatusEnum.DISABLED
 					: this.props.autoload 
-						? "on" 
-						: "off"
+						? ExtensionStatusEnum.ON
+						: ExtensionStatusEnum.OFF
 			)
 		};
 		this.toggleExtension = this.toggleExtension.bind(this);
@@ -112,24 +148,6 @@ class App extends Component {
 		this.toggleSettings = this.toggleSettings.bind(this);
 		this.closeLogger = this.closeLogger.bind(this);
 		this.openLogger = this.openLogger.bind(this);
-
-		this.shortcutsConfig = {
-			"toggleDashboard": {
-				label: "Show/hide the dashboard",
-				onKeyDown: () => this.toggleDashboard()
-			},
-			"toggleSearchPanel": {
-				label: "Show/hide the search panel",
-				onKeyDown: () => this.toggleSearchPanel()
-			},
-			"toggleSettingsPanel": {
-				label: "Show/hide the settings panel",
-				onKeyDown: () => this.toggleSettings()
-			}
-		};
-		this.hotkeysOptions = {
-			showDialogKeyCombo: "shift+Z+R"
-		};
 	}
 
 	componentDidMount(){
@@ -204,6 +222,25 @@ class App extends Component {
 		);
 	}
 
+	shortcutsConfig: Record<string, Omit<HotkeyConfig, "combo">> = {
+		"toggleDashboard": {
+			label: "Show/hide the dashboard",
+			onKeyDown: () => this.toggleDashboard()
+		},
+		"toggleSearchPanel": {
+			label: "Show/hide the search panel",
+			onKeyDown: () => this.toggleSearchPanel()
+		},
+		"toggleSettingsPanel": {
+			label: "Show/hide the settings panel",
+			onKeyDown: () => this.toggleSettings()
+		}
+	};
+
+	hotkeysOptions: UseHotkeysOptions = {
+		showDialogKeyCombo: "shift+Z+R"
+	};
+
 	toggleExtension() {
 		this.setState((prevState) => {
 			const { status } = prevState;
@@ -272,17 +309,11 @@ class App extends Component {
 	}
 
 }
-App.propTypes = {
-	autoload: bool,
-	extension: customPropTypes.extensionType,
-	extensionAPI: object,
-	idbDatabase: instanceOf(IDBDatabase),
-	requests: customPropTypes.requestsType,
-	shortcuts: customPropTypes.shortcutsSettingsType
-};
+
 
 export {
 	AppWrapper,
 	ExtensionContext,
+	useExtensionContext,
 	queryClient
 };
