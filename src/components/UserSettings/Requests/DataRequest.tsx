@@ -12,7 +12,7 @@ type OwnProps = {
 	request: DataRequest
 };
 
-function DataRequest({ request }: OwnProps){
+function DataRequestItem({ request }: OwnProps){
 	const { apikey, dataURI, library: { path, type } } = request;
 
 	const libContents = useMemo(() => {
@@ -47,4 +47,4 @@ function DataRequest({ request }: OwnProps){
 }
 
 
-export default DataRequest;
+export default DataRequestItem;
