@@ -23,6 +23,12 @@ const config: StorybookConfig = {
 	webpackFinal: async (config) => {
 		return {
 			...config,
+			devtool: false,
+			optimization: {
+				...config.optimization,
+				minimize: false,
+				minimizer: []
+			},
 			resolve: {
 				...config.resolve,
 				alias: {
