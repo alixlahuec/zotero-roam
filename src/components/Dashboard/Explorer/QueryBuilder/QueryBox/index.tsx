@@ -8,8 +8,7 @@ import { defaultQueryTerm } from "../queries";
 import { removeArrayElemAt, updateArrayElemAt } from "../../../../../utils";
 
 import { CustomClasses } from "../../../../../constants";
-import { QueryTerm, QueryTermListRecursive } from "../types";
-import { QueryBoxAction, QueryTermAction } from "../QueryFilterList/types";
+import { QueryTerm, QueryTermListRecursive, QueryBoxAction, QueryTermAction } from "../types";
 
 
 type OwnProps = {

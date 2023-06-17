@@ -35,8 +35,6 @@ type InputComponentProps<T extends InputEnum | null> = {
 
 function InputComponent<T extends InputEnum | null>({ inputType, ...props }: { inputType: T } & InputComponentProps<T>){
 	switch (inputType) {
-	case null:
-		return null;
 	case InputEnum.ITEM_TYPE:
 		return <ItemType {...props as InputComponentProps<InputEnum.ITEM_TYPE>} />;
 	case InputEnum.ITEM_TAGS:
@@ -47,6 +45,7 @@ function InputComponent<T extends InputEnum | null>({ inputType, ...props }: { i
 		return <InputDateRange {...props as InputComponentProps<InputEnum.DATE_RANGE>} />;
 	case InputEnum.TEXT:
 		return <InputText {...props as InputComponentProps<InputEnum.TEXT>} />;
+	case null:
 	default:
 		return null;
 	}
