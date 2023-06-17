@@ -41,13 +41,13 @@ import "./index.css";
 
 		render(
 			<HotkeysProvider dialogProps={{ globalGroupName: "zoteroRoam" }}>
-				<UserSettingsProvider extensionAPI={null} init={{ ...settings, requests }}>
+				<UserSettingsProvider init={{ ...settings, requests }}>
 					<AppWrapper
 						extension={{
 							portalId: EXTENSION_PORTAL_ID,
 							version: EXTENSION_VERSION,
 						}}
-						extensionAPI={null}
+						extensionAPI={{}}
 						idbDatabase={idbDatabase}
 					/>
 				</UserSettingsProvider>

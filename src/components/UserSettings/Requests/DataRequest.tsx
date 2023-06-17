@@ -1,14 +1,18 @@
 import { useMemo } from "react";
-
 import { IconName, Tag } from "@blueprintjs/core";
 
-import * as customPropTypes from "../../../propTypes";
 import { CustomClasses } from "../../../constants";
+import { DataRequest } from "Types/extension";
 
 
 const obfuscate = (val: string) => "*".repeat(val.length);
 
-function DataRequest({ request }){
+
+type OwnProps = {
+	request: DataRequest
+};
+
+function DataRequestItem({ request }: OwnProps){
 	const { apikey, dataURI, library: { path, type } } = request;
 
 	const libContents = useMemo(() => {
@@ -41,8 +45,6 @@ function DataRequest({ request }){
 		</div>
 	</div>;
 }
-DataRequest.propTypes = {
-	request: customPropTypes.dataRequestType
-};
 
-export default DataRequest;
+
+export default DataRequestItem;

@@ -1,9 +1,9 @@
-import { memo, useCallback, useContext, useEffect, useMemo } from "react";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import { Button, Classes, Divider, Icon, IconName, IconProps, Intent, Menu, MenuItem, Spinner, Switch, Tag } from "@blueprintjs/core";
 import { ContextMenu2, Tooltip2 } from "@blueprintjs/popover2";
 import { QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
 
-import { ExtensionContext } from "Components/App";
+import { useExtensionContext } from "Components/App";
 import { useOtherSettings, useRequestsSettings } from "Components/UserSettings";
 
 import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/queries";
@@ -51,7 +51,7 @@ function DarkThemeToggle() {
 }
 
 const IconTooltipFooter = memo(function IconTooltipFooter() {
-	const { version } = useContext(ExtensionContext);
+	const { version } = useExtensionContext();
 	
 	return <div className="zr-icon-tooltip-footer">
 		<DarkThemeToggle />
