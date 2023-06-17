@@ -14,26 +14,14 @@
 		"enabled": false
 	},
 	{
-		"groupName": "Blueprint",
-		"matchPackagePrefixes": [
-			"@blueprintjs/"
-		],
-		"enabled": false
-	},
-	{
-		"groupName": "Jest Core",
+		"matchUpdateTypes": ["major"],
 		"matchPackageNames": [
-			"jest",
-			"jest-environment-jsdom",
-			"babel-jest"
-		],
-		"enabled": false
-	},
-	{
-		"groupName": "React",
-		"matchPackageNames": [
+			"@blueprintjs/core",
+			"@blueprintjs/datetime",
+			"@blueprintjs/select",
 			"react",
-			"react-dom"
+			"react-dom",
+			"idb"
 		],
 		"enabled": false
 	},
@@ -54,7 +42,8 @@
 			"@storybook/addon-links",
 			"@storybook/cli",
 			"@storybook/react",
-			"@storybook/react-webpack5"
+			"@storybook/react-webpack5",
+			"storybook"
 		]
 	}
   ]
