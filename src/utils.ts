@@ -6,6 +6,34 @@ import { RCitekeyPages, RImportableBlock, ZCleanItemPDF, ZCleanItemTop, ZEnriche
 import { SCleanItem, SEnrichedItem, SEnrichedItemCitation, SEnrichedItemReference, SEnrichedItemTypeEnum, SRelatedEntries, isSBacklink } from "Types/transforms/semantic";
 
 
+/** Adds an element to the end of an array
+ * @param arr - The targeted array
+ * @param elem - The element to add
+ * @returns 
+ */
+function addElemToArray<T, V>(arr: T[], elem: V): (T | V)[] {
+	return [...arr, elem];
+}
+
+/** Removes an element from an array at a given index
+ * @param arr - The targeted array
+ * @param index - The index of the element to remove
+ * @returns 
+ */
+function removeArrayElemAt<T>(arr: T[], index: number): T[] {
+	return [...arr.slice(0, index), ...arr.slice(index + 1, arr.length)];
+}
+
+/** Updates the value of an array element from its index
+ * @param arr - The targeted array
+ * @param index - The index of the element to update
+ * @param value - The new value of the element
+ * @returns 
+ */
+function updateArrayElemAt<T, V extends T>(arr: T[], index: number, value: V): T[] {
+	return [...arr.slice(0, index), value, ...arr.slice(index + 1, arr.length)];
+}
+
 /** Converts a string from camelCase to Title Case
  * @see https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-title-case-text */
 function camelToTitleCase(text: string): string {
@@ -1223,6 +1251,9 @@ function splitNotes(notes: ZItemNote[], separator: string): string[][] {
 }
 
 export {
+	addElemToArray,
+	removeArrayElemAt,
+	updateArrayElemAt,
 	camelToTitleCase,
 	categorizeLibraryItems,
 	makeAuthorsSummary,

@@ -1,5 +1,6 @@
 import { mock } from "jest-mock-extended";
-import { QueryTerm, queries, runQuerySet } from "./queries";
+import { queries, runQuerySet } from "./queries";
+import { QueryTerm } from "./types";
 import { ZCleanItemTop } from "Types/transforms";
 
 

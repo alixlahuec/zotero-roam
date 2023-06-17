@@ -1,5 +1,6 @@
 import { getInitialedPages } from "Roam";
 import { searchEngine } from "../../../utils";
+import { TagManagerSortBy } from "./types";
 import { ZTagEntry, ZTagList, ZTagStats, ZTagSuggestion } from "Types/transforms";
 
 
@@ -14,7 +15,7 @@ function getTagStats(tagListData: ZTagEntry[]): ZTagStats{
 			nAuto: t.zotero.length == 0 ? 0 : t.zotero.filter(tag => tag.meta.type == 1).length,
 			in_roam: t.roam.length > 0 ? 1 : 0
 		};
-	}).reduce((out, tk) => {
+	}).reduce<ZTagStats>((out, tk) => {
 		out.nTags += tk.nTags;
 		out.nAuto += tk.nAuto;
 		out.nRoam += tk.in_roam;
@@ -23,6 +24,7 @@ function getTagStats(tagListData: ZTagEntry[]): ZTagStats{
 	{ nTags: 0, nAuto: 0, nRoam: 0, nTotal: tagListData.length });
 }
 
+
 /** Compiles the usage count for a given tag. This returns the number of Zotero items which use the tag, with an option to add +1 if the tag has a Roam page. */
 function getTagUsage(entry: ZTagEntry, { count_roam = false }: { count_roam?: boolean } = {}): number{
 	return entry.zotero.reduce((count, tag) => {
@@ -30,10 +32,12 @@ function getTagUsage(entry: ZTagEntry, { count_roam = false }: { count_roam?: bo
 	}, 0) + (count_roam ? entry.roam.length : 0);
 }
 
+
 /** Evaluates if a given tag is a singleton (i.e, has a single version in Zotero and Roam). */
 function isSingleton(entry: ZTagEntry): boolean{
 	return entry.zotero.length == 1 && (entry.roam.length == 0 || (entry.roam.length == 1 && entry.zotero[0].tag == entry.roam[0].title));
 }
+
 
 /** Emits a suggestion, if possible, for handling a given tag. */
 function makeSuggestionFor(entry: ZTagEntry): ZTagSuggestion{
@@ -95,6 +99,7 @@ function makeSuggestionFor(entry: ZTagEntry): ZTagSuggestion{
 	}
 }
 
+
 /** Matches Zotero tags with existing Roam pages */
 function matchTagData(tagList: ZTagList): Promise<ZTagEntry[]>{
 	return new Promise((resolve) => {
@@ -126,10 +131,9 @@ function matchTagData(tagList: ZTagList): Promise<ZTagEntry[]>{
 	});
 }
 
-type TagsSortBy = "alphabetical" | "roam" | "usage";
 
 /** Sorts Zotero tags */
-function sortTags(tagList: ZTagEntry[], by: TagsSortBy = "alphabetical"){
+function sortTags(tagList: ZTagEntry[], by: TagManagerSortBy = TagManagerSortBy.ALPHABETICAL){
 	const arr = [...tagList];
 	switch(by){
 	case "usage":
