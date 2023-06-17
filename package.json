@@ -118,7 +118,7 @@
         "webpack-merge": "^5.9.0"
     },
     "dependencies": {
-        "@blueprintjs/core": "^3.50.4",
+        "@blueprintjs/core": "^3.54.0",
         "@blueprintjs/datetime": "^3.23.14",
         "@blueprintjs/icons": "^3.33.0",
         "@blueprintjs/popover2": "^0.14.0",
