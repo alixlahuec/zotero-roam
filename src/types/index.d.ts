@@ -17,6 +17,6 @@ declare global {
 
 		zoteroRoam: ZoteroRoam
 
-		zoteroRoam_settings?: LegacyUserSettings
+		zoteroRoam_settings: LegacyUserSettings
 	}
 }

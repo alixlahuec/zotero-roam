@@ -79,6 +79,7 @@ function offload(){
 	unregisterSmartblockCommands();
 	unmountExtensionIfExists();
 	window.zoteroRoam.deleteDatabase();
+	// @ts-ignore
 	delete window.zoteroRoam;
 }
 

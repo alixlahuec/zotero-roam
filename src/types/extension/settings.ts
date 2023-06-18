@@ -1,6 +1,7 @@
 import { ZoteroAPI } from "../externals";
 import { SBConfig, ZLibrary } from "../transforms";
 import { ZItemReferenceFormat } from "./misc";
+import { DeepPartial } from "../helpers";
 
 
 /* -------------------------------------------------------------- */
@@ -233,5 +234,5 @@ export type InitSettings = {
 } & UserSettings;
 
 export type LegacyUserSettings = {
-	dataRequests: LegacyUserDataRequest[]
-} & UserSettings
+	dataRequests: (LegacyUserDataRequest | UserDataRequest)[]
+} & DeepPartial<UserSettings>

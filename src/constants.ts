@@ -1,3 +1,5 @@
+import { ZoteroAPI } from "Types/externals";
+
 /** @constant {String} The extension's current version (from package.json) */
 export const EXTENSION_VERSION = require("../package.json").version;
 
@@ -22,7 +24,7 @@ export const IDB_REACT_QUERY_CLIENT_KEY = "REACT_QUERY_CLIENT";
 
 
 /* istanbul ignore file */
-export const TYPEMAP_DEFAULT = {
+export const TYPEMAP_DEFAULT: Record<ZoteroAPI.ItemTop["data"]["itemType"], string> = {
 	artwork: "Illustration",
 	audioRecording: "Recording",
 	bill: "Legislation",
