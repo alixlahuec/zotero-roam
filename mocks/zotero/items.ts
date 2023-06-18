@@ -36,7 +36,7 @@ const data: Mocks.ItemTop[] = [
 				DOI: "10.1503/cmaj.210229",
 				publicationTitle: "CMAJ",
 				url: "https://www.cmaj.ca/content/193/44/E1696"
-			},
+			}
 		}),
 		meta: {
 			creatorSummary: "Bloch and Rozmovits",
@@ -95,7 +95,7 @@ const data: Mocks.ItemTop[] = [
 					{ tag: "housing" }
 				],
 				url: "https://equityhealthj.biomedcentral.com/articles/10.1186/s12939-021-01479-2"
-			},
+			}
 		}),
 		meta: {
 			creatorSummary: "Pinto et al.",
