@@ -5,9 +5,10 @@ import ZoteroRoam from "./src/extension";
 import { initialize } from "./src/setup";
 import { simplifyZoteroAnnotations } from "./src/utils";
 import { apiKeys, findCollections, findItems, libraries, sampleAnnot, sampleImageAnnot, sampleNote, samplePDF } from "Mocks";
+import { RImportableBlock, RImportableElement } from "Types/transforms";
 
 
-const { keyWithFullAccess: masterKey } = apiKeys;
+const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary } = libraries;
 
 /**
@@ -25,15 +26,17 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 						apikey: masterKey,
 						library: {
 							type: userLibrary.type,
-							id: userLibrary.id
+							id: `${userLibrary.id}`
 						}
 					}
 				],
+				// @ts-ignore
 				annotations: {
 					func: "customAnnotsFunction",
 					use: "function",
 					...annotations
 				},
+				// @ts-ignore
 				metadata: {
 					func: "customFunction",
 					use: "function",
@@ -80,24 +83,24 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 		throw new Error("Updating the libraries used in the sandbox is not allowed.");
 	}
 
+	// @ts-ignore
 	getBibEntries(){
 		throw new Error("Generating bibliographic information is not available in the sandbox.");
 	}
 
+	// @ts-ignore
 	getItemCitation(){
 		throw new Error("Generating citation information is not available in the sandbox.");
 	}
 
+	// @ts-ignore
 	getTags(){
 		throw new Error("Retrieving data on library tags is not allowed in the sandbox.");
 	}
 }
 
-/** Wraps contents of a block object inside of a `<li>` tag.
- * @param {{string: String, text: String, children?: Array}} object - The block object to process
- * @returns
- */
-function blockObjectToHTML(object){
+/** Wraps contents of a block object inside of a `<li>` tag. */
+function blockObjectToHTML(object: RImportableBlock): string{
 	let objectHTML = "";
 	
 	if(typeof(object.string) === "undefined"){
@@ -115,16 +118,13 @@ function blockObjectToHTML(object){
 	return objectHTML;
 }
 
-/** Generates HTML list from metadata blocks.
- * @param {(String|{string: String, text: String, children?: Array})[]} arr - The list of metadata blocks
- * @returns 
- */
-function arrayToHTML(arr){
+/** Generates HTML list from metadata blocks. */
+function arrayToHTML(arr: RImportableElement[]): string{
 	let renderedHTML = "<ul>";
 	arr.forEach((el) => {
-		if(el.constructor === Object){
+		if(typeof(el) == "object"){
 			renderedHTML = renderedHTML + blockObjectToHTML(el);
-		} else if(el.constructor === String) {
+		} else if(typeof(el) == "string") {
 			renderedHTML = renderedHTML + `<li>${el} </li>`;
 		} else {
 			throw new Error("All array items should be of type String or Object");

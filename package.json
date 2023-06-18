@@ -13,7 +13,7 @@
         "url": "https://github.com/alixlahuec/zotero-roam/issues",
         "email": "alix.lahuec@onmail.com"
     },
-    "main": "src/index.js",
+    "main": "src/index.tsx",
     "browser": "dist/zoteroRoam.min.js",
     "unpkg": "dist/zoteroRoam.min.js",
     "msw": {
@@ -44,7 +44,7 @@
     },
     "sideEffects": [
         "*.css",
-        "src/index.js"
+        "src/index.tsx"
     ],
     "babel": {
         "presets": [

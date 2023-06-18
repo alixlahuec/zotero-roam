@@ -18,7 +18,7 @@ module.exports = merge(baseConfig, {
         "react-dom": "ReactDOM",
     },
     externalsType: "window",
-    entry: path.resolve("loader.js"),
+    entry: path.resolve("loader.tsx"),
     optimization: {
         minimizer: [
             `...`,
@@ -55,7 +55,7 @@ module.exports = merge(baseConfig, {
         rules: [
 			{
 				test: /\.[tj]sx?$/,
-				include: [path.resolve("src"), path.resolve("loader.js")],
+				include: [path.resolve("src"), path.resolve("loader.tsx")],
 				use: {
 					loader: "babel-loader",
 					options: {
