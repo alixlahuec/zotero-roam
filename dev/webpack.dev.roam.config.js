@@ -7,7 +7,7 @@ module.exports = merge(baseDevConfig, {
 	experiments: {
 		outputModule: true,
 	},
-	entry: path.resolve("loader.js"),
+	entry: path.resolve("loader.tsx"),
 	output: {
 		path: path.resolve("."),
 		filename: "extension.js",
@@ -25,7 +25,7 @@ module.exports = merge(baseDevConfig, {
 		rules: [
 			{
 				test: /\.[tj]sx?$/,
-				include: [path.resolve("src"), path.resolve("loader.js")],
+				include: [path.resolve("src"), path.resolve("loader.tsx")],
 				use: {
 					loader: "babel-loader",
 					options: {

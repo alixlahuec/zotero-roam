@@ -203,8 +203,8 @@ module.exports = {
 				"<rootDir>/src/**/*",
 				"<rootDir>/stories/**/*",
 				"<rootDir>/tests/**/*",
-				"<rootDir>/loader.js",
-				"<rootDir>/sandbox.js"
+				"<rootDir>/loader.tsx",
+				"<rootDir>/sandbox.ts"
 			]
 		}
 	],
