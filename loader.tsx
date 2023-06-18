@@ -63,7 +63,7 @@ function onload({ extensionAPI }){
 				<AppWrapper
 					extension={{
 						portalId: EXTENSION_PORTAL_ID,
-						version: EXTENSION_VERSION,
+						version: EXTENSION_VERSION
 					}}
 					extensionAPI={extensionAPI}
 					idbDatabase={idbDatabase}
