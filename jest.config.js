@@ -1,9 +1,6 @@
 /* eslint-disable */
-import { Config } from "jest";
 
-
-// https://jestjs.io/docs/configuration
-const common: Config = {
+const common = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
