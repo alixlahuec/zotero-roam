@@ -30,11 +30,13 @@ class ZoteroRoamSandbox extends ZoteroRoam {
 						}
 					}
 				],
+				// @ts-ignore
 				annotations: {
 					func: "customAnnotsFunction",
 					use: "function",
 					...annotations
 				},
+				// @ts-ignore
 				metadata: {
 					func: "customFunction",
 					use: "function",
