@@ -76,7 +76,7 @@ describe("Parsing user data requests", () => {
 	it("throws if the same library is provided twice", () => {
 		const reqs = [
 			{ library: { type: "users", id: "123456" }, apikey: "XXXXXXXXXX" },
-			{ library: { type: "users", id: "123456" }, apikey: "XXXXXXXXXX", name: "duplicate lib" },
+			{ library: { type: "users", id: "123456" }, apikey: "XXXXXXXXXX", name: "duplicate lib" }
 		];
 
 		expect(() => analyzeUserRequests(reqs as UserDataRequest[]))
@@ -113,7 +113,7 @@ describe("Parsing user data requests", () => {
 		const expected = {
 			dataRequests: [
 				{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", name: "My personal library", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } },
-				{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", name: "", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items/top" } },
+				{ dataURI: "groups/98765/items/top", apikey: "XXXXXXXXXX", name: "", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items/top" } }
 			],
 			apiKeys: ["XXXXXXXXXX"],
 			libraries: [
@@ -136,7 +136,7 @@ describe("Parsing user data requests", () => {
 		const expected = {
 			dataRequests: [
 				{ dataURI: "users/12345/items", apikey: "XXXXXXXXXX", name: "My personal library", library: { id: "12345", path: "users/12345", type: "users", uri: "items" } },
-				{ dataURI: "groups/98765/items", apikey: "XXXXXXXXXX", name: "", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items" } },
+				{ dataURI: "groups/98765/items", apikey: "XXXXXXXXXX", name: "", library: { id: "98765", path: "groups/98765", type: "groups", uri: "items" } }
 			],
 			apiKeys: ["XXXXXXXXXX"],
 			libraries: [
@@ -207,7 +207,7 @@ describe("Parsing initial user settings", () => {
 			format_char: "",
 			format_use: "preset",
 			format: "citation",
-			trigger: "",
+			trigger: ""
 		},
 		copy: {
 			always: false,

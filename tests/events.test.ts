@@ -156,7 +156,7 @@ describe("tagsModified", () => {
 				failed: {},
 				unchanged: {},
 				success: {}
-			}],
+			}]
 		};
 		tagsModified(mockEvent({ data }));
 		expect(window.zoteroRoam.warn).toHaveBeenCalledWith({

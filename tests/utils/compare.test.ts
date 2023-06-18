@@ -21,7 +21,7 @@ test("Sorts Zotero items by publication year & creators", () => {
 		[b, c].sort(compareItemsByYear),
 		[c, d].sort(compareItemsByYear),
 		[d, c].sort(compareItemsByYear),
-		[d, e].sort(compareItemsByYear),
+		[d, e].sort(compareItemsByYear)
 	])
 		.toEqual([
 			[b, a],
@@ -30,7 +30,7 @@ test("Sorts Zotero items by publication year & creators", () => {
 			[c, b],
 			[d, c],
 			[d, c],
-			[e, d],
+			[e, d]
 		]);
 });
 

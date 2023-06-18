@@ -69,7 +69,7 @@ describe("Enforcing a block-object format returns correct output", () => {
 					{ string: "string", text: "string", children: [] }
 				] }
 			]
-		],
+		]
 	];
 
 	test.each(cases)(
