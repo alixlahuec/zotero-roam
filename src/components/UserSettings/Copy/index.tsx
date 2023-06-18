@@ -26,7 +26,7 @@ export const OVERRIDE_KEY_OPTIONS = [
 	{ label: "Alt", value: "altKey" },
 	{ label: "Ctrl", value: "ctrlKey" },
 	{ label: "Shift", value: "shiftKey" },
-	{ label: "System key", value: "metaKey" },
+	{ label: "System key", value: "metaKey" }
 ];
 
 const COPY_REPLACEMENTS = (

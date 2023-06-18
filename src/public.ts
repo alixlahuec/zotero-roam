@@ -133,5 +133,5 @@ export {
 	_formatPDFs,
 	_getItemCreators,
 	_getItemTags,
-	_getItemRelated,
+	_getItemRelated
 };

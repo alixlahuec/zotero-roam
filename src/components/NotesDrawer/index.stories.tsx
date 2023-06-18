@@ -10,7 +10,7 @@ export default {
 	component: NotesDrawer,
 	args: {
 		isOpen: true,
-		onClose: () => {},
+		onClose: () => {}
 	},
 	parameters: {
 		userSettings: {

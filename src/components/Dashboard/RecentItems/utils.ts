@@ -28,7 +28,7 @@ function createLogItem(
 		meta: [creator, pub_year].filter(AsBoolean).join(" "),
 		publication: item.data.publicationTitle || item.data.bookTitle || item.data.university || "",
 		raw: item,
-		title: item.data.title || "",
+		title: item.data.title || ""
 	};
 
 	return entry;

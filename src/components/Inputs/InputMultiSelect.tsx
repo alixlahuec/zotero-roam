@@ -59,7 +59,7 @@ function InputMultiSelect({ options = [], value = [], setValue, ...extraProps }:
 	const onRemove = useCallback<NonNullable<SelectorProps["onRemove"]>>((item, _index) => setValue(value.filter(val => val != item.value)), [setValue, value]);
 
 	const itemRenderer = useCallback<SelectorProps["itemRenderer"]>((item, itemProps) => {
-		const { handleClick, /*modifiers: { active }*/ } = itemProps;
+		const { handleClick/*, modifiers: { active }*/ } = itemProps;
 		const isSelected = value.includes(item.value);
 
 		return <MenuItem aria-selected={isSelected} key={item.value} labelElement={isSelected ? <Icon icon="small-tick" /> : null} onClick={handleClick} text={item.label} />;

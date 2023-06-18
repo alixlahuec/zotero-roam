@@ -65,7 +65,7 @@ function CitekeyMenuFactory({ menus }: { menus: Element[] }){
 function DNPMenuFactory({ menus }: { menus: Element[] }){
 	const [{ trigger }] = usePageMenuSettings();
 	const [{ dataRequests }] = useRequestsSettings();
-	const [roamCitekeys,] = useRoamCitekeys();
+	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
 
 	const itemQueries = useQuery_Items(dataRequests, {
 		notifyOnChangeProps: ["data"], 
@@ -117,7 +117,7 @@ function DNPMenuFactory({ menus }: { menus: Element[] }){
 function TagMenuFactory({ menus }: { menus: Element[] }){
 	const [{ trigger }] = usePageMenuSettings();
 	const [{ dataRequests }] = useRequestsSettings();
-	const [roamCitekeys,] = useRoamCitekeys();
+	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
 	
 	const itemQueries = useQuery_Items(dataRequests, {
 		notifyOnChangeProps: ["data"],
