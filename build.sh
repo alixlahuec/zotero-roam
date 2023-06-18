@@ -1,2 +1,2 @@
-npm ci --legacy-peer-deps
+npm ci
 npm run build:roam
