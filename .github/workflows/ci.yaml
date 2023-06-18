@@ -22,7 +22,7 @@ jobs:
           cache: 'npm'
 
       - name: Install packages
-        run: npm ci --legacy-peer-deps # To fix failing CI due to webpack-filter-warnings-plugin (https://github.com/storybookjs/storybook/issues/13990)
+        run: npm ci
 
       - name: Type-checking
         run: npm run ci:typecheck

@@ -40,7 +40,7 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: Install packages
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - name: Bump version, build
         run: |
