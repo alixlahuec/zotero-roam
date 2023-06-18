@@ -18,7 +18,7 @@ jobs:
           node-version: 16
           cache: 'npm'
 
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
 
       - name: Jest, ESLint
         run: npm run ci:test
@@ -73,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
       - name: Configure NPM
         run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
       
