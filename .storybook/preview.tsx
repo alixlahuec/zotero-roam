@@ -25,12 +25,12 @@ import { fallbackHandler, roamAssetsHandler, sciteApiHandler, sciteAssetsHandler
 initialize({
 	onUnhandledRequest: ({ method, url }) => {
 		console.error(`Unhandled ${method} request to ${url}.`);
-	},
+	}
 });
 
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
 const withTheme: Decorator = (Story: StoryFn, context: StoryContext) => {
-	const [{ theme }, /* updateGlobals */] = useGlobals();
+	const [{ theme }/*, updateGlobals */] = useGlobals();
 
 	useEffect(() => {
 		document.getElementById("storybook-root")?.parentElement?.setAttribute("zr-dark-theme", (theme == "dark").toString());
@@ -64,9 +64,9 @@ const preview: Preview = {
 				// Property that specifies if the name of the item will be displayed
 				showName: true,
 				// Change title based on selected value
-				dynamicTitle: true,
-			},
-		},
+				dynamicTitle: true
+			}
+		}
 	},
 	loaders: [mswLoader],
 	parameters: {
@@ -74,8 +74,8 @@ const preview: Preview = {
 		controls: {
 			matchers: {
 				color: /(background|color)$/i,
-				date: /Date$/,
-			},
+				date: /Date$/
+			}
 		},
 		msw: {
 			handlers: [
@@ -86,7 +86,7 @@ const preview: Preview = {
 				rest.get("http://localhost:6006/runtime*", (req, _res, _ctx) => req.passthrough()),
 				rest.get("http://localhost:6006/main*", (req, _res, _ctx) => req.passthrough()),
 				rest.get("http://localhost:6006/vendors*", (req, _res, _ctx) => req.passthrough()),
-				rest.get("http://localhost:6006/*", (req, res, ctx) => req.passthrough()),
+				rest.get("http://localhost:6006/*", (req, _res, _ctx) => req.passthrough()),
 				fallbackHandler
 			]
 		},

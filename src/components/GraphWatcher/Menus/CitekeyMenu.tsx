@@ -113,7 +113,7 @@ type RelatedItemsBarProps = {
 
 function RelatedItemsBar(props: RelatedItemsBarProps) {
 	const { doi, itemList, origin, title } = props;
-	const [roamCitekeys,] = useRoamCitekeys();
+	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
 	const { isLoading, isError, data, error } = useQuery_Semantic(doi);
 	
 	const [isBacklinksListOpen, { toggle: toggleBacklinks }] = useBool(false);
@@ -247,7 +247,7 @@ const CitekeyMenu = memo<CitekeyMenuProps>(function CitekeyMenu({ item, itemList
 	const [sciteBadgeSettings] = useSciteSettings();
 	const [typemap] = useTypemapSettings();
 	
-	const [roamCitekeys,] = useRoamCitekeys();
+	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
 
 	const doi = parseDOI(item.data.DOI);
 	const pageUID = findRoamPage("@" + item.key);

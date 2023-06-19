@@ -6,7 +6,7 @@ import ShortcutSequence from ".";
 type Props = ComponentProps<typeof ShortcutSequence>;
 
 export default { 
-	component: ShortcutSequence,
+	component: ShortcutSequence
 } as Meta<Props>;
 
 export const Default: StoryObj<Props> = {

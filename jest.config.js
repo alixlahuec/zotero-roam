@@ -1,8 +1,4 @@
 /* eslint-disable */
-/*
- * For a detailed explanation regarding each configuration property, visit:
- * https://jestjs.io/docs/configuration
- */
 
 const common = {
   // All imported modules in your tests should be mocked automatically
@@ -16,15 +12,6 @@ const common = {
 
   // Automatically clear mock calls, instances, contexts and results before every test
   clearMocks: true,
-
-  // Indicates whether the coverage information should be collected while executing the test
-  collectCoverage: true,
-
-  // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: ["./src/**", "./mocks/**"],
-
-  // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
   coveragePathIgnorePatterns: [

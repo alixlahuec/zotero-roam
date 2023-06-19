@@ -20,7 +20,7 @@ function RequestsWidget() {
 	const [
 		{
 			/*apiKeys,*/
-			dataRequests,
+			dataRequests
 			/*libraries*/
 		},
 		setOpts

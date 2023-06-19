@@ -42,7 +42,7 @@ type SearchPanelProps = {
 const SearchPanel = memo<SearchPanelProps>(function SearchPanel({ isOpen, onClose, status }) {
 	const [{ useQuickCopy }] = useCopySettings();
 	const [{ dataRequests }] = useRequestsSettings();
-	const [roamCitekeys,] = useRoamCitekeys();
+	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
 
 	const [quickCopyActive, { toggle: toggleQuickCopy }] = useBool(useQuickCopy); // Is QuickCopy active by default ?
 

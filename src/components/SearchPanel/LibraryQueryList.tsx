@@ -108,7 +108,7 @@ type RenderedListProps = {
 };
 
 const RenderedList = memo<RenderedListProps>(function RenderedList(props){
-	const { handleClose, /*handleKeyDown, handleKeyUp,*/ itemList, selectedItem } = props;
+	const { handleClose/*, handleKeyDown, handleKeyUp*/, itemList, selectedItem } = props;
 
 	return selectedItem 
 		? <ItemDetails item={selectedItem} 
@@ -133,7 +133,7 @@ const LibraryQueryList = memo<LibraryQueryListProps>(function LibraryQueryList(p
 	const [selectedItemID, itemSelect] = useState<Pick<ZCleanItemTop, "key" | "location"> | null>(null);
 	const [query, setQuery] = useState<string>();
 	// Debouncing query : https://github.com/palantir/blueprint/issues/3281#issuecomment-607172353
-	const [debouncedCallback, ] = useDebounceCallback(_query => { }, query_debounce);
+	const [debouncedCallback/*, cancel */] = useDebounceCallback(_query => { }, query_debounce);
 
 	const handleItemSelect = useCallback<QueryListProps<ZCleanItemTop>["onItemSelect"]>((item, e) => {
 		if(!item){

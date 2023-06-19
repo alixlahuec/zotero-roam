@@ -34,7 +34,7 @@ import "./index.css";
 			idbDatabase,
 			queryClient,
 			requests,
-			settings,
+			settings
 		});
 
 		setup({ settings });
@@ -45,7 +45,7 @@ import "./index.css";
 					<AppWrapper
 						extension={{
 							portalId: EXTENSION_PORTAL_ID,
-							version: EXTENSION_VERSION,
+							version: EXTENSION_VERSION
 						}}
 						idbDatabase={idbDatabase}
 					/>

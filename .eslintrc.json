@@ -57,6 +57,7 @@
     ],
     "rules": {
         "arrow-spacing": "error",
+		"comma-dangle": ["error", "never"],
         "curly": [
             "error",
             "all"

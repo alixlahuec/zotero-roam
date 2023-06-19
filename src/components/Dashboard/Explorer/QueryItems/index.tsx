@@ -42,7 +42,7 @@ type QueryItemsListProps = {
 
 function QueryItemsList({ items, onClose }: QueryItemsListProps){
 	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
-	const [useOR, /*setUseOR*/] = useState(true);
+	const [useOR/*, setUseOR*/] = useState(true);
 	const [queryTerms, dispatch] = useArrayReducer<QueryTermListRecursive[]>([]);
 
 	const queriedItems = useMemo(() => items.filter(it => runQuerySet(queryTerms, useOR, it)), [items, queryTerms, useOR]);
@@ -83,7 +83,7 @@ type QueryItemsProps = {
 };
 
 function QueryItems({ itemList, onClose }: QueryItemsProps) {
-	const [roamCitekeys,] = useRoamCitekeys();
+	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
 	const [items, setItems] = useState<ZCleanItemTop[] | null>(null);
 
 	useEffect(() => {
