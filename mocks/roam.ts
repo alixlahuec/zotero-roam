@@ -36,7 +36,13 @@ function getCitekeyPagesWithEditTime(){
 	return new Map([]);
 }
 
-function getInitialedPages(_keys){
+function getInitialedPages(keys) {
+	if (keys.includes("h")) {
+		return [
+			{ title: "housing", uid: "__some_uid__" }
+		];
+	}
+
 	return [];
 }
 
