@@ -167,7 +167,6 @@ type ZoteroImportProps = {
 
 const ZoteroImport = memo<ZoteroImportProps>(function ZoteroImport(props) {
 	const { identifiers, isActive, resetImport } = props;
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ libraries }] = useRequestsSettings();
 
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);

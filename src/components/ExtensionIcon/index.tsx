@@ -150,7 +150,6 @@ type ExtensionIconProps = {
 
 const ExtensionIcon = memo<ExtensionIconProps>(function ExtensionIcon(props) {
 	const { openDashboard, openLogger, openSearchPanel, openSettingsPanel, status, toggleExtension } = props;
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ apiKeys, dataRequests, libraries }] = useRequestsSettings();
     
 	const queryOpts = useMemo<Pick<QueryObserverOptions, "enabled" | "notifyOnChangeProps">>(() => ({
