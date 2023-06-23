@@ -2,15 +2,14 @@ import { useCallback, useMemo } from "react";
 import { Button, ButtonGroup, ButtonProps, IconName, Intent, Menu } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
-import ActionsMenu from "../ActionsMenu";
-import MergeAsOptions from "../MergeAsOptions";
+import ActionsMenu from "./ActionsMenu";
+import MergeAsOptions from "./MergeAsOptions";
 
-import { useModifyTags } from "../../../../api/write";
-import { makeSuggestionFor } from "../utils";
+import { useModifyTags } from "../../../api/write";
+import { makeSuggestionFor } from "./utils";
 
-import { CustomClasses } from "../../../../constants";
+import { CustomClasses } from "../../../constants";
 import { ZLibrary, ZTagEntry, ZTagSuggestionAuto, ZTagSuggestionManual } from "Types/transforms";
-import "./index.css";
 
 
 type AutoMergeProps = {
@@ -52,7 +51,9 @@ function AutoMerge({ library, suggestion }: AutoMergeProps){
 	}, [status]);
 
 	return <Button
+		active={true}
 		className={["zr-tag-suggestion--auto-merge", CustomClasses.TEXT_SMALL].join(" ")}
+		intent="primary"
 		loading={status == "loading"}
 		onClick={triggerMerge}
 		text="Auto-merge"
@@ -73,7 +74,7 @@ function ManualMerge({ library, suggestion }: ManualMergeProps){
 		interactionKind="click"
 		popoverClassName={CustomClasses.POPOVER}
 	>
-		<Button className={["zr-tag-suggestion--merge-as", CustomClasses.TEXT_SMALL].join(" ")} rightIcon="caret-down" text="Merge as ..." />
+		<Button className={["zr-tag-suggestion--merge-as", CustomClasses.TEXT_SMALL].join(" ")} intent="primary" rightIcon="caret-down" text="Merge as ..." />
 	</Popover2>;
 }
 
