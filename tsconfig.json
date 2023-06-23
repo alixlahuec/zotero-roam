@@ -27,6 +27,7 @@
         "src/**/*",
 		"loader.tsx",
 		"sandbox.ts",
+		"stories/**/*",
 		".storybook/**/*",
 		"tests/**/*"
     ]

@@ -265,17 +265,34 @@ textarea.zr-text-input,
 	color: white;
 }
 
+[class*="zr"] a:not(.bp3-menu-item) {
+    color: hsla(var(--zr-accent-1-hsl), 95%);
+}
+
 [class*="zr"] a:focus {
     color: var(--zr-text-co);
     text-decoration: none;
 }
+
+[class*="zr"] a:not(.bp3-menu-item) .bp3-icon {
+    color: hsla(var(--zr-accent-1-hsl), 75%);
+}
+
+[class*="zr"] a:not(.bp3-menu-item):hover {
+    color: hsla(var(--zr-accent-1-hsl), 85%);
+    text-decoration: none;
+}
+
+/* BUTTONS */
+
+/* --- General */
 
 [class*="zr"] .bp3-button.bp3-minimal:not([class*="bp3-intent-"]),
 [class*="zr"] .bp3-button.bp3-minimal:not([class*="bp3-intent-"]) .bp3-icon {
     color: var(--zr-text-co);
 }
 
-[class*="zr"] .bp3-button.bp3-minimal:hover,
+[class*="zr"] .bp3-button.bp3-minimal:not(.bp3-disabled):hover,
 [class*="zr"] .bp3-button-group.bp3-minimal .bp3-button:not([class*="bp3-intent-"]):active,
 [class*="zr"] .bp3-button-group.bp3-minimal .bp3-button.bp3-active:not([class*="bp3-intent-"]) {
     background: var(--zr-box-bg);
@@ -294,50 +311,69 @@ textarea.zr-text-input,
     height: fit-content;
 }
 
-[class*="zr"] a:not(.bp3-menu-item),
+/* --- Intents */
+
+[class*="zr"] .bp3-button.bp3-intent-primary,
 [class*="zr"] .bp3-menu-item.bp3-intent-primary,
-[class*="zr"] .bp3-button.bp3-minimal.bp3-intent-primary,
-[class*="zr"] .bp3-button.bp3-outlined.bp3-intent-primary,
-[class*="zr"] .bp3-button.bp3-minimal.bp3-intent-primary:hover,
-[class*="zr"] .bp3-button-group.bp3-minimal button.bp3-intent-primary {
-    --zr-base-tone: var(--zr-accent-1-hsl);
-    color: hsla(var(--zr-accent-1-hsl), 95%);
+[class*="zr"] .bp3-button-group button.bp3-intent-primary {
+	--zr-base-tone: var(--zr-accent-1-hsl);
 }
 
+[class*="zr"] .bp3-button.bp3-intent-warning,
 [class*="zr"] .bp3-menu-item.bp3-intent-warning,
-[class*="zr"] .bp3-button.bp3-minimal.bp3-intent-warning,
-[class*="zr"] .bp3-button.bp3-outlined.bp3-intent-warning,
-[class*="zr"] .bp3-button.bp3-minimal.bp3-intent-warning:hover,
-[class*="zr"] .bp3-button-group.bp3-minimal button.bp3-intent-warning {
-    --zr-base-tone: var(--zr-accent-2-hsl);
-    color: hsla(var(--zr-accent-2-hsl), 95%);
+[class*="zr"] .bp3-button-group button.bp3-intent-warning {
+	--zr-base-tone: var(--zr-accent-2-hsl);
 }
 
+[class*="zr"] .bp3-button.bp3-intent-success,
 [class*="zr"] .bp3-menu-item.bp3-intent-success,
-[class*="zr"] .bp3-button.bp3-minimal.bp3-intent-success,
-[class*="zr"] .bp3-button.bp3-outlined.bp3-intent-success,
-[class*="zr"] .bp3-button.bp3-minimal.bp3-intent-success:hover,
-[class*="zr"] .bp3-button-group.bp3-minimal button.bp3-intent-success {
-    --zr-base-tone: var(--zr-positive-hsl);
-    color: hsla(var(--zr-positive-hsl), 95%);
+[class*="zr"] .bp3-button-group button.bp3-intent-success {
+	--zr-base-tone: var(--zr-positive-hsl);
 }
 
+[class*="zr"] .bp3-button.bp3-intent-danger,
 [class*="zr"] .bp3-menu-item.bp3-intent-danger,
-[class*="zr"] .bp3-button.bp3-minimal.bp3-intent-danger,
-[class*="zr"] .bp3-button.bp3-outlined.bp3-intent-danger,
-[class*="zr"] .bp3-button.bp3-minimal.bp3-intent-danger:hover,
-[class*="zr"] .bp3-button-group.bp3-minimal button.bp3-intent-danger {
-    --zr-base-tone: var(--zr-negative-hsl);
-    color: hsla(var(--zr-negative-hsl), 95%);
+[class*="zr"] .bp3-button-group button.bp3-intent-danger {
+	--zr-base-tone: var(--zr-negative-hsl);
+}
+
+[class*="zr"] .bp3-menu-item[class*="bp3-intent-"],
+[class*="zr"] .bp3-button.bp3-minimal[class*="bp3-intent-"],
+[class*="zr"] .bp3-button.bp3-outlined[class*="bp3-intent-"],
+[class*="zr"] .bp3-button.bp3-minimal[class*="bp3-intent-"]:hover,
+[class*="zr"] .bp3-button-group.bp3-minimal button[class*="bp3-intent-"] {
+	color: hsla(var(--zr-base-tone), 95%);
+}
+
+[class*="zr"] .bp3-button:not(.bp3-disabled)[class*="bp3-intent-"] {
+    border-color: hsla(var(--zr-base-tone), 20%);
+}
+
+[class*="zr"] .bp3-button:not(.bp3-minimal):not(.bp3-outlined):not(.bp3-disabled):not(.bp3-active)[class*="bp3-intent-"] {
+	background-color: hsla(var(--zr-base-tone), 10%);
+	box-shadow: none;
+	color: hsla(var(--zr-base-tone), 95%);
+}
+
+[class*="zr"] .bp3-button:not(.bp3-minimal):not(.bp3-outlined):not(.bp3-disabled).bp3-active[class*="bp3-intent-"] {
+	background-color: hsla(var(--zr-base-tone), 70%);
+	box-shadow: none;
+	color: white;
+}
+
+[class*="zr"] .bp3-button:not(.bp3-minimal):not(.bp3-outlined):not(.bp3-disabled).bp3-active[class*="bp3-intent-"] .bp3-icon {
+	color: white;
+}
+
+[class*="zr"] .bp3-button.bp3-disabled:not(.bp3-loading)[class*="bp3-intent-"],
+[class*="zr"] .bp3-button.bp3-disabled.bp3-loading:not(.bp3-minimal)[class*="bp3-intent-"] {
+	background-color: hsla(var(--zr-base-tone), 4%);
+	color: hsla(var(--zr-base-tone), 40%);
 }
 
 [class*="zr"] .bp3-menu-item[class*="bp3-intent-"]:hover,
 [class*="zr"] .bp3-button.bp3-minimal[class*="bp3-intent-"]:hover {
     background: hsla(var(--zr-base-tone), 10%);
-}
-
-[class*="zr"] .bp3-button[class*="bp3-intent-"]:not(.bp3-disabled) {
-    border-color: hsla(var(--zr-base-tone), 20%);
 }
 
 [class*="zr"] .bp3-button.bp3-minimal.bp3-active[class*="bp3-intent-"],
@@ -347,17 +383,13 @@ textarea.zr-text-input,
     transition: 0.3s;
 }
 
-[class*="zr"] a:not(.bp3-menu-item) .bp3-icon {
-    color: hsla(var(--zr-accent-1-hsl), 75%);
+[class*="zr"] .bp3-button.bp3-minimal[class*="bp3-intent-"] .bp3-button-spinner .bp3-spinner-head {
+	stroke: hsla(var(--zr-base-tone), 60%);
 }
 
-[class*="zr"] a:not(.bp3-menu-item):hover {
-    color: hsla(var(--zr-accent-1-hsl), 85%);
-    text-decoration: none;
-}
+/* ------ */
 
 [class*="zr"] .bp3-tag.bp3-minimal:not([class*="bp3-intent-"]),
-[class*="zr"] .bp3-disabled.bp3-minimal.bp3-button[class*="bp3-intent-"],
 [class*="zr"] .bp3-disabled .bp3-tag:not(.bp3-minimal)[class*="bp3-intent-"] {
     background: var(--zr-minimal-bg);
     color: var(--zr-auxiliary);
