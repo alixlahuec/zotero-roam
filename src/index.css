@@ -292,7 +292,7 @@ textarea.zr-text-input,
     color: var(--zr-text-co);
 }
 
-[class*="zr"] .bp3-button.bp3-minimal:hover,
+[class*="zr"] .bp3-button.bp3-minimal:not(.bp3-disabled):hover,
 [class*="zr"] .bp3-button-group.bp3-minimal .bp3-button:not([class*="bp3-intent-"]):active,
 [class*="zr"] .bp3-button-group.bp3-minimal .bp3-button.bp3-active:not([class*="bp3-intent-"]) {
     background: var(--zr-box-bg);

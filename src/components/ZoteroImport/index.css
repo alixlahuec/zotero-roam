@@ -3,14 +3,6 @@
     margin-top:5px;
 }
 
-.zr-semantic-panel--side .bp3-button-group button.bp3-intent-primary.zr-import--trigger {
-    color: hsla(var(--zr-accent-1-hsl), 90%);
-}
-
-.zr-semantic-panel--side .bp3-button-group button.bp3-intent-warning.zr-import--cancel {
-    color: hsla(var(--zr-accent-2-hsl), 90%);
-}
-
 .import-options {
     color: var(--zr-text-co);
     display: flex;

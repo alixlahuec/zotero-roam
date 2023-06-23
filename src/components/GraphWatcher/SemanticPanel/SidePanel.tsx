@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo } from "react";
-import { Button, ButtonGroup, Classes } from "@blueprintjs/core";
+import { Button, Classes } from "@blueprintjs/core";
 
 import ZoteroImport from "Components/ZoteroImport";
 
@@ -26,9 +26,7 @@ const SelectedImportItem = memo<SelectedImportItemProps>(function SelectedImport
 				<span className={[CustomClasses.TEXT_SECONDARY, "selected_origin"].join(" ")}>{item.meta}</span>
 			</div>
 			<div className="selected_state">
-				<ButtonGroup minimal={true} >
-					<Button className="selected_remove-button" icon="cross" intent="danger" onClick={removeItemFromImport} title="Remove item from import" />
-				</ButtonGroup>
+				<Button className="selected_remove-button" icon="cross" intent="danger" minimal={true} onClick={removeItemFromImport} title="Remove item from import" />
 			</div>
 		</li>
 	);
