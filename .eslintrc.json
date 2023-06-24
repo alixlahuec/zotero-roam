@@ -16,7 +16,7 @@
     "globals": {
         "PACKAGE_VERSION": "readonly"
     },
-    "ignorePatterns": ["*.css", "*.scss", "dist/**", "dev/**", "*.html", "/extension.js"],
+    "ignorePatterns": ["*.css", "*.scss", "*.sass", "dist/**", "dev/**", "*.html", "/extension.js"],
     "overrides": [
         {
           "files": ["tests/**"],

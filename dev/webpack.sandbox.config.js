@@ -37,6 +37,6 @@ module.exports = merge(baseConfig, {
 			"Components": path.resolve("src", "components"),
 			"Types": path.resolve("src", "types")
 		},
-		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss"]
+		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sass"]
 	}
 });

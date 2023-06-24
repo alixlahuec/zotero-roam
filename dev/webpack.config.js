@@ -16,7 +16,7 @@ module.exports = {
 			"Components": path.resolve("src", "components"),
 			"Types": path.resolve("src", "types")
         },
-		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss"]
+		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sass"]
 	},
 	mode: "production",
 	module: {
