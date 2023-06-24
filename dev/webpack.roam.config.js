@@ -64,7 +64,7 @@ module.exports = merge(baseConfig, {
 				}
 			},
 			{
-				test: /\.s[ac]ss$/i,
+				test: /\.(sa|sc|c)ss$/i,
 				use: [
                     {
                         loader: MiniCssExtractPlugin.loader
