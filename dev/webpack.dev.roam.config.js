@@ -34,7 +34,7 @@ module.exports = merge(baseDevConfig, {
 				}
 			},
 			{
-				test: /\.css$/,
+				test: /\.s[ac]ss$/i,
 				use: [
 					{
 						loader: MiniCssExtractPlugin.loader
@@ -44,6 +44,9 @@ module.exports = merge(baseDevConfig, {
 						options: {
 							sourceMap: false
 						}
+					},
+					{
+						loader: "sass-loader"
 					}
 				],
 			},
