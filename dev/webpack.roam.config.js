@@ -71,9 +71,6 @@ module.exports = merge(baseConfig, {
                     }, 
                     {
                         loader: "css-loader",
-                        options: {
-                            sourceMap: false
-                        }
 					},
 					{
 						loader: "sass-loader"

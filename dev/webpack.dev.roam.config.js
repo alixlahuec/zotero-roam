@@ -46,7 +46,10 @@ module.exports = merge(baseDevConfig, {
 						}
 					},
 					{
-						loader: "sass-loader"
+						loader: "sass-loader",
+						options: {
+							sourceMap: false
+						}
 					}
 				],
 			},
