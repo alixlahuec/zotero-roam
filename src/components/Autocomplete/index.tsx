@@ -92,7 +92,6 @@ const useGetItems = (
 };
 
 const Autocomplete = memo(function Autocomplete() {
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ dataRequests }] = useRequestsSettings();
 	const [{ trigger, display_char, display_use = "preset", display = "citekey", format_char, format_use = "preset", format = "citation" }] = useAutocompleteSettings();
 

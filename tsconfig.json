@@ -26,6 +26,7 @@
     "include": [
         "src/**/*",
 		"loader.tsx",
+		"mocks/**/*",
 		"sandbox.ts",
 		"stories/**/*",
 		".storybook/**/*",
