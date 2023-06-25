@@ -94,14 +94,14 @@ function DataRequestForm({ inputRef = undefined, pos, req, updateReq }: DataRequ
 						rightIcon="caret-down"
 						text={type} />
 				</Select>
-				<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-library" + pos} inputRef={inputRef} onChange={changeHandlers.updateLibraryID} placeholder="e.g, 123456" value={id} />
+				<InputGroup className={[CustomClasses.INPUT_BOX, CustomClasses.INPUT_TEXT, CustomClasses.TEXT_SMALL].join(" ")} id={"req-library" + pos} inputRef={inputRef} onChange={changeHandlers.updateLibraryID} placeholder="e.g, 123456" value={id} />
 			</ControlGroup>
 		</FormGroup>
 		<FormGroup label="API Key" labelFor={"req-apikey" + pos}>
-			<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-apikey" + pos} onChange={changeHandlers.updateAPIKey} placeholder="Zotero API key" value={apikey} />
+			<InputGroup className={[CustomClasses.INPUT_BOX, CustomClasses.INPUT_TEXT, CustomClasses.TEXT_SMALL].join(" ")} id={"req-apikey" + pos} onChange={changeHandlers.updateAPIKey} placeholder="Zotero API key" value={apikey} />
 		</FormGroup>
 		<FormGroup label="Name" labelFor={"req-name" + pos}>
-			<InputGroup className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")} id={"req-name" + pos} onChange={changeHandlers.updateName} placeholder="Nickname (optional)" value={name} />
+			<InputGroup className={[CustomClasses.INPUT_BOX, CustomClasses.INPUT_TEXT, CustomClasses.TEXT_SMALL].join(" ")} id={"req-name" + pos} onChange={changeHandlers.updateName} placeholder="Nickname (optional)" value={name} />
 		</FormGroup>
 	</>;
 }

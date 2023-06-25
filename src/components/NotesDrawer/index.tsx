@@ -25,7 +25,7 @@ function ShowRaw({ item }: ShowRawProps){
 		<Button icon="eye-open" minimal={true} onClick={openDialog} />
 		<Dialog canEscapeKeyClose={false} className="zr-raw-item-dialog" isOpen={isDialogOpen} lazy={true} onClose={closeDialog} >
 			<div className={Classes.DIALOG_BODY}>
-				<pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "  ")}</pre>
+				<pre className={[Classes.CODE_BLOCK, CustomClasses.TEXT_AUXILIARY].join(" ")}>{JSON.stringify(item, null, "  ")}</pre>
 			</div>
 		</Dialog>
 	</>;
@@ -44,7 +44,7 @@ function Annotation({ annot }: AnnotationProps){
 		"backgroundImage": `linear-gradient(120deg, ${color}50 0%, ${color}50 100%)`
 	}), [color]);
 
-	return <div className={["zr-drawer--notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
+	return <div className={[CustomClasses.PREFIX_DRAWER + "notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
 		<div zr-role="card-header">
 			<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 			<ButtonGroup minimal={true}>
@@ -75,7 +75,7 @@ function Note({ note }: NoteProps){
 
 	const notesList = useMemo(() => formatZoteroNotes([raw], notesSettings), [notesSettings, raw]);
 
-	return <div className={["zr-drawer--notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
+	return <div className={[CustomClasses.PREFIX_DRAWER + "notes-card", CustomClasses.TEXT_SMALL].join(" ")}>
 		<div zr-role="card-header">
 			<span>{tags.map((tag, j) => <Tag key={j} minimal={true} >{tag}</Tag>)}</span>
 			<ButtonGroup minimal={true}>

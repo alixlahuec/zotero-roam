@@ -10,7 +10,7 @@ type ItemProps = {
 };
 
 function RawItem({ item }: ItemProps){
-	return <pre className={Classes.CODE_BLOCK}>{JSON.stringify(item, null, "  ")}</pre>;
+	return <pre className={[Classes.CODE_BLOCK, CustomClasses.TEXT_AUXILIARY].join(" ")}>{JSON.stringify(item, null, "  ")}</pre>;
 }
 
 
