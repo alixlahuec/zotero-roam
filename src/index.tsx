@@ -13,7 +13,7 @@ import { initialize, setup, setupPortals } from "./setup";
 import { DEFAULT_TOAST_TIMEOUT, EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./constants";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
-import "../styles/index.sass";
+import "../styles/_index.sass";
 
 
 (() => {
