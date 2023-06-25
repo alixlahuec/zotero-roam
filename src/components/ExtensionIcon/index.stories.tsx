@@ -59,7 +59,7 @@ export const WithInteractions: StoryObj<Props> = {
 
 		await sleep(1000);
 
-		await userEvent.click(icon, { button: 2 });
+		await userEvent.pointer([{ target: icon, keys: "[MouseRight]" }]);
 
 		await waitFor(() => expect(screen.getByText("Dashboard"))
 			.toBeInTheDocument(),
