@@ -4,8 +4,7 @@
 [class*="zr"]
 
     .bp3-callout
-        @include base.accentBox
-        border-width: 1px
+        @include base.accentBox($border-width: 1px)
         margin: 10px
         width: auto
 
@@ -24,7 +23,7 @@
             border-bottom: 1px solid
 
 
-    .bp3-drawer
+    &.bp3-drawer
         @include base.neutralBox
 
         & > .bp3-tabs > .bp3-tab-list

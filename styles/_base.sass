@@ -45,20 +45,23 @@
     --zr-text-co: #76a0cb
 
 
-@mixin accentBox
+@mixin accentBox($border-width: 0px)
     background: var(--zr-box-bg)
     border-color: var(--zr-border-co)
     border-style: solid
+    border-width: $border-width
     color: var(--zr-text-co)
 
 
-@mixin neutralBox
+@mixin neutralBox($border-width: 0px, $outline-width: 0px)
     background: var(--zr-dialog-bg)
     border-color: var(--zr-border-co)
     border-style: solid
+    border-width: $border-width
     color: var(--zr-text-co)
     outline-color: var(--zr-border-co)
     outline-style: solid
+    outline-width: $outline-width
 
 
 [class*="zr"]

@@ -2,9 +2,8 @@
 
 
 textarea.zr-text-input
-    @include base.neutralBox
+    @include base.neutralBox($outline-width: 1px)
     box-shadow: none
-    outline-width: 1px
 
 
 [class*="zr"]
@@ -20,23 +19,20 @@ textarea.zr-text-input
         max-width: calc(2 * var(--zr-input-size))
 
         input
-            @include base.neutralBox
+            @include base.neutralBox($outline-width: 1px)
             box-shadow: none
-            outline-width: 1px
 
     input:not(.bp3-input-ghost)
-        @include base.neutralBox
+        @include base.neutralBox($outline-width: 1px)
         box-shadow: none
-        outline-width: 1px
 
 
 [class*="zr"] .bp3-numeric-input
 
     input.bp3-input
-        @include base.neutralBox
+        @include base.neutralBox($outline-width: 1px)
         box-shadow: none
         max-width: calc(0.20 * var(--zr-input-size))
-        outline-width: 1px
     
     .bp3-button:not([class*="bp3-intent-"])
         @include base.neutralBox
@@ -45,9 +41,8 @@ textarea.zr-text-input
 
 [class*="zr"] .bp3-multi-select
     &.bp3-input
-        @include base.neutralBox
+        @include base.neutralBox($outline-width: 1px)
         box-shadow: none
-        outline-width: 1px
 
     &, input
         max-width: var(--zr-input-size)
@@ -76,14 +71,14 @@ textarea.zr-text-input
         .bp3-input-action > span.bp3-icon
             color: hsla(var(--zr-base-tone), 100%)
 
-    &:not([class*="bp3-intent-"])
-        .bp3-input-action > span.bp3-icon
-            color: var(--zr-auxiliary)
-            margin: 7px
-
     .bp3-input-left-container button.bp3-button
         margin-left: 0px
         margin-right: 0px
+
+
+[class*="zr"] .bp3-input-action > span.bp3-icon
+        color: var(--zr-auxiliary)
+        margin: 7px
 
 
 .zr-text-input
@@ -91,10 +86,6 @@ textarea.zr-text-input
         box-shadow: none
         color: var(--zr-negative-co)
         outline: 1px var(--zr-negative-co) solid
-    
-    .bp3-input-action > span.bp3-icon
-        color: var(--zr-auxiliary)
-        margin: 7px
 
 
 .zr-date-picker
@@ -121,8 +112,7 @@ textarea.zr-text-input
     box-shadow: none
 
     .bp3-slider-label
-        @include base.accentBox
-        border-width: 1px
+        @include base.accentBox($border-width: 1px)
         box-shadow: none
         width: max-content
 

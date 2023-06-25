@@ -54,11 +54,9 @@
 
 
 [class*="zr"] code.bp3-code
-    @include base.accentBox
-    border-width: 2px
+    @include base.accentBox($border-width: 2px)
 
 
 [class*="zr"] .bp3-code-block
-    @include base.neutralBox
-    border-width: 1px
+    @include base.neutralBox($border-width: 1px)
     white-space: pre-wrap
