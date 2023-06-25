@@ -64,19 +64,13 @@ module.exports = merge(baseConfig, {
 				}
 			},
 			{
-				test: /\.(sa|sc|c)ss$/i,
-				use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader
-                    }, 
-                    {
-                        loader: "css-loader",
-					},
-					{
-						loader: "sass-loader"
-					}
-                ],
-            },
+				test: /\.s[ac]ss$/i,
+				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+			},
+			{
+				test: /\.css$/i,
+				use: [MiniCssExtractPlugin.loader, "css-loader"],
+			},
         ],
-    },
+	}
 });
