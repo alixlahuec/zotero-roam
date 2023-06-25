@@ -1,14 +1,24 @@
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
-const { merge } = require("webpack-merge");
-const baseConfig = require("./webpack.config");
 
-module.exports = merge(baseConfig, {
-    devtool: false,
-    experiments: {
-        outputModule: true,
-    },
+// ! Do not merge with another config - it will give a SASS error (unrelated to the config contents, seems to be due to the merging process)
+module.exports = {
+	/* I/O */
+	context: path.resolve(__dirname, '../'),
+	entry: path.resolve("loader.tsx"),
+	experiments: {
+		outputModule: true,
+	},
+	output: {
+		path: path.resolve("."),
+		filename: "extension.js",
+		library: {
+			type: "module",
+		}
+	},
+
+	/* Modules */
     externals: {
         "@blueprintjs/core": ["Blueprint", "Core"],
         "@blueprintjs/datetime": ["Blueprint", "DateTime"],
@@ -17,35 +27,42 @@ module.exports = merge(baseConfig, {
         react: "React",
         "react-dom": "ReactDOM",
     },
-    externalsType: "window",
-    entry: path.resolve("loader.tsx"),
-    optimization: {
-        minimizer: [
-            `...`,
-            new CssMinimizerPlugin(),
-        ],
-        splitChunks: {
-            cacheGroups: {
-                styles: {
-                    name: "styles",
-                    type: "css/mini-extract",
-                    chunks: "all",
-                    enforce: true,
-                },
-            },
-        },
-    },
+	externalsType: "window",
+	resolve: {
+		alias: {
+			"Mocks": path.resolve("mocks"),
+			"Roam": path.resolve("src", "roam.ts"),
+			"Components": path.resolve("src", "components"),
+			"Types": path.resolve("src", "types")
+		},
+		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sass"]
+	},
+
+	/* Config */
+	devtool: false,
+	mode: "production",
+	optimization: {
+		minimizer: [
+			`...`,
+			new CssMinimizerPlugin(),
+		],
+		splitChunks: {
+			cacheGroups: {
+				styles: {
+					name: "styles",
+					type: "css/mini-extract",
+					chunks: "all",
+					enforce: true,
+				},
+			},
+		},
+	},
     performance: {
         maxAssetSize: 2000000,
         maxEntrypointSize: 2000000
-    },
-    output: {
-		path: path.resolve("."),
-		filename: "extension.js",
-        library: {
-            type: "module",
-        }
-    },
+	},
+
+	/* Plugins and loaders */
     plugins: [
         new MiniCssExtractPlugin({
             filename: "extension.css",
@@ -64,13 +81,9 @@ module.exports = merge(baseConfig, {
 				}
 			},
 			{
-				test: /\.s[ac]ss$/i,
+				test: /\.(sa|sc|c)ss$/i,
 				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
-			},
-			{
-				test: /\.css$/i,
-				use: [MiniCssExtractPlugin.loader, "css-loader"],
-			},
+			}
         ],
 	}
-});
+};
