@@ -15,7 +15,7 @@ import { unregisterSmartblockCommands } from "./src/smartblocks";
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./src/constants";
 
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
-import "./src/index.css";
+import "./styles/_index.sass";
 
 
 /** @constant {ExtensionSettingsConfig} */

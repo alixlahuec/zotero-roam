@@ -1,9 +1,13 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
-const { merge } = require("webpack-merge");
+const { mergeWithRules } = require("webpack-merge");
 const baseDevConfig = require("./webpack.dev.config");
 
-module.exports = merge(baseDevConfig, {
+module.exports = mergeWithRules({
+	module: {
+		rules: "replace"
+	}
+})(baseDevConfig, {
 	experiments: {
 		outputModule: true,
 	},
@@ -34,13 +38,19 @@ module.exports = merge(baseDevConfig, {
 				}
 			},
 			{
-				test: /\.css$/,
+				test: /\.(sa|sc|c)ss$/,
 				use: [
 					{
 						loader: MiniCssExtractPlugin.loader
 					},
 					{
 						loader: "css-loader",
+						options: {
+							sourceMap: false
+						}
+					},
+					{
+						loader: "sass-loader",
 						options: {
 							sourceMap: false
 						}

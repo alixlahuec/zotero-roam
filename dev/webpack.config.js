@@ -16,7 +16,7 @@ module.exports = {
 			"Components": path.resolve("src", "components"),
 			"Types": path.resolve("src", "types")
         },
-		extensions: [".js", ".jsx", ".ts", ".tsx", ".css"]
+		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sass"]
 	},
 	mode: "production",
 	module: {
@@ -32,8 +32,8 @@ module.exports = {
 				}
 			},
 			{
-				test: /\.css$/i,
-				use: ["style-loader", "css-loader"]
+				test: /\.(sa|sc|c)ss$/i,
+				use: ["style-loader", "css-loader", "sass-loader"],
 			}
 		]
     },

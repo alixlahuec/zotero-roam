@@ -1,0 +1,62 @@
+@use "base"
+
+
+[class*="zr-accent-"]
+    padding-right: 8px
+
+    &.zr-accent-1
+        color: var(--zr-accent-1)
+    
+    &.zr-accent-2
+        color: var(--zr-accent-2)
+
+
+.zr-auxiliary
+    &, &button.bp3-button:not(.bp3-disabled)
+        color: var(--zr-auxiliary)
+
+
+.zr-secondary
+    &, &button.bp3-button:not(.bp3-disabled), &button.bp3-button.bp3-minimal:not([class*="bp3-intent-"]) .bp3-icon 
+        color: var(--zr-secondary-co)
+        font-weight: var(--zr-secondary-fw)
+
+
+.zr-text-small
+    &, select, button, input[type="text"], input.bp3-input-ghost, .bp3-button-text
+        font-size: var(--zr-text-small)
+    
+    .bp3-icon:not(.bp3-tag-input-icon)
+        margin-top: 1px
+        margin-left: 0px
+    
+    .bp3-code
+        font-size: inherit
+
+
+[class*="zr"] a
+    &:focus
+        color: var(--zr-text-co)
+        text-decoration: none
+    
+    &:not(.bp3-menu-item)
+        color: hsla(var(--zr-accent-1-hsl), 95%)
+
+        &:hover
+            color: hsla(var(--zr-accent-1-hsl), 85%)
+            text-decoration: none
+
+        &.bp3-button
+            height: fit-content
+
+        .bp3-icon
+            color: hsla(var(--zr-accent-1-hsl), 75%)
+
+
+[class*="zr"] code.bp3-code
+    @include base.accentBox($border-width: 2px)
+
+
+[class*="zr"] .bp3-code-block
+    @include base.neutralBox($border-width: 1px)
+    white-space: pre-wrap

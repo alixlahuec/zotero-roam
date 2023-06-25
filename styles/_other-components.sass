@@ -1,0 +1,54 @@
+@use "base"
+
+
+[class*="zr"]
+
+    .bp3-callout
+        @include base.accentBox($border-width: 1px)
+        margin: 10px
+        width: auto
+
+        &[class*="bp3-intent"]
+
+            &.bp3-intent-danger
+                background: var(--zr-negative-bg)
+
+            &.bp3-intent-warning
+                background: hsla(var(--zr-base-tone), 10%)
+
+            &, &[class*="bp3-icon-"]::before, & > .bp3-icon:first-child, .bp3-heading
+                color: hsla(var(--zr-base-tone), 100%)
+
+        a
+            border-bottom: 1px solid
+
+
+    &.bp3-drawer
+        @include base.neutralBox
+
+        & > .bp3-tabs > .bp3-tab-list
+            margin-left: 20px
+
+        .bp3-tab-panel
+            margin-top: 0px
+            max-height: 95vh
+            overflow-y: scroll
+
+
+    .bp3-non-ideal-state
+        padding: 25px 0px
+
+        h4.bp3-heading
+            color: var(--zr-text-co)
+
+
+    .bp3-progress-bar
+        &[class*="bp3-intent-"]
+            .bp3-progress-meter
+                background-color: hsla(var(--zr-base-tone), 100%)
+
+
+    .bp3-toast
+        &[class*="bp3-intent"]
+            .bp3-heading 
+                color: white

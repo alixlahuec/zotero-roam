@@ -44,6 +44,7 @@
     },
     "sideEffects": [
         "*.css",
+        "*.sass",
         "src/index.tsx"
     ],
     "babel": {
@@ -75,6 +76,7 @@
         "@storybook/addon-essentials": "^7.0.23",
         "@storybook/addon-interactions": "^7.0.23",
         "@storybook/addon-links": "^7.0.23",
+        "@storybook/addon-styling": "^1.3.0",
         "@storybook/cli": "^7.0.23",
         "@storybook/jest": "^0.1.0",
         "@storybook/react": "^7.0.23",
@@ -109,6 +111,8 @@
         "msw": "^0.49.3",
         "msw-storybook-addon": "^1.8.0",
         "release-it": "^15.11.0",
+        "sass": "^1.63.6",
+        "sass-loader": "^13.3.2",
         "storybook": "^7.0.23",
         "storybook-mock-date-decorator": "^1.0.0",
         "style-loader": "^3.3.3",

@@ -1,0 +1,35 @@
+@use "base"
+
+
+.zr-popover
+    &:not(.zr-date-picker)
+        box-shadow: none
+        font-size: var(--zr-text-small)
+        max-width: 300px
+
+        &:not(.bp3-submenu):not(.zr-guide-popover) 
+            @include base.neutralBox($border-width: 2px)
+
+    .bp3-datepicker
+        @include base.neutralBox
+
+    .bp3-menu
+        @include base.neutralBox
+
+        .bp3-menu-item
+            &[aria-selected="true"]
+                &, &:hover, .bp3-icon
+                    background-color: inherit
+                    color: hsla(var(--zr-accent-1-hsl), 95%)
+
+            &[aria-selected="false"]
+                &:hover
+                    background: var(--zr-box-bg)
+                    color: hsla(var(--zr-accent-1-hsl), 95%)
+
+    &.bp3-popover .bp3-popover-content,
+    &.bp3-popover2 .bp3-popover2-content
+        @include base.neutralBox
+
+    &.bp3-popover2 .bp3-popover2-arrow-fill
+        fill: var(--zr-box-bg)
