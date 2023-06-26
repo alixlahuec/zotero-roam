@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { ButtonGroup, Icon, IconName } from "@blueprintjs/core";
 
 import { CustomClasses } from "../../../constants";
-import "./index.css";
+import "./_index.sass";
 
 
 export type SortOption<T extends string | number> = {

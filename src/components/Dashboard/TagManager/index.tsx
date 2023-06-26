@@ -11,7 +11,7 @@ import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
 import { CustomClasses } from "../../../constants";
 import { TagManagerFilter, TagManagerTab } from "./types";
 import { ZLibrary, ZTagList } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 type TabConfig = {

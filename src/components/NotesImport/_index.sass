@@ -1,0 +1,35 @@
+.zr-notesimport--datalist
+    margin-bottom: 20px
+    padding: 0px 15px
+
+
+.zr-notesimport
+    &-daylist
+        padding: 5px
+
+        .bp3-checkbox .bp3-heading
+            color: var(--zr-text-co)
+
+    &-daylist .bp3-checkbox .bp3-heading,
+    &-item .bp3-checkbox [zr-role="note-contents"]
+        display: inline-grid
+        margin-bottom: 0px
+
+    &-day, &-item--title
+        &.bp3-checkbox.bp3-control
+            .bp3-control-indicator
+                background-image: none
+                border-radius: 8px
+                box-shadow: none
+                outline: hsla(var(--zr-accent-1-hsl), 75%) dotted 1px
+
+            input:checked ~ .bp3-control-indicator
+                background-color: hsla(var(--zr-accent-1-hsl), 75%)
+                outline-style: none
+
+    &day
+        &.bp3-checkbox.bp3-control
+            .bp3-control-indicator,
+                &, &::before
+                    height: 0.9em
+                    width: 0.9em

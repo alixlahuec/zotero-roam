@@ -5,7 +5,7 @@ import { pluralize } from "../../utils";
 import { CustomClasses } from "../../constants";
 
 import { AsBoolean } from "Types/helpers";
-import "./index.css";
+import "./_index.sass";
 
 
 type ListItemProps = { className?: string };

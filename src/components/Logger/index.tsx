@@ -9,7 +9,7 @@ import { ZoteroRoamLog } from "../../extension";
 import { useBool, usePagination } from "../../hooks";
 
 import { CustomClasses } from "../../constants";
-import "./index.css";
+import "./_index.sass";
 
 
 const itemsPerPage = 20;

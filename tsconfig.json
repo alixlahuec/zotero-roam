@@ -10,6 +10,7 @@
 			"Mocks/*": ["./mocks/*"],
 			"Mocks": ["./mocks"],
 			"Roam": ["./src/roam.ts"],
+			"Styles": ["./styles"],
 			"Types/*": ["./src/types/*"]
 		},
         "alwaysStrict": false,

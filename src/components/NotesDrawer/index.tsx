@@ -11,7 +11,7 @@ import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZ
 import { CustomClasses } from "../../constants";
 import { ZItemAnnotation, ZItemNote, ZSimplifiedAnnotation, ZSimplifiedNote, isZAnnotation, isZNote } from "Types/transforms";
 
-import "./index.css";
+import "./_index.sass";
 
 
 type ShowRawProps = {

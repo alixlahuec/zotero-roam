@@ -10,7 +10,7 @@ import { importItemMetadata, openInSidebarByUID, openPageByUID } from "Roam";
 
 import { CustomClasses } from "../../constants";
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 const popoverProps: Partial<Popover2Props> = {

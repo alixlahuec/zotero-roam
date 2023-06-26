@@ -184,6 +184,7 @@
 					["Mocks", "./mocks"],
 					["Roam", "./src/roam.ts"],
 					["Components", "./src/components"],
+                    ["Styles", "./styles"],
 					["Types", "./src/types"]
 				],
 				"extensions": [".js", ".jsx", ".ts", ".tsx", ".css", ".scss"]

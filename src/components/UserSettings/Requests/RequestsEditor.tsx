@@ -11,7 +11,7 @@ import { analyzeUserRequests } from "../../../setup";
 import { CustomClasses } from "../../../constants";
 import { DataRequest, UserDataRequest, UserRequests } from "Types/extension";
 import { ZoteroAPI } from "Types/externals";
-import "./index.css";
+import "./_index.sass";
 
 
 type LibraryOption = { label: string, value: ZoteroAPI.LibraryTypeURI };

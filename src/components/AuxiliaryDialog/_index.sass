@@ -1,0 +1,113 @@
+.bp3-dialog[class*="zr-auxiliary-dialog--"]
+    --zr-dialog-gutter: 2.5%
+    --zr-dialog-margin: 15vw
+    align-self: baseline
+    background: var(--zr-dialog-bg)
+    box-shadow: none
+    margin-left: calc(var(--zr-dialog-margin) + var(--zr-dialog-gutter))
+    padding-bottom: 0px
+    width: calc(100% - 2*(var(--zr-dialog-gutter) + var(--zr-dialog-margin)))
+
+    .bp3-dialog-container > &
+        @media (max-width: 1000px)
+            --zr-dialog-gutter: 1.5%
+            --zr-dialog-margin: 5vw
+
+        @media (max-width: 700px)
+            --zr-dialog-gutter: 1.5%!important
+            --zr-dialog-margin: 2.5vw!important
+
+    &::-webkit-scrollbar, ::-webkit-scrollbar
+        background: var(--zr-box-bg)
+
+    & > .bp3-dialog-header
+        background: var(--zr-dialog-bg)
+        border-bottom: 1px var(--zr-border-co) solid
+        box-shadow: none
+
+    .bp3-dialog-body
+        margin: 0px
+
+    .rendered-div
+        font-size: var(--zr-text-small)
+        padding: 0px 20px
+
+        & > ul, ul.bp3-menu
+            max-height: 70vh
+            overflow-y: scroll
+
+            &::-webkit-scrollbar
+                width: 5px
+
+            &::-webkit-scrollbar-thumb
+                background: var(--zr-border-co)
+
+    .header-content
+        align-items: center
+        display: flex
+        margin: 0px
+        width: 100%
+
+    .header-left
+        align-content: space-between
+        align-items: center
+        display: flex
+        flex: 0 1 100%
+        overflow-wrap: anywhere
+        padding-left: min(15px, 2vw)
+
+    .header-right
+        align-self: baseline
+        flex: 0 0 auto
+        text-align: right
+
+    h5.panel-tt
+        color: var(--zr-text-co)
+        display: inline-block
+        font-weight: 600
+        line-height: 2
+        padding: 0px 15px
+
+
+.zr-related-item
+    color: var(--zr-text-co)
+
+    &:not(:first-child)
+        border-top: 1px var(--zr-border-co) dotted
+
+    & > .bp3-menu-item:hover
+        background-color: unset
+        cursor: unset
+
+    &-contents--metadata
+        flex: 0 1 100%
+
+        .zr-accent-1:not(:empty), .zr-accent-2:not(:empty)
+            padding-right: 8px
+        
+        .zr-related-item--decorating-icon
+            margin: 0px 10px
+
+    &-contents--actions
+        text-align: right
+        flex: 1 0 auto
+
+        a,
+        [zr-role="item-url"] + button.bp3-small
+            overflow-wrap: break-word
+
+        [zr-role="item-url"] + button.bp3-small
+            opacity: 0.8
+
+        a
+            opacity: 0.65
+
+        button .bp3-button-text
+            overflow-wrap: anywhere
+
+    a[zr-role="item-url"]
+        display: block
+
+        &, &:hover
+            color: var(--zr-text-co)
+            text-decoration: none

@@ -7,7 +7,7 @@ import RecentItems from "./RecentItems";
 import TagManager from "./TagManager";
 
 import { CustomClasses } from "../../constants";
-import "./index.css";
+import "./_index.sass";
 
 
 enum DashboardTab {

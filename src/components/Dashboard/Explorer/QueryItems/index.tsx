@@ -13,7 +13,7 @@ import { cleanLibraryItem, identifyChildren } from "../../../../utils";
 import { CustomClasses } from "../../../../constants";
 import { QueryTermListRecursive } from "../QueryBuilder/types";
 import { RCitekeyPages, ZCleanItemTop, ZLibraryContents } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 function cleanLibraryData(itemList: ZLibraryContents, roamCitekeys: RCitekeyPages): Promise<ZCleanItemTop[]>{

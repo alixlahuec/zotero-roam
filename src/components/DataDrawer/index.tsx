@@ -2,7 +2,7 @@ import { Button, Classes, Drawer, DrawerProps, Tab, Tabs } from "@blueprintjs/co
 import { ErrorBoundary } from "Components/Errors";
 
 import { CustomClasses } from "../../constants";
-import "./index.css";
+import "./_index.sass";
 
 
 type ItemProps = {

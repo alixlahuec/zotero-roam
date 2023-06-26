@@ -6,7 +6,7 @@ import { useExtensionContext } from "Components/App";
 
 import { CustomClasses } from "../../constants";
 
-import "./index.css";
+import "./_index.sass";
 
 
 type OwnProps = {

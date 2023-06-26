@@ -35,6 +35,7 @@ module.exports = merge(baseConfig, {
 			"Mocks": path.resolve("mocks"),
 			"Roam": path.resolve("mocks", "roam.ts"),
 			"Components": path.resolve("src", "components"),
+			"Styles": path.resolve("styles"),
 			"Types": path.resolve("src", "types")
 		},
 		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sass"]

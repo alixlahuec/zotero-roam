@@ -1,0 +1,41 @@
+.zr-tagmanager--datalist .zr-datalist--item
+    border: 1px var(--zr-border-co) solid
+    border-radius: 5px
+    box-shadow: 2px 2px 4px 1px var(--zr-box-shadow-co)
+    display: flex
+    flex-direction: column
+    margin: 10px
+    padding: 5px 0px
+
+    [zr-role="item-actions"]
+        justify-content: flex-end
+        display: flex
+        flex: 1 1 33%
+
+        & > .bp3-menu
+            min-width: auto
+
+    [zr-role="item-count"]
+        align-self: center
+        flex: 0 0 auto
+
+    &.zr-tag-suggestion [zr-role="item-count"]:hover
+        cursor: help
+
+    [zr-role="item-header"]
+        align-items: stretch
+        display: flex
+        justify-content: space-between
+
+    [zr-role="item-info"]
+        align-self: center
+        flex: 2 1 40%
+
+    [zr-role="item-header"] > *, [zr-role="item-info"] > *
+        margin: 0px 4px
+
+    [zr-role="title"]
+        font-weight: 600
+
+    .bp3-tag[data-tag-source]
+        margin: 3px 5px

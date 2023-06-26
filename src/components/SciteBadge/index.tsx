@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef } from "react";
 import { insertBadges } from "scite-badge";
 
-import "./index.css";
+import "./_index.sass";
 
 
 type OwnProps = {
