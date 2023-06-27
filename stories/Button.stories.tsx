@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Button, ButtonGroup } from "@blueprintjs/core";
+import { Button, ButtonGroup, Tag } from "@blueprintjs/core";
 
 import { Meta, StoryObj } from "@storybook/react";
 import { CustomClasses } from "../src/constants";
@@ -17,27 +17,28 @@ export default {
 } as Meta<Props>;
 
 const Template: StoryObj<Props>["render"] = (args) => {
+	const renderVersions = (extraProps: Partial<Props> = {}) => {
+		const styles = <>
+			<Button {...args} {...extraProps} />
+			<Button {...args} {...extraProps} active={true} />
+			<Button {...args} {...extraProps} minimal={true} />
+			<Button {...args} {...extraProps} outlined={true} />
+			<Button {...args} {...extraProps} aria-disabled={true} disabled={true} />
+			<Button {...args} {...extraProps} aria-disabled={true} disabled={true} minimal={true} />
+			<Button {...args} {...extraProps} loading={true} />
+			<Button {...args} {...extraProps} loading={true} minimal={true} />
+		</>;
+
+		return <>
+			<ButtonGroup>{styles}</ButtonGroup>
+			<div>{styles}</div>
+		</>;
+	};
+
 	return <>
-		<ButtonGroup>
-			<Button {...args} />
-			<Button {...args} active={true} />
-			<Button {...args} minimal={true} />
-			<Button {...args} outlined={true} />
-			<Button {...args} aria-disabled={true} disabled={true} />
-			<Button {...args} aria-disabled={true} disabled={true} minimal={true} />
-			<Button {...args} loading={true} />
-			<Button {...args} loading={true} minimal={true} />
-		</ButtonGroup>
-		<div>
-			<Button {...args} />
-			<Button {...args} active={true} />
-			<Button {...args} minimal={true} />
-			<Button {...args} outlined={true} />
-			<Button {...args} aria-disabled={true} disabled={true} />
-			<Button {...args} aria-disabled={true} disabled={true} minimal={true} />
-			<Button {...args} loading={true} />
-			<Button {...args} loading={true} minimal={true} />
-		</div>
+		{renderVersions()}
+		{renderVersions({ rightIcon: <Tag intent={args.intent}>3</Tag> })}
+		{renderVersions({ rightIcon: "caret-down" })}
 	</>;
 };
 

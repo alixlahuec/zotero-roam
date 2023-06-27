@@ -8,7 +8,7 @@
             color: hsla(var(--zr-base-tone), 100%)
 
         &.bp3-intent-danger
-            &.bp3-minimal
+            &.bp3-minimal, &:not(.bp3-minimal)
                 background-color: var(--zr-negative-bg)
 
         &.bp3-intent-primary
@@ -20,7 +20,7 @@
                 background-color: var(--zr-positive-bg)
 
         &.bp3-intent-warning
-            &.bp3-minimal
+            &.bp3-minimal, &:not(.bp3-minimal)
                 background: hsla(var(--zr-base-tone), 15%)
 
     .bp3-disabled .bp3-tag
@@ -28,3 +28,7 @@
             &:not(.bp3-minimal)
                 background: var(--zr-minimal-bg)
                 color: var(--zr-auxiliary)
+
+    .bp3-active .bp3-tag
+        &[class*="bp3-intent-"]
+            color: white

@@ -14,7 +14,7 @@
     --zr-dialog-bg: #ffffff
     --zr-input-size: 240px
     --zr-minimal-bg: #cad1df26
-    --zr-negative-bg: #fff1f2
+    --zr-negative-bg: #ff929a26
     --zr-positive-bg: #45d29826
     --zr-secondary-co: #696969
     --zr-secondary-fw: 300
@@ -45,23 +45,29 @@
     --zr-text-co: #76a0cb
 
 
-@mixin accentBox($border-width: 0px)
+@mixin accentBox($border-width: false)
     background: var(--zr-box-bg)
-    border-color: var(--zr-border-co)
-    border-style: solid
-    border-width: $border-width
     color: var(--zr-text-co)
 
+    @if $border-width
+        border-color: var(--zr-border-co)
+        border-style: solid
+        border-width: $border-width
 
-@mixin neutralBox($border-width: 0px, $outline-width: 0px)
+
+@mixin neutralBox($border-width: false, $outline-width: false)
     background: var(--zr-dialog-bg)
-    border-color: var(--zr-border-co)
-    border-style: solid
-    border-width: $border-width
     color: var(--zr-text-co)
-    outline-color: var(--zr-border-co)
-    outline-style: solid
-    outline-width: $outline-width
+
+    @if $border-width
+        border-color: var(--zr-border-co)
+        border-style: solid
+        border-width: $border-width
+
+    @if $outline-width
+        outline-color: var(--zr-border-co)
+        outline-style: solid
+        outline-width: $outline-width
 
 
 [class*="zr"]
