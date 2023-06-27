@@ -22,6 +22,7 @@ const Template: StoryObj<Props>["render"] = (args) => {
 			<Button {...args} {...extraProps} />
 			<Button {...args} {...extraProps} active={true} />
 			<Button {...args} {...extraProps} minimal={true} />
+			<Button {...args} {...extraProps} active={true} minimal={true} />
 			<Button {...args} {...extraProps} outlined={true} />
 			<Button {...args} {...extraProps} aria-disabled={true} disabled={true} />
 			<Button {...args} {...extraProps} aria-disabled={true} disabled={true} minimal={true} />
