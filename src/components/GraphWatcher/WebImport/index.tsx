@@ -8,7 +8,7 @@ import WebImportPanel from "./WebImportPanel";
 import { useBool } from "../../../hooks";
 import { hasNodeListChanged } from "../../../utils";
 
-import "./index.css";
+import "./_index.sass";
 
 
 type WebImportButtonProps = {

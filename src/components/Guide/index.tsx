@@ -3,7 +3,7 @@ import { H6, Icon } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
 
 import { CustomClasses } from "../../constants";
-import "./index.css";
+import "./_index.sass";
 
 
 function GuideHeader({ children }: { children: ReactNode }){

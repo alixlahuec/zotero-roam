@@ -1,0 +1,119 @@
+.zr-page-menu--citekey
+    max-width: 850px
+
+
+.zr-page-menu--dnp, .zr-page-menu--tag
+    opacity: 0.6
+    position: absolute
+    right: 10px
+    top: 40px
+
+
+/* CitekeyMenu */
+
+.zr-citekey-doi 
+    display: block
+    letter-spacing: 0.3mm
+    margin: 10px
+
+
+.zr-citekey-menu
+
+    @media (max-width: 700px)
+        .bp3-button
+            font-size: 0.85em
+
+    &.bp3-card
+        justify-content: space-between
+        border-width: 0px
+        padding: 5px
+        border-radius: 5px
+        background-color: var(--zr-box-bg)
+        box-shadow: none
+
+    .bp3-button-group
+        .bp3-button
+            &, &:hover, .bp3-icon
+                color: var(--zr-text-co)
+            
+            &.bp3-disabled
+                color: var(--zr-text-co)
+                opacity: 0.8
+
+    .zotero-roam-page-menu-citations
+        display: flex
+        padding: 5px
+        flex-wrap: wrap
+        padding-bottom: 0px
+        border-top: 1px var(--zr-border-co) solid
+
+        button[class*='zr-page-menu-show--']
+            flex: 1 0 33%
+
+    &--header
+        display: flex
+
+    &--actions.bp3-button-group
+        flex-wrap: wrap
+        flex: 1 1 auto
+
+        .bp3-button
+            flex: 0 1 auto
+
+        [zr-role="pdf-link"]
+            font-weight: 600
+
+    &--backlinks
+        display: flex
+        flex-direction: column
+        margin: 10px 0px
+        width: 100%
+
+        .zr-backlinks-divider--tag.bp3-tag.bp3-minimal
+            color: var(--zr-text-co)
+
+            & + .bp3-divider
+                border-color: var(--zr-border-co)
+
+
+.zr-backlink-item
+    align-items: flex-start
+    display: flex
+    padding: 0px
+
+    &--year
+        flex: 0 0 auto
+
+    &--info
+        line-height: normal
+        flex: 1 2 90%
+
+        [zr-role="item-title"]
+            color: var(--zr-text-co)
+            display: block
+            font-weight: 500
+
+    &--year, &--info
+        font-size: 0.9em
+        padding: 0px 0px 6px 10px
+
+    &--year, &--info > *:not([zr-role="item-title"])
+        line-height: 2em
+
+    &--state
+        flex: 1 0 auto
+        overflow-wrap: anywhere
+        
+        @media (max-width: 700px)
+            flex: 1 2 auto
+
+    &[data-backlink-type="reference"] .zr-backlink-item--year
+        color: var(--zr-accent-1)
+
+    &[data-backlink-type="citation"] .zr-backlink-item--year
+        color: var(--zr-accent-2)
+
+
+.zr-auxiliary-dialog--view-item-information.bp3-dialog
+    --zr-dialog-gutter: 2.5%
+    --zr-dialog-margin: 15vw

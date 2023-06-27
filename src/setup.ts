@@ -25,7 +25,7 @@ type InstallArgs =
 	| { context: "roam/depot", extensionAPI: Roam.ExtensionAPI }
 	| {
 		context: "roam/js" | "sandbox",
-		manualSettings: Partial<LegacyUserSettings>
+		manualSettings: LegacyUserSettings
 	}
 
 /** Generates a data requests configuration object */
@@ -334,7 +334,7 @@ function configRoamDepot({ extensionAPI }: { extensionAPI: Roam.ExtensionAPI }){
 /** Initializes the extension, from a roam/js install
  * @returns The user's setup configuration
  */
-function configRoamJS({ manualSettings }: { manualSettings: Partial<LegacyUserSettings> }){
+function configRoamJS({ manualSettings }: { manualSettings: LegacyUserSettings }){
 	const { dataRequests = [] } = manualSettings;
 
 	const settings = setupInitialSettings(manualSettings);

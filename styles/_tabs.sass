@@ -1,0 +1,47 @@
+[class*="zr"] .bp3-tabs
+
+    & > .bp3-tab-list > .bp3-tab
+        color: var(--zr-text-co)
+        font-size: 0.9rem
+        opacity: 0.8
+
+        &[aria-selected="true"]
+            box-shadow: none
+            color: hsla(var(--zr-accent-1-hsl), 80%)
+            font-weight: 500
+            opacity: 1
+        
+        &[aria-selected="true"], :not([aria-disabled="true"]):hover
+            background-color: var(--zr-dialog-bg)
+            transition: 0.4s
+
+        .bp3-icon
+            margin-right: 8px
+
+    &.bp3-vertical
+        & > .bp3-tab-list > *:not(:last-child)
+            margin-right: 0px
+
+        &.zr-tabs > .bp3-tab-list .bp3-tab
+            padding: 0.2em 1.2em
+            
+            &[aria-selected="true"], &:not([aria-disabled="true"]):hover
+                box-shadow: 0px 0px 10px 5px var(--zr-box-shadow-co)
+
+    &.zr-tabs-minimal > .bp3-tab-list > .bp3-tab
+        font-weight: 400
+
+
+@media (max-width: 1000px)
+    .zr-tabs.bp3-tabs, .zr-tabs-minimal.bp3-tabs
+        &:not(.bp3-vertical)
+            & > .bp3-tab-list > .bp3-tab
+                margin-right: 0px
+                width: auto
+
+        & > .bp3-tab-list > .bp3-tab
+            .bp3-icon
+                margin-right: 0px
+
+            .bp3-icon+*
+                display: none

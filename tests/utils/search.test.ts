@@ -85,7 +85,7 @@ describe("Search - matching modes", () => {
 		const targets = [
 			"organization",
 			"organizational",
-			"an organization",
+			"an organization"
 		];
 		expect(targets.map(target => searchEngine("organization", target, { match: "exact" })))
 			.toEqual([
@@ -98,7 +98,7 @@ describe("Search - matching modes", () => {
 	it("finds exact matches - multi-word query", () => {
 		const targets = [
 			"knowledge management",
-			"personal knowledge management",
+			"personal knowledge management"
 		];
 		expect(targets.map(target => searchEngine("knowledge management", target, { match: "exact" })))
 			.toEqual([

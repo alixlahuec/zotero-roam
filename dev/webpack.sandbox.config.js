@@ -4,7 +4,7 @@ const baseConfig = require("./webpack.config");
 
 module.exports = merge(baseConfig, {
 	devtool: false,
-	entry: path.resolve("sandbox.js"),
+	entry: path.resolve("sandbox.ts"),
 	experiments: {
         outputModule: true,
     },
@@ -20,7 +20,7 @@ module.exports = merge(baseConfig, {
 		rules: [
 			{
 				test: /\.[tj]sx?$/,
-				include: [path.resolve("src"), path.resolve("mocks"), path.resolve("sandbox.js")],
+				include: [path.resolve("src"), path.resolve("mocks"), path.resolve("sandbox.ts")],
 				use: {
 					loader: "babel-loader",
 					options: {
@@ -35,8 +35,9 @@ module.exports = merge(baseConfig, {
 			"Mocks": path.resolve("mocks"),
 			"Roam": path.resolve("mocks", "roam.ts"),
 			"Components": path.resolve("src", "components"),
+			"Styles": path.resolve("styles"),
 			"Types": path.resolve("src", "types")
 		},
-		extensions: [".js", ".jsx", ".ts", ".tsx", ".css"]
+		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sass"]
 	}
 });

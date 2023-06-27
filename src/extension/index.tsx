@@ -191,7 +191,7 @@ export default class ZoteroRoam {
 	}
 
 	/** Retrieves the list of collections for a given item */
-	getItemCollections(item: ZItemTop, { return_as = "string", brackets = true }: Partial<CollectionOptions> = {},) {
+	getItemCollections(item: ZItemTop, { return_as = "string", brackets = true }: Partial<CollectionOptions> = {}) {
 		const path = item.library.type + "s/" + item.library.id;
 		const collectionList = this.getCollections(path);
 

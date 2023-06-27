@@ -1,0 +1,40 @@
+@use "base"
+
+
+[class*="zr"]
+    .bp3-menu
+        @include base.neutralBox
+
+        .bp3-menu-divider
+            border-color: var(--zr-border-co)
+
+        .bp3-menu-header
+            border-color: var(--zr-border-co)
+
+            .bp3-heading
+                color: var(--zr-text-co)
+
+
+    .bp3-menu-item
+        &[class*="bp3-intent-"]
+            color: hsla(var(--zr-base-tone), 95%)
+
+            &:hover
+                background: hsla(var(--zr-base-tone), 10%)
+
+        &.bp3-disabled > [class*="bp3-text"],
+        &.bp3-disabled .bp3-icon
+            color: var(--zr-auxiliary)
+        
+        .bp3-menu-item-label
+            color: var(--zr-secondary-co)
+
+
+[class*="zr"] li[aria-selected="true"],
+[class*="zr"] li [aria-selected="true"]:not(.bp3-menu-item),
+[class*="zr"] li[aria-selected="false"]:hover,
+[class*="zr"] li [aria-selected="false"]:not(.bp3-menu-item):hover,
+.zotero-roam-search_result[aria-selected="true"],
+.zotero-roam-search_result[aria-selected="false"]:hover
+    background: hsla(var(--zr-accent-1-hsl), 8%)
+    color: inherit

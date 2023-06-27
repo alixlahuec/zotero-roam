@@ -1,0 +1,145 @@
+@use "base"
+
+
+textarea.zr-text-input
+    @include base.neutralBox($outline-width: 1px)
+    box-shadow: none
+
+
+[class*="zr"]
+    .bp3-input:focus, .bp3-input.bp3-active
+        box-shadow: none
+
+
+.zr-input-box
+    &, & input
+        max-width: var(--zr-input-size)
+
+    &.zr-date-range-input
+        max-width: calc(2 * var(--zr-input-size))
+
+        input
+            @include base.neutralBox($outline-width: 1px)
+            box-shadow: none
+
+    input:not(.bp3-input-ghost)
+        @include base.neutralBox($outline-width: 1px)
+        box-shadow: none
+
+
+[class*="zr"] .bp3-numeric-input
+
+    input.bp3-input
+        @include base.neutralBox($outline-width: 1px)
+        box-shadow: none
+        max-width: calc(0.20 * var(--zr-input-size))
+    
+    .bp3-button:not([class*="bp3-intent-"])
+        @include base.neutralBox
+        box-shadow: none
+
+
+[class*="zr"] .bp3-multi-select
+    &.bp3-input
+        @include base.neutralBox($outline-width: 1px)
+        box-shadow: none
+
+    &, input
+        max-width: var(--zr-input-size)
+
+    input
+        color: var(--zr-text-co)
+        font-size: var(--zr-text-small)
+
+        ::placeholder
+            color: var(--zr-secondary-co)
+
+        &.bp3-multi-select-tag-input-input.bp3-input-ghost
+            max-width: calc(2 * var(--zr-input-size))
+
+            &::placeholder
+                opacity: 0.8
+
+
+[class*="zr"] .bp3-input-group
+    &[class*="bp3-intent-"]
+        input, .bp3-input:focus
+            box-shadow: none
+            color: hsla(var(--zr-base-tone), 100%)
+            outline: 1px hsla(var(--zr-base-tone), 100%) solid
+
+        .bp3-input-action > span.bp3-icon
+            color: hsla(var(--zr-base-tone), 100%)
+
+    .bp3-input-left-container button.bp3-button
+        margin-left: 0px
+        margin-right: 0px
+
+
+[class*="zr"] .bp3-input-action > span.bp3-icon
+        color: var(--zr-auxiliary)
+        margin: 7px
+
+
+.zr-text-input
+    input[aria-invalid="true"]
+        box-shadow: none
+        color: var(--zr-negative-co)
+        outline: 1px var(--zr-negative-co) solid
+
+
+.zr-date-picker
+    .bp3-datepicker .DayPicker-Day.DayPicker-Day--selected
+        background: hsla(var(--zr-accent-1-hsl), 90%)
+    
+    .bp3-daterangepicker .DayPicker-Day--selected-range
+        background: hsla(var(--zr-accent-1-hsl), 10%)
+        color: hsla(var(--zr-accent-1-hsl), 80%)
+
+
+[class*="zr"] .bp3-slider-track
+    .bp3-slider-progress
+        &[class*="bp3-intent-"]
+            background-color: hsla(var(--zr-base-tone), 20%)
+
+        &:not([class*="bp3-intent-"])
+            @include base.accentBox
+
+
+[class*="zr"] .bp3-slider-handle
+    background: hsla(var(--zr-accent-1-hsl), 65%)
+    border-radius: 10px
+    box-shadow: none
+
+    .bp3-slider-label
+        @include base.accentBox($border-width: 1px)
+        box-shadow: none
+        width: max-content
+
+
+[class*="zr"] .bp3-control
+
+    &.bp3-checkbox
+        input:checked~.bp3-control-indicator
+            box-shadow: none
+
+    &.bp3-radio
+        color: var(--zr-text-co)
+        font-weight: 400
+
+        input~.bp3-control-indicator
+            box-shadow: none
+        input:checked~.bp3-control-indicator
+            background-color: hsla(var(--zr-accent-1-hsl), 75%)
+        input:not(:checked)~.bp3-control-indicator
+            background-color: hsla(var(--zr-accent-1-hsl), 10%)
+            background-image: none
+
+    &.bp3-switch
+        .bp3-control-indicator::before
+            background: var(--zr-dialog-bg)
+            box-shadow: none
+
+    &.bp3-switch, &.bp3-checkbox
+        input:checked~.bp3-control-indicator
+            background-color: hsla(var(--zr-accent-1-hsl), 70%)

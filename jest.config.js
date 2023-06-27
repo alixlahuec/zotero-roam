@@ -1,8 +1,4 @@
 /* eslint-disable */
-/*
- * For a detailed explanation regarding each configuration property, visit:
- * https://jestjs.io/docs/configuration
- */
 
 const common = {
   // All imported modules in your tests should be mocked automatically
@@ -16,15 +12,6 @@ const common = {
 
   // Automatically clear mock calls, instances, contexts and results before every test
   clearMocks: true,
-
-  // Indicates whether the coverage information should be collected while executing the test
-  collectCoverage: true,
-
-  // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: ["./src/**", "./mocks/**"],
-
-  // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
   coveragePathIgnorePatterns: [
@@ -94,8 +81,9 @@ const common = {
   moduleNameMapper: {
 	  "Mocks/(.*)$": "<rootDir>/mocks/$1",
 	  "Mocks": "<rootDir>/mocks/index.ts",
-      "Roam": "<rootDir>/mocks/roam.ts",
-	  "Components/(.*)$": "<rootDir>/src/components/$1",
+    "Roam": "<rootDir>/mocks/roam.ts",
+    "Components/(.*)$": "<rootDir>/src/components/$1",
+    "Styles": "<rootDir>/styles/_index.sass",
 	  "Types/(.*)$": "<rootDir>/src/types/$1"
   },
 
@@ -163,7 +151,7 @@ const common = {
   // A map from regular expressions to paths to transformers
   transform: {
     "\\.[tj]sx?$": "babel-jest",
-    "^.+\\.css$": "jest-transform-css"
+    "^.+\\.(sa|sc|c)ss$": "jest-transform-css"
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
@@ -203,8 +191,8 @@ module.exports = {
 				"<rootDir>/src/**/*",
 				"<rootDir>/stories/**/*",
 				"<rootDir>/tests/**/*",
-				"<rootDir>/loader.js",
-				"<rootDir>/sandbox.js"
+				"<rootDir>/loader.tsx",
+				"<rootDir>/sandbox.ts"
 			]
 		}
 	],

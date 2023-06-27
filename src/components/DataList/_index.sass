@@ -1,0 +1,49 @@
+ul.zr-datalist--listwrapper
+    list-style-type: none
+    margin-bottom: 0px
+    max-height: 70vh
+    overflow-y: scroll
+    padding-left: 0px
+
+    &::-webkit-scrollbar
+        width: 0px
+
+
+.zr-datalist--pagination
+    color: var(--zr-text-co)
+    display: flex
+
+    [zr-role="items-count"]
+        padding: 5px 10px
+
+
+.zr-datalist--toolbar
+    align-items: center
+    border-radius: 5px 5px 0px 0px
+    display: flex
+    justify-content: space-between
+    padding: 10px 15px
+
+    @media (max-width: 700px)
+        flex-direction: column
+    
+    @media (max-width: 700px)
+        & > *
+            justify-content: space-between
+            width: 100%
+
+    & > .bp3-slider
+        flex: 0 1 33%
+        margin-top: 20px
+
+    & > label.bp3-switch
+        color: var(--zr-text-co)
+        font-weight: normal
+    
+    & > .bp3-form-group,
+    & > .bp3-switch
+        margin-bottom: 0px
+
+    .bp3-button.bp3-minimal
+        &, .bp3-icon
+            color: var(--zr-text-co)

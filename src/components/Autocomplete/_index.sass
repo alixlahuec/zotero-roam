@@ -1,0 +1,28 @@
+@use "Styles/base"
+
+
+.zr-tribute
+    @include base.neutralBox($border-width: 1px)
+    border-radius: 3px
+    margin-top: 8px
+    max-height: 300px
+    max-width: 450px
+    overflow-y: scroll
+
+    ul
+        list-style-type: none
+        margin-bottom: 0px
+        padding: 0px
+
+        li
+            display: flex
+            justify-content: space-between
+            font-size: var(--zr-text-small)
+            line-height: 1.5
+            padding: 3px 8px
+    
+    &--item-details
+        flex: 0 1 100%
+
+    &--selected
+        background: hsla(var(--zr-accent-1-hsl), 8%)

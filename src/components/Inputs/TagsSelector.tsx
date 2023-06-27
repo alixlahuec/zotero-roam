@@ -73,7 +73,7 @@ type OwnProps = {
 const TagsSelector = memo<OwnProps & Partial<SelectorProps>>(
 	function TagsSelector(props) {
 		const { selectedTags, onRemove, onSelect, ...extraProps } = props;
-		const [roamPages,] = useState(() => getAllPages()); // https://tkdodo.eu/blog/things-to-know-about-use-state
+		const [roamPages] = useState(() => getAllPages()); // https://tkdodo.eu/blog/things-to-know-about-use-state
 
 		const addTag = useCallback((tag: Tag, _event) => onSelect(tag), [onSelect]);
 		const removeTag = useCallback((tag: Tag, _index) => onRemove(tag), [onRemove]);

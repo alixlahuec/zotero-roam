@@ -18,7 +18,7 @@ import { ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
 import { ZLibrary } from "Types/transforms";
 
-import "./index.css";
+import "./_index.sass";
 
 
 type ImportButtonOwnProps = {
@@ -81,7 +81,7 @@ const ImportButton = memo<ImportButtonOwnProps & ZoteroImportProps>(function Imp
 	}, [isActive, isDataReady, status]);
 
 	return (
-		<Button className={[CustomClasses.TEXT_SMALL, "zr-import--trigger"].join(" ")} onClick={triggerImport} {...buttonProps} />
+		<Button className={[CustomClasses.TEXT_SMALL, "zr-import--trigger"].join(" ")} minimal={true} onClick={triggerImport} {...buttonProps} />
 	);
 });
 
@@ -129,7 +129,7 @@ const ImportPanel = memo<ImportPanelOwnProps & ZoteroImportProps>(function Impor
 		<ErrorBoundary>
 			<div className="import-header">
 				<ButtonGroup fill={true} minimal={true}>
-					<Button className={[CustomClasses.TEXT_SMALL, "zr-import--cancel"].join(" ")} icon="chevron-left" intent="warning" onClick={resetImport}>Cancel</Button>
+					<Button className={[CustomClasses.TEXT_SMALL, "zr-import--cancel"].join(" ")} icon="chevron-left" intent="warning" minimal={true} onClick={resetImport}>Cancel</Button>
 					<ImportButton 
 						identifiers={identifiers} 
 						importProps={importProps} 
@@ -167,7 +167,6 @@ type ZoteroImportProps = {
 
 const ZoteroImport = memo<ZoteroImportProps>(function ZoteroImport(props) {
 	const { identifiers, isActive, resetImport } = props;
-	// @ts-ignore "TODO: Remove ignore once Settings have been migrated to TSX"
 	const [{ libraries }] = useRequestsSettings();
 
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);

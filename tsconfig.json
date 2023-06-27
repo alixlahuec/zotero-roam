@@ -10,6 +10,7 @@
 			"Mocks/*": ["./mocks/*"],
 			"Mocks": ["./mocks"],
 			"Roam": ["./src/roam.ts"],
+			"Styles": ["./styles"],
 			"Types/*": ["./src/types/*"]
 		},
         "alwaysStrict": false,
@@ -24,10 +25,13 @@
     },
 	"exclude": ["node_modules", "dist"],
     "include": [
-        "src/**/*",
-		"loader.js",
-		"sandbox.js",
-		".storybook/**/*",
+        ".storybook/**/*",
+		"loader.tsx",
+		"mocks/**/*",
+		"sandbox.ts",
+		"src/**/*",
+		"stories/**/*",
+		"styles/**/*",
 		"tests/**/*"
     ]
 }

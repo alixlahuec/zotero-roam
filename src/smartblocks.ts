@@ -131,7 +131,7 @@ const sbCommands = () => {
 				const hasURL = item.data.url;
 				const hasDOI = parseDOI(item.data.DOI);
 				return hasURL || (hasDOI ? ("https://doi/org/" + hasDOI) : "");
-			},
+			}
 		},
 		"ZOTEROITEMYEAR": {
 			help: "Returns the year of publication of a Zotero item, if available.",

@@ -10,7 +10,15 @@ const config: StorybookConfig = {
 		"@storybook/addon-coverage",
 		"@storybook/addon-links",
 		"@storybook/addon-essentials",
-		"@storybook/addon-interactions"
+		"@storybook/addon-interactions",
+		{
+			name: '@storybook/addon-styling',
+			options: {
+				sass: {
+					implementation: require('sass'),
+				},
+			},
+		},
 	],
 	framework: {
 		name: "@storybook/react-webpack5",
@@ -23,12 +31,19 @@ const config: StorybookConfig = {
 	webpackFinal: async (config) => {
 		return {
 			...config,
+			devtool: false,
+			optimization: {
+				...config.optimization,
+				minimize: false,
+				minimizer: []
+			},
 			resolve: {
 				...config.resolve,
 				alias: {
 					"Mocks": path.resolve(__dirname, "..", "mocks"),
 					"Roam": path.resolve(__dirname, "..", "mocks", "roam.ts"),
 					"Components": path.resolve(__dirname, "..", "src", "components"),
+					"Styles": path.resolve(__dirname, "..", "styles"),
 					"Types": path.resolve(__dirname, "..", "src", "types")
 				}
 			}

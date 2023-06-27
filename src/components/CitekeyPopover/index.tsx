@@ -1,6 +1,6 @@
-import { HTMLProps, memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { Button, ButtonProps, Intent, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
-import { IPopover2SharedProps, Popover2, Popover2InteractionKind, Popover2Props } from "@blueprintjs/popover2";
+import { DefaultPopover2TargetHTMLProps, Popover2, Popover2InteractionKind, Popover2Props, Popover2SharedProps } from "@blueprintjs/popover2";
 
 import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useTypemapSettings } from "Components/UserSettings";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
@@ -10,12 +10,12 @@ import { importItemMetadata, openInSidebarByUID, openPageByUID } from "Roam";
 
 import { CustomClasses } from "../../constants";
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 const popoverProps: Partial<Popover2Props> = {
 	autoFocus: true,
-	boundary: "window" as IPopover2SharedProps<HTMLProps<HTMLElement>>["boundary"],
+	boundary: "window" as Popover2SharedProps<DefaultPopover2TargetHTMLProps>["boundary"],
 	className: "zr-library-item-popover",
 	interactionKind: Popover2InteractionKind.HOVER,
 	lazy: true,

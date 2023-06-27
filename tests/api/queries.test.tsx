@@ -14,7 +14,7 @@ const { makeTagList, parseSemanticDOIs } = apiUtils;
 
 const { 
 	keyWithFullAccess: { key: masterKey },
-	keyWithNoGroupAccess: { key: userOnlyKey },
+	keyWithNoGroupAccess: { key: userOnlyKey }
 } = apiKeys;
 const { 
 	userLibrary: { path: userPath }, 
@@ -125,7 +125,7 @@ describe("Hook for items queries", () => {
 		const reqs = Object.values(libraries).map((lib) => mock<DataRequest>({
 			apikey: masterKey,
 			dataURI: `${lib.path}/items`,
-			library: { path: lib.path },
+			library: { path: lib.path }
 		}));
 
 		const { result, waitFor } = renderHook(() => useQuery_Items(reqs, {}), { wrapper });

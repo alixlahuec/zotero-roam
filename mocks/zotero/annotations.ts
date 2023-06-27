@@ -50,7 +50,7 @@ export const sampleImageAnnot = makeAnnot({
 		annotationComment: "Good figure to dissect",
 		annotationText: "",
 		annotationType: "image",
-		tags: [{ tag: "TODO" }],
+		tags: [{ tag: "TODO" }]
 	}
 });
 

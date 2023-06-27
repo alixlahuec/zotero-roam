@@ -11,7 +11,7 @@ import { pluralize, sortElems } from "../../../utils";
 import { CustomClasses } from "../../../constants";
 import { ShowPropertiesRelated, ShowTypeRelated } from "../types";
 import { SCleanRelatedItem } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 const PANEL_LABEL_ID = "zr-related-panel-label";

@@ -5,12 +5,12 @@ import { pluralize } from "../../utils";
 import { CustomClasses } from "../../constants";
 
 import { AsBoolean } from "Types/helpers";
-import "./index.css";
+import "./_index.sass";
 
 
-type ListItemProps = { className: string };
+type ListItemProps = { className?: string };
 
-const ListItem: FC<ListItemProps & JSX.IntrinsicElements["li"]> = ({ className, children, ...rest }) => (
+const ListItem: FC<ListItemProps & JSX.IntrinsicElements["li"]> = ({ className = null, children, ...rest }) => (
 	<li className={[className, CustomClasses.DATALIST_ITEM].filter(AsBoolean).join(" ")} {...rest}>
 		{children}
 	</li>

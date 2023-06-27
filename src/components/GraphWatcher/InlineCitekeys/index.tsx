@@ -1,8 +1,8 @@
-import { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import {  Classes, Menu, MenuDivider, MenuItem, Overlay } from "@blueprintjs/core";
 
-import { ExtensionContext } from "Components/App";
+import { useExtensionContext } from "Components/App";
 import NotesDrawer from "Components/NotesDrawer";
 import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useOtherSettings, useRequestsSettings, useTypemapSettings } from "Components/UserSettings";
 
@@ -14,7 +14,7 @@ import { importItemMetadata } from "Roam";
 
 import { DataRequest } from "Types/extension";
 import { QueryDataItems, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 type Citekey = string;
@@ -223,7 +223,7 @@ const CitekeyContextMenu = memo<CitekeyContextMenuProps>(function CitekeyContext
 
 /* istanbul ignore next */
 const InlineCitekeys = memo(function InlineCitekeys() {
-	const { portalId } = useContext(ExtensionContext);
+	const { portalId } = useExtensionContext();
 	const [{ dataRequests }] = useRequestsSettings();
 	const [{ render_inline }] = useOtherSettings();
 

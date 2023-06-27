@@ -12,7 +12,7 @@ import { useMulti } from "../../../hooks";
 import { CustomClasses } from "../../../constants";
 import { ShowTypeSemantic } from "../types";
 import { SEnrichedItem, SRelatedEntries } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 const labelId = "zr-semantic-panel-label";

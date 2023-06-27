@@ -26,7 +26,7 @@ type InputDateSingleProps = {
 
 function InputDateSingle({ value, setValue }: InputDateSingleProps) {
 	return <DateInput
-		className={CustomClasses.DATE_INPUT}
+		className={CustomClasses.INPUT_BOX}
 		closeOnSelection={true}
 		highlightCurrentDay={true}
 		onChange={setValue}
@@ -47,7 +47,7 @@ type InputDateRangeProps = {
 
 function InputDateRange({ value, setValue }: InputDateRangeProps) {
 	return <DateRangeInput
-		className={CustomClasses.DATE_INPUT_RANGE}
+		className={CustomClasses.INPUT_DATE_RANGE}
 		closeOnSelection={true}
 		highlightCurrentDay={true}
 		onChange={setValue}

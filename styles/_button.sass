@@ -1,0 +1,70 @@
+@use "base"
+
+
+[class*="zr"] .bp3-button
+    &.bp3-minimal
+        &:not([class*="bp3-intent-"])
+            &, .bp3-icon
+                color: var(--zr-text-co)
+
+        &:not(.bp3-disabled):hover
+            @include base.accentBox
+
+    &.bp3-outlined
+        border-color: var(--zr-border-co)
+
+        &:hover
+            color: var(--zr-text-co)
+
+    &[class*="bp3-intent-"]
+        &.bp3-minimal, &.bp3-outlined, &.bp3-minimal:hover
+            color: hsla(var(--zr-base-tone), 95%)
+
+        &:not(.bp3-disabled)
+            border-color: hsla(var(--zr-base-tone), 20%)
+
+        &:not(.bp3-minimal):not(.bp3-outlined):not(.bp3-disabled)
+            box-shadow: none
+
+            &:not(.bp3-active)
+                background-color: hsla(var(--zr-base-tone), 10%)
+                color: hsla(var(--zr-base-tone), 95%)
+
+            &.bp3-active
+                background-color: hsla(var(--zr-base-tone), 70%)
+
+                &, .bp3-icon
+                    color: white
+
+        &.bp3-disabled
+            &:not(.bp3-loading),
+            &.bp3-loading:not(.bp3-minimal)
+                background-color: hsla(var(--zr-base-tone), 4%)
+                color: hsla(var(--zr-base-tone), 40%)
+
+        &.bp3-minimal
+            &:hover
+                background: hsla(var(--zr-base-tone), 10%)
+
+            &.bp3-active
+                background-color: hsla(var(--zr-base-tone), 5%)
+                color: hsla(var(--zr-base-tone), 97%)
+                transition: 0.3s
+
+            .bp3-button-spinner .bp3-spinner-head
+                stroke: hsla(var(--zr-base-tone), 60%)
+
+
+[class*="zr"] .bp3-button-group
+    &.bp3-minimal
+        .bp3-button
+            &:not([class*="bp3-intent-"])
+                &:active, &.bp3-active
+                    @include base.accentBox
+
+            &[class*="bp3-intent-"]
+                color: hsla(var(--zr-base-tone), 95%)
+
+                &:not(.bp3-disabled):not(.bp3-outlined):hover
+                    background-color: hsla(var(--zr-base-tone), 5%)
+                    transition: 0.3s

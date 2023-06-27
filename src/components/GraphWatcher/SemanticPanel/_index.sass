@@ -1,0 +1,128 @@
+.zr-auxiliary-dialog--citations.bp3-dialog
+    --zr-dialog-gutter: 1.5%
+    --zr-dialog-margin: 20vw
+    transition: 0.5s
+
+    @media (max-width: 1000px)
+        .bp3-dialog-container > &
+            --zr-dialog-gutter: 1.5%
+            --zr-dialog-margin: 11vw
+
+    &.has-selected-items
+        width: calc(100% - 2*var(--zr-dialog-gutter) - var(--zr-dialog-margin))
+
+        .zr-semantic-panel--side
+            flex: 1 0 var(--zr-dialog-margin)
+            display: block
+
+            @media (max-width: 1000px)
+                flex: 1 0 calc(2.5*var(--zr-dialog-margin))
+        
+            & > *:not(.import-header)
+                padding: 0px 10px
+
+    & > .bp3-dialog-body
+        display: flex
+
+
+.zr-semantic-panel--main
+    flex: 0 1 100%
+
+    .zr-tabs.bp3-tabs > .bp3-tab-list
+        margin-left: 15px
+        align-items: start
+
+        & > *:not(.bp3-flex-expander):not(.bp3-button)
+            line-height: 21px
+            margin-top: 5px
+            padding: 5px 10px
+            border-radius: 3px
+            font-size: 0.9em
+
+        & > .bp3-tab[data-tab-id="is_citation"]
+            &[aria-selected="true"], &:not([aria-disabled="true"]):hover
+                color: var(--zr-accent-2)
+
+    .bp3-tab-panel
+        margin-top: 5px
+
+    input[id*="semantic-search--"]
+        background: 0
+        box-shadow: none
+        font-size: 1em
+        color: var(--zr-auxiliary)
+
+    .zr-related-item
+        &[data-in-library="true"] .zr-related-item--timestamp 
+            background: var(--zr-positive-bg)
+            color: var(--zr-positive-co)
+            border-radius: 3px
+
+        &--links
+            display: block
+
+            span[data-service]
+                padding-right: 10px
+
+        &--intents
+            margin: 5px 0px
+
+            .bp3-tag[data-semantic-intent]
+                background-color: var(--zr-box-bg)
+                color: #c981ed
+                opacity: 0.6
+                margin-right: 8px
+
+
+#zr-semantic-panel-label
+    overflow: hidden
+    text-overflow: ellipsis
+
+
+.zr-semantic--datalist
+    min-height: 60vh
+
+
+.zr-semantic-panel--side
+    background: var(--zr-box-bg)
+    border-radius: 0px 6px 6px 0px
+    flex: 0 0 0%
+    overflow: auto
+    transition: 0.5s
+
+    @media (max-width: 1200px)
+        .import-options
+            flex-direction: column
+
+    @media (max-width: 1000px)
+        .import-options > *
+            max-width: 100%
+
+    li.import-items_selected
+        display: flex
+        justify-content: space-between
+        background: var(--zr-dialog-bg)
+        padding: 5px
+
+    .selected
+        &_title
+            font-weight: 500
+        &_origin
+            display: block
+        &_info
+            flex: 0 1 90%
+        &_state
+            flex: 1 0 10%
+            text-align: center
+
+
+.zr-popover.bp3-multi-select-popover .bp3-menu
+    max-width: calc(var(--zr-dialog-margin) - 30px)
+    width: calc(var(--zr-dialog-margin) - 30px)
+
+
+/* SMALLER DISPLAYS */
+
+@media (max-width: 1000px)
+    .zr-related-item-contents--actions
+        flex: 0 1 auto

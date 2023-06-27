@@ -233,5 +233,5 @@ export type InitSettings = {
 } & UserSettings;
 
 export type LegacyUserSettings = {
-	dataRequests: LegacyUserDataRequest[]
-} & UserSettings
+	dataRequests: (LegacyUserDataRequest | UserDataRequest)[]
+} & Partial<UserSettings>

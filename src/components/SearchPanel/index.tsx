@@ -13,7 +13,7 @@ import { cleanLibrary } from "../../utils";
 import { dialogClass, dialogLabel } from "./classes";
 import { QueryDataItems, RCitekeyPages } from "Types/transforms";
 import { DataRequest, ExtensionStatusEnum } from "Types/extension";
-import "./index.css";
+import "./_index.sass";
 
 
 function useGetItems(reqs: DataRequest[], roamCitekeys: RCitekeyPages, opts = {}){
@@ -42,7 +42,7 @@ type SearchPanelProps = {
 const SearchPanel = memo<SearchPanelProps>(function SearchPanel({ isOpen, onClose, status }) {
 	const [{ useQuickCopy }] = useCopySettings();
 	const [{ dataRequests }] = useRequestsSettings();
-	const [roamCitekeys,] = useRoamCitekeys();
+	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
 
 	const [quickCopyActive, { toggle: toggleQuickCopy }] = useBool(useQuickCopy); // Is QuickCopy active by default ?
 

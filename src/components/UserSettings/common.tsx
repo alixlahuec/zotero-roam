@@ -224,7 +224,7 @@ const TextAreaInput = ({ label = undefined, onChange, value, ...extraProps }: Te
 	return <TextArea 
 		aria-label={label}
 		autoComplete="off" 
-		className={["zr-text-input", CustomClasses.TEXT_SMALL, Classes.CODE_BLOCK].join(" ")}
+		className={[CustomClasses.INPUT_TEXT, CustomClasses.TEXT_AUXILIARY, CustomClasses.TEXT_SMALL, Classes.CODE_BLOCK].join(" ")}
 		fill={true}
 		growVertically={false}
 		onChange={valueHandler}
@@ -235,7 +235,7 @@ const TextAreaInput = ({ label = undefined, onChange, value, ...extraProps }: Te
 };
 
 
-const TextInput: FC = ({ children }) => <div className="zr-text-input" zr-role="input-text">{children}</div>;
+const TextInput: FC = ({ children }) => <div className={[CustomClasses.INPUT_BOX, CustomClasses.INPUT_TEXT].join(" ")} zr-role="input-text">{children}</div>;
 
 
 const defaultValidator = (_text: string) => true;
@@ -269,7 +269,7 @@ const TextField = ({ description = null, ifEmpty = null, label = undefined, onCh
 					aria-invalid={!isValid}
 					aria-label={label}
 					autoComplete="off" 
-					className={["zr-text-input", CustomClasses.TEXT_SMALL, Classes.INPUT].join(" ")}
+					className={[CustomClasses.INPUT_BOX, CustomClasses.INPUT_TEXT, CustomClasses.TEXT_SMALL, Classes.INPUT].join(" ")}
 					onChange={valueHandler}
 					placeholder={placeholder}
 					spellCheck="false" 
@@ -329,7 +329,7 @@ const TextWithSelect = ({ description = null, onSelectChange, onValueChange, pla
 			<InputGroup
 				aria-label={inputLabel}
 				autoComplete="off"
-				className={["zr-text-input", CustomClasses.TEXT_SMALL].join(" ")}
+				className={[CustomClasses.INPUT_BOX, CustomClasses.INPUT_TEXT, CustomClasses.TEXT_SMALL].join(" ")}
 				onChange={valueHandler}
 				placeholder={placeholder}
 				spellCheck="false"

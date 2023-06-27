@@ -1,0 +1,46 @@
+.zr-notesimport-item
+    margin-bottom: 5px
+    padding: 2px 15px
+
+    & > .bp3-menu-item
+        flex-wrap: wrap
+
+        &:hover
+            background-color: unset
+
+    &--header
+        align-items: baseline
+        display: flex
+        flex: 0 0 100%
+        justify-content: space-between
+
+
+    &--title.bp3-checkbox.bp3-control
+        flex: 0 0 100%
+        font-weight: normal
+        margin-bottom: 0px
+
+        .bp3-control-indicator
+            &, &::before
+                height: 0.8em
+                width: 0.8em
+
+    &--contents
+        align-items: baseline
+        display: flex
+        flex: 0 0 100%
+        justify-content: space-between
+        flex-wrap: wrap
+
+        & > div
+            flex: 0 0 100%
+            padding: 5px 15px
+
+    [zr-role="note-contents"] > p
+        margin-bottom: 0px
+        max-height: 7em
+        overflow: hidden
+        -webkit-mask-image: linear-gradient(grey, var(--zr-box-shadow-co))
+        -webkit-mask-size: 100% 85%
+        -webkit-mask-repeat: no-repeat
+        -webkit-mask-position: left top,left bottom

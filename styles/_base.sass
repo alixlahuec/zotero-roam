@@ -1,0 +1,97 @@
+:root
+    --zr-accent-1-hsl: 223, 100%, 44%
+    --zr-accent-2-hsl: 18, 63%, 39%
+    --zr-negative-hsl: 0, 92%, 41%
+    --zr-positive-hsl: 155, 58%, 27%
+    --zr-accent-1: hsla(var(--zr-accent-1-hsl), 100%)
+    --zr-accent-2: hsla(var(--zr-accent-2-hsl), 100%)
+    --zr-negative-co: hsla(var(--zr-negative-hsl), 100%)
+    --zr-positive-co: hsla(var(--zr-positive-hsl), 100%)
+    --zr-auxiliary: #5c7080
+    --zr-border-co: #ececec
+    --zr-box-bg: #f8f8f8
+    --zr-box-shadow-co: #d7dced4d
+    --zr-dialog-bg: #ffffff
+    --zr-input-size: 240px
+    --zr-minimal-bg: #cad1df26
+    --zr-negative-bg: #ff929a26
+    --zr-positive-bg: #45d29826
+    --zr-secondary-co: #696969
+    --zr-secondary-fw: 300
+    --zr-shortcut-co: inherit
+    --zr-text-co: inherit
+    --zr-text-small: 0.85rem
+
+
+[zr-dark-theme="true"]
+    --zr-accent-1-hsl: 202, 100%, 62%
+    --zr-accent-2-hsl: 30, 70%, 51%
+    --zr-negative-hsl: 0, 85%, 69%
+    --zr-positive-hsl: 120, 86%, 75%
+    --zr-accent-1: hsla(var(--zr-accent-1-hsl), 100%)
+    --zr-accent-2: hsla(var(--zr-accent-2-hsl), 100%)
+    --zr-negative-co: hsla(var(--zr-negative-hsl), 100%)
+    --zr-positive-co: hsla(var(--zr-positive-hsl), 100%)
+    --zr-auxiliary: #95a8b7
+    --zr-border-co: #2f3133
+    --zr-box-bg: #191919
+    --zr-box-shadow-co: #0b0b0c4d
+    --zr-dialog-bg: #1f1f1f
+    --zr-negative-bg: #332828
+    --zr-positive-bg: #5863582e
+    --zr-secondary-co: #8ba4bd
+    --zr-secondary-fw: 400
+    --zr-shortcut-co: #9b9b9b
+    --zr-text-co: #76a0cb
+
+
+@mixin accentBox($border-width: false)
+    background: var(--zr-box-bg)
+    color: var(--zr-text-co)
+
+    @if $border-width
+        border-color: var(--zr-border-co)
+        border-style: solid
+        border-width: $border-width
+
+
+@mixin neutralBox($border-width: false, $outline-width: false)
+    background: var(--zr-dialog-bg)
+    color: var(--zr-text-co)
+
+    @if $border-width
+        border-color: var(--zr-border-co)
+        border-style: solid
+        border-width: $border-width
+
+    @if $outline-width
+        outline-color: var(--zr-border-co)
+        outline-style: solid
+        outline-width: $outline-width
+
+
+[class*="zr"]
+    .bp3-intent-danger
+        --zr-base-tone: var(--zr-negative-hsl)
+    .bp3-intent-primary
+        --zr-base-tone: var(--zr-accent-1-hsl)
+    .bp3-intent-success
+        --zr-base-tone: var(--zr-positive-hsl)
+    .bp3-intent-warning
+        --zr-base-tone: var(--zr-accent-2-hsl)
+
+
+.roam-log-page
+    /* Required to adequately position contextual buttons */
+    position: relative
+
+
+#zotero-roam-portal
+    & > *
+        z-index: 1000
+
+    .bp3-overlay-backdrop
+        opacity: 0.4
+
+    & > .bp3-overlay > .bp3-dialog-container
+        justify-content: flex-start

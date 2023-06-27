@@ -1,7 +1,38 @@
 import { getCitekeyPagesWithEditTime } from "Roam";
 import { identifyChildren } from "../../../utils";
 import { AsBoolean } from "Types/helpers";
-import { ZDataViewContents, ZLibraryContents, ZLogItem } from "Types/transforms";
+import { ZDataViewContents, ZItemTop, ZLibraryContents, ZLogItem } from "Types/transforms";
+
+
+function createLogItem(
+	item: ZItemTop,
+	{ edited, inGraph, notes, pdfs }: { edited: Date, inGraph: string | false } & Omit<ZLibraryContents, "items">
+): ZLogItem {
+	const itemKey = item.key;
+	const location = item.library.type + "s/" + item.library.id;
+	const creator = item.meta.creatorSummary || "";
+	const pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
+
+	// Find the item's children (PDFs/notes/annotations) in the library
+	const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
+
+	// Push simplified data to the log
+	const entry: ZLogItem = {
+		abstract: item.data.abstractNote || "",
+		children,
+		edited,
+		inGraph,
+		itemType: item.data.itemType,
+		key: itemKey,
+		location,
+		meta: [creator, pub_year].filter(AsBoolean).join(" "),
+		publication: item.data.publicationTitle || item.data.bookTitle || item.data.university || "",
+		raw: item,
+		title: item.data.title || ""
+	};
+
+	return entry;
+}
 
 
 /** Categorizes a list of Zotero items by recent activity
@@ -10,7 +41,7 @@ import { ZDataViewContents, ZLibraryContents, ZLogItem } from "Types/transforms"
  * @returns The categorized list of items
  */
 function makeLogFromItems(itemList: ZLibraryContents, asRecentAs = 7){
-	return new Promise((resolve) => {
+	return new Promise<ZDataViewContents>((resolve) => {
 		setTimeout(() => {
 			const { items = [], pdfs = [], notes =[] } = itemList;
 			const citPages = getCitekeyPagesWithEditTime();
@@ -26,13 +57,8 @@ function makeLogFromItems(itemList: ZLibraryContents, asRecentAs = 7){
 			recent.setHours(0,0,0);
 			
 			const dateView = items.reduce<ZDataViewContents>((log, item) => {
-				const itemKey = item.key;
-				const location = item.library.type + "s/" + item.library.id;
-				const creator = item.meta.creatorSummary || "";
-				const pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
-
 				// Obtain data for the item's Roam page (if it exists)
-				const rPage = citPages.get("@" + itemKey);
+				const rPage = citPages.get("@" + item.key);
 				const { edited = null, uid = false } = rPage || {};
 				const zotero_last_edit = new Date(item.data.dateModified);
 				const last_combined_edit = new Date(Math.max(...[edited, zotero_last_edit].filter(AsBoolean).map(d => Number(d))));
@@ -40,23 +66,7 @@ function makeLogFromItems(itemList: ZLibraryContents, asRecentAs = 7){
 				if(last_combined_edit <= recent){
 					return log;
 				} else {
-					// Find the item's children (PDFs/notes/annotations) in the library
-					const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
-
-					// Push simplified data to the log
-					const entry: ZLogItem = {
-						abstract: item.data.abstractNote || "",
-						children,
-						edited: last_combined_edit,
-						inGraph: uid,
-						itemType: item.data.itemType,
-						key: itemKey,
-						location,
-						meta: [creator, pub_year].filter(AsBoolean).join(" "),
-						publication: item.data.publicationTitle || item.data.bookTitle || item.data.university || "",
-						raw: item,
-						title: item.data.title || "",
-					};
+					const entry = createLogItem(item, { edited: last_combined_edit, inGraph: uid, notes, pdfs });
 
 					if(last_combined_edit > today) {
 						log.today.push(entry);
@@ -89,5 +99,6 @@ function makeLogFromItems(itemList: ZLibraryContents, asRecentAs = 7){
 }
 
 export {
+	createLogItem,
 	makeLogFromItems
 };

@@ -1,51 +1,51 @@
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
-const { merge } = require("webpack-merge");
+const { mergeWithRules } = require("webpack-merge");
 const baseConfig = require("./webpack.config");
 
-module.exports = merge(baseConfig, {
-    devtool: false,
-    experiments: {
-        outputModule: true,
-    },
-    externals: {
-        "@blueprintjs/core": ["Blueprint", "Core"],
-        "@blueprintjs/datetime": ["Blueprint", "DateTime"],
-        "@blueprintjs/select": ["Blueprint", "Select"],
+module.exports = mergeWithRules({
+	module: {
+		rules: "replace"
+	}
+})(baseConfig, {
+	devtool: false,
+	experiments: {
+		outputModule: true,
+	},
+	externals: {
+		"@blueprintjs/core": ["Blueprint", "Core"],
+		"@blueprintjs/datetime": ["Blueprint", "DateTime"],
+		"@blueprintjs/select": ["Blueprint", "Select"],
 		"idb": "idb",
-        react: "React",
-        "react-dom": "ReactDOM",
-    },
-    externalsType: "window",
-    entry: path.resolve("loader.js"),
-    optimization: {
-        minimizer: [
-            `...`,
-            new CssMinimizerPlugin(),
-        ],
-        splitChunks: {
-            cacheGroups: {
-                styles: {
-                    name: "styles",
-                    type: "css/mini-extract",
-                    chunks: "all",
-                    enforce: true,
-                },
-            },
-        },
-    },
-    performance: {
-        maxAssetSize: 2000000,
-        maxEntrypointSize: 2000000
-    },
-    output: {
+		react: "React",
+		"react-dom": "ReactDOM",
+	},
+	externalsType: "window",
+	entry: path.resolve("loader.tsx"),
+	optimization: {
+		minimizer: [
+			`...`,
+			new CssMinimizerPlugin(),
+		],
+		splitChunks: {
+			cacheGroups: {
+				styles: {
+					name: "styles",
+					type: "css/mini-extract",
+					chunks: "all",
+					enforce: true,
+				},
+			},
+		},
+	},
+	output: {
 		path: path.resolve("."),
 		filename: "extension.js",
-        library: {
-            type: "module",
-        }
-    },
+		library: {
+			type: "module",
+		}
+	},
     plugins: [
         new MiniCssExtractPlugin({
             filename: "extension.css",
@@ -55,7 +55,7 @@ module.exports = merge(baseConfig, {
         rules: [
 			{
 				test: /\.[tj]sx?$/,
-				include: [path.resolve("src"), path.resolve("loader.js")],
+				include: [path.resolve("src"), path.resolve("loader.tsx")],
 				use: {
 					loader: "babel-loader",
 					options: {
@@ -63,20 +63,10 @@ module.exports = merge(baseConfig, {
 					}
 				}
 			},
-            {
-                test: /\.css$/,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader
-                    }, 
-                    {
-                        loader: "css-loader",
-                        options: {
-                            sourceMap: false
-                        }
-                    }
-                ],
-            },
+			{
+				test: /\.(sa|sc|c)ss$/i,
+				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+			}
         ],
-    },
+	}
 });

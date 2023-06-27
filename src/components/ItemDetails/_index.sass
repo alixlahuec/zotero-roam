@@ -1,0 +1,97 @@
+@use "Styles/base"
+
+
+#zr-item-details
+    display: flex
+    width: 100%
+
+    @media (max-width: 600px)
+        flex-direction: column 
+        max-height: 80vh
+        overflow-y: scroll
+
+    & > *
+        max-height: 80vh
+        overflow-y: scroll
+
+        &::-webkit-scrollbar
+            width: 0px
+
+        @media (max-width: 600px)
+            max-height: none
+
+    [zr-role="item-metadata"]
+        border-bottom-left-radius: 6px
+        color: var(--zr-text-co)
+        flex: 1 0 66%
+        padding: 10px 4%
+
+    [zr-role="item-metadata--header"]
+        display: flex
+        flex-wrap: wrap
+        font-size: 0.9em
+
+        h5
+            margin-bottom: 5px
+            width: 100%
+
+    [zr-role="item-weblink"]
+        display: block
+        /* To prevent weird resizing of flex container on smaller displays */
+        overflow-wrap: anywhere
+        /* --- */
+        width: 100%
+
+    [zr-role="item-abstract"]:not(:empty)
+        background: var(--zr-box-bg)
+        margin: 5px 0px
+        padding: 10px 2.5%
+
+    [zr-role="item-actions"]
+        @include base.accentBox
+        border-bottom-right-radius: 6px
+        flex: 0 1 34%
+        padding-top: 10px
+
+        & > ul > li
+            font-weight: 500
+
+        .bp3-overlay
+            font-weight: normal
+
+        .bp3-menu
+            background: none
+
+        .bp3-menu-item 
+            & > .bp3-icon:first-child
+                color: hsla(var(--zr-accent-1-hsl), 40%)
+
+    [zr-role="metadata-col"],
+    [zr-role="metadata-row"]
+        display: flex
+        font-size: 0.9em
+        margin: 10px 0px
+
+    [zr-role="metadata-col"]
+        flex-wrap: wrap
+
+        span, div
+            flex: 0 0 100%
+
+    [zr-role="metadata-row"]
+        align-items: baseline
+        justify-content: space-between
+
+        span
+            flex: 1 0 25%
+            min-width: auto
+
+        div
+            flex: 0 1 80%
+
+        .bp3-tag
+            margin-bottom: 5px
+            margin-right: 3px
+
+            &.bp3-minimal:not([class*="bp3-intent"])
+                @include base.accentBox

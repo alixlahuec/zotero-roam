@@ -39,7 +39,7 @@ export default {
 	parameters: {
 		userSettings: {
 			copy: {
-				useQuickCopy: false,
+				useQuickCopy: false
 			},
 			shortcuts: {
 				focusSearchBar: "alt+F",

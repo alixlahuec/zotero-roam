@@ -1,13 +1,17 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
-const { merge } = require("webpack-merge");
+const { mergeWithRules } = require("webpack-merge");
 const baseDevConfig = require("./webpack.dev.config");
 
-module.exports = merge(baseDevConfig, {
+module.exports = mergeWithRules({
+	module: {
+		rules: "replace"
+	}
+})(baseDevConfig, {
 	experiments: {
 		outputModule: true,
 	},
-	entry: path.resolve("loader.js"),
+	entry: path.resolve("loader.tsx"),
 	output: {
 		path: path.resolve("."),
 		filename: "extension.js",
@@ -25,7 +29,7 @@ module.exports = merge(baseDevConfig, {
 		rules: [
 			{
 				test: /\.[tj]sx?$/,
-				include: [path.resolve("src"), path.resolve("loader.js")],
+				include: [path.resolve("src"), path.resolve("loader.tsx")],
 				use: {
 					loader: "babel-loader",
 					options: {
@@ -34,13 +38,19 @@ module.exports = merge(baseDevConfig, {
 				}
 			},
 			{
-				test: /\.css$/,
+				test: /\.(sa|sc|c)ss$/,
 				use: [
 					{
 						loader: MiniCssExtractPlugin.loader
 					},
 					{
 						loader: "css-loader",
+						options: {
+							sourceMap: false
+						}
+					},
+					{
+						loader: "sass-loader",
 						options: {
 							sourceMap: false
 						}

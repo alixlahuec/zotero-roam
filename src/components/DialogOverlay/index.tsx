@@ -1,11 +1,11 @@
-import { FC, useContext, useMemo } from "react";
+import { FC, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Classes, Dialog, DialogProps } from "@blueprintjs/core";
 
-import { ExtensionContext } from "Components/App";
+import { useExtensionContext } from "Components/App";
 
 import { CustomClasses } from "../../constants";
-import "./index.css";
+import "./_index.sass";
 
 
 type OwnProps = {
@@ -27,7 +27,7 @@ const DialogOverlay: FC<DialogOverlayProps> = (props) => {
 		onOpening,
 		...otherProps
 	} = props;
-	const { portalId } = useContext(ExtensionContext);
+	const { portalId } = useExtensionContext();
     
 	const dialog_class = useMemo(() => CustomClasses.PREFIX_DIALOG_OVERLAY + dialogClass, [dialogClass]);
 	const mainPanelStyle = useMemo(() => {

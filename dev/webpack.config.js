@@ -3,7 +3,7 @@ const path = require("path");
 module.exports = {
 	context: path.resolve(__dirname, '../'),
 	devtool: "source-map",
-	entry: path.resolve("src", "index.js"),
+	entry: path.resolve("src", "index.tsx"),
 	output: {
 		path: path.resolve("dist"),
 		filename: "zoteroRoam.min.js",
@@ -14,9 +14,10 @@ module.exports = {
             "Mocks": path.resolve("mocks"),
             "Roam": path.resolve("src", "roam.ts"),
 			"Components": path.resolve("src", "components"),
+			"Styles": path.resolve("styles"),
 			"Types": path.resolve("src", "types")
         },
-		extensions: [".js", ".jsx", ".ts", ".tsx", ".css"]
+		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sass"]
 	},
 	mode: "production",
 	module: {
@@ -32,8 +33,8 @@ module.exports = {
 				}
 			},
 			{
-				test: /\.css$/i,
-				use: ["style-loader", "css-loader"]
+				test: /\.(sa|sc|c)ss$/i,
+				use: ["style-loader", "css-loader", "sass-loader"],
 			}
 		]
     },

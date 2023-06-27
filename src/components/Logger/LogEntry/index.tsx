@@ -8,7 +8,7 @@ import { makeTimestamp } from "../../../utils";
 import { useBool } from "../../../hooks";
 
 import { CustomClasses } from "../../../constants";
-import "./index.css";
+import "./_index.sass";
 
 
 type OwnProps = {
@@ -38,7 +38,7 @@ const LogEntry = memo<OwnProps>(function LogEntry({ log }){
 		</div>
 		<div className="zr-log--details">
 			{hasContext && <Collapse isOpen={isContextOpen}>
-				<pre className={Classes.CODE_BLOCK}>{JSON.stringify(log.context, null, "  ")}</pre>
+				<pre className={[Classes.CODE_BLOCK, CustomClasses.TEXT_AUXILIARY].join(" ")}>{JSON.stringify(log.context, null, "  ")}</pre>
 			</Collapse>}
 		</div>
 	</ListItem>;

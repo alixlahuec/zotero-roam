@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { InputGroup, InputGroupProps2 } from "@blueprintjs/core";
+import { CustomClasses } from "../../constants";
 
 
 interface OwnProps {
@@ -10,7 +11,7 @@ interface OwnProps {
 function InputText({ value, setValue }: OwnProps) {
 	const handleValueChange = useCallback<NonNullable<InputGroupProps2["onChange"]>>((event) => setValue(event.target.value), [setValue]);
 	return <InputGroup 
-		className="zr-text-input"
+		className={[CustomClasses.INPUT_BOX, CustomClasses.INPUT_TEXT].join(" ")}
 		onChange={handleValueChange} 
 		placeholder="Enter text"
 		value={value} />;

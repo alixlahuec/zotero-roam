@@ -1,0 +1,76 @@
+#zotero-roam-search-autocomplete
+    background: var(--zr-box-bg)
+    border-bottom: 1px var(--zr-border-co) solid
+    box-shadow: none
+    color: var(--zr-auxiliary)
+    font-size: 13px
+
+    &::placeholder
+        opacity: 0.8
+
+    &:focus
+        box-shadow: none
+
+label.zr-quick-copy
+    font-weight: var(--zr-secondary-fw)
+    font-size: var(--zr-text-small)
+    margin-bottom: 0px
+
+    .roam-body.mobile + #zotero-roam-portal &
+        display: none
+
+/* QueryList */
+
+.zr-library-search-input-group.bp3-input
+    background: none
+    box-shadow: none
+    padding: unset
+
+    .bp3-input-left-container > *
+        margin-right: 10px
+
+    .bp3-input-action
+        display: flex
+        align-items: center
+
+
+#zotero-roam-library-rendered
+    .bp3-menu
+        max-height: 70vh
+        overflow-y: scroll
+        background: unset
+        padding: 0px
+
+        &::-webkit-scrollbar
+            width: 0px
+
+    .zr-querylist--more-results
+        border-top: 1px var(--zr-border-co) solid
+        color: var(--zr-accent-2)
+        font-size: var(--zr-text-small)
+        font-weight: 500
+        padding: 3px 10px
+
+    .zotero-roam-search_result
+        padding: 3px 10px
+        font-size: 0.9em
+
+        .zr-library-item--key
+            flex: 0 0 auto
+            padding: 0px 6px
+            font-size: var(--zr-text-small)
+            text-align: right
+
+        &[data-in-graph="true"] .zr-library-item--key
+            background-color: var(--zr-positive-bg)
+            border-radius: 3px
+            color: var(--zr-positive-co)
+            font-weight: 500
+
+        .zr-library-item--title
+            display: block
+            font-weight: 500
+
+    .zr-library-item--contents
+        color: var(--zr-text-co)
+        white-space: normal

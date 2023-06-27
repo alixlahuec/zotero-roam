@@ -1,0 +1,48 @@
+@use "Styles/base"
+
+
+.import-header
+    margin-bottom: 20px
+    margin-top: 5px
+
+
+.import-options
+    color: var(--zr-text-co)
+    display: flex
+    flex-wrap: wrap
+    justify-content: space-between
+
+    .bp3-input.bp3-multi-select
+        @include base.neutralBox($border-width: 1px)
+        box-shadow: none
+        font-size: var(--zr-text-small)
+        margin: 20px 0px
+
+
+.options
+    &-library-list, &-collections-list
+        flex: 1 0 50%
+        word-break: break-word
+
+    &-library-list
+        label
+            font-weight: 600
+
+    &-collections-list
+        max-height: 50vh
+        overflow-y: scroll
+        padding-top: 2px
+
+        &::-webkit-scrollbar
+            width: 0.2em
+
+        label
+            font-weight: 400
+            margin-left: 40px
+            margin-bottom: 0px
+
+            &.depth-0
+                margin-left: 0px
+
+            &.depth-1
+                margin-left: 20px

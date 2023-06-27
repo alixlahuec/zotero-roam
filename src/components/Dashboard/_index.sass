@@ -1,0 +1,33 @@
+@use "Styles/base"
+
+
+.zr-auxiliary-dialog--dashboard.bp3-dialog
+    --zr-dialog-gutter: 2.5%
+    --zr-dialog-margin: 15vw
+    height: 90vh
+    overflow-y: scroll
+
+
+.zr-dashboard-tabs-wrapper > .bp3-tab-list
+    background: var(--zr-box-bg)
+    border-right: 1px var(--zr-border-co) solid
+    height: 90vh
+    padding: 3px
+
+
+.zr-dashboard-panel.bp3-tab-panel
+    max-height: 90vh
+    overflow-y: scroll
+    padding: 0.5em 1em
+    width: 100%
+
+
+    &::-webkit-scrollbar
+        width: 0px
+
+.zr-dashboard--main .zr-datalist--listwrapper
+    max-height: none
+
+
+.zr-dashboard--library-select.bp3-button.bp3-minimal
+    @include base.accentBox($border-width: 1px)
