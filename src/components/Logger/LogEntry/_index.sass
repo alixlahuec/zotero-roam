@@ -1,0 +1,34 @@
+.zr-logger--entry
+    color: var(--zr-text-co)
+    padding: 2px 5px
+
+.zr-log
+
+    &--header
+        align-items: center
+        display: flex
+        padding: 0px
+
+    &--metadata
+        display: flex
+        flex: 2 0 33%
+        justify-content: space-evenly
+
+        & > *
+            flex: 0 0 30%
+
+    &--timestamp
+        padding: 0px 6px
+
+    &--timestamp,
+    &--level
+        text-align: center
+
+    &--summary
+        align-items: center
+        display: flex
+        flex: 0 2 66%
+        justify-content: space-between
+
+        & > div > *
+            margin-right: 10px

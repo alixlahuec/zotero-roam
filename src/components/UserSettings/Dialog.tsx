@@ -10,7 +10,7 @@ import { CustomClasses } from "../../constants";
 import { SETTINGS_CONFIG } from "./mapping";
 import { camelToTitleCase } from "../../utils";
 
-import "./index.css";
+import "./_index.sass";
 
 
 const tabProps = {

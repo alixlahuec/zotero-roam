@@ -55,7 +55,7 @@ function FilterSelect({ options, toggleFilter }: OwnProps){
 		popoverProps={popoverProps}
 		{...staticProps}
 	>
-		<Button active={options.some(op => op.active)} className={CustomClasses.TEXT_SECONDARY} intent="primary" minimal={true} rightIcon={nbSelectedFilters > 0 ? <Tag intent="primary">{nbSelectedFilters}</Tag> : "caret-down"} text="Filter" />
+		<Button className={CustomClasses.TEXT_SECONDARY} minimal={true} outlined={true} rightIcon={nbSelectedFilters > 0 ? <Tag minimal={true}>{nbSelectedFilters}</Tag> : "caret-down"} text="Filter" />
 	</Select>;
 }
 

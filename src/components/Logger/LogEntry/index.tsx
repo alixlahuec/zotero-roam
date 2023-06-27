@@ -8,7 +8,7 @@ import { makeTimestamp } from "../../../utils";
 import { useBool } from "../../../hooks";
 
 import { CustomClasses } from "../../../constants";
-import "./index.css";
+import "./_index.sass";
 
 
 type OwnProps = {

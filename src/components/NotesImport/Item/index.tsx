@@ -7,7 +7,7 @@ import { formatItemNotes, simplifyZoteroAnnotations } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
 import { ZItemAnnotation, ZItemNote, isZNote } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 function Annotation({ annotation }: { annotation: ZItemAnnotation}){

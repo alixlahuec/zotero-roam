@@ -3,7 +3,7 @@ import { ProgressBar } from "@blueprintjs/core";
 
 import { CustomClasses } from "../../../../constants";
 import { ZTagStats } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 type OwnProps = {

@@ -5,7 +5,7 @@ import { Classes, Dialog, DialogProps } from "@blueprintjs/core";
 import { useExtensionContext } from "Components/App";
 
 import { CustomClasses } from "../../constants";
-import "./index.css";
+import "./_index.sass";
 
 
 type OwnProps = {

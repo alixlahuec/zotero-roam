@@ -10,7 +10,7 @@ import { useQuery_Items } from "../../api/queries";
 import { CustomClasses } from "../../constants";
 import { TributeJS } from "Types/externals/tribute";
 import { QueryDataItems, isZItemTop } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 import { DataRequest, ZItemReferenceFormat } from "Types/extension";
 
 

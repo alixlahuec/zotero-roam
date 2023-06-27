@@ -1,0 +1,100 @@
+.zr-webimport-div
+    position: absolute
+    right: 0px
+    opacity: 0.7
+    z-index: 10
+
+
+.zr-auxiliary-dialog--webimport.bp3-dialog
+    --zr-dialog-gutter: 2.5%
+    --zr-dialog-margin: 22vw
+    transition: 0.5s
+
+    @media (max-width: 1000px)
+        .bp3-dialog-container > &
+            --zr-dialog-gutter: 1.5%
+            --zr-dialog-margin: 11vw
+
+    & > .bp3-dialog-body
+        display: flex
+
+    &.has-selected-items
+        width: calc(100% - 2*var(--zr-dialog-gutter) - var(--zr-dialog-margin))
+
+        .zr-webimport-panel--side
+            flex: 1 0 var(--zr-dialog-margin)
+            display: block
+            padding: 0px 8px
+
+            @media (max-width: 1000px)
+                flex: 1 0 calc(2.5*var(--zr-dialog-margin))
+
+    .zr-webimport-panel--side
+        flex: 0 0 0%
+        overflow: auto
+        transition: 0.5s
+
+        @media (max-width: 1000px)
+            .import-options > *
+                max-width: 100%
+
+        .zr-input-tags.bp3-popover2-target
+            width: 100%
+
+    .zr-webimport-panel--main
+        flex: 1 1 auto
+        padding-bottom: 20px
+
+
+.zr-webimport-item
+    background: var(--zr-box-bg)
+    border: 1px var(--zr-border-co) solid
+    border-radius: 5px
+    margin-bottom: 15px
+    padding: 5px
+
+
+    & > .bp3-menu-item
+        flex-wrap: wrap
+
+        &:hover 
+            background-color: unset
+
+    &--title.bp3-checkbox.bp3-control
+        font-weight: normal
+        margin-bottom: 0px
+
+        label a
+            font-weight: 500
+
+        .bp3-control-indicator
+            background-image: none
+            border-radius: 8px
+            box-shadow: none
+            outline: hsla(var(--zr-accent-1-hsl), 75%) dotted 1px
+
+            &, &::before
+                height: 0.9em
+                width: 0.9em
+
+            input:checked ~ &
+                background-color: hsla(var(--zr-accent-1-hsl), 75%)
+                outline-style: auto
+
+    &--contents, &--header
+        align-items: baseline
+        display: flex
+        flex: 0 0 100%
+        justify-content: space-between
+
+    &--contents
+        flex-wrap: wrap
+        padding-left: 25px
+
+        [zr-role="item-abstract"]
+            display: block
+            flex: 0 0 100%
+            margin-top: 5px
+
+    &--header [zr-role="item-type"]
+        flex: 0 0 auto

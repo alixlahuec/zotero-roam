@@ -13,7 +13,7 @@ import { makeLogFromItems } from "./utils";
 
 import { CustomClasses } from "../../../constants";
 import { ZDataViewContents, ZLibraryContents, ZLogItem } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 type LogViewSublistProps = {

@@ -1,0 +1,45 @@
+.zr-drawer--notes-card
+    flex: 0 0 auto
+    margin: 10px
+    padding: 20px
+
+    [zr-dark-theme="true"] &
+        background-color: none
+
+    &:not(:first-child)
+        border-top: 2px var(--zr-border-co) dotted
+
+    [zr-role="card-header"], 
+    [zr-role="card-footer"]
+        align-items: center
+        display: flex
+
+    [zr-role="card-header"]
+        justify-content: space-between
+
+        .bp3-button, .bp3-tag.bp3-minimal
+            color: var(--zr-text-co)
+
+        .bp3-tag
+            margin-right: 5px
+
+    [zr-role="card-footer"]
+        justify-content: end
+
+
+.zr-note--contents
+    padding: 10px
+
+.zr-annotation
+    &--highlight, &--comment
+        @extend .zr-note--contents
+
+    &--comment
+        .bp3-icon
+            margin-right: 5px
+
+    &--highlight
+        & > span
+            background-repeat: no-repeat
+            background-size: 100% 95%
+            font-family: monospace

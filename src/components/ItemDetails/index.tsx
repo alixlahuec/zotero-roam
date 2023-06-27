@@ -17,7 +17,7 @@ import { useBool } from "../../hooks";
 import { CustomClasses } from "../../constants";
 import { AsBoolean } from "Types/helpers";
 import { ZCleanItemTop } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 type ItemCopyFormat = "citation" | "citekey" | "page-reference" | "tag";

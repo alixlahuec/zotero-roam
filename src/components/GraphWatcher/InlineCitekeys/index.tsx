@@ -14,7 +14,7 @@ import { importItemMetadata } from "Roam";
 
 import { DataRequest } from "Types/extension";
 import { QueryDataItems, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 type Citekey = string;

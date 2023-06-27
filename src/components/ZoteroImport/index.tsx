@@ -18,7 +18,7 @@ import { ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
 import { ZLibrary } from "Types/transforms";
 
-import "./index.css";
+import "./_index.sass";
 
 
 type ImportButtonOwnProps = {

@@ -13,7 +13,7 @@ import { makeTimestamp } from "../../utils";
 import { ExtensionStatusEnum } from "Types/extension";
 import { AsBoolean } from "Types/helpers";
 import { QueryDataCollections, QueryDataItems, QueryDataPermissions, QueryDataTags } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 type QueriesList = {

@@ -1,6 +1,6 @@
 import { Tag } from "@blueprintjs/core";
 
-import "./index.css";
+import "./_index.sass";
 
 
 type OwnProps = {

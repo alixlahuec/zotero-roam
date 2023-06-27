@@ -12,7 +12,7 @@ import { useQuery_Items } from "../../../api/queries";
 import { categorizeLibraryItems } from "../../../utils";
 import { cleanRelatedItem } from "./utils";
 
-import "./index.css";
+import "./_index.sass";
 import { SCleanRelatedItem } from "Types/transforms";
 
 

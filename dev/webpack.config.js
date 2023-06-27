@@ -14,6 +14,7 @@ module.exports = {
             "Mocks": path.resolve("mocks"),
             "Roam": path.resolve("src", "roam.ts"),
 			"Components": path.resolve("src", "components"),
+			"Styles": path.resolve("styles"),
 			"Types": path.resolve("src", "types")
         },
 		extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sass"]

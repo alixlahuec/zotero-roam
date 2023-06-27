@@ -1,0 +1,45 @@
+.zr-sort-option
+    color: var(--zr-text-co)
+    padding: 3px 10px
+
+    &:first-child
+        padding-left: 0px
+
+    &:last-child
+        padding-right: 0px
+
+    label
+        color: var(--zr-text-co)
+        cursor: pointer
+        display: inline-block
+        font-weight: 400
+        margin-bottom: 0px
+        opacity: 0.85
+        padding-bottom: 3px
+        text-align: center
+        width: auto
+
+    input
+        &, &:focus
+            appearance: none
+            outline: none
+
+        &:checked ~ label
+            border-bottom: 1px hsla(var(--zr-accent-1-hsl), 50%) solid
+
+        &:checked ~ span, 
+        &:checked ~ label
+            cursor: default
+            font-weight: 600
+            opacity: 1
+
+    span.bp3-icon
+        margin: 0px 2px
+        opacity: 0.7
+        padding-right: 5px
+
+/* DARK THEME */
+
+[zr-dark-theme="true"] .zr-sort-option input:checked ~ span,
+[zr-dark-theme="true"] .zr-sort-option input:checked ~ label
+    color: var(--zr-accent-1)

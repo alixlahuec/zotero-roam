@@ -13,7 +13,7 @@ import { usePagination } from "../../../../hooks";
 import { CustomClasses } from "../../../../constants";
 import { TagManagerFilter, TagManagerSortBy } from "../types";
 import { ZLibrary, ZTagEntry, ZTagList, ZTagStats } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 const itemsPerPage = 30;

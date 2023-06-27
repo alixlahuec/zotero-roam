@@ -13,7 +13,7 @@ import { useMulti } from "../../hooks";
 
 import { CustomClasses } from "../../constants";
 import { ZItemAnnotation, ZItemNote, ZItemTop } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 type NotesListProps = {

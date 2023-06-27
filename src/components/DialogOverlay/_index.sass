@@ -1,0 +1,22 @@
+.bp3-dialog[class*="zr-dialog-overlay--"]
+    --zr-dialog-gutter: 2.5%
+    --zr-dialog-margin: 16vw
+    align-self: baseline
+    background: var(--zr-dialog-bg)
+    box-shadow: none
+    margin-left: calc(var(--zr-dialog-margin) + var(--zr-dialog-gutter))
+    padding-bottom: 0px
+    width: calc(100% - 2*(var(--zr-dialog-margin) + var(--zr-dialog-gutter)))
+
+    @media (max-width: 1000px)
+        --zr-dialog-gutter: 2.5%
+        --zr-dialog-margin: 10vw
+
+    @media (max-width: 700px)
+        --zr-dialog-gutter: 2.5%
+        --zr-dialog-margin: 5vw
+
+    & > .bp3-dialog-body
+        flex-wrap: nowrap
+        display: flex
+        margin: 0px

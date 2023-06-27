@@ -43,6 +43,7 @@ const config: StorybookConfig = {
 					"Mocks": path.resolve(__dirname, "..", "mocks"),
 					"Roam": path.resolve(__dirname, "..", "mocks", "roam.ts"),
 					"Components": path.resolve(__dirname, "..", "src", "components"),
+					"Styles": path.resolve(__dirname, "..", "styles"),
 					"Types": path.resolve(__dirname, "..", "src", "types")
 				}
 			}

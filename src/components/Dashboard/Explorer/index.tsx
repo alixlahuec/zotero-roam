@@ -12,7 +12,7 @@ import { categorizeLibraryItems } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
 import { ZLibraryContents } from "Types/transforms";
-import "./index.css";
+import "./_index.sass";
 
 
 enum TabsEnum {

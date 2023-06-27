@@ -1,0 +1,65 @@
+#zotero-roam-icon
+    &[data-extension-status="on"][data-fetching-status="ready"]
+        background-color: #60f06042
+
+    &[data-fetching-status="loading"] > .bp3-icon,
+    &[data-extension-status="disabled"].bp3-button.bp3-disabled > .bp3-icon
+        color: #f7c99b!important
+
+    &[data-fetching-status="error"] > .bp3-icon
+        color: #b71c1c
+
+
+.zr-icon-tooltip
+    &.bp3-tooltip2
+        & > .bp3-popover2-content > span:first-child
+            display: block
+
+        .bp3-popover2-arrow-fill
+            fill: var(--zr-dialog-bg)
+
+        .bp3-popover2-content
+            background: var(--zr-dialog-bg)
+            color: var(--zr-auxiliary)
+
+            .bp3-control.bp3-switch
+                align-items: center
+                display: flex
+                flex-direction: row-reverse
+                justify-content: space-between
+                margin-bottom: 0px
+
+            a
+                color: var(--zr-text-co)
+
+    &-footer
+        line-height: 1.7
+
+
+.zr-icon-tooltip-footer--row,
+li.zr-queries-status
+    display: flex
+    justify-content: space-between
+    align-items: baseline
+
+
+.zr-queries-status
+    [zr-role="entry"]
+        color: var(--zr-auxiliary)
+        font-weight: 500
+
+    [zr-role="status"]
+        align-items: center
+        display: flex
+
+        & > button
+            min-height: 16px
+
+    [zr-role="timestamp"]
+        color: var(--zr-secondary-co)
+        margin-left: 14px
+        margin-right: 8px
+
+
+.zr-version-tag
+  margin-left: 10px
