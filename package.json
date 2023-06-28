@@ -47,6 +47,18 @@
         "*.sass",
         "src/index.tsx"
     ],
+    "babel": {
+        "presets": [
+            "@babel/preset-env",
+            [
+                "@babel/preset-react",
+                {
+                    "runtime": "automatic"
+                }
+            ],
+            "@babel/preset-typescript"
+        ]
+    },
     "jest-runner-eslint": {
         "cliOptions": {
             "fix": true
@@ -99,7 +111,6 @@
         "sass": "^1.63.6",
         "sass-loader": "^13.3.2",
         "storybook": "^7.0.23",
-        "storybook-addon-swc": "^1.2.0",
         "storybook-mock-date-decorator": "^1.0.0",
         "style-loader": "^3.3.3",
         "swc-loader": "^0.2.3",

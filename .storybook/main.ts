@@ -18,8 +18,7 @@ const config: StorybookConfig = {
 					implementation: require('sass'),
 				},
 			},
-		},
-		"storybook-addon-swc"
+		}
 	],
 	framework: {
 		name: "@storybook/react-webpack5",
