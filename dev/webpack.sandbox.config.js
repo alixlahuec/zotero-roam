@@ -21,12 +21,7 @@ module.exports = merge(baseConfig, {
 			{
 				test: /\.[tj]sx?$/,
 				include: [path.resolve("src"), path.resolve("mocks"), path.resolve("sandbox.ts")],
-				use: {
-					loader: "babel-loader",
-					options: {
-						presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"]
-					}
-				}
+				use: "swc-loader"
 			}
 		]
 	},
