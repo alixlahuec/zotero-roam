@@ -111,7 +111,7 @@
         "msw": "^0.49.3",
         "msw-storybook-addon": "^1.8.0",
         "release-it": "^16.1.5",
-        "sass": "^1.63.6",
+        "sass": "^1.66.1",
         "sass-loader": "^13.3.2",
         "storybook": "^7.3.2",
         "storybook-mock-date-decorator": "^1.0.1",
