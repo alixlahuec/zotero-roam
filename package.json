@@ -47,18 +47,6 @@
         "*.sass",
         "src/index.tsx"
     ],
-    "babel": {
-        "presets": [
-            "@babel/preset-env",
-            [
-                "@babel/preset-react",
-                {
-                    "runtime": "automatic"
-                }
-            ],
-            "@babel/preset-typescript"
-        ]
-    },
     "jest-runner-eslint": {
         "cliOptions": {
             "fix": true
