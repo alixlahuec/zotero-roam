@@ -33,7 +33,8 @@ const config: StorybookConfig = {
 	/* eslint-disable-next-line require-await */
 	babel: async (config) => {
 		return {
-			"presets": [
+			...config,
+			presets: [
 				"@babel/preset-env",
 				[
 					"@babel/preset-react",
@@ -42,8 +43,7 @@ const config: StorybookConfig = {
 					}
 				],
 				"@babel/preset-typescript"
-			],
-			...config
+			]
 		};
 	},
 	/* eslint-disable-next-line require-await */
