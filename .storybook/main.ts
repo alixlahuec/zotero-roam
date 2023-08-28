@@ -31,6 +31,22 @@ const config: StorybookConfig = {
 	},
 	staticDirs: ["../public"],
 	/* eslint-disable-next-line require-await */
+	babel: async (config) => {
+		return {
+			"presets": [
+				"@babel/preset-env",
+				[
+					"@babel/preset-react",
+					{
+						"runtime": "automatic"
+					}
+				],
+				"@babel/preset-typescript"
+			],
+			...config
+		};
+	},
+	/* eslint-disable-next-line require-await */
 	webpackFinal: async (config) => {
 		return {
 			...config,
