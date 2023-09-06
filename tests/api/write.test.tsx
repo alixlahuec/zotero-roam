@@ -2,14 +2,23 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react-hooks";
 
 import { mock } from "jest-mock-extended";
-import * as apiUtils from "../../src/api/utils";
-import { fetchItems, fetchTags } from "../../src/api/utils";
+import { deleteTags, fetchItems, fetchTags, writeItems } from "../../src/api/utils";
 import { useDeleteTags, useImportCitoids, useModifyTags } from "../../src/api/write";
 
 import { apiKeys, citoids, goodIdentifier, libraries } from "Mocks";
 import { DataRequest } from "Types/extension";
 import { isFulfilled } from "Types/helpers";
 
+
+jest.mock("../../src/api/utils", () => {
+	const originalModule = jest.requireActual("../../src/api/utils");
+
+	return {
+		...originalModule,
+		deleteTags: jest.fn(originalModule.deleteTags),
+		writeItems: jest.fn(originalModule.writeItems)
+	};
+});
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { groupLibrary, userLibrary } = libraries;
@@ -41,8 +50,6 @@ describe("Mutation hooks for the Zotero API", () => {
 	afterEach(() => queryClient.clear());
 
 	describe("useDeleteTags", () => {
-		const deleteTagsSpy = jest.spyOn(apiUtils, "deleteTags");
-
 		beforeEach(() => {
 			return fetchTags({ apikey: masterKey, path: userLibrary.path })
 				.then((mockData) => queryClient.setQueryData(["tags", { library: userLibrary.path }], () => mockData));
@@ -60,7 +67,7 @@ describe("Mutation hooks for the Zotero API", () => {
 			});
 			await waitFor(() => result.current.status == "success");
 
-			expect(deleteTagsSpy).toHaveBeenCalledWith(
+			expect(deleteTags).toHaveBeenCalledWith(
 				["systems"],
 				{ apikey: masterKey, path: userLibrary.path },
 				userLibrary.version
@@ -95,8 +102,6 @@ describe("Mutation hooks for the Zotero API", () => {
 	});
 
 	describe("useImportCitoids", () => {
-		const writeItemsSpy = jest.spyOn(apiUtils, "writeItems");
-
 		test("args passed to writeItems", async () => {
 			const library = { apikey: masterKey, path: userLibrary.path };
 			const { result, waitFor } = renderHook(() => useImportCitoids(), { wrapper });
@@ -112,7 +117,7 @@ describe("Mutation hooks for the Zotero API", () => {
 			});
 			await waitFor(() => result.current.status == "success");
 
-			expect(writeItemsSpy).toHaveBeenCalledWith(
+			expect(writeItems).toHaveBeenCalledWith(
 				[
 					{
 						...citoids[goodIdentifier],
@@ -161,7 +166,6 @@ describe("Mutation hooks for the Zotero API", () => {
 	});
 
 	describe("useModifyTags", () => {
-		const writeItemsSpy = jest.spyOn(apiUtils, "writeItems");
 		const sample_req = mock<DataRequest>({ apikey: masterKey, dataURI: `${groupLibrary.path}/items`, library: { path: groupLibrary.path } });
 
 		beforeEach(() => {
@@ -185,7 +189,7 @@ describe("Mutation hooks for the Zotero API", () => {
 			});
 			await waitFor(() => result.current.status == "success");
 
-			expect(writeItemsSpy).toHaveBeenCalledWith(
+			expect(writeItems).toHaveBeenCalledWith(
 				[{ key: "D53X926C", version: 17, tags: [{ tag: "HOUSING", type: 0 }] }],
 				{ apikey: masterKey, path: groupLibrary.path }
 			);

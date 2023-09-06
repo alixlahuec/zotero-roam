@@ -18,7 +18,7 @@ const config: StorybookConfig = {
 					implementation: require('sass'),
 				},
 			},
-		},
+		}
 	],
 	framework: {
 		name: "@storybook/react-webpack5",
@@ -27,6 +27,22 @@ const config: StorybookConfig = {
 		}
 	},
 	staticDirs: ["../public"],
+	/* eslint-disable-next-line require-await */
+	babel: async (config) => {
+		return {
+			...config,
+			presets: [
+				"@babel/preset-env",
+				[
+					"@babel/preset-react",
+					{
+						"runtime": "automatic"
+					}
+				],
+				"@babel/preset-typescript"
+			]
+		};
+	},
 	/* eslint-disable-next-line require-await */
 	webpackFinal: async (config) => {
 		return {

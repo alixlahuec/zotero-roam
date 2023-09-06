@@ -30,12 +30,7 @@ module.exports = mergeWithRules({
 			{
 				test: /\.[tj]sx?$/,
 				include: [path.resolve("src"), path.resolve("loader.tsx")],
-				use: {
-					loader: "babel-loader",
-					options: {
-						presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"]
-					}
-				}
+				use: "swc-loader"
 			},
 			{
 				test: /\.(sa|sc|c)ss$/,

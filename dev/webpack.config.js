@@ -25,12 +25,7 @@ module.exports = {
 			{
 				test: /\.[tj]sx?$/,
 				include: path.resolve("src"),
-				use: {
-					loader: "babel-loader",
-					options: {
-						presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"]
-					}
-				}
+				use: "swc-loader"
 			},
 			{
 				test: /\.(sa|sc|c)ss$/i,
