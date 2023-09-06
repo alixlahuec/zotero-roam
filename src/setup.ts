@@ -121,8 +121,7 @@ export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserD
 }
 
 /* istanbul ignore next */
-/** Creates a persister that can be used for writing a React Query client to the IndexedDB cache.
- */
+/** Creates a persister that can be used for writing a React Query client to the IndexedDB cache. */
 export function createPersisterWithIDB(database: IDBDatabase){
 	const indexedDbKey = IDB_REACT_QUERY_CLIENT_KEY;
 	const reactQueryStore = database.selectStore(IDB_REACT_QUERY_STORE_NAME);
@@ -349,8 +348,7 @@ function configRoamJS({ manualSettings }: { manualSettings: LegacyUserSettings }
 }
 
 /* istanbul ignore next */
-/** Initializes the extension, given an installation environment and parameters
- */
+/** Initializes the extension, given an installation environment and parameters */
 export function initialize(configObj: InstallArgs) {
 	const { requests, settings } = (configObj.context == "roam/depot")
 		? configRoamDepot(configObj)
@@ -368,8 +366,7 @@ function setupDarkTheme(use_dark = false){
 }
 
 /* istanbul ignore next */
-/** Injects DOM elements to be used as React portals by the extension
- */
+/** Injects DOM elements to be used as React portals by the extension */
 export function setupPortals(){
 
 	unmountExtensionIfExists();
@@ -395,8 +392,7 @@ export function setup({ settings }: { settings: UserSettings }){
 }
 
 /* istanbul ignore next */
-/** Teardown the extension's React tree, if it currently exists
- */
+/** Teardown the extension's React tree, if it currently exists */
 export function unmountExtensionIfExists(){
 	const existingSlot = document.getElementById(EXTENSION_SLOT_ID);
 	if(existingSlot){

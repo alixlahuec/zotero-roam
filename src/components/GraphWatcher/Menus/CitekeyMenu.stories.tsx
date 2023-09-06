@@ -81,11 +81,11 @@ export const WithInteractions: StoryObj<Props> = {
 
 		await sleep(2000);
 
-		const refButton = await canvas.findByTitle("Show references");
+		const refButton = await canvas.findByRole("menuitem", { name: "Show references" });
 
 		await userEvent.click(refButton);
 
-		await waitFor(async () => expect(await canvas.findByTitle("Works related to @" + args.item.key ))
+		await waitFor(async () => expect(await canvas.findByRole("dialog", { name: "Works related to @" + args.item.key }))
 			.toBeInTheDocument()
 		);
 

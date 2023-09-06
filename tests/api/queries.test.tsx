@@ -3,21 +3,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WrapperComponent, renderHook } from "@testing-library/react-hooks";
 
 import { mock } from "jest-mock-extended";
-import { fetchItems, makeTagList, parseSemanticDOIs } from "../../src/api/utils";
+import * as apiUtils from "../../src/api/utils";
 import { wrappedFetchItems, useQuery_Citoid, useQuery_Collections, useQuery_Items, useQuery_Semantic, useQuery_Tags, useWriteableLibraries } from "../../src/api/queries";
 
 import { apiKeys, badIdentifier, goodIdentifier, findCollections, findItems, items, libraries, semantics, tags } from "Mocks";
 import { DataRequest } from "Types/extension";
 
 
-jest.mock("../../src/api/utils", () => {
-	const originalModule = jest.requireActual("../../src/api/utils");
-
-	return {
-		...originalModule,
-		fetchItems: jest.fn(originalModule.fetchItems)
-	};
-});
+const { makeTagList, parseSemanticDOIs } = apiUtils;
 
 const { 
 	keyWithFullAccess: { key: masterKey },
@@ -214,6 +207,7 @@ describe("Wrapper for fetching items", () => {
 		dataURI: userPath + "/items"
 	});
 	const { apikey, library, ...identifiers } = sample_req;
+	const fetchItemsSpy = jest.spyOn(apiUtils, "fetchItems");
 
 	beforeEach(() => {
 		client = new QueryClient();
@@ -222,7 +216,7 @@ describe("Wrapper for fetching items", () => {
 	test("Fetching items when query cache is empty", async() => {
 		await wrappedFetchItems(sample_req, client);
 
-		expect(fetchItems).toHaveBeenCalledWith({ ...sample_req, since: 0 }, { match: [] }, client);
+		expect(fetchItemsSpy).toHaveBeenCalledWith({ ...sample_req, since: 0 }, { match: [] }, client);
 	});
 
 	test("Fetching items when query cache has version data", async() => {
@@ -237,6 +231,6 @@ describe("Wrapper for fetching items", () => {
 
 		await wrappedFetchItems(sample_req, client);
 
-		expect(fetchItems).toHaveBeenCalledWith({ ...sample_req, since: cachedData.lastUpdated }, { match: cachedData.data }, client);
+		expect(fetchItemsSpy).toHaveBeenCalledWith({ ...sample_req, since: cachedData.lastUpdated }, { match: cachedData.data }, client);
 	});
 });
