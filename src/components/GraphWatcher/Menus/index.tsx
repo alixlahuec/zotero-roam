@@ -93,7 +93,12 @@ function DNPMenuFactory({ menus }: { menus: Element[] }){
 				})
 				.map(menu => {
 					const title = menu.getAttribute("data-title")!;
-					const dnp_date = new Date(JSON.parse(menu.getAttribute("data-dnp-date")!)).toDateString();
+
+					// e.g. [2023,5,6] is June 6th, 2023
+					// For the month to be parsed correctly, the array has to be spread - otherwise it will be off by 1
+					const date_as_array = JSON.parse(menu.getAttribute("data-dnp-date")!) as [number, number, number];
+					const dnp_date = new Date(...date_as_array).toDateString();
+
 					const added = items
 						.filter(it => new Date(it.data.dateAdded).toDateString() == dnp_date)
 						.map(it => cleanRelatedItem(it, { pdfs, notes }, roamCitekeys));
