@@ -1,6 +1,12 @@
 ## Changelog
 
-### [0.7.19](https://github.com/alixlahuec/zotero-roam/compare/0.7.18...0.7.19) - 
+### [0.7.20](https://github.com/alixlahuec/zotero-roam/compare/0.7.19...0.7.20) - 
+
+#### Bug Fixes
+
+-  incorrect items are shown in DNP menus ([`#396`](https://github.com/alixlahuec/zotero-roam/pull/396))
+
+### [0.7.19](https://github.com/alixlahuec/zotero-roam/compare/0.7.18...0.7.19) -  2023-06-28 
 
 ### [0.7.18](https://github.com/alixlahuec/zotero-roam/compare/0.7.17...0.7.18) -  2023-06-17 
 
