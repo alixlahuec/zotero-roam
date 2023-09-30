@@ -125,7 +125,7 @@
         "@blueprintjs/core": "^3.54.0",
         "@blueprintjs/datetime": "^3.24.1",
         "@blueprintjs/icons": "^3.33.0",
-        "@blueprintjs/popover2": "^1.14.11",
+        "@blueprintjs/popover2": "^0.14.0",
         "@blueprintjs/select": "^3.19.1",
         "@tanstack/react-query": "^4.35.3",
         "@tanstack/react-query-persist-client": "^4.35.5",
