@@ -1,6 +1,12 @@
 ## Changelog
 
-### [0.7.20](https://github.com/alixlahuec/zotero-roam/compare/0.7.19...0.7.20) - 
+### [0.7.21](https://github.com/alixlahuec/zotero-roam/compare/0.7.20...0.7.21) - 
+
+#### Bug Fixes
+
+-  icon context menu doesn't display correctly ([`#420`](https://github.com/alixlahuec/zotero-roam/pull/420))
+
+### [0.7.20](https://github.com/alixlahuec/zotero-roam/compare/0.7.19...0.7.20) -  2023-09-09 
 
 #### Bug Fixes
 
