@@ -1,6 +1,6 @@
-import { memo, useCallback, useMemo } from "react";
+import { HTMLProps, memo, useCallback, useMemo } from "react";
 import { Button, ButtonProps, Intent, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
-import { DefaultPopover2TargetHTMLProps, Popover2, Popover2InteractionKind, Popover2Props, Popover2SharedProps } from "@blueprintjs/popover2";
+import { IPopover2SharedProps, Popover2, Popover2InteractionKind, Popover2Props } from "@blueprintjs/popover2";
 
 import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useTypemapSettings } from "Components/UserSettings";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
@@ -15,7 +15,7 @@ import "./_index.sass";
 
 const popoverProps: Partial<Popover2Props> = {
 	autoFocus: true,
-	boundary: "window" as Popover2SharedProps<DefaultPopover2TargetHTMLProps>["boundary"],
+	boundary: "window" as IPopover2SharedProps<HTMLProps<HTMLElement>>["boundary"], // TODO: Update to Popover2SharedProps<DefaultPopover2TargetHTMLProps>["boundary"] once issues with popover2 v1 are fixed
 	className: "zr-library-item-popover",
 	interactionKind: Popover2InteractionKind.HOVER,
 	lazy: true,
