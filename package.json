@@ -82,7 +82,7 @@
         "@storybook/react": "^7.4.6",
         "@storybook/react-webpack5": "^7.4.6",
         "@storybook/test-runner": "^0.13.0",
-        "@storybook/testing-library": "0.1.0",
+        "@storybook/testing-library": "~0.1.0",
         "@testing-library/react": "^12.1.5",
         "@testing-library/react-hooks": "^8.0.1",
         "@typescript-eslint/eslint-plugin": "^6.7.4",
