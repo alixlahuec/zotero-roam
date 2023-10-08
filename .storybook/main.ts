@@ -40,7 +40,7 @@ const config: StorybookConfig = {
 					"Types": path.resolve(__dirname, "..", "src", "types")
 				}
 			},
-			plugins: [istanbul(), turbosnap({ rootDir: path.resolve(__dirname, "..") })]
+			plugins: [istanbul({ exclude: ["*.html", "*.css", "*.sass", "*.json"]}), turbosnap({ rootDir: path.resolve(__dirname, "..") })]
 		})
 	}
 };
