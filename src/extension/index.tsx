@@ -43,7 +43,6 @@ export default class ZoteroRoam {
 
 	}
 
-	/* istanbul ignore next */
 	/** Clears the contents of the React Query store from the database. */
 	async clearDataCache(): Promise<void>{
 		if(this.#db !== null){
@@ -67,7 +66,6 @@ export default class ZoteroRoam {
 		}
 	}
 
-	/* istanbul ignore next */
 	/** Deletes the database, if any */
 	async deleteDatabase(): Promise<void>{
 		if(this.#db){
@@ -75,7 +73,6 @@ export default class ZoteroRoam {
 		}
 	}
 
-	/* istanbul ignore next */
 	/** Checks if there is a cached version of the React Query client */
 	async isDataCached(): Promise<boolean>{
 		if(this.#db !== null){
@@ -99,7 +96,6 @@ export default class ZoteroRoam {
 		return false;
 	}
 
-	/* istanbul ignore next */
 	/** Retrieves the timestamp when the React Query client was last persisted to cache. */
 	async getDataCacheUpdatedAt(){
 		if(this.#db){
