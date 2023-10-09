@@ -61,6 +61,11 @@ test("DB creation", async () => {
 			}
 		]);
 	}, { timeout: 500 });
+
+	await waitFor(() => {
+		/* eslint-disable-next-line dot-notation */
+		indexedDB.deleteDatabase(idbInstance["dbName"]);
+	}, { timeout: 2000 });
 });
 
 
