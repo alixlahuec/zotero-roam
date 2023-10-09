@@ -4,6 +4,7 @@ import { Query } from "@tanstack/react-query";
 import { PersistedClient } from "@tanstack/query-persist-client-core";
 
 import { TYPEMAP_DEFAULT } from "../../src/constants";
+import ZoteroRoam from "../../src/extension";
 import { analyzeUserRequests, createPersisterWithIDB, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
 import IDBDatabaseService from "../../src/services/idb";
 
@@ -13,6 +14,10 @@ import { UserDataRequest } from "Types/extension";
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { id: userLibID, path: userPath }, groupLibrary: { id: groupLibID, path: groupPath } } = libraries;
+
+beforeEach(() => {
+	window.zoteroRoam = mock<ZoteroRoam>();
+});
 
 describe("Parsing user data requests", () => {
 	it("passes if an empty array of requests is provided", () => {
@@ -337,15 +342,22 @@ describe("Creating IndexedDB persister", () => {
 		await expect(() => persister.restoreClient())
 			.rejects
 			.toThrow();
-		
+		expect(window.zoteroRoam.error).toHaveBeenCalledTimes(1);
+
 		await expect(() => persister.removeClient())
 			.rejects
 			.toThrow();
-		
+		expect(window.zoteroRoam.error).toHaveBeenCalledTimes(2);
+
 		await expect(() => persister.persistClient(mockClient))
 			.rejects
 			.toThrow();
-		
+		expect(window.zoteroRoam.error).toHaveBeenCalledTimes(3);
+
+		expect(window.zoteroRoam.error).toHaveBeenNthCalledWith(1, expect.objectContaining({ origin: "Database", message: "Failed to restore query client" }));
+		expect(window.zoteroRoam.error).toHaveBeenNthCalledWith(2, expect.objectContaining({ origin: "Database", message: "Failed to remove query client" }));
+		expect(window.zoteroRoam.error).toHaveBeenNthCalledWith(3, expect.objectContaining({ origin: "Database", message: "Failed to persist query client" }));
+
 	});
 
 });
