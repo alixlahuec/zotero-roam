@@ -43,7 +43,7 @@ test("Store handling", async () => {
 	await waitFor(() => {
 		/* eslint-disable-next-line dot-notation */
 		indexedDB.deleteDatabase(idbInstance["dbName"]);
-	}, { timeout: 2000 });
+	}, { timeout: 500 });
 
 });
 
@@ -65,7 +65,7 @@ test("DB creation", async () => {
 	await waitFor(() => {
 		/* eslint-disable-next-line dot-notation */
 		indexedDB.deleteDatabase(idbInstance["dbName"]);
-	}, { timeout: 2000 });
+	}, { timeout: 500 });
 });
 
 
