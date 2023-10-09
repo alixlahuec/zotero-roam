@@ -124,12 +124,12 @@ export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserD
 /** Creates a persister that can be used for writing a React Query client to the IndexedDB cache. */
 export function createPersisterWithIDB(database: IDBDatabase){
 	const indexedDbKey = IDB_REACT_QUERY_CLIENT_KEY;
-	const reactQueryStore = database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 
 	return {
 		persistClient: async (client: PersistedClient) => {
 			try {
-				return await reactQueryStore.set(indexedDbKey, client);
+				const reactQueryStore = await database.selectStore(IDB_REACT_QUERY_STORE_NAME);
+				await reactQueryStore.set(indexedDbKey, client);
 			} catch(e) {
 				window.zoteroRoam?.error?.({
 					origin: "Database",
@@ -143,6 +143,7 @@ export function createPersisterWithIDB(database: IDBDatabase){
 		},
 		removeClient: async () => {
 			try {
+				const reactQueryStore = await database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 				return await reactQueryStore.delete(indexedDbKey);
 			} catch (e) {
 				window.zoteroRoam?.error?.({
@@ -157,6 +158,7 @@ export function createPersisterWithIDB(database: IDBDatabase){
 		},
 		restoreClient: async () => {
 			try {
+				const reactQueryStore = await database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 				return await reactQueryStore.get(indexedDbKey);
 			} catch (e) {
 				window.zoteroRoam?.error?.({
