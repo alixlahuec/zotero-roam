@@ -1,28 +1,30 @@
-/* istanbul ignore file */
-import { DBSchema, IDBPDatabase, deleteDB, openDB } from "idb";
+import { DBSchema, IDBPDatabase, StoreKey, StoreNames, StoreValue, deleteDB, openDB } from "idb";
 import { PersistedClient } from "@tanstack/react-query-persist-client";
 import { getGraphName } from "Roam";
 import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 import { AsBoolean } from "Types/helpers";
 
 
-const STORE_NAMES = [
+const STORE_NAMES: StoreName[] = [
 	IDB_REACT_QUERY_STORE_NAME
-] as const;
+];
 
 interface Schema extends DBSchema {
 	[IDB_REACT_QUERY_STORE_NAME]: {
 		key: string,
-		value: PersistedClient
+		value: PersistedClient | undefined
 	}
 }
+
+type StoreName = StoreNames<Schema>;
+
 
 /**
  * Opens the extension's interface with IndexedDB. This is the basis for managing local caching with React Query.
  */
-class IDBDatabase {
-	#db: Promise<IDBPDatabase<Schema>>;
-	#dbName: string;
+class IDBDatabaseService {
+	private connection: Promise<IDBPDatabase<Schema>>;
+	private dbName: string;
 
 	constructor(){
 		let graphName = "";
@@ -34,31 +36,35 @@ class IDBDatabase {
 
 		const dbName = [IDB_DATABASE_NAME, graphName].filter(AsBoolean).join("_");
 
-		this.#dbName = dbName;
-		this.#db = openDB<Schema>(this.#dbName, IDB_DATABASE_VERSION, {
+		this.dbName = dbName;
+		this.connection = openDB<Schema>(this.dbName, IDB_DATABASE_VERSION, {
 			upgrade: (database, _oldVersion, _newVersion, _transaction) => {
 				STORE_NAMES.forEach((storeName) => database.createObjectStore(storeName));
 			},
 			blocking: () => {
-				console.log(`${this.#dbName} - Connection is blocking another, will close`);
-				this.#db
-					.then((db) => db.close())
-					.then(() => console.log(`${this.#dbName} - Connection successfully closed`));
+				console.log(`${this.dbName} - Connection is blocking another, will close`);
+				this.connection
+					.then((conn) => conn.close())
+					.then(() => console.log(`${this.dbName} - Connection successfully closed`));
 			},
 			blocked: () => {
-				console.log(`${this.#dbName} - Connection blocked by another`);
+				console.log(`${this.dbName} - Connection blocked by another`);
 			}
 		});
 	}
 
-	/** Deletes the database from memory.
-	 * @returns 
-	 */
+	/** Closes the connection to the database. This allows proper teardown in some tests.
+	*/
+	async close() {
+		(await this.connection).close();
+	}
+
+	/** Deletes the database from memory. */
 	async deleteSelf(){
 		try {
-			return await deleteDB(this.#dbName, {
+			return await deleteDB(this.dbName, {
 				blocked: () => {
-					console.log(`${this.#dbName} - Database deletion is blocked`);
+					console.log(`${this.dbName} - Database deletion is blocked`);
 				}
 			});
 		} catch (e) {
@@ -68,25 +74,25 @@ class IDBDatabase {
 
 	/**
 	 * Returns handlers for interaction with a store in the database.
-	 * @param {String} storeName - The name of the targeted store
-	 * @returns
+	 * @param storeName - The name of the targeted store
 	 */
-	selectStore<T extends keyof Schema>(storeName: T){
+	async selectStore<T extends StoreName>(storeName: T) {
+		const conn = await this.connection;
 		return {
-			async get(key: Schema[T]["key"]): Promise<Schema[T]["value"]>{
-				return (await this.#db).get(storeName, key);
+			async get(key: StoreKey<Schema, T>) {
+				return await conn.get(storeName, key);
 			},
-			async set(key: Schema[T]["key"], value: Schema[T]["value"]){
-				return (await this.#db).put(storeName, value, key);
+			async set(key: StoreKey<Schema, T>, value: StoreValue<Schema, T>){
+				return await conn.put(storeName, value, key);
 			},
-			async delete(key: Schema[T]["key"]){
-				return (await this.#db).delete(storeName, key);
+			async delete(key: StoreKey<Schema, T>){
+				return await conn.delete(storeName, key);
 			},
 			async clear(){
-				return (await this.#db).clear(storeName);
+				return await conn.clear(storeName);
 			}
 		};
 	}
 }
 
-export default IDBDatabase;
+export default IDBDatabaseService;
