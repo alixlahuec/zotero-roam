@@ -48,7 +48,8 @@ export default class ZoteroRoam {
 	async clearDataCache(): Promise<void>{
 		if(this.#db !== null){
 			try {
-				await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).clear();
+				const reactQueryStore = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME);
+				await reactQueryStore.clear();
 				this.info({
 					origin: "Database",
 					message: "Successfully cleared data from cache",
@@ -79,7 +80,8 @@ export default class ZoteroRoam {
 	async isDataCached(): Promise<boolean>{
 		if(this.#db !== null){
 			try {
-				const cachedClient = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).get(IDB_REACT_QUERY_CLIENT_KEY);
+				const reactQueryStore = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME);
+				const cachedClient = await reactQueryStore.get(IDB_REACT_QUERY_CLIENT_KEY);
 				return cachedClient !== undefined;
 			} catch(e) {
 				this.error({
@@ -102,7 +104,8 @@ export default class ZoteroRoam {
 	async getDataCacheUpdatedAt(){
 		if(this.#db){
 			try {
-				const { timestamp } = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME).get(IDB_REACT_QUERY_CLIENT_KEY);
+				const reactQueryStore = await this.#db.selectStore(IDB_REACT_QUERY_STORE_NAME);
+				const { timestamp } = await reactQueryStore.get(IDB_REACT_QUERY_CLIENT_KEY) || {};
 				return timestamp;
 			} catch(e){
 				this.error({
