@@ -1,8 +1,11 @@
+import "fake-indexeddb/auto";
 import { mock } from "jest-mock-extended";
 import { Query } from "@tanstack/react-query";
+import { PersistedClient } from "@tanstack/query-persist-client-core";
 
 import { TYPEMAP_DEFAULT } from "../../src/constants";
-import { analyzeUserRequests, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
+import { analyzeUserRequests, createPersisterWithIDB, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
+import IDBDatabaseService from "../../src/services/idb";
 
 import { apiKeys, libraries } from "Mocks";
 import { UserDataRequest } from "Types/extension";
@@ -296,6 +299,55 @@ describe("Parsing user shortcuts", () => {
 				.toEqual(expectation);
 		}
 	);
+});
+
+describe("Creating IndexedDB persister", () => {
+
+	const mockClient: PersistedClient = {
+		timestamp: 0,
+		buster: "",
+		clientState: {
+			mutations: [],
+			queries: []
+		}
+	};
+
+	test("persist, restore, delete client", async () => {
+		const idbService = new IDBDatabaseService();
+		const persister = createPersisterWithIDB(idbService);
+
+		let cachedClient = await persister.restoreClient();
+		expect(cachedClient).toBeUndefined();
+
+		await persister.persistClient(mockClient);
+		cachedClient = await persister.restoreClient();
+		expect(cachedClient).toMatchObject<PersistedClient>(mockClient);
+
+		await persister.removeClient();
+		cachedClient = await persister.restoreClient();
+		expect(cachedClient).toBeUndefined();
+	});
+
+	test("persist errors are raised", async () => {
+		const idbService = new IDBDatabaseService();
+		const persister = createPersisterWithIDB(idbService);
+
+		await idbService.deleteSelf();
+
+		await expect(() => persister.restoreClient())
+			.rejects
+			.toThrow();
+		
+		await expect(() => persister.removeClient())
+			.rejects
+			.toThrow();
+		
+		await expect(() => persister.persistClient(mockClient))
+			.rejects
+			.toThrow();
+		
+	});
+
 });
 
 describe("Filtering queries for persistence", () => {

@@ -120,7 +120,6 @@ export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserD
 	}
 }
 
-/* istanbul ignore next */
 /** Creates a persister that can be used for writing a React Query client to the IndexedDB cache. */
 export function createPersisterWithIDB(database: IDBDatabase){
 	const indexedDbKey = IDB_REACT_QUERY_CLIENT_KEY;
