@@ -2,7 +2,6 @@ import * as path from "path";
 import { mergeConfig } from "vite";
 import { StorybookConfig } from "@storybook/react-vite";
 import turbosnap from "vite-plugin-turbosnap";
-import istanbul from "rollup-plugin-istanbul";
 
 
 const config: StorybookConfig = {
@@ -10,6 +9,7 @@ const config: StorybookConfig = {
 	addons: [
 		"@storybook/addon-a11y",
 		"@storybook/addon-controls",
+		"@storybook/addon-coverage",
 		"@storybook/addon-links",
 		"@storybook/addon-essentials",
 		"@storybook/addon-interactions"
@@ -29,7 +29,6 @@ const config: StorybookConfig = {
 		return mergeConfig(config, {
 			mode: "storybook",
 			minify: false,
-			sourcemap: false,
 			resolve: {
 				...config.resolve,
 				alias: {
@@ -40,7 +39,7 @@ const config: StorybookConfig = {
 					"Types": path.resolve(__dirname, "..", "src", "types")
 				}
 			},
-			plugins: [istanbul({ include: ["mocks/**", "src/**/*.ts", "src/**/*.tsx", "stories/**"]}), turbosnap({ rootDir: path.resolve(__dirname, "..") })]
+			plugins: [turbosnap({ rootDir: path.resolve(__dirname, "..") })]
 		})
 	}
 };
