@@ -20,7 +20,7 @@ export default {
 } as Meta<Props>;
 
 export const Default: StoryObj<Props> = {
-	play: async ({ canvasElement }) => {
+	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		const frame = within(canvasElement.parentElement!);
 
@@ -32,7 +32,7 @@ export const Default: StoryObj<Props> = {
 
 		const relatedDialog = frame.getByRole("dialog");
 
-		await waitFor(() => expect(within(relatedDialog).getByRole("button", { name: "Show abstracts" }))
+		await waitFor(() => expect(within(relatedDialog).getByText(`2 items added on ${args.title}`))
 			.toBeInTheDocument()
 		);
 
