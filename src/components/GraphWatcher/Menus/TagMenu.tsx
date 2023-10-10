@@ -16,7 +16,7 @@ export type TagMenuProps = {
 	tagged: SCleanRelatedItem[]
 };
 
-/* istanbul ignore next */
+
 function TagMenu(props: TagMenuProps){
 	const { inAbstract = [], tag, tagged = [] } = props;
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
