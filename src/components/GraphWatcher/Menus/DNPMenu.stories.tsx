@@ -24,7 +24,7 @@ export const Default: StoryObj<Props> = {
 		const canvas = within(canvasElement);
 		const frame = within(canvasElement.parentElement!);
 
-		await userEvent.click(canvas.getByRole("button", { name: "2 items added" }));
+		await userEvent.click(canvas.getByRole("button", { name: "1 item added" }));
 
 		await waitFor(() =>
 			expect(frame.getByRole("dialog")).toBeInTheDocument()
@@ -32,7 +32,7 @@ export const Default: StoryObj<Props> = {
 
 		const relatedDialog = frame.getByRole("dialog");
 
-		await waitFor(() => expect(within(relatedDialog).getByText(`2 items added on ${args.title}`))
+		await waitFor(() => expect(within(relatedDialog).getByText(`1 item added on ${args.title}`))
 			.toBeInTheDocument()
 		);
 
