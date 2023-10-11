@@ -7,8 +7,8 @@ import {
 	DnpPageWithItems,
 	DnpPageWithoutItems,
 	DnpPreviewWithItems,
-	NormalPage1,
-	NormalPage2
+	NormalPageWithoutTaggingContent,
+	NormalPageWithTaggingContent
 } from "./fixtures";
 
 import { hasNodeListChanged } from "../../../utils";
@@ -104,8 +104,8 @@ describe("DNP menu containers are inserted", () => {
 
 describe("Tag menu containers are inserted", () => {
 	const cases = [
-		[NormalPage1, 1, "September"],
-		[NormalPage2, 1, "systems"]
+		[NormalPageWithoutTaggingContent, 1, "September"],
+		[NormalPageWithTaggingContent, 1, "systems"]
 	] as const;
 
 	test.each(cases)(

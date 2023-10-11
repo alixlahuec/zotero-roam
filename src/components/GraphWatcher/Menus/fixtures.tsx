@@ -90,13 +90,13 @@ const dnpLogView = ({ entries = [], preview = null }: { entries?: string[], prev
 
 
 export const DnpLogWithItems = () => dnpLogView({ entries: ["November 12th, 2021"] });
-export const DnpPageWithItems = () => roamMainPage("June 20th, 2021");
+export const DnpPageWithItems = () => roamMainPage("June 19th, 2021");
 export const DnpLogWithoutItems = () => dnpLogView({ entries: ["April 6th, 1999"] });
 export const DnpPageWithoutItems = () => roamMainPage("April 6th, 1999");
-export const DnpPreviewWithItems = () => dnpLogView({ preview: "June 20th, 2021" });
+export const DnpPreviewWithItems = () => dnpLogView({ preview: "June 19th, 2021" });
 
 export const CitekeyPageValid = () => roamMainPage("@blochImplementingSocialInterventions2021");
 export const CitekeyPageInvalid = () => roamMainPage("@nonExistentCitekey");
 
-export const NormalPage1 = () => roamMainPage("September");
-export const NormalPage2 = () => roamMainPage("systems");
+export const NormalPageWithoutTaggingContent = () => roamMainPage("September");
+export const NormalPageWithTaggingContent = () => roamMainPage("housing");
