@@ -105,7 +105,7 @@ describe("DNP menu containers are inserted", () => {
 describe("Tag menu containers are inserted", () => {
 	const cases = [
 		[NormalPageWithoutTaggingContent, 1, "September"],
-		[NormalPageWithTaggingContent, 1, "systems"]
+		[NormalPageWithTaggingContent, 1, "housing"]
 	] as const;
 
 	test.each(cases)(
