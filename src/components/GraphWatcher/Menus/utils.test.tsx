@@ -66,7 +66,7 @@ describe("Citekey menu containers are inserted", () => {
 describe("DNP menu containers are inserted", () => {
 	const cases = [
 		[DnpLogWithItems, 1, "[2021,10,12]"],
-		[DnpPageWithItems, 1, "[2021,5,20]"],
+		[DnpPageWithItems, 1, "[2021,5,19]"],
 		[DnpLogWithoutItems, 1, "[1999,3,6]"],
 		[DnpPageWithoutItems, 1, "[1999,3,6]"],
 		[DnpPreviewWithItems, 0, null]
