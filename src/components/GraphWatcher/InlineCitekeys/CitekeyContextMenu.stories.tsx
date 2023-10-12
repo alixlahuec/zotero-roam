@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { CitekeyContextMenu, useGetItems } from ".";
 import { useRequestsSettings } from "Components/UserSettings";
 
-import { items } from "Mocks";
+import { items, samplePDF } from "Mocks";
 
 
 type Props = ComponentProps<typeof CitekeyContextMenu>;
@@ -23,7 +23,7 @@ export default {
 		(Story, context) => {
 			const [{ dataRequests }] = useRequestsSettings();
 			const targetElement = useRef<HTMLElement>(null);
-			const itemsMap = useGetItems(dataRequests);
+			const itemsMap = context.args.itemsMap || useGetItems(dataRequests);
 			const citekey = "@" + items[0].key;
 
 			return (
@@ -59,3 +59,27 @@ export default {
 } as Meta<Props>;
 
 export const Default: StoryObj<Props> = {};
+
+export const WithPDFAttachment: StoryObj<Props> = {
+	args: {
+		itemsMap: new Map([[
+			"@" + items[0].key,
+			{
+				citation: "",
+				data: {
+					children: {
+						pdfs: [samplePDF],
+						notes: []
+					},
+					location: "",
+					raw: items[0],
+					weblink: false,
+					zotero: {
+						local: "",
+						web: ""
+					}
+				}
+			}
+		]])
+	}
+};

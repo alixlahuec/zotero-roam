@@ -43,7 +43,7 @@ const useGetItems = (reqs: DataRequest[]): ItemsMap => {
 		if (datastore.data) {
 			const lib = categorizeLibraryItems(datastore.data);
 
-			return lib.items.map<[string, Item]>(item => {
+			return lib.items.map<[Citekey, Item]>(item => {
 				const hasURL = item.data.url;
 				const hasDOI = parseDOI(item.data.DOI);
 				const weblink = hasURL
