@@ -17,6 +17,8 @@ import { QueryDataItems, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop }
 import "./_index.sass";
 
 
+export const WATCHER_DELAY = 1000;
+
 type Citekey = string;
 type Item = {
 	citation: string,
@@ -292,7 +294,7 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 		const watcher = setInterval(
 			() => {
 				renderCitekeyRefs();
-			}, 1000
+			}, WATCHER_DELAY
 		);
 		return function cleanup() {
 			clearInterval(watcher);

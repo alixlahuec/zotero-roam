@@ -2,7 +2,7 @@ import { ComponentProps, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { CitekeyMenuFactory } from ".";
 import { addPageMenus, findPageMenus } from "./utils";
-import { CitekeyPageInvalid, CitekeyPageValid } from "./fixtures";
+import { CitekeyPageInvalid, CitekeyPageValid } from "../fixtures";
 
 
 type Props = ComponentProps<typeof CitekeyMenuFactory>;

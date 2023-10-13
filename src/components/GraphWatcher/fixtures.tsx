@@ -89,6 +89,11 @@ const dnpLogView = ({ entries = [], preview = null }: { entries?: string[], prev
 </div>;
 
 
+const inlinePageReference = (title: string) => <span data-link-title={title} data-link-uid="some-page-uid" data-testid="reference-wrapper">
+	<span tabIndex={-1} className="rm-page-ref rm-page-ref--link" data-testid="reference-link">{title}</span>
+</span>;
+
+
 export const DnpLogWithItems = () => dnpLogView({ entries: ["November 12th, 2021"] });
 export const DnpPageWithItems = () => roamMainPage("June 19th, 2021");
 export const DnpLogWithoutItems = () => dnpLogView({ entries: ["April 6th, 1999"] });
@@ -100,3 +105,6 @@ export const CitekeyPageInvalid = () => roamMainPage("@nonExistentCitekey");
 
 export const NormalPageWithoutTaggingContent = () => roamMainPage("September");
 export const NormalPageWithTaggingContent = () => roamMainPage("housing");
+
+export const CitekeyReferenceValid = () => inlinePageReference("@blochImplementingSocialInterventions2021");
+export const CitekeyReferenceInvalid = () => inlinePageReference("@nonExistentCitekey");

@@ -2,7 +2,7 @@ import { ComponentProps, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { TagMenuFactory } from ".";
 import { addPageMenus, findPageMenus } from "./utils";
-import { NormalPageWithoutTaggingContent, NormalPageWithTaggingContent } from "./fixtures";
+import { NormalPageWithoutTaggingContent, NormalPageWithTaggingContent } from "../fixtures";
 
 
 type Props = ComponentProps<typeof TagMenuFactory>;

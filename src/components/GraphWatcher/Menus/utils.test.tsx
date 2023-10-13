@@ -9,7 +9,7 @@ import {
 	DnpPreviewWithItems,
 	NormalPageWithoutTaggingContent,
 	NormalPageWithTaggingContent
-} from "./fixtures";
+} from "../fixtures";
 
 import { hasNodeListChanged } from "../../../utils";
 import { addPageMenus, findPageMenus } from "./utils";

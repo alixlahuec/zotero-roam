@@ -2,7 +2,7 @@ import { ComponentProps, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { DNPMenuFactory } from ".";
 import { addPageMenus, findPageMenus } from "./utils";
-import { DnpLogWithItems, DnpLogWithoutItems, DnpPageWithItems, DnpPageWithoutItems, DnpPreviewWithItems } from "./fixtures";
+import { DnpLogWithItems, DnpLogWithoutItems, DnpPageWithItems, DnpPageWithoutItems, DnpPreviewWithItems } from "../fixtures";
 
 
 type Props = ComponentProps<typeof DNPMenuFactory>;
