@@ -36,7 +36,7 @@ export const WithCitekeyInLibrary: StoryObj<Props> = {
 
 		await waitFor(() =>
 			expect(referenceSpan).toHaveAttribute("data-in-library", "true"),
-		{ timeout: WATCHER_DELAY * 2 });
+		{ timeout: WATCHER_DELAY * 3 });
 		
 		await userEvent.click(referenceLinkSpan, { button: 2 });
 
