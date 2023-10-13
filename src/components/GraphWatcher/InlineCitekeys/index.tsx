@@ -223,7 +223,6 @@ const CitekeyContextMenu = memo<CitekeyContextMenuProps>(function CitekeyContext
 });
 
 
-/* istanbul ignore next */
 const InlineCitekeys = memo(function InlineCitekeys() {
 	const { portalId } = useExtensionContext();
 	const [{ dataRequests }] = useRequestsSettings();
