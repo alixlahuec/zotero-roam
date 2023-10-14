@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import { Fragment } from "react";
 
 
@@ -94,6 +95,44 @@ const inlinePageReference = (title: string) => <span data-link-title={title} dat
 </span>;
 
 
+const aliasedLink = (href: string, title: string = "Some link title") => <span>
+	<span className="bp3-popover-wrapper">
+		<span aria-haspopup="true" className="bp3-popover-target">
+			<a target="_blank" href={href} className="rm-alias rm-alias--external" tabIndex={0}>{title}</a>
+		</span>
+	</span>
+</span>;
+
+
+const plainHrefLink = (href: string) => <a target="_blank" href={href}>{href}</a>;
+
+
+const roamBlock = ({ content, pageLinks = [] }) => <div data-create-time="1650246111969" data-page-links={JSON.stringify(pageLinks)} data-edit-display-name="Jane Doe" data-edit-time="1650246563557" className="roam-block-container rm-block rm-block--mine  rm-block--open rm-block--editable rm-not-focused block-bullet-view" data-page-title="Some Page Title" data-path-page-links="[]">
+	<div className="rm-block-main rm-block__self">
+		<div className="controls rm-block__controls">
+			<span className="block-expand">
+				<span className="bp3-icon-standard bp3-icon-caret-down rm-caret rm-caret-open rm-caret-hidden"></span>
+			</span>
+			<span className="rm-bullet " draggable="true">
+				<span className="bp3-popover-wrapper">
+					<span aria-haspopup="true" className="bp3-popover-target">
+						<span className="rm-bullet__inner" tabIndex={0}></span>
+					</span>
+				</span>
+			</span>
+		</div>
+		<div id="block-input-AZ9ct58wG4byaQ4uRDyR4rsw6Pv2-body-outline-9tXf3-XPq-3ieD1-zDn" className="rm-block__input rm-block__input--view roam-block dont-unfocus-block hoverparent rm-block-text" tabIndex={0}>
+			<span>{content}</span>
+		</div>
+		<div className="rm-block-separator"></div>
+		<div style={{ minWidth: "24px" }}></div>
+	</div>
+	<div className="rm-block-children rm-block__children rm-level-1">
+		<div className="rm-multibar"></div>
+	</div>
+</div>;
+
+
 export const DnpLogWithItems = () => dnpLogView({ entries: ["November 12th, 2021"] });
 export const DnpPageWithItems = () => roamMainPage("June 19th, 2021");
 export const DnpLogWithoutItems = () => dnpLogView({ entries: ["April 6th, 1999"] });
@@ -108,3 +147,6 @@ export const NormalPageWithTaggingContent = () => roamMainPage("housing");
 
 export const CitekeyReferenceValid = () => inlinePageReference("@blochImplementingSocialInterventions2021");
 export const CitekeyReferenceInvalid = () => inlinePageReference("@nonExistentCitekey");
+
+export const blockWithHrefLink = (tags) => roamBlock({ content: plainHrefLink("https://plain-example.com"), pageLinks: tags });
+export const blockWithAliasedLink = (tags) => roamBlock({ content: aliasedLink("https://aliased-example.com"), pageLinks: tags });
