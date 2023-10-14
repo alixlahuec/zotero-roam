@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 import { matchArrays } from "../../../utils";
 import { webimportClass } from "../classes";
 
