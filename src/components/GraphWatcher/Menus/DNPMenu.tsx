@@ -15,7 +15,7 @@ type DNPMenuProps = {
 	title: string
 };
 
-/* istanbul ignore next */
+
 function DNPMenu({ added, title }: DNPMenuProps){
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);
 

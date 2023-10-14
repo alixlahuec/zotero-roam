@@ -8,7 +8,6 @@ import { RCitekeyPages, SCleanRelatedItem, ZItemAnnotation, ZItemAttachment, ZIt
 
 const dnpRegex = new RegExp(/(.+) ([0-9]+).{2}, ([0-9]{4})/);
 
-/* istanbul ignore next */
 const addPageMenus = () => {
 	const newPages = Array.from(document.querySelectorAll<HTMLElement>("h1.rm-title-display"))
 		.filter(page => !(page.parentElement?.querySelector(`[class*=${menuPrefix}]`)));

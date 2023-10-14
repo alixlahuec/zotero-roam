@@ -17,6 +17,8 @@ import { QueryDataItems, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop }
 import "./_index.sass";
 
 
+export const WATCHER_DELAY = 1000;
+
 type Citekey = string;
 type Item = {
 	citation: string,
@@ -43,7 +45,7 @@ const useGetItems = (reqs: DataRequest[]): ItemsMap => {
 		if (datastore.data) {
 			const lib = categorizeLibraryItems(datastore.data);
 
-			return lib.items.map<[string, Item]>(item => {
+			return lib.items.map<[Citekey, Item]>(item => {
 				const hasURL = item.data.url;
 				const hasDOI = parseDOI(item.data.DOI);
 				const weblink = hasURL
@@ -221,7 +223,6 @@ const CitekeyContextMenu = memo<CitekeyContextMenuProps>(function CitekeyContext
 });
 
 
-/* istanbul ignore next */
 const InlineCitekeys = memo(function InlineCitekeys() {
 	const { portalId } = useExtensionContext();
 	const [{ dataRequests }] = useRequestsSettings();
@@ -292,7 +293,7 @@ const InlineCitekeys = memo(function InlineCitekeys() {
 		const watcher = setInterval(
 			() => {
 				renderCitekeyRefs();
-			}, 1000
+			}, WATCHER_DELAY
 		);
 		return function cleanup() {
 			clearInterval(watcher);
