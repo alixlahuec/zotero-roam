@@ -387,7 +387,6 @@ export function setup({ settings }: { settings: UserSettings }){
 	registerSmartblockCommands();
 }
 
-/* istanbul ignore next */
 /** Teardown the extension's React tree, if it currently exists */
 export function unmountExtensionIfExists(){
 	const existingSlot = document.getElementById(EXTENSION_SLOT_ID);

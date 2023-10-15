@@ -6,7 +6,7 @@ import { PersistedClient } from "@tanstack/query-persist-client-core";
 import { act, render } from "@testing-library/react";
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, TYPEMAP_DEFAULT } from "../../src/constants";
 import ZoteroRoam from "../../src/extension";
-import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
+import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, unmountExtensionIfExists, validateShortcuts } from "../../src/setup";
 import IDBDatabaseService from "../../src/services/idb";
 
 import { apiKeys, libraries } from "Mocks";
@@ -449,16 +449,20 @@ describe("Initial configuration", () => {
 });
 
 describe("Theme setter", () => {
+	const testWrapper = document.createElement("div");
 	const cases = [true, false];
 
 	test.each(cases)(
 		"use_dark_theme = %s",
 		(use_dark_theme) => {
-			const { container, queryByTestId } = render(<div data-testid="theme-target"></div>, { container: document.body });
+			const { queryByTestId } = render(
+				<div data-testid="theme-target"></div>,
+				{ container: document.body.appendChild(testWrapper) }
+			);
 
 			act(() => setupDarkTheme(use_dark_theme));
 
-			expect(container)
+			expect(document.body)
 				.toHaveAttribute("zr-dark-theme", `${use_dark_theme}`);
 			expect(queryByTestId("theme-target"))
 				.not.toHaveAttribute("zr-dark-theme");
@@ -467,6 +471,8 @@ describe("Theme setter", () => {
 });
 
 describe("Portals setup", () => {
+
+	const testWrapper = document.createElement("div");
 
 	describe("Extension slot", () => {
 		const cases = [true, false];
@@ -477,7 +483,10 @@ describe("Portals setup", () => {
 				const className = topbar_exists
 					? ".rm-topbar .rm-find-or-create-wrapper"
 					: "";
-				const { container, queryByTestId } = render(<div className={className} data-testid="test-element"></div>);
+				const { container, queryByTestId } = render(
+					<div className={className} data-testid="test-element"></div>,
+					{ container: document.body.appendChild(testWrapper) }
+				);
 
 				act(() => setupPortals());
 
@@ -497,7 +506,10 @@ describe("Portals setup", () => {
 			"App exists: %s",
 			(app_exists) => {
 				const id = app_exists ? "app" : "some-id";
-				const { container, queryByTestId } = render(<div id={id} data-testid={id}></div>);
+				const { container, queryByTestId } = render(
+					<div id={id} data-testid={id}></div>,
+					{ container: document.body.appendChild(testWrapper) }
+				);
 
 				act(() => setupPortals());
 
@@ -508,4 +520,35 @@ describe("Portals setup", () => {
 			}
 		);
 	});
+});
+
+describe("Teardown", () => {
+
+	test("Extension slot", () => {
+		const extensionSlot = document.createElement("span");
+		extensionSlot.id = EXTENSION_SLOT_ID;
+
+		document.body.appendChild(extensionSlot);
+
+		expect(extensionSlot).toBeInTheDocument();
+
+		unmountExtensionIfExists();
+
+		expect(extensionSlot).not.toBeInTheDocument();
+	});
+
+	test("Portals container", () => {
+		const extensionPortal = document.createElement("div");
+		extensionPortal.id = EXTENSION_PORTAL_ID;
+
+		document.body.appendChild(extensionPortal);
+
+		expect(extensionPortal).toBeInTheDocument();
+
+		unmountExtensionIfExists();
+
+		expect(extensionPortal).not.toBeInTheDocument();
+
+	});
+
 });
