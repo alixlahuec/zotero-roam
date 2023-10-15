@@ -362,7 +362,6 @@ export function setupDarkTheme(use_dark = false){
 	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
 }
 
-/* istanbul ignore next */
 /** Injects DOM elements to be used as React portals by the extension */
 export function setupPortals(){
 

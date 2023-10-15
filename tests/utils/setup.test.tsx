@@ -4,9 +4,9 @@ import { Query } from "@tanstack/react-query";
 import { PersistedClient } from "@tanstack/query-persist-client-core";
 
 import { act, render } from "@testing-library/react";
-import { TYPEMAP_DEFAULT } from "../../src/constants";
+import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, TYPEMAP_DEFAULT } from "../../src/constants";
 import ZoteroRoam from "../../src/extension";
-import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
+import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
 import IDBDatabaseService from "../../src/services/idb";
 
 import { apiKeys, libraries } from "Mocks";
@@ -464,4 +464,48 @@ describe("Theme setter", () => {
 				.not.toHaveAttribute("zr-dark-theme");
 		}
 	);
+});
+
+describe("Portals setup", () => {
+
+	describe("Extension slot", () => {
+		const cases = [true, false];
+
+		test.each(cases)(
+			"Topbar exists: %s",
+			(topbar_exists) => {
+				const className = topbar_exists
+					? ".rm-topbar .rm-find-or-create-wrapper"
+					: "";
+				const { container, queryByTestId } = render(<div className={className} data-testid="test-element"></div>);
+
+				act(() => setupPortals());
+
+				expect(container.querySelector(`#${EXTENSION_SLOT_ID}`))
+					.toBe(topbar_exists
+						? queryByTestId("test-element")!.nextSibling
+						: null);
+
+			}
+		);
+	});
+
+	describe("Portals container", () => {
+		const cases = [true, false];
+
+		test.each(cases)(
+			"App exists: %s",
+			(app_exists) => {
+				const id = app_exists ? "app" : "some-id";
+				const { container, queryByTestId } = render(<div id={id} data-testid={id}></div>);
+
+				act(() => setupPortals());
+
+				expect(container.querySelector(`#${EXTENSION_PORTAL_ID}`))
+					.toBe(app_exists
+						? queryByTestId(id)?.firstChild
+						: null);
+			}
+		);
+	});
 });
