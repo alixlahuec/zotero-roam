@@ -5,11 +5,12 @@ import { PersistedClient } from "@tanstack/query-persist-client-core";
 
 import { TYPEMAP_DEFAULT } from "../../src/constants";
 import ZoteroRoam from "../../src/extension";
-import { analyzeUserRequests, createPersisterWithIDB, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
+import { analyzeUserRequests, createPersisterWithIDB, initialize, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
 import IDBDatabaseService from "../../src/services/idb";
 
 import { apiKeys, libraries } from "Mocks";
 import { UserDataRequest } from "Types/extension";
+import { Roam } from "Types/externals";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -379,4 +380,69 @@ describe("Filtering queries for persistence", () => {
 			expect(shouldQueryBePersisted(mockQuery)).toBe(is_allowed);
 		}
 	);
+});
+
+describe("Initial configuration", () => {
+
+	test("Roam Depot - no requests set", () => {
+		const mockExtensionAPI = mock<Roam.ExtensionAPI>({
+			settings: {
+				get: jest.fn((_key: string) => undefined),
+				set: jest.fn((_key, _val) => { })
+			}
+		});
+
+		expect(initialize({
+			context: "roam/depot",
+			extensionAPI: mockExtensionAPI
+		})).toEqual({
+			requests: {
+				dataRequests: [],
+				apiKeys: [],
+				libraries: []
+			},
+			settings: setupInitialSettings({})
+		});
+	});
+
+	test("Roam Depot - requests are provided", () => {
+		const requests = {
+			apiKeys: ["abc"],
+			dataRequests: [],
+			libraries: []
+		};
+
+		const mockExtensionAPI = mock<Roam.ExtensionAPI>({
+			settings: {
+				get: jest.fn((key: string) => {
+					if (key == "requests") {
+						return requests as any;
+					} else {
+						return undefined;
+					}
+				}),
+				set: jest.fn((_key, _val) => { })
+			}
+		});
+
+		expect(initialize({
+			context: "roam/depot",
+			extensionAPI: mockExtensionAPI
+		})).toEqual({
+			requests,
+			settings: setupInitialSettings({})
+		});
+	});
+
+	test("RoamJS", () => {
+		expect(initialize({
+			context: "roam/js",
+			manualSettings: { dataRequests: [] }
+		}))
+			.toEqual({
+				requests: analyzeUserRequests([]),
+				settings: setupInitialSettings({})
+			});
+	});
+
 });

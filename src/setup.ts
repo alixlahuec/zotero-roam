@@ -303,7 +303,6 @@ export function setupInitialSettings(settingsObject: Partial<UserSettings>): Use
 	};
 }
 
-/* istanbul ignore next */
 /** Initializes the extension, from a Roam Depot install 
  * @returns The user's setup configuration
  */
@@ -331,7 +330,6 @@ function configRoamDepot({ extensionAPI }: { extensionAPI: Roam.ExtensionAPI }){
 	};
 }
 
-/* istanbul ignore next */
 /** Initializes the extension, from a roam/js install
  * @returns The user's setup configuration
  */
@@ -348,7 +346,6 @@ function configRoamJS({ manualSettings }: { manualSettings: LegacyUserSettings }
 	};
 }
 
-/* istanbul ignore next */
 /** Initializes the extension, given an installation environment and parameters */
 export function initialize(configObj: InstallArgs) {
 	const { requests, settings } = (configObj.context == "roam/depot")
