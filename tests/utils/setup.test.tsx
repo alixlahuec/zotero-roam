@@ -3,9 +3,10 @@ import { mock } from "jest-mock-extended";
 import { Query } from "@tanstack/react-query";
 import { PersistedClient } from "@tanstack/query-persist-client-core";
 
+import { act, render } from "@testing-library/react";
 import { TYPEMAP_DEFAULT } from "../../src/constants";
 import ZoteroRoam from "../../src/extension";
-import { analyzeUserRequests, createPersisterWithIDB, initialize, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
+import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
 import IDBDatabaseService from "../../src/services/idb";
 
 import { apiKeys, libraries } from "Mocks";
@@ -445,4 +446,22 @@ describe("Initial configuration", () => {
 			});
 	});
 
+});
+
+describe("Theme setter", () => {
+	const cases = [true, false];
+
+	test.each(cases)(
+		"use_dark_theme = %s",
+		(use_dark_theme) => {
+			const { container, queryByTestId } = render(<div data-testid="theme-target"></div>, { container: document.body });
+
+			act(() => setupDarkTheme(use_dark_theme));
+
+			expect(container)
+				.toHaveAttribute("zr-dark-theme", `${use_dark_theme}`);
+			expect(queryByTestId("theme-target"))
+				.not.toHaveAttribute("zr-dark-theme");
+		}
+	);
 });

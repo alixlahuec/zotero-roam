@@ -355,11 +355,10 @@ export function initialize(configObj: InstallArgs) {
 	return { requests, settings };
 }
 
-/* istanbul ignore next */
 /** Sets up the extension's theme (light vs dark)
  * @param use_dark - If the extension's theme should be `dark`
  */
-function setupDarkTheme(use_dark = false){
+export function setupDarkTheme(use_dark = false){
 	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
 }
 
