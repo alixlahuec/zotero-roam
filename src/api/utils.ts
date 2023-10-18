@@ -1,5 +1,6 @@
 import { QueryClient } from "@tanstack/query-core";
 
+import { isAxiosError } from "axios";
 import { citoidClient, semanticClient, zoteroClient } from "./clients";
 import { cleanNewlines, makeDictionary, parseDOI, searchEngine } from "../utils";
 import { emitCustomEvent } from "../events";
@@ -117,19 +118,17 @@ function cleanBibliographyHTML(bib: string) {
 	return formattedBib;
 }
 
-// TODO: add typing
 /* istanbul ignore next */
-function cleanErrorIfAxios(error) {
+function cleanErrorIfAxios(error: Error) {
 	try {
-		const origin = error.name || "";
-		if (origin == "AxiosError") {
-			const { code, message, status, config: { url } } = error;
+		if(isAxiosError(error)){
+			const { code, message, status, config } = error;
 			return {
 				code,
 				message,
 				status,
 				config: {
-					url
+					url: config?.url
 				}
 			};
 		}
