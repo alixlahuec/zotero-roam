@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 import { jest } from "@storybook/jest";
 
 
