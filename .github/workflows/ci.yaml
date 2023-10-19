@@ -38,13 +38,13 @@ jobs:
           path: reports/tests-junit.xml
           reporter: jest-junit
 
-      - name: Webpack build (prod)
+      - name: Vite build (prod)
         run: npm run build:prod
       
-      - name: Webpack build (Roam Depot)
+      - name: Vite build (Roam Depot)
         run: npm run build:roam
       
-      - name: Webpack build (sandbox)
+      - name: Vite build (sandbox)
         run: npm run build:sandbox
 
       - name: Commit to repository

@@ -269,8 +269,8 @@ function getCurrentCursorLocation() {
 	if(!blockUID || !windowID){ return null; }
 
 	const blockElementID = ["block-input", windowID, blockUID].join("-");
-	const blockElement = document.getElementById(blockElementID);
-	const { selectionStart = null, selectionEnd = null } = blockElement || {} as Record<string,any>;
+	const blockElement = document.getElementById(blockElementID)!;
+	const { selectionStart = null, selectionEnd = null } = (blockElement || {}) as Record<string,any>;
 
 	const output: RCursorLocation = {
 		id: blockElementID,
