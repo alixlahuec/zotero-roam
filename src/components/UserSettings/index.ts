@@ -1,3 +1,6 @@
+export * from "./common";
+export * from "./SettingsManager";
+
 export * from "./Annotations";
 export * from "./Autocomplete";
 export * from "./Copy";
@@ -11,7 +14,5 @@ export * from "./Shortcuts";
 export * from "./Typemap";
 export * from "./WebImport";
 
-export * from "./common";
 export * from "./Dialog";
 export * from "./Provider";
-export * from "./SettingsManager";

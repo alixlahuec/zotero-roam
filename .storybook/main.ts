@@ -1,5 +1,7 @@
 import * as path from "path";
-import { StorybookConfig } from "@storybook/react-webpack5";
+import { mergeConfig } from "vite";
+import { StorybookConfig } from "@storybook/react-vite";
+import turbosnap from "vite-plugin-turbosnap";
 
 
 const config: StorybookConfig = {
@@ -10,33 +12,23 @@ const config: StorybookConfig = {
 		"@storybook/addon-coverage",
 		"@storybook/addon-links",
 		"@storybook/addon-essentials",
-		"@storybook/addon-interactions",
-		{
-			name: '@storybook/addon-styling',
-			options: {
-				sass: {
-					implementation: require('sass'),
-				},
-			},
-		},
+		"@storybook/addon-interactions"
 	],
+	core: {
+		builder: "@storybook/builder-vite"
+	},
 	framework: {
-		name: "@storybook/react-webpack5",
+		name: "@storybook/react-vite",
 		options: {
 			legacyRootApi: true
 		}
 	},
 	staticDirs: ["../public"],
 	/* eslint-disable-next-line require-await */
-	webpackFinal: async (config) => {
-		return {
-			...config,
-			devtool: false,
-			optimization: {
-				...config.optimization,
-				minimize: false,
-				minimizer: []
-			},
+	viteFinal: async (config, { configType }) => {
+		return mergeConfig(config, {
+			mode: "storybook",
+			minify: false,
 			resolve: {
 				...config.resolve,
 				alias: {
@@ -46,8 +38,9 @@ const config: StorybookConfig = {
 					"Styles": path.resolve(__dirname, "..", "styles"),
 					"Types": path.resolve(__dirname, "..", "src", "types")
 				}
-			}
-		};
+			},
+			plugins: [turbosnap({ rootDir: path.resolve(__dirname, "..") })]
+		})
 	}
 };
 

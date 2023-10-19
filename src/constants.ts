@@ -1,7 +1,8 @@
+import { version } from "../package.json";
 import { ZoteroAPI } from "Types/externals";
 
 /** @constant {String} The extension's current version (from package.json) */
-export const EXTENSION_VERSION = require("../package.json").version;
+export const EXTENSION_VERSION = version;
 
 /** @constant {String} The HTML id for the extension's portals' container */
 export const EXTENSION_PORTAL_ID = "zotero-roam-portal";

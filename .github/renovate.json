@@ -48,9 +48,10 @@
 			"@storybook/addon-essentials",
 			"@storybook/addon-interactions",
 			"@storybook/addon-links",
+			"@storybook/builder-vite",
 			"@storybook/cli",
 			"@storybook/react",
-			"@storybook/react-webpack5",
+			"@storybook/react-vite",
 			"storybook"
 		]
 	}
