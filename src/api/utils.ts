@@ -130,9 +130,11 @@ function cleanErrorIfAxios(error: Error) {
 					url: config?.url
 				}
 			};
+		} else if (error instanceof Error) {
+			return error.message;
+		} else {
+			return error;
 		}
-
-		return error.message || error;
 	}, error);
 }
 

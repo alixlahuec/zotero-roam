@@ -49,15 +49,8 @@ describe("Error parsing", () => {
 		expect(cleanErrorIfAxios(error)).toEqual(msg);
 	});
 
-	test("Message key is returned if present", () => {
+	test("Non-errors are returned as-is", () => {
 		const badInput = { "some": "value", "message": "Lorem ipsum" };
-		/* @ts-expect-error Test expects bad input */
-		expect(cleanErrorIfAxios(badInput))
-			.toEqual(badInput.message);
-	});
-
-	test("Non-errors without a message key are returned as-is", () => {
-		const badInput = "something";
 		/* @ts-expect-error Test expects bad input */
 		expect(cleanErrorIfAxios(badInput))
 			.toEqual(badInput);
