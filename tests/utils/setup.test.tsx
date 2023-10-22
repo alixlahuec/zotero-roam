@@ -6,7 +6,7 @@ import { PersistedClient } from "@tanstack/query-persist-client-core";
 import { act, render } from "@testing-library/react";
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, TYPEMAP_DEFAULT } from "../../src/constants";
 import ZoteroRoam from "../../src/extension";
-import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, unmountExtensionIfExists, validateShortcuts } from "../../src/setup";
+import { InvalidLibraryError, InvalidRequestError, InvalidRequestsError, analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, unmountExtensionIfExists, validateShortcuts } from "../../src/setup";
 import IDBDatabaseService from "../../src/services/idb";
 
 import { apiKeys, libraries } from "Mocks";
@@ -38,7 +38,7 @@ describe("Parsing user data requests", () => {
 		];
 
 		expect(() => analyzeUserRequests(reqs))
-			.toThrow("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
+			.toThrow(InvalidRequestsError);
 	});
 	
 	it("throws if any of the requests is missing a data URI", () => {
@@ -49,7 +49,7 @@ describe("Parsing user data requests", () => {
 
 		// @ts-expect-error "Test expects incomplete input"
 		expect(() => analyzeUserRequests(reqs))
-			.toThrow("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+			.toThrow(InvalidRequestError);
 	});
 	
 	it("throws if any of the requests has an incorrect data URI", () => {
@@ -59,7 +59,7 @@ describe("Parsing user data requests", () => {
 		];
 
 		expect(() => analyzeUserRequests(reqs))
-			.toThrow("An incorrect data URI was provided for a request : groups/some_group_name/items. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials");
+			.toThrow(InvalidRequestError);
 	});
 
 	it("throws if any of the requests has an incorrect library ID", () => {
@@ -69,7 +69,7 @@ describe("Parsing user data requests", () => {
 		];
 
 		expect(() => analyzeUserRequests(reqs as UserDataRequest[]))
-			.toThrow("A library ID is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+			.toThrow(InvalidLibraryError);
 	});
 
 	it("throws if any of the requests has an incorrect library type", () => {
@@ -80,7 +80,7 @@ describe("Parsing user data requests", () => {
 
 		// @ts-expect-error "Tests bad input"
 		expect(() => analyzeUserRequests(reqs))
-			.toThrow("A library type is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+			.toThrow(InvalidLibraryError);
 	});
 
 	it("throws if the same library is provided twice", () => {
@@ -90,7 +90,7 @@ describe("Parsing user data requests", () => {
 		];
 
 		expect(() => analyzeUserRequests(reqs as UserDataRequest[]))
-			.toThrow("The same library was provided twice: users/123456.");
+			.toThrow(InvalidRequestsError);
 	});
 
 	/* This is needed to support manual install via roam/js when the user has specified their dataRequests as an Object */
