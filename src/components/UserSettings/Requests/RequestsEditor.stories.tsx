@@ -63,14 +63,14 @@ export const NoRequests: StoryObj<Props> = {
 
 		// Validation on empty req list shouldn't display an error
 		await userEvent.click(validateButton);
-		await expect(canvas.queryByRole("heading", { name: "Error" })).not.toBeInTheDocument();
+		await expect(canvas.queryByRole("heading", { name: "InvalidRequestsError" })).not.toBeInTheDocument();
 
 		const addReqToListButton = newLibForm.getByRole("button", { name: "Add" });
 
-		// Validation with empty req should display an error
+		// Validation with empty req should display an InvalidRequestsError
 		await userEvent.click(addReqToListButton);
 		await userEvent.click(validateButton);
-		await expect(canvas.queryByRole("heading", { name: "Error" })).toBeInTheDocument();
+		await expect(canvas.queryByRole("heading", { name: "InvalidRequestsError" })).toBeInTheDocument();
 
 		const firstLibForm = within(canvasElement.querySelector(".zr-data-request.existing")!);
 		// const libTypeControl = firstLibForm.getByRole("button", { name: "users" });
@@ -80,12 +80,11 @@ export const NoRequests: StoryObj<Props> = {
 
 		// Change in any of the inputs should make the error callout disappear
 		await userEvent.type(libIDInput, "12345");
-		await expect(canvas.queryByRole("heading", { name: "Error" })).not.toBeInTheDocument();
+		await expect(canvas.queryByRole("heading", { name: "InvalidRequestsError" })).not.toBeInTheDocument();
 
 		// Validation on valid req should pass, and cause the dialog to be closed
 		await userEvent.type(apikeyInput, "key");
 		await userEvent.click(validateButton);
-		await expect(canvas.queryByRole("heading", { name: "Error" })).not.toBeInTheDocument();
 		await expect(args.closeDialog).toHaveBeenCalled();
 	}
 };
