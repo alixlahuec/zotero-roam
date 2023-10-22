@@ -8,7 +8,7 @@ import { useAnnotationsSettings, useNotesSettings } from "Components/UserSetting
 import DayList, { DayListProps } from "./DayList";
 
 import { importItemNotes } from "Roam";
-import { makeDNP } from "../../utils";
+import { makeDNP, safely } from "../../utils";
 import { useMulti } from "../../hooks";
 
 import { CustomClasses } from "../../constants";
@@ -87,14 +87,12 @@ function NotesImport({ closeDialog, item, notes, pageUID }: NotesImportProps){
 		}
 	}, [notes, selectedKeys, set]);
 
-	const triggerImport = useCallback(async() => {
-		const selectedNotes = notes.filter(nt => selectedKeys.includes(nt.data.key));
-		try {
+	const triggerImport = useCallback(async () => {
+		await safely(async () => {
+			const selectedNotes = notes.filter(nt => selectedKeys.includes(nt.data.key));
 			await importItemNotes({ item, notes: selectedNotes }, pageUID, notesSettings, annotationsSettings);
 			closeDialog();
-		} catch(e){
-			//
-		}
+		}, undefined);
 	}, [annotationsSettings, closeDialog, item, notes, notesSettings, pageUID, selectedKeys]);
 
 	const selectProps = useMemo(() => ({

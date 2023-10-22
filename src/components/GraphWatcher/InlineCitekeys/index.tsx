@@ -9,7 +9,7 @@ import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useOther
 import { useBool } from "../../../hooks";
 import { useQuery_Items } from "../../../api/queries";
 
-import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
+import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI, safely } from "../../../utils";
 import { importItemMetadata } from "Roam";
 
 import { DataRequest } from "Types/extension";
@@ -120,16 +120,10 @@ const CitekeyContextMenu = memo<CitekeyContextMenuProps>(function CitekeyContext
 		}
 	}, [citekey, itemsMap]);
 
-	const onOpening = useCallback(() => {
-		setTimeout(() => {
-			try{
-				// Hide default Roam context menu
-				document.querySelector<HTMLElement>("body > .bp3-context-menu+.bp3-portal")!.style.display = "none";
-			} catch(e){
-				// Do nothing
-			}
-		}, 100);
-	}, []);
+	const onOpening = useCallback(() => setTimeout(() => safely(() => {
+		// Hide default Roam context menu
+		document.querySelector<HTMLElement>("body > .bp3-context-menu+.bp3-portal")!.style.display = "none";
+	}, undefined), 100), []);
 
 	const importMetadata = useCallback(() => {
 		if (itemData) {

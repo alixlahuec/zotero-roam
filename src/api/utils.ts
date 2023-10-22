@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/query-core";
 
 import { isAxiosError } from "axios";
 import { citoidClient, semanticClient, zoteroClient } from "./clients";
-import { cleanNewlines, makeDictionary, parseDOI, searchEngine } from "../utils";
+import { cleanNewlines, makeDictionary, parseDOI, safely, searchEngine } from "../utils";
 import { emitCustomEvent } from "../events";
 
 import { DataRequest } from "Types/extension";
@@ -120,8 +120,8 @@ function cleanBibliographyHTML(bib: string) {
 
 /* istanbul ignore next */
 function cleanErrorIfAxios(error: Error) {
-	try {
-		if(isAxiosError(error)){
+	return safely(() => {
+		if (isAxiosError(error)) {
 			const { code, message, status, config } = error;
 			return {
 				code,
@@ -134,9 +134,7 @@ function cleanErrorIfAxios(error: Error) {
 		}
 
 		return error.message;
-	} catch (e) {
-		return error;
-	}
+	}, error);
 }
 
 /** Deletes Zotero tags through the `/[library]/tags` endpoint of the Zotero API
