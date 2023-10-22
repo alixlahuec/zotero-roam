@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
-import { areTagsDuplicate, cleanBibliographyHTML, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeItems } from "../../src/api/utils";
+import { areTagsDuplicate, cleanBibliographyHTML, cleanErrorIfAxios, deleteTags, extractCitekeys, fetchAdditionalData, fetchBibEntries, fetchBibliography, fetchCitoid, fetchCollections, fetchDeleted, fetchItems, fetchPermissions, fetchSemantic, fetchTags, makeTagList, matchWithCurrentData, parseSemanticDOIs, updateTagMap, writeItems } from "../../src/api/utils";
 import { makeDictionary } from "../../src/utils";
 
 import { apiKeys, bibs, citoids, deletions, findBibliographyEntry, findBibEntry, findCollections, findItems, findTags, items, libraries, semantics, tags, Mocks } from "Mocks";
@@ -15,6 +15,54 @@ const { userLibrary, groupLibrary } = libraries;
 const getLibraryPath = (library) => {
 	return library.type + "s/" + library.id;
 };
+
+describe("Error parsing", () => {
+	test("Axios errors have their config scrubbed", () => {
+		const error = {
+			code: "ERR_BAD_REQUEST",
+			message: "An error occurred with Axios",
+			config: {
+				headers: {},
+				url: "/123456/items"
+			}
+		};
+
+		/* @ts-ignore Test isn't doing a deep mock */
+		const axiosError = new AxiosError(error.message, error.code, error.config);
+
+		/* @ts-ignore Mocking isn't correctly typing as AxiosError */
+		expect(cleanErrorIfAxios(axiosError)).toEqual({
+			code: error.code,
+			message: error.message,
+			status: undefined,
+			config: {
+				url: error.config.url
+			}
+		});
+	});
+
+	test("Non-Axios errors only have their message returned", () => {
+		const error = new Error();
+		const msg = "Some error message";
+		error.message = msg;
+
+		expect(cleanErrorIfAxios(error)).toEqual(msg);
+	});
+
+	test("Message key is returned if present", () => {
+		const badInput = { "some": "value", "message": "Lorem ipsum" };
+		/* @ts-expect-error Test expects bad input */
+		expect(cleanErrorIfAxios(badInput))
+			.toEqual(badInput.message);
+	});
+
+	test("Non-errors without a message key are returned as-is", () => {
+		const badInput = "something";
+		/* @ts-expect-error Test expects bad input */
+		expect(cleanErrorIfAxios(badInput))
+			.toEqual(badInput);
+	});
+});
 
 describe("Cleaning XHTML markup for bibliography entries", () => {
 	// Necessary since jsdom does not support innerText

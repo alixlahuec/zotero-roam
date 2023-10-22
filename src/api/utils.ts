@@ -118,7 +118,6 @@ function cleanBibliographyHTML(bib: string) {
 	return formattedBib;
 }
 
-/* istanbul ignore next */
 function cleanErrorIfAxios(error: Error) {
 	return safely(() => {
 		if (isAxiosError(error)) {
@@ -133,7 +132,7 @@ function cleanErrorIfAxios(error: Error) {
 			};
 		}
 
-		return error.message;
+		return error.message || error;
 	}, error);
 }
 
