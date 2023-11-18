@@ -68,7 +68,7 @@
         "@storybook/addon-a11y": "^7.5.2",
         "@storybook/addon-actions": "^7.5.2",
         "@storybook/addon-controls": "^7.5.2",
-        "@storybook/addon-coverage": "^0.0.9",
+        "@storybook/addon-coverage": "^1.0.0",
         "@storybook/addon-essentials": "^7.5.2",
         "@storybook/addon-interactions": "^7.5.2",
         "@storybook/addon-links": "^7.5.2",
