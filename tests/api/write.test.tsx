@@ -30,6 +30,12 @@ const queryClient = new QueryClient({
 queryClient.invalidateQueries = jest.fn();
 const dispatchEventSpy = jest.spyOn(document, "dispatchEvent");
 
+// https://github.com/swc-project/swc/discussions/7024#discussioncomment-6629202
+jest.mock("../../src/api/utils", () => ({
+	__esModule: true,
+	...jest.requireActual("../../src/api/utils")
+}));
+
 // https://tkdodo.eu/blog/testing-react-query
 const wrapper = ({ children }) => {
 	return (
