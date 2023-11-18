@@ -13,6 +13,7 @@
         "url": "https://github.com/alixlahuec/zotero-roam/issues",
         "email": "alix.lahuec@onmail.com"
     },
+    "type": "module",
     "main": "src/index.tsx",
     "browser": "dist/zoteroRoam.min.js",
     "unpkg": "dist/zoteroRoam.min.js",
@@ -112,7 +113,7 @@
         "storybook-mock-date-decorator": "^1.0.1",
         "swc-plugin-coverage-instrument": "^0.0.20",
         "typescript": "^4.9.5",
-        "vite": "^4.5.0",
+        "vite": "^5.0.0",
         "vite-plugin-externals": "^0.6.2",
         "vite-plugin-turbosnap": "^1.0.3"
     },
