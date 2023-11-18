@@ -35,8 +35,7 @@
 		"groupName": "Jest",
 		"matchPackageNames": [
 			"jest",
-			"jest-environment-jsdom",
-			"babel-jest"
+			"jest-environment-jsdom"
 		]
 	},
 	{
