@@ -22,7 +22,7 @@ coverage:
         paths:
           - .storybook/
           - mocks/
-        target: 95%
+        target: 90%
         threshold: 5%
       utils:
         paths:

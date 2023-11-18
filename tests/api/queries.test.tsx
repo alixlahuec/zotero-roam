@@ -21,6 +21,12 @@ const {
 	groupLibrary: { path: groupPath } 
 } = libraries;
 
+// https://github.com/swc-project/swc/discussions/7024#discussioncomment-6629202
+jest.mock("../../src/api/utils", () => ({
+	__esModule: true,
+	...jest.requireActual("../../src/api/utils")
+}));
+
 // https://tkdodo.eu/blog/testing-react-query
 const wrapper: WrapperComponent<{ children: ReactChildren }> = ({ children }) => {
 	const queryClient = new QueryClient({
