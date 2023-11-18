@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { defineConfig, AliasOptions, PluginOption } from "vite";
 import { BuildOptions } from "esbuild";
 
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 import { viteExternalsPlugin } from "vite-plugin-externals";
 
 

@@ -12,7 +12,25 @@ const config: StorybookConfig = {
 		"@storybook/addon-coverage",
 		"@storybook/addon-links",
 		"@storybook/addon-essentials",
-		"@storybook/addon-interactions"
+		"@storybook/addon-interactions",
+		{
+			name: "storybook-addon-swc",
+			options: {
+				enable: true,
+				enableSwcLoader: true,
+				enableSwcMinify: true,
+				swcLoaderOptions: {
+					jsc: {
+						experimental: {
+							"plugins": [
+								["swc-plugin-coverage-instrument", {}]
+							]
+						},
+					},
+				},
+				swcMinifyOptions: {},
+			},
+		},
 	],
 	core: {
 		builder: "@storybook/builder-vite"
