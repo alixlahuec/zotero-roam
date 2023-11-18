@@ -13,6 +13,7 @@
         "url": "https://github.com/alixlahuec/zotero-roam/issues",
         "email": "alix.lahuec@onmail.com"
     },
+    "type": "module",
     "main": "src/index.tsx",
     "browser": "dist/zoteroRoam.min.js",
     "unpkg": "dist/zoteroRoam.min.js",
