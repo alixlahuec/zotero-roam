@@ -150,7 +150,18 @@ const common = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    "\\.[tj]sx?$": "babel-jest",
+    "\\.[tj]sx?$": [
+        "@swc/jest",
+        {
+          jsc: {
+            transform: {
+              react: {
+                runtime: "automatic",
+              },
+            },
+          },
+        }
+    ],
     "^.+\\.(sa|sc|c)ss$": "jest-transform-css"
   },
 
