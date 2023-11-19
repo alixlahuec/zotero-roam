@@ -1,7 +1,10 @@
 import { DBSchema, IDBPDatabase, StoreKey, StoreNames, StoreValue, deleteDB, openDB } from "idb";
 import { PersistedClient } from "@tanstack/react-query-persist-client";
+
 import { getGraphName } from "Roam";
 import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../constants";
+import { safely } from "../utils";
+
 import { AsBoolean } from "Types/helpers";
 
 
@@ -27,13 +30,7 @@ class IDBDatabaseService {
 	private dbName: string;
 
 	constructor(){
-		let graphName = "";
-		try {
-			graphName = getGraphName();
-		} catch(_e){
-			// Do nothing
-		}
-
+		const graphName = safely(() => getGraphName(), "");
 		const dbName = [IDB_DATABASE_NAME, graphName].filter(AsBoolean).join("_");
 
 		this.dbName = dbName;

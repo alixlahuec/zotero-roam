@@ -28,6 +28,33 @@ type InstallArgs =
 		manualSettings: LegacyUserSettings
 	}
 
+export class InvalidRequestsError extends Error {
+	constructor(msg: string) {
+		super();
+		this.message = msg;
+		this.name = "InvalidRequestsError";
+		Object.setPrototypeOf(this, InvalidRequestsError.prototype);
+	}
+}
+
+export class InvalidLibraryError extends Error {
+	constructor(msg: string) {
+		super();
+		this.message = `${msg} See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api`;
+		this.name = "InvalidLibraryError";
+		Object.setPrototypeOf(this, InvalidLibraryError.prototype);
+	}
+}
+
+export class InvalidRequestError extends Error {
+	constructor(msg: string) {
+		super();
+		this.message = msg;
+		this.name = "InvalidRequestError";
+		Object.setPrototypeOf(this, InvalidRequestError.prototype);
+	}
+}
+
 /** Generates a data requests configuration object */
 export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserDataRequest|UserDataRequest)[]): UserRequests{
 	const reqs = (Array.isArray(requests))
@@ -44,19 +71,21 @@ export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserD
 	} else {
 		const fallbackAPIKey = reqs.find(req => req.apikey)?.apikey;
 		if(!fallbackAPIKey){
-			throw new Error("At least one data request must be assigned an API key. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
+			throw new InvalidRequestsError("At least one data request must be assigned an API key.See the documentation here: https://alix-lahuec.gitbook.io/zotero-roam/zotero-roam/getting-started/api");
 		} else {
-			const dataRequests = reqs.map((req) => {
+			const dataRequests = reqs.map((req, index) => {
+				const legibleIndex = index + 1;
+
 				if ("library" in req) {
 					const { apikey, library, name = "" } = req;
 					const { id, type } = library;
                     
 					if(!id || isNaN(Number(id))){
-						throw new Error("A library ID is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+						throw new InvalidLibraryError(`Request #${legibleIndex} does not have a valid library ID.`);
 					}
 
 					if(!type || !["users", "groups"].includes(type)){
-						throw new Error("A library type is missing or invalid. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+						throw new InvalidLibraryError(`Request #${legibleIndex} does not have a valid library type.`);
 					}
 
 					return {
@@ -74,13 +103,13 @@ export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserD
 					const { apikey, dataURI, name = "" } = req;
 
 					if(!dataURI){
-						throw new Error("Each data request must be assigned a data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api");
+						throw new InvalidRequestError(`Request #${legibleIndex} has no data URI. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/api`);
 					}
                     
 					const match = [...dataURI.matchAll(/(users|groups)\/(\d+?)\/(items.*)/g)];
 					
 					if(match.length == 0){
-						throw new Error(`An incorrect data URI was provided for a request : ${dataURI}. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
+						throw new InvalidRequestError(`Request #${legibleIndex} has an incorrect data URI: ${dataURI}. See the documentation here : https://alix-lahuec.gitbook.io/zotero-roam/getting-started/prereqs#zotero-api-credentials`);
 					} 
                     
 					const [/*input*/, type, id, uri] = match[0];
@@ -103,8 +132,8 @@ export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserD
 				const { library: { path }, apikey } = req;
 				const has_lib = arr.find(lib => lib.path == path);
 
-				if(has_lib){
-					throw new Error(`The same library was provided twice: ${path}.`);
+				if (has_lib) {
+					throw new InvalidRequestsError(`The same library was provided more than once: ${path}`);
 				}
 				
 				arr.push({ path, apikey });

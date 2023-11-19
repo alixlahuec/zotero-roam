@@ -968,6 +968,14 @@ function readDNP(string: string, { as_date = true }: { as_date?: boolean } = {})
 	return as_date ? new Date(...parsedDate) : parsedDate;
 }
 
+function safely<T extends (...args: any[]) => any, F>(cb: T, fallbackReturnValue: F): ReturnType<T> | F {
+	try {
+		return cb();
+	} catch {
+		return fallbackReturnValue;
+	}
+}
+
 interface SearchEngineParams {
 	any_case: boolean,
 	match: "exact" | "partial" | "word",
@@ -1290,6 +1298,7 @@ export {
 	parseDOI,
 	pluralize,
 	readDNP,
+	safely,
 	searchEngine,
 	simplifyZoteroAnnotations,
 	simplifyZoteroNotes,

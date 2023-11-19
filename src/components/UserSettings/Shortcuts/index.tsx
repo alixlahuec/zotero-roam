@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { parseKeyCombo } from "@blueprintjs/core";
 
 import { TextField, SettingsManager } from "Components/UserSettings";
-import { camelToTitleCase } from "../../../utils";
+import { camelToTitleCase, safely } from "../../../utils";
 
 
 const { Provider: ShortcutsProvider, useSettings: useShortcutsSettings } = new SettingsManager<"shortcuts">();
@@ -10,12 +10,10 @@ const { Provider: ShortcutsProvider, useSettings: useShortcutsSettings } = new S
 const validateUserInput = (input) => {
 	if(input == ""){ return true; }
 
-	try {
+	return safely(() => {
 		parseKeyCombo(input);
 		return true;
-	} catch(e) {
-		return false;
-	}
+	}, false);
 };
 
 function ShortcutsWidget(){

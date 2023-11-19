@@ -4,7 +4,7 @@ import Tribute, { TributeCollection } from "tributejs";
 
 import { useAutocompleteSettings, useRequestsSettings } from "Components/UserSettings";
 
-import { escapeRegExp, formatItemReference } from "../../utils";
+import { escapeRegExp, formatItemReference, safely } from "../../utils";
 import { useQuery_Items } from "../../api/queries";
 
 import { CustomClasses } from "../../constants";
@@ -151,10 +151,7 @@ const Autocomplete = memo(function Autocomplete() {
 
 		return () => {
 			editingObserver.disconnect();
-			try { document.querySelector(`.${CustomClasses.TRIBUTE}`)!.remove(); } 
-			catch(e){
-				// Do nothing
-			}
+			safely(() => document.querySelector(`.${CustomClasses.TRIBUTE}`)!.remove(), undefined);
 		};
 	}, [checkEditingMode]);
 

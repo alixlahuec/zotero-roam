@@ -158,7 +158,7 @@ describe("tagsModified", () => {
 				success: {}
 			}]
 		};
-		tagsModified(mockEvent({ data }));
+		tagsModified(mockEvent({ data, error: undefined }));
 		expect(window.zoteroRoam.warn).toHaveBeenCalledWith({
 			origin: "API",
 			message: "",
@@ -179,7 +179,7 @@ describe("tagsModified", () => {
 				unchanged: {},
 				success: {} }]
 		};
-		tagsModified(mockEvent({ data }));
+		tagsModified(mockEvent({ data, error: undefined }));
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
 			message: "1 item successfully modified in users/123456.",
@@ -218,7 +218,7 @@ describe("writeFinished", () => {
 				success: {}
 			}]
 		};
-		writeFinished(mockEvent({ data }));
+		writeFinished(mockEvent({ data, error: undefined }));
 		expect(window.zoteroRoam.warn).toHaveBeenCalledWith({
 			origin: "API",
 			message: "Unsuccessful when sending data to Zotero",
@@ -240,7 +240,7 @@ describe("writeFinished", () => {
 				success: {}
 			}]
 		};
-		writeFinished(mockEvent({ data }));
+		writeFinished(mockEvent({ data, error: undefined }));
 		expect(showToasterFn).toHaveBeenCalledWith({
 			intent: "success",
 			message: "1 item added to users/123456.",
