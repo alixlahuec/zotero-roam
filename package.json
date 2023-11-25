@@ -21,8 +21,8 @@
         "workerDirectory": "public"
     },
     "scripts": {
-        "vite:dev": "vite serve --config dev/vite.config.ts",
-        "vite:prod": "vite build --config dev/vite.config.ts",
+        "vite:dev": "vite serve --config dev/vite.config.mts",
+        "vite:prod": "vite build --config dev/vite.config.mts",
         "build:dev": "npm run vite:dev -- --mode=default",
         "build:prod": "npm run vite:prod -- --mode=default",
         "build:roam": "npm run vite:prod -- --mode=roam",
