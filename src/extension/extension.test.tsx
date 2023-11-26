@@ -1,8 +1,13 @@
-import { QueryClient } from "@tanstack/query-core";
-import { H5 } from "@blueprintjs/core";
+import "fake-indexeddb/auto";
 import { mock } from "jest-mock-extended";
+import { waitFor } from "@testing-library/dom";
 
-import { setupInitialSettings } from "../setup";
+import { H5 } from "@blueprintjs/core";
+import { QueryClient } from "@tanstack/query-core";
+import { persistQueryClientSave } from "@tanstack/query-persist-client-core";
+
+import { createPersisterWithIDB, setupInitialSettings } from "../setup";
+import IDBDatabaseService from "../services/idb";
 import { _formatPDFs, _getItemCreators, _getItemTags } from "../public";
 import { cleanBibliographyHTML, makeTagList } from "../api/utils";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
@@ -576,6 +581,169 @@ describe("Logger utils", () => {
 			]);
 	});
 
+});
+
+describe("DB utils", () => {
+	const client = new QueryClient();
+	const date = new Date(2021, 4, 6);
+	const extensionRequests = mock<UserRequests>({ libraries: [] });
+
+	let extension: ZoteroRoam;
+	let idbInstance: IDBDatabaseService;
+
+	beforeEach(() => {
+		idbInstance = new IDBDatabaseService();
+		extension = new ZoteroRoam({
+			idbDatabase: idbInstance,
+			queryClient: client,
+			requests: extensionRequests,
+			settings: initSettings
+		});
+
+		jest.useFakeTimers()
+			.setSystemTime(date);
+	});
+
+	afterEach(async () => {
+		/* eslint-disable-next-line dot-notation */
+		await waitFor(() => indexedDB.deleteDatabase(idbInstance["dbName"]), { timeout: 5000 });
+		jest.useRealTimers();
+	});
+
+	test("Cache lifecycle", async () => {
+		const infoLogger = jest.spyOn(extension, "info");
+
+		// Simulate behavior of the React Query provider
+		persistQueryClientSave({
+			queryClient: client,
+			persister: createPersisterWithIDB(idbInstance)
+		});
+
+		let clientIsCached = await extension.isDataCached();
+		expect(clientIsCached).toBe(true);
+
+		const lastCachedTimestamp = await extension.getDataCacheUpdatedAt();
+		expect(lastCachedTimestamp).toBe(date.valueOf());
+
+		await extension.clearDataCache();
+
+		expect(infoLogger).toHaveBeenCalledTimes(1);
+		expect(infoLogger).toHaveBeenCalledWith({
+			origin: "Database",
+			message: "Successfully cleared data from cache",
+			showToaster: 1000
+		});
+
+		clientIsCached = await extension.isDataCached();
+		expect(clientIsCached).toBe(false);
+	
+	});
+
+	test("DB deletion", async () => {
+		await extension.deleteDatabase();
+
+		await waitFor(async () => {
+			const databasesList = await indexedDB.databases();
+			expect(databasesList).toEqual([]);
+		}, { timeout: 500 });
+	});
+
+});
+
+describe("DB utils - without DB", () => {
+	const extensionRequests = mock<UserRequests>({ libraries: [] });
+
+	let client: QueryClient;
+	let extension: ZoteroRoam;
+
+	beforeEach(() => {
+		client = new QueryClient();
+		extension = new ZoteroRoam({
+			queryClient: client,
+			requests: extensionRequests,
+			settings: initSettings
+		});
+	});
+
+
+	test("isDataCached returns false", async () => {
+		const clientIsCached = await extension.isDataCached();
+		expect(clientIsCached).toBe(false);
+	});
+
+});
+
+describe("DB utils - errors are logged", () => {
+	const extensionRequests = mock<UserRequests>({ libraries: [] });
+
+	let client: QueryClient;
+	let extension: ZoteroRoam;
+	let idbInstance: IDBDatabaseService;
+
+	beforeEach(async () => {
+		client = new QueryClient();
+		idbInstance = new IDBDatabaseService();
+		extension = new ZoteroRoam({
+			idbDatabase: idbInstance,
+			queryClient: client,
+			requests: extensionRequests,
+			settings: initSettings
+		});
+
+		/* eslint-disable-next-line dot-notation */
+		await waitFor(async () => {
+			await idbInstance.close();
+			await extension.deleteDatabase();
+		}, { timeout: 500 });
+	});
+
+
+	test("Clearing the React Query store", async () => {
+		const errorLogger = jest.spyOn(extension, "error");
+
+		await extension.clearDataCache();
+
+		expect(errorLogger).toHaveBeenCalledTimes(1);
+		expect(errorLogger).toHaveBeenCalledWith(
+			expect.objectContaining({
+				origin: "Database",
+				message: "Failed to clear data from cache"
+			})
+		);
+
+	});
+
+
+	test("Checking if there is cached data in the React Query store", async () => {
+		const errorLogger = jest.spyOn(extension, "error");
+	
+		const res = await extension.isDataCached();
+
+		expect(res).toBe(false);
+		expect(errorLogger).toHaveBeenCalledTimes(1);
+		expect(errorLogger).toHaveBeenCalledWith(
+			expect.objectContaining({
+				origin: "Database",
+				message: "Failed to obtain caching status"
+			})
+		);
+
+	});
+
+
+	test("Fetching timestamp of last caching operation", async () => {
+		const errorLogger = jest.spyOn(extension, "error");
+
+		await extension.getDataCacheUpdatedAt();
+
+		expect(errorLogger).toHaveBeenCalledTimes(1);
+		expect(errorLogger).toHaveBeenCalledWith(
+			expect.objectContaining({
+				origin: "Database",
+				message: "Failed to retrieve cache age"
+			})
+		);
+	});
 });
 
 describe("Custom class for logs", () => {

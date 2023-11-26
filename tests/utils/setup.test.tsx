@@ -1,15 +1,25 @@
+import "fake-indexeddb/auto";
 import { mock } from "jest-mock-extended";
 import { Query } from "@tanstack/react-query";
+import { PersistedClient } from "@tanstack/query-persist-client-core";
 
-import { TYPEMAP_DEFAULT } from "../../src/constants";
-import { analyzeUserRequests, setupInitialSettings, shouldQueryBePersisted, validateShortcuts } from "../../src/setup";
+import { act, render } from "@testing-library/react";
+import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, TYPEMAP_DEFAULT } from "../../src/constants";
+import ZoteroRoam from "../../src/extension";
+import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, unmountExtensionIfExists, validateShortcuts } from "../../src/setup";
+import IDBDatabaseService from "../../src/services/idb";
 
 import { apiKeys, libraries } from "Mocks";
 import { UserDataRequest } from "Types/extension";
+import { Roam } from "Types/externals";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary: { id: userLibID, path: userPath }, groupLibrary: { id: groupLibID, path: groupPath } } = libraries;
+
+beforeEach(() => {
+	window.zoteroRoam = mock<ZoteroRoam>();
+});
 
 describe("Parsing user data requests", () => {
 	it("passes if an empty array of requests is provided", () => {
@@ -298,6 +308,62 @@ describe("Parsing user shortcuts", () => {
 	);
 });
 
+describe("Creating IndexedDB persister", () => {
+
+	const mockClient: PersistedClient = {
+		timestamp: 0,
+		buster: "",
+		clientState: {
+			mutations: [],
+			queries: []
+		}
+	};
+
+	test("persist, restore, delete client", async () => {
+		const idbService = new IDBDatabaseService();
+		const persister = createPersisterWithIDB(idbService);
+
+		let cachedClient = await persister.restoreClient();
+		expect(cachedClient).toBeUndefined();
+
+		await persister.persistClient(mockClient);
+		cachedClient = await persister.restoreClient();
+		expect(cachedClient).toMatchObject<PersistedClient>(mockClient);
+
+		await persister.removeClient();
+		cachedClient = await persister.restoreClient();
+		expect(cachedClient).toBeUndefined();
+	});
+
+	test("persist errors are raised", async () => {
+		const idbService = new IDBDatabaseService();
+		const persister = createPersisterWithIDB(idbService);
+
+		await idbService.deleteSelf();
+
+		await expect(() => persister.restoreClient())
+			.rejects
+			.toThrow();
+		expect(window.zoteroRoam.error).toHaveBeenCalledTimes(1);
+
+		await expect(() => persister.removeClient())
+			.rejects
+			.toThrow();
+		expect(window.zoteroRoam.error).toHaveBeenCalledTimes(2);
+
+		await expect(() => persister.persistClient(mockClient))
+			.rejects
+			.toThrow();
+		expect(window.zoteroRoam.error).toHaveBeenCalledTimes(3);
+
+		expect(window.zoteroRoam.error).toHaveBeenNthCalledWith(1, expect.objectContaining({ origin: "Database", message: "Failed to restore query client" }));
+		expect(window.zoteroRoam.error).toHaveBeenNthCalledWith(2, expect.objectContaining({ origin: "Database", message: "Failed to remove query client" }));
+		expect(window.zoteroRoam.error).toHaveBeenNthCalledWith(3, expect.objectContaining({ origin: "Database", message: "Failed to persist query client" }));
+
+	});
+
+});
+
 describe("Filtering queries for persistence", () => {
 	const cases = [
 		[{ queryKey: "permissions/XXXXXX", state: { status: "success" } }, false],
@@ -315,4 +381,174 @@ describe("Filtering queries for persistence", () => {
 			expect(shouldQueryBePersisted(mockQuery)).toBe(is_allowed);
 		}
 	);
+});
+
+describe("Initial configuration", () => {
+
+	test("Roam Depot - no requests set", () => {
+		const mockExtensionAPI = mock<Roam.ExtensionAPI>({
+			settings: {
+				get: jest.fn((_key: string) => undefined),
+				set: jest.fn((_key, _val) => { })
+			}
+		});
+
+		expect(initialize({
+			context: "roam/depot",
+			extensionAPI: mockExtensionAPI
+		})).toEqual({
+			requests: {
+				dataRequests: [],
+				apiKeys: [],
+				libraries: []
+			},
+			settings: setupInitialSettings({})
+		});
+	});
+
+	test("Roam Depot - requests are provided", () => {
+		const requests = {
+			apiKeys: ["abc"],
+			dataRequests: [],
+			libraries: []
+		};
+
+		const mockExtensionAPI = mock<Roam.ExtensionAPI>({
+			settings: {
+				get: jest.fn((key: string) => {
+					if (key == "requests") {
+						return requests as any;
+					} else {
+						return undefined;
+					}
+				}),
+				set: jest.fn((_key, _val) => { })
+			}
+		});
+
+		expect(initialize({
+			context: "roam/depot",
+			extensionAPI: mockExtensionAPI
+		})).toEqual({
+			requests,
+			settings: setupInitialSettings({})
+		});
+	});
+
+	test("RoamJS", () => {
+		expect(initialize({
+			context: "roam/js",
+			manualSettings: { dataRequests: [] }
+		}))
+			.toEqual({
+				requests: analyzeUserRequests([]),
+				settings: setupInitialSettings({})
+			});
+	});
+
+});
+
+describe("Theme setter", () => {
+	const testWrapper = document.createElement("div");
+	const cases = [true, false];
+
+	test.each(cases)(
+		"use_dark_theme = %s",
+		(use_dark_theme) => {
+			const { queryByTestId } = render(
+				<div data-testid="theme-target"></div>,
+				{ container: document.body.appendChild(testWrapper) }
+			);
+
+			act(() => setupDarkTheme(use_dark_theme));
+
+			expect(document.body)
+				.toHaveAttribute("zr-dark-theme", `${use_dark_theme}`);
+			expect(queryByTestId("theme-target"))
+				.not.toHaveAttribute("zr-dark-theme");
+		}
+	);
+});
+
+describe("Portals setup", () => {
+
+	const testWrapper = document.createElement("div");
+
+	describe("Extension slot", () => {
+		const cases = [true, false];
+
+		test.each(cases)(
+			"Topbar exists: %s",
+			(topbar_exists) => {
+				const className = topbar_exists
+					? ".rm-topbar .rm-find-or-create-wrapper"
+					: "";
+				const { container, queryByTestId } = render(
+					<div className={className} data-testid="test-element"></div>,
+					{ container: document.body.appendChild(testWrapper) }
+				);
+
+				act(() => setupPortals());
+
+				expect(container.querySelector(`#${EXTENSION_SLOT_ID}`))
+					.toBe(topbar_exists
+						? queryByTestId("test-element")!.nextSibling
+						: null);
+
+			}
+		);
+	});
+
+	describe("Portals container", () => {
+		const cases = [true, false];
+
+		test.each(cases)(
+			"App exists: %s",
+			(app_exists) => {
+				const id = app_exists ? "app" : "some-id";
+				const { container, queryByTestId } = render(
+					<div id={id} data-testid={id}></div>,
+					{ container: document.body.appendChild(testWrapper) }
+				);
+
+				act(() => setupPortals());
+
+				expect(container.querySelector(`#${EXTENSION_PORTAL_ID}`))
+					.toBe(app_exists
+						? queryByTestId(id)?.firstChild
+						: null);
+			}
+		);
+	});
+});
+
+describe("Teardown", () => {
+
+	test("Extension slot", () => {
+		const extensionSlot = document.createElement("span");
+		extensionSlot.id = EXTENSION_SLOT_ID;
+
+		document.body.appendChild(extensionSlot);
+
+		expect(extensionSlot).toBeInTheDocument();
+
+		unmountExtensionIfExists();
+
+		expect(extensionSlot).not.toBeInTheDocument();
+	});
+
+	test("Portals container", () => {
+		const extensionPortal = document.createElement("div");
+		extensionPortal.id = EXTENSION_PORTAL_ID;
+
+		document.body.appendChild(extensionPortal);
+
+		expect(extensionPortal).toBeInTheDocument();
+
+		unmountExtensionIfExists();
+
+		expect(extensionPortal).not.toBeInTheDocument();
+
+	});
+
 });

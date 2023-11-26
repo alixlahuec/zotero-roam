@@ -120,16 +120,15 @@ export function analyzeUserRequests(requests: LegacyUserDataRequest|(LegacyUserD
 	}
 }
 
-/* istanbul ignore next */
 /** Creates a persister that can be used for writing a React Query client to the IndexedDB cache. */
 export function createPersisterWithIDB(database: IDBDatabase){
 	const indexedDbKey = IDB_REACT_QUERY_CLIENT_KEY;
-	const reactQueryStore = database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 
 	return {
 		persistClient: async (client: PersistedClient) => {
 			try {
-				return await reactQueryStore.set(indexedDbKey, client);
+				const reactQueryStore = await database.selectStore(IDB_REACT_QUERY_STORE_NAME);
+				await reactQueryStore.set(indexedDbKey, client);
 			} catch(e) {
 				window.zoteroRoam?.error?.({
 					origin: "Database",
@@ -143,6 +142,7 @@ export function createPersisterWithIDB(database: IDBDatabase){
 		},
 		removeClient: async () => {
 			try {
+				const reactQueryStore = await database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 				return await reactQueryStore.delete(indexedDbKey);
 			} catch (e) {
 				window.zoteroRoam?.error?.({
@@ -157,6 +157,7 @@ export function createPersisterWithIDB(database: IDBDatabase){
 		},
 		restoreClient: async () => {
 			try {
+				const reactQueryStore = await database.selectStore(IDB_REACT_QUERY_STORE_NAME);
 				return await reactQueryStore.get(indexedDbKey);
 			} catch (e) {
 				window.zoteroRoam?.error?.({
@@ -302,7 +303,6 @@ export function setupInitialSettings(settingsObject: Partial<UserSettings>): Use
 	};
 }
 
-/* istanbul ignore next */
 /** Initializes the extension, from a Roam Depot install 
  * @returns The user's setup configuration
  */
@@ -330,7 +330,6 @@ function configRoamDepot({ extensionAPI }: { extensionAPI: Roam.ExtensionAPI }){
 	};
 }
 
-/* istanbul ignore next */
 /** Initializes the extension, from a roam/js install
  * @returns The user's setup configuration
  */
@@ -347,7 +346,6 @@ function configRoamJS({ manualSettings }: { manualSettings: LegacyUserSettings }
 	};
 }
 
-/* istanbul ignore next */
 /** Initializes the extension, given an installation environment and parameters */
 export function initialize(configObj: InstallArgs) {
 	const { requests, settings } = (configObj.context == "roam/depot")
@@ -357,15 +355,13 @@ export function initialize(configObj: InstallArgs) {
 	return { requests, settings };
 }
 
-/* istanbul ignore next */
 /** Sets up the extension's theme (light vs dark)
  * @param use_dark - If the extension's theme should be `dark`
  */
-function setupDarkTheme(use_dark = false){
+export function setupDarkTheme(use_dark = false){
 	document.getElementsByTagName("body")[0].setAttribute("zr-dark-theme", (use_dark == true).toString());
 }
 
-/* istanbul ignore next */
 /** Injects DOM elements to be used as React portals by the extension */
 export function setupPortals(){
 
@@ -391,7 +387,6 @@ export function setup({ settings }: { settings: UserSettings }){
 	registerSmartblockCommands();
 }
 
-/* istanbul ignore next */
 /** Teardown the extension's React tree, if it currently exists */
 export function unmountExtensionIfExists(){
 	const existingSlot = document.getElementById(EXTENSION_SLOT_ID);

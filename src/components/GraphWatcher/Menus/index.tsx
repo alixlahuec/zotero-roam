@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 import { createPortal } from "react-dom";
 import { useMemo } from "react";
 
