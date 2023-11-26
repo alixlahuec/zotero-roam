@@ -3,11 +3,15 @@
   "extends": [
     "config:base"
   ],
-  "assignees": ["alixlahuec"],
   "baseBranches": ["beta"],
   "rangeStrategy": "bump",
   "schedule": "every weekend",
+  "automergeSchedule": [
+	"at any time"
+  ],
+  "platformAutomerge": true,
   "timezone": "America/Toronto",
+  "prConcurrentLimit": 1,
   "packageRules": [
 	{
 		"matchDepTypes": ["action"],
@@ -53,6 +57,15 @@
 			"@storybook/react-vite",
 			"storybook"
 		]
+	},
+	{
+		"groupName": "typescript-eslint",
+		"matchPackagePrefixes": ["@typescript-eslint"],
+		"automerge": true
+	},
+	{
+		"matchPackagePrefixes": ["eslint"],
+		"automerge": true
 	}
   ]
 }
