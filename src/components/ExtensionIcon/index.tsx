@@ -25,6 +25,7 @@ type QueriesList = {
 
 
 const betaTag = <Tag intent="primary" minimal={true}>Beta</Tag>;
+const newTag = <Tag intent="success" minimal={true}>NEW</Tag>;
 
 const isCurrentlyDark = () => document.getElementsByTagName("body")[0].getAttribute("zr-dark-theme") == "true";
 
@@ -203,6 +204,7 @@ const ExtensionIcon = memo<ExtensionIconProps>(function ExtensionIcon(props) {
 				<MenuItem disabled={!allowContext} text="Dashboard" icon="dashboard" labelElement={betaTag} onClick={openDashboard} />
 				<MenuItem disabled={!allowContext} text="Search in library" icon="search" onClick={openSearchPanel} />
 				<MenuItem text="View logs" icon="console" onClick={openLogger} />
+				<MenuItem text="Roadmap" icon="map-create" href="https://alix.canny.io/zoteroroam" target="_blank" labelElement={newTag} />
 			</Menu>
 		);
 	}, [allowContext, openDashboard, openLogger, openSearchPanel, openSettingsPanel]);
