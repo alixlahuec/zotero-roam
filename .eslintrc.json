@@ -117,11 +117,6 @@
 				],
 				"pathGroups": [
 					{
-						"pattern": "prop-types",
-						"group": "builtin",
-						"position": "before"
-					},
-					{
 						"pattern": "react",
 						"group": "builtin"
 					},
