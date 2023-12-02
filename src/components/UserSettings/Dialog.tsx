@@ -1,5 +1,3 @@
-import { bool, func } from "prop-types";
-
 import { Classes, Tab, Tabs } from "@blueprintjs/core";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";
@@ -18,7 +16,13 @@ const tabProps = {
 	panelClassName: "zr-settings-panel"
 };
 
-function SettingsDialog({ isOpen, onClose }) {
+
+type OwnProps = {
+	isOpen: boolean,
+	onClose: () => void
+}
+
+function SettingsDialog({ isOpen, onClose }: OwnProps) {
 	return <AuxiliaryDialog className="settings" isOpen={isOpen} label="zoteroRoam settings" onClose={onClose}>
 		<div className={Classes.DIALOG_BODY}>
 			<div className="zr-settings--main">
@@ -46,10 +50,7 @@ function SettingsDialog({ isOpen, onClose }) {
 		</div>
 	</AuxiliaryDialog>;
 }
-SettingsDialog.propTypes = {
-	isOpen: bool,
-	onClose: func
-};
+
 
 export {
 	SettingsDialog
