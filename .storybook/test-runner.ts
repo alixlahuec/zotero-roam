@@ -16,10 +16,10 @@ const a11yConfig: TestRunnerConfig = {
 			}
 		);
 	},
-	async preRender(page, _context) {
+	async preVisit(page, _context) {
 		await injectAxe(page);
 	},
-	async postRender(page, _context) {
+	async postVisit(page, _context) {
 		await configureAxe(page, {
 			rules: A11Y_RULES
 		});
