@@ -1,5 +1,4 @@
-import { node } from "prop-types";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { FC, createContext, useCallback, useContext, useMemo, useState } from "react";
 
 import { getCitekeyPages } from "Roam";
 import { RCitekeyPages } from "Types/transforms";
@@ -9,7 +8,7 @@ import { RCitekeyPages } from "Types/transforms";
 
 const RoamCitekeys = createContext<(readonly [RCitekeyPages, () => void]) | null>(null);
 
-const RoamCitekeysProvider = ({ children }) => {
+const RoamCitekeysProvider: FC = ({ children }) => {
 	const [roamCitekeys, setRoamCitekeys] = useState<RCitekeyPages>(() => getCitekeyPages());
 
 	const update = useCallback(() => {
@@ -23,9 +22,6 @@ const RoamCitekeysProvider = ({ children }) => {
 			{children}
 		</RoamCitekeys.Provider>
 	);
-};
-RoamCitekeysProvider.propTypes = {
-	children: node
 };
 
 const useRoamCitekeys = () => {
