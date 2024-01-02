@@ -19,6 +19,11 @@ export const fallbackHandler = rest.get(
 	}
 );
 
+export const chromaticHandler = rest.get(
+	"https://*.chromatic.com/assets/*",
+	(req, _res, _ctx) => req.passthrough()
+);
+
 export const roamAssetsHandler = rest.get(
 	"https://roamresearch.com/assets/*", 
 	(req, _res, _ctx) => req.passthrough()

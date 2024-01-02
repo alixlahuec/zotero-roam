@@ -18,7 +18,7 @@ import { withRoamCitekeys } from "./withRoamCitekeys";
 import { withUserSettings } from "./withUserSettings";
 
 import { A11Y_RULES } from "./a11y-rules";
-import { fallbackHandler, roamAssetsHandler, sciteApiHandler, sciteAssetsHandler, apiHandlers } from "Mocks";
+import { fallbackHandler, chromaticHandler, roamAssetsHandler, sciteApiHandler, sciteAssetsHandler, apiHandlers } from "Mocks";
 
 
 // Initialize MSW
@@ -83,6 +83,7 @@ const preview: Preview = {
 				roamAssetsHandler,
 				sciteApiHandler,
 				sciteAssetsHandler,
+				chromaticHandler,
 				rest.get("http://localhost:6006/runtime*", (req, _res, _ctx) => req.passthrough()),
 				rest.get("http://localhost:6006/main*", (req, _res, _ctx) => req.passthrough()),
 				rest.get("http://localhost:6006/vendors*", (req, _res, _ctx) => req.passthrough()),
