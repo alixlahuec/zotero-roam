@@ -24,10 +24,7 @@ jobs:
       - name: Install packages
         run: npm ci
 
-      - name: Type-checking
-        run: npm run ci:typecheck
-
-      - name: Jest, ESLint
+      - name: Jest, ESLint, Typecheck
         run: npm run ci:test
 
       - name: Upload test reports

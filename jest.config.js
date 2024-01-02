@@ -206,7 +206,13 @@ export default async() => ({
 				"<rootDir>/loader.tsx",
 				"<rootDir>/sandbox.ts"
 			]
-		}
+    },
+    {
+      ...common,
+      displayName: "typecheck",
+      runner: "jest-runner-tsc",
+      moduleFileExtensions: ["ts", "tsx"],
+    },
 	],
 	// Use this configuration option to add custom reporters to Jest
 	reporters: [
