@@ -66,6 +66,7 @@
         }
     },
     "devDependencies": {
+        "@netsells/storybook-mockdate": "^0.3.2",
         "@storybook/addon-a11y": "^7.6.6",
         "@storybook/addon-actions": "^7.6.6",
         "@storybook/addon-controls": "^7.6.6",
@@ -110,7 +111,6 @@
         "sass": "^1.69.6",
         "storybook": "^7.6.6",
         "storybook-addon-swc": "^1.2.0",
-        "storybook-mock-date-decorator": "^1.0.1",
         "swc-plugin-coverage-instrument": "^0.0.20",
         "typescript": "^4.9.5",
         "vite": "^5.0.10",

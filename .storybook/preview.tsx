@@ -3,7 +3,7 @@ import { useEffect, useGlobals } from "@storybook/addons";
 import { Decorator, Preview, StoryContext, StoryFn } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
 import { rest } from "msw";
-import { mockDateDecorator } from "storybook-mock-date-decorator";
+import { withMockdate } from "@netsells/storybook-mockdate";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
 import "../node_modules/@blueprintjs/select/lib/css/blueprint-select.css";
@@ -50,7 +50,7 @@ const preview: Preview = {
 		withExtensionContext,
 		withUserSettings,
 		withRoamCitekeys,
-		mockDateDecorator
+		withMockdate
 	],
 	globalTypes: {
 		theme: {
@@ -97,7 +97,7 @@ const preview: Preview = {
 			}
 		},
 		chromatic: { diffThreshold: 0.1 },
-		date: new Date("April 6, 2022 17:15:00")
+		mockdate: new Date("April 6, 2022 17:15:00")
 	}
 };
 
