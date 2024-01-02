@@ -85,7 +85,8 @@ const common = {
     "Roam": "<rootDir>/mocks/roam.ts",
     "Components/(.*)$": "<rootDir>/src/components/$1",
     "Styles": "<rootDir>/styles/_index.sass",
-	  "Types/(.*)$": "<rootDir>/src/types/$1"
+    "Types/(.*)$": "<rootDir>/src/types/$1",
+    "\.(css|sass)$": "<rootDir>/mocks/style.ts"
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -162,8 +163,7 @@ const common = {
             },
           },
         }
-    ],
-    "\.(css|sass)$": "<rootDir>/mocks/style.ts"
+    ]
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
