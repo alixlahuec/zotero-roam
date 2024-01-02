@@ -163,7 +163,7 @@ const common = {
           },
         }
     ],
-    "^.+\\.(sa|sc|c)ss$": "jest-transform-css"
+    "\.(css|sass)$": "<rootDir>/mocks/style.ts"
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
