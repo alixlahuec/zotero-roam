@@ -13,6 +13,11 @@
 			"Styles": ["./styles"],
 			"Types/*": ["./src/types/*"]
 		},
+		// needed for jest-runner-tsc:
+		"typeRoots": [
+			"./node_modules/@types",
+			"./src/types"
+		],
         "alwaysStrict": false,
 		"noImplicitAny": false,
 		"skipLibCheck": true,
