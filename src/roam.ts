@@ -170,7 +170,7 @@ async function createRoamBlock(parentUID: string, string: string, order: Roam.Bl
 			}
 		}
 	}
-	await window.roamAlphaAPI.createBlock({ location: { "parent-uid": parentUID, order }, "block": blockContents });
+	await window.roamAlphaAPI.data.block.create({ location: { "parent-uid": parentUID, order }, "block": blockContents });
 	return blockUID;
 }
 
@@ -183,7 +183,7 @@ function findRoamBlock(
 	/** The UID of the targeted parent (Roam block or page) */
 	parentUID: string
 ) {
-	const blockSearch = window.roamAlphaAPI.q<[[{ uid: string, children?: any[] }]?]>(`[
+	const blockSearch = window.roamAlphaAPI.data.q<[[{ uid: string, children?: any[] }]?]>(`[
 		:find (pull ?b [:block/uid :block/children])
 		:in $ ?string ?parentUID
 		:where
@@ -207,7 +207,7 @@ function findRoamPage(
 	/** The title to be searched */
 	title: string
 ) {
-	const pageSearch = window.roamAlphaAPI.q<[[string]?]>(`[
+	const pageSearch = window.roamAlphaAPI.data.q<[[string]?]>(`[
 		:find ?uid 
 		:in $ ?title 
 		:where
@@ -225,7 +225,7 @@ function findRoamPage(
  * @returns The array of all page titles, sorted from A-Z
  */
 function getAllPages(){
-	return window.roamAlphaAPI.q<[string][]>(`[
+	return window.roamAlphaAPI.data.q<[string][]>(`[
 		:find ?title 
 		:where
 			[?e :node/title ?title]
@@ -238,7 +238,7 @@ function getAllPages(){
  * @returns A Map whose `keys` are the pages' titles, and whose `entries` are the pages' UIDs
  */
 function getCitekeyPages(): RCitekeyPages{
-	return new Map(window.roamAlphaAPI.q<[string, string][]>(`[
+	return new Map(window.roamAlphaAPI.data.q<[string, string][]>(`[
 		:find ?title ?uid 
 		:where
 			[?e :node/title ?title]
@@ -249,7 +249,7 @@ function getCitekeyPages(): RCitekeyPages{
 
 /** Retrieves the list of citekey pages (i.e, starting with `@`) in the Roam graph, with their last-edit time */
 function getCitekeyPagesWithEditTime(): RCitekeyPagesWithEditTime{
-	return new Map(window.roamAlphaAPI.q<{ title: string, time: number, uid: string, _parents: { time: number }[] }[]>(`[
+	return new Map(window.roamAlphaAPI.data.q<{ title: string, time: number, uid: string, _parents: { time: number }[] }[]>(`[
 		:find [(pull ?e [:node/title :edit/time :block/uid {:block/_parents [:edit/time]}])...] 
 		:where
 			[?e :node/title ?t]
@@ -302,7 +302,7 @@ function getInitialedPages(
 	/** The Array of keys for which to retrieve Roam pages */
 	keys: string[]
 ) {
-	return window.roamAlphaAPI.q<{ title: string, uid: string }[][]>(`[
+	return window.roamAlphaAPI.data.q<{ title: string, uid: string }[][]>(`[
 		:find (pull ?e [:node/title :block/uid]) 
 		:in $ [?k ...] 
 		:where
@@ -328,7 +328,7 @@ async function importItemMetadata(
 	const page = { new: false, title, uid: pageUID };
 	
 	if(pageUID != uid){
-		window.roamAlphaAPI.createPage({ page: { title, "uid": pageUID } });
+		window.roamAlphaAPI.data.page.create({ page: { title, "uid": pageUID } });
 		page.new = true;
 	}
 	
@@ -416,7 +416,7 @@ async function importItemNotes(
 	const page = { new: false, title, uid: pageUID };
 
 	if(pageUID != uid){
-		window.roamAlphaAPI.createPage({ page: { title, "uid": pageUID } });
+		window.roamAlphaAPI.data.page.create({ page: { title, "uid": pageUID } });
 		page.new = true;
 	}
 
