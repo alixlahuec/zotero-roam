@@ -1,9 +1,9 @@
 /* istanbul ignore file */
-import { useEffect, useGlobals } from "@storybook/addons";
+import { useEffect } from "react";
 import { Decorator, Preview, StoryContext, StoryFn } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
 import { rest } from "msw";
-import { withMockdate } from "@netsells/storybook-mockdate";
+import withMockdate from "@netsells/storybook-mockdate";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
 import "../node_modules/@blueprintjs/select/lib/css/blueprint-select.css";
@@ -30,7 +30,7 @@ initialize({
 
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
 const withTheme: Decorator = (Story: StoryFn, context: StoryContext) => {
-	const [{ theme }/*, updateGlobals */] = useGlobals();
+	const { theme } = context.globals;
 
 	useEffect(() => {
 		document.getElementById("storybook-root")?.parentElement?.setAttribute("zr-dark-theme", (theme == "dark").toString());
@@ -97,6 +97,8 @@ const preview: Preview = {
 			}
 		},
 		chromatic: { diffThreshold: 0.1 },
+		// needed for mockdate
+		framework: "react",
 		mockdate: new Date("April 6, 2022 17:15:00")
 	}
 };
