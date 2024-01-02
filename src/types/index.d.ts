@@ -3,7 +3,6 @@ import { LegacyUserSettings } from "./extension";
 import { SmartblocksPlugin, Roam } from "./externals";
 
 
-export {};
 declare global {
 	interface Window {
 		roamAlphaAPI: Roam.AlphaAPI
