@@ -30,12 +30,6 @@
 		"enabled": false
 	},
 	{
-		"matchPackageNames": [
-			"scite-badge"
-		],
-		"enabled": false
-	},
-	{
 		"groupName": "Jest",
 		"matchPackageNames": [
 			"jest",
