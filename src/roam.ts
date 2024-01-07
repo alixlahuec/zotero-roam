@@ -8,11 +8,15 @@ import { Roam } from "Types/externals";
 import { ArgsMetadataBlocks, OutcomeMetadataStatus, SettingsAnnotations, SettingsMetadata, SettingsNotes, SettingsTypemap } from "Types/extension";
 
 
-/** Adds Roam blocks to a parent UID based on an Object block template.
- * @param parentUID - The UID of the parent (Roam block or page) 
- * @param object - The block Object to use as template 
- */
-async function addBlockObject(parentUID: string, object: RImportableBlock, order: Roam.BlockOrder = 0): Promise<void> {
+/** Adds Roam blocks to a parent UID based on an Object block template. */
+async function addBlockObject(
+	/** The UID of the block's parent */
+	parentUID: string,
+	/** The block object to insert */
+	object: RImportableBlock,
+	/** The place where the block should be inserted */
+	order: Roam.BlockOrder = 0
+): Promise<void> {
 	const { string: blockString, children = [], ...opts } = object;
 	
 	if(typeof(blockString) === "undefined"){
@@ -23,7 +27,7 @@ async function addBlockObject(parentUID: string, object: RImportableBlock, order
 				object
 			}
 		});
-		throw new Error("All blocks passed as an Object must have a string property.");
+		throw new Error("All blocks objects must have a `string` property.");
 	} else {
 		const blockUID = await createRoamBlock(
 			opts.parentUID || parentUID,
@@ -31,28 +35,13 @@ async function addBlockObject(parentUID: string, object: RImportableBlock, order
 			// Order parameter from the block itself takes precedence over the arg
 			opts.order || order,
 			opts);
-		// If the Object has a `children` property
-		if(children.constructor === Array){
-			// Go through each child element, starting by the last
-			// Recursion will ensure all nested children will be added
-			for (let j = children.length - 1; j >= 0; j--){
-				const elem = children[j];
-				if(typeof(elem) === "object"){
-					// eslint-disable-next-line no-await-in-loop
-					await addBlockObject(blockUID, elem, order);
-				} else if(typeof(children[j]) === "string"){
-					// eslint-disable-next-line no-await-in-loop
-					await createRoamBlock(blockUID, elem, order, {});
-				} else {
-					window.zoteroRoam?.error?.({
-						origin: "Metadata",
-						message: "Bad element received",
-						context: {
-							element: children[j]
-						}
-					});
-					throw new Error(`All children array items should be of type String or Object, not ${typeof(elem)}`);
-				}
+
+		// If the Object has a `children` property, process each child element sequentially.
+		// Recursion will ensure all nested children are added.
+		if (children.constructor === Array) {
+			for (const child of children) {
+				// eslint-disable-next-line no-await-in-loop
+				await addBlock({ parentUID: blockUID, block: child, order: "last" });
 			}
 		} else {
 			window.zoteroRoam?.error?.({
@@ -62,8 +51,38 @@ async function addBlockObject(parentUID: string, object: RImportableBlock, order
 					object
 				}
 			});
-			throw new Error(`If provided, the 'children' property of a block should be an Array, not ${typeof(children)}`);
+			throw new Error(`If provided, the 'children' property of a block should be an Array - received ${typeof(children)}`);
 		}
+	}
+}
+
+
+type AddBlockProps = {
+	/** The UID of the block's parent */
+	parentUID: string,
+	/** The block element to insert */
+	block: RImportableElement,
+	/** The place where the block should be inserted */
+	order?: Roam.BlockOrder
+};
+
+async function addBlock({ parentUID, block, order = 0 }: AddBlockProps): Promise<void | string> {
+	switch (typeof (block)) {
+	case "object":
+		await addBlockObject(parentUID, block, order);
+		break;
+	case "string":
+		await createRoamBlock(parentUID, block, order);
+		break;
+	default:
+		window.zoteroRoam?.error?.({
+			origin: "Metadata",
+			message: "Bad element received",
+			context: {
+				element: block
+			}
+		});
+		throw new Error(`All block items should be of type String or Object - received ${typeof (block)}`);
 	}
 }
 
@@ -74,9 +93,7 @@ async function addBlocksArray(
 	/** The UID of the parent (Roam block or page) */
 	parentUID: string,
 	/** The array to use as template */
-	arr: RImportableElement[],
-	/** The place where the blocks should be added */
-	order: Roam.BlockOrder = 0
+	arr: RImportableElement[]
 ): Promise<{ args: ArgsMetadataBlocks } & OutcomeMetadataStatus>{
 	const defaultOutcome = {
 		args: {
@@ -88,28 +105,11 @@ async function addBlocksArray(
 	};
 
 	if(arr.length > 0){
-		try{
+		try {
 			// Go through the array items in reverse order, so that each block gets added to the "same" position
-			for (let k = arr.length - 1; k >= 0; k--){
-				const elem = arr[k];
-				// If the element is an Object, pass it to addBlockObject to recursively process its contents
-				if(typeof(elem) === "object"){
-					// eslint-disable-next-line no-await-in-loop
-					await addBlockObject(parentUID, elem, order);
-				} else if(typeof(elem) === "string") {
-					// If the element is a simple String, add the corresponding block & move on
-					// eslint-disable-next-line no-await-in-loop
-					await createRoamBlock(parentUID, elem, order, {});
-				} else {
-					window.zoteroRoam?.error?.({
-						origin: "Metadata",
-						message: "Bad element received",
-						context: {
-							element: arr[k]
-						}
-					});
-					throw new Error(`All array items should be of type String or Object, not ${arr[k].constructor.name}`);
-				}
+			for (const block of arr.reverse()) {
+				// eslint-disable-next-line no-await-in-loop
+				await addBlock({ parentUID, block, order: 0 });
 			}
 			return Promise.resolve({ 
 				...defaultOutcome, 
