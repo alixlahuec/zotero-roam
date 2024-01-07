@@ -72,10 +72,11 @@ export default defineConfig(({ command, mode }) => {
 			rollupOptions: {
 				input: rollupInput,
 				output: {
-					format: "esm",
+					format: "es",
 					assetFileNames: "extension.[ext]",
 					entryFileNames: "[name].js"
-				}
+				},
+				preserveEntrySignatures: "allow-extension"
 			}
 		},
 		resolve: {
