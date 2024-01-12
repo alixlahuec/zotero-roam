@@ -88,7 +88,7 @@
         "@typescript-eslint/parser": "^6.18.0",
         "@vitejs/plugin-react-swc": "^3.5.0",
         "auto-changelog": "^2.4.0",
-        "axe-playwright": "^1.2.3",
+        "axe-playwright": "^2.0.1",
         "chromatic": "^10.2.0",
         "eslint": "^8.56.0",
         "eslint-import-resolver-alias": "^1.1.2",
