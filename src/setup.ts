@@ -5,7 +5,7 @@ import { PersistedClient } from "@tanstack/react-query-persist-client";
 
 import { cleanErrorIfAxios } from "./api/utils";
 import IDBDatabase from "./services/idb";
-import { registerSmartblockCommands } from "./smartblocks";
+import { registerSmartblockCommands } from "./services/smartblocks";
 import { setDefaultHooks } from "./events";
 
 import {

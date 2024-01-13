@@ -10,7 +10,7 @@ import IDBDatabase from "./src/services/idb";
 import ZoteroRoam from "./src/extension";
 import { clearDefaultHooks } from "./src/events";
 import { initialize, setup, setupPortals, unmountExtensionIfExists } from "./src/setup";
-import { unregisterSmartblockCommands } from "./src/smartblocks";
+import { unregisterSmartblockCommands } from "./src/services/smartblocks";
 
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./src/constants";
 

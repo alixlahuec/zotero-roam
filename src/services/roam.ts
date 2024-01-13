@@ -2,7 +2,7 @@
 import { executeFunctionByName } from "../utils";
 import { _formatNotes, _getItemMetadata } from "../extension";
 import { emitCustomEvent } from "../events";
-import { use_smartblock_metadata } from "../smartblocks";
+import { use_smartblock_metadata } from "./smartblocks";
 import { RCitekeyPages, RCitekeyPagesWithEditTime, RCursorLocation, RImportableBlock, RImportableElement, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import { Roam } from "Types/externals";
 import { ArgsMetadataBlocks, OutcomeMetadataStatus, SettingsAnnotations, SettingsMetadata, SettingsNotes, SettingsTypemap } from "Types/extension";
