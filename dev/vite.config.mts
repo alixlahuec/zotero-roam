@@ -82,7 +82,7 @@ export default defineConfig(({ command, mode }) => {
 		resolve: {
 			alias: {
 				"Mocks": resolve("mocks"),
-				"Roam": resolve("src", "roam"),
+				"Roam": resolve("src", "services", "roam"),
 				"Components": resolve("src", "components"),
 				"Styles": resolve("styles"),
 				"Types": resolve("src", "types"),

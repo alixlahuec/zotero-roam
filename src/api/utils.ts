@@ -3,7 +3,7 @@ import { QueryClient } from "@tanstack/query-core";
 import { isAxiosError } from "axios";
 import { citoidClient, semanticClient, zoteroClient } from "./clients";
 import { cleanNewlines, makeDictionary, parseDOI, searchEngine } from "../utils";
-import { emitCustomEvent } from "../events";
+import { emitCustomEvent } from "../services/events";
 
 import { DataRequest } from "Types/extension";
 import { CitoidAPI, SemanticScholarAPI, ZoteroAPI } from "Types/externals";
