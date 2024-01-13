@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { executeFunctionByName } from "../utils";
 import { _formatNotes, _getItemMetadata } from "../extension";
-import { emitCustomEvent } from "../events";
+import { emitCustomEvent } from "./events";
 import { use_smartblock_metadata } from "./smartblocks";
 import { RCitekeyPages, RCitekeyPagesWithEditTime, RCursorLocation, RImportableBlock, RImportableElement, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import { Roam } from "Types/externals";

@@ -1,9 +1,9 @@
 import zrToaster from "Components/ExtensionToaster";
 
-import { cleanErrorIfAxios } from "./api/utils";
-import { pluralize } from "./utils";
+import { cleanErrorIfAxios } from "../api/utils";
+import { pluralize } from "../utils";
 
-import { DEFAULT_TOAST_TIMEOUT } from "./constants";
+import { DEFAULT_TOAST_TIMEOUT } from "../constants";
 
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import { CitoidAPI, ZoteroAPI } from "Types/externals";

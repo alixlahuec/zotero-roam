@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTags, writeItems } from "./utils";
-import { emitCustomEvent } from "../events";
+import { emitCustomEvent } from "../services/events";
 
 import { QueryDataItems, QueryDataTags, ZLibrary, isZItemTop } from "Types/transforms";
 import { CitoidAPI, ZoteroAPI } from "Types/externals";
