@@ -802,6 +802,7 @@ function isHTMLTag(input: string){
 	};
 }
 
+// FIXME: consider moving to Zotero helpers
 /** Creates a dictionary from a String Array
  * @param arr - The array from which to make the dictionary
  * @returns An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
