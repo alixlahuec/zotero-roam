@@ -1,8 +1,6 @@
 import zrToaster from "Components/ExtensionToaster";
 
-import { cleanErrorIfAxios } from "../api/utils";
-import { pluralize } from "../utils";
-
+import { cleanError, pluralize } from "../utils";
 import { DEFAULT_TOAST_TIMEOUT } from "../constants";
 
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
@@ -139,7 +137,7 @@ function metadataAdded(event: CustomEvent<Events.MetadataAdded>){
 			message: `Metadata import failed for ${title}`,
 			context: {
 				...event.detail,
-				error: cleanErrorIfAxios(error)
+				error: cleanError(error)
 			},
 			showToaster: true
 		});
@@ -167,7 +165,7 @@ function notesAdded(event: CustomEvent<Events.NotesAdded>){
 			message: `Notes import failed for ${title}`,
 			context: {
 				...event.detail,
-				error: cleanErrorIfAxios(error)
+				error: cleanError(error)
 			},
 			showToaster: true
 		});
@@ -197,7 +195,7 @@ function tagsDeleted(event: CustomEvent<Events.TagsDeleted>){
 			message: "Tag deletion failed",
 			context: {
 				...event.detail,
-				error: cleanErrorIfAxios(error)
+				error: cleanError(error)
 			},
 			showToaster: true
 		});
@@ -217,7 +215,7 @@ function tagsModified(event: CustomEvent<Events.TagsModified>){
 	/* eslint-disable-next-line prefer-const */
 	let { data: { failed, successful }, error, library } = event.detail;
 
-	error = cleanErrorIfAxios(error);
+	error = cleanError(error);
 
 	if (error || (failed.length > 0 && successful.length == 0)) {
 		window.zoteroRoam?.error?.({
@@ -267,7 +265,7 @@ function writeFinished(event: CustomEvent<Events.Write>){
 	let { data, error, library } = event.detail;
 	const { failed = [], successful = [] } = data;
 
-	error = cleanErrorIfAxios(error);
+	error = cleanError(error);
 
 	if (error || (failed.length > 0 && successful.length == 0)) {
 		window.zoteroRoam?.error?.({

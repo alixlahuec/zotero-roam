@@ -2,7 +2,7 @@ import { Component, ReactNode } from "react";
 
 import { ErrorCallout } from "./ErrorCallout";
 
-import { cleanErrorIfAxios } from "../../api/utils";
+import { cleanError } from "../../utils";
 
 
 type OwnProps = {
@@ -29,7 +29,7 @@ class ErrorBoundary extends Component<OwnProps, OwnState> {
 			origin: "Interface",
 			message: "Failed to render",
 			context: {
-				error: cleanErrorIfAxios(error),
+				error: cleanError(error),
 				errorInfo
 			}
 		});

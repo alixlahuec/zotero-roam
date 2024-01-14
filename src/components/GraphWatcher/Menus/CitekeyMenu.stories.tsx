@@ -6,7 +6,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import CitekeyMenu from "./CitekeyMenu";
 import { parseDOI } from "../../../utils";
-import { parseSemanticDOIs } from "../../../api/utils";
+import { parseSemanticDOIs } from "../../../clients/semantic/helpers";
 import { sleep } from "../../../../.storybook/utils";
 import { items, sampleNote, samplePDF, semantics } from "Mocks";
 

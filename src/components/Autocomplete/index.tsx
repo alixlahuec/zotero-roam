@@ -5,13 +5,13 @@ import Tribute, { TributeCollection } from "tributejs";
 import { useAutocompleteSettings, useRequestsSettings } from "Components/UserSettings";
 
 import { escapeRegExp, formatItemReference } from "../../utils";
-import { useQuery_Items } from "../../api/queries";
+import { useItems } from "../../clients/hooks";
 
 import { CustomClasses } from "../../constants";
-import { TributeJS } from "Types/externals/tribute";
-import { QueryDataItems, isZItemTop } from "Types/transforms";
-import "./_index.sass";
 import { DataRequest, ZItemReferenceFormat } from "Types/extension";
+import { TributeJS } from "Types/externals/tribute";
+import { Queries, isZItemTop } from "Types/transforms";
+import "./_index.sass";
 
 
 type Option = {
@@ -64,7 +64,7 @@ const useGetItems = (
 	/** The format the item should be displayed in */
 	display: ZItemReferenceFormat | string = "citekey"
 ): Option[] => {
-	const select = useCallback((datastore: QueryDataItems) => {
+	const select = useCallback((datastore: Queries.Data.Items) => {
 		return datastore.data
 			? datastore.data
 				.filter(isZItemTop)
@@ -81,7 +81,7 @@ const useGetItems = (
 			: [];
 	}, [display, format]);
 
-	const itemQueries = useQuery_Items(reqs, { 
+	const itemQueries = useItems(reqs, { 
 		select,
 		notifyOnChangeProps: ["data"] 
 	});

@@ -6,21 +6,21 @@ import { QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
 import { useExtensionContext } from "Components/App";
 import { useOtherSettings, useRequestsSettings } from "Components/UserSettings";
 
-import { useQuery_Collections, useQuery_Items, useQuery_Permissions, useQuery_Tags } from "../../api/queries";
+import { useCollections, useItems, usePermissions, useTags } from "../../clients/hooks";
 import { useBool } from "../../hooks";
 import { makeTimestamp } from "../../utils";
 
 import { ExtensionStatusEnum } from "Types/extension";
 import { AsBoolean } from "Types/helpers";
-import { QueryDataCollections, QueryDataItems, QueryDataPermissions, QueryDataTags } from "Types/transforms";
+import { Queries } from "Types/transforms";
 import "./_index.sass";
 
 
 type QueriesList = {
-	"Permissions": UseQueryResult<QueryDataPermissions>[],
-	"Collections": UseQueryResult<QueryDataCollections>[],
-	"Tags": UseQueryResult<QueryDataTags>[],
-	"Items": UseQueryResult<QueryDataItems>[]
+	"Permissions": UseQueryResult<Queries.Data.Permissions>[],
+	"Collections": UseQueryResult<Queries.Data.Collections>[],
+	"Tags": UseQueryResult<Queries.Data.Tags>[],
+	"Items": UseQueryResult<Queries.Data.Items>[]
 };
 
 
@@ -158,10 +158,10 @@ const ExtensionIcon = memo<ExtensionIconProps>(function ExtensionIcon(props) {
 		notifyOnChangeProps: ["dataUpdatedAt", "status", "isFetching"]
 	}), [status]);
 
-	const itemQueries = useQuery_Items(dataRequests, queryOpts);
-	const permissionQueries = useQuery_Permissions(apiKeys, queryOpts);
-	const tagQueries = useQuery_Tags(libraries, queryOpts);
-	const collectionQueries = useQuery_Collections(libraries, queryOpts);
+	const itemQueries = useItems(dataRequests, queryOpts);
+	const permissionQueries = usePermissions(apiKeys, queryOpts);
+	const tagQueries = useTags(libraries, queryOpts);
+	const collectionQueries = useCollections(libraries, queryOpts);
     
 	const isCurrentlyLoading = [...permissionQueries, ...itemQueries, ...tagQueries, ...collectionQueries].some(q => q.isLoading);
 	const isCurrentlyFetching = [...permissionQueries, ...itemQueries, ...tagQueries, ...collectionQueries].some(q => q.fetchStatus == "fetching");

@@ -7,13 +7,13 @@ import NotesDrawer from "Components/NotesDrawer";
 import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useOtherSettings, useRequestsSettings, useTypemapSettings } from "Components/UserSettings";
 
 import { useBool } from "../../../hooks";
-import { useQuery_Items } from "../../../api/queries";
+import { useItems } from "../../../clients/hooks";
 
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
 import { importItemMetadata } from "Roam";
 
 import { DataRequest } from "Types/extension";
-import { QueryDataItems, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
+import { Queries, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import "./_index.sass";
 
 
@@ -41,7 +41,7 @@ type ItemsMap = Map<Citekey, Item>
 
 /** Custom hook to retrieve library items and return a Map with their data & formatted citation */
 const useGetItems = (reqs: DataRequest[]): ItemsMap => {
-	const select = useCallback((datastore: QueryDataItems) => {
+	const select = useCallback((datastore: Queries.Data.Items) => {
 		if (datastore.data) {
 			const lib = categorizeLibraryItems(datastore.data);
 
@@ -79,7 +79,7 @@ const useGetItems = (reqs: DataRequest[]): ItemsMap => {
 		}
 	}, []);
 
-	const itemQueries = useQuery_Items(reqs, { 
+	const itemQueries = useItems(reqs, { 
 		notifyOnChangeProps: ["data"],
 		select
 	});

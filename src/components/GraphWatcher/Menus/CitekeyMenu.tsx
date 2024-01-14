@@ -13,7 +13,7 @@ import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, usePageM
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
 import { useBool } from "../../../hooks";
-import { useQuery_Semantic } from "../../../api/queries";
+import { useSemantic } from "../../../clients/hooks";
 
 import { showClasses } from "../classes";
 
@@ -114,7 +114,7 @@ type RelatedItemsBarProps = {
 function RelatedItemsBar(props: RelatedItemsBarProps) {
 	const { doi, itemList, origin, title } = props;
 	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
-	const { isLoading, isError, data, error } = useQuery_Semantic(doi);
+	const { isLoading, isError, data, error } = useSemantic(doi);
 	
 	const [isBacklinksListOpen, { toggle: toggleBacklinks }] = useBool(false);
 	const [isDialogOpen, { on: openDialog, off: closeDialog }] = useBool(false);

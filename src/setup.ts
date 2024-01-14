@@ -3,11 +3,11 @@ import { parseKeyCombo } from "@blueprintjs/core";
 import { Query, defaultShouldDehydrateQuery } from "@tanstack/react-query";
 import { PersistedClient } from "@tanstack/react-query-persist-client";
 
-import { cleanErrorIfAxios } from "./api/utils";
 import IDBDatabase from "./services/idb";
 import { registerSmartblockCommands } from "./services/smartblocks";
 import { setDefaultHooks } from "./services/events";
 
+import { cleanError } from "./utils";
 import {
 	EXTENSION_PORTAL_ID,
 	EXTENSION_SLOT_ID,
@@ -134,7 +134,7 @@ export function createPersisterWithIDB(database: IDBDatabase){
 					origin: "Database",
 					message: "Failed to persist query client",
 					context: {
-						error: cleanErrorIfAxios(e)
+						error: cleanError(e)
 					}
 				});
 				throw e;
@@ -149,7 +149,7 @@ export function createPersisterWithIDB(database: IDBDatabase){
 					origin: "Database",
 					message: "Failed to remove query client",
 					context: {
-						error: cleanErrorIfAxios(e)
+						error: cleanError(e)
 					}
 				});
 				throw e;
@@ -164,7 +164,7 @@ export function createPersisterWithIDB(database: IDBDatabase){
 					origin: "Database",
 					message: "Failed to restore query client",
 					context: {
-						error: cleanErrorIfAxios(e)
+						error: cleanError(e)
 					}
 				});
 				throw e;

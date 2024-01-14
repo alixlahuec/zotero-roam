@@ -7,7 +7,7 @@ import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
-import { useQuery_Items } from "../../../api/queries";
+import { useItems } from "../../../clients/hooks";
 import { categorizeLibraryItems } from "../../../utils";
 import { cleanRelatedItem } from "./utils";
 
@@ -19,7 +19,7 @@ function CitekeyMenuFactory({ menus }: { menus: Element[] }){
 	const [{ trigger }] = usePageMenuSettings();
 	const [{ dataRequests }] = useRequestsSettings();
 
-	const itemQueries = useQuery_Items(dataRequests, { 
+	const itemQueries = useItems(dataRequests, { 
 		select: (datastore) => datastore.data, 
 		notifyOnChangeProps: ["data"] 
 	});
@@ -66,7 +66,7 @@ function DNPMenuFactory({ menus }: { menus: Element[] }){
 	const [{ dataRequests }] = useRequestsSettings();
 	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
 
-	const itemQueries = useQuery_Items(dataRequests, {
+	const itemQueries = useItems(dataRequests, {
 		notifyOnChangeProps: ["data"], 
 		select: (datastore) => datastore.data
 	});
@@ -123,7 +123,7 @@ function TagMenuFactory({ menus }: { menus: Element[] }){
 	const [{ dataRequests }] = useRequestsSettings();
 	const [roamCitekeys/*, updateCitekeys */] = useRoamCitekeys();
 	
-	const itemQueries = useQuery_Items(dataRequests, {
+	const itemQueries = useItems(dataRequests, {
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => datastore.data 
 	});

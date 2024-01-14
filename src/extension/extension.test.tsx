@@ -6,20 +6,21 @@ import { H5 } from "@blueprintjs/core";
 import { QueryClient } from "@tanstack/query-core";
 import { persistQueryClientSave } from "@tanstack/query-persist-client-core";
 
-import { createPersisterWithIDB, setupInitialSettings } from "../setup";
-import IDBDatabaseService from "../services/idb";
+import zrToaster from "Components/ExtensionToaster";
+
+import { cleanBibliographyHTML, makeTagList } from "../clients/zotero/helpers";
 import { _formatPDFs, _getItemCreators, _getItemTags } from "../public";
-import { cleanBibliographyHTML, makeTagList } from "../api/utils";
+import IDBDatabaseService from "../services/idb";
+import { createPersisterWithIDB, setupInitialSettings } from "../setup";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
 
 import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from ".";
-import zrToaster from "Components/ExtensionToaster";
 
 import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, findCollections, libraries, sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage, sampleNote, sampleOlderNote, samplePDF, tags, Mocks } from "Mocks";
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
 
 import { UserRequests, UserSettings } from "Types/extension";
-import { QueryDataItems, ZItem, ZItemTop } from "Types/transforms";
+import { Queries, ZItem, ZItemTop } from "Types/transforms";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -306,7 +307,7 @@ describe("Retrieval utils", () => {
 		const parentItem = items.find(it => it.data.key == samplePDF.data.parentItem)!;
 		// getItemChildren() retrieves queries data by matching the data URI,
 		// so no need to reproduce the exact query key that would exist in prod
-		client.setQueryData<QueryDataItems>(
+		client.setQueryData<Queries.Data.Items>(
 			["items", targetLibrary.path, { dataURI: targetLibrary.path + "/items" }],
 			(_prev) => ({
 				data: [parentItem, samplePDF],

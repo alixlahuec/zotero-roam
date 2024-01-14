@@ -8,8 +8,9 @@ import { useRequestsSettings } from "Components/UserSettings";
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
 
-import { useQuery_Citoid, useQuery_Collections, useWriteableLibraries } from "../../api/queries";
-import { useImportCitoids } from "../../api/write";
+import { useCitoids, useCollections, useWriteableLibraries } from "../../clients/hooks";
+import { useImportCitoids } from "../../clients/mutations";
+
 import { useMulti, useSelect } from "../../hooks";
 import { sortCollections } from "../../utils";
 
@@ -32,7 +33,7 @@ type ImportButtonOwnProps = {
 const ImportButton = memo<ImportButtonOwnProps & ZoteroImportProps>(function ImportButton(props) {
 	const { identifiers, importProps, isActive, resetImport } = props;
 
-	const citoidQueries = useQuery_Citoid(identifiers, { 
+	const citoidQueries = useCitoids(identifiers, { 
 		enabled: isActive && identifiers.length > 0,
 		select: (data) => data.item
 	});
@@ -171,7 +172,7 @@ const ZoteroImport = memo<ZoteroImportProps>(function ZoteroImport(props) {
 
 	const { data: writeableLibraries, isLoading } = useWriteableLibraries(libraries);
 
-	const collectionQueries = useQuery_Collections(libraries, {
+	const collectionQueries = useCollections(libraries, {
 		enabled: writeableLibraries.length > 0,
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => datastore.data

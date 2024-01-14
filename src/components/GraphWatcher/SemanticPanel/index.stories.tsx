@@ -5,7 +5,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import SemanticPanel from ".";
 import { cleanSemantic, parseDOI } from "../../../utils";
-import { parseSemanticDOIs } from "../../../api/utils";
+import { parseSemanticDOIs } from "../../../clients/semantic/helpers";
 
 import { items, semantics } from "Mocks";
 
