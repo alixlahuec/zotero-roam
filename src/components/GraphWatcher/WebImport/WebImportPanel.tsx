@@ -8,7 +8,7 @@ import { useTypemapSettings } from "Components/UserSettings";
 import ZoteroImport from "Components/ZoteroImport";
 
 import { useMulti } from "../../../hooks";
-import { useQuery_Citoid } from "../../../api/queries";
+import { useCitoids } from "../../../clients/hooks";
 import { pluralize } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
@@ -26,7 +26,7 @@ type WebImportItem = {
 };
 
 function useGetCitoids(urls: string[], opts = {}) {
-	return useQuery_Citoid(urls, {
+	return useCitoids(urls, {
 		...opts,
 		select: (data) => {
 			const { item, query } = data;

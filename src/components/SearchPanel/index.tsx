@@ -7,23 +7,23 @@ import { useCopySettings, useRequestsSettings } from "Components/UserSettings";
 import LibraryQueryList from "./LibraryQueryList";
 
 import { useBool } from "../../hooks";
-import { useQuery_Items } from "../../api/queries";
+import { useItems } from "../../clients/hooks";
 import { cleanLibrary } from "../../utils";
 
 import { dialogClass, dialogLabel } from "./classes";
-import { QueryDataItems, RCitekeyPages } from "Types/transforms";
+import { Queries, RCitekeyPages } from "Types/transforms";
 import { DataRequest, ExtensionStatusEnum } from "Types/extension";
 import "./_index.sass";
 
 
 function useGetItems(reqs: DataRequest[], roamCitekeys: RCitekeyPages, opts = {}){
-	const select = useCallback((datastore: QueryDataItems) => {
+	const select = useCallback((datastore: Queries.Data.Items) => {
 		return datastore.data
 			? cleanLibrary(datastore.data, roamCitekeys)
 			: [];
 	}, [roamCitekeys]);
 
-	const itemQueries = useQuery_Items(reqs, {
+	const itemQueries = useItems(reqs, {
 		...opts,
 		notifyOnChangeProps: ["data"],
 		select

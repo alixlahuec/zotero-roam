@@ -7,7 +7,7 @@ import { useRequestsSettings } from "Components/UserSettings";
 import LogItem from "./LogItem";
 
 import { useBool } from "../../../hooks";
-import { useQuery_Items } from "../../../api/queries";
+import { useItems } from "../../../clients/hooks";
 import { categorizeLibraryItems } from "../../../utils";
 import { makeLogFromItems } from "./utils";
 
@@ -87,7 +87,7 @@ type RecentItemsProps = {
 
 const RecentItems = memo<RecentItemsProps>(function RecentItems({ onClose }){
 	const [{ dataRequests }] = useRequestsSettings();
-	const itemQueries = useQuery_Items(dataRequests, {
+	const itemQueries = useItems(dataRequests, {
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => datastore.data
 	});

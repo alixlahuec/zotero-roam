@@ -4,8 +4,7 @@ import { userEvent, within } from "@storybook/testing-library";
 import { Meta, StoryObj } from "@storybook/react";
 
 import SemanticPanel from ".";
-import { cleanSemantic, parseDOI } from "../../../utils";
-import { parseSemanticDOIs } from "../../../api/utils";
+import { cleanSemantic, parseDOI, transformDOIs } from "../../../utils";
 
 import { items, semantics } from "Mocks";
 
@@ -16,8 +15,8 @@ const semanticItem = items.find((it) => it.key == "blochImplementingSocialInterv
 const itemDOI = parseDOI(semanticItem.data.DOI) as string;
 const { citations, references } = semantics[itemDOI];
 const semanticData = {
-	citations: parseSemanticDOIs(citations),
-	references: parseSemanticDOIs(references)
+	citations: transformDOIs(citations),
+	references: transformDOIs(references)
 };
 
 export default {

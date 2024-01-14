@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Intent } from "@blueprintjs/core";
 
-import { cleanErrorIfAxios } from "../../api/utils";
+import { cleanError } from "../../utils";
 
 
 function ClearCacheButton(){
@@ -14,7 +14,7 @@ function ClearCacheButton(){
 					origin: "Cache",
 					message: "Failed to update caching status",
 					context: {
-						error: cleanErrorIfAxios(e)
+						error: cleanError(e)
 					}
 				});
 			});

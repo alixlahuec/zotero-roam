@@ -1,4 +1,7 @@
+import { isAxiosError } from "axios";
+
 import zrToaster from "Components/ExtensionToaster";
+
 import { SettingsAnnotations, SettingsNotes, ZItemReferenceFormat } from "Types/extension";
 import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
@@ -63,6 +66,27 @@ function categorizeLibraryItems(datastore: ZItem[]): ZLibraryContents{
 		return obj;
 
 	}, { items: [], pdfs: [], notes: [] });
+}
+
+/* istanbul ignore next */
+function cleanError(error: Error) {
+	try {
+		if (isAxiosError(error)) {
+			const { code, message, status, config } = error;
+			return {
+				code,
+				message,
+				status,
+				config: {
+					url: config?.url
+				}
+			};
+		}
+
+		return error.message;
+	} catch (e) {
+		return error;
+	}
 }
 
 /** Extracts an author's last name */
@@ -1250,6 +1274,17 @@ function splitNotes(notes: ZItemNote[], separator: string): string[][] {
 	}
 }
 
+/** Transform DOI data in a list of items. */
+function transformDOIs<T extends { doi: string | false | null }>(arr: T[]) {
+	return arr.map(elem => {
+		const { doi, ...rest } = elem;
+		return {
+			doi: parseDOI(doi),
+			...rest
+		};
+	});
+}
+
 export {
 	addElemToArray,
 	removeArrayElemAt,
@@ -1257,6 +1292,7 @@ export {
 	camelToTitleCase,
 	categorizeLibraryItems,
 	makeAuthorsSummary,
+	cleanError,
 	cleanLibrary,
 	cleanLibraryItem,
 	cleanLibraryPDF,
@@ -1295,5 +1331,6 @@ export {
 	simplifyZoteroNotes,
 	sortCollections,
 	sortElems,
-	splitNotes
+	splitNotes,
+	transformDOIs
 };
