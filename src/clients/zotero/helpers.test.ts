@@ -7,7 +7,6 @@ import { fetchItems } from "./base";
 
 import { areTagsDuplicate, cleanBibliographyHTML, extractCitekeys, makeTagList, matchWithCurrentData, updateTagMap, wrappedFetchItems } from "./helpers";
 import { makeDictionary } from "../../utils";
-import { parseSemanticDOIs } from "../semantic/helpers";
 
 import { apiKeys, bibs, findTags, items, libraries, tags } from "Mocks";
 import { DataRequest } from "Types/extension";
@@ -246,23 +245,6 @@ test("Merging data updates", () => {
 		{ with_citekey: false }
 	))
 		.toEqual(itemsList.slice(0, 2));
-});
-
-test("Selecting and formatting Semantic DOIs", () => {
-	const testItems = [
-		{ doi: null },
-		{ doi: "invalid.DOI" },
-		{ doi: "10.1186/S40985-018-0094-7" },
-		{ doi: "10.1370/afm.1918" }
-	];
-
-	expect(parseSemanticDOIs(testItems))
-		.toEqual([
-			{ doi: false },
-			{ doi: false },
-			{ doi: "10.1186/s40985-018-0094-7" },
-			{ doi: "10.1370/afm.1918" }
-		]);
 });
 
 describe("wrappedFetchItems", () => {

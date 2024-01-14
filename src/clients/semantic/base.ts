@@ -1,8 +1,7 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
 
-import { parseSemanticDOIs } from "./helpers";
-import { cleanError } from "../../utils";
+import { cleanError, transformDOIs } from "../../utils";
 
 import { SemanticScholarAPI } from "Types/externals";
 import { Queries } from "Types/transforms";
@@ -33,8 +32,8 @@ async function fetchSemantic(doi: string): Promise<Queries.Data.Semantic> {
 
 		return {
 			doi,
-			citations: parseSemanticDOIs(citations),
-			references: parseSemanticDOIs(references)
+			citations: transformDOIs(citations),
+			references: transformDOIs(references)
 		};
 	} catch (error) /* istanbul ignore next */ {
 		window.zoteroRoam?.error?.({

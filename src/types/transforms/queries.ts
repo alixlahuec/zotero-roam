@@ -1,4 +1,4 @@
-import { parseSemanticDOIs } from "../../clients/semantic/helpers";
+import { transformDOIs } from "../../utils";
 
 import { DataRequest } from "Types/extension";
 import { CitoidAPI, SemanticScholarAPI, ZoteroAPI } from "Types/externals";
@@ -23,8 +23,9 @@ export namespace Queries {
 
 		export type Semantic = {
 			doi: string,
-			citations: ReturnType<typeof parseSemanticDOIs<SemanticScholarAPI.RelatedPaper>>,
-			references: ReturnType<typeof parseSemanticDOIs<SemanticScholarAPI.RelatedPaper>>
+			// TODO: simplify with a type helper
+			citations: ReturnType<typeof transformDOIs<SemanticScholarAPI.RelatedPaper>>,
+			references: ReturnType<typeof transformDOIs<SemanticScholarAPI.RelatedPaper>>
 		};
 
 		export type Collections = {

@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react-hooks";
 import { wrapper } from "../query-test-wrapper";
 
 import { useSemantic } from "./hooks";
-import { parseSemanticDOIs } from "./helpers";
+import { transformDOIs } from "../../utils";
 
 import { semantics } from "Mocks/semantic-scholar";
 
@@ -20,8 +20,8 @@ describe("useSemantic", () => {
 			expect(result.current.data)
 				.toEqual({
 					doi,
-					citations: parseSemanticDOIs(expectation.citations),
-					references: parseSemanticDOIs(expectation.references)
+					citations: transformDOIs(expectation.citations),
+					references: transformDOIs(expectation.references)
 				});
 		}
 	);

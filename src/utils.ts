@@ -1274,6 +1274,17 @@ function splitNotes(notes: ZItemNote[], separator: string): string[][] {
 	}
 }
 
+/** Transform DOI data in a list of items. */
+function transformDOIs<T extends { doi: string | false | null }>(arr: T[]) {
+	return arr.map(elem => {
+		const { doi, ...rest } = elem;
+		return {
+			doi: parseDOI(doi),
+			...rest
+		};
+	});
+}
+
 export {
 	addElemToArray,
 	removeArrayElemAt,
@@ -1320,5 +1331,6 @@ export {
 	simplifyZoteroNotes,
 	sortCollections,
 	sortElems,
-	splitNotes
+	splitNotes,
+	transformDOIs
 };
