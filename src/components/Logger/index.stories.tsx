@@ -4,7 +4,7 @@ import { userEvent, within } from "@storybook/testing-library";
 import { Meta, StoryObj } from "@storybook/react";
 
 import Logger from ".";
-import ZoteroRoam, { ZoteroRoamLog } from "../../extension";
+import ZoteroRoam, { ZoteroRoamLog } from "../../api";
 
 
 type Props = ComponentProps<typeof Logger>;

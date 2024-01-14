@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/query-core";
 import { mock } from "jest-mock-extended";
 
 import { analyzeUserRequests, setupInitialSettings } from "../setup";
-import ZoteroRoam from "../extension";
+import ZoteroRoam from "../api";
 import { eval_term, reformatImportableBlocks, sbCommands } from "./smartblocks";
 import { getLocalLink, getWebLink, makeDNP } from "../utils";
 

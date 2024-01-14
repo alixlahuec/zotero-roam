@@ -3,7 +3,7 @@ import { Button, Classes, Collapse, Tag } from "@blueprintjs/core";
 
 import { ListItem } from "Components/DataList";
 
-import { ZoteroRoamLog } from "../../../extension";
+import { ZoteroRoamLog } from "../../../api";
 import { makeTimestamp } from "../../../utils";
 import { useBool } from "../../../hooks";
 
