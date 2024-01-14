@@ -5,7 +5,7 @@ import zrToaster from "Components/ExtensionToaster";
 import { SettingsAnnotations, SettingsNotes, ZItemReferenceFormat } from "Types/extension";
 import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
-import { RCitekeyPages, RImportableBlock, ZCleanItemPDF, ZCleanItemTop, ZEnrichedCollection, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZSimplifiedNote, ZTagDictionary, isZAnnotation, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
+import { RCitekeyPages, RImportableBlock, ZCleanItemTop, ZEnrichedCollection, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZSimplifiedNote, ZTagDictionary, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
 import { SCleanItem, SEnrichedItem, SEnrichedItemCitation, SEnrichedItemReference, SEnrichedItemTypeEnum, SRelatedEntries, isSBacklink } from "Types/transforms/semantic";
 
 
@@ -203,19 +203,6 @@ function cleanLibraryItem(item: ZItemTop, pdfs: ZItemAttachment[] = [], notes: (
 	].filter(AsBoolean).join(" ");
 
 	return clean_item;
-}
-
-/** Formats a Zotero PDF's metadata into a clean format, with parent & annotations data */
-function cleanLibraryPDF(pdf: ZItemAttachment, parent: (ZItemTop | Record<string, never>) = {}, annotations: ZItemAnnotation[] = []): ZCleanItemPDF {
-	return {
-		annotations,
-		key: pdf.data.key,
-		link: getPDFLink(pdf, "href"),
-		parent,
-		title: pdf.data.filename || pdf.data.title,
-		raw: pdf,
-		tags: pdf.data.tags.map(t => t.tag)
-	};
 }
 
 /** Removes newlines at the beginning and end of a string */
@@ -761,29 +748,6 @@ function identifyChildren(itemKey: string, location: string, { pdfs = [], notes 
 	};
 }
 
-/** Identifies the connections of a Zotero PDF within a given set of item and notes entries
- * @param itemKey - The Zotero key of the PDF item
- * @param parentKey - The Zotero key of the PDF's parent
- * @param location - The library location of the PDF item
- * @param data - The items among which connections are to be identified 
- * @returns The item's connections
- */
-function identifyPDFConnections(
-	itemKey: string,
-	parentKey: string,
-	location: string,
-	{ items = [], notes = [] }: Pick<ZLibraryContents, "items" | "notes">
-): { parent?: ZItemTop, annotations: ZItemAnnotation[] } {
-	const parentItem = items.find(it => it.data.key == parentKey && (it.library.type + "s/" + it.library.id == location));
-	const annotationItems = notes.filter(isZAnnotation)
-		.filter(n => n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location);
-
-	return {
-		parent: parentItem,
-		annotations: annotationItems
-	};
-}
-
 /** Checks if a string input is an HTML tag
  * @param {String} input - The targeted string
  * @returns The outcome of the test
@@ -1296,7 +1260,6 @@ export {
 	cleanError,
 	cleanLibrary,
 	cleanLibraryItem,
-	cleanLibraryPDF,
 	cleanNewlines,
 	cleanSemantic,
 	cleanSemanticItem,
@@ -1318,7 +1281,6 @@ export {
 	getWebLink,
 	hasNodeListChanged,
 	identifyChildren,
-	identifyPDFConnections,
 	makeDateFromAgo,
 	makeDictionary,
 	makeDNP,
