@@ -2,7 +2,7 @@ import { H5, IconName, Intent } from "@blueprintjs/core";
 import { Query, QueryClient, QueryFilters } from "@tanstack/query-core";
 import zrToaster from "Components/ExtensionToaster";
 
-import { RelatedOptions, _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "../public";
+import { RelatedOptions, _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
 import IDBDatabase from "../services/idb";
 import { cleanBibliographyHTML } from "../clients/zotero/helpers";
 import { fetchBibEntries, fetchBibliography } from "../clients/zotero/base";

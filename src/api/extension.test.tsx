@@ -9,7 +9,7 @@ import { persistQueryClientSave } from "@tanstack/query-persist-client-core";
 import zrToaster from "Components/ExtensionToaster";
 
 import { cleanBibliographyHTML, makeTagList } from "../clients/zotero/helpers";
-import { _formatPDFs, _getItemCreators, _getItemTags } from "../public";
+import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
 import IDBDatabaseService from "../services/idb";
 import { createPersisterWithIDB, setupInitialSettings } from "../setup";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";

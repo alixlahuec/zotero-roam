@@ -1,5 +1,5 @@
 import { mock } from "jest-mock-extended";
-import { _getItemCreators, _getItemTags } from "../src/public";
+import { _getItemCreators, _getItemTags } from "./public";
 
 import { ZItemTop } from "Types/transforms";
 

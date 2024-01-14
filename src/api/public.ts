@@ -1,5 +1,5 @@
 import { findRoamPage } from "Roam";
-import { getPDFLink } from "./utils";
+import { getPDFLink } from "../utils";
 import { ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
 import { ZItem, ZItemAttachment, ZItemTop } from "Types/transforms";
