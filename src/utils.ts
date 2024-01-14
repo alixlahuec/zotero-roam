@@ -4,7 +4,7 @@ import zrToaster from "Components/ExtensionToaster";
 
 import { SettingsAnnotations, SettingsNotes, ZItemReferenceFormat } from "Types/extension";
 import { AsBoolean } from "Types/helpers";
-import { RCitekeyPages, RImportableBlock, ZCleanItemTop, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZSimplifiedNote, ZTagDictionary, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
+import { RCitekeyPages, RImportableBlock, ZCleanItemTop, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZTagDictionary, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
 
 
 /** Adds an element to the end of an array
@@ -920,37 +920,6 @@ function simplifyZoteroAnnotations(annotations: ZItemAnnotation[]): ZSimplifiedA
 	});
 }
 
-/** Simplifies data structure for Zotero notes
- * @returns The simplified array of notes
- */
-function simplifyZoteroNotes(notes: ZItemNote[]): ZSimplifiedNote[] {
-	return notes.map(nt => {
-		const {
-			dateAdded: date_added,
-			dateModified: date_modified,
-			parentItem: parent_item,
-			note,
-			tags
-		} = nt.data;
-
-		const location = nt.library.type + "s/" + nt.library.id;
-		const libLoc = location.startsWith("groups/") ? location : "library";
-		const link_note = `zotero://select/${libLoc}/items/${nt.key}`;
-
-		return {
-			date_added,
-			date_modified,
-			key: nt.key,
-			location,
-			link_note,
-			note,
-			parent_item,
-			raw: nt,
-			tags: tags.map(t => t.tag)
-		};
-	});
-}
-
 /** Splits Zotero notes on a given string
  * @param notes - The raw array of notes to split
  * @param separator - The string on which to split notes
@@ -1012,7 +981,6 @@ export {
 	readDNP,
 	searchEngine,
 	simplifyZoteroAnnotations,
-	simplifyZoteroNotes,
 	splitNotes,
 	transformDOIs
 };
