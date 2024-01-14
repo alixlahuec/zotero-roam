@@ -1,4 +1,4 @@
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt, camelToTitleCase, executeFunctionByName, hasNodeListChanged } from "../../src/utils";
+import { addElemToArray, removeArrayElemAt, updateArrayElemAt, camelToTitleCase, executeFunctionByName } from "../../src/utils";
 
 
 test("Appends element in array", () => {
@@ -59,44 +59,5 @@ describe("Executing a function by name", () => {
 		expect(() => {
 			executeFunctionByName("customFunc", window);
 		}).toThrow("Function customFunc doesn't exist");
-	});
-});
-
-describe("Checking for changes in a list of nodes", () => {
-	document.body.innerHTML = `
-		<div class="some-div"></div>
-		<div class="another-div"></div>
-	`;
-
-	const someNodeList = document.querySelectorAll(".some-div");
-	const anotherNodeList = document.querySelectorAll(".another-div");
-	const allNodesList = document.querySelectorAll("div");
-	const emptyList = document.querySelectorAll(".non-existent-class");
-
-	test("Empty list doesn't get identified as a change", () => {
-		expect(hasNodeListChanged(emptyList, emptyList))
-			.toBe(false);
-	});
-
-	test("Identical list doesn't get identified as a change", () => {
-		expect(hasNodeListChanged(someNodeList, someNodeList))
-			.toBe(false);
-	});
-
-	test("Non-empty list becoming empty is a change", () => {
-		expect(hasNodeListChanged(someNodeList, emptyList))
-			.toBe(true);
-	});
-
-	test("Empty list becoming non-empty is a change", () => {
-		expect(hasNodeListChanged(emptyList, someNodeList))
-			.toBe(true);
-	});
-
-	test("Change in list contents is a change", () => {
-		expect(hasNodeListChanged(someNodeList, anotherNodeList))
-			.toBe(true);
-		expect(hasNodeListChanged(someNodeList, allNodesList))
-			.toBe(true);
 	});
 });

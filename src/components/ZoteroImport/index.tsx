@@ -12,7 +12,7 @@ import { useCitoids, useCollections, useWriteableLibraries } from "../../clients
 import { useImportCitoids } from "../../clients/mutations";
 
 import { useMulti, useSelect } from "../../hooks";
-import { sortCollections } from "../../utils";
+import { sortCollections } from "./helpers";
 
 import { CustomClasses } from "../../constants";
 import { ZoteroAPI } from "Types/externals";

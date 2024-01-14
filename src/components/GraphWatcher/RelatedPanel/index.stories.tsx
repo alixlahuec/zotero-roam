@@ -4,7 +4,7 @@ import { expect } from "@storybook/jest";
 import { Meta, StoryObj } from "@storybook/react";
 
 import RelatedPanel from ".";
-import { cleanRelatedItem } from "../Menus/utils";
+import { cleanRelatedItem } from "../helpers";
 
 import { items } from "Mocks";
 

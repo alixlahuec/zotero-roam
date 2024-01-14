@@ -1,11 +1,51 @@
 import { mock } from "jest-mock-extended";
 import { cleanLibraryItem } from "../../utils";
-import { formatItemReferenceWithDefault } from "./utils";
-import { items } from "Mocks";
+import { cleanLibrary, formatItemReferenceWithDefault } from "./helpers";
+import { items, libraries } from "Mocks";
 import { SettingsCopy } from "Types/extension";
 
 
-describe("Item reference formatting - with preset", () => {
+const { userLibrary } = libraries;
+
+describe("cleanLibrary", () => {
+	it("Simplifies Zotero item metadata", () => {
+		expect(cleanLibrary([items[0]], new Map()))
+			.toEqual([{
+				abstract: items[0].data.abstractNote,
+				authors: "Bloch and Rozmovits",
+				authorsFull: ["Gary Bloch", "Linda Rozmovits"],
+				authorsLastNames: ["Bloch", "Rozmovits"],
+				authorsRoles: ["author", "author"],
+				children: {
+					pdfs: [],
+					notes: []
+				},
+				createdByUser: null,
+				inGraph: false,
+				itemKey: items[0].data.key,
+				itemType: items[0].data.itemType,
+				key: "blochImplementingSocialInterventions2021",
+				location: userLibrary.path,
+				meta: "Bloch and Rozmovits (2021)",
+				publication: "CMAJ",
+				tags: [],
+				title: "Implementing social interventions in primary care",
+				weblink: {
+					href: "https://www.cmaj.ca/content/193/44/E1696",
+					title: "https://www.cmaj.ca/content/193/44/E1696"
+				},
+				year: "2021",
+				zotero: {
+					local: "zotero://select/library/items/" + items[0].data.key,
+					web: "https://www.zotero.org/" + userLibrary.path + "/items/" + items[0].data.key
+				},
+				raw: items[0],
+				_multiField: items[0].data.abstractNote + " Gary Bloch Linda Rozmovits 2021 Implementing social interventions in primary care blochImplementingSocialInterventions2021"
+			}]);
+	});
+});
+
+describe("formatItemReferenceWithDefault", () => {
 	const sample_item = items.find(it => it.key == "blochImplementingSocialInterventions2021")!;
 	const simplifiedItem = cleanLibraryItem(sample_item, [], [], new Map([]));
 

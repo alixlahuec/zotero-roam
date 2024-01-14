@@ -1,9 +1,7 @@
 import { menuClasses, menuPrefix } from "../classes";
 import { findRoamPage } from "Roam";
 
-import { identifyChildren, makeTimestamp, readDNP } from "../../../utils";
-import { AsBoolean } from "Types/helpers";
-import { RCitekeyPages, SCleanRelatedItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
+import { readDNP } from "../../../utils";
 
 
 const dnpRegex = new RegExp(/(.+) ([0-9]+).{2}, ([0-9]{4})/);
@@ -39,40 +37,6 @@ const addPageMenus = () => {
 	}
 };
 
-/** Formats an item for display in AuxiliaryDialog
- * @param item - The item to format
- * @param libraryData - The list of attachments in the library
- * @param roamCitekeys - The map of citekey pages in the Roam graph. Each entry contains the page's UID.  
- * @returns The formatted item
- * @see cleanRelatedItemType
- */
-function cleanRelatedItem(
-	item: ZItemTop,
-	{ pdfs = [], notes = [] }: { pdfs: ZItemAttachment[], notes: (ZItemAnnotation | ZItemNote)[] },
-	roamCitekeys: RCitekeyPages
-): SCleanRelatedItem {
-	const creator = item.meta.creatorSummary || "";
-	const pub_year = item.meta.parsedDate ? `(${new Date(item.meta.parsedDate).getUTCFullYear()})` : "";
-	const itemKey = item.data.key;
-	const location = item.library.type + "s/" + item.library.id;
-
-	const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
-
-	return {
-		abstract: item.data.abstractNote || "",
-		added: item.data.dateAdded,
-		children,
-		inGraph: roamCitekeys.get("@" + item.key) || false,
-		itemType: item.data.itemType,
-		key: item.key,
-		location,
-		meta: [creator, pub_year].filter(AsBoolean).join(" "),
-		raw: item,
-		timestamp: makeTimestamp(item.data.dateAdded),
-		title: item.data.title || ""
-	};
-}
-
 const findPageMenus = () => {
 	return {
 		citekeyMenus: Array.from(document.querySelectorAll(`[class=${menuClasses.citekey}]`)),
@@ -83,6 +47,5 @@ const findPageMenus = () => {
 
 export {
 	addPageMenus,
-	cleanRelatedItem,
 	findPageMenus
 };

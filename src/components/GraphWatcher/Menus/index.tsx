@@ -8,11 +8,12 @@ import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
 import { useItems } from "../../../clients/hooks";
-import { categorizeLibraryItems } from "../../../utils";
-import { cleanRelatedItem } from "./utils";
 
-import "./_index.sass";
+import { categorizeLibraryItems } from "../../../utils";
+import { cleanRelatedItem } from "../helpers";
+
 import { SCleanRelatedItem } from "Types/transforms";
+import "./_index.sass";
 
 
 function CitekeyMenuFactory({ menus }: { menus: Element[] }){

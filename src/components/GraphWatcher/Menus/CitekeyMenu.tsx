@@ -17,7 +17,8 @@ import { useSemantic } from "../../../clients/hooks";
 
 import { showClasses } from "../classes";
 
-import { cleanLibraryItem, cleanSemantic, compareItemsByYear, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
+import { cleanSemantic, compareItemsByYear } from "./helpers";
+import { cleanLibraryItem, getLocalLink, getPDFLink, getWebLink, identifyChildren, parseDOI, pluralize } from "../../../utils";
 import { findRoamPage, importItemMetadata } from "Roam";
 
 import { CustomClasses } from "../../../constants";

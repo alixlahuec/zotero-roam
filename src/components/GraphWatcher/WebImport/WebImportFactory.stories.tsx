@@ -2,7 +2,7 @@ import { ComponentProps, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import WebImportFactory from ".";
 
-import { findWebimportDivs, setWebimportDivs } from "./utils";
+import { findWebimportDivs, setWebimportDivs } from "./helpers";
 import { blockWithAliasedLink, blockWithHrefLink } from "../fixtures";
 
 
