@@ -35,15 +35,6 @@ function updateArrayElemAt<T, V extends T>(arr: T[], index: number, value: V): T
 	return [...arr.slice(0, index), value, ...arr.slice(index + 1, arr.length)];
 }
 
-/** Converts a string from camelCase to Title Case
- * @see https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-title-case-text */
-function camelToTitleCase(text: string): string {
-	const result = text.replace(/([A-Z])/g, " $1");
-	const finalResult = result.charAt(0).toUpperCase() + result.slice(1);
-
-	return finalResult;
-}
-
 /** Categorizes library items according to their type (items, PDFs attachments, notes)
  * @param datastore - The items to categorize 
  * @returns The categorized object
@@ -952,7 +943,6 @@ export {
 	addElemToArray,
 	removeArrayElemAt,
 	updateArrayElemAt,
-	camelToTitleCase,
 	categorizeLibraryItems,
 	cleanError,
 	cleanLibraryItem,

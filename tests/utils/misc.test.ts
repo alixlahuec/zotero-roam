@@ -1,4 +1,4 @@
-import { addElemToArray, removeArrayElemAt, updateArrayElemAt, camelToTitleCase, executeFunctionByName } from "../../src/utils";
+import { addElemToArray, removeArrayElemAt, updateArrayElemAt, executeFunctionByName } from "../../src/utils";
 
 
 test("Appends element in array", () => {
@@ -18,22 +18,6 @@ test("Updates value of array element", () => {
 	const arr: any[] = ["a", "b", "c"];
 	expect(updateArrayElemAt(arr, 0, { id: 123 })).toEqual([{ id: 123 }, "b", "c"]);
 	expect(updateArrayElemAt(arr, 3, { id: 456 })).toEqual(["a", "b", "c", { id: 456 }]);
-});
-
-describe("Convert camelCase to Title Case", () => {
-	const cases = [
-		["someText", "Some Text"],
-		["toggleDashboard", "Toggle Dashboard"],
-		["copyAsReference", "Copy As Reference"]
-	];
-
-	test.each(cases)(
-		"%# - %s",
-		(input, expectation) => {
-			expect(camelToTitleCase(input))
-				.toBe(expectation);
-		}
-	);
 });
 
 describe("Executing a function by name", () => {
