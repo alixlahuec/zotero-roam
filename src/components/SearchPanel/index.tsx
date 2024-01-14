@@ -8,7 +8,7 @@ import LibraryQueryList from "./LibraryQueryList";
 
 import { useBool } from "../../hooks";
 import { useItems } from "../../clients/hooks";
-import { cleanLibrary } from "../../utils";
+import { cleanLibrary } from "./helpers";
 
 import { dialogClass, dialogLabel } from "./classes";
 import { Queries, RCitekeyPages } from "Types/transforms";

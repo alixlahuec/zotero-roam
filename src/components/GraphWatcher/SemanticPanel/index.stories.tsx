@@ -4,7 +4,8 @@ import { userEvent, within } from "@storybook/testing-library";
 import { Meta, StoryObj } from "@storybook/react";
 
 import SemanticPanel from ".";
-import { cleanSemantic, parseDOI, transformDOIs } from "../../../utils";
+import { cleanSemantic } from "../Menus/helpers";
+import { parseDOI, transformDOIs } from "../../../utils";
 
 import { items, semantics } from "Mocks";
 

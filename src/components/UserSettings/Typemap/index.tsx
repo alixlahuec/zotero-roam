@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import { TextField , SettingsManager } from "Components/UserSettings";
-import { camelToTitleCase } from "../../../utils";
+import { camelToTitleCase } from "../common";
 
 
 const { Provider: TypemapProvider, useSettings: useTypemapSettings } = new SettingsManager<"typemap">({

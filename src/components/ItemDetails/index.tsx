@@ -11,7 +11,7 @@ import { useAnnotationsSettings, useCopySettings, useMetadataSettings, useNotesS
 import { validateShortcuts } from "../../setup";
 import { copyToClipboard, makeDateFromAgo } from "../../utils";
 import { importItemMetadata, importItemNotes, openPageByUID } from "Roam";
-import { formatItemReferenceWithDefault } from "Components/SearchPanel/utils";
+import { formatItemReferenceWithDefault } from "Components/SearchPanel/helpers";
 import { useBool } from "../../hooks";
 
 import { CustomClasses } from "../../constants";

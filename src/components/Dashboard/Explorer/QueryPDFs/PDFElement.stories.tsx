@@ -2,7 +2,7 @@ import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import PDFElement from "./PDFElement";
 
-import { cleanLibraryPDF } from "../../../../utils";
+import { cleanLibraryPDF } from "./helpers";
 import { ListWrapper } from "Components/DataList";
 import { samplePDF } from "Mocks/zotero";
 

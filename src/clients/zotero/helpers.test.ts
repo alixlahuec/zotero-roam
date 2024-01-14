@@ -6,11 +6,11 @@ jest.mock("./base");
 import { fetchItems } from "./base";
 
 import { areTagsDuplicate, cleanBibliographyHTML, extractCitekeys, makeTagList, matchWithCurrentData, updateTagMap, wrappedFetchItems } from "./helpers";
-import { makeDictionary } from "../../utils";
 
 import { apiKeys, bibs, findTags, items, libraries, tags } from "Mocks";
 import { DataRequest } from "Types/extension";
 import { ZoteroAPI } from "Types/externals";
+import { ZTagDictionary } from "Types/transforms";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -167,7 +167,7 @@ describe("Building tag maps", () => {
 describe("Creating formatted tag lists", () => {
 	const cases = Object.entries(libraries);
 
-	function setExpectations(path: string, list: ReturnType<typeof makeDictionary>) {
+	function setExpectations(path: string, list: ZTagDictionary) {
 		const output = {};
 		Object.entries(list).map(([initial, tokens]) => {
 			output[initial] = tokens.map(token => ({

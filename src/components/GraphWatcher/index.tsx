@@ -7,10 +7,10 @@ import InlineCitekeys from "./InlineCitekeys";
 import { CitekeyMenuFactory, DNPMenuFactory, TagMenuFactory } from "./Menus";
 import WebImportFactory from "./WebImport";
 
+import { hasNodeListChanged } from "./helpers";
 import { addPageMenus, findPageMenus } from "./Menus/utils";
-import { findWebimportDivs, setWebimportDivs } from "./WebImport/utils";
+import { findWebimportDivs, setWebimportDivs } from "./WebImport/helpers";
 import { menuPrefix, webimportClass } from "./classes";
-import { hasNodeListChanged } from "../../utils";
 
 
 const GraphWatcher = memo(function GraphWatcher(){
