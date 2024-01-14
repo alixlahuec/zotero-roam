@@ -1,5 +1,5 @@
 import { fetchSemantic } from "./base";
-import { parseSemanticDOIs } from "./helpers";
+import { transformDOIs } from "../../utils";
 import { semantics } from "Mocks/semantic-scholar";
 
 
@@ -14,8 +14,8 @@ describe("Fetching mocked Semantic data", () => {
 
 			expect(res).toEqual({
 				doi,
-				citations: parseSemanticDOIs(citations),
-				references: parseSemanticDOIs(references)
+				citations: transformDOIs(citations),
+				references: transformDOIs(references)
 			});
 		}
 	);
