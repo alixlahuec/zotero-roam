@@ -1,4 +1,29 @@
-import { ZItem, ZItemTop } from "Types/transforms";
+import { compareAnnotationIndices, executeFunctionByName, extractSortIndex, formatItemAnnotations, simplifyZoteroAnnotations } from "../utils";
+import { SettingsAnnotations } from "Types/extension";
+import { ZItem, ZItemAnnotation, ZItemTop } from "Types/transforms";
+
+
+/** Orders the (raw) indices of two Zotero annotations */
+function compareAnnotationRawIndices(a: string, b: string): number {
+	return compareAnnotationIndices(
+		extractSortIndex(a),
+		extractSortIndex(b)
+	);
+}
+
+
+/** Formats an array of Zotero annotations into Roam blocks, with optional configuration */
+function formatZoteroAnnotations(
+	annotations: ZItemAnnotation[],
+	{ func = "", use = "default", __with = "raw", ...settings }: Partial<SettingsAnnotations> = {}
+): any {
+	if (use == "function" && func) {
+		// If the user has provided a custom function, execute it with the desired input
+		return executeFunctionByName(func, window, __with == "raw" ? annotations : simplifyZoteroAnnotations(annotations));
+	} else {
+		return formatItemAnnotations(annotations, { ...settings });
+	}
+}
 
 
 export type RelatedOptions = { brackets: boolean, return_as: "array" | "raw" | "string" };
@@ -44,4 +69,8 @@ function _getItemRelated(
 }
 
 
-export { _getItemRelated };
+export {
+	_getItemRelated,
+	compareAnnotationRawIndices,
+	formatZoteroAnnotations
+};
