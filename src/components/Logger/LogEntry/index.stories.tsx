@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ListWrapper } from "Components/DataList";
 
 import LogEntry from ".";
-import { ZoteroRoamLog } from "../../../api";
+import { ZoteroRoamLog } from "../../../api/logging";
 
 
 type Props = ComponentProps<typeof LogEntry>;
