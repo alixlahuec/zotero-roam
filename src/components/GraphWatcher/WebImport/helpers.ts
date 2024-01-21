@@ -1,10 +1,20 @@
-import { matchArrays } from "../../../utils";
 import { webimportClass } from "../classes";
 
 
 const findWebimportDivs = () => {
 	return Array.from(document.querySelectorAll(`[class="${webimportClass}"]`));
 };
+
+
+/** Determines if two arrays have any elements in common
+ * @param arr1 - The first array to use 
+ * @param arr2 - The second array to use
+ * @returns `true` if at least one elements is present in both arrays - otherwise `false`
+ */
+function matchArrays(arr1: any[], arr2: any[]) {
+	return arr1.some(el => arr2.includes(el));
+}
+
 
 const setWebimportDivs = (tags: string[]) => {
 	// Old blocks - are they still valid ?
@@ -22,4 +32,4 @@ const setWebimportDivs = (tags: string[]) => {
 	newTrigBlocks.forEach(b => b.insertAdjacentElement("afterbegin", elem.cloneNode(true) as Element));
 };
 
-export { findWebimportDivs, setWebimportDivs };
+export { findWebimportDivs, matchArrays, setWebimportDivs };

@@ -6,8 +6,9 @@ import { ErrorBoundary } from "Components/Errors";
 import SemanticPagination, { SemanticPaginationProps } from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
-import { pluralize, sortElems } from "../../../utils";
+import { pluralize } from "../../../utils";
 import { useMulti } from "../../../hooks";
+import { sortElems } from "../helpers";
 
 import { CustomClasses } from "../../../constants";
 import { ShowTypeSemantic } from "../types";

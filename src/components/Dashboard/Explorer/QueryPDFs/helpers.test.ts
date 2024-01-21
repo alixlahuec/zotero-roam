@@ -1,4 +1,5 @@
-import { cleanLibraryPDF, getPDFLink, identifyPDFConnections } from "../../src/utils";
+import { cleanLibraryPDF, identifyPDFConnections } from "./helpers";
+import { getPDFLink } from "../../../../utils";
 import { items, sampleAnnot, samplePDF } from "Mocks";
 
 
@@ -7,12 +8,12 @@ test("Identifies the connections of a PDF item", () => {
 	const parent = items.find(it => it.data.key == parentKey);
 
 	expect(identifyPDFConnections(
-		samplePDF.data.key, 
-		parentKey, 
-		samplePDF.library.type + "s/" + samplePDF.library.id, 
-		{ 
-			items: items, 
-			notes: [sampleAnnot] 
+		samplePDF.data.key,
+		parentKey,
+		samplePDF.library.type + "s/" + samplePDF.library.id,
+		{
+			items: items,
+			notes: [sampleAnnot]
 		}))
 		.toEqual({
 			parent,

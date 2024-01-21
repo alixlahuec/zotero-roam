@@ -72,16 +72,17 @@ export default defineConfig(({ command, mode }) => {
 			rollupOptions: {
 				input: rollupInput,
 				output: {
-					format: "esm",
+					format: "es",
 					assetFileNames: "extension.[ext]",
 					entryFileNames: "[name].js"
-				}
+				},
+				preserveEntrySignatures: "allow-extension"
 			}
 		},
 		resolve: {
 			alias: {
 				"Mocks": resolve("mocks"),
-				"Roam": resolve("src", "roam"),
+				"Roam": resolve("src", "services", "roam"),
 				"Components": resolve("src", "components"),
 				"Styles": resolve("styles"),
 				"Types": resolve("src", "types"),

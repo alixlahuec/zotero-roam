@@ -1,11 +1,11 @@
 import { ComponentProps } from "react";
-import { Meta, StoryObj } from "@storybook/react";
-
-import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
+import { Meta, StoryObj } from "@storybook/react";
+import { userEvent, waitFor, within } from "@storybook/testing-library";
+
 import TagMenu from "./TagMenu";
 
-import { cleanRelatedItem } from "./utils";
+import { cleanRelatedItem } from "../helpers";
 import { items } from "Mocks";
 
 

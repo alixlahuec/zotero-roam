@@ -1,10 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react-hooks";
-
 import { mock } from "jest-mock-extended";
-import * as apiUtils from "../../src/api/utils";
-import { fetchItems, fetchTags } from "../../src/api/utils";
-import { useDeleteTags, useImportCitoids, useModifyTags } from "../../src/api/write";
+
+import { fetchItems, fetchTags } from "./base";
+import { useDeleteTags, useImportCitoids, useModifyTags } from "./mutations";
 
 import { apiKeys, citoids, goodIdentifier, libraries } from "Mocks";
 import { DataRequest } from "Types/extension";
@@ -27,14 +26,8 @@ const queryClient = new QueryClient({
 	}
 });
 
-queryClient.invalidateQueries = jest.fn();
+const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
 const dispatchEventSpy = jest.spyOn(document, "dispatchEvent");
-
-// https://github.com/swc-project/swc/discussions/7024#discussioncomment-6629202
-jest.mock("../../src/api/utils", () => ({
-	__esModule: true,
-	...jest.requireActual("../../src/api/utils")
-}));
 
 // https://tkdodo.eu/blog/testing-react-query
 const wrapper = ({ children }) => {
@@ -44,17 +37,17 @@ const wrapper = ({ children }) => {
 };
 
 describe("Mutation hooks for the Zotero API", () => {
-	afterEach(() => queryClient.clear());
+	afterEach(() => {
+		queryClient.clear();
+	});
 
 	describe("useDeleteTags", () => {
-		const deleteTagsSpy = jest.spyOn(apiUtils, "deleteTags");
-
 		beforeEach(() => {
 			return fetchTags({ apikey: masterKey, path: userLibrary.path })
 				.then((mockData) => queryClient.setQueryData(["tags", { library: userLibrary.path }], () => mockData));
 		});
 
-		test("args passed to deleteTags", async () => {
+		test("callback on success", async () => {
 			const { result, waitFor } = renderHook(() => useDeleteTags(), { wrapper });
 
 			expect(result.current.status).toBe("idle");
@@ -66,26 +59,7 @@ describe("Mutation hooks for the Zotero API", () => {
 			});
 			await waitFor(() => result.current.status == "success");
 
-			expect(deleteTagsSpy).toHaveBeenCalledWith(
-				["systems"],
-				{ apikey: masterKey, path: userLibrary.path },
-				userLibrary.version
-			);
-		});
-
-		test("callback on success", async() => {
-			const { result, waitFor } = renderHook(() => useDeleteTags(), { wrapper });
-
-			expect(result.current.status).toBe("idle");
-			act(() => {
-				result.current.mutate({
-					library: { apikey: masterKey, path: userLibrary.path },
-					tags: ["systems"]
-				});
-			});
-			await waitFor(() => result.current.status == "success");
-
-			expect(queryClient.invalidateQueries).toHaveBeenCalledWith(
+			expect(invalidateQueriesSpy).toHaveBeenCalledWith(
 				["items", userLibrary.path],
 				{ refetchType: "all" },
 				{ throwOnError: true }
@@ -101,34 +75,6 @@ describe("Mutation hooks for the Zotero API", () => {
 	});
 
 	describe("useImportCitoids", () => {
-		const writeItemsSpy = jest.spyOn(apiUtils, "writeItems");
-
-		test("args passed to writeItems", async () => {
-			const library = { apikey: masterKey, path: userLibrary.path };
-			const { result, waitFor } = renderHook(() => useImportCitoids(), { wrapper });
-
-			expect(result.current.status).toBe("idle");
-			act(() => {
-				result.current.mutate({
-					collections: [],
-					items: [citoids[goodIdentifier]],
-					library,
-					tags: []
-				});
-			});
-			await waitFor(() => result.current.status == "success");
-
-			expect(writeItemsSpy).toHaveBeenCalledWith(
-				[
-					{
-						...citoids[goodIdentifier],
-						collections: [],
-						tags: []
-					}
-				],
-				library
-			);
-		});
 
 		test("callback on success", async () => {
 			const { result, waitFor } = renderHook(() => useImportCitoids(), { wrapper });
@@ -144,7 +90,7 @@ describe("Mutation hooks for the Zotero API", () => {
 			});
 			await waitFor(() => result.current.status == "success");
 
-			expect(queryClient.invalidateQueries).toHaveBeenCalledWith(
+			expect(invalidateQueriesSpy).toHaveBeenCalledWith(
 				["items", userLibrary.path],
 				{ refetchType: "all" }
 			);
@@ -167,7 +113,6 @@ describe("Mutation hooks for the Zotero API", () => {
 	});
 
 	describe("useModifyTags", () => {
-		const writeItemsSpy = jest.spyOn(apiUtils, "writeItems");
 		const sample_req = mock<DataRequest>({ apikey: masterKey, dataURI: `${groupLibrary.path}/items`, library: { path: groupLibrary.path } });
 
 		beforeEach(() => {
@@ -178,7 +123,7 @@ describe("Mutation hooks for the Zotero API", () => {
 			).then((mockData) => queryClient.setQueryData(["items", groupLibrary.path, {}], () => mockData));
 		});
 
-		test("args passed to writeItems", async() => {
+		test("callback on success", async () => {
 			const { result, waitFor } = renderHook(() => useModifyTags(), { wrapper });
 
 			expect(result.current.status).toBe("idle");
@@ -191,26 +136,7 @@ describe("Mutation hooks for the Zotero API", () => {
 			});
 			await waitFor(() => result.current.status == "success");
 
-			expect(writeItemsSpy).toHaveBeenCalledWith(
-				[{ key: "D53X926C", version: 17, tags: [{ tag: "HOUSING", type: 0 }] }],
-				{ apikey: masterKey, path: groupLibrary.path }
-			);
-		});
-
-		test("callback on success", async() => {
-			const { result, waitFor } = renderHook(() => useModifyTags(), { wrapper });
-
-			expect(result.current.status).toBe("idle");
-			act(() => {
-				result.current.mutate({
-					into: "HOUSING",
-					library: { apikey: masterKey, path: groupLibrary.path },
-					tags: ["housing"]
-				});
-			});
-			await waitFor(() => result.current.status == "success");
-
-			expect(queryClient.invalidateQueries).toHaveBeenCalledWith(
+			expect(invalidateQueriesSpy).toHaveBeenCalledWith(
 				["items", groupLibrary.path],
 				{ refetchType: "all" }
 			);

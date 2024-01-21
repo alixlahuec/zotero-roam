@@ -176,7 +176,7 @@
             "alias": {
 				"map": [
 					["Mocks", "./mocks"],
-					["Roam", "./src/roam.ts"],
+					["Roam", "./src/services/roam.ts"],
 					["Components", "./src/components"],
                     ["Styles", "./styles"],
 					["Types", "./src/types"]

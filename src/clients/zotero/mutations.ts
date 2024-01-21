@@ -1,40 +1,27 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteTags, writeItems } from "./utils";
-import { emitCustomEvent } from "../events";
 
-import { QueryDataItems, QueryDataTags, ZLibrary, isZItemTop } from "Types/transforms";
+import { deleteTags, writeItems } from "./base";
+import { emitCustomEvent } from "../../services/events";
+
 import { CitoidAPI, ZoteroAPI } from "Types/externals";
 import { isFulfilled } from "Types/helpers";
+import { Queries, ZLibrary, isZItemTop } from "Types/transforms";
 
-
-type ImportCitoidsArgs = {
-	collections: string[],
-	items: CitoidAPI.AsZotero[],
-	library: ZLibrary,
-	tags: string[];
-};
 
 type DeleteTagsArgs = {
 	library: ZLibrary,
 	tags: string[]
 };
 
-type ModifyTagsArgs = {
-	into: string,
-	library: ZLibrary,
-	tags: string[]
-};
-
-/** React Query custom mutation hook for deleting tags from a Zotero library.
+/** Delete tags from a Zotero library.
  * @fires zotero-roam:write
- * @returns 
  */
 const useDeleteTags = () => {
 	const client = useQueryClient();
 
 	return useMutation((variables: DeleteTagsArgs) => {
 		const { library: { apikey, path }, tags } = variables;
-		const { lastUpdated: version = 0 } = client.getQueryData<QueryDataTags>(["tags", { library: path }]) || {};
+		const { lastUpdated: version = 0 } = client.getQueryData<Queries.Data.Tags>(["tags", { library: path }]) || {};
 
 		return deleteTags(tags, { apikey, path }, version);
 	}, {
@@ -63,9 +50,16 @@ const useDeleteTags = () => {
 	});
 };
 
-/** React Query custom mutation hook for adding items to Zotero
+
+type ImportCitoidsArgs = {
+	collections: string[],
+	items: CitoidAPI.AsZotero[],
+	library: ZLibrary,
+	tags: string[];
+};
+
+/** Add items to a Zotero library.
  * @fires zotero-roam:write
- * @returns 
  */
 const useImportCitoids = () => {
 	const client = useQueryClient();
@@ -102,7 +96,7 @@ const useImportCitoids = () => {
 				return obj;
 			}, { successful: [], failed: [] });
 
-			if(!error && outcome.successful.length > 0){
+			if (!error && outcome.successful.length > 0) {
 				// Invalidate item queries related to the library used
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries(["items", path], {
@@ -125,9 +119,15 @@ const useImportCitoids = () => {
 	});
 };
 
-/** React Query custom mutation hook for modifying tags in a Zotero library
+
+type ModifyTagsArgs = {
+	into: string,
+	library: ZLibrary,
+	tags: string[]
+};
+
+/** Update tags in a Zotero library
  * @fires zotero-roam:tags-modified
- * @returns
  */
 const useModifyTags = () => {
 	const client = useQueryClient();
@@ -135,7 +135,7 @@ const useModifyTags = () => {
 	return useMutation((variables: ModifyTagsArgs) => {
 		const { into, library: { apikey, path }, tags } = variables;
 		const dataList: Pick<ZoteroAPI.ItemTop["data"], "key" | "version" | "tags">[] = [];
-		const libItems = client.getQueriesData<QueryDataItems>(["items", path])
+		const libItems = client.getQueriesData<Queries.Data.Items>(["items", path])
 			.map(query => (query[1] || {}).data || []).flat(1)
 			.filter(isZItemTop)
 			.filter(i => i.data.tags.length > 0);
@@ -167,7 +167,7 @@ const useModifyTags = () => {
 
 			const outcome = data.reduce<{ successful: ZoteroAPI.Responses.ItemsWrite[], failed: string[] }>((obj, res) => {
 				/* istanbul ignore else */
-				if(isFulfilled(res)){
+				if (isFulfilled(res)) {
 					obj.successful.push(res.value.data);
 				} else {
 					obj.failed.push(res.reason);
@@ -176,7 +176,7 @@ const useModifyTags = () => {
 			}, { successful: [], failed: [] });
 
 			/* istanbul ignore if */
-			if(outcome.successful.length > 0){
+			if (outcome.successful.length > 0) {
 				// If any item was modified, invalidate item queries for the targeted library
 				// Data can't be updated through cache modification because of the library version
 				client.invalidateQueries(["items", path], {

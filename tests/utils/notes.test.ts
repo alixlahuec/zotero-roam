@@ -1,27 +1,7 @@
 import { mock } from "jest-mock-extended";
-import { formatItemNotes, formatZoteroNotes, simplifyZoteroNotes, splitNotes } from "../../src/utils";
-import { libraries, sampleNote } from "Mocks";
+import { formatItemNotes, formatZoteroNotes, splitNotes } from "../../src/utils";
 import { ZItemNote } from "Types/transforms";
 
-
-const { userLibrary } = libraries;
-
-test("Simplifies notes", () => {
-	expect(simplifyZoteroNotes([sampleNote]))
-		.toEqual([
-			{
-				date_added: sampleNote.data.dateAdded,
-				date_modified: sampleNote.data.dateModified,
-				key: sampleNote.key,
-				location: userLibrary.path,
-				link_note: "zotero://select/library/items/" + sampleNote.key,
-				note: sampleNote.data.note,
-				parent_item: sampleNote.data.parentItem,
-				raw: sampleNote,
-				tags: ["toRead"]
-			}
-		]);
-});
 
 describe("Splitting HTML notes", () => {
 	const notes = ([

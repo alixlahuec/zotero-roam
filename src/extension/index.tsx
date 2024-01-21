@@ -4,13 +4,14 @@ import zrToaster from "Components/ExtensionToaster";
 
 import { RelatedOptions, _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "../public";
 import IDBDatabase from "../services/idb";
-import { cleanBibliographyHTML, cleanErrorIfAxios, fetchBibEntries, fetchBibliography } from "../api/utils";
-import { compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "../utils";
+import { cleanBibliographyHTML } from "../clients/zotero/helpers";
+import { fetchBibEntries, fetchBibliography } from "../clients/zotero/base";
+import { cleanError, compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "../utils";
 import { findRoamBlock } from "Roam";
 
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 
-import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, QueryDataCollections, QueryDataItems, QueryDataTags, QueryKeyItems, QueryKeyTags, QueryKeyCollections, ZLinkType, ZLinkOptions, isZAnnotation, isZNote, isZItemTop, isZAttachment } from "Types/transforms";
+import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, Queries, ZLinkType, ZLinkOptions, isZAnnotation, isZNote, isZItemTop, isZAttachment } from "Types/transforms";
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
 import { ZoteroAPI } from "Types/externals";
 
@@ -59,7 +60,7 @@ export default class ZoteroRoam {
 					origin: "Database",
 					message: "Failed to clear data from cache",
 					context: {
-						error: cleanErrorIfAxios(e)
+						error: cleanError(e)
 					}
 				});
 			}
@@ -85,7 +86,7 @@ export default class ZoteroRoam {
 					origin: "Database",
 					message: "Failed to obtain caching status",
 					context: {
-						error: cleanErrorIfAxios(e)
+						error: cleanError(e)
 					}
 				});
 
@@ -108,7 +109,7 @@ export default class ZoteroRoam {
 					origin: "Database",
 					message: "Failed to retrieve cache age",
 					context: {
-						error: cleanErrorIfAxios(e)
+						error: cleanError(e)
 					}
 				});
 			}
@@ -426,8 +427,8 @@ async function _getItemCitation(item: ZItemTop, config: Partial<ZoteroAPI.Reques
 /** Retrieves the (cached) list of collections for a given library */
 function _getCollections(library: ZLibrary, { queryClient }: { queryClient: QueryClient }): ZoteroAPI.Collection[] {
 	const { /*apikey,*/ path } = library;
-	const queryKey: QueryKeyCollections = ["collections", { library: path }];
-	const datastore = queryClient.getQueryData<QueryDataCollections>(queryKey);
+	const queryKey: Queries.Key.Collections = ["collections", { library: path }];
+	const datastore = queryClient.getQueryData<Queries.Data.Collections>(queryKey);
 	return datastore?.data || [];
 }
 
@@ -435,7 +436,7 @@ function _getCollections(library: ZLibrary, { queryClient }: { queryClient: Quer
 function _getItemChildren(item: ZItemTop, { queryClient }: { queryClient: QueryClient }) {
 	const location = item.library.type + "s/" + item.library.id;
 	return _getItems("children", {
-		predicate: (query: Query<unknown, unknown, QueryDataItems, QueryKeyItems>) => {
+		predicate: (query: Query<unknown, unknown, Queries.Data.Items, Queries.Key.Items>) => {
 			const { queryKey } = query;
 			return queryKey[2].dataURI.startsWith(location);
 		}
@@ -553,7 +554,7 @@ function _getItems(select: "pdfs", filters: QueryFilters, { queryClient }): ZIte
 function _getItems(select: SelectItemsOption, filters: QueryFilters, { queryClient }): ZItem[];
 /** Returns the current items in the query cache, with optional configuration */
 function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { queryClient }: { queryClient: QueryClient }): ZItem[] {
-	const items = queryClient.getQueriesData<QueryDataItems>({ queryKey: ["items"], ...filters })
+	const items = queryClient.getQueriesData<Queries.Data.Items>({ queryKey: ["items"], ...filters })
 		.map(query => {
 			const [/* queryKey */, queryData] = query;
 			return queryData?.data || [];
@@ -583,8 +584,8 @@ function _getItems(select: SelectItemsOption, filters: QueryFilters = {}, { quer
 /** Returns the (cached) map of tags for a given library */
 function _getTags(location: string, { libraries, queryClient }: { libraries: ZLibrary[], queryClient: QueryClient }) {
 	const { /*apikey,*/ path } = libraries.find(lib => lib.path == location)!;
-	const queryKey: QueryKeyTags = ["tags", { library: path }];
+	const queryKey: Queries.Key.Tags = ["tags", { library: path }];
 
-	const datastore = queryClient.getQueryData<QueryDataTags>(queryKey)!;
+	const datastore = queryClient.getQueryData<Queries.Data.Tags>(queryKey)!;
 	return datastore.data;
 }

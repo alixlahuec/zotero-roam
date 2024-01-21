@@ -5,7 +5,7 @@ import { Button } from "@blueprintjs/core";
 import WebImportPanel from "./WebImportPanel";
 
 import { useBool } from "../../../hooks";
-import { hasNodeListChanged } from "../../../utils";
+import { hasNodeListChanged } from "../helpers";
 
 import "./_index.sass";
 

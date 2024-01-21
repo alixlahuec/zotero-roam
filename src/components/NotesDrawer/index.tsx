@@ -6,7 +6,8 @@ import { ErrorBoundary } from "Components/Errors";
 import { useNotesSettings } from "Components/UserSettings";
 
 import { useBool } from "../../hooks";
-import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations, simplifyZoteroNotes } from "../../utils";
+import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations } from "../../utils";
+import { simplifyZoteroNotes } from "./helpers";
 
 import { CustomClasses } from "../../constants";
 import { ZItemAnnotation, ZItemNote, ZSimplifiedAnnotation, ZSimplifiedNote, isZAnnotation, isZNote } from "Types/transforms";
