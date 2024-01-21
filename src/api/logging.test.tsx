@@ -105,7 +105,7 @@ describe("Custom class for logs", () => {
 			intent: "danger",
 			message: (
 				<>
-					<H5>Failed to import metadata for @someCitekey</H5>
+					<H5>{"Failed to import metadata for @someCitekey"}</H5>
 					<p>{"Function customFunc doesn't exist"}</p>
 				</>
 			),

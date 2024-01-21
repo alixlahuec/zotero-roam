@@ -53,8 +53,8 @@ export class ZoteroRoamLog {
 				message: (
 					this.detail
 						? <>
-							<H5>{ this.message } </H5>
-							<p> { this.detail } </p>
+							<H5>{this.message}</H5>
+							<p>{this.detail}</p>
 						</>
 						: this.message
 				),
