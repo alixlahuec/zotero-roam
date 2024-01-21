@@ -6,8 +6,8 @@ import { RelatedOptions, _formatPDFs, _getItemCreators, _getItemRelated, _getIte
 import IDBDatabase from "../services/idb";
 import { cleanBibliographyHTML } from "../clients/zotero/helpers";
 import { fetchBibEntries, fetchBibliography } from "../clients/zotero/base";
-import { cleanError, compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "../utils";
-import { findRoamBlock } from "Roam";
+import { cleanError, compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink } from "../utils";
+import { findRoamBlock, makeDNP } from "Roam";
 
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 

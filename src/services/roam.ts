@@ -454,6 +454,20 @@ async function importItemNotes(
 	}
 }
 
+
+/** Converts input into a Roam DNP title */
+function makeDNP(date: Date | any, { brackets = true }: { brackets?: boolean } = {}) {
+	const thisdate = date.constructor === Date ? date : new Date(date);
+	const dnp_title = window.roamAlphaAPI.util.dateToPageTitle(thisdate);
+
+	if (brackets) {
+		return `[[${dnp_title}]]`;
+	} else {
+		return dnp_title;
+	}
+}
+
+
 /** Places the cursor in a given location, if it is specified */
 function maybeReturnCursorToPlace(place: RCursorLocation | null){
 	if(place && place.location){
@@ -502,6 +516,7 @@ export {
 	getInitialedPages,
 	importItemMetadata,
 	importItemNotes,
+	makeDNP,
 	maybeReturnCursorToPlace,
 	openInSidebarByUID,
 	openPageByUID,

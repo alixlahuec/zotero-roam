@@ -2,6 +2,8 @@ import { isAxiosError } from "axios";
 
 import zrToaster from "Components/ExtensionToaster";
 
+import { makeDNP } from "Roam";
+
 import { SettingsAnnotations, SettingsNotes, ZItemReferenceFormat } from "Types/extension";
 import { AsBoolean } from "Types/helpers";
 import { RCitekeyPages, RImportableBlock, ZCleanItemTop, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZTagDictionary, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
@@ -610,22 +612,6 @@ function makeDateFromAgo(date: Date | any){
 	}
 }
 
-/** Converts a date into Roam DNP format
- * @param date - The date to parse and convert 
- * @param config - Additional parameters 
- * @returns 
- */
-function makeDNP(date: Date | any, { brackets = true }: { brackets?: boolean } = {}){
-	const thisdate = date.constructor === Date ? date : new Date(date);
-	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-	const dateString = `${months[thisdate.getMonth()]} ${makeOrdinal(thisdate.getDate())}, ${thisdate.getFullYear()}`;
-	if(brackets){
-		return `[[${dateString}]]`;
-	} else{
-		return dateString;
-	}
-}
-
 /** Converts a number into ordinal format
  * @param i - The number to convert
  * @returns The number in ordinal format
@@ -964,7 +950,7 @@ export {
 	identifyChildren,
 	makeDateFromAgo,
 	makeDictionary,
-	makeDNP,
+	makeOrdinal,
 	makeTimestamp,
 	parseDOI,
 	pluralize,

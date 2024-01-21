@@ -3,8 +3,7 @@ import {
 	formatItemReference,
 	getLocalLink, 
 	getPDFLink, 
-	getWebLink, 
-	makeDNP,
+	getWebLink,
 	makeDateFromAgo, 
 	makeDictionary, 
 	makeTimestamp, 
@@ -18,39 +17,7 @@ import { CustomClasses } from "../../src/constants";
 import { ZItemAttachment, ZItemTop } from "Types/transforms";
 
 
-const date = new Date(2022, 0, 1);
-const offset = date.getTimezoneOffset();
-
 // Date & Time
-
-describe("Creating DNPs", () => {
-	it("creates ordinals correctly", () => {
-		const numbers = [1, 2, 3, 4, 11, 12, 15, 26, 27, 28, 29];
-		const ordinals = ["1st", "2nd", "3rd", "4th", "11th", "12th", "15th", "26th", "27th", "28th", "29th"];
-	
-		expect(numbers.map(nb => makeDNP(new Date(2022, 0, nb))))
-			.toEqual(ordinals.map(ord => `[[January ${ord}, 2022]]`));
-	});
-
-	it("formats correctly without brackets", () => {
-		expect(makeDNP(date, { brackets: false })).toBe("January 1st, 2022");
-	});
-
-	it("takes into account local timezone", () => {
-		const datetz = new Date("2022-01-01T12:00:00Z");
-		
-		expect(makeDNP(offset < 0
-			? new Date(datetz.setHours(24, offset))
-			: offset > 0
-				? new Date(datetz.setHours(0, -offset))
-				: datetz))
-			.toBe(offset < 0 
-				? "[[January 2nd, 2022]]" 
-				: offset > 0 
-					? "[[December 31st, 2021]]" 
-					: "[[January 1st, 2022]]");
-	});
-});
 
 describe("Reading DNPs", () => {
 	it("parses correctly into a Date", () => {

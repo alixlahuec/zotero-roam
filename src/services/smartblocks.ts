@@ -1,4 +1,6 @@
-import { getLocalLink, getWebLink, makeDNP, parseDOI } from "../utils";
+import { makeDNP } from "Roam";
+import { getLocalLink, getWebLink, parseDOI } from "../utils";
+
 import { SmartblocksPlugin } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
 import { RImportableElement, SBConfig, SBImportableBlock, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
