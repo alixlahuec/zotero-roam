@@ -2,11 +2,8 @@ import "fake-indexeddb/auto";
 import { mock } from "jest-mock-extended";
 import { waitFor } from "@testing-library/dom";
 
-import { H5 } from "@blueprintjs/core";
 import { QueryClient } from "@tanstack/query-core";
 import { persistQueryClientSave } from "@tanstack/query-persist-client-core";
-
-import zrToaster from "Components/ExtensionToaster";
 
 import { cleanBibliographyHTML, makeTagList } from "../clients/zotero/helpers";
 import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
@@ -14,7 +11,7 @@ import IDBDatabaseService from "../services/idb";
 import { createPersisterWithIDB, setupInitialSettings } from "../setup";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
 
-import ZoteroRoam, { ZoteroRoamLog, _formatNotes } from ".";
+import ZoteroRoam, { _formatNotes } from ".";
 
 import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, findCollections, libraries, sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage, sampleNote, sampleOlderNote, samplePDF, tags, Mocks } from "Mocks";
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
@@ -744,115 +741,5 @@ describe("DB utils - errors are logged", () => {
 				message: "Failed to retrieve cache age"
 			})
 		);
-	});
-});
-
-describe("Custom class for logs", () => {
-	beforeAll(() => {
-		jest.useFakeTimers()
-			.setSystemTime(new Date(2022, 4, 6));
-	});
-
-	afterAll(() => {
-		jest.useRealTimers();
-	});
-
-	test("It uses fallback values", () => {
-		const sample_log = new ZoteroRoamLog();
-
-		expect(sample_log)
-			.toEqual({
-				context: {},
-				detail: "",
-				intent: "primary",
-				level: "info",
-				message: "",
-				origin: "",
-				timestamp: new Date(2022, 4, 6)
-			});
-	});
-
-	test("It initializes with values provided", () => {
-		const sample_log = new ZoteroRoamLog(
-			{
-				origin: "API",
-				message: "Failed to fetch",
-				context: {
-					text: "some text"
-				}
-			},
-			"error"
-		);
-
-		expect(sample_log)
-			.toEqual({
-				context: {
-					text: "some text"
-				},
-				detail: "",
-				intent: "danger",
-				level: "error",
-				message: "Failed to fetch",
-				origin: "API",
-				timestamp: new Date(2022, 4, 6)
-			});
-	});
-
-	test("It calls the toaster when showToaster is provided", () => {
-		const showToasterFn = jest.spyOn(zrToaster, "show");
-
-		const log_contents = {
-			origin: "Metadata",
-			message: "Failed to import metadata for @someCitekey",
-			context: {
-				text: "some text"
-			}
-		};
-
-		new ZoteroRoamLog({ ...log_contents }, "error");
-		expect(showToasterFn).not.toHaveBeenCalled();
-
-		new ZoteroRoamLog({ ...log_contents, showToaster: 1500 }, "error");
-		expect(showToasterFn).toHaveBeenCalled();
-		expect(showToasterFn).toHaveBeenCalledWith({
-			icon: "warning-sign",
-			intent: "danger",
-			message: log_contents.message,
-			timeout: 1500
-		});
-
-		new ZoteroRoamLog({ ...log_contents, showToaster: true }, "warning");
-		expect(showToasterFn).toHaveBeenCalledTimes(2);
-		expect(showToasterFn).toHaveBeenNthCalledWith(2, {
-			icon: "warning-sign",
-			intent: "warning",
-			message: log_contents.message,
-			timeout: 1000
-		});
-	});
-
-	test("It creates the right message for the toaster", () => {
-		const showToasterFn = jest.spyOn(zrToaster, "show");
-
-		new ZoteroRoamLog({
-			origin: "Metadata",
-			message: "Failed to import metadata for @someCitekey",
-			detail: "Function customFunc doesn't exist",
-			context: {},
-			showToaster: 1000
-		}, "error");
-
-		expect(showToasterFn).toHaveBeenCalled();
-		expect(showToasterFn).toHaveBeenCalledWith({
-			icon: "warning-sign",
-			intent: "danger",
-			message: (
-				<>
-					<H5>Failed to import metadata for @someCitekey</H5>
-					<p>{"Function customFunc doesn't exist"}</p>
-				</>
-			),
-			timeout: 1000
-		});
 	});
 });

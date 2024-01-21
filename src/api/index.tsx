@@ -1,16 +1,17 @@
-import { H5, IconName, Intent } from "@blueprintjs/core";
 import { Query, QueryClient, QueryFilters } from "@tanstack/query-core";
-import zrToaster from "Components/ExtensionToaster";
 
-import { RelatedOptions, _formatPDFs, _getItemCreators, _getItemRelated, _getItemTags } from "./public";
-import IDBDatabase from "../services/idb";
 import { cleanBibliographyHTML } from "../clients/zotero/helpers";
 import { fetchBibEntries, fetchBibliography } from "../clients/zotero/base";
-import { cleanError, compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "../utils";
+import IDBDatabase from "../services/idb";
 import { findRoamBlock } from "Roam";
 
-import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "../constants";
+import { RelatedOptions, _getItemRelated } from "./helpers";
+import { ZoteroRoamLog, LogConfig, LogLevel } from "./logging";
+import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
 
+import { cleanError, compareAnnotationRawIndices, formatZoteroAnnotations, formatZoteroNotes, getLocalLink, getWebLink, makeDNP } from "../utils";
+
+import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, Queries, ZLinkType, ZLinkOptions, isZAnnotation, isZNote, isZItemTop, isZAttachment } from "Types/transforms";
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
 import { ZoteroAPI } from "Types/externals";
@@ -247,68 +248,6 @@ export default class ZoteroRoam {
 			libraries: this.#libraries,
 			queryClient: this.#queryClient
 		});
-	}
-}
-
-type LogConfig = {
-	context?: Record<string, any>,
-	detail?: string,
-	origin?: string,
-	message?: string,
-	showToaster?: number | boolean
-};
-
-type LogLevel = "error" | "info" | "warning";
-
-/**
- * Creates a log entry for the extension. This is meant to provide users with information about different events (e.g errors when fetching data), through an optional toast and more detailed logs.
- */
-export class ZoteroRoamLog {
-	level: LogLevel;
-	origin: string;
-	message: string;
-	detail: string;
-	context: Record<string, any>;
-	intent: Intent | undefined;
-	timestamp: Date;
-
-	#LEVELS_MAPPING: Record<LogLevel, Intent> = {
-		"error": "danger",
-		"info": "primary",
-		"warning": "warning"
-	};
-
-	#ICONS_MAPPING: Record<LogLevel, IconName> = {
-		"error": "warning-sign",
-		"info": "info-sign",
-		"warning": "warning-sign"
-	};
-
-	constructor(obj: LogConfig = {}, level: LogLevel = "info"){
-		const { origin = "", message = "", detail = "", context = {}, showToaster = false } = obj;
-		this.level = level;
-		this.origin = origin;
-		this.message = message;
-		this.detail = detail;
-		this.context = context;
-		this.intent = this.#LEVELS_MAPPING[level] || undefined;
-		this.timestamp = new Date();
-
-		if(showToaster){
-			zrToaster.show({
-				icon: this.#ICONS_MAPPING[level] || null,
-				intent: this.intent,
-				message: (
-					this.detail
-						? <>
-							<H5>{this.message}</H5>
-							<p>{this.detail}</p>
-						</>
-						: this.message
-				),
-				timeout: showToaster.constructor === Number ? showToaster : 1000
-			});
-		}
 	}
 }
 
