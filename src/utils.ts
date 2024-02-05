@@ -198,18 +198,6 @@ function compareAnnotationIndices(a: number[], b: number[]): number {
 	}
 }
 
-/** Orders the (raw) indices of two Zotero annotations
- * @param a - The first string index to compare
- * @param b - The second string index to compare
- * @returns The comparison outcome
- */
-function compareAnnotationRawIndices(a: string, b: string): number {
-	return compareAnnotationIndices(
-		extractSortIndex(a),
-		extractSortIndex(b)
-	);
-}
-
 /** Extracts the numerical index of a Zotero annotation, from its string origin
  * @param str - The string index
  * @returns The index in numerical Array form
@@ -429,20 +417,6 @@ function formatItemReference(item: ZItemTop, format: ZItemReferenceFormat | stri
 
 	return output;
 
-}
-
-/** Formats an array of Zotero annotations into Roam blocks, with optional configuration
- * @param annotations - The Zotero annotations to format
- * @param config - Additional settings 
- * @returns The formatted annotations
- */
-function formatZoteroAnnotations(annotations: ZItemAnnotation[], { func = "", use = "default", __with = "raw", ...settings }: Partial<SettingsAnnotations> = {}){
-	if(use == "function" && func){
-		// If the user has provided a custom function, execute it with the desired input
-		return executeFunctionByName(func, window, __with == "raw" ? annotations : simplifyZoteroAnnotations(annotations));
-	} else {
-		return formatItemAnnotations(annotations, { ...settings });
-	}
 }
 
 /** Formats an array of Zotero notes into Roam blocks, with optional configuration
@@ -948,7 +922,6 @@ export {
 	cleanLibraryItem,
 	cleanNewlines,
 	compareAnnotationIndices,
-	compareAnnotationRawIndices,
 	copyToClipboard,
 	escapeRegExp,
 	executeFunctionByName,
@@ -956,7 +929,6 @@ export {
 	formatItemAnnotations,
 	formatItemNotes,
 	formatItemReference,
-	formatZoteroAnnotations,
 	formatZoteroNotes,
 	getPDFLink,
 	getLocalLink,
