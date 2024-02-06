@@ -86,7 +86,7 @@
         "@testing-library/react-hooks": "^8.0.1",
         "@typescript-eslint/eslint-plugin": "^6.19.0",
         "@typescript-eslint/parser": "^6.19.0",
-        "@vitejs/plugin-react-swc": "^3.5.0",
+        "@vitejs/plugin-react-swc": "^3.6.0",
         "auto-changelog": "^2.4.0",
         "axe-playwright": "^2.0.1",
         "chromatic": "^10.7.1",
