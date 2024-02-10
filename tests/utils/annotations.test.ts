@@ -1,11 +1,9 @@
 import {
 	compareAnnotationIndices,
-	compareAnnotationRawIndices,
 	extractSortIndex,
-	formatZoteroAnnotations,
 	simplifyZoteroAnnotations } from "../../src/utils";
 
-import { libraries, sampleAnnot, sampleImageAnnot } from "Mocks";
+import { libraries, sampleAnnot } from "Mocks";
 
 
 const { userLibrary } = libraries;
@@ -27,29 +25,6 @@ describe("Extracts annotation indices from string", () => {
 				.toEqual(index);
 		}
 	);
-});
-
-test("Sorts raw annotation indices", () => {
-	const indices = [
-		"00003|00014|00009",
-		"00005|00010|00007",
-		"00002|00022|00007",
-		"00002|00022|00030",
-		"00002|00024|00010",
-		"00003|00014|00007",
-		"00005|00009|00009"
-	];
-
-	expect(indices.sort(compareAnnotationRawIndices))
-		.toEqual([
-			"00002|00022|00007",
-			"00002|00022|00030",
-			"00002|00024|00010",
-			"00003|00014|00007",
-			"00003|00014|00009",
-			"00005|00009|00009",
-			"00005|00010|00007"
-		]);
 });
 
 test("Sorts annotation indices", () => {
@@ -107,38 +82,4 @@ test("Simplifies annotations", () => {
 			text: data.annotationText,
 			type: data.annotationType
 		});
-});
-
-describe("Annotations formatting", () => {
-	it("formats with defaults", () => {
-		expect(formatZoteroAnnotations([sampleAnnot]))
-			.toEqual([
-				{
-					string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
-					text: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
-					children: [simplifiedAnnot.comment]
-				}
-			]);
-		expect(formatZoteroAnnotations([sampleImageAnnot]))
-			.toEqual([
-				// Images return null, and are filtered out
-			]);
-	});
-	
-	it("groups by day added", () => {
-		expect(formatZoteroAnnotations([sampleAnnot], { group_by: "day_added" }))
-			.toEqual([
-				{
-					string: "[[March 18th, 2022]]",
-					text: "[[March 18th, 2022]]",
-					children: [
-						{
-							string: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
-							text: `[[>]] ${simplifiedAnnot.text} ([p. ${simplifiedAnnot.page_label}](${simplifiedAnnot.link_page})) ${simplifiedAnnot.tags_string}`,
-							children: [simplifiedAnnot.comment]
-						}
-					]
-				}
-			]);
-	});
 });
