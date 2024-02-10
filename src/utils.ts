@@ -694,13 +694,17 @@ function getPDFLink(pdfItem: ZItemAttachment, as: ("href" | "markdown") = "href"
 }
 
 /** Creates a web link to a specific Zotero item, which opens in the browser.
+ * For user libraries: https://www.zotero.org/:username/items/:itemKey/library
+ * For group libraries: https://www.zotero.org/groups/:libraryId/:libraryName/items/:itemKey/library
  * @param item - The targeted Zotero item 
  * @param config - Additional settings 
  * @returns A link to the item, either as a Markdown link or a URL
  */
-function getWebLink(item: ZItemTop, { format = "markdown", text = "Web library" }: Partial<ZLinkOptions> = {}){
-	const location = ((item.library.type == "user") ? "users" : "groups") + `/${item.library.id}`;
-	const target = `https://www.zotero.org/${location}/items/${item.data.key}`;
+function getWebLink(item: ZItemTop, { format = "markdown", text = "Web library" }: Partial<ZLinkOptions> = {}) {
+	const location = item.library.type == "user"
+		? item.library.name
+		: `groups/${item.library.id}/${item.library.name}`;
+	const target = `https://www.zotero.org/${location}/items/${item.data.key}/library`;
 	switch(format){
 	case "markdown":
 		return `[${text}](${target})`;
