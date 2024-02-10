@@ -11,7 +11,7 @@ import {
 	NormalPageWithTaggingContent
 } from "../fixtures";
 
-import { hasNodeListChanged } from "../../../utils";
+import { hasNodeListChanged } from "../helpers";
 import { addPageMenus, findPageMenus } from "./utils";
 import { menuClasses } from "../classes";
 

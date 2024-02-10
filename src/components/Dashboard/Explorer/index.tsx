@@ -7,7 +7,7 @@ import QueryItems from "./QueryItems";
 import QueryNotes from "./QueryNotes";
 import QueryPDFs from "./QueryPDFs";
 
-import { useQuery_Items } from "../../../api/queries";
+import { useItems } from "../../../clients/hooks";
 import { categorizeLibraryItems } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
@@ -86,7 +86,7 @@ type ExplorerProps = {
 
 function Explorer({ onClose }: ExplorerProps){
 	const [{ dataRequests }] = useRequestsSettings();
-	const itemQueries = useQuery_Items(dataRequests, {
+	const itemQueries = useItems(dataRequests, {
 		notifyOnChangeProps: ["data"],
 		select: (datastore) => datastore.data
 	});

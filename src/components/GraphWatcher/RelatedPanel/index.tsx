@@ -6,7 +6,8 @@ import CitekeyPopover from "Components/CitekeyPopover";
 import { ErrorBoundary } from "Components/Errors";
 
 import { useBool } from "../../../hooks";
-import { pluralize, sortElems } from "../../../utils";
+import { pluralize } from "../../../utils";
+import { sortElems } from "../helpers";
 
 import { CustomClasses } from "../../../constants";
 import { ShowPropertiesRelated, ShowTypeRelated } from "../types";

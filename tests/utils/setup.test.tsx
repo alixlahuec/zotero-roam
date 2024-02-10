@@ -5,7 +5,7 @@ import { PersistedClient } from "@tanstack/query-persist-client-core";
 
 import { act, render } from "@testing-library/react";
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, TYPEMAP_DEFAULT } from "../../src/constants";
-import ZoteroRoam from "../../src/extension";
+import ZoteroRoam from "../../src/api";
 import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, unmountExtensionIfExists, validateShortcuts } from "../../src/setup";
 import IDBDatabaseService from "../../src/services/idb";
 

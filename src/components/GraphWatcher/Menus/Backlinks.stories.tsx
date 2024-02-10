@@ -2,7 +2,7 @@ import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Backlinks } from "./CitekeyMenu";
-import { cleanSemanticItem } from "../../../utils";
+import { cleanSemanticItem } from "./helpers";
 
 import { citoids, semanticIdentifier, items, semantics } from "Mocks";
 import { SEnrichedItemTypeEnum } from "Types/transforms";

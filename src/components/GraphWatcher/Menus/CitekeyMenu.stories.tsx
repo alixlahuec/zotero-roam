@@ -5,8 +5,7 @@ import { expect } from "@storybook/jest";
 import { Meta, StoryObj } from "@storybook/react";
 
 import CitekeyMenu from "./CitekeyMenu";
-import { parseDOI } from "../../../utils";
-import { parseSemanticDOIs } from "../../../api/utils";
+import { parseDOI, transformDOIs } from "../../../utils";
 import { sleep } from "../../../../.storybook/utils";
 import { items, sampleNote, samplePDF, semantics } from "Mocks";
 
@@ -33,8 +32,8 @@ export default {
 				const { citations, references } = semantics[doi];
 				client.setQueryData(["semantic", { doi }], {
 					doi,
-					citations: parseSemanticDOIs(citations),
-					references: parseSemanticDOIs(references)
+					citations: transformDOIs(citations),
+					references: transformDOIs(references)
 				});
 
 				return () => {

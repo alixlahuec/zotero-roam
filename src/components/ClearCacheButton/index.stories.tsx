@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import ClearCacheButton from "Components/ClearCacheButton";
-import ZoteroRoam from "../../extension";
+import ZoteroRoam from "../../api";
 
 
 export default {

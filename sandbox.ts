@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { QueryClient } from "@tanstack/react-query";
 
-import ZoteroRoam from "./src/extension";
+import ZoteroRoam from "./src/api";
 import { initialize } from "./src/setup";
 import { simplifyZoteroAnnotations } from "./src/utils";
 import { apiKeys, findCollections, findItems, libraries, sampleAnnot, sampleImageAnnot, sampleNote, samplePDF } from "Mocks";

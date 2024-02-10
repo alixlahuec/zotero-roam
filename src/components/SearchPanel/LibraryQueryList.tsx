@@ -8,7 +8,7 @@ import { useCopySettings } from "Components/UserSettings";
 
 import { useDebounceCallback } from "../../hooks";
 import { copyToClipboard, pluralize, searchEngine } from "../../utils";
-import { formatItemReferenceWithDefault } from "./utils";
+import { formatItemReferenceWithDefault } from "./helpers";
 
 import { resultClass, resultKeyClass } from "./classes";
 import { CustomClasses } from "../../constants";
