@@ -111,7 +111,7 @@ test("Simplifies Zotero item metadata", () => {
 			year: "2021",
 			zotero: {
 				local: "zotero://select/library/items/" + items[0].data.key,
-				web: "https://www.zotero.org/" + userLibrary.path + "/items/" + items[0].data.key
+				web: "https://www.zotero.org/" + userLibrary.name + "/items/" + items[0].data.key + "/library"
 			},
 			raw: items[0],
 			_multiField: items[0].data.abstractNote + " Gary Bloch Linda Rozmovits 2021 Implementing social interventions in primary care blochImplementingSocialInterventions2021"
