@@ -200,18 +200,6 @@ function compareAnnotationIndices(a: number[], b: number[]): number {
 	}
 }
 
-/** Orders the (raw) indices of two Zotero annotations
- * @param a - The first string index to compare
- * @param b - The second string index to compare
- * @returns The comparison outcome
- */
-function compareAnnotationRawIndices(a: string, b: string): number {
-	return compareAnnotationIndices(
-		extractSortIndex(a),
-		extractSortIndex(b)
-	);
-}
-
 /** Extracts the numerical index of a Zotero annotation, from its string origin
  * @param str - The string index
  * @returns The index in numerical Array form
@@ -433,20 +421,6 @@ function formatItemReference(item: ZItemTop, format: ZItemReferenceFormat | stri
 
 }
 
-/** Formats an array of Zotero annotations into Roam blocks, with optional configuration
- * @param annotations - The Zotero annotations to format
- * @param config - Additional settings 
- * @returns The formatted annotations
- */
-function formatZoteroAnnotations(annotations: ZItemAnnotation[], { func = "", use = "default", __with = "raw", ...settings }: Partial<SettingsAnnotations> = {}){
-	if(use == "function" && func){
-		// If the user has provided a custom function, execute it with the desired input
-		return executeFunctionByName(func, window, __with == "raw" ? annotations : simplifyZoteroAnnotations(annotations));
-	} else {
-		return formatItemAnnotations(annotations, { ...settings });
-	}
-}
-
 /** Formats an array of Zotero notes into Roam blocks, with optional configuration
  * @param notes - The Zotero notes to format
  * @param config - Additional settings
@@ -512,12 +486,16 @@ function getPDFLink(pdfItem: ZItemAttachment, as: ("href" | "markdown") = "href"
 }
 
 /** Creates a web link to a specific Zotero item, which opens in the browser.
+ * For user libraries: https://www.zotero.org/:username/items/:itemKey
+ * For group libraries: https://www.zotero.org/groups/:libraryId/:libraryName/items/:itemKey
  * @param item - The targeted Zotero item 
  * @param config - Additional settings 
  * @returns A link to the item, either as a Markdown link or a URL
  */
-function getWebLink(item: ZItemTop, { format = "markdown", text = "Web library" }: Partial<ZLinkOptions> = {}){
-	const location = ((item.library.type == "user") ? "users" : "groups") + `/${item.library.id}`;
+function getWebLink(item: ZItemTop, { format = "markdown", text = "Web library" }: Partial<ZLinkOptions> = {}) {
+	const location = item.library.type == "user"
+		? item.library.name
+		: `groups/${item.library.id}/${item.library.name}`;
 	const target = `https://www.zotero.org/${location}/items/${item.data.key}`;
 	switch(format){
 	case "markdown":
@@ -934,7 +912,6 @@ export {
 	cleanLibraryItem,
 	cleanNewlines,
 	compareAnnotationIndices,
-	compareAnnotationRawIndices,
 	copyToClipboard,
 	escapeRegExp,
 	executeFunctionByName,
@@ -942,7 +919,6 @@ export {
 	formatItemAnnotations,
 	formatItemNotes,
 	formatItemReference,
-	formatZoteroAnnotations,
 	formatZoteroNotes,
 	getPDFLink,
 	getLocalLink,

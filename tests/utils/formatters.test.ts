@@ -131,14 +131,26 @@ describe("Making Zotero local link", () => {
 });
 
 describe("Making Zotero web link", () => {
+	const userLibrary = mock<ZItemTop["library"]>({ type: "user", id: 12345, name: "myname" });
+	const groupLibrary = mock<ZItemTop["library"]>({ type: "group", id: 56789, name: "mygroupname" });
+	const itemKey = "A12BCDEF";
+
+	const expectedUserUrl = "https://www.zotero.org/myname/items/A12BCDEF";
+	const expectedGroupUrl = "https://www.zotero.org/groups/56789/mygroupname/items/A12BCDEF";
+
 	it("creates Markdown link by default", () => {
-		const item = mock<ZItemTop>({ data: { key: "A12BCDEF" }, library: { type: "user", id: 12345 } });
-		expect(getWebLink(item)).toBe("[Web library](https://www.zotero.org/users/12345/items/A12BCDEF)");
+		const item = mock<ZItemTop>({ data: { key: itemKey }, library: userLibrary });
+		expect(getWebLink(item)).toBe(`[Web library](${expectedUserUrl})`);
 	});
-	
-	it("correctly generates the target URL", () => {
-		const item = mock<ZItemTop>({ data: { key: "A12BCDEF" }, library: { type: "user", id: 12345 } });
-		expect(getWebLink(item, { format: "target" })).toBe("https://www.zotero.org/users/12345/items/A12BCDEF");
+
+	it("correctly generates the target URL for user libraries", () => {
+		const item = mock<ZItemTop>({ data: { key: itemKey }, library: userLibrary });
+		expect(getWebLink(item, { format: "target" })).toBe(expectedUserUrl);
+	});
+
+	it("correctly generates the target URL for group libraries", () => {
+		const item = mock<ZItemTop>({ data: { key: itemKey }, library: groupLibrary });
+		expect(getWebLink(item, { format: "target" })).toBe(expectedGroupUrl);
 	});
 });
 
