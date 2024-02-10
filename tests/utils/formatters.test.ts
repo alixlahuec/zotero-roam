@@ -149,8 +149,8 @@ describe("Making Zotero web link", () => {
 	const groupLibrary = mock<ZItemTop["library"]>({ type: "group", id: 56789, name: "mygroupname" });
 	const itemKey = "A12BCDEF";
 
-	const expectedUserUrl = "https://www.zotero.org/myname/items/A12BCDEF/library";
-	const expectedGroupUrl = "https://www.zotero.org/groups/56789/mygroupname/items/A12BCDEF/library";
+	const expectedUserUrl = "https://www.zotero.org/myname/items/A12BCDEF";
+	const expectedGroupUrl = "https://www.zotero.org/groups/56789/mygroupname/items/A12BCDEF";
 
 	it("creates Markdown link by default", () => {
 		const item = mock<ZItemTop>({ data: { key: itemKey }, library: userLibrary });
