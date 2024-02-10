@@ -168,6 +168,7 @@ export namespace Roam {
 			 */
 			generateUID: () => string,
 			/** Converts a DNP page title (e.g. "April 6th, 2021") into a Date.
+			 * The date will be expressed in the local timezone (e.g. Tue Apr 06 2021 00:00:00 GMT-0400 (Eastern Daylight Time)).
 			 * @see https://roamresearch.com/#/app/developer-documentation/page/daF13_WNI
 			 */
 			pageTitleToDate: (title: string) => Date

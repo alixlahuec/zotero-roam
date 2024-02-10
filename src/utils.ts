@@ -692,21 +692,6 @@ function pluralize(num: number, string: string, suffix = "") {
 	return `${num == 0 ? "No" : num} ${string}${num == 1 ? "" : "s"}${suffix}`;
 }
 
-/** Converts a Roam Daily Note title into a JavaScript date
- * @param string - Daily Note Page (DNP) title 
- * @param config - Additional settings 
- * @returns The corresponding date, either as a Date or an Array (YYYY,M,DD)
- */
-function readDNP(string: string, { as_date = true }: { as_date?: boolean } = {}){
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [match, mm, dd, yy] = Array.from(string.matchAll(/(.+) ([0-9]+).{2}, ([0-9]{4})/g))[0];
-	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    
-	const parsedDate = [parseInt(yy), months.findIndex(month => month == mm), parseInt(dd)] as const;
-    
-	return as_date ? new Date(...parsedDate) : parsedDate;
-}
-
 interface SearchEngineParams {
 	any_case: boolean,
 	match: "exact" | "partial" | "word",
@@ -930,7 +915,6 @@ export {
 	makeTimestamp,
 	parseDOI,
 	pluralize,
-	readDNP,
 	searchEngine,
 	simplifyZoteroAnnotations,
 	splitNotes,

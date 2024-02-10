@@ -9,7 +9,6 @@ import {
 	makeTimestamp, 
 	parseDOI, 
 	pluralize, 
-	readDNP,
 	transformDOIs
 } from "../../src/utils";
 
@@ -18,18 +17,6 @@ import { ZItemAttachment, ZItemTop } from "Types/transforms";
 
 
 // Date & Time
-
-describe("Reading DNPs", () => {
-	it("parses correctly into a Date", () => {
-		const dnp = "January 1st, 2022";
-		expect(readDNP(dnp)).toEqual(new Date(2022, 0, 1));
-	});
-
-	it("parses correctly into a Date array", () => {
-		const dnp = "January 1st, 2022";
-		expect(readDNP(dnp, { as_date: false })).toEqual([2022, 0, 1]);
-	});
-});
 
 describe("Creating timestamps", () => {
 	it("formats with 24-hour clock", () => {
