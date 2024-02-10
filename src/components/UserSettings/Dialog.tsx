@@ -6,7 +6,7 @@ import { ErrorBoundary } from "Components/Errors";
 
 import { CustomClasses } from "../../constants";
 import { SETTINGS_CONFIG } from "./mapping";
-import { camelToTitleCase } from "../../utils";
+import { camelToTitleCase } from "./common";
 
 import "./_index.sass";
 

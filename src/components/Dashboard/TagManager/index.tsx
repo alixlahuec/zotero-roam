@@ -6,7 +6,7 @@ import { useRequestsSettings } from "Components/UserSettings";
 import LibrarySelect, { LibrarySelectProps } from "../LibrarySelect";
 import TagsDatalist from "./TagsDatalist";
 
-import { useQuery_Tags, useWriteableLibraries } from "../../../api/queries";
+import { useTags, useWriteableLibraries } from "../../../clients/hooks";
 
 import { CustomClasses } from "../../../constants";
 import { TagManagerFilter, TagManagerTab } from "./types";
@@ -70,7 +70,7 @@ type TabContentsProps = {
 function TabContents({ libraries }: TabContentsProps){
 	const [selectedLibrary, setSelectedLibrary] = useState(libraries[0]);
 
-	const { isLoading, data } = useQuery_Tags([selectedLibrary], { 
+	const { isLoading, data } = useTags([selectedLibrary], { 
 		notifyOnChangeProps: ["data"], 
 		select: (datastore) => datastore.data
 	})[0];

@@ -1,9 +1,10 @@
+import { isAxiosError } from "axios";
+
 import zrToaster from "Components/ExtensionToaster";
+
 import { SettingsAnnotations, SettingsNotes, ZItemReferenceFormat } from "Types/extension";
-import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
-import { RCitekeyPages, RImportableBlock, ZCleanItemPDF, ZCleanItemTop, ZEnrichedCollection, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZSimplifiedNote, ZTagDictionary, isZAnnotation, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
-import { SCleanItem, SEnrichedItem, SEnrichedItemCitation, SEnrichedItemReference, SEnrichedItemTypeEnum, SRelatedEntries, isSBacklink } from "Types/transforms/semantic";
+import { RCitekeyPages, RImportableBlock, ZCleanItemTop, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibraryContents, ZLinkOptions, ZSimplifiedAnnotation, ZTagDictionary, isZAttachment, isZNoteOrAnnotation } from "Types/transforms";
 
 
 /** Adds an element to the end of an array
@@ -34,15 +35,6 @@ function updateArrayElemAt<T, V extends T>(arr: T[], index: number, value: V): T
 	return [...arr.slice(0, index), value, ...arr.slice(index + 1, arr.length)];
 }
 
-/** Converts a string from camelCase to Title Case
- * @see https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-title-case-text */
-function camelToTitleCase(text: string): string {
-	const result = text.replace(/([A-Z])/g, " $1");
-	const finalResult = result.charAt(0).toUpperCase() + result.slice(1);
-
-	return finalResult;
-}
-
 /** Categorizes library items according to their type (items, PDFs attachments, notes)
  * @param datastore - The items to categorize 
  * @returns The categorized object
@@ -65,44 +57,25 @@ function categorizeLibraryItems(datastore: ZItem[]): ZLibraryContents{
 	}, { items: [], pdfs: [], notes: [] });
 }
 
-/** Extracts an author's last name */
-function getAuthorLastName(name: string): string {
-	const components = name.replaceAll(".", " ").split(" ").filter(AsBoolean);
-	if (components.length == 1) {
-		return components[0];
-	} else {
-		return components.slice(1).filter(c => c.length > 1).join(" ");
+/* istanbul ignore next */
+function cleanError(error: Error) {
+	try {
+		if (isAxiosError(error)) {
+			const { code, message, status, config } = error;
+			return {
+				code,
+				message,
+				status,
+				config: {
+					url: config?.url
+				}
+			};
+		}
+
+		return error.message;
+	} catch (e) {
+		return error;
 	}
-}
-
-/** Formats authoring metadata */
-function makeAuthorsSummary(names: string[]): string {
-	switch (names.length) {
-	case 0:
-		return "";
-	case 1:
-		return names[0];
-	case 2:
-		return names[0] + " & " + names[1];
-	case 3:
-		return names[0] + ", " + names[1] + " & " + names[2];
-	default:
-		return names[0] + " et al.";
-	}
-}
-
-/** Categorizes library data into top-level items, annotations/notes, and PDFs with their metadata, children, and links */
-function cleanLibrary(arr: ZItem[], roamCitekeys: RCitekeyPages): ZCleanItemTop[] {
-	const lib = categorizeLibraryItems(arr);
-
-	return lib.items
-		.map((item: ZItemTop) => {
-			const itemKey = item.data.key;
-			const location = item.library.type + "s/" + item.library.id;
-			const { pdfs, notes } = identifyChildren(itemKey, location, { pdfs: lib.pdfs, notes: lib.notes });
-
-			return cleanLibraryItem(item, pdfs, notes, roamCitekeys);
-		});
 }
 
 /** Formats a Zotero item's metadata into a clean format, with Roam & children data
@@ -181,19 +154,6 @@ function cleanLibraryItem(item: ZItemTop, pdfs: ZItemAttachment[] = [], notes: (
 	return clean_item;
 }
 
-/** Formats a Zotero PDF's metadata into a clean format, with parent & annotations data */
-function cleanLibraryPDF(pdf: ZItemAttachment, parent: (ZItemTop | Record<string, never>) = {}, annotations: ZItemAnnotation[] = []): ZCleanItemPDF {
-	return {
-		annotations,
-		key: pdf.data.key,
-		link: getPDFLink(pdf, "href"),
-		parent,
-		title: pdf.data.filename || pdf.data.title,
-		raw: pdf,
-		tags: pdf.data.tags.map(t => t.tag)
-	};
-}
-
 /** Removes newlines at the beginning and end of a string */
 function cleanNewlines(text: string){
 	let cleanText = text;
@@ -208,124 +168,6 @@ function cleanNewlines(text: string){
 	cleanText = cleanText.replaceAll(/\n{2}/g, "\n");
 
 	return cleanText;
-}
-
-/** Formats the metadata of a Semantic Scholar entry */
-function cleanSemanticItem(item: SemanticScholarAPI.RelatedPaper): SCleanItem {
-	const clean_item: SCleanItem = {
-		authors: "",
-		authorsLastNames: [],
-		authorsString: "",
-		//* Note: SemanticScholar DOIs are sanitized on fetch
-		doi: item.doi,
-		intent: item.intent,
-		isInfluential: item.isInfluential,
-		links: {},
-		meta: item.venue.split(/ ?:/)[0], // If the publication has a colon, only take the portion that precedes it
-		title: item.title,
-		url: item.url || "",
-		year: item.year ? item.year.toString() : "",
-		_multiField: ""
-	};
-
-	// Parse authors data
-	clean_item.authorsLastNames = item.authors.map(a => getAuthorLastName(a.name));
-	clean_item.authorsString = clean_item.authorsLastNames.join(" ");
-	clean_item.authors = makeAuthorsSummary(clean_item.authorsLastNames);
-
-	// Parse external links
-	if (item.paperId) {
-		clean_item.links["semantic-scholar"] = `https://www.semanticscholar.org/paper/${item.paperId}`;
-	}
-	if (item.arxivId) {
-		clean_item.links.arxiv = `https://arxiv.org/abs/${item.arxivId}`;
-	}
-	if (item.doi || item.title) {
-		clean_item.links["connected-papers"] = "https://www.connectedpapers.com/" + (item.doi ? "api/redirect/doi/" + item.doi : "search?q=" + encodeURIComponent(item.title));
-		clean_item.links["google-scholar"] = "https://scholar.google.com/scholar?q=" + (item.doi || encodeURIComponent(item.title));
-	}
-
-	// Set multifield property for search
-	clean_item._multiField = [
-		clean_item.authorsString,
-		clean_item.year,
-		clean_item.title
-	].filter(AsBoolean).join(" ");
-
-	return clean_item;
-}
-
-/** Matches a clean Semantic Scholar entry to Zotero and Roam data */
-function matchSemanticEntry(
-	semanticItem: SemanticScholarAPI.RelatedPaper,
-	datastore: Partial<ZLibraryContents>,
-	roamCitekeys: RCitekeyPages
-): SEnrichedItem {
-	const { items = [], pdfs = [], notes = [] } = datastore;
-	const cleanItem = cleanSemanticItem(semanticItem);
-	if (!cleanItem.doi) {
-		return {
-			...cleanItem,
-			inGraph: false,
-			inLibrary: false
-		};
-	} else {
-		const libItem = items.find(it => parseDOI(it.data.DOI) == cleanItem.doi);
-		if (!libItem) {
-			return {
-				...cleanItem,
-				inGraph: false,
-				inLibrary: false
-			};
-		} else {
-			const itemKey = libItem.data.key;
-			const location = libItem.library.type + "s/" + libItem.library.id;
-			const children = identifyChildren(itemKey, location, { pdfs: pdfs, notes: notes });
-
-			return {
-				...cleanItem,
-				inGraph: roamCitekeys.get("@" + libItem.key) || false,
-				inLibrary: {
-					children,
-					raw: libItem
-				}
-			};
-		}
-	}
-}
-
-/** Formats a list of Semantic Scholar entries for display */
-function cleanSemantic(
-	datastore: ZLibraryContents,
-	semantic: Pick<SemanticScholarAPI.Item, "citations" | "references">,
-	roamCitekeys: RCitekeyPages
-): SRelatedEntries {
-	const { items = [], pdfs = [], notes = [] } = datastore;
-	const itemsWithDOIs = items.filter(it => it.data.DOI);
-	// * Note: DOIs from the Semantic Scholar queries are sanitized at fetch
-	const { citations = [], references = [] } = semantic;
-
-	const clean_citations: SEnrichedItemCitation[] = citations.map((cit) => {
-		const cleanProps = matchSemanticEntry(cit, { items: itemsWithDOIs, pdfs, notes }, roamCitekeys);
-		return {
-			...cleanProps,
-			_type: SEnrichedItemTypeEnum.CITING
-		};
-	});
-
-	const clean_references: SEnrichedItemReference[] = references.map((ref) => {
-		const cleanProps = matchSemanticEntry(ref, { items: itemsWithDOIs, pdfs, notes }, roamCitekeys);
-		return {
-			...cleanProps,
-			_type: SEnrichedItemTypeEnum.CITED
-		};
-	});
-
-	return {
-		citations: clean_citations,
-		references: clean_references,
-		backlinks: [...clean_references, ...clean_citations].filter(isSBacklink)
-	};
 }
 
 /** Orders the indices of two Zotero annotations
@@ -353,44 +195,6 @@ function compareAnnotationIndices(a: number[], b: number[]): number {
 		}
 	} else {
 		return 1;
-	}
-}
-
-/** Orders the (raw) indices of two Zotero annotations
- * @param a - The first string index to compare
- * @param b - The second string index to compare
- * @returns The comparison outcome
- */
-function compareAnnotationRawIndices(a: string, b: string): number {
-	return compareAnnotationIndices(
-		extractSortIndex(a),
-		extractSortIndex(b)
-	);
-}
-
-/** Compares two Zotero items by publication year then alphabetically, to determine sort order
- * @returns The comparison outcome
- */
-function compareItemsByYear(a: ZItemTop, b: ZItemTop): (-1 | 1) {
-	if (!a.meta.parsedDate) {
-		if (!b.meta.parsedDate) {
-			return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
-		} else {
-			return 1;
-		}
-	} else {
-		if (!b.meta.parsedDate) {
-			return -1;
-		} else {
-			const date_diff = new Date(a.meta.parsedDate).getUTCFullYear() - new Date(b.meta.parsedDate).getUTCFullYear();
-			if (date_diff < 0) {
-				return -1;
-			} else if (date_diff == 0) {
-				return a.meta.creatorSummary < b.meta.creatorSummary ? -1 : 1;
-			} else {
-				return 1;
-			}
-		}
 	}
 }
 
@@ -615,20 +419,6 @@ function formatItemReference(item: ZItemTop, format: ZItemReferenceFormat | stri
 
 }
 
-/** Formats an array of Zotero annotations into Roam blocks, with optional configuration
- * @param annotations - The Zotero annotations to format
- * @param config - Additional settings 
- * @returns The formatted annotations
- */
-function formatZoteroAnnotations(annotations: ZItemAnnotation[], { func = "", use = "default", __with = "raw", ...settings }: Partial<SettingsAnnotations> = {}){
-	if(use == "function" && func){
-		// If the user has provided a custom function, execute it with the desired input
-		return executeFunctionByName(func, window, __with == "raw" ? annotations : simplifyZoteroAnnotations(annotations));
-	} else {
-		return formatItemAnnotations(annotations, { ...settings });
-	}
-}
-
 /** Formats an array of Zotero notes into Roam blocks, with optional configuration
  * @param notes - The Zotero notes to format
  * @param config - Additional settings
@@ -710,16 +500,6 @@ function getWebLink(item: ZItemTop, { format = "markdown", text = "Web library" 
 	}
 }
 
-/** Checks if the contents of a NodeList have changed
- * @see https://stackoverflow.com/questions/51958759/how-can-i-test-the-equality-of-two-nodelists
- * @returns `true` if the NodeList has changed ; `false` otherwise
- */
-function hasNodeListChanged(prev: ArrayLike<Element>, current: ArrayLike<Element>): boolean {
-	const arrPrev = Array.from(prev);
-	const arrCurrent = Array.from(current);
-	return (arrPrev.length + arrCurrent.length) != 0 && (arrPrev.length !== arrCurrent.length || arrPrev.some((el, i) => el !== arrCurrent[i]));
-}
-
 /** Identifies the children of a Zotero item within a given set of PDF and note entries
  * @param itemKey - The Zotero key of the parent item
  * @param location - The library location of the parent item
@@ -734,29 +514,6 @@ function identifyChildren(itemKey: string, location: string, { pdfs = [], notes 
 	return {
 		pdfs: pdfItems,
 		notes: noteItems
-	};
-}
-
-/** Identifies the connections of a Zotero PDF within a given set of item and notes entries
- * @param itemKey - The Zotero key of the PDF item
- * @param parentKey - The Zotero key of the PDF's parent
- * @param location - The library location of the PDF item
- * @param data - The items among which connections are to be identified 
- * @returns The item's connections
- */
-function identifyPDFConnections(
-	itemKey: string,
-	parentKey: string,
-	location: string,
-	{ items = [], notes = [] }: Pick<ZLibraryContents, "items" | "notes">
-): { parent?: ZItemTop, annotations: ZItemAnnotation[] } {
-	const parentItem = items.find(it => it.data.key == parentKey && (it.library.type + "s/" + it.library.id == location));
-	const annotationItems = notes.filter(isZAnnotation)
-		.filter(n => n.data.parentItem == itemKey && n.library.type + "s/" + n.library.id == location);
-
-	return {
-		parent: parentItem,
-		annotations: annotationItems
 	};
 }
 
@@ -778,6 +535,7 @@ function isHTMLTag(input: string){
 	};
 }
 
+// FIXME: consider moving to Zotero helpers
 /** Creates a dictionary from a String Array
  * @param arr - The array from which to make the dictionary
  * @returns An object where each entry is made up of a key (String ; a given letter or character, in lowercase) and the strings from the original array that begin with that letter or character (in any case).
@@ -866,15 +624,6 @@ function makeOrdinal(i: number): string {
 function makeTimestamp(date: Date | string | number){
 	const d = date.constructor === Date ? date : new Date(date);
 	return `${d.getHours()}:${("0" + d.getMinutes()).slice(-2)}`;
-}
-
-/** Determines if two arrays have any elements in common
- * @param arr1 - The first array to use 
- * @param arr2 - The second array to use
- * @returns `true` if at least one elements is present in both arrays - otherwise `false`
- */
-function matchArrays(arr1: any[], arr2: any[]){
-	return arr1.some(el => arr2.includes(el));
 }
 
 /** Extracts a valid DOI from a string
@@ -1136,103 +885,6 @@ function simplifyZoteroAnnotations(annotations: ZItemAnnotation[]): ZSimplifiedA
 	});
 }
 
-/** Simplifies data structure for Zotero notes
- * @returns The simplified array of notes
- */
-function simplifyZoteroNotes(notes: ZItemNote[]): ZSimplifiedNote[] {
-	return notes.map(nt => {
-		const {
-			dateAdded: date_added,
-			dateModified: date_modified,
-			parentItem: parent_item,
-			note,
-			tags
-		} = nt.data;
-
-		const location = nt.library.type + "s/" + nt.library.id;
-		const libLoc = location.startsWith("groups/") ? location : "library";
-		const link_note = `zotero://select/${libLoc}/items/${nt.key}`;
-
-		return {
-			date_added,
-			date_modified,
-			key: nt.key,
-			location,
-			link_note,
-			note,
-			parent_item,
-			raw: nt,
-			tags: tags.map(t => t.tag)
-		};
-	});
-}
-
-/** Sorts the children of a Zotero collection, with nested children
- * @returns The sorted array
- */
-function sortCollectionChildren(
-	parent: ZoteroAPI.Collection,
-	children: ZoteroAPI.Collection[],
-	depth = 0
-): ZEnrichedCollection[] {
-	const parColl = {
-		...parent,
-		depth
-	};
-
-	const chldn = children.filter(ch => ch.data.parentCollection == parColl.key);
-	// If the collection has children, recurse
-	if (chldn.length > 0) {
-		const collArray = [parColl];
-		// Go through each child collection 1-by-1
-		// If a child has children itself, the recursion should ensure everything gets added where it should
-		for (let j = 0; j < chldn.length; j++) {
-			collArray.push(...sortCollectionChildren(chldn[j], children, depth + 1));
-		}
-		return collArray;
-	} else {
-		return [parColl];
-	}
-
-}
-
-/** Sorts an array of Zotero collections in A-Z order, with child collections
- * @param arr - The array of Zotero collections to sort
- * @returns The sorted array
- */
-function sortCollections(arr: ZoteroAPI.Collection[]): ZEnrichedCollection[] {
-	if (arr.length > 0) {
-		// Sort collections A-Z
-		const array = [...arr].sort((a, b) => (a.data.name.toLowerCase() < b.data.name.toLowerCase() ? -1 : 1));
-		const childColls = array.filter(cl => cl.data.parentCollection);
-		const topColls: ZEnrichedCollection[] = array
-			.filter(cl => !cl.data.parentCollection)
-			.map(cl => ({ ...cl, depth: 0 }));
-
-		const orderedArray: ZEnrichedCollection[] = [];
-
-		for (let k = 0; k < topColls.length; k++) {
-			const chldn = childColls.filter(ch => ch.data.parentCollection == topColls[k].key);
-			// If the collection has children, pass it to sortCollectionChildren to recursively process the nested collections
-			if (chldn.length > 0) {
-				orderedArray.push(...sortCollectionChildren(topColls[k], childColls));
-			} else {
-				orderedArray.push(topColls[k]);
-			}
-		}
-		return orderedArray;
-	} else {
-		return [];
-	}
-}
-
-/** Sorts an array of objects on a given string key, in A-Z order
- * @returns The sorted array
- */
-function sortElems<T extends Record<string, any>[]>(arr: T, sort: string) {
-	return arr.sort((a, b) => (`${a[sort]}`.toLowerCase() < `${b[sort]}`.toLowerCase()) ? -1 : 1);
-}
-
 /** Splits Zotero notes on a given string
  * @param notes - The raw array of notes to split
  * @param separator - The string on which to split notes
@@ -1250,22 +902,26 @@ function splitNotes(notes: ZItemNote[], separator: string): string[][] {
 	}
 }
 
+/** Transform DOI data in a list of items. */
+function transformDOIs<T extends { doi: string | false | null }>(arr: T[]) {
+	return arr.map(elem => {
+		const { doi, ...rest } = elem;
+		return {
+			doi: parseDOI(doi),
+			...rest
+		};
+	});
+}
+
 export {
 	addElemToArray,
 	removeArrayElemAt,
 	updateArrayElemAt,
-	camelToTitleCase,
 	categorizeLibraryItems,
-	makeAuthorsSummary,
-	cleanLibrary,
+	cleanError,
 	cleanLibraryItem,
-	cleanLibraryPDF,
 	cleanNewlines,
-	cleanSemantic,
-	cleanSemanticItem,
-	compareItemsByYear,
 	compareAnnotationIndices,
-	compareAnnotationRawIndices,
 	copyToClipboard,
 	escapeRegExp,
 	executeFunctionByName,
@@ -1273,27 +929,20 @@ export {
 	formatItemAnnotations,
 	formatItemNotes,
 	formatItemReference,
-	formatZoteroAnnotations,
 	formatZoteroNotes,
-	getAuthorLastName,
 	getPDFLink,
 	getLocalLink,
 	getWebLink,
-	hasNodeListChanged,
 	identifyChildren,
-	identifyPDFConnections,
 	makeDateFromAgo,
 	makeDictionary,
 	makeDNP,
 	makeTimestamp,
-	matchArrays,
 	parseDOI,
 	pluralize,
 	readDNP,
 	searchEngine,
 	simplifyZoteroAnnotations,
-	simplifyZoteroNotes,
-	sortCollections,
-	sortElems,
-	splitNotes
+	splitNotes,
+	transformDOIs
 };

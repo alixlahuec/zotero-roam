@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import LibraryQueryList from "./LibraryQueryList";
 
 import { useBool } from "../../hooks";
-import { cleanLibrary } from "../../utils";
+import { cleanLibrary } from "./helpers";
 import { items } from "Mocks";
 
 

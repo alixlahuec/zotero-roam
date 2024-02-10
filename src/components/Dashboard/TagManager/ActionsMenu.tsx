@@ -3,7 +3,7 @@ import { Menu, MenuItem } from "@blueprintjs/core";
 
 import MergeAsOptions from "./MergeAsOptions";
 
-import { useDeleteTags } from "../../../api/write";
+import { useDeleteTags } from "../../../clients/mutations";
 
 import { CustomClasses } from "../../../constants";
 import { ZLibrary, ZTagSuggestion } from "Types/transforms";

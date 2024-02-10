@@ -29,59 +29,63 @@ export namespace Roam {
 	 * @see https://roamresearch.com/#/app/developer-documentation/page/j6s5Gd5js
 	 */
 	export interface AlphaAPI {
-		/** Creates a new block at a given location.
-		 * @see https://roamresearch.com/#/app/developer-documentation/page/Sq5IhwNQY
-		 * @deprecated Use `.data.block.create` instead.
-		 */
-		createBlock: (args: {
-			location: {
-				/** The UID of the block's parent */
-				"parent-uid": string;
-				/** The position where the block should be inserted (zero-indexed) */
-				order: BlockOrder;
-			},
-			block: {
-				/** The string contents for the block */
-				string: string;
-				/** The UID for the block */
-				uid?: string;
-				/** The initial open/collapsed state for the block */
-				open?: boolean;
-				/** The heading style for the block */
-				heading?: Heading;
-				/** The text alignment for the block */
-				"text-align"?: TextAlign
-				/** The view type for the block */
-				"children-view-type"?: ViewType;
-			}
-		}) => Promise<void>,
 
-		/** Creates a new page.
-		 * Pages with title in the format of `January 21st, 2021` will create a new daily note if it does not yet exist.
-		 * @see https://roamresearch.com/#/app/developer-documentation/page/1jMc3V1QE
-		 * @deprecated Use `.data.page.create` instead.
-		 */
-		createPage: (args: {
+		data: {
+			block: {
+				/** Creates a new block at a given location.
+				 * @see https://roamresearch.com/#/app/developer-documentation/page/Sq5IhwNQY
+				 */
+				create: (args: {
+					location: {
+						/** The UID of the block's parent */
+						"parent-uid": string;
+						/** The position where the block should be inserted (zero-indexed) */
+						order: BlockOrder;
+					},
+					block: {
+						/** The string contents for the block */
+						string: string;
+						/** The UID for the block */
+						uid?: string;
+						/** The initial open/collapsed state for the block */
+						open?: boolean;
+						/** The heading style for the block */
+						heading?: Heading;
+						/** The text alignment for the block */
+						"text-align"?: TextAlign
+						/** The view type for the block */
+						"children-view-type"?: ViewType;
+					}
+				}) => Promise<void | null | undefined>
+			},
+
 			page: {
-				/** The title for the page */
-				title: string,
-				/** The UID for the page */
-				uid?: string,
-				/** The view type for the page */
-				"children-view-type"?: ViewType
-			}
-		}) => Promise<void>,
+				/** Creates a new page.
+				 * Pages with title in the format of `January 21st, 2021` will create a new daily note if it does not yet exist.
+				 * @see https://roamresearch.com/#/app/developer-documentation/page/1jMc3V1QE
+				 */
+				create: (args: {
+					page: {
+						/** The title for the page */
+						title: string,
+						/** The UID for the page */
+						uid?: string,
+						/** The view type for the page */
+						"children-view-type"?: ViewType
+					}
+				}) => Promise<void | null | undefined>,
+			},
+
+			/** Runs a Datalog query against the graph.
+			 * @see https://roamresearch.com/#/app/developer-documentation/page/SI3FNt3EQ 
+			 */
+			q: <T>(query: string, ...params: any[]) => T,
+		},
 
 		graph: {
 			/** The name of the Roam graph */
 			name: string
 		},
-
-		/** Runs a Datalog query against the graph.
-		 * @see https://roamresearch.com/#/app/developer-documentation/page/SI3FNt3EQ 
-		 * @deprecated Use `.data.q` instead.
-		 */
-		q: <T>(query: string, ...params: any[]) => T,
 
 		ui: {
 			commandPalette: {
