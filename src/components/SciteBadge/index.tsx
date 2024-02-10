@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef } from "react";
-import { insertBadges } from "scite-badge";
+import { insertBadges } from "scite-extension/src/badge/main";
 
 import "./_index.sass";
 
