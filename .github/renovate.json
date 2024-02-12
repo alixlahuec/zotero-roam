@@ -55,6 +55,7 @@
 			"@storybook/cli",
 			"@storybook/react",
 			"@storybook/react-vite",
+			"@storybook/test",
 			"storybook"
 		]
 	},
