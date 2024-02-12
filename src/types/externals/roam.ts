@@ -159,10 +159,19 @@ export namespace Roam {
 		},
 
 		util: {
+			/** Converts a Date into a DNP page title.
+			 * @see https://roamresearch.com/#/app/developer-documentation/page/G9TZzJ0oO
+			 */
+			dateToPageTitle: (date: Date) => string,
 			/** Generates a Roam block UID, which is a random string of length nine.
 			 * @see https://roamresearch.com/#/app/developer-documentation/page/cMeEb11Bx
 			 */
-			generateUID: () => string
+			generateUID: () => string,
+			/** Converts a DNP page title (e.g. "April 6th, 2021") into a Date.
+			 * The date will be expressed in the local timezone (e.g. Tue Apr 06 2021 00:00:00 GMT-0400 (Eastern Daylight Time)).
+			 * @see https://roamresearch.com/#/app/developer-documentation/page/daF13_WNI
+			 */
+			pageTitleToDate: (title: string) => Date
 		}
 
 	}

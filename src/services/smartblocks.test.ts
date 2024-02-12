@@ -4,9 +4,10 @@ import { mock } from "jest-mock-extended";
 import { analyzeUserRequests, setupInitialSettings } from "../setup";
 import ZoteroRoam from "../api";
 import { eval_term, reformatImportableBlocks, sbCommands } from "./smartblocks";
-import { getLocalLink, getWebLink, makeDNP } from "../utils";
+import { getLocalLink, getWebLink } from "../utils";
 
 import { Mocks, apiKeys, bibs, findCollections, findItems, items, libraries, sampleNote, samplePDF } from "Mocks";
+import { makeDNP } from "Mocks/roam";
 
 import { SmartblocksPlugin } from "Types/externals";
 

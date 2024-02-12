@@ -454,6 +454,20 @@ async function importItemNotes(
 	}
 }
 
+
+/** Converts input into a Roam DNP title */
+function makeDNP(date: Date | any, { brackets = true }: { brackets?: boolean } = {}) {
+	const thisdate = date.constructor === Date ? date : new Date(date);
+	const dnp_title = window.roamAlphaAPI.util.dateToPageTitle(thisdate);
+
+	if (brackets) {
+		return `[[${dnp_title}]]`;
+	} else {
+		return dnp_title;
+	}
+}
+
+
 /** Places the cursor in a given location, if it is specified */
 function maybeReturnCursorToPlace(place: RCursorLocation | null){
 	if(place && place.location){
@@ -480,6 +494,14 @@ async function openPageByUID(uid: string){
 	await window.roamAlphaAPI.ui.mainWindow.openPage({ page: { uid } });
 }
 
+/** Converts a Roam DNP title into a Date
+ * @returns The corresponding date, either as a Date or an Array [YYYY,M,D]. In the array format, the month is zero-indexed.
+ */
+function readDNP(string: string, { as_date = true }: { as_date?: boolean } = {}) {
+	const parsedDate = window.roamAlphaAPI.util.pageTitleToDate(string);
+	return as_date ? parsedDate : [parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate()];
+}
+
 /** Removes an entry from Roam's Command Palette */
 function removePaletteCommand(label: string, extensionAPI: Roam.ExtensionAPI | Record<string, never> = {}) {
 	const command = { label };
@@ -502,8 +524,10 @@ export {
 	getInitialedPages,
 	importItemMetadata,
 	importItemNotes,
+	makeDNP,
 	maybeReturnCursorToPlace,
 	openInSidebarByUID,
 	openPageByUID,
+	readDNP,
 	removePaletteCommand
 };
