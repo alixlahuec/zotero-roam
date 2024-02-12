@@ -79,7 +79,12 @@ const SemanticTabList = memo<SemanticTabListProps>(function SemanticTabList(prop
 				title={citations_title}
 			/>
 			<Tabs.Expander />
-			<span className={CustomClasses.TEXT_AUXILIARY} id={labelId} title={"Works related to " + title}>{title}</span>
+			<span className={CustomClasses.TEXT_AUXILIARY}
+				id={labelId}
+				aria-label={"Works related to " + title}
+				title={"Works related to " + title}>
+				{title}
+			</span>
 			<Button icon="cross" minimal={true} large={true} onClick={onClose} title="Close dialog" />
 		</Tabs>
 	);

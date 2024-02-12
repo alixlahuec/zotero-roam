@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { Menu } from "@blueprintjs/core";
 import { Meta, StoryObj } from "@storybook/react";
-import { expect, Mock, userEvent, waitFor, within } from "@storybook/test";
+import { expect, fn, Mock, userEvent, waitFor, within } from "@storybook/test";
 
 import MergeAsOptions from "./MergeAsOptions";
 import { apiKeys, libraries } from "Mocks";
@@ -36,7 +36,7 @@ export const Default: StoryObj<Props> = {
 	play: async({ args, canvasElement }) => {
 		const into = "healthcare";
 
-		document.dispatchEvent = jest.fn();
+		document.dispatchEvent = fn();
 
 		const canvas = within(canvasElement);
 		const frame = within(canvasElement.parentElement!);
