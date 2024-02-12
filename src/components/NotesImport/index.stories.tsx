@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 import { expect, jest } from "@storybook/jest";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { userEvent, waitFor, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/react";
 
 import AuxiliaryDialog from "Components/AuxiliaryDialog";

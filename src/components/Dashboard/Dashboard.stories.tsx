@@ -1,5 +1,6 @@
 import { ComponentProps } from "react";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { userEvent, waitFor, within } from "@storybook/test";
+
 import { expect } from "@storybook/jest";
 import { Meta, StoryObj } from "@storybook/react";
 

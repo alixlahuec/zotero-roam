@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 import { expect } from "@storybook/jest";
 import { Meta, StoryObj } from "@storybook/react";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { userEvent, waitFor, within } from "@storybook/test";
 
 import DNPMenu from "./DNPMenu";
 import { cleanRelatedItem } from "../helpers";

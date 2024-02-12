@@ -1,7 +1,7 @@
 import { ComponentProps, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { expect, jest } from "@storybook/jest";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { userEvent, waitFor, within } from "@storybook/test";
 
 import { Meta, StoryObj } from "@storybook/react";
 import ActionsMenu from "./ActionsMenu";

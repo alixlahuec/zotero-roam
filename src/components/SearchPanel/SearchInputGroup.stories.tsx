@@ -1,6 +1,6 @@
 import { ComponentProps, useRef } from "react";
 import { HotkeysProvider } from "@blueprintjs/core";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { userEvent, waitFor, within } from "@storybook/test";
 import { expect } from "@storybook/jest";
 import { Meta, StoryObj } from "@storybook/react";
 
