@@ -1,7 +1,6 @@
 import { ComponentProps } from "react";
-import { expect } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/react";
-import { userEvent, waitFor, within } from "@storybook/test";
+import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 import InlineCitekeys, { WATCHER_DELAY } from ".";
 import { CitekeyReferenceValid, CitekeyReferenceInvalid } from "../fixtures";
@@ -38,7 +37,7 @@ export const WithCitekeyInLibrary: StoryObj<Props> = {
 			expect(referenceSpan).toHaveAttribute("data-in-library", "true"),
 		{ timeout: WATCHER_DELAY * 3 });
 		
-		await userEvent.click(referenceLinkSpan, { button: 2 });
+		await userEvent.pointer({ keys: "[MouseRight]", target: referenceLinkSpan });
 
 		await waitFor(() =>
 			expect(frame.getByText("Import metadata"))
@@ -62,7 +61,7 @@ export const WithCitekeyNotInLibrary: StoryObj<Props> = {
 			expect(referenceSpan).toHaveAttribute("data-in-library", "false"),
 		{ timeout: WATCHER_DELAY * 2 });
 
-		await userEvent.click(referenceLinkSpan, { button: 2 });
+		await userEvent.pointer({ keys: "[MouseRight]", target: referenceLinkSpan });
 
 		await waitFor(() =>
 			expect(frame.queryByText("Import metadata"))

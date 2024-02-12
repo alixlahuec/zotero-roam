@@ -1,7 +1,6 @@
 import { ComponentProps } from "react";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/react";
+import { expect, userEvent, within } from "@storybook/test";
 
 import SemanticPanel from ".";
 import { cleanSemantic } from "../Menus/helpers";

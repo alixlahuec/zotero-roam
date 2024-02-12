@@ -1,5 +1,5 @@
 import { ComponentProps, useState } from "react";
-import { expect, jest, userEvent, within } from "@storybook/test";
+import { expect, fn, userEvent, within } from "@storybook/test";
 
 import { Meta, StoryObj } from "@storybook/react";
 
@@ -16,7 +16,7 @@ type Props = ComponentProps<typeof RequestsEditor>;
 export default {
 	component: RequestsEditor,
 	args: {
-		closeDialog: jest.fn()
+		closeDialog: fn()
 	},
 	argTypes: {
 		closeDialog: { action: true }

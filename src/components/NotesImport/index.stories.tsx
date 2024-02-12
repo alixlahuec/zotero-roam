@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { expect, jest, userEvent, waitFor, within } from "@storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
 
 import { Meta, StoryObj } from "@storybook/react";
 
@@ -21,7 +21,7 @@ type Props = ComponentProps<typeof NotesImport>;
 export default {
 	component: NotesImport,
 	args: {
-		closeDialog: jest.fn(),
+		closeDialog: fn(),
 		item: items[0],
 		notes: [sampleOlderNote, sampleAnnotLaterPage, sampleNote, sampleAnnotPrevPage],
 		pageUID: "some_uid"

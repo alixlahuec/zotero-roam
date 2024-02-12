@@ -1,6 +1,6 @@
 import { ComponentProps, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { expect, jest, userEvent, waitFor, within } from "@storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
 
 
 import { Meta, StoryObj } from "@storybook/react";
@@ -51,7 +51,7 @@ export const Default: StoryObj<Props> = {
 		}
 	},
 	play: async ({ canvasElement }) => {
-		document.dispatchEvent = jest.fn();
+		document.dispatchEvent = fn();
 
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getByText("Delete tag(s)"));

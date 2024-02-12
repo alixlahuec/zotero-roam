@@ -1,4 +1,4 @@
-import { jest } from "@storybook/test";
+import { fn } from "@storybook/test";
 
 
 export const uid_with_existing_block = "__UID_WITH_EXISTING_BLOCK__";
@@ -62,7 +62,7 @@ function importItemMetadata() {
 	return {};
 }
 
-const importItemNotes = jest.fn(() => {});
+const importItemNotes = fn(() => {});
 
 function maybeReturnCursorToPlace(){}
 
