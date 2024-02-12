@@ -1,6 +1,6 @@
 import { ComponentProps, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
+import { expect, fn, Mock, userEvent, waitFor, within } from "@storybook/test";
 
 
 import { Meta, StoryObj } from "@storybook/react";
@@ -66,7 +66,7 @@ export const Default: StoryObj<Props> = {
 		});
 
 		await expect(document.dispatchEvent).toHaveBeenCalled();
-		await expect((document.dispatchEvent as jest.Mock).mock.calls[0][0].detail)
+		await expect((document.dispatchEvent as Mock).mock.calls[0][0].detail)
 			.toEqual({
 				args: {
 					tags: ["history", "history", "HISTORY", "History"]

@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
-import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
+import { expect, fn, Mock, userEvent, waitFor, within } from "@storybook/test";
 
 import WebImportPanel from "./WebImportPanel";
 import { badIdentifier, citoids, goodIdentifier, libraries } from "Mocks";
@@ -76,7 +76,7 @@ export const WithInteractions: StoryObj<Props> = {
 			.toHaveBeenCalled(),
 		{ timeout: 3000 });
 
-		await expect((document.dispatchEvent as jest.Mock).mock.calls[0][0].detail)
+		await expect((document.dispatchEvent as Mock).mock.calls[0][0].detail)
 			.toEqual({
 				args: {
 					collections: [],
