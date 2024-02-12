@@ -75,7 +75,6 @@
         "@storybook/addon-links": "^7.6.13",
         "@storybook/builder-vite": "^7.6.13",
         "@storybook/cli": "^7.6.13",
-        "@storybook/jest": "^0.2.3",
         "@storybook/react": "^7.6.13",
         "@storybook/react-vite": "^7.6.13",
         "@storybook/test": "^7.6.13",
