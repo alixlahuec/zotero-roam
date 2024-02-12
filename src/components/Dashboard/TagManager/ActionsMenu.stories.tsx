@@ -1,7 +1,7 @@
 import { ComponentProps, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { expect, jest } from "@storybook/jest";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { expect, fn, Mock, userEvent, waitFor, within } from "@storybook/test";
+
 
 import { Meta, StoryObj } from "@storybook/react";
 import ActionsMenu from "./ActionsMenu";
@@ -51,7 +51,7 @@ export const Default: StoryObj<Props> = {
 		}
 	},
 	play: async ({ canvasElement }) => {
-		document.dispatchEvent = jest.fn();
+		document.dispatchEvent = fn();
 
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getByText("Delete tag(s)"));
@@ -66,7 +66,7 @@ export const Default: StoryObj<Props> = {
 		});
 
 		await expect(document.dispatchEvent).toHaveBeenCalled();
-		await expect((document.dispatchEvent as jest.Mock).mock.calls[0][0].detail)
+		await expect((document.dispatchEvent as Mock).mock.calls[0][0].detail)
 			.toEqual({
 				args: {
 					tags: ["history", "history", "HISTORY", "History"]

@@ -1,4 +1,4 @@
-import { jest } from "@storybook/jest";
+import { fn } from "@storybook/test";
 import { makeOrdinal } from "../src/utils";
 
 
@@ -63,7 +63,7 @@ function importItemMetadata() {
 	return {};
 }
 
-const importItemNotes = jest.fn(() => {});
+const importItemNotes = fn(() => {});
 
 function makeDNP(date: Date | any, { brackets = true }: { brackets?: boolean } = {}) {
 	const thisdate = date.constructor === Date ? date : new Date(date);

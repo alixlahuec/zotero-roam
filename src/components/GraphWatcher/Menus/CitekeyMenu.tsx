@@ -174,7 +174,7 @@ function RelatedItemsBar(props: RelatedItemsBarProps) {
 				:
 				<>
 					<ButtonGroup minimal={true} fill={true} role="menubar">
-						<Button aria-disabled={refCount == 0} disabled={refCount == 0} className={ showClasses.references } loading={isLoading} minimal={true} onClick={showReferences} icon="citation" intent="primary" role="menuitem" aria-haspopup="dialog" title="Show references" >{ pluralize(refCount, "reference") }</Button>
+						<Button aria-disabled={refCount == 0} disabled={refCount == 0} className={ showClasses.references } loading={isLoading} minimal={true} onClick={showReferences} icon="citation" intent="primary" role="menuitem" aria-haspopup="dialog" aria-label="Show references" title="Show references" >{ pluralize(refCount, "reference") }</Button>
 						<Button aria-disabled={citCount == 0} disabled={citCount == 0} className={ showClasses.citations } loading={isLoading} minimal={true} onClick={showCitations} icon="chat" intent="warning" role="menuitem" aria-haspopup="dialog" title="Show citations" >{ pluralize(citCount, "citation") }</Button>
 						<Button className={ showClasses.backlinks } loading={isLoading} minimal={true} onClick={toggleBacklinks} {...showBacklinksButtonProps} role="menuitem" title="Show backlinks" />
 					</ButtonGroup>
