@@ -1,8 +1,8 @@
 import { ComponentProps } from "react";
 import { Menu } from "@blueprintjs/core";
-import { expect, jest } from "@storybook/jest";
+import { expect, jest, userEvent, waitFor, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/react";
-import { userEvent, waitFor, within } from "@storybook/test";
+
 
 import MergeAsOptions from "./MergeAsOptions";
 import { apiKeys, libraries } from "Mocks";

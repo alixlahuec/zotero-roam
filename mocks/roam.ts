@@ -1,4 +1,4 @@
-import { jest } from "@storybook/jest";
+import { jest } from "@storybook/test";
 
 
 export const uid_with_existing_block = "__UID_WITH_EXISTING_BLOCK__";

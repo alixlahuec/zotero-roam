@@ -1,6 +1,6 @@
 import { ComponentProps, useState } from "react";
-import { expect } from "@storybook/jest";
-import { userEvent, waitFor, within } from "@storybook/test";
+import { expect, userEvent, waitFor, within } from "@storybook/test";
+
 import { Meta, StoryObj } from "@storybook/react";
 import { TextField } from "./common";
 

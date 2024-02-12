@@ -1,7 +1,7 @@
 import { ComponentProps, useReducer } from "react";
 import { Meta, StoryObj } from "@storybook/react";
-import { userEvent, within } from "@storybook/test";
-import { expect } from "@storybook/jest";
+import { userEvent, within, expect } from "@storybook/test";
+
 
 import QueryEntry from "./QueryEntry";
 import { QueryProperty } from "../types";
