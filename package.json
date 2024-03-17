@@ -110,7 +110,7 @@
         "storybook": "^7.6.17",
         "storybook-addon-swc": "^1.2.0",
         "storybook-mock-date-decorator": "^1.0.1",
-        "swc-plugin-coverage-instrument": "^0.0.20",
+        "swc-plugin-coverage-instrument": "^0.0.21",
         "typescript": "^4.9.5",
         "vite": "^5.1.4",
         "vite-plugin-externals": "^0.6.2",
