@@ -25,13 +25,16 @@ jobs:
         id: npm-cache
         uses: actions/cache@v3
         with:
-          path: ~/.npm
+          path: .npm/
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
 
       - name: Install packages
-        run: npm ci
+        run: npm ci --cache .npm --prefer-offline
         if: steps.npm-cache.outputs.cache-hit != 'true'
+      - name: Install packages (from cache)
+        run: npm install --cache .npm --prefer-offline
+        if: steps.npm-cache.outputs.cache-hit == 'true'
 
       - name: Type-checking
         run: npm run ci:typecheck
