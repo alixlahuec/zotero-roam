@@ -89,7 +89,7 @@
         "@vitejs/plugin-react-swc": "^3.6.0",
         "auto-changelog": "^2.4.0",
         "axe-playwright": "^2.0.1",
-        "chromatic": "^11.2.0",
+        "chromatic": "^11.3.0",
         "eslint": "^8.57.0",
         "eslint-import-resolver-alias": "^1.1.2",
         "eslint-plugin-import": "^2.29.1",
