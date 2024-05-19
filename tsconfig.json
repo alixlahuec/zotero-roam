@@ -11,7 +11,6 @@
 			"Components/*": ["./src/components/*"],
 			"Mocks/*": ["./mocks/*"],
 			"Mocks": ["./mocks"],
-			"Roam": ["src/services/roam/index.ts"],
 			"Styles": ["./styles"],
 			"Types/*": ["./src/types/*"]
 		},

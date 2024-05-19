@@ -51,9 +51,9 @@ const config: StorybookConfig = {
 				...config.resolve,
 				alias: {
 					"@clients": path.resolve(__dirname, "..", "src", "clients"),
+					"@services/roam": path.resolve(__dirname, "..", "mocks", "roam.ts"),
 					"@services": path.resolve(__dirname, "..", "src", "services"),
 					"Mocks": path.resolve(__dirname, "..", "mocks"),
-					"Roam": path.resolve(__dirname, "..", "mocks", "roam.ts"),
 					"Components": path.resolve(__dirname, "..", "src", "components"),
 					"Styles": path.resolve(__dirname, "..", "styles"),
 					"Types": path.resolve(__dirname, "..", "src", "types")

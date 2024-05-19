@@ -1,4 +1,4 @@
-import { Roam } from "Roam";
+import { Roam } from "@services/roam";
 
 
 /**

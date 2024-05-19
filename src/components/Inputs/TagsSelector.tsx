@@ -2,7 +2,7 @@ import { memo, useCallback, useState } from "react";
 import { MenuItem } from "@blueprintjs/core";
 import { MultiSelect, MultiSelectProps } from "@blueprintjs/select";
 
-import { getAllPages } from "Roam";
+import { getAllPages } from "@services/roam";
 import { searchEngine } from "../../utils";
 import { CustomClasses } from "../../constants";
 

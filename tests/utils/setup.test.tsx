@@ -8,7 +8,7 @@ import { act, render } from "@testing-library/react";
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, TYPEMAP_DEFAULT } from "../../src/constants";
 import ZoteroRoam from "../../src/api";
 import IDBDatabaseService from "@services/idb";
-import { Roam } from "Roam";
+import { Roam } from "@services/roam";
 import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, unmountExtensionIfExists, validateShortcuts } from "../../src/setup";
 
 import { apiKeys, libraries } from "Mocks";

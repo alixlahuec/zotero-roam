@@ -31,7 +31,7 @@ export default defineConfig(({ command, mode }) => {
 				"zoteroRoam.sandbox": resolve("sandbox")
 			};
 			
-			extraAliases["Roam"] = resolve("mocks", "roam");
+			extraAliases["@services/roam"] = resolve("mocks", "roam");
 
 			break;
 		case "roam":
@@ -84,7 +84,6 @@ export default defineConfig(({ command, mode }) => {
 				"@clients": resolve("src", "clients"),
 				"@services": resolve("src", "services"),
 				"Mocks": resolve("mocks"),
-				"Roam": resolve("src", "services", "roam"),
 				"Components": resolve("src", "components"),
 				"Styles": resolve("styles"),
 				"Types": resolve("src", "types"),

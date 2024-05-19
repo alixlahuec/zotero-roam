@@ -4,7 +4,7 @@ import { _getItemCreators, _getItemTags } from "./public";
 import { ZItemTop } from "Types/transforms";
 
 
-jest.mock("Roam", (() => ({
+jest.mock("@services/roam", (() => ({
 	findRoamPage: () => false
 })));
 

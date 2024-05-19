@@ -7,8 +7,8 @@ import { ErrorBoundary } from "Components/Errors";
 import { useAnnotationsSettings, useNotesSettings } from "Components/UserSettings";
 import DayList, { DayListProps } from "./DayList";
 
-import { importItemNotes, makeDNP } from "Roam";
 import { useMulti } from "../../hooks";
+import { importItemNotes, makeDNP } from "@services/roam";
 
 import { CustomClasses } from "../../constants";
 import { ZItemAnnotation, ZItemNote, ZItemTop } from "Types/transforms";

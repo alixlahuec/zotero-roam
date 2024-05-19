@@ -84,7 +84,6 @@ const common = {
     "@services/(.*)$": "<rootDir>/src/services/$1",
 	  "Mocks/(.*)$": "<rootDir>/mocks/$1",
 	  "Mocks": "<rootDir>/mocks/index.ts",
-    "Roam": "<rootDir>/mocks/roam.ts",
     "Components/(.*)$": "<rootDir>/src/components/$1",
     "Styles": "<rootDir>/styles/_index.sass",
     "Types/(.*)$": "<rootDir>/src/types/$1",

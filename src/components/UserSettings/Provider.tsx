@@ -1,8 +1,9 @@
 import { FC, ReactChildren, useCallback } from "react";
 
+import { Roam } from "@services/roam";
+
 import { SETTINGS_CONFIG } from "./mapping";
 
-import { Roam } from "Roam";
 import { InitSettings } from "Types/extension";
 
 

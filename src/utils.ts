@@ -2,7 +2,7 @@ import { isAxiosError } from "axios";
 
 import zrToaster from "Components/ExtensionToaster";
 
-import { makeDNP } from "Roam";
+import { makeDNP } from "@services/roam";
 
 import { SettingsAnnotations, SettingsNotes, ZItemReferenceFormat } from "Types/extension";
 import { AsBoolean } from "Types/helpers";

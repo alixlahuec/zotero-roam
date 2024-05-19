@@ -13,7 +13,7 @@ import SearchPanel from "Components/SearchPanel";
 import { SettingsDialog, useOtherSettings, useRequestsSettings, useShortcutsSettings } from "Components/UserSettings";
 
 import IDBDatabase from "@services/idb";
-import { Roam, addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "Roam";
+import { Roam, addPaletteCommand, getCurrentCursorLocation, maybeReturnCursorToPlace, removePaletteCommand } from "@services/roam";
 import { createPersisterWithIDB, shouldQueryBePersisted, validateShortcuts } from "../../setup";
 
 import { AsBoolean } from "Types/helpers";

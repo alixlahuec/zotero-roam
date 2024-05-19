@@ -5,7 +5,7 @@ import { PersistedClient } from "@tanstack/react-query-persist-client";
 
 import { setDefaultHooks } from "@services/events";
 import IDBDatabase from "@services/idb";
-import { Roam } from "Roam";
+import { Roam } from "@services/roam";
 import { registerSmartblockCommands } from "@services/smartblocks";
 
 import { cleanError } from "./utils";

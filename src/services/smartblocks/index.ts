@@ -1,4 +1,4 @@
-import { makeDNP } from "Roam";
+import { makeDNP } from "@services/roam";
 import { getLocalLink, getWebLink, parseDOI } from "../../utils";
 
 import { SmartblocksPlugin } from "./types";
