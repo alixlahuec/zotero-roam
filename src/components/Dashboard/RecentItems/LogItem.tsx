@@ -4,7 +4,7 @@ import { Button } from "@blueprintjs/core";
 import CitekeyPopover from "Components/CitekeyPopover";
 import { ListItem } from "Components/DataList";
 
-import { useBool } from "../../../hooks";
+import { useBool } from "@hooks";
 
 import { CustomClasses } from "../../../constants";
 import { ZLogItem } from "Types/transforms";

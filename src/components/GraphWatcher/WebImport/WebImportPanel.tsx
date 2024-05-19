@@ -8,7 +8,8 @@ import { useTypemapSettings } from "Components/UserSettings";
 import ZoteroImport from "Components/ZoteroImport";
 
 import { CitoidAPI, useCitoids } from "@clients/citoid";
-import { useMulti } from "../../../hooks";
+import { useMulti } from "@hooks";
+
 import { pluralize } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";

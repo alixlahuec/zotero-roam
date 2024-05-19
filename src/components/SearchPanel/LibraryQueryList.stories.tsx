@@ -2,8 +2,10 @@ import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import LibraryQueryList from "./LibraryQueryList";
 
-import { useBool } from "../../hooks";
+import { useBool } from "@hooks";
+
 import { cleanLibrary } from "./helpers";
+
 import { items } from "Mocks";
 
 

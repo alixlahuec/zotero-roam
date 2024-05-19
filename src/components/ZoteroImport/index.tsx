@@ -10,8 +10,8 @@ import LibrarySelector from "./LibrarySelector";
 
 import { useCitoids } from "@clients/citoid";
 import { ZoteroAPI, useCollections, useWriteableLibraries, useImportCitoids } from "@clients/zotero";
+import { useMulti, useSelect } from "@hooks";
 
-import { useMulti, useSelect } from "../../hooks";
 import { sortCollections } from "./helpers";
 
 import { CustomClasses } from "../../constants";

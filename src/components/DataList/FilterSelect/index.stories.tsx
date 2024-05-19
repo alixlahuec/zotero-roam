@@ -2,7 +2,8 @@ import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { userEvent, within, expect } from "@storybook/test";
 
-import { useFilterList } from "../../../hooks";
+import { useFilterList } from "@hooks";
+
 import FilterSelect from ".";
 
 

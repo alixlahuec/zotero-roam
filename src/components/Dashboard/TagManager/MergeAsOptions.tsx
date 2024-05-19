@@ -3,7 +3,7 @@ import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag, UL } f
 import { MutationStatus } from "@tanstack/react-query";
 
 import { useModifyTags } from "@clients/zotero";
-import { useBool, useText } from "../../../hooks";
+import { useBool, useText } from "@hooks";
 
 import { ZLibrary, ZTagSuggestion } from "Types/transforms";
 

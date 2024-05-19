@@ -5,12 +5,13 @@ import AuxiliaryDialog from "Components/AuxiliaryDialog";
 import CitekeyPopover from "Components/CitekeyPopover";
 import { ErrorBoundary } from "Components/Errors";
 
-import { useBool } from "../../../hooks";
-import { pluralize } from "../../../utils";
+import { useBool } from "@hooks";
+
 import { sortElems } from "../helpers";
+import { ShowPropertiesRelated, ShowTypeRelated } from "../types";
 
 import { CustomClasses } from "../../../constants";
-import { ShowPropertiesRelated, ShowTypeRelated } from "../types";
+import { pluralize } from "../../../utils";
 import { SCleanRelatedItem } from "Types/transforms";
 import "./_index.sass";
 

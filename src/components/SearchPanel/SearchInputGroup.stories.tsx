@@ -1,11 +1,11 @@
 import { ComponentProps, useRef } from "react";
 import { HotkeysProvider } from "@blueprintjs/core";
+import { Meta, StoryObj } from "@storybook/react";
 import { userEvent, waitFor, within, expect } from "@storybook/test";
 
-import { Meta, StoryObj } from "@storybook/react";
+import { useBool } from "@hooks";
 
 import SearchInputGroup from "./SearchInputGroup";
-import { useBool } from "../../hooks";
 
 
 type Props = ComponentProps<typeof SearchInputGroup>;

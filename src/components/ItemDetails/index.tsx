@@ -5,16 +5,17 @@ import DataDrawer from "Components/DataDrawer";
 import { ErrorBoundary } from "Components/Errors";
 import NotesDrawer from "Components/NotesDrawer";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
+import { formatItemReferenceWithDefault } from "Components/SearchPanel/helpers";
 import ShortcutSequence from "Components/ShortcutSequence";
 import { useAnnotationsSettings, useCopySettings, useMetadataSettings, useNotesSettings, useShortcutsSettings, useTypemapSettings } from "Components/UserSettings";
 
-import { useBool } from "../../hooks";
+import { useBool } from "@hooks";
 import { importItemMetadata, importItemNotes, openPageByUID } from "@services/roam";
-import { validateShortcuts } from "../../setup";
-import { copyToClipboard, makeDateFromAgo } from "../../utils";
-import { formatItemReferenceWithDefault } from "Components/SearchPanel/helpers";
 
 import { CustomClasses } from "../../constants";
+import { validateShortcuts } from "../../setup";
+import { copyToClipboard, makeDateFromAgo } from "../../utils";
+
 import { AsBoolean } from "Types/helpers";
 import { ZCleanItemTop } from "Types/transforms";
 import "./_index.sass";

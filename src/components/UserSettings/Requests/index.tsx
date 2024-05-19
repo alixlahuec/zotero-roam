@@ -5,7 +5,8 @@ import { RowCol, SettingsManager } from "Components/UserSettings";
 import DataRequestItem from "./DataRequest";
 import RequestsEditor from "./RequestsEditor";
 
-import { useBool } from "../../../hooks";
+import { useBool } from "@hooks";
+
 import { CustomClasses } from "../../../constants";
 
 

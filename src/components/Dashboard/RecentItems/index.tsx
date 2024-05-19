@@ -7,11 +7,12 @@ import { useRequestsSettings } from "Components/UserSettings";
 import LogItem from "./LogItem";
 
 import { useItems } from "@clients/zotero";
-import { useBool } from "../../../hooks";
-import { categorizeLibraryItems } from "../../../utils";
+import { useBool } from "@hooks";
+
 import { makeLogFromItems } from "./utils";
 
 import { CustomClasses } from "../../../constants";
+import { categorizeLibraryItems } from "../../../utils";
 import { ZDataViewContents, ZLibraryContents, ZLogItem } from "Types/transforms";
 import "./_index.sass";
 

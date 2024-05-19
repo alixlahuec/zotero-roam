@@ -5,11 +5,12 @@ import ButtonLink from "Components/ButtonLink";
 import { ErrorBoundary } from "Components/Errors";
 import { useNotesSettings } from "Components/UserSettings";
 
-import { useBool } from "../../hooks";
-import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations } from "../../utils";
+import { useBool } from "@hooks";
+
 import { simplifyZoteroNotes } from "./helpers";
 
 import { CustomClasses } from "../../constants";
+import { compareAnnotationIndices, formatZoteroNotes, makeDateFromAgo, simplifyZoteroAnnotations } from "../../utils";
 import { ZItemAnnotation, ZItemNote, ZSimplifiedAnnotation, ZSimplifiedNote, isZAnnotation, isZNote } from "Types/transforms";
 
 import "./_index.sass";

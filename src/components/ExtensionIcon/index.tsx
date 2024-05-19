@@ -7,7 +7,8 @@ import { useExtensionContext } from "Components/App";
 import { useOtherSettings, useRequestsSettings } from "Components/UserSettings";
 
 import { useCollections, useItems, usePermissions, useTags } from "@clients/zotero";
-import { useBool } from "../../hooks";
+import { useBool } from "@hooks";
+
 import { makeTimestamp } from "../../utils";
 
 import { ExtensionStatusEnum } from "Types/extension";
