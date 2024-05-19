@@ -1,5 +1,5 @@
 import { Tag } from "@blueprintjs/core";
-import { ZoteroAPI } from "Types/externals";
+import { ZoteroAPI } from "../../../../clients/zotero";
 
 
 type OwnProps = {

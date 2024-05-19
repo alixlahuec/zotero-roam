@@ -6,11 +6,11 @@ import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import { useCopySettings, useRequestsSettings } from "Components/UserSettings";
 import LibraryQueryList from "./LibraryQueryList";
 
+import { useItems } from "../../clients/zotero";
 import { useBool } from "../../hooks";
-import { useItems } from "../../clients/hooks";
-import { cleanLibrary } from "./helpers";
 
 import { dialogClass, dialogLabel } from "./classes";
+import { cleanLibrary } from "./helpers";
 import { Queries, RCitekeyPages } from "Types/transforms";
 import { DataRequest, ExtensionStatusEnum } from "Types/extension";
 import "./_index.sass";

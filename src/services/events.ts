@@ -1,11 +1,11 @@
 import zrToaster from "Components/ExtensionToaster";
 
 import { CitoidAPI } from "../clients/citoid";
+import { ZoteroAPI } from "../clients/zotero";
 import { cleanError, pluralize } from "../utils";
 import { DEFAULT_TOAST_TIMEOUT } from "../constants";
 
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
-import { ZoteroAPI } from "Types/externals";
 import { ArgsMetadataBlocks, ArgsMetadataSmartblock, OutcomeMetadataStatus, OutcomePage } from "Types/extension";
 
 

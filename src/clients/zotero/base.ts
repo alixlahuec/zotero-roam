@@ -3,11 +3,12 @@ import axios, { AxiosResponse } from "axios";
 import axiosRetry from "axios-retry";
 
 import { makeTagList, matchWithCurrentData } from "./helpers";
+import { ZoteroAPI } from "./types";
+
 import { emitCustomEvent } from "../../services/events";
 import { cleanError } from "../../utils";
 
 import { DataRequest } from "Types/extension";
-import { ZoteroAPI } from "Types/externals";
 import { Maybe } from "Types/helpers";
 import { Queries, ZItem, ZLibrary } from "Types/transforms";
 

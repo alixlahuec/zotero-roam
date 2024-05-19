@@ -6,7 +6,7 @@ import { useRequestsSettings } from "Components/UserSettings";
 import LibrarySelect, { LibrarySelectProps } from "../LibrarySelect";
 import TagsDatalist from "./TagsDatalist";
 
-import { useTags, useWriteableLibraries } from "../../../clients/hooks";
+import { useTags, useWriteableLibraries } from "../../../clients/zotero";
 
 import { CustomClasses } from "../../../constants";
 import { TagManagerFilter, TagManagerTab } from "./types";

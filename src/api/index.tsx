@@ -1,11 +1,10 @@
 import { Query, QueryClient, QueryFilters } from "@tanstack/query-core";
 
-import { cleanBibliographyHTML } from "../clients/zotero/helpers";
-import { fetchBibEntries, fetchBibliography } from "../clients/zotero/base";
+import { ZoteroAPI, fetchBibEntries, fetchBibliography } from "../clients/zotero";
 import { findRoamBlock, makeDNP } from "Roam";
 import IDBDatabase from "../services/idb";
 
-import { RelatedOptions, _getItemRelated, compareAnnotationRawIndices, formatZoteroAnnotations } from "./helpers";
+import { RelatedOptions, _getItemRelated, cleanBibliographyHTML, compareAnnotationRawIndices, formatZoteroAnnotations } from "./helpers";
 import { ZoteroRoamLog, LogConfig, LogLevel } from "./logging";
 import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
 
@@ -14,7 +13,6 @@ import { cleanError, formatZoteroNotes, getLocalLink, getWebLink } from "../util
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "../constants";
 import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, Queries, ZLinkType, ZLinkOptions, isZAnnotation, isZNote, isZItemTop, isZAttachment } from "Types/transforms";
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
-import { ZoteroAPI } from "Types/externals";
 
 
 type ZoteroRoamConstructorArgs = {

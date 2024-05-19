@@ -7,7 +7,7 @@ import CitekeyMenu from "./CitekeyMenu";
 import DNPMenu from "./DNPMenu";
 import TagMenu from "./TagMenu";
 
-import { useItems } from "../../../clients/hooks";
+import { useItems } from "../../../clients/zotero";
 
 import { categorizeLibraryItems } from "../../../utils";
 import { cleanRelatedItem } from "../helpers";

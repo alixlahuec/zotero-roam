@@ -7,7 +7,7 @@ import NotesDrawer from "Components/NotesDrawer";
 import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useOtherSettings, useRequestsSettings, useTypemapSettings } from "Components/UserSettings";
 
 import { useBool } from "../../../hooks";
-import { useItems } from "../../../clients/hooks";
+import { useItems } from "../../../clients/zotero";
 
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
 import { importItemMetadata } from "Roam";

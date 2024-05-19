@@ -2,10 +2,10 @@ import { QueryClient } from "@tanstack/react-query";
 
 import * as base from "./base";
 import { makeTagList } from "./helpers";
+import { ZoteroAPI } from "./types";
 
 import { apiKeys, bibs, deletions, findBibliographyEntry, findBibEntry, findCollections, findItems, libraries, tags } from "Mocks";
 
-import { ZoteroAPI } from "Types/externals";
 import { isFulfilled } from "Types/helpers";
 
 

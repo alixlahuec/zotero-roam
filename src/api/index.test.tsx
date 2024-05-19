@@ -5,13 +5,15 @@ import { waitFor } from "@testing-library/dom";
 import { QueryClient } from "@tanstack/query-core";
 import { persistQueryClientSave } from "@tanstack/query-persist-client-core";
 
-import { cleanBibliographyHTML, makeTagList } from "../clients/zotero/helpers";
-import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
+import { makeTagList } from "../clients/zotero/helpers";
 import IDBDatabaseService from "../services/idb";
-import { createPersisterWithIDB, setupInitialSettings } from "../setup";
-import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
 
 import ZoteroRoam, { _formatNotes } from ".";
+import { cleanBibliographyHTML } from "./helpers";
+import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
+
+import { createPersisterWithIDB, setupInitialSettings } from "../setup";
+import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
 
 import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, findCollections, libraries, sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage, sampleNote, sampleOlderNote, samplePDF, tags, Mocks } from "Mocks";
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";

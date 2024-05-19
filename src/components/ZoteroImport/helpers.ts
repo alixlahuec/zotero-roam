@@ -1,4 +1,4 @@
-import { ZoteroAPI } from "Types/externals";
+import { ZoteroAPI } from "../../clients/zotero";
 import { ZEnrichedCollection } from "Types/transforms";
 
 

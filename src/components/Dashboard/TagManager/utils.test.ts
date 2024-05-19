@@ -1,7 +1,10 @@
 import { mock } from "jest-mock-extended";
+
+import { ZoteroAPI } from "../../../clients/zotero";
+
 import { getTagStats, getTagUsage, isSingleton, makeSuggestionFor, matchTagData, sortTags } from "./utils";
 import { TagManagerSortBy } from "./types";
-import { ZoteroAPI } from "Types/externals";
+
 import { ZTagEntry, ZTagList } from "Types/transforms";
 
 

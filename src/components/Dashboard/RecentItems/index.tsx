@@ -7,7 +7,7 @@ import { useRequestsSettings } from "Components/UserSettings";
 import LogItem from "./LogItem";
 
 import { useBool } from "../../../hooks";
-import { useItems } from "../../../clients/hooks";
+import { useItems } from "../../../clients/zotero";
 import { categorizeLibraryItems } from "../../../utils";
 import { makeLogFromItems } from "./utils";
 
