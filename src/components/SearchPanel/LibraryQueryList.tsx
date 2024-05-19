@@ -6,12 +6,13 @@ import ItemDetails from "Components/ItemDetails";
 import SearchInputGroup, { SearchInputGroupProps } from "./SearchInputGroup";
 import { useCopySettings } from "Components/UserSettings";
 
-import { useDebounceCallback } from "../../hooks";
-import { copyToClipboard, pluralize, searchEngine } from "../../utils";
-import { formatItemReferenceWithDefault } from "./helpers";
+import { useDebounceCallback } from "@hooks";
 
 import { resultClass, resultKeyClass } from "./classes";
+import { formatItemReferenceWithDefault } from "./helpers";
+
 import { CustomClasses } from "../../constants";
+import { copyToClipboard, pluralize, searchEngine } from "../../utils";
 import { ZCleanItemTop } from "Types/transforms";
 
 

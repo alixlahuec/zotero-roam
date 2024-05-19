@@ -3,7 +3,8 @@ import { Button, ButtonProps, Checkbox, Classes, Code, ControlGroup, H4, H5, IPo
 import { IListItemsProps, Select, SelectProps } from "@blueprintjs/select";
 import { Placement } from "@blueprintjs/popover2";
 
-import { useBool } from "../../hooks";
+import { useBool } from "@hooks";
+
 import { CustomClasses } from "../../constants";
 import { AsBoolean } from "Types/helpers";
 

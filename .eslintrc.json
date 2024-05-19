@@ -129,10 +129,6 @@
 						"group": "internal"
 					},
 					{
-						"pattern": "*/propTypes",
-						"group": "internal"
-					},
-					{
 						"pattern": "Mocks/*",
 						"group": "internal"
 					},
@@ -149,11 +145,15 @@
                         "group": "parent"
                     },
                     {
+                        "pattern": "@hooks",
+                        "group": "parent"
+                    },
+                    {
                         "pattern": "@services/**",
                         "group": "parent"
                     }
 				],
-				"pathGroupsExcludedImportTypes": ["react", "react-dom", "@blueprintjs/*", "Components/*", "@clients/*", "@services/*", "*/constants", "*/propTypes"]
+				"pathGroupsExcludedImportTypes": ["react", "react-dom", "@blueprintjs/*", "Components/*", "@clients/*", "@hooks", "@services/*", "*/constants"]
 			}
 		],
 		"@typescript-eslint/ban-ts-comment": "off",
@@ -180,6 +180,7 @@
             "alias": {
 				"map": [
                     ["@clients", "./src/clients"],
+                    ["@hooks", "./src/hooks"],
                     ["@services", "./src/services"],
 					["Mocks", "./mocks"],
 					["Components", "./src/components"],

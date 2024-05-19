@@ -2,8 +2,10 @@ import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { screen, userEvent, waitFor, within, expect } from "@storybook/test";
 
+import { useToggle } from "@hooks";
+
 import ExtensionIcon from ".";
-import { useToggle } from "../../hooks";
+
 import { sleep } from "../../../.storybook/utils";
 import { ExtensionStatusEnum } from "Types/extension";
 

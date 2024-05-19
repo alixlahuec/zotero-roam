@@ -6,7 +6,7 @@ import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import LogEntry from "./LogEntry";
 
 import { ZoteroRoamLog } from "../../api/logging";
-import { useBool, usePagination } from "../../hooks";
+import { useBool, usePagination } from "@hooks";
 
 import { CustomClasses } from "../../constants";
 import "./_index.sass";

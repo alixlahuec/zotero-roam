@@ -4,10 +4,10 @@ import { Button, Classes, Collapse, Tag } from "@blueprintjs/core";
 import { ListItem } from "Components/DataList";
 
 import { ZoteroRoamLog } from "../../../api/logging";
-import { makeTimestamp } from "../../../utils";
-import { useBool } from "../../../hooks";
+import { useBool } from "@hooks";
 
 import { CustomClasses } from "../../../constants";
+import { makeTimestamp } from "../../../utils";
 import "./_index.sass";
 
 

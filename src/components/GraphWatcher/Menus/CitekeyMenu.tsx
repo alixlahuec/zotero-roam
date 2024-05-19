@@ -13,7 +13,7 @@ import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, usePageM
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
 import { useSemantic } from "@clients/semantic";
-import { useBool } from "../../../hooks";
+import { useBool } from "@hooks";
 import { findRoamPage, importItemMetadata } from "@services/roam";
 
 

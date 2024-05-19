@@ -7,7 +7,7 @@ import { ErrorBoundary } from "Components/Errors";
 import { useAnnotationsSettings, useNotesSettings } from "Components/UserSettings";
 import DayList, { DayListProps } from "./DayList";
 
-import { useMulti } from "../../hooks";
+import { useMulti } from "@hooks";
 import { importItemNotes, makeDNP } from "@services/roam";
 
 import { CustomClasses } from "../../constants";

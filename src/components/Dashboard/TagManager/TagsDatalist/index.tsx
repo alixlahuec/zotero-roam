@@ -7,11 +7,12 @@ import ItemEntry from "./ItemEntry";
 import ItemSuggestion from "./ItemSuggestion";
 import Stats from "../Stats";
 
+import { usePagination } from "@hooks";
+
 import { getTagStats, isSingleton, matchTagData, sortTags } from "../utils";
-import { usePagination } from "../../../../hooks";
+import { TagManagerFilter, TagManagerSortBy } from "../types";
 
 import { CustomClasses } from "../../../../constants";
-import { TagManagerFilter, TagManagerSortBy } from "../types";
 import { ZLibrary, ZTagEntry, ZTagList, ZTagStats } from "Types/transforms";
 import "./_index.sass";
 
