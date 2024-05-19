@@ -6,6 +6,7 @@
         "target": "ES2021",
 		"moduleResolution": "node",
 		"paths": {
+			"@clients/*": ["./src/clients/*"],
 			"Components/*": ["./src/components/*"],
 			"Mocks/*": ["./mocks/*"],
 			"Mocks": ["./mocks"],

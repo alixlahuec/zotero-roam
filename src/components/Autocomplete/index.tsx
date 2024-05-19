@@ -4,8 +4,8 @@ import Tribute, { TributeCollection } from "tributejs";
 
 import { useAutocompleteSettings, useRequestsSettings } from "Components/UserSettings";
 
+import { useItems } from "@clients/zotero";
 import { escapeRegExp, formatItemReference } from "../../utils";
-import { useItems } from "../../clients/hooks";
 
 import { CustomClasses } from "../../constants";
 import { DataRequest, ZItemReferenceFormat } from "Types/extension";

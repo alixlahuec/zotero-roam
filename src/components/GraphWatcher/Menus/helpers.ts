@@ -1,6 +1,7 @@
+import { SemanticScholarAPI } from "@clients/semantic";
+
 import { identifyChildren, parseDOI } from "../../../utils";
 
-import { SemanticScholarAPI } from "Types/externals";
 import { AsBoolean } from "Types/helpers";
 import { isSBacklink, RCitekeyPages, SCleanItem, SEnrichedItem, SEnrichedItemCitation, SEnrichedItemReference, SEnrichedItemTypeEnum, SRelatedEntries, ZItemTop, ZLibraryContents } from "Types/transforms";
 

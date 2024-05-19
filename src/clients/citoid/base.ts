@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { cleanError } from "../../utils";
 
-import { CitoidAPI } from "Types/externals";
+import { CitoidAPI } from "./types";
 import { Queries } from "Types/transforms";
 
 

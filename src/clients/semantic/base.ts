@@ -3,7 +3,7 @@ import axiosRetry from "axios-retry";
 
 import { cleanError, transformDOIs } from "../../utils";
 
-import { SemanticScholarAPI } from "Types/externals";
+import { SemanticScholarAPI } from "./types";
 import { Queries } from "Types/transforms";
 
 

@@ -6,8 +6,8 @@ import { ErrorBoundary } from "Components/Errors";
 import { useRequestsSettings } from "Components/UserSettings";
 import LogItem from "./LogItem";
 
+import { useItems } from "@clients/zotero";
 import { useBool } from "../../../hooks";
-import { useItems } from "../../../clients/hooks";
 import { categorizeLibraryItems } from "../../../utils";
 import { makeLogFromItems } from "./utils";
 

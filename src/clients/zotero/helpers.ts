@@ -1,10 +1,11 @@
 import { QueryClient } from "@tanstack/react-query";
 
 import { fetchItems } from "./base";
-import { cleanNewlines, makeDictionary, searchEngine } from "../../utils";
+import { ZoteroAPI } from "./types";
+
+import { makeDictionary, searchEngine } from "../../utils";
 
 import { DataRequest } from "Types/extension";
-import { ZoteroAPI } from "Types/externals";
 import { Queries, ZTagEntry, ZTagList, ZTagMap } from "Types/transforms";
 
 /** Compares two Zotero tags based on tag string and type, to determine if they are duplicates
@@ -59,37 +60,6 @@ function categorizeZoteroTags(z_data: string[], tagMap: ZTagMap): ZTagEntry[] {
 	}
 
 	return output.sort((a, b) => a.token < b.token ? -1 : 1);
-}
-
-
-/** Parses the XHTML bibliography for a Zotero item into Roam formatting
- * @param bib - The item's XHTML bibliography
- * @returns The clean bibliography string
- */
-function cleanBibliographyHTML(bib: string) {
-	let bibString = bib;
-
-	// Strip divs
-	const richTags = ["div"];
-	richTags.forEach(tag => {
-		// eslint-disable-next-line no-useless-escape
-		const tagRegex = new RegExp(`<\/?${tag}>|<${tag} .+?>`, "g"); // Covers both the simple case : <tag> or </tag>, and the case with modifiers : <tag :modifier>
-		bibString = bibString.replaceAll(tagRegex, "");
-	});
-
-	bibString = cleanNewlines(bibString).trim();
-
-	// Use a textarea element to decode HTML
-	const formatter = document.createElement("textarea");
-	formatter.innerHTML = bibString;
-	let formattedBib = formatter.innerText;
-	// Convert italics
-	formattedBib = formattedBib.replaceAll(/<\/?i>/g, "__");
-	// Convert links
-	const linkRegex = /<a href="(.+)">(.+)<\/a>/g;
-	formattedBib = formattedBib.replaceAll(linkRegex, "[$2]($1)");
-
-	return formattedBib;
 }
 
 
@@ -236,7 +206,6 @@ async function wrappedFetchItems(req: DataRequest, queryClient: QueryClient) {
 
 export {
 	areTagsDuplicate,
-	cleanBibliographyHTML,
 	extractCitekeys,
 	makeTagList,
 	makeTagMap,

@@ -1,5 +1,5 @@
 import { version } from "../package.json";
-import { ZoteroAPI } from "Types/externals";
+import { ZoteroAPI } from "@clients/zotero";
 
 /** @constant {String} The extension's current version (from package.json) */
 export const EXTENSION_VERSION = version;
