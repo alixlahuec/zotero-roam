@@ -1,4 +1,4 @@
-import { ZoteroAPI } from "./zotero";
+import { ZoteroAPI } from "Types/externals";
 
 
 export namespace CitoidAPI {

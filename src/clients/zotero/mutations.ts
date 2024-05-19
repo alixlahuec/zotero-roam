@@ -3,7 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTags, writeItems } from "./base";
 import { emitCustomEvent } from "../../services/events";
 
-import { CitoidAPI, ZoteroAPI } from "Types/externals";
+import { CitoidAPI } from "../citoid";
+import { ZoteroAPI } from "Types/externals";
 import { isFulfilled } from "Types/helpers";
 import { Queries, ZLibrary, isZItemTop } from "Types/transforms";
 

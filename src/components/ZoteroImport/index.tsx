@@ -8,7 +8,8 @@ import { useRequestsSettings } from "Components/UserSettings";
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
 
-import { useCitoids, useCollections, useWriteableLibraries } from "../../clients/hooks";
+import { useCitoids } from "../../clients/citoid";
+import { useCollections, useWriteableLibraries } from "../../clients/hooks";
 import { useImportCitoids } from "../../clients/mutations";
 
 import { useMulti, useSelect } from "../../hooks";
