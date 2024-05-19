@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { rest } from "msw";
+import { http, passthrough, HttpResponse } from "msw";
 import { handleAPIKey } from "./zotero/keys";
 import { handleBibliography } from "./zotero/bib";
 import { handleCitoid } from "./citoid";
@@ -10,33 +10,31 @@ import { handleSemantic } from "./semantic-scholar";
 import { handleTags } from "./zotero/tags";
 
 
-export const fallbackHandler = rest.get(
+export const fallbackHandler = http.get(
 	"*", 
-	(req, res, ctx) => {
-		return res(
-			ctx.status(404, "You need to add a handler for " + req.url)
-		);
+	({ request }) => {
+		return new HttpResponse("You need to add a handler for " + request.url, { status: 401 });
 	}
 );
 
-export const chromaticHandler = rest.get(
+export const chromaticHandler = http.get(
 	"https://*.chromatic.com/assets/*",
-	(req, _res, _ctx) => req.passthrough()
+	() => passthrough()
 );
 
-export const roamAssetsHandler = rest.get(
+export const roamAssetsHandler = http.get(
 	"https://roamresearch.com/assets/*", 
-	(req, _res, _ctx) => req.passthrough()
+	() => passthrough()
 );
 
-export const sciteApiHandler = rest.post(
+export const sciteApiHandler = http.post(
 	"https://api.scite.ai/*",
-	(req, _res, _ctx) => req.passthrough()
+	() => passthrough()
 );
 
-export const sciteAssetsHandler = rest.get(
+export const sciteAssetsHandler = http.get(
 	"https://cdn.scite.ai/assets/*",
-	(req, _res, _ctx) => req.passthrough()
+	() => passthrough()
 );
 
 export const apiHandlers = [

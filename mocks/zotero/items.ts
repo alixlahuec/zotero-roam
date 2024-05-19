@@ -1,4 +1,4 @@
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
 import { citoids, semanticIdentifier, Mocks } from "Mocks";
@@ -165,40 +165,44 @@ export const findItems = ({ type, id, since }: Pick<Mocks.Library, "type" | "id"
 };
 
 export const handleItems = [
-	rest.get<never, Mocks.RequestParams.Items, Mocks.Responses.ItemsGet>(
+	http.get<Mocks.RequestParams.Items, never, Mocks.Responses.ItemsGet>(
 		zotero(":libraryType/:libraryID/items"),
-		(req, res, ctx) => {
-			const { libraryType, libraryID } = req.params;
-			const since = req.url.searchParams.get("since");
-			const include = req.url.searchParams.get("include") || "json";
+		({ request, params }) => {
+			const { libraryType, libraryID } = params;
+			const url = new URL(request.url);
+			const since = url.searchParams.get("since");
+			const include = url.searchParams.get("include") || "json";
 
 			// Otherwise create success response
 			const { type, id, version } = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`)!;
 
 			// Bibliography entries
 			if (include == "biblatex") {
-				const keyList = req.url.searchParams.get("itemKey")!.split(",");
+				const keyList = url.searchParams.get("itemKey")!.split(",");
 				const bibs = keyList.map(key => findBibEntry({ type, id, key })!);
-				return res(
-					ctx.json(bibs)
-				);
+				return HttpResponse.json(bibs);
 			}
 
 			// Items JSON
 			const items = findItems({ type, id, since: Number(since) });
-			return res(
-				ctx.set("last-modified-version", `${version}`),
-				ctx.set("total-results", `${Math.min(items.length, 100)}`), // We're not mocking for additional requests
-				ctx.json(items)
+			return HttpResponse.json(
+				items,
+				{
+					headers: {
+						"last-modified-version": `${version}`,
+						// We're not mocking for additional requests
+						"total-results": `${Math.min(items.length, 100)}`
+					}
+				}
 			);
 		}
 	),
-	rest.post<Mocks.RequestBody.ItemsPost, Mocks.RequestParams.Items, Mocks.Responses.ItemsPost>(
+	http.post<Mocks.RequestParams.Items, Mocks.RequestBody.ItemsPost, Mocks.Responses.ItemsPost>(
 		zotero(":libraryType/:libraryID/items"),
-		async (req, res, ctx) => {
+		async ({ request, params }) => {
 			
-			const { libraryType, libraryID } = req.params;
-			const itemsData = await req.json<Mocks.RequestBody.ItemsPost>();
+			const { libraryType, libraryID } = params;
+			const itemsData = await request.json();
 
 			const library = Object.values(libraries).find(lib => lib.path == `${libraryType}/${libraryID}`)!;
 
@@ -260,9 +264,7 @@ export const handleItems = [
 				restructuredOutput[cat] = Object.fromEntries(output[cat].map((el, i) => [i, el]));
 			});
 
-			return res(
-				ctx.json(restructuredOutput)
-			);
+			return HttpResponse.json(restructuredOutput);
 		}
 	)
 ];

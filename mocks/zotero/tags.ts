@@ -1,4 +1,4 @@
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { zotero } from "./common";
 import { libraries } from "./libraries";
 import { searchEngine } from "../../src/utils";
@@ -54,38 +54,39 @@ const data: Record<string, Mocks.Tag[]> = {
 };
 
 export const handleTags = [
-	rest.get<never, Mocks.RequestParams.Tags, Mocks.Responses.TagsGet>(
+	http.get<Mocks.RequestParams.Tags, never, Mocks.Responses.TagsGet>(
 		zotero(":libraryType/:libraryID/tags"),
-		(req, res, ctx) => {
-			const { libraryType, libraryID } = req.params;
+		({ params }) => {
+			const { libraryType, libraryID } = params;
             
 			const { path, version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`)!;
 			const tags = data[path];
 
-			return res(
-				ctx.set("last-modified-version", `${version}`),
-				ctx.set("total-results", `${Math.min(tags.length, 100)}`), // We're not mocking with additional requests
-				ctx.json(tags)
+			return HttpResponse.json(
+				tags,
+				{
+					headers: {
+						"last-modified-version": `${version}`,
+						// We're not mocking with additional requests
+						"total-results": `${Math.min(tags.length, 100)}`
+					}
+				}
 			);
 		}
 	),
-	rest.delete<never, Mocks.RequestParams.Tags, Mocks.Responses.TagsDelete>(
+	http.delete<Mocks.RequestParams.Tags, never, Mocks.Responses.TagsDelete>(
 		zotero(":libraryType/:libraryID/tags"),
-		(req, res, ctx) => {
-			const { libraryType, libraryID } = req.params;
+		({ request, params }) => {
+			const { libraryType, libraryID } = params;
 			// const tag = req.url.searchParams("tag");
-			const ifUnmodifiedSince = req.headers.get("If-Unmodified-Since-Version");
+			const ifUnmodifiedSince = request.headers.get("If-Unmodified-Since-Version");
 
 			const { version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`)!;
 
 			if(Number(ifUnmodifiedSince) < version){
-				return res(
-					ctx.status(412, "Precondition failed")
-				);
+				return new HttpResponse("Precondition failed", { status: 412 });
 			} else {
-				return res(
-					ctx.status(204, "No content")
-				);
+				return new HttpResponse("No content", { status: 204 });
 			}
 		}
 	)
