@@ -1,4 +1,5 @@
-import { SemanticScholarAPI } from "../../../clients/semantic";
+import { SemanticScholarAPI } from "@clients/semantic";
+
 import { identifyChildren, parseDOI } from "../../../utils";
 
 import { AsBoolean } from "Types/helpers";

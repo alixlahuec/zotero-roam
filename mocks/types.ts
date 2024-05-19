@@ -1,6 +1,6 @@
-import { CitoidAPI } from "../src/clients/citoid";
-import { SemanticScholarAPI } from "../src/clients/semantic";
-import { ZoteroAPI } from "../src/clients/zotero";
+import { CitoidAPI } from "@clients/citoid";
+import { SemanticScholarAPI } from "@clients/semantic";
+import { ZoteroAPI } from "@clients/zotero";
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 
 

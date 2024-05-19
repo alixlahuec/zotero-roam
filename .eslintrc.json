@@ -144,12 +144,16 @@
 						"pattern": "Components/**",
 						"group": "parent"
 					},
+                    {
+                        "pattern": "@clients/**",
+                        "group": "parent"
+                    },
 					{
 						"pattern": "Roam",
 						"group": "parent"
 					}
 				],
-				"pathGroupsExcludedImportTypes": ["react", "react-dom", "@blueprintjs/*", "Components/*", "Roam", "*/constants", "*/propTypes"]
+				"pathGroupsExcludedImportTypes": ["react", "react-dom", "@blueprintjs/*", "Components/*", "@clients/*", "Roam", "*/constants", "*/propTypes"]
 			}
 		],
 		"@typescript-eslint/ban-ts-comment": "off",
@@ -175,6 +179,7 @@
         "import/resolver": {
             "alias": {
 				"map": [
+                    ["@clients", "./src/clients"],
 					["Mocks", "./mocks"],
 					["Roam", "./src/services/roam.ts"],
 					["Components", "./src/components"],

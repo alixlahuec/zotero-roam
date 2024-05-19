@@ -6,7 +6,7 @@ import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import { useCopySettings, useRequestsSettings } from "Components/UserSettings";
 import LibraryQueryList from "./LibraryQueryList";
 
-import { useItems } from "../../clients/zotero";
+import { useItems } from "@clients/zotero";
 import { useBool } from "../../hooks";
 
 import { dialogClass, dialogLabel } from "./classes";

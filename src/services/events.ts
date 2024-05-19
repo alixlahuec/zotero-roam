@@ -1,7 +1,8 @@
 import zrToaster from "Components/ExtensionToaster";
 
-import { CitoidAPI } from "../clients/citoid";
-import { ZoteroAPI } from "../clients/zotero";
+import { CitoidAPI } from "@clients/citoid";
+import { ZoteroAPI } from "@clients/zotero";
+
 import { cleanError, pluralize } from "../utils";
 import { DEFAULT_TOAST_TIMEOUT } from "../constants";
 

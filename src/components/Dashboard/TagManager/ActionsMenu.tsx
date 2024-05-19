@@ -3,7 +3,7 @@ import { Menu, MenuItem } from "@blueprintjs/core";
 
 import MergeAsOptions from "./MergeAsOptions";
 
-import { useDeleteTags } from "../../../clients/zotero";
+import { useDeleteTags } from "@clients/zotero";
 
 import { CustomClasses } from "../../../constants";
 import { ZLibrary, ZTagSuggestion } from "Types/transforms";

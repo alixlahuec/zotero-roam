@@ -12,7 +12,7 @@ import SemanticPanel from "../SemanticPanel";
 import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, usePageMenuSettings, useSciteSettings, useTypemapSettings } from "Components/UserSettings";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
-import { useSemantic } from "../../../clients/semantic";
+import { useSemantic } from "@clients/semantic";
 import { useBool } from "../../../hooks";
 
 import { showClasses } from "../classes";

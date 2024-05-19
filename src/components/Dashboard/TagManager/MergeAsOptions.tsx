@@ -2,7 +2,7 @@ import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef } from "rea
 import { Button, Classes, Dialog, InputGroup, MenuDivider, MenuItem, Tag, UL } from "@blueprintjs/core";
 import { MutationStatus } from "@tanstack/react-query";
 
-import { useModifyTags } from "../../../clients/zotero";
+import { useModifyTags } from "@clients/zotero";
 import { useBool, useText } from "../../../hooks";
 
 import { ZLibrary, ZTagSuggestion } from "Types/transforms";

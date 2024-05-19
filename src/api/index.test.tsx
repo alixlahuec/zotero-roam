@@ -5,7 +5,7 @@ import { waitFor } from "@testing-library/dom";
 import { QueryClient } from "@tanstack/query-core";
 import { persistQueryClientSave } from "@tanstack/query-persist-client-core";
 
-import { makeTagList } from "../clients/zotero/helpers";
+import { makeTagList } from "@clients/zotero/helpers";
 import IDBDatabaseService from "../services/idb";
 
 import ZoteroRoam, { _formatNotes } from ".";

@@ -5,7 +5,7 @@ import { Popover2 } from "@blueprintjs/popover2";
 import ActionsMenu from "./ActionsMenu";
 import MergeAsOptions from "./MergeAsOptions";
 
-import { useModifyTags } from "../../../clients/zotero";
+import { useModifyTags } from "@clients/zotero";
 import { makeSuggestionFor } from "./utils";
 
 import { CustomClasses } from "../../../constants";

@@ -1,6 +1,7 @@
-import { CitoidAPI } from "../../clients/citoid";
-import { SemanticScholarAPI } from "../../clients/semantic";
-import { ZoteroAPI } from "../../clients/zotero";
+import { CitoidAPI } from "@clients/citoid";
+import { SemanticScholarAPI } from "@clients/semantic";
+import { ZoteroAPI } from "@clients/zotero";
+
 import { transformDOIs } from "../../utils";
 
 import { DataRequest } from "Types/extension";

@@ -8,8 +8,8 @@ import { useRequestsSettings } from "Components/UserSettings";
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
 
-import { useCitoids } from "../../clients/citoid";
-import { ZoteroAPI, useCollections, useWriteableLibraries, useImportCitoids } from "../../clients/zotero";
+import { useCitoids } from "@clients/citoid";
+import { ZoteroAPI, useCollections, useWriteableLibraries, useImportCitoids } from "@clients/zotero";
 
 import { useMulti, useSelect } from "../../hooks";
 import { sortCollections } from "./helpers";

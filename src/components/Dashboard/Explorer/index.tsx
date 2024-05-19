@@ -7,7 +7,7 @@ import QueryItems from "./QueryItems";
 import QueryNotes from "./QueryNotes";
 import QueryPDFs from "./QueryPDFs";
 
-import { useItems } from "../../../clients/zotero";
+import { useItems } from "@clients/zotero";
 import { categorizeLibraryItems } from "../../../utils";
 
 import { CustomClasses } from "../../../constants";
