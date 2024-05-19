@@ -2,7 +2,7 @@ import { FC, ReactChildren, useCallback } from "react";
 
 import { SETTINGS_CONFIG } from "./mapping";
 
-import { Roam } from "Types/externals";
+import { Roam } from "Roam";
 import { InitSettings } from "Types/extension";
 
 

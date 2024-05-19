@@ -1,10 +1,11 @@
 /* istanbul ignore file */
-import { executeFunctionByName } from "../utils";
-import { _formatNotes, _getItemMetadata } from "../api";
-import { emitCustomEvent } from "./events";
-import { use_smartblock_metadata } from "./smartblocks";
+import { executeFunctionByName } from "../../utils";
+import { _formatNotes, _getItemMetadata } from "../../api";
+import { emitCustomEvent } from "../events";
+import { Roam } from "../roam";
+import { use_smartblock_metadata } from "../smartblocks";
+
 import { RCitekeyPages, RCitekeyPagesWithEditTime, RCursorLocation, RImportableBlock, RImportableElement, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
-import { Roam } from "Types/externals";
 import { ArgsMetadataBlocks, OutcomeMetadataStatus, SettingsAnnotations, SettingsMetadata, SettingsNotes, SettingsTypemap } from "Types/extension";
 
 
@@ -511,6 +512,8 @@ function removePaletteCommand(label: string, extensionAPI: Roam.ExtensionAPI | R
 		extensionAPI.ui.commandPalette.removeCommand(command);
 	}
 }
+
+export * from "./types";
 
 export {
 	addPaletteCommand,

@@ -1,4 +1,4 @@
-import { Roam } from "Types/externals";
+import { Roam } from "Roam";
 
 
 /**

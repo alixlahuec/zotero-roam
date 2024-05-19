@@ -181,7 +181,7 @@
 				"map": [
                     ["@clients", "./src/clients"],
 					["Mocks", "./mocks"],
-					["Roam", "./src/services/roam.ts"],
+					["Roam", "./src/services/roam/index.ts"],
 					["Components", "./src/components"],
                     ["Styles", "./styles"],
 					["Types", "./src/types"]
