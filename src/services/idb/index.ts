@@ -1,7 +1,9 @@
 import { DBSchema, IDBPDatabase, StoreKey, StoreNames, StoreValue, deleteDB, openDB } from "idb";
 import { PersistedClient } from "@tanstack/react-query-persist-client";
-import { getGraphName } from "Roam";
-import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../constants";
+
+import { getGraphName } from "@services/roam";
+
+import { IDB_DATABASE_NAME, IDB_DATABASE_VERSION, IDB_REACT_QUERY_STORE_NAME } from "../../constants";
 import { AsBoolean } from "Types/helpers";
 
 

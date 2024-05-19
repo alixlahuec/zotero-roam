@@ -8,9 +8,9 @@ import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useOther
 
 import { useItems } from "@clients/zotero";
 import { useBool } from "../../../hooks";
+import { importItemMetadata } from "@services/roam";
 
 import { categorizeLibraryItems, formatItemReference, getLocalLink, getWebLink, identifyChildren, parseDOI } from "../../../utils";
-import { importItemMetadata } from "Roam";
 
 import { DataRequest } from "Types/extension";
 import { Queries, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";

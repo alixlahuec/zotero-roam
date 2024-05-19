@@ -3,9 +3,10 @@ import { parseKeyCombo } from "@blueprintjs/core";
 import { Query, defaultShouldDehydrateQuery } from "@tanstack/react-query";
 import { PersistedClient } from "@tanstack/react-query-persist-client";
 
-import IDBDatabase from "./services/idb";
-import { registerSmartblockCommands } from "./services/smartblocks";
-import { setDefaultHooks } from "./services/events";
+import { setDefaultHooks } from "@services/events";
+import IDBDatabase from "@services/idb";
+import { Roam } from "@services/roam";
+import { registerSmartblockCommands } from "@services/smartblocks";
 
 import { cleanError } from "./utils";
 import {
@@ -18,7 +19,6 @@ import {
 
 import { DataRequest, LegacyUserDataRequest, LegacyUserSettings, SettingsShortcuts, UserDataRequest, UserRequests, UserSettings } from "Types/extension";
 import { ZLibrary } from "Types/transforms";
-import { Roam } from "Types/externals";
 
 
 type InstallArgs =

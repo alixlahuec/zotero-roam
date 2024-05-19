@@ -1,8 +1,8 @@
 import { Query, QueryClient, QueryFilters } from "@tanstack/query-core";
 
 import { ZoteroAPI, fetchBibEntries, fetchBibliography } from "@clients/zotero";
-import { findRoamBlock, makeDNP } from "Roam";
-import IDBDatabase from "../services/idb";
+import IDBDatabase from "@services/idb";
+import { findRoamBlock, makeDNP } from "@services/roam";
 
 import { RelatedOptions, _getItemRelated, cleanBibliographyHTML, compareAnnotationRawIndices, formatZoteroAnnotations } from "./helpers";
 import { ZoteroRoamLog, LogConfig, LogLevel } from "./logging";

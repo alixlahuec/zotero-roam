@@ -7,10 +7,10 @@
 		"moduleResolution": "node",
 		"paths": {
 			"@clients/*": ["./src/clients/*"],
+			"@services/*": ["./src/services/*"],
 			"Components/*": ["./src/components/*"],
 			"Mocks/*": ["./mocks/*"],
 			"Mocks": ["./mocks"],
-			"Roam": ["./src/services/roam.ts"],
 			"Styles": ["./styles"],
 			"Types/*": ["./src/types/*"]
 		},

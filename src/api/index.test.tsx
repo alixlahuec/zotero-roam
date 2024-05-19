@@ -6,7 +6,7 @@ import { QueryClient } from "@tanstack/query-core";
 import { persistQueryClientSave } from "@tanstack/query-persist-client-core";
 
 import { makeTagList } from "@clients/zotero/helpers";
-import IDBDatabaseService from "../services/idb";
+import IDBDatabaseService from "@services/idb";
 
 import ZoteroRoam, { _formatNotes } from ".";
 import { cleanBibliographyHTML } from "./helpers";

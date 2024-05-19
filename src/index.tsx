@@ -6,8 +6,8 @@ import { AppWrapper, queryClient } from "Components/App";
 import { UserSettingsProvider } from "Components/UserSettings";
 import zrToaster from "Components/ExtensionToaster";
 
-import IDBDatabase from "./services/idb";
 import ZoteroRoam from "./api";
+import IDBDatabase from "@services/idb";
 import { initialize, setup, setupPortals } from "./setup";
 
 import { DEFAULT_TOAST_TIMEOUT, EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./constants";

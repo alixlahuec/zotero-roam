@@ -8,7 +8,7 @@ import { TagManagerSortBy } from "./types";
 import { ZTagEntry, ZTagList } from "Types/transforms";
 
 
-jest.mock("Roam", () => ({
+jest.mock("@services/roam", () => ({
 	getInitialedPages: () => [
 		{ title: "culture", uid: "abcdef" },
 		{ title: "systems", uid: "pqrst" }

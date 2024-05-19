@@ -1,4 +1,4 @@
-import { makeDNP } from "Roam";
+import { makeDNP } from "@services/roam";
 import { searchEngine } from "../../../../utils";
 import { InputEnum, InputValuesMap, QueryProperty, QueryTerm, SupportedItemType } from "./types";
 import { ZCleanItemTop } from "Types/transforms";

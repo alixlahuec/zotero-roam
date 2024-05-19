@@ -1,8 +1,11 @@
 import { mock } from "jest-mock-extended";
 import zrToaster from "Components/ExtensionToaster";
-import ZoteroRoam from "../api";
-import { Events, metadataAdded, notesAdded, tagsDeleted, tagsModified, writeFinished } from "./events";
-import { DEFAULT_TOAST_TIMEOUT } from "../constants";
+import ZoteroRoam from "../../api";
+
+import { metadataAdded, notesAdded, tagsDeleted, tagsModified, writeFinished } from ".";
+import { Events } from "./types";
+
+import { DEFAULT_TOAST_TIMEOUT } from "../../constants";
 import { ZItemTop } from "Types/transforms";
 
 

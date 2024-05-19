@@ -7,12 +7,12 @@ import { act, render } from "@testing-library/react";
 
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, TYPEMAP_DEFAULT } from "../../src/constants";
 import ZoteroRoam from "../../src/api";
+import IDBDatabaseService from "@services/idb";
+import { Roam } from "@services/roam";
 import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, unmountExtensionIfExists, validateShortcuts } from "../../src/setup";
-import IDBDatabaseService from "../../src/services/idb";
 
 import { apiKeys, libraries } from "Mocks";
 import { UserDataRequest } from "Types/extension";
-import { Roam } from "Types/externals";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;

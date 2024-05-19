@@ -2,10 +2,11 @@ import { QueryClient } from "@tanstack/query-core";
 import axios, { AxiosResponse } from "axios";
 import axiosRetry from "axios-retry";
 
+import { emitCustomEvent } from "@services/events";
+
 import { makeTagList, matchWithCurrentData } from "./helpers";
 import { ZoteroAPI } from "./types";
 
-import { emitCustomEvent } from "../../services/events";
 import { cleanError } from "../../utils";
 
 import { DataRequest } from "Types/extension";
