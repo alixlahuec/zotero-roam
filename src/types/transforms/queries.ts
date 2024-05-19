@@ -1,8 +1,9 @@
 import { CitoidAPI } from "../../clients/citoid";
+import { SemanticScholarAPI } from "../../clients/semantic";
 import { transformDOIs } from "../../utils";
 
 import { DataRequest } from "Types/extension";
-import { SemanticScholarAPI, ZoteroAPI } from "Types/externals";
+import { ZoteroAPI } from "Types/externals";
 import { ZItem, ZTagList } from "Types/transforms";
 
 
