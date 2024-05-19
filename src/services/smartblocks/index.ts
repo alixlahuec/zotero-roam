@@ -1,7 +1,8 @@
 import { makeDNP } from "Roam";
-import { getLocalLink, getWebLink, parseDOI } from "../utils";
+import { getLocalLink, getWebLink, parseDOI } from "../../utils";
 
-import { SmartblocksPlugin } from "Types/externals";
+import { SmartblocksPlugin } from "./types";
+
 import { AsBoolean } from "Types/helpers";
 import { RImportableElement, SBConfig, SBImportableBlock, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 
@@ -164,6 +165,8 @@ const sbCommands = () => {
 		}
 	} as const;
 };
+
+// TODO: move helpers into separate module
 
 /** Returns the outcome of a given query against a given props array
  * @param query - The query to test against the props
@@ -387,6 +390,8 @@ async function use_smartblock_metadata(config: SBConfig, context: SBContextMetad
 		});
 	}
 }
+
+export * from "./types";
 
 export {
 	eval_term,

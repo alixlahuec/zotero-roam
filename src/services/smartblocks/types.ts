@@ -40,7 +40,7 @@ export namespace SmartblocksPlugin {
 		/**
 		 * @see https://roamjs.com/extensions/smartblocks/developer_docs#xB__yUfkW
 		 * @param cmd - The SmartBlock command to register
-		 */	
+		 */
 		registerCommand: (cmd: Command) => void,
 		/**
 		 * @see https://roamjs.com/extensions/smartblocks/developer_docs#nJ8-c8efE
@@ -54,8 +54,8 @@ export namespace SmartblocksPlugin {
 	}
 
 	/** 
- 	* A custom SmartBlock command
- 	* @see https://roamjs.com/extensions/smartblocks/developer_docs#xB__yUfkW
+	  * A custom SmartBlock command
+	  * @see https://roamjs.com/extensions/smartblocks/developer_docs#xB__yUfkW
 	*/
 	export interface Command {
 		/** The name for the command. Must be all capital letters. */

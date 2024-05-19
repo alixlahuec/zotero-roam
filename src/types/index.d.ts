@@ -1,6 +1,8 @@
 import ZoteroRoam from "../api";
+import { SmartblocksPlugin } from "../services/smartblocks";
+
 import { LegacyUserSettings } from "./extension";
-import { SmartblocksPlugin, Roam } from "./externals";
+import { Roam } from "./externals";
 
 
 declare global {

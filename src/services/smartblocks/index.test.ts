@@ -1,15 +1,17 @@
 import { QueryClient } from "@tanstack/query-core";
 import { mock } from "jest-mock-extended";
 
-import { analyzeUserRequests, setupInitialSettings } from "../setup";
-import ZoteroRoam from "../api";
-import { eval_term, reformatImportableBlocks, sbCommands } from "./smartblocks";
-import { getLocalLink, getWebLink } from "../utils";
+import { analyzeUserRequests, setupInitialSettings } from "../../setup";
+import ZoteroRoam from "../../api";
+
+import { eval_term, reformatImportableBlocks, sbCommands } from ".";
+import { SmartblocksPlugin } from "./types";
+
+import { getLocalLink, getWebLink } from "../../utils";
 
 import { Mocks, apiKeys, bibs, findCollections, findItems, items, libraries, sampleNote, samplePDF } from "Mocks";
 import { makeDNP } from "Mocks/roam";
 
-import { SmartblocksPlugin } from "Types/externals";
 
 
 const { userLibrary, groupLibrary } = libraries;
