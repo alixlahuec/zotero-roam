@@ -137,7 +137,11 @@ const common = {
   testEnvironment: "jsdom",
 
   // Options that will be passed to the testEnvironment
-  // testEnvironmentOptions: {},
+  testEnvironmentOptions: {
+    // opt-out of default browser imports, to make it work with msw v2
+    // https://github.com/mswjs/msw/issues/1786#issuecomment-1782559851
+    customExportConditions: [''],
+  },
 
   // Adds a location field to test results
   // testLocationInResults: false,
