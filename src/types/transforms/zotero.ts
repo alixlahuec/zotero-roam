@@ -1,4 +1,4 @@
-import { ZoteroAPI } from "../externals";
+import { ZoteroAPI } from "../../clients/zotero";
 
 
 export interface ZCleanItemTop {
