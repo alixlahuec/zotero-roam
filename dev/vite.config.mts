@@ -82,6 +82,7 @@ export default defineConfig(({ command, mode }) => {
 		resolve: {
 			alias: {
 				"@clients": resolve("src", "clients"),
+				"@services": resolve("src", "services"),
 				"Mocks": resolve("mocks"),
 				"Roam": resolve("src", "services", "roam"),
 				"Components": resolve("src", "components"),
