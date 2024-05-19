@@ -2,8 +2,8 @@ import "fake-indexeddb/auto";
 import { waitFor } from "@testing-library/dom";
 import { PersistedClient } from "@tanstack/query-persist-client-core";
 
-import IDBDatabaseService from "./idb";
-import { IDB_REACT_QUERY_STORE_NAME, IDB_REACT_QUERY_CLIENT_KEY, IDB_DATABASE_VERSION } from "../constants";
+import IDBDatabaseService from ".";
+import { IDB_REACT_QUERY_STORE_NAME, IDB_REACT_QUERY_CLIENT_KEY, IDB_DATABASE_VERSION } from "../../constants";
 
 
 beforeEach(() => {
