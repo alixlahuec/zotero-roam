@@ -81,6 +81,7 @@ const common = {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     "@clients/(.*)$": "<rootDir>/src/clients/$1",
+    "@services/roam": "<rootDir>/mocks/roam.ts",
     "@services/(.*)$": "<rootDir>/src/services/$1",
 	  "Mocks/(.*)$": "<rootDir>/mocks/$1",
 	  "Mocks": "<rootDir>/mocks/index.ts",
