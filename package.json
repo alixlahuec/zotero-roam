@@ -81,7 +81,7 @@
         "@typescript-eslint/eslint-plugin": "^7.10.0",
         "@typescript-eslint/parser": "^7.10.0",
         "@vitejs/plugin-react-swc": "^3.6.0",
-        "@vitest/coverage-istanbul": "^1.6.0",
+        "@vitest/coverage-v8": "^1.6.0",
         "auto-changelog": "^2.4.0",
         "axe-playwright": "^2.0.1",
         "chromatic": "^11.3.5",
