@@ -34,7 +34,7 @@
         "ci:test": "vitest run --config ./dev/vite.config.mts --coverage",
         "lint": "eslint --fix",
         "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build --quiet",
+        "build-storybook": "storybook build --quiet --test",
         "test-storybook": "test-storybook",
         "ci:test-storybook": "test-storybook --coverage --junit",
         "chromatic": "chromatic",
