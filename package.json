@@ -79,7 +79,7 @@
         "@storybook/react-vite": "^8.1.1",
         "@storybook/test": "^8.1.1",
         "@storybook/test-runner": "^0.18.1",
-        "@swc/core": "^1.4.16",
+        "@swc/core": "^1.5.7",
         "@swc/jest": "^0.2.36",
         "@testing-library/react": "^12.1.5",
         "@testing-library/react-hooks": "^8.0.1",
