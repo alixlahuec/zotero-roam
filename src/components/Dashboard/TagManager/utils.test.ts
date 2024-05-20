@@ -1,4 +1,5 @@
-import { mock } from "jest-mock-extended";
+import { mock } from "vitest-mock-extended";
+import { vi } from "vitest";
 
 import { ZoteroAPI } from "@clients/zotero";
 
@@ -8,7 +9,7 @@ import { TagManagerSortBy } from "./types";
 import { ZTagEntry, ZTagList } from "Types/transforms";
 
 
-jest.mock("@services/roam", () => ({
+vi.mock("@services/roam", () => ({
 	getInitialedPages: () => [
 		{ title: "culture", uid: "abcdef" },
 		{ title: "systems", uid: "pqrst" }

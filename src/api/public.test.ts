@@ -1,10 +1,11 @@
-import { mock } from "jest-mock-extended";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import { _getItemCreators, _getItemTags } from "./public";
 
 import { ZItemTop } from "Types/transforms";
 
 
-jest.mock("@services/roam", (() => ({
+vi.mock("@services/roam", (() => ({
 	findRoamPage: () => false
 })));
 

@@ -1,3 +1,5 @@
+import { vi } from "vitest";
+
 import { addElemToArray, removeArrayElemAt, updateArrayElemAt, executeFunctionByName } from "../../src/utils";
 
 
@@ -28,13 +30,13 @@ describe("Executing a function by name", () => {
 	});
 
 	it("executes a function attached to the window", () => {
-		global.customFunc = jest.fn();
+		global.customFunc = vi.fn();
 		executeFunctionByName("customFunc", window);
 		expect(global.customFunc).toHaveBeenCalled();
 	});
 
 	it("executes the function with args", () => {
-		global.customFunc = jest.fn();
+		global.customFunc = vi.fn();
 		executeFunctionByName("customFunc", window, "my arg");
 		expect(global.customFunc).toHaveBeenCalledWith("my arg");
 	});

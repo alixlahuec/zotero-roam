@@ -1,4 +1,4 @@
-import { mock } from "jest-mock-extended";
+import { mock } from "vitest-mock-extended";
 import { 
 	categorizeLibraryItems,  
 	identifyChildren } from "../../src/utils";

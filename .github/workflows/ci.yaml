@@ -27,7 +27,10 @@ jobs:
       - name: Type-checking
         run: npm run ci:typecheck
 
-      - name: Jest, ESLint
+      - name: ESLint
+        run: npm run lint
+
+      - name: Vitest
         run: npm run ci:test
 
       - name: Upload test reports

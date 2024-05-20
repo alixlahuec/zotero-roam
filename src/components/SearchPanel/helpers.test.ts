@@ -1,4 +1,4 @@
-import { mock } from "jest-mock-extended";
+import { mock } from "vitest-mock-extended";
 import { cleanLibraryItem } from "../../utils";
 import { cleanLibrary, formatItemReferenceWithDefault } from "./helpers";
 import { items, libraries } from "Mocks";
