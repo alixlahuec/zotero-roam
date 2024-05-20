@@ -42,9 +42,9 @@ describe("Mutation hooks for the Zotero API", () => {
 	});
 
 	describe("useDeleteTags", () => {
-		beforeEach(() => {
-			return fetchTags({ apikey: masterKey, path: userLibrary.path })
-				.then((mockData) => queryClient.setQueryData(["tags", { library: userLibrary.path }], () => mockData));
+		beforeEach(async() => {
+			const mockData = await fetchTags({ apikey: masterKey, path: userLibrary.path });
+			queryClient.setQueryData(["tags", { library: userLibrary.path }], () => mockData);
 		});
 
 		test("callback on success", async () => {
@@ -115,12 +115,13 @@ describe("Mutation hooks for the Zotero API", () => {
 	describe("useModifyTags", () => {
 		const sample_req = mock<DataRequest>({ apikey: masterKey, dataURI: `${groupLibrary.path}/items`, library: { path: groupLibrary.path } });
 
-		beforeEach(() => {
-			return fetchItems(
+		beforeEach(async() => {
+			const mockData = await fetchItems(
 				{ ...sample_req, since: 0 },
 				{ match: [] },
 				queryClient
-			).then((mockData) => queryClient.setQueryData(["items", groupLibrary.path, {}], () => mockData));
+			);
+			queryClient.setQueryData(["items", groupLibrary.path, {}], () => mockData);
 		});
 
 		test("callback on success", async () => {
