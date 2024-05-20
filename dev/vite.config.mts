@@ -102,7 +102,7 @@ export default defineConfig(({ command, mode }) => {
 			clearMocks: true,
 			coverage: {
 				exclude: ["**/*.stories.jsx"],
-				provider: "v8",
+				provider: "istanbul",
 				reporter: ["text", "json"]
 			},
 			define: {
