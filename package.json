@@ -31,7 +31,7 @@
         "typecheck": "tsc --noEmit --pretty --checkJs false",
         "ci:typecheck": "npm run typecheck",
         "test": "vitest --config ./dev/vite.config.mts",
-        "ci:test": "vitest --config ./dev/vite.config.mts --coverage",
+        "ci:test": "vitest run --config ./dev/vite.config.mts --coverage",
         "lint": "eslint --fix",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build --quiet",
