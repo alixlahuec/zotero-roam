@@ -110,6 +110,7 @@ export default defineConfig(({ command, mode }) => {
 			},
 			environment: "jsdom",
 			globals: true,
+			isolate: false,
 			outputFile: {
 				"junit": "reports/tests-junit.xml",
 			},
