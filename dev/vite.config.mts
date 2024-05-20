@@ -1,6 +1,7 @@
+import { BuildOptions } from "esbuild";
 import { resolve } from "path";
 import { defineConfig, AliasOptions, PluginOption } from "vite";
-import { BuildOptions } from "esbuild";
+import { coverageConfigDefaults } from "vitest/config";
 
 import react from "@vitejs/plugin-react-swc";
 import { viteExternalsPlugin } from "vite-plugin-externals";
@@ -101,7 +102,7 @@ export default defineConfig(({ command, mode }) => {
 			},
 			clearMocks: true,
 			coverage: {
-				exclude: ["**/*.stories.jsx"],
+				exclude: ["**/*.stories.jsx", ...coverageConfigDefaults.exclude],
 				include: ["src/*", "loader.tsx", "sandbox.ts", "mocks/*"],
 				provider: "istanbul",
 				reporter: ["text", "json"]
