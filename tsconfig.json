@@ -25,7 +25,7 @@
 		"isolatedModules": true,
 		"noEmit": true,
 		"resolveJsonModule": true,
-		"types": ["@testing-library/jest-dom"]
+		"types": ["vitest/globals"]
     },
 	"exclude": ["node_modules", "dist"],
     "include": [

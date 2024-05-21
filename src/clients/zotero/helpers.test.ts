@@ -1,8 +1,9 @@
 import { QueryClient } from "@tanstack/react-query";
-import { mock } from "jest-mock-extended";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 
 
-jest.mock("./base");
+vi.mock("./base");
 import { fetchItems } from "./base";
 import { ZoteroAPI } from "./types";
 

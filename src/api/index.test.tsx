@@ -1,9 +1,8 @@
-import "fake-indexeddb/auto";
-import { mock } from "jest-mock-extended";
-import { waitFor } from "@testing-library/dom";
-
 import { QueryClient } from "@tanstack/query-core";
 import { persistQueryClientSave } from "@tanstack/query-persist-client-core";
+import { waitFor } from "@testing-library/dom";
+import "fake-indexeddb/auto";
+import { mock } from "vitest-mock-extended";
 
 import { makeTagList } from "@clients/zotero/helpers";
 import IDBDatabaseService from "@services/idb";
@@ -517,12 +516,12 @@ describe("Logger utils", () => {
 	const client = new QueryClient();
 
 	beforeAll(() => {
-		jest.useFakeTimers()
+		vi.useFakeTimers()
 			.setSystemTime(new Date(2022, 4, 6));
 	});
 
 	afterAll(() => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	});
 
 	beforeEach(() => {
@@ -600,18 +599,18 @@ describe("DB utils", () => {
 			settings: initSettings
 		});
 
-		jest.useFakeTimers()
+		vi.useFakeTimers()
 			.setSystemTime(date);
 	});
 
 	afterEach(async () => {
 		/* eslint-disable-next-line dot-notation */
 		await waitFor(() => indexedDB.deleteDatabase(idbInstance["dbName"]), { timeout: 5000 });
-		jest.useRealTimers();
+		vi.useRealTimers();
 	});
 
 	test("Cache lifecycle", async () => {
-		const infoLogger = jest.spyOn(extension, "info");
+		const infoLogger = vi.spyOn(extension, "info");
 
 		// Simulate behavior of the React Query provider
 		persistQueryClientSave({
@@ -699,7 +698,7 @@ describe("DB utils - errors are logged", () => {
 
 
 	test("Clearing the React Query store", async () => {
-		const errorLogger = jest.spyOn(extension, "error");
+		const errorLogger = vi.spyOn(extension, "error");
 
 		await extension.clearDataCache();
 
@@ -715,7 +714,7 @@ describe("DB utils - errors are logged", () => {
 
 
 	test("Checking if there is cached data in the React Query store", async () => {
-		const errorLogger = jest.spyOn(extension, "error");
+		const errorLogger = vi.spyOn(extension, "error");
 	
 		const res = await extension.isDataCached();
 
@@ -732,7 +731,7 @@ describe("DB utils - errors are logged", () => {
 
 
 	test("Fetching timestamp of last caching operation", async () => {
-		const errorLogger = jest.spyOn(extension, "error");
+		const errorLogger = vi.spyOn(extension, "error");
 
 		await extension.getDataCacheUpdatedAt();
 

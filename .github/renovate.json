@@ -36,13 +36,6 @@
 		"enabled": false
 	},
 	{
-		"groupName": "Jest",
-		"matchPackageNames": [
-			"jest",
-			"jest-environment-jsdom"
-		]
-	},
-	{
 		"groupName": "Storybook Core",
 		"matchPackageNames": [
 			"@storybook/addon-a11y",

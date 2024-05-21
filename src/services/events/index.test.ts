@@ -1,4 +1,5 @@
-import { mock } from "jest-mock-extended";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import zrToaster from "Components/ExtensionToaster";
 import ZoteroRoam from "../../api";
 
@@ -9,7 +10,7 @@ import { DEFAULT_TOAST_TIMEOUT } from "../../constants";
 import { ZItemTop } from "Types/transforms";
 
 
-const showToasterFn = jest.spyOn(zrToaster, "show");
+const showToasterFn = vi.spyOn(zrToaster, "show");
 beforeEach(() => {
 	window.zoteroRoam = mock<ZoteroRoam>();
 });
