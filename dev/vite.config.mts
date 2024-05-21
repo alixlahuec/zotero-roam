@@ -102,7 +102,7 @@ export default defineConfig(({ command, mode }) => {
 			},
 			clearMocks: true,
 			coverage: {
-				exclude: ["**/*.stories.jsx", ...coverageConfigDefaults.exclude],
+				exclude: ["**/*.stories.tsx", ...coverageConfigDefaults.exclude],
 				include: ["src/*", "loader.tsx", "sandbox.ts", "mocks/*"],
 				provider: "istanbul",
 				reporter: ["text", "json"]
