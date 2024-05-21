@@ -1,9 +1,12 @@
+import { BuildOptions } from "esbuild";
 import { resolve } from "path";
 import { defineConfig, AliasOptions, PluginOption } from "vite";
-import { BuildOptions } from "esbuild";
+import { coverageConfigDefaults } from "vitest/config";
 
 import react from "@vitejs/plugin-react-swc";
 import { viteExternalsPlugin } from "vite-plugin-externals";
+
+import pkg from "../package.json";
 
 
 export default defineConfig(({ command, mode }) => {
@@ -83,6 +86,7 @@ export default defineConfig(({ command, mode }) => {
 			alias: {
 				"@clients": resolve("src", "clients"),
 				"@hooks": resolve("src", "hooks"),
+				...(process.env.VITEST ? { "@services/roam": resolve("mocks", "roam.ts") } : {}),
 				"@services": resolve("src", "services"),
 				"Mocks": resolve("mocks"),
 				"Components": resolve("src", "components"),
@@ -91,6 +95,35 @@ export default defineConfig(({ command, mode }) => {
 				...extraAliases
 			}
 		},
-		plugins: [react(), ...extraPlugins]
+		plugins: [react(), ...extraPlugins],
+		test: {
+			alias: {
+				"\.(css|sass)$": resolve("mocks", "style.ts")
+			},
+			clearMocks: true,
+			coverage: {
+				exclude: ["**/*.stories.tsx", ...coverageConfigDefaults.exclude],
+				include: ["src/*", "loader.tsx", "sandbox.ts", "mocks/*"],
+				provider: "istanbul",
+				reporter: ["text", "json"]
+			},
+			define: {
+				"PACKAGE_VERSION": pkg.version
+			},
+			environment: "jsdom",
+			globals: true,
+			outputFile: {
+				"junit": "reports/tests-junit.xml",
+			},
+			reporters: [
+				"verbose",
+				"junit",
+				...(process.env.GITHUB_ACTIONS ? ["github-actions"] : [])
+			],
+			setupFiles: ["dev/vitest.setup.js"],
+			typecheck: {
+				enabled: true
+			}
+		}
 	};
 });

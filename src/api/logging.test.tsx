@@ -6,12 +6,12 @@ import { ZoteroRoamLog } from "./logging";
 
 describe("Custom class for logs", () => {
 	beforeAll(() => {
-		jest.useFakeTimers()
+		vi.useFakeTimers()
 			.setSystemTime(new Date(2022, 4, 6));
 	});
 
 	afterAll(() => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	});
 
 	test("It uses fallback values", () => {
@@ -56,7 +56,7 @@ describe("Custom class for logs", () => {
 	});
 
 	test("It calls the toaster when showToaster is provided", () => {
-		const showToasterFn = jest.spyOn(zrToaster, "show");
+		const showToasterFn = vi.spyOn(zrToaster, "show");
 
 		const log_contents = {
 			origin: "Metadata",
@@ -89,7 +89,7 @@ describe("Custom class for logs", () => {
 	});
 
 	test("It creates the right message for the toaster", () => {
-		const showToasterFn = jest.spyOn(zrToaster, "show");
+		const showToasterFn = vi.spyOn(zrToaster, "show");
 
 		new ZoteroRoamLog({
 			origin: "Metadata",

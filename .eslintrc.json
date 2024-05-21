@@ -2,7 +2,7 @@
     "env": {
         "browser": true,
         "es2021": true,
-        "jest/globals": true,
+        "vitest/globals": true,
         "node": true
     },
     "extends": [
@@ -20,9 +20,9 @@
     "overrides": [
         {
           "files": ["tests/**"],
-          "plugins": ["jest"],
-          "extends": ["plugin:jest/recommended"],
-          "rules": { "jest/prefer-expect-assertions": "off" }
+          "plugins": ["vitest"],
+          "extends": ["plugin:vitest/legacy-recommended"],
+          "rules": { "vitest/prefer-expect-assertions": "off" }
         },
 		{
 			"files": [".storybook/**"],
@@ -51,7 +51,7 @@
     },
     "plugins": [
         "react",
-        "jest",
+        "vitest",
         "import",
 		"@typescript-eslint"
     ],
