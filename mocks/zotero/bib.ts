@@ -1,4 +1,4 @@
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 
 import { makeEntityLinks, makeLibraryMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
@@ -52,11 +52,12 @@ const data: Record<string, Mocks.ItemBibliography> = {
 };
 
 
-export const handleBibliography = rest.get<never, Mocks.RequestParams.Bibliography, Mocks.Responses.Bibliography>(
+export const handleBibliography = http.get<Mocks.RequestParams.Bibliography, never, Mocks.Responses.Bibliography>(
 	zotero(":libraryType/:libraryID/items/:itemKey"),
-	(req, res, ctx) => {
-		const { libraryType, libraryID, itemKey } = req.params;
-		const includeFormats = (req.url.searchParams.get("include") || "").split(",");
+	({ request, params }) => {
+		const { libraryType, libraryID, itemKey } = params;
+		const url = new URL(request.url);
+		const includeFormats = (url.searchParams.get("include") || "").split(",");
         
 		const { key, version, library, links, meta, ...outputs } = findBibliographyEntry({ key: `${itemKey}`, path: `${libraryType}/${libraryID}` });
 
@@ -64,16 +65,14 @@ export const handleBibliography = rest.get<never, Mocks.RequestParams.Bibliograp
 			Object.entries(outputs)
 				.filter(([format, _output]) => includeFormats.includes(format))) as { bib: string };
 
-		return res(
-			ctx.json({
-				key,
-				version,
-				library,
-				links,
-				meta,
-				...formatsData
-			})
-		);
+		return HttpResponse.json({
+			key,
+			version,
+			library,
+			links,
+			meta,
+			...formatsData
+		});
 	}
 );
 

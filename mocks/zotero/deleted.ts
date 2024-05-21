@@ -1,4 +1,4 @@
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { makeCollection, makeItemMetadata, zotero } from "./common";
 import { libraries } from "./libraries";
 import { Mocks } from "Mocks";
@@ -82,23 +82,22 @@ export const findDeleted = ({ path, since }: { path: string, since: number }) =>
 	return entities;
 };
 
-export const handleDeleted = rest.get<never, Mocks.RequestParams.Deleted, Mocks.Responses.Deleted>(
+export const handleDeleted = http.get<Mocks.RequestParams.Deleted, never, Mocks.Responses.Deleted>(
 	zotero(":libraryType/:libraryID/deleted"),
-	(req, res, ctx) => {
-		const { libraryType, libraryID } = req.params;
-		const since = Number(req.url.searchParams.get("since"));
+	({ request, params }) => {
+		const { libraryType, libraryID } = params;
+		const url = new URL(request.url);
+		const since = Number(url.searchParams.get("since"));
 		const path = `${libraryType}/${libraryID}`;
 
 		const { collections = [], items = [] } = findDeleted({ path, since });
 
-		return res(
-			ctx.json({
-				collections,
-				items,
-				searches: [],
-				tags: []
-			})
-		);
+		return HttpResponse.json({
+			collections,
+			items,
+			searches: [],
+			tags: []
+		});
 	}
 );
 

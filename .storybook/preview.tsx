@@ -2,7 +2,7 @@
 import { useEffect, useGlobals } from "@storybook/addons";
 import { Decorator, Preview, StoryContext, StoryFn } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
-import { rest } from "msw";
+import { http, passthrough } from "msw";
 import { mockDateDecorator } from "storybook-mock-date-decorator";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
@@ -84,10 +84,10 @@ const preview: Preview = {
 				sciteApiHandler,
 				sciteAssetsHandler,
 				chromaticHandler,
-				rest.get("http://localhost:6006/runtime*", (req, _res, _ctx) => req.passthrough()),
-				rest.get("http://localhost:6006/main*", (req, _res, _ctx) => req.passthrough()),
-				rest.get("http://localhost:6006/vendors*", (req, _res, _ctx) => req.passthrough()),
-				rest.get("http://localhost:6006/*", (req, _res, _ctx) => req.passthrough()),
+				http.get("http://localhost:6006/runtime*", () => passthrough()),
+				http.get("http://localhost:6006/main*", () => passthrough()),
+				http.get("http://localhost:6006/vendors*", () => passthrough()),
+				http.get("http://localhost:6006/*", () => passthrough()),
 				fallbackHandler
 			]
 		},

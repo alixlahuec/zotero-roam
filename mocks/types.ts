@@ -78,7 +78,7 @@ export namespace Mocks {
 		export type ItemsPost = { failed: Record<number, string>, unchanged: Record<number, string>, success: Record<number, string>, successful: Record<number, ItemTop> };
 		export type Permissions = ZoteroAPI.Responses.Permissions;
 		export type TagsGet = ZoteroAPI.Responses.Tags;
-		export type TagsDelete = Record<string, never>;
+		export type TagsDelete = never;
 	}
 }
 
