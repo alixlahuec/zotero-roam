@@ -84,9 +84,9 @@ export const handleTags = [
 			const { version } = Object.values(libraries).find(val => val.path == `${libraryType}/${libraryID}`)!;
 
 			if(Number(ifUnmodifiedSince) < version){
-				return new HttpResponse("Precondition failed", { status: 412 });
+				return new HttpResponse(null, { status: 412, statusText: "Precondition failed" });
 			} else {
-				return new HttpResponse("No content", { status: 204 });
+				return new HttpResponse(null, { status: 204, statusText: "No content" });
 			}
 		}
 	)
