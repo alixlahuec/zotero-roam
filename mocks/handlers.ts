@@ -13,7 +13,7 @@ import { handleTags } from "./zotero/tags";
 export const fallbackHandler = http.get(
 	"*", 
 	({ request }) => {
-		return new HttpResponse("You need to add a handler for " + request.url, { status: 404 });
+		return new HttpResponse(null, { status: 404, statusText: "You need to add a handler for " + request.url });
 	}
 );
 
