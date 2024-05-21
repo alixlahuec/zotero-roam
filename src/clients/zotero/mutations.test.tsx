@@ -57,7 +57,7 @@ describe("Mutation hooks for the Zotero API", () => {
 					tags: ["systems"]
 				});
 			});
-			await waitFor(() => result.current.status == "success", { timeout: 1500 });
+			await waitFor(() => result.current.status == "success");
 
 			expect(invalidateQueriesSpy).toHaveBeenCalledWith(
 				["items", userLibrary.path],
