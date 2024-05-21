@@ -3,7 +3,7 @@ import { builtinEnvironments } from 'vitest/environments';
 
 export default <Environment> {
 	name: "custom_jsdom",
-	transformMode: "ssr",
+	transformMode: "web",
 	setup: (global, options) => {
 		const envReturn = builtinEnvironments.jsdom.setup(global, options)
 
