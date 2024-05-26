@@ -59,7 +59,7 @@ jobs:
       - name: Storybook CI
         id: chromatic
         uses: chromaui/action@v1
-        if: ${{ !startsWith(github.ref_name, 'renovate/') }}
+        if: ${{ !startsWith(github.ref_name, 'renovate/') }} || ${{ startsWith(github.ref_name, 'renovate/storybook') }}
         with:
           buildScriptName: "build-storybook"
           exitOnceUploaded: true
@@ -68,7 +68,7 @@ jobs:
           exitZeroOnChanges: true
 
       - name: Storybook tests
-        if: ${{ !startsWith(github.ref_name, 'renovate/') }}
+        if: ${{ !startsWith(github.ref_name, 'renovate/') }} || ${{ startsWith(github.ref_name, 'renovate/storybook') }}
         run: npm run ci:test-storybook
         env:
           TARGET_URL: "${{ steps.chromatic.outputs.storybookUrl }}"
@@ -77,7 +77,7 @@ jobs:
 
       - name: Upload test reports
         uses: dorny/test-reporter@v1
-        if: ${{ !startsWith(github.ref_name, 'renovate/') }}
+        if: ${{ !startsWith(github.ref_name, 'renovate/') }} || ${{ startsWith(github.ref_name, 'renovate/storybook') }}
         with:
           name: Storybook
           path: reports/storybook-junit.xml
