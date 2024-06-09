@@ -1,10 +1,10 @@
 import { H5 } from "@blueprintjs/core";
 
 import zrToaster from "Components/ExtensionToaster";
-import { ZoteroRoamLog } from "./logging";
+import { Logger, ZoteroRoamLog } from "./logging";
 
 
-describe("Custom class for logs", () => {
+describe("ZoteroRoamLog", () => {
 	beforeAll(() => {
 		vi.useFakeTimers()
 			.setSystemTime(new Date(2022, 4, 6));
@@ -14,7 +14,7 @@ describe("Custom class for logs", () => {
 		vi.useRealTimers();
 	});
 
-	test("It uses fallback values", () => {
+	it("uses fallback values", () => {
 		const sample_log = new ZoteroRoamLog();
 
 		expect(sample_log)
@@ -29,7 +29,7 @@ describe("Custom class for logs", () => {
 			});
 	});
 
-	test("It initializes with values provided", () => {
+	it("initializes with values provided", () => {
 		const sample_log = new ZoteroRoamLog(
 			{
 				origin: "API",
@@ -55,7 +55,7 @@ describe("Custom class for logs", () => {
 			});
 	});
 
-	test("It calls the toaster when showToaster is provided", () => {
+	it("calls the toaster when showToaster is provided", () => {
 		const showToasterFn = vi.spyOn(zrToaster, "show");
 
 		const log_contents = {
@@ -88,7 +88,7 @@ describe("Custom class for logs", () => {
 		});
 	});
 
-	test("It creates the right message for the toaster", () => {
+	it("creates the right message for the toaster", () => {
 		const showToasterFn = vi.spyOn(zrToaster, "show");
 
 		new ZoteroRoamLog({
@@ -112,4 +112,70 @@ describe("Custom class for logs", () => {
 			timeout: 1000
 		});
 	});
+});
+
+describe("Logger", () => {
+	let logger: Logger;
+
+	beforeAll(() => {
+		vi.useFakeTimers()
+			.setSystemTime(new Date(2022, 4, 6));
+	});
+
+	afterAll(() => {
+		vi.useRealTimers();
+	});
+
+	beforeEach(() => {
+		logger = new Logger();
+	});
+
+	const log_details = {
+		origin: "API",
+		message: "Some log",
+		detail: "",
+		context: {
+			text: "string"
+		}
+	};
+
+	it("logs errors", () => {
+		logger.error(log_details);
+		expect(logger.logs)
+			.toEqual([
+				{
+					...log_details,
+					intent: "danger",
+					level: "error",
+					timestamp: new Date(2022, 4, 6)
+				}
+			]);
+	});
+
+	it("logs infos", () => {
+		logger.info(log_details);
+		expect(logger.logs)
+			.toEqual([
+				{
+					...log_details,
+					intent: "primary",
+					level: "info",
+					timestamp: new Date(2022, 4, 6)
+				}
+			]);
+	});
+
+	it("logs warnings", () => {
+		logger.warn(log_details);
+		expect(logger.logs)
+			.toEqual([
+				{
+					...log_details,
+					intent: "warning",
+					level: "warning",
+					timestamp: new Date(2022, 4, 6)
+				}
+			]);
+	});
+
 });

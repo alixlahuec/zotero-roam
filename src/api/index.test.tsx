@@ -4,18 +4,16 @@ import { waitFor } from "@testing-library/dom";
 import "fake-indexeddb/auto";
 import { mock } from "vitest-mock-extended";
 
-import { makeTagList } from "@clients/zotero/helpers";
 import IDBDatabaseService from "@services/idb";
-import { Queries } from "@services/react-query";
 
-import ZoteroRoam, { _formatNotes } from ".";
-import { cleanBibliographyHTML } from "./helpers";
+import ZoteroRoam from ".";
+import { cleanBibliographyHTML, formatNotes } from "./helpers";
 import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
 
 import { createPersisterWithIDB, setupInitialSettings } from "../setup";
 import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
 
-import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, findCollections, libraries, sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage, sampleNote, sampleOlderNote, samplePDF, tags, Mocks } from "Mocks";
+import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, libraries, sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage, sampleNote, sampleOlderNote, samplePDF } from "Mocks";
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
 
 import { UserRequests, UserSettings } from "Types/extension";
@@ -41,7 +39,7 @@ describe("Formatting utils", () => {
 
 		test("Class method returns correct output", () => {
 			expect(extension.formatNotes([sampleNote, sampleAnnot]))
-				.toEqual(_formatNotes([sampleNote, sampleAnnot], null, { annotationsSettings: initSettings.annotations, notesSettings: initSettings.notes }));
+				.toEqual(formatNotes([sampleNote, sampleAnnot], null, { annotationsSettings: initSettings.annotations, notesSettings: initSettings.notes }));
 			expect(extension.formatNotes([]))
 				.toEqual([]);
 		});
@@ -132,7 +130,7 @@ describe("Formatting utils", () => {
 
 			const formattedOutput = formatItemNotes([sampleNote]);
 
-			expect(_formatNotes([sampleNote], uid_with_existing_block, mockSettings)).toEqual(
+			expect(formatNotes([sampleNote], uid_with_existing_block, mockSettings)).toEqual(
 				formattedOutput.map(blck => ({
 					string: blck,
 					text: blck,
@@ -141,7 +139,7 @@ describe("Formatting utils", () => {
 				}))
 			);
 			
-			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings)).toEqual(
+			expect(formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings)).toEqual(
 				formattedOutput.map(blck => ({
 					string: blck,
 					text: blck,
@@ -150,7 +148,7 @@ describe("Formatting utils", () => {
 				}))
 			);
 
-			expect(_formatNotes([sampleNote], "uid without existing block", mockSettings)).toEqual([
+			expect(formatNotes([sampleNote], "uid without existing block", mockSettings)).toEqual([
 				{
 					string: custom_string,
 					text: custom_string,
@@ -174,7 +172,7 @@ describe("Formatting utils", () => {
 
 			const formattedOutput = formatItemNotes([sampleNote]);
 
-			expect(_formatNotes([sampleNote], uid_with_existing_block, mockSettings))
+			expect(formatNotes([sampleNote], uid_with_existing_block, mockSettings))
 				.toEqual(
 					formattedOutput.map(blck => ({
 						string: blck,
@@ -184,7 +182,7 @@ describe("Formatting utils", () => {
 					}))
 				);
 
-			expect(_formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings))
+			expect(formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings))
 				.toEqual(
 					formattedOutput.map(blck => ({
 						string: blck,
@@ -301,96 +299,10 @@ describe("Retrieval utils", () => {
 		}); 
 	});
 
-	test("Retrieving children data for an item", () => {
-		const targetLibrary = Object.values(libraries).find(lib => lib.type == samplePDF.library.type + "s" && lib.id == samplePDF.library.id)!;
-		const parentItem = items.find(it => it.data.key == samplePDF.data.parentItem)!;
-		// getItemChildren() retrieves queries data by matching the data URI,
-		// so no need to reproduce the exact query key that would exist in prod
-		client.setQueryData<Queries.Data.Items>(
-			["items", targetLibrary.path, { dataURI: targetLibrary.path + "/items" }],
-			(_prev) => ({
-				data: [parentItem, samplePDF],
-				lastUpdated: targetLibrary.version
-			})
-		);
-
-		expect(extension.getItemChildren(parentItem))
-			.toEqual([samplePDF]);
-	});
-
-	test("Retrieving collections data for an item", () => {
-		Object.values(libraries).forEach(lib => {
-			const { path, version } = lib;
-			const [type, id] = path.split("/");
-			const colls = findCollections(type as Mocks.Library["type"], Number(id), 0);
-
-			client.setQueryData(
-				["collections", { library: path }],
-				(_prev) => ({
-					data: colls,
-					lastUpdated: version
-				})
-			);
-		});
-
-		const sample_item = items.find(it => it.data.collections.length > 0)!;
-		const collectionList = findCollections(`${sample_item.library.type}s`, sample_item.library.id, 0);
-		const expectedColls = sample_item.data.collections
-			.map(key => collectionList.find(coll => coll.key == key)!.data.name);
-
-		expect(extension.getItemCollections(sample_item, { return_as: "array", brackets: false }))
-			.toEqual(expectedColls);
-		expect(extension.getItemCollections(sample_item, { return_as: "array", brackets: true }))
-			.toEqual(expectedColls.map(cl => `[[${cl}]]`));
-		expect(extension.getItemCollections(sample_item, { return_as: "string", brackets: false }))
-			.toEqual(expectedColls.join(", "));
-		expect(extension.getItemCollections(sample_item, { return_as: "string", brackets: true }))
-			.toEqual(expectedColls.map(cl => `[[${cl}]]`).join(", "));
-		expect(extension.getItemCollections(sample_item, {}))
-			.toEqual(expectedColls.map(cl => `[[${cl}]]`).join(", "));
-        
-		const item_without_collections = items.find(it => it.data.collections.length == 0)!;
-		expect(extension.getItemCollections(item_without_collections, { brackets: false }))
-			.toEqual([]);
-
-	});
-
 	test("Retrieving creators data for an item", () => {
 		const sample_item = items.find(it => it.data.creators.length > 0)!;
 		expect(extension.getItemCreators(sample_item, {}))
 			.toEqual(_getItemCreators(sample_item, {}));
-	});
-
-	test("Retrieving relations data for an item", () => {
-		const semanticItem = items.find(it => it.data.key == "_SEMANTIC_ITEM_")!;
-		const relatedItem = items.find(it => it.data.key == "PPD648N6")!;
-		// getItems() retrieves queries data with an inclusive query,
-		// so no need to reproduce the exact query key that would exist in prod
-		client.setQueryData(
-			["items"],
-			(_prev) => ({
-				data: items,
-				lastUpdated: 9999
-			})
-		);
-
-		expect(extension.getItemRelated(semanticItem, { return_as: "array", brackets: false }))
-			.toEqual([relatedItem.key]);
-		expect(extension.getItemRelated(semanticItem, { return_as: "raw", brackets: false }))
-			.toEqual([relatedItem]);
-		expect(extension.getItemRelated(semanticItem, { return_as: "string", brackets: false }))
-			.toEqual(relatedItem.key);
-		expect(extension.getItemRelated(semanticItem, { return_as: "string", brackets: true }))
-			.toEqual(`[[@${relatedItem.key}]]`);
-		
-		// No relations
-		const noRelationsItem = items.find(it => JSON.stringify(it.data.relations) == "{}")!;
-		expect(extension.getItemRelated(noRelationsItem, { return_as: "array" }))
-			.toEqual([]);
-		expect(extension.getItemRelated(noRelationsItem, { return_as: "raw" }))
-			.toEqual([]);
-		expect(extension.getItemRelated(noRelationsItem, { return_as: "string" }))
-			.toEqual("");
 	});
 
 	test("Retrieving tags data for an item", () => {
@@ -447,138 +359,6 @@ describe("Retrieval utils", () => {
     
 		expect(bibEntries)
 			.toEqual(expected);
-	});
-
-	test("Retrieving all items across libraries", () => {
-		// getItems() retrieves queries data with an inclusive query,
-		// so no need to reproduce the exact query key that would exist in prod
-		client.setQueryData(
-			["items"],
-			(_prev) => ({
-				data: [...items, sampleAnnot, sampleNote, samplePDF],
-				lastUpdated: 9999
-			})
-		);
-
-		expect(extension.getItems())
-			.toEqual([...items, sampleAnnot, sampleNote, samplePDF]);
-
-		expect(extension.getItems("all"))
-			.toEqual([...items, sampleAnnot, sampleNote, samplePDF]);
-    
-		expect(extension.getItems("annotations"))
-			.toEqual([sampleAnnot]);
-        
-		expect(extension.getItems("attachments"))
-			.toEqual([samplePDF]);
-
-		expect(extension.getItems("children"))
-			.toEqual([sampleAnnot, sampleNote, samplePDF]);
-        
-		expect(extension.getItems("items"))
-			.toEqual([...items]);
-        
-		expect(extension.getItems("notes"))
-			.toEqual([sampleNote]);
-
-		expect(extension.getItems("pdfs"))
-			.toEqual([samplePDF]);
-	});
-
-	describe("Retrieving tags data for a library", () => {
-		const cases = Object.entries(libraries);
-
-		test.each(cases)(
-			"%# Retrieving tags data for %s",
-			(_libName, libraryDetails) => {
-				const { path, version } = libraryDetails;
-
-				const tagList = makeTagList(tags[path]);
-
-				client.setQueryData(
-					["tags", { library: path }],
-					(_prev) => ({
-						data: tagList,
-						lastUpdated: version
-					})
-				);
-
-				expect(extension.getTags(path))
-					.toEqual(tagList);
-			}
-		);
-
-	});
-
-});
-
-describe("Logger utils", () => {
-	let extension: ZoteroRoam;
-	const client = new QueryClient();
-
-	beforeAll(() => {
-		vi.useFakeTimers()
-			.setSystemTime(new Date(2022, 4, 6));
-	});
-
-	afterAll(() => {
-		vi.useRealTimers();
-	});
-
-	beforeEach(() => {
-		extension = new ZoteroRoam({
-			queryClient: client,
-			requests: mock<UserRequests>(),
-			settings: mock<UserSettings>()
-		}); 
-	});
-
-	const log_details = {
-		origin: "API",
-		message: "Some log",
-		detail: "",
-		context: {
-			text: "string"
-		}
-	};
-
-	test("Logging error", () => {
-		extension.error(log_details);
-		expect(extension.logs)
-			.toEqual([
-				{
-					...log_details,
-					intent: "danger",
-					level: "error",
-					timestamp: new Date(2022, 4, 6)
-				}
-			]);
-	});
-
-	test("Logging info", () => {
-		extension.info(log_details);
-		expect(extension.logs)
-			.toEqual([
-				{
-					...log_details,
-					intent: "primary",
-					level: "info",
-					timestamp: new Date(2022, 4, 6)
-				}
-			]);
-	});
-
-	test("Logging warning", () => {
-		extension.warn(log_details);
-		expect(extension.logs)
-			.toEqual([
-				{
-					...log_details,
-					intent: "warning",
-					level: "warning",
-					timestamp: new Date(2022, 4, 6)
-				}
-			]);
 	});
 
 });

@@ -6,6 +6,8 @@ import { AsBoolean } from "Types/helpers";
 import { ZItemAttachment, ZItemTop } from "Types/transforms";
 
 
+// TODO: consolidate this module with helpers.ts
+
 type PDFFormatOption = "links" | "identity" | "string";
 type PDFAsIdentity = { key: string, link: string, title: string };
 

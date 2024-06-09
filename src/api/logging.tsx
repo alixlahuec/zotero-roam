@@ -2,7 +2,7 @@ import { H5, IconName, Intent } from "@blueprintjs/core";
 import zrToaster from "Components/ExtensionToaster";
 
 
-export type LogConfig = {
+type LogConfig = {
 	context?: Record<string, any>,
 	detail?: string,
 	origin?: string,
@@ -10,7 +10,7 @@ export type LogConfig = {
 	showToaster?: number | boolean
 };
 
-export type LogLevel = "error" | "info" | "warning";
+type LogLevel = "error" | "info" | "warning";
 
 /**
  * Creates a log entry for the extension. This is meant to provide users with information about different events (e.g errors when fetching data), through an optional toast and more detailed logs.
@@ -61,5 +61,25 @@ export class ZoteroRoamLog {
 				timeout: showToaster.constructor === Number ? showToaster : 1000
 			});
 		}
+	}
+}
+
+export class Logger {
+	logs: ZoteroRoamLog[] = [];
+
+	send(obj: LogConfig, level: LogLevel = "info") {
+		this.logs.push(new ZoteroRoamLog(obj, level));
+	}
+
+	error(obj: LogConfig) {
+		this.send(obj, "error");
+	}
+
+	info(obj: LogConfig) {
+		this.send(obj, "info");
+	}
+
+	warn(obj: LogConfig) {
+		this.send(obj, "warning");
 	}
 }
