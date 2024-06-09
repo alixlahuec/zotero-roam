@@ -1,9 +1,18 @@
-import { cleanBibliographyHTML, compareAnnotationRawIndices, formatZoteroAnnotations } from "./helpers";
-import { simplifyZoteroAnnotations } from "../utils";
-import { bibs, sampleAnnot, sampleImageAnnot } from "Mocks";
+import { mock } from "vitest-mock-extended";
+
+import { cleanBibliographyHTML, compareAnnotationRawIndices, formatNotes, formatZoteroAnnotations, getItemDateAdded } from "./helpers";
+
+import { setupInitialSettings } from "../setup";
+import { formatItemAnnotations, formatItemNotes, simplifyZoteroAnnotations } from "../utils";
+
+import { bibs, sampleAnnot, sampleAnnotPrevPage, sampleAnnotLaterPage, sampleImageAnnot, sampleNote, sampleOlderNote } from "Mocks";
+import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
+import { ZItem } from "Types/transforms";
 
 
 const simplifiedAnnot = simplifyZoteroAnnotations([sampleAnnot])[0];
+const { annotations, notes } = setupInitialSettings({});
+const settings = { annotationsSettings: annotations, notesSettings: notes };
 
 
 describe("cleanBibliographyHTML", () => {
@@ -54,6 +63,149 @@ test("compareAnnotationRawIndices", () => {
 		]);
 });
 
+describe("formatNotes", () => {
+	it("sorts output", () => {
+		expect(formatNotes([sampleAnnotLaterPage, sampleAnnotPrevPage], null, settings))
+			.toEqual([
+				...formatItemAnnotations([sampleAnnotPrevPage]),
+				...formatItemAnnotations([sampleAnnotLaterPage])
+			]);
+
+		expect(formatNotes([sampleNote, sampleOlderNote], null, settings))
+			.toEqual([
+				...formatItemNotes([sampleOlderNote]),
+				...formatItemNotes([sampleNote])
+			]);
+
+		expect(formatNotes([sampleNote, sampleAnnotLaterPage, sampleAnnotPrevPage], null, settings))
+			.toEqual([
+				...formatItemAnnotations([sampleAnnotPrevPage]),
+				...formatItemAnnotations([sampleAnnotLaterPage]),
+				...formatItemNotes([sampleNote])
+			]);
+	});
+
+	it("handles nested output (with preset)", () => {
+		const notesSettings = {
+			...settings.notesSettings,
+			nest_preset: "[[Notes]]",
+			nest_use: "preset"
+		} as const
+
+		expect(formatNotes([sampleNote, sampleOlderNote], null, { ...settings, notesSettings }))
+			.toEqual([
+				{
+					string: notesSettings.nest_preset,
+					text: notesSettings.nest_preset,
+					children: [
+						...formatItemNotes([sampleOlderNote]),
+						...formatItemNotes([sampleNote])
+					]
+				}
+			]);
+	});
+
+	it("handles nested output (with custom string)", () => {
+		const custom_string = "[[My Notes]]";
+
+		const notesSettings = {
+			...settings.notesSettings,
+			nest_char: custom_string,
+			nest_use: "custom"
+		} as const
+
+		expect(formatNotes([sampleNote, sampleOlderNote], null, { ...settings, notesSettings }))
+			.toEqual([
+				{
+					string: custom_string,
+					text: custom_string,
+					children: [
+						...formatItemNotes([sampleOlderNote]),
+						...formatItemNotes([sampleNote])
+					]
+				}
+			]);
+	});
+
+	it("handles nested output, with block checking", () => {
+		const custom_string = "[[My Notes]]";
+		const mockSettings = {
+			...settings,
+			notesSettings: {
+				...settings.notesSettings,
+				nest_char: custom_string,
+				nest_position: "top",
+				nest_preset: false,
+				nest_use: "custom"
+			}
+		} as const
+
+		const formattedOutput = formatItemNotes([sampleNote]);
+
+		expect(formatNotes([sampleNote], uid_with_existing_block, mockSettings)).toEqual(
+			formattedOutput.map(blck => ({
+				string: blck,
+				text: blck,
+				order: 0,
+				parentUID: existing_block_uid
+			}))
+		);
+
+		expect(formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings)).toEqual(
+			formattedOutput.map(blck => ({
+				string: blck,
+				text: blck,
+				order: 0,
+				parentUID: existing_block_uid_with_children
+			}))
+		);
+
+		expect(formatNotes([sampleNote], "uid without existing block", mockSettings)).toEqual([
+			{
+				string: custom_string,
+				text: custom_string,
+				children: formattedOutput
+			}
+		]);
+
+	});
+
+	it("handles nested output, with block checking & position", () => {
+		const mockSettings = {
+			...settings,
+			notesSettings: {
+				...settings.notesSettings,
+				nest_char: "[[My Notes]]",
+				nest_position: "bottom",
+				nest_preset: false,
+				nest_use: "custom"
+			}
+		} as const
+
+		const formattedOutput = formatItemNotes([sampleNote]);
+
+		expect(formatNotes([sampleNote], uid_with_existing_block, mockSettings))
+			.toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					order: 0,
+					parentUID: existing_block_uid
+				}))
+			);
+
+		expect(formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings))
+			.toEqual(
+				formattedOutput.map(blck => ({
+					string: blck,
+					text: blck,
+					order: 2,
+					parentUID: existing_block_uid_with_children
+				}))
+			);
+	});
+});
+
 describe("formatZoteroAnnotations", () => {
 	it("formats with defaults", () => {
 		expect(formatZoteroAnnotations([sampleAnnot]))
@@ -86,4 +238,13 @@ describe("formatZoteroAnnotations", () => {
 				}
 			]);
 	});
+});
+
+test("getItemDateAdded", () => {
+	const date = new Date(2022, 0, 1).toString();
+	const mockItem = mock<ZItem>({ data: { dateAdded: date } });
+
+	expect(getItemDateAdded(mockItem)).toBe("[[January 1st, 2022]]");
+	expect(getItemDateAdded(mockItem, { brackets: false })).toBe("January 1st, 2022");
+
 });

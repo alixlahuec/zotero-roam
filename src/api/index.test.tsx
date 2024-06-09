@@ -7,14 +7,13 @@ import { mock } from "vitest-mock-extended";
 import IDBDatabaseService from "@services/idb";
 
 import ZoteroRoam from ".";
-import { cleanBibliographyHTML, formatNotes } from "./helpers";
+import { cleanBibliographyHTML, formatNotes, getItemDateAdded } from "./helpers";
 import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
 
 import { createPersisterWithIDB, setupInitialSettings } from "../setup";
-import { formatItemAnnotations, formatItemNotes, getLocalLink, getWebLink } from "../utils";
+import { getLocalLink, getWebLink } from "../utils";
 
-import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, libraries, sampleAnnot, sampleAnnotLaterPage, sampleAnnotPrevPage, sampleNote, sampleOlderNote, samplePDF } from "Mocks";
-import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
+import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, libraries, sampleAnnot, sampleNote, samplePDF } from "Mocks";
 
 import { UserRequests, UserSettings } from "Types/extension";
 import { ZItem, ZItemTop } from "Types/transforms";
@@ -31,206 +30,30 @@ describe("Formatting utils", () => {
 		settings: initSettings
 	});
     
-	describe("Notes & Annotations formatting", () => {
-		afterEach(() => {
-			// Reset the notes settings each time
-			extension.updateSetting("notes", initSettings.notes);
-		});
-
-		test("Class method returns correct output", () => {
-			expect(extension.formatNotes([sampleNote, sampleAnnot]))
-				.toEqual(formatNotes([sampleNote, sampleAnnot], null, { annotationsSettings: initSettings.annotations, notesSettings: initSettings.notes }));
-			expect(extension.formatNotes([]))
-				.toEqual([]);
-		});
-
-		test("Sorted output", () => {
-			extension.updateSetting("notes", {
-				...initSettings.notes,
-				nest_preset: false,
-				nest_use: "preset"
-			});
-
-			expect(extension.formatNotes([sampleAnnotLaterPage, sampleAnnotPrevPage]))
-				.toEqual([
-					...formatItemAnnotations([sampleAnnotPrevPage]),
-					...formatItemAnnotations([sampleAnnotLaterPage])
-				]);
-		
-			expect(extension.formatNotes([sampleNote, sampleOlderNote]))
-				.toEqual([
-					...formatItemNotes([sampleOlderNote]),
-					...formatItemNotes([sampleNote])
-				]);
-			
-			expect(extension.formatNotes([sampleNote, sampleAnnotLaterPage, sampleAnnotPrevPage]))
-				.toEqual([
-					...formatItemAnnotations([sampleAnnotPrevPage]),
-					...formatItemAnnotations([sampleAnnotLaterPage]),
-					...formatItemNotes([sampleNote])
-				]);
-		});
-
-		test("Nested output - with preset", () => {
-			const preset_string = "[[Notes]]";
-
-			extension.updateSetting("notes", {
-				...initSettings.notes,
-				nest_preset: preset_string,
-				nest_use: "preset"
-			});
-
-			expect(extension.formatNotes([sampleNote, sampleOlderNote]))
-				.toEqual([
-					{
-						string: preset_string,
-						text: preset_string,
-						children: [
-							...formatItemNotes([sampleOlderNote]),
-							...formatItemNotes([sampleNote])
-						]
-					}
-				]);
-		});
-
-		test("Nested output - with custom string", () => {
-			const custom_string = "[[My Notes]]";
-
-			extension.updateSetting("notes", {
-				...initSettings.notes,
-				nest_char: custom_string,
-				nest_use: "custom"
-			});
-
-			expect(extension.formatNotes([sampleNote, sampleOlderNote]))
-				.toEqual([
-					{
-						string: custom_string,
-						text: custom_string,
-						children: [
-							...formatItemNotes([sampleOlderNote]),
-							...formatItemNotes([sampleNote])
-						]
-					}
-				]);
-		});
-
-		test("Util returns nested output - with block checking", () => {
-			const custom_string = "[[My Notes]]";
-			const mockSettings = {
-				annotationsSettings: mock<UserSettings["annotations"]>(),
-				notesSettings: mock<UserSettings["notes"]>({
-					...initSettings.notes,
-					nest_char: custom_string,
-					nest_position: "top",
-					nest_preset: false,
-					nest_use: "custom"
-				})
-			};
-
-			const formattedOutput = formatItemNotes([sampleNote]);
-
-			expect(formatNotes([sampleNote], uid_with_existing_block, mockSettings)).toEqual(
-				formattedOutput.map(blck => ({
-					string: blck,
-					text: blck,
-					order: 0,
-					parentUID: existing_block_uid
-				}))
-			);
-			
-			expect(formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings)).toEqual(
-				formattedOutput.map(blck => ({
-					string: blck,
-					text: blck,
-					order: 0,
-					parentUID: existing_block_uid_with_children
-				}))
-			);
-
-			expect(formatNotes([sampleNote], "uid without existing block", mockSettings)).toEqual([
-				{
-					string: custom_string,
-					text: custom_string,
-					children: formattedOutput
-				}
-			]);
-
-		});
-
-		test("Util returns nested output - with block checking, with position", () => {
-			const mockSettings = {
-				annotationsSettings: mock<UserSettings["annotations"]>(),
-				notesSettings: mock<UserSettings["notes"]>({
-					...initSettings.notes,
-					nest_char: "[[My Notes]]",
-					nest_position: "bottom",
-					nest_preset: false,
-					nest_use: "custom"
-				})
-			};
-
-			const formattedOutput = formatItemNotes([sampleNote]);
-
-			expect(formatNotes([sampleNote], uid_with_existing_block, mockSettings))
-				.toEqual(
-					formattedOutput.map(blck => ({
-						string: blck,
-						text: blck,
-						order: 0,
-						parentUID: existing_block_uid
-					}))
-				);
-
-			expect(formatNotes([sampleNote], uid_with_existing_block_with_children, mockSettings))
-				.toEqual(
-					formattedOutput.map(blck => ({
-						string: blck,
-						text: blck,
-						order: 2,
-						parentUID: existing_block_uid_with_children
-					}))
-				);
-		});
+	test("formatNotes", () => {
+		expect(extension.formatNotes([sampleNote, sampleAnnot]))
+			.toEqual(formatNotes([sampleNote, sampleAnnot], null, { annotationsSettings: initSettings.annotations, notesSettings: initSettings.notes }));
+		expect(extension.formatNotes([]))
+			.toEqual([]);
 
 	});
 
-	test("PDFs formatting", () => {
-		expect(extension.formatPDFs([samplePDF], "links"))
-			.toEqual(_formatPDFs([samplePDF], "links"));
-		expect(extension.formatPDFs([samplePDF], "identity"))
-			.toEqual(_formatPDFs([samplePDF], "identity"));
-		expect(extension.formatPDFs([samplePDF], "string"))
+	test("formatPDFs", () => {
+		expect(extension.formatPDFs([samplePDF]))
 			.toEqual(_formatPDFs([samplePDF], "string"));
 		expect(extension.formatPDFs([]))
 			.toEqual("");
 	});
 
-	describe("Retrieving and formatting the date-added property of an item", () => {
+	test("getItemDateAdded", () => {
 		const date = new Date(2022, 0, 1).toString();
 		const mockItem = mock<ZItem>({ data: { dateAdded: date } });
-		const cases = [
-			[
-				"with default settings", 
-				{},
-				"[[January 1st, 2022]]"
-			],
-			[
-				"with no brackets",
-				{ brackets: false },
-				"January 1st, 2022"
-			]
-		] as const;
 
-		test.each(cases)(
-			"%# - %s",
-			(_id, config, expectation) => {
-				expect(extension.getItemDateAdded(mockItem, config)).toBe(expectation);
-			}
-		);
+		expect(extension.getItemDateAdded(mockItem))
+			.toEqual(getItemDateAdded(mockItem, { brackets: true }));
 	});
 
-	test("Retrieving the links to an item", () => {
+	test("getItemLink", () => {
 		const mockItem = mock<ZItemTop>();
 		expect(extension.getItemLink(mockItem, "local"))
 			.toBe(getLocalLink(mockItem));
@@ -238,7 +61,7 @@ describe("Formatting utils", () => {
 			.toBe(getWebLink(mockItem));
 	});
 
-	describe("Retrieving publication details for an item", () => {
+	describe("getItemPublication", () => {
 		const makeMock = (itemData: Partial<ZItemTop["data"]>) => mock<ZItemTop>({ data: { ...itemData } });
 		const cases = [
 			[{ publicationTitle: "some publication", bookTitle: undefined, university: undefined }, "some publication"],
@@ -269,7 +92,6 @@ describe("Formatting utils", () => {
 	describe("Retrieving the formatted type for an item", () => {
 		const cases = [
 			[{ itemType: "journalArticle" }, {}, "[[Article]]"],
-			[{ itemType: "journalArticle" }, { brackets: true }, "[[Article]]"],
 			[{ itemType: "bookSection" }, { brackets: false }, "Chapter"]
 		] as const;
 
@@ -363,7 +185,7 @@ describe("Retrieval utils", () => {
 
 });
 
-describe("DB utils", () => {
+describe("Database connectivity", () => {
 	const client = new QueryClient();
 	const date = new Date(2021, 4, 6);
 	const extensionRequests = mock<UserRequests>({ libraries: [] });
@@ -390,7 +212,7 @@ describe("DB utils", () => {
 		vi.useRealTimers();
 	});
 
-	test("Cache lifecycle", async () => {
+	it("can manage the cache", async () => {
 		const infoLogger = vi.spyOn(extension, "info");
 
 		// Simulate behavior of the React Query provider
@@ -419,7 +241,7 @@ describe("DB utils", () => {
 	
 	});
 
-	test("DB deletion", async () => {
+	it("can delete the database", async () => {
 		await extension.deleteDatabase();
 
 		await waitFor(async () => {
@@ -430,30 +252,64 @@ describe("DB utils", () => {
 
 });
 
-describe("DB utils - without DB", () => {
+describe("isDataCached", () => {
 	const extensionRequests = mock<UserRequests>({ libraries: [] });
 
-	let client: QueryClient;
-	let extension: ZoteroRoam;
-
-	beforeEach(() => {
-		client = new QueryClient();
-		extension = new ZoteroRoam({
+	it("returns false when no data has been persisted yet", async() => {
+		const idbInstance = new IDBDatabaseService();
+		const client = new QueryClient();
+		const extension = new ZoteroRoam({
+			idbDatabase: idbInstance,
 			queryClient: client,
 			requests: extensionRequests,
 			settings: initSettings
 		});
+
+		const clientIsCached = await extension.isDataCached();
+		expect(clientIsCached).toBe(false);
+
+		/* eslint-disable-next-line dot-notation */
+		await waitFor(() => indexedDB.deleteDatabase(idbInstance["dbName"]), { timeout: 5000 });
 	});
 
+	it("returns true when data has been persisted", async () => {
+		const idbInstance = new IDBDatabaseService();
+		const client = new QueryClient();
+		const extension = new ZoteroRoam({
+			idbDatabase: idbInstance,
+			queryClient: client,
+			requests: extensionRequests,
+			settings: initSettings
+		});
 
-	test("isDataCached returns false", async () => {
+		// Simulate behavior of the React Query provider
+		persistQueryClientSave({
+			queryClient: client,
+			persister: createPersisterWithIDB(idbInstance)
+		});
+
+		const clientIsCached = await extension.isDataCached();
+		expect(clientIsCached).toBe(true);
+
+		/* eslint-disable-next-line dot-notation */
+		await waitFor(() => indexedDB.deleteDatabase(idbInstance["dbName"]), { timeout: 5000 });
+	});
+
+	it("returns false when there is no database", async() => {
+		const client = new QueryClient();
+		const extension = new ZoteroRoam({
+			queryClient: client,
+			requests: extensionRequests,
+			settings: initSettings
+		});
+	
 		const clientIsCached = await extension.isDataCached();
 		expect(clientIsCached).toBe(false);
 	});
 
 });
 
-describe("DB utils - errors are logged", () => {
+describe("Error logging when the database no longer exists", () => {
 	const extensionRequests = mock<UserRequests>({ libraries: [] });
 
 	let client: QueryClient;
@@ -478,7 +334,7 @@ describe("DB utils - errors are logged", () => {
 	});
 
 
-	test("Clearing the React Query store", async () => {
+	it("handles attempting to clear the React Query store", async () => {
 		const errorLogger = vi.spyOn(extension, "error");
 
 		await extension.clearDataCache();
@@ -494,7 +350,7 @@ describe("DB utils - errors are logged", () => {
 	});
 
 
-	test("Checking if there is cached data in the React Query store", async () => {
+	it("handles attempting to check if there is cached data", async () => {
 		const errorLogger = vi.spyOn(extension, "error");
 	
 		const res = await extension.isDataCached();
@@ -511,7 +367,7 @@ describe("DB utils - errors are logged", () => {
 	});
 
 
-	test("Fetching timestamp of last caching operation", async () => {
+	it("handles attempting to fetch the timestamp for the last caching operation", async () => {
 		const errorLogger = vi.spyOn(extension, "error");
 
 		await extension.getDataCacheUpdatedAt();
