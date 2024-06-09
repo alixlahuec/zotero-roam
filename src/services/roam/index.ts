@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import { executeFunctionByName } from "../../utils";
-import { _formatNotes, _getItemMetadata } from "../../api";
+import { formatNotes, formatItemMetadata } from "../../api/helpers";
 import { emitCustomEvent } from "../events";
 import { Roam } from "./types";
 import { use_smartblock_metadata } from "../smartblocks";
@@ -364,7 +364,7 @@ async function importItemMetadata(
 		try {
 			const metadata = (use == "function" && func) 
 				? await executeFunctionByName(func, window, item, pdfs, notes) 
-				: _getItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap });
+				: formatItemMetadata(item, pdfs, notes, { annotationsSettings, notesSettings, typemap });
 			const importOutcome = await addBlocksArray(pageUID, metadata);
 
 			const outcome = {
@@ -422,7 +422,7 @@ async function importItemNotes(
 	}
 
 	try {
-		const formattedOutput = _formatNotes(notes, pageUID, { annotationsSettings, notesSettings });
+		const formattedOutput = formatNotes(notes, pageUID, { annotationsSettings, notesSettings });
 		const importOutcome = await addBlocksArray(pageUID, formattedOutput);
 
 		const outcome = {
