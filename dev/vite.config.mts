@@ -110,7 +110,7 @@ export default defineConfig(({ command, mode }) => {
 			define: {
 				"PACKAGE_VERSION": pkg.version
 			},
-			environment: "jsdom",
+			environment: "./dev/vitest.environment.ts",
 			globals: true,
 			outputFile: {
 				"junit": "reports/tests-junit.xml",

@@ -82,7 +82,7 @@
         "eslint-plugin-react-hooks": "^4.6.2",
         "eslint-plugin-storybook": "^0.8.0",
         "eslint-plugin-vitest": "^0.5.4",
-        "fake-indexeddb": "^4.0.2",
+        "fake-indexeddb": "^6.0.0",
         "msw": "^2.3.0",
         "msw-storybook-addon": "^2.0.2",
         "release-it": "^17.3.0",
