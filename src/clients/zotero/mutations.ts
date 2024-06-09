@@ -2,12 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { CitoidAPI } from "@clients/citoid";
 import { emitCustomEvent } from "@services/events";
+import { Queries } from "@services/react-query";
 
 import { deleteTags, writeItems } from "./base";
 import { ZoteroAPI } from "./types";
 
 import { isFulfilled } from "Types/helpers";
-import { Queries, ZLibrary, isZItemTop } from "Types/transforms";
+import { ZLibrary, isZItemTop } from "Types/transforms";
 
 
 type DeleteTagsArgs = {

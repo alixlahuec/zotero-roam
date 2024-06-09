@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import axiosRetry from "axios-retry";
 
 import { emitCustomEvent } from "@services/events";
+import { Queries } from "@services/react-query";
 
 import { makeTagList, matchWithCurrentData } from "./helpers";
 import { ZoteroAPI } from "./types";
@@ -11,7 +12,7 @@ import { cleanError } from "../../utils";
 
 import { DataRequest } from "Types/extension";
 import { Maybe } from "Types/helpers";
-import { Queries, ZItem, ZLibrary } from "Types/transforms";
+import { ZItem, ZLibrary } from "Types/transforms";
 
 
 const zoteroClient = axios.create({

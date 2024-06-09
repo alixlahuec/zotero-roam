@@ -42,10 +42,10 @@ export namespace Queries {
 		};
 
 		export type Permissions = ZoteroAPI.Responses.Permissions;
-		
+
 		export type Tags = {
 			data: ZTagList,
 			lastUpdated: number
 		}
-	}	
+	}
 }

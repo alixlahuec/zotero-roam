@@ -6,6 +6,7 @@ import { mock } from "vitest-mock-extended";
 
 import { makeTagList } from "@clients/zotero/helpers";
 import IDBDatabaseService from "@services/idb";
+import { Queries } from "@services/react-query";
 
 import ZoteroRoam, { _formatNotes } from ".";
 import { cleanBibliographyHTML } from "./helpers";
@@ -18,7 +19,7 @@ import { bibs, findBibliographyEntry, entries, findItems, items, apiKeys, findCo
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
 
 import { UserRequests, UserSettings } from "Types/extension";
-import { Queries, ZItem, ZItemTop } from "Types/transforms";
+import { ZItem, ZItemTop } from "Types/transforms";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;

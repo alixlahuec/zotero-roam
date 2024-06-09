@@ -8,11 +8,12 @@ import LibraryQueryList from "./LibraryQueryList";
 
 import { useItems } from "@clients/zotero";
 import { useBool } from "@hooks";
+import { Queries } from "@services/react-query";
 
 import { dialogClass, dialogLabel } from "./classes";
 import { cleanLibrary } from "./helpers";
 
-import { Queries, RCitekeyPages } from "Types/transforms";
+import { RCitekeyPages } from "Types/transforms";
 import { DataRequest, ExtensionStatusEnum } from "Types/extension";
 import "./_index.sass";
 

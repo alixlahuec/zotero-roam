@@ -2,6 +2,7 @@ import { Query, QueryClient, QueryFilters } from "@tanstack/query-core";
 
 import { ZoteroAPI, fetchBibEntries, fetchBibliography } from "@clients/zotero";
 import IDBDatabase from "@services/idb";
+import { Queries } from "@services/react-query";
 import { findRoamBlock, makeDNP } from "@services/roam";
 
 import { RelatedOptions, _getItemRelated, cleanBibliographyHTML, compareAnnotationRawIndices, formatZoteroAnnotations } from "./helpers";
@@ -11,7 +12,7 @@ import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
 import { cleanError, formatZoteroNotes, getLocalLink, getWebLink } from "../utils";
 
 import { IDB_REACT_QUERY_CLIENT_KEY, IDB_REACT_QUERY_STORE_NAME } from "../constants";
-import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, Queries, ZLinkType, ZLinkOptions, isZAnnotation, isZNote, isZItemTop, isZAttachment } from "Types/transforms";
+import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLibrary, ZLinkType, ZLinkOptions, isZAnnotation, isZNote, isZItemTop, isZAttachment } from "Types/transforms";
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap, UserRequests, UserSettings } from "Types/extension";
 
 

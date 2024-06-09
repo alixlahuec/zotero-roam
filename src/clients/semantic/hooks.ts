@@ -1,8 +1,8 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 
-import { fetchSemantic } from "./base";
+import { Queries } from "@services/react-query";
 
-import { Queries } from "Types/transforms";
+import { fetchSemantic } from "./base";
 
 
 /** Use Semantic Scholar citation data for a DOI. By default, `cacheTime = Infinity`.
