@@ -3,16 +3,16 @@ import { mock } from "vitest-mock-extended";
 import { cleanBibliographyHTML, compareAnnotationRawIndices, formatNotes, formatZoteroAnnotations, getItemDateAdded } from "./helpers";
 
 import { setupInitialSettings } from "../setup";
-import { formatItemAnnotations, formatItemNotes, simplifyZoteroAnnotations } from "../utils";
+import { formatZoteroNotes, simplifyZoteroAnnotations } from "../utils";
 
 import { bibs, sampleAnnot, sampleAnnotPrevPage, sampleAnnotLaterPage, sampleImageAnnot, sampleNote, sampleOlderNote } from "Mocks";
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
+import { UserSettings } from "Types/extension";
 import { ZItem } from "Types/transforms";
 
 
 const simplifiedAnnot = simplifyZoteroAnnotations([sampleAnnot])[0];
-const { annotations, notes } = setupInitialSettings({});
-const settings = { annotationsSettings: annotations, notesSettings: notes };
+const { annotations: annotationsSettings, notes } = setupInitialSettings({});
 
 
 describe("cleanBibliographyHTML", () => {
@@ -65,41 +65,46 @@ test("compareAnnotationRawIndices", () => {
 
 describe("formatNotes", () => {
 	it("sorts output", () => {
-		expect(formatNotes([sampleAnnotLaterPage, sampleAnnotPrevPage], null, settings))
+		const notesSettings: UserSettings["notes"] = {
+			...notes,
+			nest_preset: false
+		};
+
+		expect(formatNotes([sampleAnnotLaterPage, sampleAnnotPrevPage], null, { annotationsSettings, notesSettings }))
 			.toEqual([
-				...formatItemAnnotations([sampleAnnotPrevPage]),
-				...formatItemAnnotations([sampleAnnotLaterPage])
+				...formatZoteroAnnotations([sampleAnnotPrevPage], annotationsSettings),
+				...formatZoteroAnnotations([sampleAnnotLaterPage], annotationsSettings)
 			]);
 
-		expect(formatNotes([sampleNote, sampleOlderNote], null, settings))
+		expect(formatNotes([sampleNote, sampleOlderNote], null, { annotationsSettings, notesSettings }))
 			.toEqual([
-				...formatItemNotes([sampleOlderNote]),
-				...formatItemNotes([sampleNote])
+				...formatZoteroNotes([sampleOlderNote], notesSettings),
+				...formatZoteroNotes([sampleNote], notesSettings)
 			]);
 
-		expect(formatNotes([sampleNote, sampleAnnotLaterPage, sampleAnnotPrevPage], null, settings))
+		expect(formatNotes([sampleNote, sampleAnnotLaterPage, sampleAnnotPrevPage], null, { annotationsSettings, notesSettings }))
 			.toEqual([
-				...formatItemAnnotations([sampleAnnotPrevPage]),
-				...formatItemAnnotations([sampleAnnotLaterPage]),
-				...formatItemNotes([sampleNote])
+				...formatZoteroAnnotations([sampleAnnotPrevPage], annotationsSettings),
+				...formatZoteroAnnotations([sampleAnnotLaterPage], annotationsSettings),
+				...formatZoteroNotes([sampleNote], notesSettings)
 			]);
 	});
 
 	it("handles nested output (with preset)", () => {
 		const notesSettings = {
-			...settings.notesSettings,
+			...notes,
 			nest_preset: "[[Notes]]",
 			nest_use: "preset"
 		} as const
 
-		expect(formatNotes([sampleNote, sampleOlderNote], null, { ...settings, notesSettings }))
+		expect(formatNotes([sampleNote, sampleOlderNote], null, { annotationsSettings, notesSettings }))
 			.toEqual([
 				{
 					string: notesSettings.nest_preset,
 					text: notesSettings.nest_preset,
 					children: [
-						...formatItemNotes([sampleOlderNote]),
-						...formatItemNotes([sampleNote])
+						...formatZoteroNotes([sampleOlderNote], notesSettings),
+						...formatZoteroNotes([sampleNote], notesSettings)
 					]
 				}
 			]);
@@ -109,19 +114,19 @@ describe("formatNotes", () => {
 		const custom_string = "[[My Notes]]";
 
 		const notesSettings = {
-			...settings.notesSettings,
+			...notes,
 			nest_char: custom_string,
 			nest_use: "custom"
 		} as const
 
-		expect(formatNotes([sampleNote, sampleOlderNote], null, { ...settings, notesSettings }))
+		expect(formatNotes([sampleNote, sampleOlderNote], null, { annotationsSettings, notesSettings }))
 			.toEqual([
 				{
 					string: custom_string,
 					text: custom_string,
 					children: [
-						...formatItemNotes([sampleOlderNote]),
-						...formatItemNotes([sampleNote])
+						...formatZoteroNotes([sampleOlderNote], notesSettings),
+						...formatZoteroNotes([sampleNote], notesSettings)
 					]
 				}
 			]);
@@ -130,9 +135,9 @@ describe("formatNotes", () => {
 	it("handles nested output, with block checking", () => {
 		const custom_string = "[[My Notes]]";
 		const mockSettings = {
-			...settings,
+			annotationsSettings,
 			notesSettings: {
-				...settings.notesSettings,
+				...notes,
 				nest_char: custom_string,
 				nest_position: "top",
 				nest_preset: false,
@@ -140,7 +145,7 @@ describe("formatNotes", () => {
 			}
 		} as const
 
-		const formattedOutput = formatItemNotes([sampleNote]);
+		const formattedOutput = formatZoteroNotes([sampleNote], mockSettings.notesSettings);
 
 		expect(formatNotes([sampleNote], uid_with_existing_block, mockSettings)).toEqual(
 			formattedOutput.map(blck => ({
@@ -172,9 +177,9 @@ describe("formatNotes", () => {
 
 	it("handles nested output, with block checking & position", () => {
 		const mockSettings = {
-			...settings,
+			annotationsSettings,
 			notesSettings: {
-				...settings.notesSettings,
+				...notes,
 				nest_char: "[[My Notes]]",
 				nest_position: "bottom",
 				nest_preset: false,
@@ -182,7 +187,7 @@ describe("formatNotes", () => {
 			}
 		} as const
 
-		const formattedOutput = formatItemNotes([sampleNote]);
+		const formattedOutput = formatZoteroNotes([sampleNote], mockSettings.notesSettings);
 
 		expect(formatNotes([sampleNote], uid_with_existing_block, mockSettings))
 			.toEqual(
