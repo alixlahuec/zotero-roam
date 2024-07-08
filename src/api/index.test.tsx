@@ -7,8 +7,7 @@ import { mock } from "vitest-mock-extended";
 import IDBDatabaseService from "@services/idb";
 
 import ZoteroRoam from ".";
-import { cleanBibliographyHTML, formatNotes, getItemDateAdded } from "./helpers";
-import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
+import { cleanBibliographyHTML, formatNotes, formatPDFs, getItemCreators, getItemDateAdded, getItemTags } from "./helpers";
 
 import { createPersisterWithIDB, setupInitialSettings } from "../setup";
 import { getLocalLink, getWebLink } from "../utils";
@@ -40,7 +39,7 @@ describe("Formatting utils", () => {
 
 	test("formatPDFs", () => {
 		expect(extension.formatPDFs([samplePDF]))
-			.toEqual(_formatPDFs([samplePDF], "string"));
+			.toEqual(formatPDFs([samplePDF], "string"));
 		expect(extension.formatPDFs([]))
 			.toEqual("");
 	});
@@ -124,13 +123,13 @@ describe("Retrieval utils", () => {
 	test("Retrieving creators data for an item", () => {
 		const sample_item = items.find(it => it.data.creators.length > 0)!;
 		expect(extension.getItemCreators(sample_item, {}))
-			.toEqual(_getItemCreators(sample_item, {}));
+			.toEqual(getItemCreators(sample_item, {}));
 	});
 
 	test("Retrieving tags data for an item", () => {
 		const sample_item = items.find(it => it.data.tags.length > 0)!;
 		expect(extension.getItemTags(sample_item, {}))
-			.toEqual(_getItemTags(sample_item, {}));
+			.toEqual(getItemTags(sample_item, {}));
 	});
 
 	describe("Retrieving bibliography for an item", () => {
