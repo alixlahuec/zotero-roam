@@ -1,9 +1,10 @@
-import { findRoamBlock, makeDNP } from "@services/roam";
+import { ZoteroAPI } from "@clients/zotero";
+import { findRoamBlock, findRoamPage, makeDNP } from "@services/roam";
 
-import { cleanNewlines, compareAnnotationIndices, executeFunctionByName, extractSortIndex, formatItemAnnotations, formatZoteroNotes, getLocalLink, getWebLink, simplifyZoteroAnnotations } from "../utils";
-import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
+import { cleanNewlines, compareAnnotationIndices, executeFunctionByName, extractSortIndex, formatItemAnnotations, formatZoteroNotes, getLocalLink, getPDFLink, getWebLink, simplifyZoteroAnnotations } from "../utils";
 
 import { SettingsAnnotations, SettingsNotes, SettingsTypemap } from "Types/extension";
+import { AsBoolean } from "Types/helpers";
 import { RImportableElement, ZItem, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop, ZLinkType, ZLinkOptions, isZAnnotation, isZNote } from "Types/transforms";
 
 
@@ -56,17 +57,17 @@ function formatItemMetadata(
 	const metadata: RImportableElement[] = [];
 
 	if (item.data.title) { metadata.push(`Title:: ${item.data.title}`); } // Title, if available
-	if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${_getItemCreators(item, { return_as: "string", brackets: true, use_type: true })}`); } // Creators list, if available
+	if (item.data.creators.length > 0) { metadata.push(`Author(s):: ${getItemCreators(item, { return_as: "string", brackets: true, use_type: true })}`); } // Creators list, if available
 	if (item.data.abstractNote) { metadata.push(`Abstract:: ${item.data.abstractNote}`); } // Abstract, if available
 	if (item.data.itemType) { metadata.push(`Type:: ${getItemType(item, { brackets: true }, { typemap })}`); } // Item type, according to typemap
 	metadata.push(`Publication:: ${getItemPublication(item, { brackets: true })}`);
 	if (item.data.url) { metadata.push(`URL : ${item.data.url}`); }
 	if (item.data.dateAdded) { metadata.push(`Date Added:: ${getItemDateAdded(item)}`); } // Date added, as Daily Notes Page reference
 	metadata.push(`Zotero links:: ${getItemLink(item, "local", { format: "markdown", text: "Local library" })}, ${getItemLink(item, "web", { format: "markdown", text: "Web library" })}`); // Local + Web links to the item
-	if (item.data.tags.length > 0) { metadata.push(`Tags:: ${_getItemTags(item, { return_as: "string", brackets: true })}`); } // Tags, if any
+	if (item.data.tags.length > 0) { metadata.push(`Tags:: ${getItemTags(item, { return_as: "string", brackets: true })}`); } // Tags, if any
 
 	if (pdfs.length > 0) {
-		metadata.push(`PDF links : ${(_formatPDFs(pdfs, "links") as string[]).join(", ")}`);
+		metadata.push(`PDF links : ${(formatPDFs(pdfs, "links") as string[]).join(", ")}`);
 	}
 	if (notes.length > 0) {
 		const formattedOutput = formatNotes(notes, null, { annotationsSettings, notesSettings });
@@ -147,6 +148,88 @@ function formatNotes(
 }
 
 
+type PDFFormatOption = "links" | "identity" | "string";
+type PDFAsIdentity = { key: string, link: string, title: string };
+
+/** Converts Zotero PDF items into a specific format */
+function formatPDFs(pdfs: ZItemAttachment[], as: PDFFormatOption = "string"): string | string[] | PDFAsIdentity[] {
+	if (!pdfs) {
+		switch (as) {
+			case "identity":
+			case "links":
+				return [];
+			case "string":
+			default:
+				return "";
+		}
+	} else {
+		const pdfsIdentity = pdfs.map(file => ({
+			title: file.data.filename || file.data.title,
+			key: file.key,
+			link: getPDFLink(file, "href")
+		}));
+		switch (as) {
+			case "identity":
+				return pdfsIdentity;
+			case "links":
+				return pdfsIdentity.map(entry => `[${entry.title}](${entry.link})`);
+			case "string":
+			default:
+				return pdfsIdentity.map(entry => `[${entry.title}](${entry.link})`).join(", ");
+		}
+	}
+}
+
+
+type CreatorAsIdentity = { inGraph: string | boolean, name: string, type: ZoteroAPI.CreatorType };
+type CreatorOptions = { brackets: boolean | "existing", return_as: "array" | "identity" | "string", use_type: boolean };
+
+/** Retrieves the creators list of a Zotero item, and returns it into a specific format */
+function getItemCreators(item: ZItemTop, { return_as = "string", brackets = true, use_type = true }: Partial<CreatorOptions> = {}): string | string[] | CreatorAsIdentity[] {
+	const creatorsInfoList = item.data.creators.map(creator => {
+		const nameTag = "name" in creator
+			? creator.name
+			: `${[creator.firstName, creator.lastName].filter(AsBoolean).join(" ")}`;
+		return {
+			name: nameTag,
+			type: creator.creatorType,
+			inGraph: findRoamPage(nameTag)
+		};
+	});
+	switch (return_as) {
+		case "identity":
+			return creatorsInfoList;
+		case "array":
+			return creatorsInfoList.map(c => c.name);
+		case "string":
+		default:
+			return creatorsInfoList.map(creator => {
+				const creatorTag = (brackets == true || (brackets == "existing" && creator.inGraph))
+					? `[[${creator.name}]]`
+					: creator.name;
+				return (use_type == true ? creatorTag + (creator.type == "author" ? "" : ` (${creator.type})`) : creatorTag);
+			}).join(", ");
+	}
+}
+
+
+type TagOptions = { brackets: boolean, return_as: "array" | "string" };
+
+/** Retrieves the tags of a Zotero item, and returns them into a specific format */
+function getItemTags(item: ZItemTop, { return_as = "string", brackets = true }: Partial<TagOptions> = {}): string | string[] {
+	const tags = item.data.tags.map(t => t.tag);
+	const tagList = (brackets == true ? tags.map(el => `#[[${el}]]`) : tags);
+
+	switch (return_as) {
+		case "array":
+			return tagList;
+		case "string":
+		default:
+			return tagList.join(" ");
+	}
+}
+
+
 /** Formats an array of Zotero annotations into Roam blocks, with optional configuration */
 function formatZoteroAnnotations(
 	annotations: ZItemAnnotation[],
@@ -217,10 +300,13 @@ export {
 	compareAnnotationRawIndices,
 	formatItemMetadata,
 	formatNotes,
+	formatPDFs,
 	formatZoteroAnnotations,
+	getItemCreators,
 	getItemDateAdded,
 	getItemLink,
 	getItemPublication,
+	getItemTags,
 	getItemType,
 	groupCitekeysByLibrary
 };

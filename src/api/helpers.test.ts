@@ -1,6 +1,6 @@
 import { mock } from "vitest-mock-extended";
 
-import { cleanBibliographyHTML, compareAnnotationRawIndices, formatNotes, formatZoteroAnnotations, getItemDateAdded } from "./helpers";
+import { cleanBibliographyHTML, compareAnnotationRawIndices, formatNotes, formatZoteroAnnotations, getItemCreators, getItemDateAdded, getItemTags } from "./helpers";
 
 import { setupInitialSettings } from "../setup";
 import { formatZoteroNotes, simplifyZoteroAnnotations } from "../utils";
@@ -8,7 +8,7 @@ import { formatZoteroNotes, simplifyZoteroAnnotations } from "../utils";
 import { bibs, sampleAnnot, sampleAnnotPrevPage, sampleAnnotLaterPage, sampleImageAnnot, sampleNote, sampleOlderNote } from "Mocks";
 import { existing_block_uid, existing_block_uid_with_children, uid_with_existing_block, uid_with_existing_block_with_children } from "Mocks/roam";
 import { UserSettings } from "Types/extension";
-import { ZItem } from "Types/transforms";
+import { ZItem, ZItemTop } from "Types/transforms";
 
 
 const simplifiedAnnot = simplifyZoteroAnnotations([sampleAnnot])[0];
@@ -245,11 +245,81 @@ describe("formatZoteroAnnotations", () => {
 	});
 });
 
+describe("getItemCreators", () => {
+	const mockItem = mock<ZItemTop>({
+		data: {
+			creators: [
+				{ name: "Gary Bloch", creatorType: "author" },
+				{ name: "Linda Rozmovits", creatorType: "author" }
+			]
+		}
+	});
+
+	const cases = [
+		[
+			{ return_as: "identity" },
+			[
+				{ name: "Gary Bloch", type: "author", inGraph: false },
+				{ name: "Linda Rozmovits", type: "author", inGraph: false }
+			]
+		],
+		[
+			{ return_as: "array" },
+			[
+				"Gary Bloch",
+				"Linda Rozmovits"
+			]
+		],
+		[
+			{ return_as: "string", brackets: true, use_type: true },
+			"[[Gary Bloch]], [[Linda Rozmovits]]"
+		],
+		[
+			{ return_as: "string", brackets: false, use_type: true },
+			"Gary Bloch, Linda Rozmovits"
+		]
+	] as const;
+
+	test.each(cases)(
+		"%#",
+		(config, expectation) => {
+			expect(getItemCreators(mockItem, config))
+				.toEqual(expectation);
+		}
+	);
+
+});
+
 test("getItemDateAdded", () => {
 	const date = new Date(2022, 0, 1).toString();
 	const mockItem = mock<ZItem>({ data: { dateAdded: date } });
 
 	expect(getItemDateAdded(mockItem)).toBe("[[January 1st, 2022]]");
 	expect(getItemDateAdded(mockItem, { brackets: false })).toBe("January 1st, 2022");
+
+});
+
+describe("getItemTags", () => {
+	const mockItem = mock<ZItemTop>({
+		data: {
+			tags: [{ tag: "housing" }]
+		}
+	});
+
+	const cases = [
+		[{ return_as: "array", brackets: false }, ["housing"]],
+		[{ return_as: "array", brackets: true }, ["#[[housing]]"]],
+		[{ return_as: "string", brackets: false }, "housing"],
+		[{ return_as: "string", brackets: true }, "#[[housing]]"],
+		[{}, "#[[housing]]"]
+	] as const;
+
+	test.each(cases)(
+		"%#",
+		(config, expectation) => {
+			expect(getItemTags(mockItem, config))
+				.toEqual(expectation);
+		}
+	);
 
 });

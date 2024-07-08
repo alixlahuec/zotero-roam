@@ -4,9 +4,8 @@ import { ZoteroAPI, fetchBibEntries, fetchBibliography } from "@clients/zotero";
 import IDBDatabase from "@services/idb";
 import { SelectItemCollectionsOptions, SelectItemRelatedOptions, SelectItemsOption, selectCollections, selectItemChildren, selectItemCollections, selectItemRelated, selectItems, selectTags } from "@services/react-query";
 
-import { cleanBibliographyHTML, formatItemMetadata, formatNotes, getItemDateAdded, getItemLink, getItemPublication, getItemType, groupCitekeysByLibrary } from "./helpers";
+import { cleanBibliographyHTML, formatItemMetadata, formatNotes, formatPDFs, getItemCreators, getItemDateAdded, getItemLink, getItemPublication, getItemTags, getItemType, groupCitekeysByLibrary } from "./helpers";
 import { Logger } from "./logging";
-import { _formatPDFs, _getItemCreators, _getItemTags } from "./public";
 
 import { cleanError } from "../utils";
 
@@ -128,12 +127,12 @@ export default class ZoteroRoam extends Logger {
 		this.#settings[op] = val;
 	}
 
-	formatPDFs = _formatPDFs;
-	getItemCreators = _getItemCreators;
+	formatPDFs = formatPDFs;
+	getItemCreators = getItemCreators;
 	getItemDateAdded = getItemDateAdded;
 	getItemLink = getItemLink;
 	getItemPublication = getItemPublication;
-	getItemTags = _getItemTags;
+	getItemTags = getItemTags;
 
 	/** Formats Zotero notes and annotations, with current user settings */
 	formatNotes(notes: (ZItemNote | ZItemAnnotation)[]) {
