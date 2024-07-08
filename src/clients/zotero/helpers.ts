@@ -1,12 +1,14 @@
 import { QueryClient } from "@tanstack/react-query";
 
+import { Queries } from "@services/react-query";
+
 import { fetchItems } from "./base";
 import { ZoteroAPI } from "./types";
 
 import { makeDictionary, searchEngine } from "../../utils";
 
 import { DataRequest } from "Types/extension";
-import { Queries, ZTagEntry, ZTagList, ZTagMap } from "Types/transforms";
+import { ZTagEntry, ZTagList, ZTagMap } from "Types/transforms";
 
 /** Compares two Zotero tags based on tag string and type, to determine if they are duplicates
  * @param tag1 - The first tag to compare

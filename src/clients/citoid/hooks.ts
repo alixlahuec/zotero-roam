@@ -1,9 +1,9 @@
 import { UseQueryOptions, useQueries } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
-import { fetchCitoid } from "./base";
+import { Queries } from "@services/react-query";
 
-import { Queries } from "Types/transforms";
+import { fetchCitoid } from "./base";
 
 
 /** React Query custom hook for retrieving Wikipedia metadata for a list of URLs. By default, `cacheTime = Infinity` and `staleTime = 10min`.

@@ -8,6 +8,12 @@ import { DataRequest } from "Types/extension";
 import { ZItem, ZTagList } from "Types/transforms";
 
 
+export type SelectItemCollectionsOptions = { brackets: boolean, return_as: "array" | "string" };
+
+export type SelectItemRelatedOptions = { brackets: boolean, return_as: "array" | "raw" | "string" };
+
+export type SelectItemsOption = "all" | "annotations" | "attachments" | "children" | "items" | "notes" | "pdfs";
+
 export namespace Queries {
 	export namespace Key {
 		export type Citoid = ["citoid", { url: string }];
@@ -42,10 +48,10 @@ export namespace Queries {
 		};
 
 		export type Permissions = ZoteroAPI.Responses.Permissions;
-		
+
 		export type Tags = {
 			data: ZTagList,
 			lastUpdated: number
 		}
-	}	
+	}
 }
