@@ -11,8 +11,8 @@ import { DEFAULT_TOAST_TIMEOUT } from "../../constants";
  * @param event - The object containing the event's details
  * @param target - The DOM target on which the event should be emitted
  */
-function emitCustomEvent(event: Events.Details, target: Element | Document = document) {
-	const e = new CustomEvent<Events.Details>(`zotero-roam:${event._type}`, { bubbles: true, cancelable: true, detail: event });
+function emitCustomEvent<T extends Events.Details = Events.Details>(event: T, target: Element | Document = document) {
+	const e = new CustomEvent<T>(`zotero-roam:${event._type}`, { bubbles: true, cancelable: true, detail: event });
 	target.dispatchEvent(e);
 }
 
@@ -216,6 +216,8 @@ function clearDefaultHooks(){
 	document.removeEventListener("zotero-roam:tags-deleted", tagsDeleted);
 	document.removeEventListener("zotero-roam:tags-modified", tagsModified);
 }
+
+export * from "./types";
 
 export {
 	emitCustomEvent,

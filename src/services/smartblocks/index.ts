@@ -1,10 +1,9 @@
 import { makeDNP } from "@services/roam";
+
 import { getLocalLink, getWebLink, parseDOI } from "../../utils";
 
-import { SmartblocksPlugin } from "./types";
-
-import { AsBoolean } from "Types/helpers";
-import { RImportableElement, SBConfig, SBImportableBlock, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
+import { processQuery, reformatImportableBlocks } from "./helpers";
+import { SBConfig, SmartblocksPlugin } from "./types";
 
 
 /** Generates the list of custom SmartBlocks commands to register
@@ -166,101 +165,6 @@ const sbCommands = () => {
 	} as const;
 };
 
-// TODO: move helpers into separate module
-
-/** Returns the outcome of a given query against a given props array
- * @param query - The query to test against the props
- * @param props - The props to test the query against
- * @returns The query's outcome (`true` if the props include a string that matches the query, `false` otherwise)
- */
-function processQuery(query: string, props: string[]): boolean{
-	// eslint-disable-next-line no-useless-escape
-	const components = query.split(/([\|\&]?)([^\&\|\(\)]+|\(.+\))([\|\&]?)/).filter(AsBoolean);
-	if(components.includes("|")){
-		return eval_or(components.filter(c => c != "|"), props);
-	} else {
-		return eval_and(components.filter(c => c!= "&"), props);
-	}
-}
-
-/** Evaluates an "AND" query against a given props array
- * @param terms - The terms of the "AND" query 
- * @param props - The props to test the query against 
- * @returns The query's outcome (`true` if all props match the query, `false` otherwise)
- */
-function eval_and(terms: string[], props: string[]): boolean{
-	let outcome = true;
-	for(let i=0;i<terms.length && outcome == true;i++){
-		outcome = eval_term(terms[i], props);
-	}
-	return outcome;
-}
-
-/** Evaluates an "OR" query against a given props array
- * @param terms - The terms of the "OR" query 
- * @param props - The props to test the query against 
- * @returns The query's outcome (`true` if any of the props matches the query, `false` otherwise)
- */
-function eval_or(terms: string[], props: string[]): boolean{
-	let outcome = false;
-	for(let i=0;i<terms.length && outcome == false;i++){
-		outcome = eval_term(terms[i], props);
-	}
-	return outcome;
-}
-
-/** Evaluates how a query term should be handled. If the term is a (grouping), the outer parentheses are stripped and the contents are evaluated against the props array that was provided. If the term is a -negation, verify that the props *do not* include it ; otherwise, verify that the props include the term. 
- * @returns The outcome of the term's evaluation against the props
- */
-function eval_term(
-	/** The query term to evaluate */
-	term: string,
-	/** The props that are being tested */
-	props: string[]
-): boolean{
-	if(term.startsWith("(") && term.endsWith(")")){
-		const clean_str = term.slice(1, -1);
-		return processQuery(clean_str, props);
-	} else {
-		if(term.startsWith("-")){
-			const clean_str = term.slice(1);
-			return !props.includes(clean_str);
-		} else {
-			return props.includes(term);
-		}
-	}
-}
-
-/** Enforces the block-object format (recursively) for an array of importable elements. This is needed for correctly importing nested blocks with SmartBlocks. */
-function reformatImportableBlocks(arr: RImportableElement[]): SBImportableBlock[]{
-	if(!arr){
-		return [];
-	} else {
-		return arr.map(blck => {
-			if(typeof(blck) === "string"){
-				return {
-					string: blck,
-					text: blck,
-					children: []
-				};
-			} else if(typeof(blck) === "object") {
-				return {
-					...blck,
-					children: reformatImportableBlocks(blck.children || [])
-				};
-			} else {
-				window.zoteroRoam?.error?.({
-					origin: "Metadata",
-					message: "Bad element received",
-					context: {
-						element: blck
-					}
-				});
-				throw new Error(`All array items should be of type String or Object, not ${typeof(blck)}`);
-			}
-		});
-	}
-}
 
 /* istanbul ignore next */
 /** Register the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph
@@ -302,6 +206,7 @@ function registerSmartblockCommands(){
 	}
 }
 
+
 /* istanbul ignore next */
 /** Unregister the extension's custom SmartBlocks commands, if the SmartBlocks extension is loaded in the user's Roam graph */
 function unregisterSmartblockCommands(){
@@ -314,66 +219,52 @@ function unregisterSmartblockCommands(){
 	}
 }
 
-// Extension-triggered SmartBlocks
 
-type SBContextMetadata = {
-	item: ZItemTop,
-	notes: (ZItemNote | ZItemAnnotation)[],
-	page: { new: boolean, title: string, uid: string },
-	pdfs: ZItemAttachment[]
-};
-
-type UseSBMetadataOutcome = {
+type UseSmartblockOutcome = {
 	args: {
 		smartblock: SBConfig,
 		uid: string
 	},
-	page: SBContextMetadata["page"],
-	raw: Pick<SBContextMetadata, "item" | "notes" | "pdfs">
+	raw: Record<string, any>
 } & ({ error: null, success: true } | { error: Error, success: false });
 
 /* istanbul ignore next */
-/** Triggers a given SmartBlock to import an item's metadata
- * @param config - The configuration of the SmartBlock to use.
- * @param context - The context variables provided by the extension to the SmartBlock
+/** Triggers a Smartblock, with optional context.
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
-async function use_smartblock_metadata(config: SBConfig, context: SBContextMetadata): Promise<UseSBMetadataOutcome>{
+async function triggerSmartblock(
+	/** The UID where the Smartblock should be triggered */
+	targetUid: string,
+	/** The configuration of the Smartblock to use */
+	config: SBConfig,
+	/** The context variables that should be available to the Smartblock */
+	variables: Record<string, any> = {}
+): Promise<UseSmartblockOutcome> {
 	const { param: sbProp, paramValue: sbPropValue } = config;
-	const { item, notes, page, pdfs } = context;
 
 	const defaultOutcome = {
 		args: {
 			smartblock: config,
-			uid: page.uid
+			uid: targetUid
 		},
 		error: null,
-		page,
-		raw: {
-			item,
-			notes,
-			pdfs
-		},
+		raw: variables,
 		success: null
 	};
 
 	const obj = {
-		targetUid: page.uid,
-		variables: {},
+		targetUid,
+		variables,
 		[sbProp]: sbPropValue
 	};
 
-	Object.keys(context).forEach(k => {
-		obj.variables[k] = context[k];
-	});
-	
 	try {
 		await window.roamjs?.extension?.smartblocks?.triggerSmartblock(obj);
 		return Promise.resolve({
-			...defaultOutcome, 
+			...defaultOutcome,
 			success: true
 		});
-	} catch(e){
+	} catch (e) {
 		window.zoteroRoam?.error?.({
 			origin: "SmartBlocks",
 			message: "Failed to trigger SmartBlock",
@@ -391,13 +282,12 @@ async function use_smartblock_metadata(config: SBConfig, context: SBContextMetad
 	}
 }
 
+
 export * from "./types";
 
 export {
-	eval_term,
-	reformatImportableBlocks,
 	registerSmartblockCommands,
 	sbCommands,
-	unregisterSmartblockCommands,
-	use_smartblock_metadata
+	triggerSmartblock,
+	unregisterSmartblockCommands
 };
