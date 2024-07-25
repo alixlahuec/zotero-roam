@@ -53,7 +53,11 @@ const config: StorybookConfig = {
 					"Types": path.resolve(__dirname, "..", "src", "types")
 				}
 			},
-			plugins: [turbosnap({ rootDir: path.resolve(__dirname, "..") })]
+			plugins: [turbosnap({ rootDir: path.resolve(__dirname, "..") })],
+			test: {
+				...config.test,
+				alias: {}
+			}
 		})
 	}
 };
