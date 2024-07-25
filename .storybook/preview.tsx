@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { Decorator, Preview, StoryContext, StoryFn } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
-import { http, passthrough } from "msw";
 import { mockDateDecorator } from "storybook-mock-date-decorator";
 
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css";
@@ -18,7 +17,7 @@ import { withRoamCitekeys } from "./withRoamCitekeys";
 import { withUserSettings } from "./withUserSettings";
 
 import { A11Y_RULES } from "./a11y-rules";
-import { fallbackHandler, roamAssetsHandler, sciteApiHandler, sciteAssetsHandler, apiHandlers, chromaticHandler } from "Mocks";
+import { roamAssetsHandler, sciteApiHandler, sciteAssetsHandler, apiHandlers, chromaticHandler } from "Mocks";
 
 
 // Initialize MSW
@@ -83,12 +82,7 @@ const preview: Preview = {
 				roamAssetsHandler,
 				sciteApiHandler,
 				sciteAssetsHandler,
-				chromaticHandler,
-				http.get("http://localhost:6006/runtime*", () => passthrough()),
-				http.get("http://localhost:6006/main*", () => passthrough()),
-				http.get("http://localhost:6006/vendors*", () => passthrough()),
-				http.get("http://localhost:6006/*", () => passthrough()),
-				fallbackHandler
+				chromaticHandler
 			]
 		},
 		a11y: {
