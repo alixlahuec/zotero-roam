@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { useEffect, useGlobals } from "@storybook/addons";
+import { useEffect } from "react";
 import { Decorator, Preview, StoryContext, StoryFn } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
 import { http, passthrough } from "msw";
@@ -30,7 +30,7 @@ initialize({
 
 // https://storybook.js.org/docs/react/essentials/toolbars-and-globals
 const withTheme: Decorator = (Story: StoryFn, context: StoryContext) => {
-	const [{ theme }/*, updateGlobals */] = useGlobals();
+	const { theme } = context.globals;
 
 	useEffect(() => {
 		document.getElementById("storybook-root")?.parentElement?.setAttribute("zr-dark-theme", (theme == "dark").toString());
