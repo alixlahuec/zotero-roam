@@ -1,15 +1,16 @@
-import { SBConfig } from "./types";
-
 import { AsBoolean } from "Types/helpers";
 import { RImportableElement, SBImportableBlock } from "Types/transforms";
 
 
-/** Evaluates an "AND" query against a given props array
- * @param terms - The terms of the "AND" query 
- * @param props - The props to test the query against 
+/** Evaluates an "AND" query against a given props array 
  * @returns The query's outcome (`true` if all props match the query, `false` otherwise)
  */
-function evalAND(terms: string[], props: string[]): boolean {
+function evalAND(
+	/** The terms of the "AND" query */
+	terms: string[],
+	/** The props to test the query against */
+	props: string[]
+): boolean {
 	let outcome = true;
 	for (let i = 0; i < terms.length && outcome == true; i++) {
 		outcome = evalTerm(terms[i], props);
@@ -18,12 +19,15 @@ function evalAND(terms: string[], props: string[]): boolean {
 }
 
 
-/** Evaluates an "OR" query against a given props array
- * @param terms - The terms of the "OR" query 
- * @param props - The props to test the query against 
+/** Evaluates an "OR" query against a given props array 
  * @returns The query's outcome (`true` if any of the props matches the query, `false` otherwise)
  */
-function evalOR(terms: string[], props: string[]): boolean {
+function evalOR(
+	/** The terms of the "OR" query */
+	terms: string[],
+	/** The props to test the query against */
+	props: string[]
+): boolean {
 	let outcome = false;
 	for (let i = 0; i < terms.length && outcome == false; i++) {
 		outcome = evalTerm(terms[i], props);
@@ -56,11 +60,14 @@ function evalTerm(
 
 
 /** Returns the outcome of a given query against a given props array
- * @param query - The query to test against the props
- * @param props - The props to test the query against
  * @returns The query's outcome (`true` if the props include a string that matches the query, `false` otherwise)
  */
-function processQuery(query: string, props: string[]): boolean {
+function processQuery(
+	/** The query to test against the props */
+	query: string,
+	/** The props to test the query against */
+	props: string[]
+): boolean {
 	// eslint-disable-next-line no-useless-escape
 	const components = query.split(/([\|\&]?)([^\&\|\(\)]+|\(.+\))([\|\&]?)/).filter(AsBoolean);
 	if (components.includes("|")) {
@@ -71,7 +78,9 @@ function processQuery(query: string, props: string[]): boolean {
 }
 
 
-/** Enforces the block-object format (recursively) for an array of importable elements. This is needed for correctly importing nested blocks with SmartBlocks. */
+/** Enforces the block-object format (recursively) for an array of importable elements.
+ * This is needed for correctly importing nested blocks with SmartBlocks.
+ */
 function reformatImportableBlocks(arr: RImportableElement[]): SBImportableBlock[] {
 	if (!arr) {
 		return [];

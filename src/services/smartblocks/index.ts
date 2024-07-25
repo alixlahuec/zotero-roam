@@ -230,14 +230,14 @@ type UseSmartblockOutcome = {
 
 /* istanbul ignore next */
 /** Triggers a Smartblock, with optional context.
- * @param targetUid - The UID where the Smartblock should be triggered.
- * @param config - The configuration of the Smartblock to use.
- * @param context - The context variables that should be available to the Smartblock.
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
 async function triggerSmartblock(
+	/** The UID where the Smartblock should be triggered */
 	targetUid: string,
+	/** The configuration of the Smartblock to use */
 	config: SBConfig,
+	/** The context variables that should be available to the Smartblock */
 	variables: Record<string, any> = {}
 ): Promise<UseSmartblockOutcome> {
 	const { param: sbProp, paramValue: sbPropValue } = config;
