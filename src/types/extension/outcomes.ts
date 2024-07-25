@@ -1,4 +1,6 @@
-import { RImportableElement, SBConfig } from "Types/transforms";
+import { SBConfig } from "@services/smartblocks";
+
+import { RImportableElement } from "Types/transforms";
 
 
 export type ArgsMetadataSmartblock = {
