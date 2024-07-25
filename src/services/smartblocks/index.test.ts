@@ -4,14 +4,14 @@ import { mock } from "vitest-mock-extended";
 import { analyzeUserRequests, setupInitialSettings } from "../../setup";
 import ZoteroRoam from "../../api";
 
-import { eval_term, reformatImportableBlocks, sbCommands } from ".";
+import { sbCommands } from ".";
+import { reformatImportableBlocks } from "./helpers";
 import { SmartblocksPlugin } from "./types";
 
 import { getLocalLink, getWebLink } from "../../utils";
 
 import { Mocks, apiKeys, bibs, findCollections, findItems, items, libraries, sampleNote, samplePDF } from "Mocks";
 import { makeDNP } from "Mocks/roam";
-
 
 
 const { userLibrary, groupLibrary } = libraries;
@@ -24,73 +24,6 @@ const defaultReqs = [
 const initRequests = analyzeUserRequests(defaultReqs);
 const initSettings = setupInitialSettings({});
 
-
-// Queries
-
-const props = ["systems", "culture", "PKM"];
-
-test("Simple term evals correctly", () => {
-	expect(eval_term("systems", props)).toBe(true);
-	expect(eval_term("software", props)).toBe(false);
-	expect(eval_term("-TODO", props)).toBe(true);
-});
-
-test("Simple grouping evals correctly", () => {
-	expect(eval_term("(systems&software)", props)).toBe(false);
-	expect(eval_term("(software|TODO)", props)).toBe(false);
-	expect(eval_term("(PKM&culture)", props)).toBe(true);
-});
-
-// Utils
-
-describe("Enforcing a block-object format returns correct output", () => {
-	const cases = [
-		[
-			[],
-			[]
-		],
-		[
-			["some", "block"],
-			[
-				{ string: "some", text: "some", children: [] },
-				{ string: "block", text: "block", children: [] }
-			]
-		],
-		[
-			["some", { string: "object", text: "object", children: [] }],
-			[
-				{ string: "some", text: "some", children: [] },
-				{ string: "object", text: "object", children: [] }
-			]
-		],
-		[
-			["some", { string: "object", text: "object", children: ["child", "string"] }],
-			[
-				{ string: "some", text: "some", children: [] },
-				{ string: "object", text: "object", children: [
-					{ string: "child", text: "child", children: [] },
-					{ string: "string", text: "string", children: [] }
-				] }
-			]
-		]
-	];
-
-	test.each(cases)(
-		"%# - %s",
-		(arr, expectation) => {
-			expect(reformatImportableBlocks(arr))
-				.toEqual(expectation);
-		}
-	);
-
-	test("Passing an invalid element throws", () => {
-		// @ts-expect-error "Test expects bad input"
-		expect(() => reformatImportableBlocks([23]))
-			.toThrow("All array items should be of type String or Object, not number");
-	});
-});
-
-// Commands
 
 describe("All commands return correct output", () => {
 	let client: QueryClient;

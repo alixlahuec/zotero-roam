@@ -1,9 +1,11 @@
 /* istanbul ignore file */
+import { emitCustomEvent } from "@services/events";
+import { useSmartblockMetadata } from "@services/smartblocks";
+
 import { executeFunctionByName } from "../../utils";
 import { formatNotes, formatItemMetadata } from "../../api/helpers";
-import { emitCustomEvent } from "../events";
+
 import { Roam } from "./types";
-import { use_smartblock_metadata } from "../smartblocks";
 
 import { RCitekeyPages, RCitekeyPagesWithEditTime, RCursorLocation, RImportableBlock, RImportableElement, ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import { ArgsMetadataBlocks, OutcomeMetadataStatus, SettingsAnnotations, SettingsMetadata, SettingsNotes, SettingsTypemap } from "Types/extension";
@@ -338,7 +340,7 @@ async function importItemMetadata(
 	if(use == "smartblock"){
 		const context = { item, notes, page, pdfs };
 		try {
-			const outcome = await use_smartblock_metadata({ param, paramValue }, context);
+			const outcome = await useSmartblockMetadata({ param, paramValue }, context);
 			emitCustomEvent({ ...outcome, _type: "metadata-added" });
 
 			return outcome;

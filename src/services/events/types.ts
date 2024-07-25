@@ -2,7 +2,7 @@ import { CitoidAPI } from "@clients/citoid";
 import { ZoteroAPI } from "@clients/zotero";
 
 import { ArgsMetadataBlocks, ArgsMetadataSmartblock, OutcomeMetadataStatus, OutcomePage } from "Types/extension";
-import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
+import { ZItemAnnotation, ZItemNote, ZItemTop } from "Types/transforms";
 
 
 export namespace Events {
@@ -17,7 +17,7 @@ export namespace Events {
 		/** The details about the Roam page for the item */
 		page: OutcomePage,
 		/** The raw data provided as input */
-		raw: { item: ZItemTop, notes: (ZItemNote | ZItemAnnotation)[], pdfs: ZItemAttachment[] }
+		raw: Record<string, any>
 	} & OutcomeMetadataStatus;
 
 
