@@ -1,11 +1,9 @@
 import { makeDNP } from "@services/roam";
+
 import { getLocalLink, getWebLink, parseDOI } from "../../utils";
 
-import { processQuery, reformatImportableBlocks, useSmartblock, UseSmartblockOutcome } from "./helpers";
+import { processQuery, reformatImportableBlocks } from "./helpers";
 import { SBConfig, SmartblocksPlugin } from "./types";
-
-import { OutcomePage } from "Types/extension";
-import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 
 
 /** Generates the list of custom SmartBlocks commands to register
@@ -222,35 +220,74 @@ function unregisterSmartblockCommands(){
 }
 
 
-type SBContextMetadata = {
-	item: ZItemTop,
-	notes: (ZItemNote | ZItemAnnotation)[],
-	page: OutcomePage,
-	pdfs: ZItemAttachment[]
-};
-
-type UseSBMetadataOutcome = UseSmartblockOutcome & {
-	page: SBContextMetadata["page"],
-};
+type UseSmartblockOutcome = {
+	args: {
+		smartblock: SBConfig,
+		uid: string
+	},
+	raw: Record<string, any>
+} & ({ error: null, success: true } | { error: Error, success: false });
 
 /* istanbul ignore next */
-/** Triggers a given SmartBlock to import an item's metadata
- * @param config - The configuration of the SmartBlock to use.
- * @param context - The context variables provided by the extension to the SmartBlock
+/** Triggers a Smartblock, with optional context.
+ * @param targetUid - The UID where the Smartblock should be triggered.
+ * @param config - The configuration of the Smartblock to use.
+ * @param context - The context variables that should be available to the Smartblock.
  * @see https://roamjs.com/extensions/smartblocks/developer_docs
  */
-async function useSmartblockMetadata(config: SBConfig, context: SBContextMetadata): Promise<UseSBMetadataOutcome>{
-	const { page } = context;
-	const outcome = await useSmartblock(page.uid, config, context)
+async function triggerSmartblock(
+	targetUid: string,
+	config: SBConfig,
+	variables: Record<string, any> = {}
+): Promise<UseSmartblockOutcome> {
+	const { param: sbProp, paramValue: sbPropValue } = config;
 
-	return { ...outcome, page }
+	const defaultOutcome = {
+		args: {
+			smartblock: config,
+			uid: targetUid
+		},
+		error: null,
+		raw: variables,
+		success: null
+	};
+
+	const obj = {
+		targetUid,
+		variables,
+		[sbProp]: sbPropValue
+	};
+
+	try {
+		await window.roamjs?.extension?.smartblocks?.triggerSmartblock(obj);
+		return Promise.resolve({
+			...defaultOutcome,
+			success: true
+		});
+	} catch (e) {
+		window.zoteroRoam?.error?.({
+			origin: "SmartBlocks",
+			message: "Failed to trigger SmartBlock",
+			context: {
+				...obj,
+				error: e.message
+			}
+		});
+
+		return Promise.resolve({
+			...defaultOutcome,
+			error: e,
+			success: false
+		});
+	}
 }
+
 
 export * from "./types";
 
 export {
 	registerSmartblockCommands,
 	sbCommands,
-	unregisterSmartblockCommands,
-	useSmartblockMetadata
+	triggerSmartblock,
+	unregisterSmartblockCommands
 };
