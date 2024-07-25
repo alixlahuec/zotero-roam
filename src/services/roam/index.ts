@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { emitCustomEvent, Events } from "@services/events";
+import { emitCustomEvent } from "@services/events";
 import { triggerSmartblock } from "@services/smartblocks";
 
 import { executeFunctionByName } from "../../utils";
