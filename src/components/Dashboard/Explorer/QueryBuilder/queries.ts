@@ -172,7 +172,7 @@ const queries: Record<QueryProperty, Record<string, QueryOperator>> = {
 			checkInput: () => false,
 			defaultInput: null,
 			inputType: null,
-			testItem: (item: ZCleanItemTop) => item.children.notes.length > 0 // TODO: support PDF children
+			testItem: (item: ZCleanItemTop) => item.children.notes.length > 0
 		} as QueryOperator<null>,
 		"do not exist": {
 			checkInput: () => false,
