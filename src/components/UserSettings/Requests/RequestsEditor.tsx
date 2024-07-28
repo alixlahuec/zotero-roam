@@ -5,12 +5,12 @@ import { Placement } from "@blueprintjs/popover2";
 
 import { ErrorCallout } from "Components/Errors";
 
-import { ArrayAction, useArrayReducer } from "../../../hooks";
-import { analyzeUserRequests } from "../../../setup";
+import { ZoteroAPI } from "@clients/zotero";
+import { ArrayAction, useArrayReducer } from "@hooks";
 
 import { CustomClasses } from "../../../constants";
+import { analyzeUserRequests } from "../../../setup";
 import { DataRequest, UserDataRequest, UserRequests } from "Types/extension";
-import { ZoteroAPI } from "Types/externals";
 import "./_index.sass";
 
 

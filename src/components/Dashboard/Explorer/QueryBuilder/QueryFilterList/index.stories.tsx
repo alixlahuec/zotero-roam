@@ -1,9 +1,10 @@
 import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
-import { userEvent, within } from "@storybook/testing-library";
+import { userEvent, within } from "@storybook/test";
+
+import { useArrayReducer } from "@hooks";
 
 import QueryFilterList from ".";
-import { useArrayReducer } from "../../../../../hooks";
 import { QueryTermListRecursive } from "../types";
 
 

@@ -1,5 +1,7 @@
-import { ZoteroAPI } from "../externals";
-import { SBConfig, ZLibrary } from "../transforms";
+import { ZoteroAPI } from "@clients/zotero";
+import { SBConfig } from "@services/smartblocks";
+
+import { ZLibrary } from "../transforms";
 import { ZItemReferenceFormat } from "./misc";
 
 

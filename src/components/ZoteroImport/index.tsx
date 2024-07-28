@@ -8,14 +8,14 @@ import { useRequestsSettings } from "Components/UserSettings";
 import CollectionsSelector from "./CollectionsSelector";
 import LibrarySelector from "./LibrarySelector";
 
-import { useCitoids, useCollections, useWriteableLibraries } from "../../clients/hooks";
-import { useImportCitoids } from "../../clients/mutations";
+import { useCitoids } from "@clients/citoid";
+import { ZoteroAPI, useCollections, useWriteableLibraries, useImportCitoids } from "@clients/zotero";
+import { useMulti, useSelect } from "@hooks";
 
-import { useMulti, useSelect } from "../../hooks";
 import { sortCollections } from "./helpers";
 
 import { CustomClasses } from "../../constants";
-import { ZoteroAPI } from "Types/externals";
+
 import { AsBoolean } from "Types/helpers";
 import { ZLibrary } from "Types/transforms";
 

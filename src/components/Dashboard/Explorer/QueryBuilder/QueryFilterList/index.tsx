@@ -1,16 +1,18 @@
 import { Dispatch, useCallback, useState } from "react";
 import { Button, ButtonProps, Classes, Dialog, Tag } from "@blueprintjs/core";
 
-import QueryBox from "../QueryBox";
+import { ArrayAction, useBool } from "@hooks";
 
+import QueryBox from "../QueryBox";
 import { returnSiblingArray } from "../utils";
 import { defaultQueryTerm, queries } from "../queries";
-import { ArrayAction, useBool } from "../../../../../hooks";
 import { removeArrayElemAt, updateArrayElemAt } from "../../../../../utils";
 
 import { CustomClasses } from "../../../../../constants";
 import { QueryTerm, QueryTermListRecursive, QueryBoxAction } from "../types";
 import { AsBoolean } from "Types/helpers";
+
+import "./_index.sass";
 
 
 function makeValueString({ property, relationship, value }: QueryTerm): string{

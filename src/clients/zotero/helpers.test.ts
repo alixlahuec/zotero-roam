@@ -1,15 +1,16 @@
 import { QueryClient } from "@tanstack/react-query";
-import { mock } from "jest-mock-extended";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 
 
-jest.mock("./base");
+vi.mock("./base");
 import { fetchItems } from "./base";
+import { ZoteroAPI } from "./types";
 
-import { areTagsDuplicate, cleanBibliographyHTML, extractCitekeys, makeTagList, matchWithCurrentData, updateTagMap, wrappedFetchItems } from "./helpers";
+import { areTagsDuplicate, extractCitekeys, makeTagList, matchWithCurrentData, updateTagMap, wrappedFetchItems } from "./helpers";
 
-import { apiKeys, bibs, findTags, items, libraries, tags } from "Mocks";
+import { apiKeys, findTags, items, libraries, tags } from "Mocks";
 import { DataRequest } from "Types/extension";
-import { ZoteroAPI } from "Types/externals";
 import { ZTagDictionary } from "Types/transforms";
 
 
@@ -17,33 +18,6 @@ const { keyWithFullAccess: { key: masterKey } } = apiKeys;
 const { userLibrary, groupLibrary } = libraries;
 const { path: userPath } = userLibrary;
 
-
-
-
-describe("Cleaning XHTML markup for bibliography entries", () => {
-	// Necessary since jsdom does not support innerText
-	// It shouldn't give discrepant results here
-	// https://github.com/jsdom/jsdom/issues/1245#issuecomment-763535573
-	beforeAll(() => {
-		Object.defineProperty(HTMLElement.prototype, "innerText", {
-			get() {
-				return this.textContent;
-			}
-		});
-	});
-
-	it("should correctly format citations with one content div (like Chicago)", () => {
-		expect(cleanBibliographyHTML(bibs.itemFromUserLibrary.bib))
-			.toBe("Agarwal, Payal, Rick Wang, Christopher Meaney, Sakina Walji, Ali Damji, Navsheer Gill Toor, Gina Yip, et al. “Sociodemographic Differences in Patient Experience with Virtual Care during COVID-19.” medRxiv, July 22, 2021. https://www.medrxiv.org/content/10.1101/2021.07.19.21260373v1.");
-	});
-
-	it("should correctly format citations with multiple content divs (like Vancouver)", () => {
-		const sample_bib_vancouver = "<div class=\"csl-bib-body\" style=\"line-height: 1.35; \">\n  <div class=\"csl-entry\" style=\"clear: left; \">\n    <div class=\"csl-left-margin\" style=\"float: left; padding-right: 0.5em; text-align: right; width: 1em;\">1. </div><div class=\"csl-right-inline\" style=\"margin: 0 .4em 0 1.5em;\">MacDonald K, Fainman-Adelman N, Anderson KK, Iyer SN. Pathways to mental health services for young people: a systematic review. Soc Psychiatry Psychiatr Epidemiol. 2018 Oct;53(10):1005&#x2013;38.</div>\n   </div>\n</div>";
-
-		expect(cleanBibliographyHTML(sample_bib_vancouver))
-			.toBe("1. MacDonald K, Fainman-Adelman N, Anderson KK, Iyer SN. Pathways to mental health services for young people: a systematic review. Soc Psychiatry Psychiatr Epidemiol. 2018 Oct;53(10):1005–38.");
-	});
-});
 
 test("Extracting citekeys for Zotero items", () => {
 	const cases = [

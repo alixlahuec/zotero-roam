@@ -5,11 +5,14 @@ import DataDrawer from "Components/DataDrawer";
 import { ListItem } from "Components/DataList";
 import NotesDrawer from "Components/NotesDrawer";
 
-import { useBool } from "../../../../hooks";
+import { useBool } from "@hooks";
+
 import { pluralize } from "../../../../utils";
 
 import { CustomClasses } from "../../../../constants";
 import { ZCleanItemPDF } from "Types/transforms";
+
+import "../_index.sass";
 
 
 type OwnProps = {

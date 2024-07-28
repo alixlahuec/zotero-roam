@@ -1,10 +1,11 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
 
-import { cleanError, transformDOIs } from "../../utils";
+import { Queries } from "@services/react-query";
 
-import { SemanticScholarAPI } from "Types/externals";
-import { Queries } from "Types/transforms";
+import { SemanticScholarAPI } from "./types";
+
+import { cleanError, transformDOIs } from "../../utils";
 
 
 const semanticClient = axios.create({

@@ -1,0 +1,40 @@
+#zotero-roam-library-rendered
+    .bp3-menu
+        max-height: 70vh
+        overflow-y: scroll
+        background: unset
+        padding: 0px
+
+        &::-webkit-scrollbar
+            width: 0px
+
+    .zr-querylist--more-results
+        border-top: 1px var(--zr-border-co) solid
+        color: var(--zr-accent-2)
+        font-size: var(--zr-text-small)
+        font-weight: 500
+        padding: 3px 10px
+
+    .zotero-roam-search_result
+        padding: 3px 10px
+        font-size: 0.9em
+
+        .zr-library-item--key
+            flex: 0 0 auto
+            padding: 0px 6px
+            font-size: var(--zr-text-small)
+            text-align: right
+
+        &[data-in-graph="true"] .zr-library-item--key
+            background-color: var(--zr-positive-bg)
+            border-radius: 3px
+            color: var(--zr-positive-co)
+            font-weight: 500
+
+        .zr-library-item--title
+            display: block
+            font-weight: 500
+
+    .zr-library-item--contents
+        color: var(--zr-text-co)
+        white-space: normal

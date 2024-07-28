@@ -1,7 +1,5 @@
+import { findRoamPage, readDNP } from "@services/roam";
 import { menuClasses, menuPrefix } from "../classes";
-import { findRoamPage } from "Roam";
-
-import { readDNP } from "../../../utils";
 
 
 const dnpRegex = new RegExp(/(.+) ([0-9]+).{2}, ([0-9]{4})/);

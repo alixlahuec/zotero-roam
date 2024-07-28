@@ -1,4 +1,4 @@
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { Mocks } from "Mocks";
 
 
@@ -103,15 +103,12 @@ const data = {
 	} as Mocks.Responses.CitoidSuccess[number]
 };
 
-export const handleCitoid = rest.get<never, Mocks.RequestParams.Citoid, Mocks.Responses.Citoid>(
+export const handleCitoid = http.get<Mocks.RequestParams.Citoid, never, Mocks.Responses.Citoid>(
 	"https://en.wikipedia.org/api/rest_v1/data/citation/zotero/:identifier",
-	(req, res, ctx) => {
-		const { identifier } = req.params;
+	({ params }) => {
+		const { identifier } = params;
 		const output = data[decodeURIComponent(`${identifier}`)];
-		return res(
-			ctx.status(output.status || 200),
-			ctx.json([output])
-		);
+		return HttpResponse.json([output], { status: output.status || 200 });
 	}
 );
 

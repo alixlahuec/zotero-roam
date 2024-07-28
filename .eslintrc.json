@@ -2,7 +2,7 @@
     "env": {
         "browser": true,
         "es2021": true,
-        "jest/globals": true,
+        "vitest/globals": true,
         "node": true
     },
     "extends": [
@@ -20,9 +20,9 @@
     "overrides": [
         {
           "files": ["tests/**"],
-          "plugins": ["jest"],
-          "extends": ["plugin:jest/recommended"],
-          "rules": { "jest/prefer-expect-assertions": "off" }
+          "plugins": ["vitest"],
+          "extends": ["plugin:vitest/legacy-recommended"],
+          "rules": { "vitest/prefer-expect-assertions": "off" }
         },
 		{
 			"files": [".storybook/**"],
@@ -51,7 +51,7 @@
     },
     "plugins": [
         "react",
-        "jest",
+        "vitest",
         "import",
 		"@typescript-eslint"
     ],
@@ -129,10 +129,6 @@
 						"group": "internal"
 					},
 					{
-						"pattern": "*/propTypes",
-						"group": "internal"
-					},
-					{
 						"pattern": "Mocks/*",
 						"group": "internal"
 					},
@@ -144,12 +140,20 @@
 						"pattern": "Components/**",
 						"group": "parent"
 					},
-					{
-						"pattern": "Roam",
-						"group": "parent"
-					}
+                    {
+                        "pattern": "@clients/**",
+                        "group": "parent"
+                    },
+                    {
+                        "pattern": "@hooks",
+                        "group": "parent"
+                    },
+                    {
+                        "pattern": "@services/**",
+                        "group": "parent"
+                    }
 				],
-				"pathGroupsExcludedImportTypes": ["react", "react-dom", "@blueprintjs/*", "Components/*", "Roam", "*/constants", "*/propTypes"]
+				"pathGroupsExcludedImportTypes": ["react", "react-dom", "@blueprintjs/*", "Components/*", "@clients/*", "@hooks", "@services/*", "*/constants"]
 			}
 		],
 		"@typescript-eslint/ban-ts-comment": "off",
@@ -175,8 +179,10 @@
         "import/resolver": {
             "alias": {
 				"map": [
+                    ["@clients", "./src/clients"],
+                    ["@hooks", "./src/hooks"],
+                    ["@services", "./src/services"],
 					["Mocks", "./mocks"],
-					["Roam", "./src/services/roam.ts"],
 					["Components", "./src/components"],
                     ["Styles", "./styles"],
 					["Types", "./src/types"]

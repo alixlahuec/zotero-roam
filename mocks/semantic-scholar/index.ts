@@ -1,4 +1,4 @@
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { Mocks } from "Mocks";
 
 
@@ -152,14 +152,12 @@ const data: Record<string, Mocks.Responses.SemanticScholarItem> = {
 	}
 };
 
-export const handleSemantic = rest.get<never, Mocks.RequestParams.SemanticScholarItem, Mocks.Responses.SemanticScholarItem>(
+export const handleSemantic = http.get<Mocks.RequestParams.SemanticScholarItem, never, Mocks.Responses.SemanticScholarItem>(
 	"https://api.semanticscholar.org/v1/paper/:pub/:index",
-	(req, res, ctx) => {
-		const { pub, index } = req.params;
+	({ params }) => {
+		const { pub, index } = params;
 		const doi = [pub, index].join("/");
-		return res(
-			ctx.json(data[doi])
-		);
+		return HttpResponse.json(data[doi]);
 	}
 );
 

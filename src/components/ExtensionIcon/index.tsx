@@ -6,13 +6,14 @@ import { QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
 import { useExtensionContext } from "Components/App";
 import { useOtherSettings, useRequestsSettings } from "Components/UserSettings";
 
-import { useCollections, useItems, usePermissions, useTags } from "../../clients/hooks";
-import { useBool } from "../../hooks";
+import { useCollections, useItems, usePermissions, useTags } from "@clients/zotero";
+import { useBool } from "@hooks";
+import { Queries } from "@services/react-query";
+
 import { makeTimestamp } from "../../utils";
 
 import { ExtensionStatusEnum } from "Types/extension";
 import { AsBoolean } from "Types/helpers";
-import { Queries } from "Types/transforms";
 import "./_index.sass";
 
 

@@ -1,6 +1,6 @@
 import { ComponentProps, useCallback, useState } from "react";
-import { userEvent, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
+import { userEvent, within, expect } from "@storybook/test";
+
 import { Meta, StoryObj } from "@storybook/react";
 
 import DayList from "Components/NotesImport/DayList";

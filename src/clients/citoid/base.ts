@@ -1,9 +1,10 @@
 import axios from "axios";
 
-import { cleanError } from "../../utils";
+import { Queries } from "@services/react-query";
 
-import { CitoidAPI } from "Types/externals";
-import { Queries } from "Types/transforms";
+import { CitoidAPI } from "./types";
+
+import { cleanError } from "../../utils";
 
 
 const citoidClient = axios.create({

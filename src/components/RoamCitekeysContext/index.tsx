@@ -1,6 +1,7 @@
 import { FC, createContext, useCallback, useContext, useMemo, useState } from "react";
 
-import { getCitekeyPages } from "Roam";
+import { getCitekeyPages } from "@services/roam";
+
 import { RCitekeyPages } from "Types/transforms";
 
 

@@ -6,11 +6,11 @@ import { AppWrapper, queryClient } from "Components/App";
 import ClearCacheButton from "Components/ClearCacheButton";
 import { UserSettingsProvider } from "Components/UserSettings";
 
-import IDBDatabase from "./src/services/idb";
 import ZoteroRoam from "./src/api";
-import { clearDefaultHooks } from "./src/services/events";
+import { clearDefaultHooks } from "@services/events";
+import IDBDatabase from "@services/idb";
+import { unregisterSmartblockCommands } from "@services/smartblocks";
 import { initialize, setup, setupPortals, unmountExtensionIfExists } from "./src/setup";
-import { unregisterSmartblockCommands } from "./src/services/smartblocks";
 
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, EXTENSION_VERSION } from "./src/constants";
 

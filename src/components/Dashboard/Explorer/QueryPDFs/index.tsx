@@ -4,8 +4,9 @@ import { NonIdealState, Spinner } from "@blueprintjs/core";
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 import PDFElement from "./PDFElement";
 
+import { usePagination } from "@hooks";
+
 import { cleanLibraryPDF, identifyPDFConnections } from "./helpers";
-import { usePagination } from "../../../../hooks";
 
 import { CustomClasses } from "../../../../constants";
 import { ZCleanItemPDF, ZLibraryContents } from "Types/transforms";

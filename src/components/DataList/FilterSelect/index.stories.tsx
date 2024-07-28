@@ -1,9 +1,9 @@
 import { ComponentProps } from "react";
-import { userEvent, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
 import { Meta, StoryObj } from "@storybook/react";
+import { userEvent, within, expect } from "@storybook/test";
 
-import { useFilterList } from "../../../hooks";
+import { useFilterList } from "@hooks";
+
 import FilterSelect from ".";
 
 

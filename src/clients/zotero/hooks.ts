@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import { useQueries, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
 
+import { Queries } from "@services/react-query";
+
 import { fetchCollections, fetchPermissions, fetchTags } from "./base";
 import { wrappedFetchItems } from "./helpers";
 
 import { DataRequest } from "Types/extension";
-import { Queries, ZLibrary } from "Types/transforms";
+import { ZLibrary } from "Types/transforms";
 
 
 /** Use collections from one or more Zotero libraries. By default, `staleTime = 5 min` and `refetchInterval = 5 min`. */

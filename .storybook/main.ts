@@ -11,27 +11,20 @@ const config: StorybookConfig = {
 		"@storybook/addon-controls",
 		"@storybook/addon-coverage",
 		"@storybook/addon-links",
-		"@storybook/addon-essentials",
-		"@storybook/addon-interactions",
 		{
-			name: "storybook-addon-swc",
-			options: {
-				enable: true,
-				enableSwcLoader: true,
-				enableSwcMinify: true,
-				swcLoaderOptions: {
-					jsc: {
-						experimental: {
-							"plugins": [
-								["swc-plugin-coverage-instrument", {}]
-							]
-						},
-					},
-				},
-				swcMinifyOptions: {},
-			},
+			name: '@storybook/addon-essentials',
+			options: { docs: false },
 		},
+		"@storybook/addon-interactions"
 	],
+	build: {
+		test: {
+			disabledAddons: [
+				'@storybook/addon-docs',
+				'@storybook/addon-essentials/docs',
+			],
+		},
+	},
 	core: {
 		builder: "@storybook/builder-vite"
 	},
@@ -50,8 +43,11 @@ const config: StorybookConfig = {
 			resolve: {
 				...config.resolve,
 				alias: {
+					"@clients": path.resolve(__dirname, "..", "src", "clients"),
+					"@hooks": path.resolve(__dirname, "..", "src", "hooks"),
+					"@services/roam": path.resolve(__dirname, "..", "mocks", "roam.ts"),
+					"@services": path.resolve(__dirname, "..", "src", "services"),
 					"Mocks": path.resolve(__dirname, "..", "mocks"),
-					"Roam": path.resolve(__dirname, "..", "mocks", "roam.ts"),
 					"Components": path.resolve(__dirname, "..", "src", "components"),
 					"Styles": path.resolve(__dirname, "..", "styles"),
 					"Types": path.resolve(__dirname, "..", "src", "types")

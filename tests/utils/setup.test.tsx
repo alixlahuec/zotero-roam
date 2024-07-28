@@ -1,17 +1,18 @@
-import "fake-indexeddb/auto";
-import { mock } from "jest-mock-extended";
+import { expect as sbExpect } from "@storybook/test";
 import { Query } from "@tanstack/react-query";
 import { PersistedClient } from "@tanstack/query-persist-client-core";
-
 import { act, render } from "@testing-library/react";
+import "fake-indexeddb/auto";
+import { mock } from "vitest-mock-extended";
+
 import { EXTENSION_PORTAL_ID, EXTENSION_SLOT_ID, TYPEMAP_DEFAULT } from "../../src/constants";
 import ZoteroRoam from "../../src/api";
+import IDBDatabaseService from "@services/idb";
+import { Roam } from "@services/roam";
 import { analyzeUserRequests, createPersisterWithIDB, initialize, setupDarkTheme, setupInitialSettings, setupPortals, shouldQueryBePersisted, unmountExtensionIfExists, validateShortcuts } from "../../src/setup";
-import IDBDatabaseService from "../../src/services/idb";
 
 import { apiKeys, libraries } from "Mocks";
 import { UserDataRequest } from "Types/extension";
-import { Roam } from "Types/externals";
 
 
 const { keyWithFullAccess: { key: masterKey } } = apiKeys;
@@ -388,8 +389,8 @@ describe("Initial configuration", () => {
 	test("Roam Depot - no requests set", () => {
 		const mockExtensionAPI = mock<Roam.ExtensionAPI>({
 			settings: {
-				get: jest.fn((_key: string) => undefined),
-				set: jest.fn((_key, _val) => { })
+				get: vi.fn((_key: string) => undefined),
+				set: vi.fn((_key, _val) => { })
 			}
 		});
 
@@ -415,14 +416,14 @@ describe("Initial configuration", () => {
 
 		const mockExtensionAPI = mock<Roam.ExtensionAPI>({
 			settings: {
-				get: jest.fn((key: string) => {
+				get: vi.fn((key: string) => {
 					if (key == "requests") {
 						return requests as any;
 					} else {
 						return undefined;
 					}
 				}),
-				set: jest.fn((_key, _val) => { })
+				set: vi.fn((_key, _val) => { })
 			}
 		});
 
@@ -452,6 +453,7 @@ describe("Theme setter", () => {
 	const testWrapper = document.createElement("div");
 	const cases = [true, false];
 
+	// eslint-disable-next-line vitest/expect-expect
 	test.each(cases)(
 		"use_dark_theme = %s",
 		(use_dark_theme) => {
@@ -462,9 +464,9 @@ describe("Theme setter", () => {
 
 			act(() => setupDarkTheme(use_dark_theme));
 
-			expect(document.body)
+			sbExpect(document.body)
 				.toHaveAttribute("zr-dark-theme", `${use_dark_theme}`);
-			expect(queryByTestId("theme-target"))
+			sbExpect(queryByTestId("theme-target"))
 				.not.toHaveAttribute("zr-dark-theme");
 		}
 	);
@@ -524,30 +526,32 @@ describe("Portals setup", () => {
 
 describe("Teardown", () => {
 
+	// eslint-disable-next-line vitest/expect-expect
 	test("Extension slot", () => {
 		const extensionSlot = document.createElement("span");
 		extensionSlot.id = EXTENSION_SLOT_ID;
 
 		document.body.appendChild(extensionSlot);
 
-		expect(extensionSlot).toBeInTheDocument();
+		sbExpect(extensionSlot).toBeInTheDocument();
 
 		unmountExtensionIfExists();
 
-		expect(extensionSlot).not.toBeInTheDocument();
+		sbExpect(extensionSlot).not.toBeInTheDocument();
 	});
 
+	// eslint-disable-next-line vitest/expect-expect
 	test("Portals container", () => {
 		const extensionPortal = document.createElement("div");
 		extensionPortal.id = EXTENSION_PORTAL_ID;
 
 		document.body.appendChild(extensionPortal);
 
-		expect(extensionPortal).toBeInTheDocument();
+		sbExpect(extensionPortal).toBeInTheDocument();
 
 		unmountExtensionIfExists();
 
-		expect(extensionPortal).not.toBeInTheDocument();
+		sbExpect(extensionPortal).not.toBeInTheDocument();
 
 	});
 

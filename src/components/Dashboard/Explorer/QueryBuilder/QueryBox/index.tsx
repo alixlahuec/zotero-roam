@@ -10,6 +10,8 @@ import { removeArrayElemAt, updateArrayElemAt } from "../../../../../utils";
 import { CustomClasses } from "../../../../../constants";
 import { QueryTerm, QueryTermListRecursive, QueryBoxAction, QueryTermAction } from "../types";
 
+import "./_index.sass";
+
 
 type OwnProps = {
 	dispatch: Dispatch<QueryBoxAction>,

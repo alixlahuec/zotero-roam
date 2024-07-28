@@ -1,7 +1,7 @@
 import { Icon } from "@blueprintjs/core";
 import { DateInput, DateInputProps, DateRange, DateRangeInput, DateRangeInputProps } from "@blueprintjs/datetime";
 
-import { makeDNP } from "../../utils";
+import { makeDNP } from "@services/roam";
 import { CustomClasses } from "../../constants";
 
 

@@ -5,10 +5,10 @@ import { IPopover2SharedProps, Popover2, Popover2InteractionKind, Popover2Props 
 import { useAnnotationsSettings, useMetadataSettings, useNotesSettings, useTypemapSettings } from "Components/UserSettings";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 
-import { getLocalLink, getWebLink } from "../../utils";
-import { importItemMetadata, openInSidebarByUID, openPageByUID } from "Roam";
+import { importItemMetadata, openInSidebarByUID, openPageByUID } from "@services/roam";
 
 import { CustomClasses } from "../../constants";
+import { getLocalLink, getWebLink } from "../../utils";
 import { ZItemAnnotation, ZItemAttachment, ZItemNote, ZItemTop } from "Types/transforms";
 import "./_index.sass";
 

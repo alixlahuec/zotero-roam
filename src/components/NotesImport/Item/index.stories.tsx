@@ -3,7 +3,9 @@ import { Classes } from "@blueprintjs/core";
 import { Meta, StoryObj } from "@storybook/react";
 
 import NotesImportItem from "Components/NotesImport/Item";
-import { useBool } from "../../../hooks";
+
+import { useBool } from "@hooks";
+
 import { sampleAnnot, sampleNote } from "Mocks";
 
 

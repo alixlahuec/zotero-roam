@@ -1,0 +1,32 @@
+#zotero-roam-search-autocomplete
+    background: var(--zr-box-bg)
+    border-bottom: 1px var(--zr-border-co) solid
+    box-shadow: none
+    color: var(--zr-auxiliary)
+    font-size: 13px
+
+    &::placeholder
+        opacity: 0.8
+
+    &:focus
+        box-shadow: none
+
+label.zr-quick-copy
+    font-weight: var(--zr-secondary-fw)
+    font-size: var(--zr-text-small)
+    margin-bottom: 0px
+
+    .roam-body.mobile + #zotero-roam-portal &
+        display: none
+
+.zr-library-search-input-group.bp3-input
+    background: none
+    box-shadow: none
+    padding: unset
+
+    .bp3-input-left-container > *
+        margin-right: 10px
+
+    .bp3-input-action
+        display: flex
+        align-items: center

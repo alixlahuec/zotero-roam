@@ -6,12 +6,13 @@ import { ErrorBoundary } from "Components/Errors";
 import SemanticPagination, { SemanticPaginationProps } from "./SemanticPagination";
 import SidePanel from "./SidePanel";
 
-import { pluralize } from "../../../utils";
-import { useMulti } from "../../../hooks";
+import { useMulti } from "@hooks";
+
 import { sortElems } from "../helpers";
+import { ShowTypeSemantic } from "../types";
 
 import { CustomClasses } from "../../../constants";
-import { ShowTypeSemantic } from "../types";
+import { pluralize } from "../../../utils";
 import { SEnrichedItem, SRelatedEntries } from "Types/transforms";
 import "./_index.sass";
 
@@ -79,7 +80,12 @@ const SemanticTabList = memo<SemanticTabListProps>(function SemanticTabList(prop
 				title={citations_title}
 			/>
 			<Tabs.Expander />
-			<span className={CustomClasses.TEXT_AUXILIARY} id={labelId} title={"Works related to " + title}>{title}</span>
+			<span className={CustomClasses.TEXT_AUXILIARY}
+				id={labelId}
+				aria-label={"Works related to " + title}
+				title={"Works related to " + title}>
+				{title}
+			</span>
 			<Button icon="cross" minimal={true} large={true} onClick={onClose} title="Close dialog" />
 		</Tabs>
 	);

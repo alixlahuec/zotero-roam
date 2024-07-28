@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "@blueprintjs/core";
 
+import { useBool } from "@hooks";
+
 import RelatedPanel from "../RelatedPanel";
-
-import { useBool } from "../../../hooks";
-import { pluralize } from "../../../utils";
-
 import { ShowPropertiesRelated, ShowTypeRelated } from "../types";
+
+import { pluralize } from "../../../utils";
 import { SCleanRelatedItem } from "Types/transforms";
 
 

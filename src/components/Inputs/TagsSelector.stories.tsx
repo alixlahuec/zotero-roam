@@ -1,7 +1,7 @@
 import { useCallback, useState, ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
-import { userEvent, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
+import { userEvent, within, expect } from "@storybook/test";
+
 
 import { TagsSelector } from ".";
 

@@ -1,7 +1,6 @@
 import { ComponentProps } from "react";
-import { expect, jest } from "@storybook/jest";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { Meta, StoryObj } from "@storybook/react";
+import { expect, fn, Mock, userEvent, waitFor, within } from "@storybook/test";
 
 import WebImportPanel from "./WebImportPanel";
 import { badIdentifier, citoids, goodIdentifier, libraries } from "Mocks";
@@ -49,7 +48,7 @@ export const WithInteractions: StoryObj<Props> = {
 	play: async ({ args, canvasElement }) => {
 		const items = args.urls.map((id) => citoids[id]);
 
-		document.dispatchEvent = jest.fn();
+		document.dispatchEvent = fn();
 
 		const canvas = within(canvasElement);
 
@@ -77,7 +76,7 @@ export const WithInteractions: StoryObj<Props> = {
 			.toHaveBeenCalled(),
 		{ timeout: 3000 });
 
-		await expect((document.dispatchEvent as jest.Mock).mock.calls[0][0].detail)
+		await expect((document.dispatchEvent as Mock).mock.calls[0][0].detail)
 			.toEqual({
 				args: {
 					collections: [],

@@ -6,14 +6,15 @@ import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import { useCopySettings, useRequestsSettings } from "Components/UserSettings";
 import LibraryQueryList from "./LibraryQueryList";
 
-import { useBool } from "../../hooks";
-import { useItems } from "../../clients/hooks";
-import { cleanLibrary } from "./helpers";
+import { useItems } from "@clients/zotero";
+import { useBool } from "@hooks";
+import { Queries } from "@services/react-query";
 
 import { dialogClass, dialogLabel } from "./classes";
-import { Queries, RCitekeyPages } from "Types/transforms";
+import { cleanLibrary } from "./helpers";
+
+import { RCitekeyPages } from "Types/transforms";
 import { DataRequest, ExtensionStatusEnum } from "Types/extension";
-import "./_index.sass";
 
 
 function useGetItems(reqs: DataRequest[], roamCitekeys: RCitekeyPages, opts = {}){

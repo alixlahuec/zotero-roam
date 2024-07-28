@@ -1,4 +1,4 @@
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { zotero } from "./common";
 import { libraries } from "./libraries";
 import { Mocks } from "Mocks";
@@ -46,13 +46,11 @@ const data = {
 	} as Mocks.Responses.Permissions
 };
 
-export const handleAPIKey = rest.get<never, Mocks.RequestParams.Permissions, Mocks.Responses.Permissions>(
+export const handleAPIKey = http.get<Mocks.RequestParams.Permissions, never, Mocks.Responses.Permissions>(
 	zotero("keys/:apikey"), 
-	(req, res, ctx) => {
-		const { apikey } = req.params;
-		return res(
-			ctx.json(Object.values(data).find(val => val.key == apikey)!)
-		);
+	({ params }) => {
+		const { apikey } = params;
+		return HttpResponse.json(Object.values(data).find(val => val.key == apikey)!);
 	}
 );
 

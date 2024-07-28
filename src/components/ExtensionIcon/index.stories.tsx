@@ -1,10 +1,11 @@
 import { ComponentProps } from "react";
-import { screen, userEvent, waitFor, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
 import { Meta, StoryObj } from "@storybook/react";
+import { screen, userEvent, waitFor, within, expect } from "@storybook/test";
+
+import { useToggle } from "@hooks";
 
 import ExtensionIcon from ".";
-import { useToggle } from "../../hooks";
+
 import { sleep } from "../../../.storybook/utils";
 import { ExtensionStatusEnum } from "Types/extension";
 
@@ -59,7 +60,7 @@ export const WithInteractions: StoryObj<Props> = {
 
 		await sleep(1000);
 
-		await userEvent.click(icon, { button: 2 });
+		await userEvent.pointer({ keys: "[MouseRight]", target: icon });
 
 		await waitFor(() => expect(screen.getByText("Dashboard"))
 			.toBeInTheDocument(),

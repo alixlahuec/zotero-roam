@@ -4,13 +4,14 @@ import Tribute, { TributeCollection } from "tributejs";
 
 import { useAutocompleteSettings, useRequestsSettings } from "Components/UserSettings";
 
+import { useItems } from "@clients/zotero";
+import { Queries } from "@services/react-query";
+import { TributeJS } from "@services/tribute";
 import { escapeRegExp, formatItemReference } from "../../utils";
-import { useItems } from "../../clients/hooks";
 
 import { CustomClasses } from "../../constants";
 import { DataRequest, ZItemReferenceFormat } from "Types/extension";
-import { TributeJS } from "Types/externals/tribute";
-import { Queries, isZItemTop } from "Types/transforms";
+import { isZItemTop } from "Types/transforms";
 import "./_index.sass";
 
 
@@ -119,6 +120,8 @@ const Autocomplete = memo(function Autocomplete() {
 		document.querySelectorAll(`.${CustomClasses.TRIBUTE}`).forEach(d => d.remove());
 
 		textArea.setAttribute("zotero-tribute", "active");
+
+		// TODO: extract code below into a service
 
 		const tribute = new Tribute(tributeFactory);
 		tribute.attach(textArea);

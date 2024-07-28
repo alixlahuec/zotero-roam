@@ -19,7 +19,7 @@
 	},
 	{
 		"matchUpdateTypes": ["major"],
-		"matchPackageNames": [
+		"matchDepNames": [
 			"@blueprintjs/core",
 			"@blueprintjs/datetime",
 			"@blueprintjs/select",
@@ -30,21 +30,14 @@
 		"enabled": false
 	},
 	{
-		"matchPackageNames": [
+		"matchDepNames": [
 			"scite-badge"
 		],
 		"enabled": false
 	},
 	{
-		"groupName": "Jest",
-		"matchPackageNames": [
-			"jest",
-			"jest-environment-jsdom"
-		]
-	},
-	{
 		"groupName": "Storybook Core",
-		"matchPackageNames": [
+		"matchDepNames": [
 			"@storybook/addon-a11y",
 			"@storybook/addon-actions",
 			"@storybook/addon-controls",
@@ -55,6 +48,7 @@
 			"@storybook/cli",
 			"@storybook/react",
 			"@storybook/react-vite",
+			"@storybook/test",
 			"storybook"
 		]
 	},

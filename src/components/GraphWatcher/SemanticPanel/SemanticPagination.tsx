@@ -6,11 +6,12 @@ import FilterSelect from "Components/DataList/FilterSelect";
 import { SemanticGuide } from "Components/Guide";
 import SemanticItem from "./SemanticItem";
 
-import { searchEngine } from "../../../utils";
-import { Filter, useFilterList, usePagination, useText } from "../../../hooks";
+import { Filter, useFilterList, usePagination, useText } from "@hooks";
+
+import { ShowTypeSemantic } from "../types";
 
 import { CustomClasses } from "../../../constants";
-import { ShowTypeSemantic } from "../types";
+import { searchEngine } from "../../../utils";
 import { AsBoolean } from "Types/helpers";
 import { SEnrichedItem, isSBacklink } from "Types/transforms";
 

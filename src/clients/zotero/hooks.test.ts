@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react-hooks";
-import { mock } from "jest-mock-extended";
+import { mock } from "vitest-mock-extended";
 import { wrapper } from "../query-test-wrapper";
 
 import { makeTagList } from "./helpers";
