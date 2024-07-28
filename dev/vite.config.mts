@@ -97,9 +97,6 @@ export default defineConfig(({ command, mode }) => {
 		},
 		plugins: [react(), ...extraPlugins],
 		test: {
-			alias: {
-				"\.(css|sass)$": resolve("mocks", "style.ts")
-			},
 			clearMocks: true,
 			coverage: {
 				exclude: ["**/*.stories.tsx", ...coverageConfigDefaults.exclude],
