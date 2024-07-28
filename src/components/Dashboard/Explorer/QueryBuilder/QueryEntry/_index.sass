@@ -1,0 +1,43 @@
+.zr-query-entry
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    justify-content: space-between
+
+    .zr-query-box > .zr-query-box--remove-self.bp3-button:hover ~ &
+        background: hsla(var(--zr-accent-1-hsl), 10%)
+
+    & > div
+        background: var(--zr-dialog-bg)
+        border-radius: 10px
+        display: flex
+        width: 100%
+
+        & > .bp3-popover-wrapper
+            border-radius: 10px
+
+            button
+                border-radius: 10px
+                color: var(--zr-text-co)
+
+        & > span.bp3-popover-wrapper
+            flex: 0 1 25%
+
+        & > div.bp3-popover-wrapper
+            flex: 1 1 60%
+
+    .bp3-input-group
+        flex: 1 1 40%
+
+    input.bp3-input
+        background: var(--zr-dialog-bg)
+        box-shadow: none
+        color: var(--zr-auxiliary)
+
+    .zr-date-input input
+        outline: none
+
+    &--add-sibling.bp3-button
+        &, &:hover
+            &, .bp3-icon
+                color: hsla(var(--zr-accent-1-hsl), 75%)

@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import { IconName, Tag } from "@blueprintjs/core";
 
-import { CustomClasses } from "../../../constants";
+import { CustomClasses } from "../../../../constants";
 import { DataRequest } from "Types/extension";
+
+import "./_index.sass";
 
 
 const obfuscate = (val: string) => "*".repeat(val.length);

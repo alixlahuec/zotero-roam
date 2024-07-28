@@ -3,11 +3,13 @@ import { Button, Classes, Icon, InputGroup, InputGroupProps2, Switch, useHotkeys
 
 import { useShortcutsSettings } from "Components/UserSettings";
 
-import { validateShortcuts } from "../../setup";
+import { validateShortcuts } from "../../../setup";
 
-import { dialogLabel } from "./classes";
-import { CustomClasses } from "../../constants";
+import { dialogLabel } from "../classes";
+import { CustomClasses } from "../../../constants";
 import { AsBoolean } from "Types/helpers";
+
+import "./_index.sass";
 
 
 type OwnProps = {

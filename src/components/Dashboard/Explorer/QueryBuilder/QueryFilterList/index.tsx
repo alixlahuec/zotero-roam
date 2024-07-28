@@ -12,6 +12,8 @@ import { CustomClasses } from "../../../../../constants";
 import { QueryTerm, QueryTermListRecursive, QueryBoxAction } from "../types";
 import { AsBoolean } from "Types/helpers";
 
+import "./_index.sass";
+
 
 function makeValueString({ property, relationship, value }: QueryTerm): string{
 	if(value == null){

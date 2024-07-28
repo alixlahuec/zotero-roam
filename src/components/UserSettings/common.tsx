@@ -8,6 +8,8 @@ import { useBool } from "@hooks";
 import { CustomClasses } from "../../constants";
 import { AsBoolean } from "Types/helpers";
 
+import "./common.sass";
+
 
 const popoverProps: Partial<IPopoverProps> = {
 	canEscapeKeyClose: false,

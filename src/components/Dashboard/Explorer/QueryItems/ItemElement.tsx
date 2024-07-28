@@ -11,6 +11,8 @@ import { CustomClasses } from "../../../../constants";
 import { pluralize } from "../../../../utils";
 import { ZCleanItemTop } from "Types/transforms";
 
+import "../_index.sass";
+
 
 type OwnProps = {
 	item: ZCleanItemTop,
