@@ -4,6 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import LogItem from ".";
 
 import { createLogItem } from "../utils";
+import { ListWrapper } from "Components/DataList";
 import { items } from "Mocks/zotero";
 
 
@@ -14,7 +15,16 @@ export default {
 	args: {
 		allAbstractsShown: true,
 		onClose: () => {}
-	}
+	},
+	decorators: [
+		(Story, context) => (
+			<div className="zr-recentitems--datalist" >
+				<ListWrapper>
+					<Story {...context} />
+				</ListWrapper>
+			</div>
+		)
+	]
 } as Meta<Props>;
 
 export const Default: StoryObj<Props> = {
