@@ -15,7 +15,6 @@ import { cleanLibrary } from "./helpers";
 
 import { RCitekeyPages } from "Types/transforms";
 import { DataRequest, ExtensionStatusEnum } from "Types/extension";
-import "./_index.sass";
 
 
 function useGetItems(reqs: DataRequest[], roamCitekeys: RCitekeyPages, opts = {}){
