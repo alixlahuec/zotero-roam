@@ -1,8 +1,9 @@
 import { ComponentProps } from "react";
 import { Meta, StoryObj } from "@storybook/react";
-import LogItem from "./LogItem";
 
-import { createLogItem } from "./utils";
+import LogItem from ".";
+
+import { createLogItem } from "../utils";
 import { ListWrapper } from "Components/DataList";
 import { items } from "Mocks/zotero";
 

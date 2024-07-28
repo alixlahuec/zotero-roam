@@ -6,8 +6,10 @@ import { ListItem } from "Components/DataList";
 
 import { useBool } from "@hooks";
 
-import { CustomClasses } from "../../../constants";
+import { CustomClasses } from "../../../../constants";
 import { ZLogItem } from "Types/transforms";
+
+import "./_index.sass";
 
 
 type AbstractProps = {
