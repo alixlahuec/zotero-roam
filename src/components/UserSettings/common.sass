@@ -1,0 +1,85 @@
+.zr-settings-rowgroup--option
+    padding: 5px 10px
+
+    &.align-items-baseline
+        align-items: baseline
+
+    &-label
+        align-items: baseline
+        display: flex
+
+        &.selected h5.bp3-heading
+            color: var(--zr-text-co)
+
+        &:not(.selected)
+            opacity: 0.6
+
+        h5.bp3-heading
+            color: var(--zr-auxiliary)
+            margin: 0px
+
+        h5.bp3-heading,
+        & > .bp3-control-indicator
+            font-size: 0.95rem
+
+        & > input[type="checkbox"],
+        & > .bp3-control-indicator
+            flex: 0 0 auto
+
+    [zr-role="settings-row"]
+        padding: 0px
+
+[zr-role="settings-row"],
+[zr-role="settings-row-col"],
+[zr-role="settings-row-group"]
+    padding: 0.9em 0.6em
+
+
+[zr-role="settings-row"],
+.zr-settings-rowgroup--option
+    align-items: center
+    display: flex
+    font-size: 0.9em
+    justify-content: space-between
+
+
+[zr-role="settings-row-group"] > div:first-child:not(:empty),
+[zr-role="settings-row-col"] > div:first-child:not(:empty)
+    padding-bottom: 10px
+
+
+[zr-role="settings-row"] > div:first-child:not(:empty),
+.zr-settings-rowgroup--option-label
+    flex: 1 1 50%
+    padding-right: 10px
+
+
+[zr-role="settings-row-col"]
+    display: flex
+    flex-wrap: wrap
+    justify-content: space-between
+
+    & > button.bp3-button
+        height: fit-content
+
+
+[zr-role="settings-row-col--container"]
+    display: flex
+    flex: 0 0 100%
+    place-content: space-evenly
+
+/* Inputs */
+
+.zr-setting--single-input
+    button
+        background: hsla(var(--zr-accent-1-hsl), 5%)
+
+        &:hover
+            background: hsla(var(--zr-accent-1-hsl), 10%)
+
+    .zr-text-select-group > &
+        padding: 0px 10px
+
+
+.zr-text-select-group > .zr-text-input
+    flex: 1

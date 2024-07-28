@@ -3,17 +3,19 @@ import { Menu, MenuItem } from "@blueprintjs/core";
 import { IItemRendererProps, QueryList, QueryListProps, renderFilteredItems } from "@blueprintjs/select";
 
 import ItemDetails from "Components/ItemDetails";
-import SearchInputGroup, { SearchInputGroupProps } from "./SearchInputGroup";
+import SearchInputGroup, { SearchInputGroupProps } from "../SearchInputGroup";
 import { useCopySettings } from "Components/UserSettings";
 
 import { useDebounceCallback } from "@hooks";
 
-import { resultClass, resultKeyClass } from "./classes";
-import { formatItemReferenceWithDefault } from "./helpers";
+import { resultClass, resultKeyClass } from "../classes";
+import { formatItemReferenceWithDefault } from "../helpers";
 
-import { CustomClasses } from "../../constants";
-import { copyToClipboard, pluralize, searchEngine } from "../../utils";
+import { CustomClasses } from "../../../constants";
+import { copyToClipboard, pluralize, searchEngine } from "../../../utils";
 import { ZCleanItemTop } from "Types/transforms";
+
+import "./_index.sass";
 
 
 const query_debounce = 300;

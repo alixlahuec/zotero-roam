@@ -11,6 +11,8 @@ import { returnSiblingArray } from "../utils";
 import { CustomClasses } from "../../../../../constants";
 import { QueryProperty, QueryTerm, QueryEntryAction } from "../types";
 
+import "./_index.sass";
+
 
 const popoverProps = {
 	minimal: true,

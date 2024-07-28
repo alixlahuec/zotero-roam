@@ -5,7 +5,7 @@ import { userEvent, waitFor, within, expect } from "@storybook/test";
 
 import { useBool } from "@hooks";
 
-import SearchInputGroup from "./SearchInputGroup";
+import SearchInputGroup from ".";
 
 
 type Props = ComponentProps<typeof SearchInputGroup>;
