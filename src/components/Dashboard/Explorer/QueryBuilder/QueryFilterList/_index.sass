@@ -1,0 +1,39 @@
+@use "Styles/base"
+
+.zr-query-filters
+    flex: 0 1 100%
+
+    & > button.bp3-button
+        margin: 5px 0px
+        margin-left: 10px
+
+.zr-query-filter
+    align-items: center
+    display: flex
+    justify-content: space-between
+    margin: 5px 0px
+
+    &--elements
+        align-items: center
+        background: hsla(var(--zr-accent-1-hsl), 7%)
+        border-radius: 5px
+        display: flex
+        flex: 0 1 100%
+        flex-wrap: wrap
+        padding: 5px 10px
+
+        [zr-role="filter-tag"].bp3-tag.bp3-minimal
+            @include base.accentBox
+
+    &--elements [zr-role="filter-operator"],
+    [zr-role="filter-list-operator"],
+    .zr-query-box [zr-role="query-entry-operator"]
+        color: var(--zr-text-co)
+        font-size: var(--zr-text-small)
+        margin: 0px 7px
+
+.zr-query-term-dialog
+    background-color: var(--zr-dialog-bg)
+
+    .bp3-dialog-footer-actions .bp3-button
+        color: var(--zr-auxiliary)
