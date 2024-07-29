@@ -36,33 +36,84 @@ const filters: Filter<Item>[] = [
 	}
 ];
 
+const handleQueryChange = vi.fn();
+
 describe("useSearchFilters", () => {
-	it("returns nothing when the query is empty", async () => {
-		const { result, waitFor } = renderHook(() => useSearchFilters({ query: "", cursorPosition: 0, filters }));
+	it("returns all filters when the query is empty", async () => {
+		const { result, waitFor } = renderHook(() => useSearchFilters({ query: "", cursorPosition: 0, filters, handleQueryChange }));
 
-		await waitFor(() => expect(result.current.terms).toEqual([]));
+		await waitFor(() => expect(result.current.terms).toBeDefined());
 
-		expect(result.current.term).toBe("");
-		expect(result.current.position).toBe(0);
-		expect(result.current.suggestions).toEqual([]);
+		expect(result.current).toEqual({
+			applySuggestion: expect.any(Function),
+			position: 0,
+			term: "",
+			termIndex: 0,
+			terms: [""],
+			suggestions: filters
+		});
 	});
 
 	describe("with fully qualified query", () => {
-		const query = "roam:true";
-		const cases = [0, 2, 5, 7, 9];
-
-		test.each(cases)(
+		const query = "roam:true doi:true";
+		const terms = ["roam:true ", "doi:true", ""];
+		
+		const firstTermCases = [0, 2, 5, 7, 9];
+		test.each(firstTermCases)(
 			"returns no suggestions - cursor at %s",
 			async (cursorPosition) => {
-				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters }));
+				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange }));
 
-				await waitFor(() => expect(result.current.terms).toEqual([query]));
+				await waitFor(() => expect(result.current.terms).toBeDefined());
 
-				expect(result.current.term).toBe(query);
-				expect(result.current.position).toBe(cursorPosition);
-				expect(result.current.suggestions).toEqual([]);
+				expect(result.current).toEqual({
+					applySuggestion: expect.any(Function),
+					position: cursorPosition,
+					term: terms[0],
+					termIndex: 0,
+					terms,
+					suggestions: []
+				});
 			}
 		)
+
+		const secondTermCases = [10, 12, 14, 16, 18];
+		test.each(secondTermCases)(
+			"returns no suggestions - cursor at %s",
+			async (cursorPosition) => {
+				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange }));
+
+				await waitFor(() => expect(result.current.terms).toBeDefined());
+
+				expect(result.current).toEqual({
+					applySuggestion: expect.any(Function),
+					position: cursorPosition - terms[0].length,
+					term: terms[1],
+					termIndex: 1,
+					terms,
+					suggestions: []
+				});
+			}
+		)
+
+	});
+
+	describe("with fully qualified query and a trailing space", () => {
+		it("returns all filters", async () => {
+			const query = "roam:true ";
+			const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition: 10, filters, handleQueryChange }));
+
+			await waitFor(() => expect(result.current.terms).toBeDefined());
+
+			expect(result.current).toEqual({
+				applySuggestion: expect.any(Function),
+				position: 0,
+				term: "",
+				termIndex: 1,
+				terms: [query, ""],
+				suggestions: filters
+			});
+		});
 	});
 
 	describe("with partially typed operator", () => {
@@ -78,25 +129,36 @@ describe("useSearchFilters", () => {
 		test.each(cases)(
 			"returns filters with matching name - #%d",
 			async (cursorPosition, expected_suggestions) => {
-				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters }));
+				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange }));
 
-				await waitFor(() => expect(result.current.terms).toEqual([query]));
+				await waitFor(() => expect(result.current.terms).toBeDefined());
 
-				expect(result.current.term).toBe(query);
-				expect(result.current.position).toBe(cursorPosition);
-				expect(result.current.suggestions).toEqual(expected_suggestions);
+				expect(result.current).toEqual({
+					applySuggestion: expect.any(Function),
+					position: cursorPosition,
+					term: query,
+					termIndex: 0,
+					terms: [query, ""],
+					suggestions: expected_suggestions
+				});
 			}
 		)
 	});
 
 	it("returns presets when the user has selected an operator", async () => {
-		const { result, waitFor } = renderHook(() => useSearchFilters({ query: "roam:", cursorPosition: 5, filters }));
+		const query = "roam:";
+		const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition: 5, filters, handleQueryChange }));
 
-		await waitFor(() => expect(result.current.terms).toEqual(["roam:"]));
+		await waitFor(() => expect(result.current.terms).toBeDefined());
 
-		expect(result.current.term).toBe("roam:");
-		expect(result.current.position).toBe(5);
-		expect(result.current.suggestions).toEqual(filters[1].presets);
+		expect(result.current).toEqual({
+			applySuggestion: expect.any(Function),
+			position: 5,
+			term: query,
+			termIndex: 0,
+			terms: [query, ""],
+			suggestions: filters[1].presets
+		});
 	});
 });
 
