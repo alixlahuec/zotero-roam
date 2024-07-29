@@ -154,7 +154,7 @@ type SearchFreeText = string;
 type SearchFilter<T extends Record<string,any> = Record<string, any>> = { filter: Filter<T>, query: string };
 type SearchTerm<T extends Record<string, any> = Record<string, any>> = SearchFreeText | SearchFilter<T>;
 
-const runSearch = <T extends Record<string, any> = Record<string, any>>(
+export const runSearch = <T extends Record<string, any> = Record<string, any>>(
 	terms: SearchTerm<T>[], items: T[], search_field: keyof T | undefined
 ) => {
 	return terms.reduce((filteredItems, term) => {
