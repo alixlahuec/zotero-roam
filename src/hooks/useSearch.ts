@@ -20,7 +20,7 @@ type Preset = {
 	value: string
 }
 
-export type Filter<T extends Record<string, any> = Record<string, any>> = {
+export type QueryFilter<T extends Record<string, any> = Record<string, any>> = {
 	/** The user-facing label for the filter. This is used in suggestions. */
 	label: string,
 	/** The filter's operator. This is used in the query itself. */
@@ -30,7 +30,7 @@ export type Filter<T extends Record<string, any> = Record<string, any>> = {
 	evaluate: (query: string, item: T) => boolean
 }
 
-export type SearchSuggestion<T extends Record<string, any> = Record<string, any>> = Preset | Filter<T>;
+export type SearchSuggestion<T extends Record<string, any> = Record<string, any>> = Preset | QueryFilter<T>;
 
 
 const FILTER_REGEX = new RegExp(/([^ ]+):([^ "]+|"[^:]+")(?: *)/g);
@@ -39,7 +39,7 @@ const QUALIFIED_FILTER_WITH_TRAILING_SPACE_REGEX = new RegExp(/^[^ ]+:(?:[^ "]+|
 
 type UseSearchProps<T extends Record<string, any> = Record<string, any>> = {
 	cursorPosition: number,
-	filters: Filter<T>[],
+	filters: QueryFilter<T>[],
 	handleQueryChange: (query: string) => void,
 	query: string
 };
@@ -151,7 +151,7 @@ const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 
 
 type SearchFreeText = string;
-type SearchFilter<T extends Record<string,any> = Record<string, any>> = { filter: Filter<T>, query: string };
+type SearchFilter<T extends Record<string,any> = Record<string, any>> = { filter: QueryFilter<T>, query: string };
 type SearchTerm<T extends Record<string, any> = Record<string, any>> = SearchFreeText | SearchFilter<T>;
 
 export const runSearch = <T extends Record<string, any> = Record<string, any>>(
@@ -181,7 +181,7 @@ export const runSearch = <T extends Record<string, any> = Record<string, any>>(
 
 
 const useSearch = <T extends Record<string, any> = Record<string, any>>(
-	{ query, filters, items, search_field = undefined }: { query: string, filters: Filter[], items: T[], search_field?: keyof T }
+	{ query, filters, items, search_field = undefined }: { query: string, filters: QueryFilter[], items: T[], search_field?: keyof T }
 ) => {
 	const terms = useMemo<SearchTerm[]>(() => {
 		const matches = Array.from(query.matchAll(FILTER_REGEX));

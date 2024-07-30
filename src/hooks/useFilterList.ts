@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 
 
-type Filter = {
+export type Filter = {
 	active: boolean,
 	label: string,
 	value: string

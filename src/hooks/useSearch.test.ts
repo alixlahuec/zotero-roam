@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react-hooks";
 
-import { Filter, runSearch, useSearch, useSearchFilters } from "./useSearch";
+import { QueryFilter, runSearch, useSearch, useSearchFilters } from "./useSearch";
 
 
 type Item = {
@@ -9,7 +9,7 @@ type Item = {
 	title: string
 };
 
-const filters: Filter<Item>[] = [
+const filters: QueryFilter<Item>[] = [
 	{
 		label: "Item created",
 		value: "created",

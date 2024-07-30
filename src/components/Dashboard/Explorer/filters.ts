@@ -1,9 +1,9 @@
-import { Filter } from "@hooks";
+import { QueryFilter } from "@hooks";
 import { searchEngine } from "src/utils";
 import { isZAnnotation, ZCleanItemPDF, ZCleanItemTop, ZItemAnnotation, ZItemNote } from "Types/transforms";
 
 
-export const itemFilters: Filter<ZCleanItemTop>[] = [
+export const itemFilters: QueryFilter<ZCleanItemTop>[] = [
 	{
 		label: "Abstract matches",
 		value: "abstract",
@@ -137,7 +137,7 @@ export const itemFilters: Filter<ZCleanItemTop>[] = [
 	}
 ];
 
-export const noteFilters: Filter<ZItemAnnotation | ZItemNote>[] = [
+export const noteFilters: QueryFilter<ZItemAnnotation | ZItemNote>[] = [
 	{
 		label: "Tags include",
 		value: "tags",
@@ -151,7 +151,7 @@ export const noteFilters: Filter<ZItemAnnotation | ZItemNote>[] = [
 	}
 ];
 
-export const pdfFilters: Filter<ZCleanItemPDF>[] = [
+export const pdfFilters: QueryFilter<ZCleanItemPDF>[] = [
 	{
 		label: "Tags include",
 		value: "tags",

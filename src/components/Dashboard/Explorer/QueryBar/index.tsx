@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Classes, Icon, InputGroup, MenuItem } from "@blueprintjs/core";
 import { QueryList, QueryListProps } from "@blueprintjs/select";
 
-import { Filter, SearchSuggestion, useSearchFilters } from "@hooks";
+import { QueryFilter, SearchSuggestion, useSearchFilters } from "@hooks";
 
 import "./_index.sass";
 
@@ -38,7 +38,7 @@ const itemRenderer: QueryListProps<SearchSuggestion>["itemRenderer"] = (item, it
 
 
 type Props<T extends Record<string, any> = Record<string, any>> = {
-	filters: Filter<T>[],
+	filters: QueryFilter<T>[],
 	onQueryChange: (query: string) => void,
 	query: string
 };
