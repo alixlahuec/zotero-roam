@@ -196,14 +196,14 @@ describe("useSearchFilters", () => {
 		const matchingFilters = [filters[1]];
 
 		const cases = [
-			[0, []],
-			[1, matchingFilters],
-			[2, matchingFilters]
-		] as const;
+			{ cursorPosition: 0, expectedSuggestions: [] },
+			{ cursorPosition: 1, expectedSuggestions: matchingFilters },
+			{ cursorPosition: 2, expectedSuggestions: matchingFilters }
+		];
 
 		test.each(cases)(
-			"returns filters with matching name - #%d",
-			async (cursorPosition, expected_suggestions) => {
+			"returns filters with matching name - %# - $expectedSuggestions.length results",
+			async ({ cursorPosition, expectedSuggestions }) => {
 				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange }));
 
 				await waitFor(() => expect(result.current.terms).toBeDefined());
@@ -214,7 +214,7 @@ describe("useSearchFilters", () => {
 					term: query,
 					termIndex: 0,
 					terms: [query, ""],
-					suggestions: expected_suggestions
+					suggestions: expectedSuggestions
 				});
 			}
 		)
