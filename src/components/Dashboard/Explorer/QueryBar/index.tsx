@@ -23,6 +23,7 @@ const itemRenderer: QueryListProps<SearchSuggestion>["itemRenderer"] = (item, it
 	return <MenuItem key={item.value}
 		aria-selected={modifiers.active}
 		className="zr-explorer-suggestion"
+		data-testid="explorer-suggestion"
 		labelClassName={Classes.CODE}
 		labelElement={item.value + (isFilter ? ":" : "")}
 		onClick={handleClick}
@@ -71,6 +72,7 @@ function ExplorerQueryList<T extends Record<string, any>>({ filters, onQueryChan
 			<InputGroup
 				autoComplete="off"
 				className={[Classes.INPUT, Classes.FILL, "zr-explorer-search-input-group"].join(" ")}
+				data-testid="explorer-searchbar"
 				id="zr-explorer-searchbar"
 				inputRef={searchbar}
 				leftElement={searchbarLeftElement}
