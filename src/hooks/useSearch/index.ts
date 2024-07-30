@@ -1,41 +1,22 @@
 import { useCallback, useMemo } from "react";
 
-import { searchEngine } from "../utils";
+import { runSearch } from "./helpers";
+import { FilterTerm, QueryFilter, SearchSuggestion, SearchTerm } from "./types";
 
 import { AsBoolean } from "Types/helpers";
 
 
 // TODO: create helpers for configuring filters with common patterns (multiple values, ranges, AND/OR like I did with Smartblocks queries)
 
+const FILTER_REGEX = new RegExp(/([^ ]+):([^ "]+|"[^:]+")(?: *)/g);
+const QUALIFIED_FILTER_REGEX = new RegExp(/([^ ]+:(?:[^ "]+|"[^:]+")(?: *))/g);
+const QUALIFIED_FILTER_WITH_TRAILING_SPACE_REGEX = new RegExp(/^[^ ]+:(?:[^ "]+|"[^:]+") $/g);
+
 type CursorPosition = {
 	position: number,
 	term: string,
 	termIndex: number
 };
-
-type Preset = {
-	/** The user-facing label for the preset. This is used in suggestions. */
-	label: string,
-	/** The value for the preset. This is used in the query itself. */
-	value: string
-}
-
-export type QueryFilter<T extends Record<string, any> = Record<string, any>> = {
-	/** The user-facing label for the filter. This is used in suggestions. */
-	label: string,
-	/** The filter's operator. This is used in the query itself. */
-	value: string,
-	/** The fixed suggestions to present when the user selects the filter. */
-	presets: Preset[],
-	evaluate: (query: string, item: T) => boolean
-}
-
-export type SearchSuggestion<T extends Record<string, any> = Record<string, any>> = Preset | QueryFilter<T>;
-
-
-const FILTER_REGEX = new RegExp(/([^ ]+):([^ "]+|"[^:]+")(?: *)/g);
-const QUALIFIED_FILTER_REGEX = new RegExp(/([^ ]+:(?:[^ "]+|"[^:]+")(?: *))/g);
-const QUALIFIED_FILTER_WITH_TRAILING_SPACE_REGEX = new RegExp(/^[^ ]+:(?:[^ "]+|"[^:]+") $/g);
 
 type UseSearchProps<T extends Record<string, any> = Record<string, any>> = {
 	cursorPosition: number,
@@ -150,42 +131,12 @@ const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 };
 
 
-type SearchFreeText = string;
-type SearchFilter<T extends Record<string,any> = Record<string, any>> = { filter: QueryFilter<T>, query: string };
-type SearchTerm<T extends Record<string, any> = Record<string, any>> = SearchFreeText | SearchFilter<T>;
-
-export const runSearch = <T extends Record<string, any> = Record<string, any>>(
-	terms: SearchTerm<T>[], items: T[], search_field: keyof T | undefined
-) => {
-	return terms.reduce((filteredItems, term) => {
-		// Skip falsy terms
-		// This is needed to ignore empty queries and the trailing term for non-empty queries
-		if (!term) {
-			return filteredItems;
-		}
-
-		// Free-text
-		if (typeof term === "string") {
-			// If no searchable field was provided, ignore free-text input
-			if (!search_field) {
-				return filteredItems;
-			}
-
-			return filteredItems.filter(item => searchEngine(term, item[search_field]));
-		}
-
-		// Filters
-		return filteredItems.filter(item => term.filter.evaluate(term.query, item));
-	}, items)
-};
-
-
 const useSearch = <T extends Record<string, any> = Record<string, any>>(
 	{ query, filters, items, search_field = undefined }: { query: string, filters: QueryFilter[], items: T[], search_field?: keyof T }
 ) => {
 	const terms = useMemo<SearchTerm[]>(() => {
 		const matches = Array.from(query.matchAll(FILTER_REGEX));
-		const appliedFilters: SearchFilter[] = matches
+		const appliedFilters: FilterTerm[] = matches
 			.map((match) => {
 				const [/* string */, operator, query] = match;
 				
@@ -228,5 +179,8 @@ const useSearch = <T extends Record<string, any> = Record<string, any>>(
 	
 	return matchedItems;
 };
+
+
+export * from "./types";
 
 export { useSearch, useSearchFilters };
