@@ -15,7 +15,12 @@ export type QueryFilter<T extends Record<string, any> = Record<string, any>> = {
 	evaluate: (query: string, item: T) => boolean
 }
 
-export type FilterTerm<T extends Record<string, any> = Record<string, any>> = { filter: QueryFilter<T>, query: string };
+export type FilterTerm<T extends Record<string, any> = Record<string, any>> = {
+	/** The configuration for the filter. */
+	filter: QueryFilter<T>,
+	/** The query string for the filter. */
+	query: string
+};
 
 type FreeTextTerm = string;
 export type SearchTerm<T extends Record<string, any> = Record<string, any>> = FreeTextTerm | FilterTerm<T>;
