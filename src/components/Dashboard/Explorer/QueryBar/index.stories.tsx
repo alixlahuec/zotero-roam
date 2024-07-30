@@ -1,7 +1,7 @@
 import { ComponentProps, useCallback, useState } from "react"
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Filter } from "@hooks";
+import { QueryFilter } from "@hooks";
 
 import ExplorerQueryList from "."
 
@@ -14,7 +14,7 @@ type Item = {
 	title: string
 };
 
-const filters: Filter<Item>[] = [
+const filters: QueryFilter<Item>[] = [
 	{
 		label: "Library entry exists",
 		value: "inLibrary",
