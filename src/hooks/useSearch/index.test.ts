@@ -206,7 +206,9 @@ describe("useSearchFilters", () => {
 
 					await waitFor(() => expect(result.current.suggestions).toBeDefined());
 
+					console.log({ result: result.current });
 					act(() => result.current.applySuggestion(suggestion));
+					console.log({ result: result.current });
 
 					expect(handleQueryChange.mock.calls).toHaveLength(1);
 					expect(handleQueryChange.mock.calls[0]).toEqual([query + suggestion.value]);

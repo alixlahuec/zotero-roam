@@ -1,22 +1,12 @@
 import { useCallback, useMemo } from "react";
 
-import { runSearch } from "./helpers";
+import { computeCursorPosition, parseQueryTerms, runSearch } from "./helpers";
 import { FilterTerm, QueryFilter, SearchSuggestion, SearchTerm } from "./types";
 
 import { AsBoolean } from "Types/helpers";
 
 
-// TODO: create helpers for configuring filters with common patterns (multiple values, ranges, AND/OR like I did with Smartblocks queries)
-
 const FILTER_REGEX = new RegExp(/([^ ]+):([^ "]+|"[^:]+")(?: *)/g);
-const QUALIFIED_FILTER_REGEX = new RegExp(/([^ ]+:(?:[^ "]+|"[^:]+")(?: *))/g);
-const QUALIFIED_FILTER_WITH_TRAILING_SPACE_REGEX = new RegExp(/^[^ ]+:(?:[^ "]+|"[^:]+") $/g);
-
-type CursorPosition = {
-	position: number,
-	term: string,
-	termIndex: number
-};
 
 type UseSearchProps<T extends Record<string, any> = Record<string, any>> = {
 	cursorPosition: number,
@@ -28,31 +18,9 @@ type UseSearchProps<T extends Record<string, any> = Record<string, any>> = {
 const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 	{ cursorPosition, filters, handleQueryChange, query }: UseSearchProps<T>
 ) => {
-	const terms = useMemo(() => [...query.split(QUALIFIED_FILTER_REGEX).filter(Boolean), ""], [query]);
+	const terms = useMemo(() => parseQueryTerms(query), [query]);
 
-	const currentPositionDetails = useMemo<CursorPosition>(() => {
-		let remainingIter = cursorPosition;
-	
-		for (let i = 0; i < terms.length; i++){
-			const term = terms[i];
-			const termFullyContainsCursor = remainingIter < term.length;
-			const cursorIsTerminal = remainingIter == term.length;
-			const isLastTerm = i == terms.length - 1;
-			const isFullyQualifiedFilter = term.match(QUALIFIED_FILTER_WITH_TRAILING_SPACE_REGEX) !== null;
-
-			if (termFullyContainsCursor || (cursorIsTerminal && (isLastTerm || !isFullyQualifiedFilter))) {
-				return {
-					position: remainingIter,
-					term,
-					termIndex: i
-				}
-			}
-
-			remainingIter -= term.length;
-		}
-
-		throw new Error("Cursor position could not be determined");
-	}, [terms, cursorPosition]);
+	const currentPositionDetails = useMemo(() => computeCursorPosition(terms, cursorPosition), [terms, cursorPosition]);
 
 	const suggestions = useMemo<SearchSuggestion<T>[]>(() => {
 		const { term, position } = currentPositionDetails;
@@ -123,8 +91,6 @@ const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 		termIndex: currentPositionDetails.termIndex,
 		/**
 		 * The ordered sequence of components to the query.
-		 * A term is either a fully qualified filter or an unmatched group (which could be free-text search or a partially-typed filter).
-		 * Note that the last term is always an empty string, which is needed to correctly determine suggestions when the cursor is at the end of the query.
 		 */
 		terms
 	}

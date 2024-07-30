@@ -1,4 +1,4 @@
-import { runSearch } from "./helpers";
+import { computeCursorPosition, parseQueryTerms, runSearch } from "./helpers";
 
 
 type Item = {
@@ -6,6 +6,54 @@ type Item = {
 	roam: boolean,
 	title: string
 };
+
+
+describe("computeCursorPosition", () => {
+	const cases = [
+		{ terms: [""], cursorPosition: 0, expectedResult: { position: 0, term: "", termIndex: 0 } },
+		{ terms: ["text", ""], cursorPosition: 4, expectedResult: { position: 4, term: "text", termIndex: 0 } },
+		{ terms: ["text ", ""], cursorPosition: 5, expectedResult: { position: 0, term: "", termIndex: 1 } },
+		{ terms: ["inRoam:", ""], cursorPosition: 7, expectedResult: { position: 7, term: "inRoam:", termIndex: 0 } },
+		{ terms: ["inRoam: ", ""], cursorPosition: 8, expectedResult: { position: 0, term: "", termIndex: 1 } },
+		{ terms: ["inRoam:true", ""], cursorPosition: 11, expectedResult: { position: 11, term: "inRoam:true", termIndex: 0 } },
+		{ terms: ["inRoam:true ", ""], cursorPosition: 12, expectedResult: { position: 0, term: "", termIndex: 1 } },
+		{ terms: ["inRoam:true ", "text", ""], cursorPosition: 12, expectedResult: { position: 0, term: "text", termIndex: 1 } },
+	];
+
+	test.each(cases)(
+		"%s",
+		({ terms, cursorPosition, expectedResult }) => {
+			expect(computeCursorPosition(terms, cursorPosition)).toEqual(expectedResult);
+		}
+	)
+});
+
+
+describe("parseQueryTerms", () => {
+	const cases = [
+		{ query: "", terms: [""] },
+		{ query: "i", terms: ["i", ""] },
+		{ query: "in", terms: ["in", ""] },
+		{ query: "inR", terms: ["inR", ""] },
+		{ query: "inRo", terms: ["inRo", ""] },
+		{ query: "inRoa", terms: ["inRoa", ""] },
+		{ query: "inRoam", terms: ["inRoam", ""] },
+		{ query: "inRoam:", terms: ["inRoam:", ""] },
+		{ query: "inRoam:true", terms: ["inRoam:true", ""] },
+		{ query: "inRoam:true ", terms: ["inRoam:true ", ""] },
+		{ query: `abstract:"`, terms: [`abstract:"`, ""] },
+		{ query: `abstract:"text string`, terms: [`abstract:"text string`, ""] },
+		{ query: `abstract:"text string"`, terms: [`abstract:"text string"`, ""] },
+		{ query: "text abstract:string", terms: ["text ", "abstract:string", ""] },
+		{ query: "abstract:string text", terms: ["abstract:string ", "text", ""] },
+		{ query: "inRoam:true abstract:string", terms: ["inRoam:true ", "abstract:string", ""] }
+	];
+
+	test.each(cases)(
+		"$query",
+		({ query, terms }) => expect(parseQueryTerms(query)).toEqual(terms)
+	)
+});
 
 
 describe("runSearch", () => {
