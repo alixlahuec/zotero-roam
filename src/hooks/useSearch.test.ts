@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-hooks";
+import { act, renderHook } from "@testing-library/react-hooks";
 
 import { Filter, runSearch, useSearch, useSearchFilters } from "./useSearch";
 
@@ -233,6 +233,59 @@ describe("useSearchFilters", () => {
 			termIndex: 0,
 			terms: [query, ""],
 			suggestions: filters[1].presets
+		});
+	});
+
+	describe("applySuggestion", () => {
+		describe("it auto-completes filter operators", async () => {
+			const cases = [
+				{ query: "", cursorPosition: 0, suggestion: filters[0] },
+				{ query: "ro", cursorPosition: 0, suggestion: filters[0] },
+				{ query: "ro", cursorPosition: 1, suggestion: filters[0] },
+				{ query: "ro", cursorPosition: 2, suggestion: filters[0] },
+				{ query: "", cursorPosition: 0, suggestion: filters[1] },
+				{ query: "ro", cursorPosition: 0, suggestion: filters[1] },
+				{ query: "ro", cursorPosition: 1, suggestion: filters[1] },
+				{ query: "ro", cursorPosition: 2, suggestion: filters[1] }
+			];
+
+			test.each(cases)(
+				"%# - $query, cursor at $cursorPosition -> $suggestion.value",
+				async ({ query, cursorPosition, suggestion }) => {
+					const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition, query, handleQueryChange, filters }));
+		
+					await waitFor(() => expect(result.current.suggestions).toBeDefined());
+		
+					act(() => result.current.applySuggestion(suggestion));
+
+					expect(handleQueryChange.mock.calls).toHaveLength(1);
+					expect(handleQueryChange.mock.calls[0]).toEqual([suggestion.value + ":"]);
+				}
+			)
+		});
+		
+		describe("it inserts filter presets", async () => {
+			const cases = [
+				{ query: filters[0].value + ":", suggestion: filters[0].presets[0] },
+				{ query: filters[0].value + ":", suggestion: filters[0].presets[1] },
+				{ query: filters[0].value + ":", suggestion: filters[0].presets[2] },
+				{ query: filters[1].value + ":", suggestion: filters[1].presets[0] },
+				{ query: filters[1].value + ":", suggestion: filters[1].presets[1] },
+			];
+
+			test.each(cases)(
+				"%# - $query $suggestion.value",
+				async ({ query, suggestion }) => {
+					const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: query.length, query, handleQueryChange, filters }));
+
+					await waitFor(() => expect(result.current.suggestions).toBeDefined());
+
+					act(() => result.current.applySuggestion(suggestion));
+
+					expect(handleQueryChange.mock.calls).toHaveLength(1);
+					expect(handleQueryChange.mock.calls[0]).toEqual([query + suggestion.value]);
+				}
+			)
 		});
 	});
 });
