@@ -57,7 +57,7 @@ describe("useSearchFilters", () => {
 
 	describe("with fully qualified query", () => {
 		const query = "roam:true doi:true";
-		const terms = ["roam:true ", "doi:true", ""];
+		const terms = ["roam:true ", "doi:true"];
 		
 		const firstTermCases = [0, 2, 5, 7, 9];
 		test.each(firstTermCases)(
@@ -139,7 +139,7 @@ describe("useSearchFilters", () => {
 					position: cursorPosition,
 					term: query,
 					termIndex: 0,
-					terms: [query, ""],
+					terms: [query],
 					suggestions: expectedSuggestions
 				});
 			}
@@ -157,7 +157,7 @@ describe("useSearchFilters", () => {
 			position: 5,
 			term: query,
 			termIndex: 0,
-			terms: [query, ""],
+			terms: [query],
 			suggestions: filters[1].presets
 		});
 	});
