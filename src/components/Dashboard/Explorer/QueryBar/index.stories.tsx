@@ -103,5 +103,8 @@ export const WithInteractions: StoryObj<Props> = {
 
 		const suggestions = canvas.getAllByTestId("explorer-suggestion");
 		expect(suggestions[0]).toHaveAttribute("aria-selected", "true");
+
+		await userEvent.click(suggestions[0]);
+		await expect(searchbar).toHaveValue(filters[0].value + ":" + filters[0].presets[0].value);
 	}
 };

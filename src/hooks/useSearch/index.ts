@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import { computeCursorPosition, parseQueryTerms, runSearch } from "./helpers";
+import { computeCursorPosition, computeSuggestions, parseQueryTerms, runSearch } from "./helpers";
 import { FilterTerm, QueryFilter, SearchSuggestion, SearchTerm } from "./types";
 
 import { AsBoolean } from "Types/helpers";
@@ -22,36 +22,9 @@ const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 
 	const currentPositionDetails = useMemo(() => computeCursorPosition(terms, cursorPosition), [terms, cursorPosition]);
 
-	const suggestions = useMemo<SearchSuggestion<T>[]>(() => {
+	const suggestions = useMemo(() => {
 		const { term, position } = currentPositionDetails;
-
-		if (position == 0) {
-			return term.length == 0
-				? filters
-				: [];
-		}
-
-		// operator:|
-		if (term.endsWith(":") && position == term.length) {
-			const operator = term.slice(0, position - 1);
-			const maybeFilter = filters.find(({ value }) => value == operator);
-
-			if (maybeFilter) {
-				return maybeFilter.presets;
-			} else {
-				return [];
-			}
-		}
-
-		// operator:quer
-		if (term.includes(":")) {
-			return []
-		}
-
-		// tex|, op|, ...
-		// TODO: improve the filtering here
-		return filters.filter(({ value }) => value.startsWith(term));
-
+		return computeSuggestions<T>({ filters, position, term });
 	}, [currentPositionDetails, filters]);
 
 	const applySuggestion = useCallback((suggestion: SearchSuggestion<T>) => {

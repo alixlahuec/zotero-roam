@@ -1,4 +1,4 @@
-import { SearchTerm } from "./types";
+import { QueryFilter, SearchSuggestion, SearchTerm } from "./types";
 
 import { searchEngine } from "../../utils";
 
@@ -6,7 +6,7 @@ import { searchEngine } from "../../utils";
 // TODO: create helpers for configuring filters with common patterns (multiple values, ranges, AND/OR like I did with Smartblocks queries)
 
 const INCOMPLETE_FILTER_REGEX = new RegExp(/^[^ ]+:(?:"[^"]*)?$/g);
-const INCOMPLETE_FREE_TEXT_REGEX = new RegExp(/^("[^"]+)|([^": ]+)$/g);
+const INCOMPLETE_FREE_TEXT_REGEX = new RegExp(/^("[^"]*)$/g);
 const QUALIFIED_FILTER_REGEX = new RegExp(/([^ ]+:(?:[^ "]+|"[^:]+")(?: *))/g);
 
 type CursorPosition = {
@@ -29,11 +29,8 @@ const computeCursorPosition = (
 		const termFullyContainsCursor = remainingIter < term.length;
 		const cursorIsTerminal = remainingIter == term.length;
 		const isLastTerm = i == terms.length - 1;
-		const isPenultimateTerm = i == terms.length - 2;
-		const isIncompleteFilter = term.match(INCOMPLETE_FILTER_REGEX) !== null;
-		const isIncompleteQuotedFreeText = term.match(INCOMPLETE_FREE_TEXT_REGEX) !== null;
 
-		if (termFullyContainsCursor || (cursorIsTerminal && (isLastTerm || (isPenultimateTerm && (isIncompleteFilter || isIncompleteQuotedFreeText))))) {
+		if (termFullyContainsCursor || (cursorIsTerminal && (isLastTerm || (isIncompleteFilter(term) || isIncompleteFreeText(term))))) {
 			return {
 				position: remainingIter,
 				term,
@@ -44,17 +41,60 @@ const computeCursorPosition = (
 		remainingIter -= term.length;
 	}
 
-	/* istanbul ignore next */
 	throw new Error("Cursor position could not be determined");
+};
+
+
+type ComputeSuggestionsArgs<T extends Record<string, any> = Record<string, any>> = {
+	filters: QueryFilter<T>[],
+	position: number,
+	term: string
+};
+
+/** Determines which suggestions to make for the current query string, cursor position, and filters. */
+const computeSuggestions = <T extends Record<string, any> = Record<string, any>>(
+	{ filters, position, term }: ComputeSuggestionsArgs<T>
+): SearchSuggestion<T>[] => {
+	if (term.length == 0) return filters;
+	if (position == 0) return [];
+
+	// operator:|
+	if (term.endsWith(":") && position == term.length && isIncompleteFilter(term)) {
+		return filters.find(({ value }) => value == term.slice(0, -1))?.presets || [];
+	}
+
+	// operator:tex|, operator:text |, "free tex
+	if (term.includes(":") || isIncompleteFreeText(term)) {
+		return []
+	}
+
+	// tex|, op|, ...
+	return filters.filter(({ value, label }) => searchEngine(term, [value, label], { word_order: "loose" }));
+};
+
+
+/** Determines if a term is a partially qualified filter (e.g. operator:). */
+const isIncompleteFilter = (term: string) => {
+	return term.match(INCOMPLETE_FILTER_REGEX) !== null;
+};
+
+
+/** Determines if a term is an unclosed quoted free-text string (e.g. "free tex). */
+const isIncompleteFreeText = (term: string) => {
+	return term.match(INCOMPLETE_FREE_TEXT_REGEX) !== null;
 };
 
 
 /** Splits a full query string into term components.
  * A term is either a fully qualified filter or an unmatched group (which could be free-text search or a partially-typed filter).
- * Note that the last term is always an empty string, which is needed to correctly determine suggestions when the cursor is at the end of the query.
+ * If the query is empty or ends with a space, an empty term is appended to the list of components to correctly determine suggestions when the cursor is at the end of the query.
 */
 const parseQueryTerms = (query: string) => {
-	return [...query.split(QUALIFIED_FILTER_REGEX).filter(Boolean), ""]
+	const chunks = query.split(QUALIFIED_FILTER_REGEX).filter(Boolean);
+
+	return (chunks.length === 0 || chunks[chunks.length -1].endsWith(" "))
+		? [...chunks, ""]
+		: chunks;
 };
 
 
@@ -85,4 +125,11 @@ const runSearch = <T extends Record<string, any> = Record<string, any>>(
 };
 
 
-export { computeCursorPosition, parseQueryTerms, runSearch };
+export {
+	computeCursorPosition,
+	computeSuggestions,
+	isIncompleteFilter,
+	isIncompleteFreeText,
+	parseQueryTerms,
+	runSearch
+};
