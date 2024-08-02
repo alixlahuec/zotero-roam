@@ -1,4 +1,4 @@
-import { computeCursorPosition, computeSuggestions, isIncompleteFilter, isIncompleteFreeText, parseQueryTerms, runSearch } from "./helpers";
+import { computeCursorPosition, computeSuggestions, isIncompleteFilter, isIncompleteFreeText, parseQueryTerms, parseSearchTerms, runSearch } from "./helpers";
 import { QueryFilter } from "./types";
 
 
@@ -155,6 +155,29 @@ describe("parseQueryTerms", () => {
 		"$query",
 		({ query, terms }) => expect(parseQueryTerms(query)).toEqual(terms)
 	)
+});
+
+
+describe("parseSearchTerms", () => {
+	const cases = [
+		{ terms: [], expected: [] },
+		{ terms: [""], expected: [] },
+		{ terms: ["text"], expected: ["text"] },
+		{ terms: ["\"text search\""], expected: ["text search"] },
+		{ terms: ["someFilter:query"], expected: []},
+		{ terms: ["roam:true"], expected: [{ filter: filters[1], query: "true" }] },
+		{ terms: ["roam:true ", "text string"], expected: [{ filter: filters[1], query: "true" }, "text string"] },
+		{ terms: ["roam:true ", "\"text string\""], expected: [{ filter: filters[1], query: "true" }, "text string"] },
+		{ terms: ["\"text string\"", "roam:true"], expected: [{ filter: filters[1], query: "true" }, "text string"] },
+		{ terms: ["text ", "roam:true ", "string"], expected: [{ filter: filters[1], query: "true" }, "text string"] }
+	];
+
+	test.each(cases)(
+		"%# - $terms (expect: $expected)",
+		({ terms, expected }) => {
+			expect(parseSearchTerms(terms, filters)).toEqual(expected);
+		}
+	);
 });
 
 
