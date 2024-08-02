@@ -13,7 +13,7 @@ type UseSearchProps<T extends Record<string, any> = Record<string, any>> = {
 	setCursorPosition: (pos: number) => void
 };
 
-const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
+const useSearchQuery = <T extends Record<string, any> = Record<string ,any>>(
 	{ cursorPosition, filters, handleQueryChange, query, search_field, setCursorPosition }: UseSearchProps<T>
 ) => {
 	const terms = useMemo(() => parseQueryTerms(query), [query]);
@@ -82,4 +82,4 @@ const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 
 export * from "./types";
 
-export { useSearchFilters };
+export { useSearchQuery };

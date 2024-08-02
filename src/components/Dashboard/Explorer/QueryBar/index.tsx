@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Classes, Icon, InputGroup, InputGroupProps2, MenuItem } from "@blueprintjs/core";
 import { QueryList, QueryListProps } from "@blueprintjs/select";
 
-import { QueryFilter, SearchSuggestion, useSearchFilters } from "@hooks";
+import { QueryFilter, SearchSuggestion, useSearchQuery } from "@hooks";
 
 import "./_index.sass";
 
@@ -65,7 +65,7 @@ function ExplorerQueryList<T extends Record<string, any>>({ filters, onQueryChan
 		onQueryChange(query);
 	}, [onQueryChange, refreshCursorPosition]);
 
-	const { applySuggestion, suggestions } = useSearchFilters<T>({ cursorPosition, filters, handleQueryChange, query, setCursorPosition });
+	const { applySuggestion, suggestions } = useSearchQuery<T>({ cursorPosition, filters, handleQueryChange, query, setCursorPosition });
 
 	const handleItemSelect = useCallback<QueryListProps<SearchSuggestion<T>>["onItemSelect"]>((item, _e) => {
 		applySuggestion(item);

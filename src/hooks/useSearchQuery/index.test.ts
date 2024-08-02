@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react-hooks";
 
-import { QueryFilter, useSearchFilters } from ".";
+import { QueryFilter, useSearchQuery } from ".";
 
 
 type Item = {
@@ -40,9 +40,9 @@ const handleQueryChange = vi.fn();
 const setCursorPosition = vi.fn();
 
 
-describe("useSearchFilters", () => {
+describe("useSearchQuery", () => {
 	it("returns all filters when the query is empty", async () => {
-		const { result, waitFor } = renderHook(() => useSearchFilters({ query: "", cursorPosition: 0, filters, handleQueryChange, setCursorPosition }));
+		const { result, waitFor } = renderHook(() => useSearchQuery({ query: "", cursorPosition: 0, filters, handleQueryChange, setCursorPosition }));
 
 		await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -65,7 +65,7 @@ describe("useSearchFilters", () => {
 		test.each(firstTermCases)(
 			"returns no suggestions - cursor at %s",
 			async (cursorPosition) => {
-				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange, setCursorPosition }));
+				const { result, waitFor } = renderHook(() => useSearchQuery({ query, cursorPosition, filters, handleQueryChange, setCursorPosition }));
 
 				await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -85,7 +85,7 @@ describe("useSearchFilters", () => {
 		test.each(secondTermCases)(
 			"returns no suggestions - cursor at %s",
 			async (cursorPosition) => {
-				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange, setCursorPosition }));
+				const { result, waitFor } = renderHook(() => useSearchQuery({ query, cursorPosition, filters, handleQueryChange, setCursorPosition }));
 
 				await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -106,7 +106,7 @@ describe("useSearchFilters", () => {
 	describe("with fully qualified query and a trailing space", () => {
 		it("returns all filters", async () => {
 			const query = "roam:true ";
-			const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition: 10, filters, handleQueryChange, setCursorPosition }));
+			const { result, waitFor } = renderHook(() => useSearchQuery({ query, cursorPosition: 10, filters, handleQueryChange, setCursorPosition }));
 
 			await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -135,7 +135,7 @@ describe("useSearchFilters", () => {
 		test.each(cases)(
 			"returns filters with matching name - %# - $expectedSuggestions.length results",
 			async ({ cursorPosition, expectedSuggestions }) => {
-				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange, setCursorPosition }));
+				const { result, waitFor } = renderHook(() => useSearchQuery({ query, cursorPosition, filters, handleQueryChange, setCursorPosition }));
 
 				await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -154,7 +154,7 @@ describe("useSearchFilters", () => {
 
 	it("returns presets when the user has selected an operator", async () => {
 		const query = "roam:";
-		const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition: 5, filters, handleQueryChange, setCursorPosition }));
+		const { result, waitFor } = renderHook(() => useSearchQuery({ query, cursorPosition: 5, filters, handleQueryChange, setCursorPosition }));
 
 		await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -185,7 +185,7 @@ describe("useSearchFilters", () => {
 			test.each(cases)(
 				"%# - $query, cursor at $cursorPosition -> $suggestion.value",
 				async ({ query, cursorPosition, suggestion }) => {
-					const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition, query, handleQueryChange, filters, setCursorPosition }));
+					const { result, waitFor } = renderHook(() => useSearchQuery({ cursorPosition, query, handleQueryChange, filters, setCursorPosition }));
 		
 					await waitFor(() => expect(result.current.suggestions).toBeDefined());
 		
@@ -212,7 +212,7 @@ describe("useSearchFilters", () => {
 			test.each(cases)(
 				"%# - $query $suggestion.value",
 				async ({ query, suggestion }) => {
-					const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: query.length, query, handleQueryChange, filters, setCursorPosition }));
+					const { result, waitFor } = renderHook(() => useSearchQuery({ cursorPosition: query.length, query, handleQueryChange, filters, setCursorPosition }));
 
 					await waitFor(() => expect(result.current.suggestions).toBeDefined());
 
@@ -237,7 +237,7 @@ describe("useSearchFilters", () => {
 		it("matches items with filters", async () => {
 			const filterEvaluateSpy = vi.spyOn(filters[1], "evaluate");
 
-			const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: 0, query: "roam:true", filters, handleQueryChange, setCursorPosition }));
+			const { result, waitFor } = renderHook(() => useSearchQuery({ cursorPosition: 0, query: "roam:true", filters, handleQueryChange, setCursorPosition }));
 
 			await waitFor(() => expect(result.current).toBeDefined());
 
@@ -249,7 +249,7 @@ describe("useSearchFilters", () => {
 		});
 
 		it("matches items with free-text search when enabled", async () => {
-			const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: 0, query: "essay", filters, handleQueryChange, search_field: "title", setCursorPosition }));
+			const { result, waitFor } = renderHook(() => useSearchQuery({ cursorPosition: 0, query: "essay", filters, handleQueryChange, search_field: "title", setCursorPosition }));
 
 			await waitFor(() => expect(result.current).toBeDefined());
 
@@ -257,7 +257,7 @@ describe("useSearchFilters", () => {
 		});
 
 		it("ignores free-text search when disabled", async () => {
-			const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: 0, query: "history", filters, handleQueryChange, setCursorPosition }));
+			const { result, waitFor } = renderHook(() => useSearchQuery({ cursorPosition: 0, query: "history", filters, handleQueryChange, setCursorPosition }));
 
 			await waitFor(() => expect(result.current).toBeDefined());
 
