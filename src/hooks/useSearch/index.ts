@@ -1,23 +1,20 @@
 import { useCallback, useMemo } from "react";
 
-import { computeCursorPosition, computeSuggestions, parseQueryTerms, runSearch } from "./helpers";
-import { FilterTerm, QueryFilter, SearchSuggestion, SearchTerm } from "./types";
+import { computeCursorPosition, computeSuggestions, parseQueryTerms, parseSearchTerms, runSearch } from "./helpers";
+import { QueryFilter, SearchSuggestion } from "./types";
 
-import { AsBoolean } from "Types/helpers";
-
-
-const FILTER_REGEX = new RegExp(/([^ ]+):([^ "]+|"[^:]+")(?: *)/g);
 
 type UseSearchProps<T extends Record<string, any> = Record<string, any>> = {
 	cursorPosition: number,
 	filters: QueryFilter<T>[],
 	handleQueryChange: (query: string) => void,
 	query: string,
+	search_field?: keyof T,
 	setCursorPosition: (pos: number) => void
 };
 
 const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
-	{ cursorPosition, filters, handleQueryChange, query, setCursorPosition }: UseSearchProps<T>
+	{ cursorPosition, filters, handleQueryChange, query, search_field, setCursorPosition }: UseSearchProps<T>
 ) => {
 	const terms = useMemo(() => parseQueryTerms(query), [query]);
 
@@ -45,6 +42,11 @@ const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 		setCursorPosition(newCursorPosition);
 	}, [currentPositionDetails, handleQueryChange, setCursorPosition]);
 
+	const search = useCallback((items) => {
+		const searchTerms = parseSearchTerms(terms, filters);
+		return runSearch(searchTerms, items, search_field);
+	}, [filters, search_field, terms]);
+
 	return {
 		/**
 		 * A contextual handler that updates the query string from a suggestion.
@@ -54,6 +56,10 @@ const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 		 * The current position of the cursor, relative to the `term`.
 		*/
 		position: currentPositionDetails.position,
+		/**
+		 * A contextual handler that executes the query against a list of items.
+		 */
+		search,
 		/**
 		 * All available suggestions for the current filtering context.
 		 */
@@ -74,56 +80,6 @@ const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 };
 
 
-const useSearch = <T extends Record<string, any> = Record<string, any>>(
-	{ query, filters, items, search_field = undefined }: { query: string, filters: QueryFilter[], items: T[], search_field?: keyof T }
-) => {
-	const terms = useMemo<SearchTerm[]>(() => {
-		const matches = Array.from(query.matchAll(FILTER_REGEX));
-		const appliedFilters: FilterTerm[] = matches
-			.map((match) => {
-				const [/* string */, operator, query] = match;
-				
-				let cleanQuery = query;
-				if (cleanQuery.startsWith(`"`)) {
-					cleanQuery = cleanQuery.slice(1);
-				}
-				if (cleanQuery.endsWith(`"`)) {
-					cleanQuery = cleanQuery.slice(0, -1);
-				}
-		
-				return { operator, query: cleanQuery };
-			})
-			.map(({ operator, query }) => {
-				const maybeFilter = filters.find(({ value }) => value == operator);
-
-				if (maybeFilter) {
-					return { filter: maybeFilter, query }
-				}
-
-				return null
-			})
-			.filter(AsBoolean)
-		;
-
-		const freeTextSearch = query.replaceAll(FILTER_REGEX, "");
-		let cleanFreeTextSearch = freeTextSearch;
-		if (cleanFreeTextSearch.startsWith(`"`)) {
-			cleanFreeTextSearch = cleanFreeTextSearch.slice(1);
-		}
-		if (cleanFreeTextSearch.endsWith(`"`)) {
-			cleanFreeTextSearch = cleanFreeTextSearch.slice(0, -1);
-		}
-
-		return [...appliedFilters, freeTextSearch]
-
-	}, [query, filters]);
-
-	const matchedItems = useMemo(() => runSearch(terms, items, search_field), [terms, items, search_field]);
-	
-	return matchedItems;
-};
-
-
 export * from "./types";
 
-export { useSearch, useSearchFilters };
+export { useSearchFilters };

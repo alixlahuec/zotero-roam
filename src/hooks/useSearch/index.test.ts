@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react-hooks";
 
-import { QueryFilter, useSearch, useSearchFilters } from ".";
+import { QueryFilter, useSearchFilters } from ".";
 
 
 type Item = {
@@ -49,6 +49,7 @@ describe("useSearchFilters", () => {
 		expect(result.current).toEqual({
 			applySuggestion: expect.any(Function),
 			position: 0,
+			search: expect.any(Function),
 			term: "",
 			termIndex: 0,
 			terms: [""],
@@ -71,6 +72,7 @@ describe("useSearchFilters", () => {
 				expect(result.current).toEqual({
 					applySuggestion: expect.any(Function),
 					position: cursorPosition,
+					search: expect.any(Function),
 					term: terms[0],
 					termIndex: 0,
 					terms,
@@ -90,6 +92,7 @@ describe("useSearchFilters", () => {
 				expect(result.current).toEqual({
 					applySuggestion: expect.any(Function),
 					position: cursorPosition - terms[0].length,
+					search: expect.any(Function),
 					term: terms[1],
 					termIndex: 1,
 					terms,
@@ -110,6 +113,7 @@ describe("useSearchFilters", () => {
 			expect(result.current).toEqual({
 				applySuggestion: expect.any(Function),
 				position: 0,
+				search: expect.any(Function),
 				term: "",
 				termIndex: 1,
 				terms: [query, ""],
@@ -138,6 +142,7 @@ describe("useSearchFilters", () => {
 				expect(result.current).toEqual({
 					applySuggestion: expect.any(Function),
 					position: cursorPosition,
+					search: expect.any(Function),
 					term: query,
 					termIndex: 0,
 					terms: [query],
@@ -156,6 +161,7 @@ describe("useSearchFilters", () => {
 		expect(result.current).toEqual({
 			applySuggestion: expect.any(Function),
 			position: 5,
+			search: expect.any(Function),
 			term: query,
 			termIndex: 0,
 			terms: [query],
@@ -221,41 +227,41 @@ describe("useSearchFilters", () => {
 			)
 		});
 	});
-});
 
+	describe("search", () => {
+		const items: Item[] = [
+			{ created: 111, roam: true, title: "An Examination of a Subject" },
+			{ created: 222, roam: false, title: "A Subject: An Essay" }
+		];
 
-describe("useSearch", () => {
-	const items: Item[] = [
-		{ created: 111, roam: true, title: "An Examination of a Subject" },
-		{ created: 222, roam: false, title: "A Subject: An Essay" }
-	];
+		it("matches items with filters", async () => {
+			const filterEvaluateSpy = vi.spyOn(filters[1], "evaluate");
 
-	it("matches items with filters", async () => {
-		const filterEvaluateSpy = vi.spyOn(filters[1], "evaluate");
+			const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: 0, query: "roam:true", filters, handleQueryChange, setCursorPosition }));
 
-		const { result, waitFor } = renderHook(() => useSearch({ query: "roam:true", filters, items }));
+			await waitFor(() => expect(result.current).toBeDefined());
 
-		await waitFor(() => expect(result.current).toBeDefined());
+			await expect(result.current.search(items)).toEqual([items[0]]);
 
-		expect(result.current).toEqual([items[0]]);
-		expect(filterEvaluateSpy.mock.calls).toHaveLength(2);
-		expect(filterEvaluateSpy.mock.calls[0]).toEqual(["true", items[0]]);
-		expect(filterEvaluateSpy.mock.calls[1]).toEqual(["true", items[1]]);
+			expect(filterEvaluateSpy).toBeCalledTimes(2);
+			expect(filterEvaluateSpy.mock.calls[0]).toEqual(["true", items[0]]);
+			expect(filterEvaluateSpy.mock.calls[1]).toEqual(["true", items[1]]);
+		});
+
+		it("matches items with free-text search when enabled", async () => {
+			const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: 0, query: "essay", filters, handleQueryChange, search_field: "title", setCursorPosition }));
+
+			await waitFor(() => expect(result.current).toBeDefined());
+
+			await expect(result.current.search(items)).toEqual([items[1]]);
+		});
+
+		it("ignores free-text search when disabled", async () => {
+			const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: 0, query: "history", filters, handleQueryChange, setCursorPosition }));
+
+			await waitFor(() => expect(result.current).toBeDefined());
+
+			await expect(result.current.search(items)).toEqual(items);
+		});
 	});
-
-	it("matches items with free-text search when enabled", async () => {
-		const { result, waitFor } = renderHook(() => useSearch({ query: "essay", filters, items, search_field: "title" }));
-
-		await waitFor(() => expect(result.current).toBeDefined());
-
-		expect(result.current).toEqual([items[1]]);
-	});
-
-	it("ignores free-text search when disabled", async () => {
-		const { result, waitFor } = renderHook(() => useSearch({ query: "history", filters, items }));
-
-		await waitFor(() => expect(result.current).toBeDefined());
-
-		expect(result.current).toEqual(items);
-	})
 });

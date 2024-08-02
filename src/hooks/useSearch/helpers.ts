@@ -1,10 +1,12 @@
-import { QueryFilter, SearchSuggestion, SearchTerm } from "./types";
+import { FilterTerm, QueryFilter, SearchSuggestion, SearchTerm } from "./types";
 
 import { searchEngine } from "../../utils";
+import { AsBoolean } from "Types/helpers";
 
 
 // TODO: create helpers for configuring filters with common patterns (multiple values, ranges, AND/OR like I did with Smartblocks queries)
 
+const FILTER_REGEX = new RegExp(/^(?: *)([^ ]+):([^ "]+|"[^:]+")(?: *)$/);
 const INCOMPLETE_FILTER_REGEX = new RegExp(/^[^ ]+:(?:"[^"]*)?$/g);
 const INCOMPLETE_FREE_TEXT_REGEX = new RegExp(/^("[^"]*)$/g);
 const QUALIFIED_FILTER_REGEX = new RegExp(/([^ ]+:(?:[^ "]+|"[^:]+")(?: *))/g);
@@ -98,6 +100,49 @@ const parseQueryTerms = (query: string) => {
 };
 
 
+/** Extracts valid filters and free-text search elements from a list of query terms.
+ * Invalid filters are removed. Free-text search is evaluated last, after any filters.
+*/
+const parseSearchTerms = <T extends Record<string, any> = Record<string, any>>(terms: string[], filters: QueryFilter<T>[]) => {
+	let freeTextTerms: string[] = [];
+	let filterTerms: FilterTerm<T>[] = [];
+
+	terms.forEach(term => {
+		const filterMatch = term.match(FILTER_REGEX);
+
+		if (!filterMatch) {
+			let cleanFreeTextSearch = term;
+			if (cleanFreeTextSearch.startsWith(`"`)) {
+				cleanFreeTextSearch = cleanFreeTextSearch.slice(1);
+			}
+			if (cleanFreeTextSearch.endsWith(`"`)) {
+				cleanFreeTextSearch = cleanFreeTextSearch.slice(0, -1);
+			}
+
+			freeTextTerms.push(cleanFreeTextSearch);
+			return;
+		};
+
+		const [/* string */, operator, query] = filterMatch;
+		const validFilter = filters.find(({ value }) => value == operator);
+
+		if (validFilter) {
+			let cleanQuery = query;
+			if (cleanQuery.startsWith(`"`)) {
+				cleanQuery = cleanQuery.slice(1);
+			}
+			if (cleanQuery.endsWith(`"`)) {
+				cleanQuery = cleanQuery.slice(0, -1);
+			}
+		
+			filterTerms.push({ filter: validFilter, query: cleanQuery });
+		}
+	})
+
+	return [...filterTerms, freeTextTerms.join("")];
+};
+
+
 /** Executes an ordered set of query terms against a list of items. */
 const runSearch = <T extends Record<string, any> = Record<string, any>>(
 	terms: SearchTerm<T>[], items: T[], search_field: keyof T | undefined
@@ -131,5 +176,6 @@ export {
 	isIncompleteFilter,
 	isIncompleteFreeText,
 	parseQueryTerms,
+	parseSearchTerms,
 	runSearch
 };
