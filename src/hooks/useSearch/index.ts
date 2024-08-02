@@ -12,11 +12,12 @@ type UseSearchProps<T extends Record<string, any> = Record<string, any>> = {
 	cursorPosition: number,
 	filters: QueryFilter<T>[],
 	handleQueryChange: (query: string) => void,
-	query: string
+	query: string,
+	setCursorPosition: (pos: number) => void
 };
 
 const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
-	{ cursorPosition, filters, handleQueryChange, query }: UseSearchProps<T>
+	{ cursorPosition, filters, handleQueryChange, query, setCursorPosition }: UseSearchProps<T>
 ) => {
 	const terms = useMemo(() => parseQueryTerms(query), [query]);
 
@@ -38,8 +39,11 @@ const useSearchFilters = <T extends Record<string, any> = Record<string ,any>>(
 		const termsList = terms;
 		termsList[termIndex] = updatedFilter;
 
+		const newCursorPosition = termsList.map(term => term.length).filter((_term, index) => index <= termIndex).reduce((iter, termLength) => iter + termLength, 0);
+
 		handleQueryChange(termsList.join(""));
-	}, [currentPositionDetails, handleQueryChange]);
+		setCursorPosition(newCursorPosition);
+	}, [currentPositionDetails, handleQueryChange, setCursorPosition]);
 
 	return {
 		/**

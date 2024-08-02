@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Classes, Icon, InputGroup, MenuItem } from "@blueprintjs/core";
+import { Classes, Icon, InputGroup, InputGroupProps2, MenuItem } from "@blueprintjs/core";
 import { QueryList, QueryListProps } from "@blueprintjs/select";
 
 import { QueryFilter, SearchSuggestion, useSearchFilters } from "@hooks";
@@ -46,27 +46,40 @@ type Props<T extends Record<string, any> = Record<string, any>> = {
 
 function ExplorerQueryList<T extends Record<string, any>>({ filters, onQueryChange, query }: Props<T>) {
 	const searchbar = useRef<HTMLInputElement>(null);
-	const [cursorPosition, setCursorPosition] = useState(() => searchbar.current?.selectionStart || 0);
+	const [cursorPosition, updateCursorPosition] = useState(() => searchbar.current?.selectionStart || 0);
 	const [showSuggestions, setShowSuggestions] = useState(false);
 
 	const refreshCursorPosition = useCallback(() => {
 		const posWithinSearchbar = searchbar.current?.selectionStart;
-		if (posWithinSearchbar !== undefined && posWithinSearchbar !== null) setCursorPosition(posWithinSearchbar);
-	}, [searchbar, setCursorPosition]);
+		if (posWithinSearchbar !== undefined && posWithinSearchbar !== null) updateCursorPosition(posWithinSearchbar);
+	}, [searchbar, updateCursorPosition]);
+
+	const setCursorPosition = useCallback((pos: number) => {
+		searchbar.current?.focus();
+		searchbar.current?.setSelectionRange(pos, null, "none");
+		refreshCursorPosition();
+	}, [searchbar, refreshCursorPosition]);
 
 	const handleQueryChange = useCallback<Required<QueryListProps<SearchSuggestion<T>>>["onQueryChange"]>((query) => {
 		refreshCursorPosition();
 		onQueryChange(query);
 	}, [onQueryChange, refreshCursorPosition]);
 
-	const { applySuggestion, suggestions } = useSearchFilters<T>({ cursorPosition, filters, handleQueryChange, query });
+	const { applySuggestion, suggestions } = useSearchFilters<T>({ cursorPosition, filters, handleQueryChange, query, setCursorPosition });
 
 	const handleItemSelect = useCallback<QueryListProps<SearchSuggestion<T>>["onItemSelect"]>((item, _e) => {
 		applySuggestion(item);
-	}, [applySuggestion, handleQueryChange]);
+	}, [applySuggestion]);
 
 	const listRenderer = useCallback<QueryListProps<SearchSuggestion<T>>["renderer"]>((listProps) => {
 		const { handleKeyUp, handleKeyDown, handleQueryChange: onChange, itemList, query } = listProps;
+
+		const handleBlur: InputGroupProps2["onBlur"] = (e) => {
+			if (e.relatedTarget?.closest(`#zr-explorer-suggestions`)) {
+				return
+			}
+			setShowSuggestions(false)
+		}
 
 		return <>
 			<InputGroup
@@ -76,7 +89,7 @@ function ExplorerQueryList<T extends Record<string, any>>({ filters, onQueryChan
 				id="zr-explorer-searchbar"
 				inputRef={searchbar}
 				leftElement={searchbarLeftElement}
-				onBlur={() => setShowSuggestions(false)}
+				onBlur={handleBlur}
 				onChange={onChange}
 				onFocus={() => setShowSuggestions(true)}
 				onKeyDown={handleKeyDown}

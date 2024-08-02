@@ -37,11 +37,12 @@ const filters: QueryFilter<Item>[] = [
 ];
 
 const handleQueryChange = vi.fn();
+const setCursorPosition = vi.fn();
 
 
 describe("useSearchFilters", () => {
 	it("returns all filters when the query is empty", async () => {
-		const { result, waitFor } = renderHook(() => useSearchFilters({ query: "", cursorPosition: 0, filters, handleQueryChange }));
+		const { result, waitFor } = renderHook(() => useSearchFilters({ query: "", cursorPosition: 0, filters, handleQueryChange, setCursorPosition }));
 
 		await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -63,7 +64,7 @@ describe("useSearchFilters", () => {
 		test.each(firstTermCases)(
 			"returns no suggestions - cursor at %s",
 			async (cursorPosition) => {
-				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange }));
+				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange, setCursorPosition }));
 
 				await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -82,7 +83,7 @@ describe("useSearchFilters", () => {
 		test.each(secondTermCases)(
 			"returns no suggestions - cursor at %s",
 			async (cursorPosition) => {
-				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange }));
+				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange, setCursorPosition }));
 
 				await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -102,7 +103,7 @@ describe("useSearchFilters", () => {
 	describe("with fully qualified query and a trailing space", () => {
 		it("returns all filters", async () => {
 			const query = "roam:true ";
-			const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition: 10, filters, handleQueryChange }));
+			const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition: 10, filters, handleQueryChange, setCursorPosition }));
 
 			await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -130,7 +131,7 @@ describe("useSearchFilters", () => {
 		test.each(cases)(
 			"returns filters with matching name - %# - $expectedSuggestions.length results",
 			async ({ cursorPosition, expectedSuggestions }) => {
-				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange }));
+				const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition, filters, handleQueryChange, setCursorPosition }));
 
 				await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -148,7 +149,7 @@ describe("useSearchFilters", () => {
 
 	it("returns presets when the user has selected an operator", async () => {
 		const query = "roam:";
-		const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition: 5, filters, handleQueryChange }));
+		const { result, waitFor } = renderHook(() => useSearchFilters({ query, cursorPosition: 5, filters, handleQueryChange, setCursorPosition }));
 
 		await waitFor(() => expect(result.current.terms).toBeDefined());
 
@@ -178,14 +179,17 @@ describe("useSearchFilters", () => {
 			test.each(cases)(
 				"%# - $query, cursor at $cursorPosition -> $suggestion.value",
 				async ({ query, cursorPosition, suggestion }) => {
-					const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition, query, handleQueryChange, filters }));
+					const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition, query, handleQueryChange, filters, setCursorPosition }));
 		
 					await waitFor(() => expect(result.current.suggestions).toBeDefined());
 		
 					act(() => result.current.applySuggestion(suggestion));
 
-					expect(handleQueryChange.mock.calls).toHaveLength(1);
-					expect(handleQueryChange.mock.calls[0]).toEqual([suggestion.value + ":"]);
+					expect(handleQueryChange).toBeCalledTimes(1);
+					expect(handleQueryChange).toBeCalledWith(suggestion.value + ":");
+
+					expect(setCursorPosition).toBeCalledTimes(1);
+					expect(setCursorPosition).toBeCalledWith(suggestion.value.length + 1);
 				}
 			)
 		});
@@ -202,16 +206,17 @@ describe("useSearchFilters", () => {
 			test.each(cases)(
 				"%# - $query $suggestion.value",
 				async ({ query, suggestion }) => {
-					const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: query.length, query, handleQueryChange, filters }));
+					const { result, waitFor } = renderHook(() => useSearchFilters({ cursorPosition: query.length, query, handleQueryChange, filters, setCursorPosition }));
 
 					await waitFor(() => expect(result.current.suggestions).toBeDefined());
 
-					console.log({ result: result.current });
 					act(() => result.current.applySuggestion(suggestion));
-					console.log({ result: result.current });
 
-					expect(handleQueryChange.mock.calls).toHaveLength(1);
-					expect(handleQueryChange.mock.calls[0]).toEqual([query + suggestion.value]);
+					expect(handleQueryChange).toBeCalledTimes(1);
+					expect(handleQueryChange).toBeCalledWith(query + suggestion.value);
+
+					expect(setCursorPosition).toBeCalledTimes(1);
+					expect(setCursorPosition).toBeCalledWith(query.length + suggestion.value.length)
 				}
 			)
 		});

@@ -86,7 +86,7 @@ export const WithInteractions: StoryObj<Props> = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const searchbar = canvas.getByTestId("explorer-searchbar");
+		const searchbar = canvas.getByTestId("explorer-searchbar") as HTMLInputElement;
 
 		await userEvent.click(searchbar);
 		await waitFor(() =>
@@ -105,6 +105,10 @@ export const WithInteractions: StoryObj<Props> = {
 		expect(suggestions[0]).toHaveAttribute("aria-selected", "true");
 
 		await userEvent.click(suggestions[0]);
-		await expect(searchbar).toHaveValue(filters[0].value + ":" + filters[0].presets[0].value);
+		const expectedNewQuery = filters[0].value + ":" + filters[0].presets[0].value;
+		await expect(searchbar).toHaveValue(expectedNewQuery);
+
+		await expect(searchbar).toHaveFocus();
+		await expect(searchbar.selectionStart).toEqual(expectedNewQuery.length);
 	}
 };
