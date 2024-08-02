@@ -166,6 +166,7 @@ describe("parseSearchTerms", () => {
 		{ terms: ["\"text search\""], expected: ["text search"] },
 		{ terms: ["someFilter:query"], expected: []},
 		{ terms: ["roam:true"], expected: [{ filter: filters[1], query: "true" }] },
+		{ terms: ["roam:\"true\""], expected: [{ filter: filters[1], query: "true"}]},
 		{ terms: ["roam:true ", "text string"], expected: [{ filter: filters[1], query: "true" }, "text string"] },
 		{ terms: ["roam:true ", "\"text string\""], expected: [{ filter: filters[1], query: "true" }, "text string"] },
 		{ terms: ["\"text string\"", "roam:true"], expected: [{ filter: filters[1], query: "true" }, "text string"] },
