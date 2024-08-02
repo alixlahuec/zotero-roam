@@ -139,7 +139,7 @@ const parseSearchTerms = <T extends Record<string, any> = Record<string, any>>(t
 		}
 	})
 
-	return [...filterTerms, freeTextTerms.join("")];
+	return [...filterTerms, freeTextTerms.join("")].filter(AsBoolean);
 };
 
 
