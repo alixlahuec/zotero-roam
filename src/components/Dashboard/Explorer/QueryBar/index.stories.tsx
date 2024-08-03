@@ -4,11 +4,10 @@ import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 import { QueryFilter } from "@hooks";
 
-import ExplorerQueryList from "."
-import { Classes } from "@blueprintjs/core";
+import QueryBar from "."
 
 
-type Props = ComponentProps<typeof ExplorerQueryList>;
+type Props = ComponentProps<typeof QueryBar>;
 
 type Item = {
 	id: number,
@@ -44,7 +43,7 @@ const filters: QueryFilter<Item>[] = [
 ];
 
 export default {
-	component: ExplorerQueryList,
+	component: QueryBar,
 	args: {
 		filters
 	},

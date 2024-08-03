@@ -44,7 +44,7 @@ type Props<T extends Record<string, any> = Record<string, any>> = {
 	query: string
 };
 
-function ExplorerQueryList<T extends Record<string, any>>({ filters, onQueryChange, query }: Props<T>) {
+function QueryBar<T extends Record<string, any>>({ filters, onQueryChange, query }: Props<T>) {
 	const searchbar = useRef<HTMLInputElement>(null);
 	const [cursorPosition, updateCursorPosition] = useState(() => searchbar.current?.selectionStart || 0);
 	const [showSuggestions, setShowSuggestions] = useState(false);
@@ -120,4 +120,4 @@ function ExplorerQueryList<T extends Record<string, any>>({ filters, onQueryChan
 	/>;
 }
 
-export default ExplorerQueryList;
+export default QueryBar;
