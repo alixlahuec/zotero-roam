@@ -53,9 +53,7 @@ export const parseDateRangeInThePast = (query: string) => {
 		if (!parsedEnd.isCertain("year")) {
 			endDate.setFullYear(refTime.getFullYear());
 		}
-		if (!parsedEnd.isCertain("month")) {
-			endDate.setFullYear(endDate.getFullYear() + 1, 0, 0);
-		} else if (!parsedEnd.isCertain("day")) {
+		if (!parsedEnd.isCertain("day")) {
 			if (endDate.getMonth() === 11) {
 				endDate.setFullYear(endDate.getFullYear() + 1, 0, 0);
 			} else {
