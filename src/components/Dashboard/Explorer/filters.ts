@@ -1,7 +1,9 @@
-import { QueryFilter } from "@hooks";
-import { useTypemapSettings } from "Components/UserSettings";
 import { useMemo } from "react";
-import { searchEngine } from "src/utils";
+import { QueryFilter } from "@hooks";
+
+import { useTypemapSettings } from "Components/UserSettings";
+
+import { searchEngine } from "../../../utils";
 import { isZAnnotation, ZCleanItemPDF, ZCleanItemTop, ZItemAnnotation, ZItemNote } from "Types/transforms";
 
 
@@ -15,7 +17,7 @@ export const useItemFilters = () => {
 			presets: [],
 			evaluate: (query, item) => {
 				if (!item.abstract) return false;
-				return searchEngine(query, item.abstract);
+				return searchEngine(query, item.abstract, { word_order: "loose" });
 			}
 		},
 		{
@@ -90,6 +92,7 @@ export const useItemFilters = () => {
 			label: "Item type matches",
 			value: "type",
 			presets: Object.entries(typemap).map(([itemType, label]) => ({ label, value: itemType })),
+			// TODO: support OR query
 			evaluate: (query, item) => {
 				return item.itemType === query;
 			}
@@ -140,11 +143,9 @@ export const useItemFilters = () => {
 			}
 		}
 	], [typemap]);
-
 	return { filters };
 };
-export const itemFilters: QueryFilter<ZCleanItemTop>[] = [
-];
+
 
 export const noteFilters: QueryFilter<ZItemAnnotation | ZItemNote>[] = [
 	{
