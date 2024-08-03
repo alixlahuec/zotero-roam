@@ -5,7 +5,7 @@ import { mock } from "vitest-mock-extended";
 import { TypemapProvider } from "Components/UserSettings";
 import { QueryFilter } from "@hooks";
 
-import { useItemFilters } from "./filters";
+import { parseDateInThePast, useItemFilters } from "./filters";
 
 import { setupInitialSettings } from "../../../setup";
 import { ZCleanItemTop } from "Types/transforms";
@@ -17,6 +17,38 @@ const mockItem = (...args) => mock<ZCleanItemTop>(...args);
 const wrapper: WrapperComponent<{ children: ReactChildren }> = ({ children }) => {
 	return <TypemapProvider init={typemap} updater={vi.fn()}>{children}</TypemapProvider>;
 };
+
+describe("parseDateInThePast", () => {
+	beforeAll(() => {
+		vi.useFakeTimers()
+			.setSystemTime(new Date(2021, 3, 6, 22, 14));
+	});
+
+	afterAll(() => {
+		vi.useRealTimers();
+	});
+
+	const cases = [
+		{ query: "bad input", expected: null },
+		{ query: "2019", expected: null },
+		{ query: "Jan 2019", expected: new Date(2019, 0, 1, 0, 0, 0) },
+		{ query: "Jan 13-Jan 17", expected: new Date(2021, 0, 13, 0, 0, 0)},
+		{ query: "today", expected: new Date(2021, 3, 6, 0, 0, 0) },
+		{ query: "last 2 days", expected: new Date(2021, 3, 4, 0, 0, 0) },
+		{ query: "last 2 weeks", expected: new Date(2021, 2, 23, 0, 0, 0)},
+		{ query: "this week", expected: new Date(2021, 3, 4, 0, 0, 0) },
+		{ query: "this Monday", expected: new Date(2021, 3, 5, 0, 0, 0) },
+		{ query: "this month", expected: new Date(2021, 3, 1, 0, 0, 0) },
+		{ query: "this year", expected: new Date(2021, 0, 1, 0, 0, 0) }
+	];
+
+	test.each(cases)(
+		"%# - $query, expect $expected",
+		({ query, expected }) => {
+			expect(parseDateInThePast(query)).toEqual(expected);
+		}
+	)
+});
 
 describe("useItemFilters", async() => {
 	const { result, waitFor } = renderHook(() => useItemFilters(), { wrapper });
@@ -97,6 +129,41 @@ describe("useItemFilters", async() => {
 
 		test.each(cases)(
 			"%#",
+			({ item, query, expected }) => {
+				expect(evaluate(query, item)).toEqual(expected);
+			}
+		)
+	});
+
+	describe("addedBefore", () => {
+		const { evaluate } = filtersMap["addedBefore"];
+
+		beforeAll(() => {
+			vi.useFakeTimers()
+				.setSystemTime(new Date(2023, 7, 2, 22));
+		});
+
+		afterAll(() => {
+			vi.useRealTimers();
+		});
+
+		const cases = [
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-08-02T00:00" } } }), query: "today", expected: false },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-08-01T00:00"}}}), query: "today", expected: true },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-30T00:00" } } }), query: "this week", expected: false },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-29T00:00" } } }), query: "this week", expected: true },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-01-02T00:00" } } }), query: "this year", expected: false },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-01-01T00:00" } } }), query: "this year", expected: false },
+			{ item: mockItem({ raw: { data: { dateAdded: "2022-12-31T00:00" } } }), query: "this year", expected: true },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-19T00:00" } } }), query: "last 2 weeks", expected: false },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-18T00:00" } } }), query: "last 2 weeks", expected: true },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-31T00:00" } } }), query: "this Monday", expected: false },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-30T00:00" } } }), query: "this Monday", expected: true },
+			{ item: mockItem({ raw: { data: { dateAdded: "2020-03-01T00:00" } } }), query: "bad input", expected: false }
+		];
+
+		test.each(cases)(
+			"%# - $query, $item.raw.data.dateAdded",
 			({ item, query, expected }) => {
 				expect(evaluate(query, item)).toEqual(expected);
 			}

@@ -5,6 +5,28 @@ import { useTypemapSettings } from "Components/UserSettings";
 
 import { searchEngine } from "../../../utils";
 import { isZAnnotation, ZCleanItemPDF, ZCleanItemTop, ZItemAnnotation, ZItemNote } from "Types/transforms";
+import { parse as chronoParse } from "chrono-node";
+
+
+export const parseDateInThePast = (query: string) => {
+	const result = chronoParse(query, undefined, { forwardDate: false });
+
+	if (!result.length) return null
+	
+	const parsedDate = result[0].start;
+	const date = parsedDate.date();
+	const localTime = new Date();
+
+	if (!parsedDate.isCertain("year")) {
+		date.setFullYear(localTime.getFullYear());
+	}
+
+	if (!parsedDate.isCertain("hour")) {
+		date.setHours(0, 0, 0, 0);
+	}
+
+	return date;
+};
 
 
 export const useItemFilters = () => {
@@ -61,33 +83,16 @@ export const useItemFilters = () => {
 			value: "addedBefore",
 			presets: [
 				{ label: "Today", value: "today" },
-				{ label: "This week", value: "0w" },
-				{ label: "This year", value: "0y" }
+				{ label: "This week", value: "\"this week\"" },
+				{ label: "This year", value: "\"this year\"" }
 			],
 			evaluate: (query, item) => {
-				let dateCheck = new Date();
-				dateCheck.setHours(0, 0, 0);
-				
-				// TODO: add NLP and processing logic here
-				if (query == "today") {
-					// Date is already set to today
-				} else if (query == "0w") {
-					// Sunday is 0, Monday is 6
-					const weekDay = dateCheck.getDay();
-					const weekStartDiff = 6 - weekDay;
-		
-					// Set the date to the first day of the current week
-					dateCheck.setDate(dateCheck.getDate() - weekStartDiff);
-				} else if (query == "0y") {
-					// Set the date to Jan 1st of the current year
-					dateCheck.setMonth(0);
-					dateCheck.setDate(0);
-				}
-		
-				return new Date(item.raw.data.dateAdded) < dateCheck;
+				const queryDate = parseDateInThePast(query);
+				if (queryDate === null) return false
+
+				return new Date(item.raw.data.dateAdded) < queryDate;
 			}
 		},
-		// TODO: extract the date handling into a method, then add the other operators for "date added"
 		{
 			label: "Item type matches",
 			value: "type",
