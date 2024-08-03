@@ -48,6 +48,7 @@ export default defineConfig(({ command, mode }) => {
 				"@blueprintjs/core": ["Blueprint", "Core"],
 				"@blueprintjs/datetime": ["Blueprint", "DateTime"],
 				"@blueprintjs/select": ["Blueprint", "Select"],
+				"chrono-node": "ChronoNode",
 				"idb": "idb",
 				"react": "React",
 				"react-dom": "ReactDOM",
