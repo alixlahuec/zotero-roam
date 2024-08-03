@@ -13,12 +13,12 @@ export const parseDateInThePast = (query: string) => {
 
 	if (!result.length) return null
 	
+	const refTime = result[0].refDate;
 	const parsedDate = result[0].start;
 	const date = parsedDate.date();
-	const localTime = new Date();
 
 	if (!parsedDate.isCertain("year")) {
-		date.setFullYear(localTime.getFullYear());
+		date.setFullYear(refTime.getFullYear());
 	}
 
 	if (!parsedDate.isCertain("hour")) {
@@ -27,6 +27,51 @@ export const parseDateInThePast = (query: string) => {
 
 	return date;
 };
+
+
+export const parseDateRangeInThePast = (query: string) => {
+	const result = chronoParse(query, undefined, { forwardDate: false });
+
+	if (!result.length) return null
+	
+	const refTime = result[0].refDate;
+
+	const parsedStart = result[0].start;
+	const startDate = parsedStart.date();
+	if (!parsedStart.isCertain("year")) {
+		startDate.setFullYear(refTime.getFullYear());
+	}
+	if (!parsedStart.isCertain("hour")) {
+		startDate.setHours(0, 0, 0, 0);
+	}
+
+	const parsedEnd = result[0].end;
+	let endDate = refTime;
+	if (parsedEnd) {
+		endDate = parsedEnd.date();
+
+		if (!parsedEnd.isCertain("year")) {
+			endDate.setFullYear(refTime.getFullYear());
+		}
+		if (!parsedEnd.isCertain("month")) {
+			endDate.setFullYear(endDate.getFullYear() + 1, 0, 0);
+		} else if (!parsedEnd.isCertain("day")) {
+			if (endDate.getMonth() === 11) {
+				endDate.setFullYear(endDate.getFullYear() + 1, 0, 0);
+			} else {
+				endDate.setMonth(endDate.getMonth() + 1, 0);
+			}
+		}
+		if (!parsedEnd.isCertain("hour")) {
+			endDate.setDate(endDate.getDate() + 1);
+			endDate.setHours(0, 0, 0, 0);
+		}
+	}
+
+	console.log({ parsedStart, parsedEnd , startDate, endDate });
+
+	return [startDate, endDate] as const;
+}
 
 
 export const useItemFilters = () => {
@@ -91,6 +136,19 @@ export const useItemFilters = () => {
 				if (queryDate === null) return false
 
 				return new Date(item.raw.data.dateAdded) < queryDate;
+			}
+		},
+
+		{
+			label: "Item added between",
+			value: "addedBetween",
+			presets: [],
+			evaluate: (query, item) => {
+				const queryDateRange = parseDateRangeInThePast(query);
+				if (queryDateRange === null) return false
+
+				const itemDateAdded = new Date(item.raw.data.dateAdded);
+				return queryDateRange[0] < itemDateAdded && itemDateAdded < queryDateRange[1];
 			}
 		},
 		{
