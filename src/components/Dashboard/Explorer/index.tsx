@@ -73,6 +73,7 @@ function ExplorerTabs({ itemList, onClose }: ExplorerTabsProps){
 			{TABS_LIST.map((config) => (
 				<Tab key={config.show} id={config.show}
 					panel={<TabContents itemList={itemList} onClose={onClose} show={config.show} />}
+					panelClassName="zr-explorer-tabpanel"
 					title={config.title} />
 			))}
 		</Tabs>

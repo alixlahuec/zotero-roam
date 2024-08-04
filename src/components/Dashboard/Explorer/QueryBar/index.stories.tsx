@@ -2,9 +2,10 @@ import { ComponentProps, useState } from "react"
 import { Meta, StoryObj } from "@storybook/react";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
-import { QueryFilter } from "@hooks";
-
+import { ListItem } from "Components/DataList";
 import QueryBar from "."
+
+import { QueryFilter } from "@hooks";
 
 
 type Props = ComponentProps<typeof QueryBar>;
@@ -42,10 +43,18 @@ const filters: QueryFilter<Item>[] = [
 	}
 ];
 
+const items: Item[] = [
+	{ id: 111, roam: false, title: "A Paper" },
+	{ id: 222, roam: true, title: "A Book"}
+];
+
 export default {
 	component: QueryBar,
 	args: {
-		filters
+		filters,
+		items,
+		renderItem: (item: Item) => <ListItem key={item.id} style={{ padding: "5px 15px" }}>{item.title}</ListItem>,
+		search_field: "title"
 	},
 	decorators: [
 		(Story, context) => {

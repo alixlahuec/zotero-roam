@@ -1,11 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Classes, Icon, InputGroup, InputGroupProps2, MenuItem } from "@blueprintjs/core";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { Classes, Icon, InputGroup, InputGroupProps2, MenuItem, NonIdealState, Tag } from "@blueprintjs/core";
 import { QueryList, QueryListProps } from "@blueprintjs/select";
 
-import { QueryFilter, SearchSuggestion, useSearchQuery } from "@hooks";
+import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
+
+import { QueryFilter, SearchSuggestion, usePagination, useSearchQuery } from "@hooks";
+
+import { CustomClasses } from "../../../../constants";
 
 import "./_index.sass";
 
+const itemsPerPage = 20;
 
 const searchbarLeftElement = <Icon
 	icon="search"
@@ -40,14 +45,16 @@ const itemRenderer: QueryListProps<SearchSuggestion>["itemRenderer"] = (item, it
 
 type Props<T extends Record<string, any> = Record<string, any>> = {
 	filters: QueryFilter<T>[],
+	items: T[],
 	onQueryChange: (query: string) => void,
-	query: string
+	query: string,
+	renderItem: (item: T) => ReactNode
+	search_field?: keyof T
 };
 
-function QueryBar<T extends Record<string, any>>({ filters, onQueryChange, query }: Props<T>) {
+function QueryBar<T extends Record<string, any>>({ filters, items, onQueryChange, query, renderItem, search_field }: Props<T>) {
 	const searchbar = useRef<HTMLInputElement>(null);
 	const [cursorPosition, updateCursorPosition] = useState(() => searchbar.current?.selectionStart || 0);
-	const [showSuggestions, setShowSuggestions] = useState(false);
 
 	const refreshCursorPosition = useCallback(() => {
 		const posWithinSearchbar = searchbar.current?.selectionStart;
@@ -65,7 +72,15 @@ function QueryBar<T extends Record<string, any>>({ filters, onQueryChange, query
 		onQueryChange(query);
 	}, [onQueryChange, refreshCursorPosition]);
 
-	const { applySuggestion, suggestions } = useSearchQuery<T>({ cursorPosition, filters, handleQueryChange, query, setCursorPosition });
+	const { applySuggestion, search, suggestions } = useSearchQuery<T>({ cursorPosition, filters, handleQueryChange, query, search_field, setCursorPosition });
+
+	const [queriedItems, setQueriedItems] = useState(() => search(items));
+	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
+	const [showSuggestions, setShowSuggestions] = useState(false);
+
+	const handleSearch = useCallback(() => {
+		setQueriedItems(search(items));
+	}, [items, search, setQueriedItems]);
 
 	const handleItemSelect = useCallback<QueryListProps<SearchSuggestion<T>>["onItemSelect"]>((item, _e) => {
 		applySuggestion(item);
@@ -81,7 +96,7 @@ function QueryBar<T extends Record<string, any>>({ filters, onQueryChange, query
 			setShowSuggestions(false)
 		}
 
-		return <>
+		return <div className="zr-explorer-search-wrapper">
 			<InputGroup
 				autoComplete="off"
 				className={[Classes.INPUT, Classes.FILL, "zr-explorer-search-input-group"].join(" ")}
@@ -95,13 +110,14 @@ function QueryBar<T extends Record<string, any>>({ filters, onQueryChange, query
 				onKeyDown={handleKeyDown}
 				onKeyUp={handleKeyUp}
 				placeholder="Start typing to see suggestions"
+				rightElement={<Tag intent="primary" interactive={true} minimal={true} onClick={handleSearch}>Enter</Tag>}
 				spellCheck="false"
 				type="text"
 				value={query}
 			/>
-			{showSuggestions && <div id="zr-explorer-suggestions">{itemList}</div>}
-		</>;
-	}, [searchbar, showSuggestions]);
+			{showSuggestions && <div id="zr-explorer-suggestions" style={{ position: "absolute", width: "100%"}}>{itemList}</div>}
+		</div>;
+	}, [handleSearch, searchbar, showSuggestions]);
 
 	useEffect(() => {
 		// TODO: make this less noisy potentially
@@ -109,15 +125,41 @@ function QueryBar<T extends Record<string, any>>({ filters, onQueryChange, query
 		return () => document.removeEventListener("selectionchange", refreshCursorPosition);
 	}, [refreshCursorPosition]);
 
-	return <QueryList<SearchSuggestion<T>>
-		itemRenderer={itemRenderer}
-		items={suggestions}
-		itemsEqual={"value"}
-		onItemSelect={handleItemSelect}
-		onQueryChange={handleQueryChange}
-		query={query}
-		renderer={listRenderer}
-	/>;
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [queriedItems.length, setCurrentPage]);
+
+	return <>
+		<Toolbar>
+			<QueryList<SearchSuggestion<T>>
+				itemRenderer={itemRenderer}
+				items={suggestions}
+				itemsEqual={"value"}
+				onItemSelect={handleItemSelect}
+				onQueryChange={handleQueryChange}
+				query={query}
+				renderer={listRenderer}
+			/>
+		</Toolbar>
+		<div className="zr-queryitems--datalist">
+			{queriedItems.length == 0
+				? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />
+				: <ListWrapper>
+					{queriedItems
+						.slice(...pageLimits)
+						.map(el => renderItem(el))}
+				</ListWrapper>}
+		</div>
+		<Toolbar>
+			<Pagination
+				arrows="first"
+				currentPage={currentPage}
+				itemsPerPage={itemsPerPage}
+				nbItems={queriedItems.length}
+				setCurrentPage={setCurrentPage}
+			/>
+		</Toolbar>
+	</>;
 }
 
 export default QueryBar;
