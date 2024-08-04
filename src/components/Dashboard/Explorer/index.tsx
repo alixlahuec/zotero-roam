@@ -34,6 +34,10 @@ const TABS_LIST: TabConfig[] = [
 	{
 		show: TabsEnum.PDFS,
 		title: "PDFs"
+	},
+	{
+		show: TabsEnum.NOTES,
+		title: "Notes"
 	}
 ];
 
