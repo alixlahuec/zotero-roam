@@ -48,7 +48,7 @@ function QueryPDFs({ itemList }) {
 
 	return items == null
 		? <Spinner size={15} />
-		: <QueryBar filters={pdfFilters} items={items} onQueryChange={setQuery} query={query} renderItem={renderItem} />;
+		: <QueryBar filters={pdfFilters} items={items} onQueryChange={setQuery} query={query} renderItem={renderItem} search_field="title" />;
 }
 
 
