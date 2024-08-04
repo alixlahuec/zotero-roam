@@ -4,7 +4,7 @@ import { Spinner } from "@blueprintjs/core";
 import { ListItem } from "Components/DataList";
 import QueryBar from "../QueryBar";
 
-import { noteFilters } from "../filters";
+import { noteFilters } from "./filters";
 
 import { ZItemAnnotation, ZItemNote, ZLibraryContents } from "Types/transforms";
 

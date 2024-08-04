@@ -5,7 +5,7 @@ import QueryBar from "../QueryBar";
 import PDFElement from "./PDFElement";
 
 import { cleanLibraryPDF, identifyPDFConnections } from "./helpers";
-import { pdfFilters } from "../filters";
+import { pdfFilters } from "./filters";
 
 import { ZCleanItemPDF, ZLibraryContents } from "Types/transforms";
 

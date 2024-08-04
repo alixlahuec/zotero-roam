@@ -3,11 +3,11 @@ import { renderHook, WrapperComponent } from "@testing-library/react-hooks";
 import { mock } from "vitest-mock-extended";
 
 import { TypemapProvider } from "Components/UserSettings";
+
 import { QueryFilter } from "@hooks";
 
-import { parseDateInThePast, parseDateRangeInThePast, useItemFilters } from "./filters";
-
-import { setupInitialSettings } from "../../../setup";
+import { useItemFilters } from "./filters";
+import { setupInitialSettings } from "../../../../setup";
 import { ZCleanItemTop } from "Types/transforms";
 
 
@@ -18,74 +18,7 @@ const wrapper: WrapperComponent<{ children: ReactChildren }> = ({ children }) =>
 	return <TypemapProvider init={typemap} updater={vi.fn()}>{children}</TypemapProvider>;
 };
 
-describe("parseDateInThePast", () => {
-	beforeAll(() => {
-		vi.useFakeTimers()
-			.setSystemTime(new Date(2021, 3, 6, 22, 14));
-	});
-
-	afterAll(() => {
-		vi.useRealTimers();
-	});
-
-	const cases = [
-		{ query: "bad input", expected: null },
-		{ query: "2019", expected: null },
-		{ query: "Jan 2019", expected: new Date(2019, 0, 1, 0, 0, 0) },
-		{ query: "Jan 13-Jan 17", expected: new Date(2021, 0, 13, 0, 0, 0)},
-		{ query: "today", expected: new Date(2021, 3, 6, 0, 0, 0) },
-		{ query: "last 2 days", expected: new Date(2021, 3, 4, 0, 0, 0) },
-		{ query: "last 2 weeks", expected: new Date(2021, 2, 23, 0, 0, 0)},
-		{ query: "this week", expected: new Date(2021, 3, 4, 0, 0, 0) },
-		{ query: "this Monday", expected: new Date(2021, 3, 5, 0, 0, 0) },
-		{ query: "this month", expected: new Date(2021, 3, 1, 0, 0, 0) },
-		{ query: "this year", expected: new Date(2021, 0, 1, 0, 0, 0) }
-	];
-
-	test.each(cases)(
-		"%# - $query, expect $expected",
-		({ query, expected }) => {
-			expect(parseDateInThePast(query)).toEqual(expected);
-		}
-	)
-});
-
-describe("parseDateRangeInThePast", () => {
-	const currentDatetime = new Date(2021, 3, 6, 22, 14);
-	beforeAll(() => {
-		vi.useFakeTimers()
-			.setSystemTime(currentDatetime);
-	});
-
-	afterAll(() => {
-		vi.useRealTimers();
-	});
-
-	const cases = [
-		{ query: "bad input", expected: null },
-		{ query: "Jan 2017 - Jan 2020", expected: [new Date(2017, 0, 1, 0, 0, 0), new Date(2020, 1, 1, 0, 0, 0)] },
-		{ query: "Jan 3rd - Apr 5th", expected: [new Date(2021, 0, 3, 0, 0, 0), new Date(2021, 3, 6, 0, 0, 0)] },
-		{ query: "Jan 2019", expected: [new Date(2019, 0, 1, 0, 0, 0), currentDatetime] },
-		{ query: "last 2 days", expected: [new Date(2021, 3, 4, 0, 0, 0), currentDatetime] },
-		{ query: "last 2 weeks", expected: [new Date(2021, 2, 23, 0, 0, 0), currentDatetime] },
-		{ query: "this week", expected: [new Date(2021, 3, 4, 0, 0, 0), currentDatetime] },
-		{ query: "this Monday", expected: [new Date(2021, 3, 5, 0, 0, 0), currentDatetime] },
-		{ query: "this month", expected: [new Date(2021, 3, 1, 0, 0, 0), currentDatetime] },
-		{ query: "this year", expected: [new Date(2021, 0, 1, 0, 0, 0), currentDatetime] },
-		{ query: "Feb 2nd - today", expected: [new Date(2021, 1, 2, 0, 0, 0), new Date(2021, 3, 7, 0, 0, 0)] },
-		// this doesn't work well because chrono is confident that the current time should be used in the start date
-		{ query: "Feb 2nd - now", expected: [new Date(2021, 1, 2, 22, 14, 0), currentDatetime] },
-	];
-
-	test.each(cases)(
-		"%# - $query, expect $expected",
-		({ query, expected }) => {
-			expect(parseDateRangeInThePast(query)).toEqual(expected);
-		}
-	)
-});
-
-describe("useItemFilters", async() => {
+describe("useItemFilters", async () => {
 	const { result, waitFor } = renderHook(() => useItemFilters(), { wrapper });
 	await waitFor(() => expect(result.current).toBeDefined());
 
@@ -184,7 +117,7 @@ describe("useItemFilters", async() => {
 
 		const cases = [
 			{ item: mockItem({ raw: { data: { dateAdded: "2023-08-02T00:00" } } }), query: "today", expected: false },
-			{ item: mockItem({ raw: { data: { dateAdded: "2023-08-01T00:00"}}}), query: "today", expected: true },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-08-01T00:00" } } }), query: "today", expected: true },
 			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-30T00:00" } } }), query: "this week", expected: false },
 			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-29T00:00" } } }), query: "this week", expected: true },
 			{ item: mockItem({ raw: { data: { dateAdded: "2023-01-02T00:00" } } }), query: "this year", expected: false },
@@ -209,7 +142,7 @@ describe("useItemFilters", async() => {
 		const { evaluate } = filtersMap["type"];
 		const cases = [
 			{ item: mockItem({ itemType: "book" }), query: "article", expected: false },
-			{ item: mockItem({ itemType: "book"}), query: "book", expected: true }
+			{ item: mockItem({ itemType: "book" }), query: "book", expected: true }
 		];
 
 		test.each(cases)(

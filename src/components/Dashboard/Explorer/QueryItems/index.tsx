@@ -4,7 +4,7 @@ import { Spinner } from "@blueprintjs/core";
 import { useRoamCitekeys } from "Components/RoamCitekeysContext";
 import ItemElement from "./ItemElement";
 
-import { useItemFilters } from "../filters";
+import { useItemFilters } from "./filters";
 import { cleanLibraryItem, identifyChildren } from "../../../../utils";
 
 import { RCitekeyPages, ZCleanItemTop, ZLibraryContents } from "Types/transforms";
