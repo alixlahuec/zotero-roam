@@ -1,24 +1,17 @@
 import { useEffect, useState } from "react";
 import { Spinner } from "@blueprintjs/core";
 
-import { ListItem, ListWrapper } from "Components/DataList";
+import { ListItem } from "Components/DataList";
+import QueryBar from "../QueryBar";
+
+import { noteFilters } from "../filters";
 
 import { ZItemAnnotation, ZItemNote, ZLibraryContents } from "Types/transforms";
 
 
-type QueryNotesListProps = {
-	items: (ZItemAnnotation | ZItemNote)[]
+const renderItem = (item: ZItemAnnotation | ZItemNote) => {
+	return <ListItem key={[item.library.id, item.key].join(" ")}>{item.key}</ListItem>
 };
-
-function QueryNotesList({ items }: QueryNotesListProps) {
-	return <ListWrapper>
-		{items.slice(0, 20).map((it, i) => (
-			<ListItem key={it.key + "-" + i}>
-				{it.key}
-			</ListItem>
-		))}
-	</ListWrapper>;
-}
 
 
 type QueryNotesProps = {
@@ -27,6 +20,7 @@ type QueryNotesProps = {
 
 function QueryNotes({ itemList }: QueryNotesProps) {
 	const [items, setItems] = useState<(ZItemAnnotation | ZItemNote)[] | null>(null);
+	const [query, setQuery] = useState("");
 
 	useEffect(() => {
 		if (itemList) {
@@ -36,7 +30,7 @@ function QueryNotes({ itemList }: QueryNotesProps) {
 
 	return items == null
 		? <Spinner size={15} />
-		: <QueryNotesList items={items} />;
+		: <QueryBar filters={noteFilters} items={items} onQueryChange={setQuery} query={query} renderItem={renderItem} />;
 }
 
 export default QueryNotes;
