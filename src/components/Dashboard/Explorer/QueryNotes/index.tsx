@@ -44,7 +44,7 @@ const renderItem = (item: ZItemAnnotation | ZItemNote) => {
 		return <Annotation annotation={item} />;
 	}, []);
 
-	return <ListItem className="zr-query--result" key={[item.library.id, item.key].join(" ")}>
+	return <ListItem className="zr-query--result" key={[item.library.id, item.key].join("-")}>
 		<div>
 			{itemContents}
 		</div>

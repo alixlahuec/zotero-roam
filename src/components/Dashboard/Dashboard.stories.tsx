@@ -17,12 +17,6 @@ export default {
 		onClose: () => {}
 	},
 	parameters: {
-		msw: [
-			http.get(zotero(":libraryType/:libraryID/items"), async ({ params }) => {
-				const { libraryType, libraryID } = params;
-				return HttpResponse.json([...items, sampleAnnot, sampleImageAnnot, sampleNote, sampleOlderNote, samplePDF].filter(it => `${it.library.id}` === libraryID && it.library.type + "s" === libraryType));
-			})
-		],
 		userSettings: {
 			annotations: {},
 			autocomplete: {},
@@ -68,13 +62,8 @@ export const VisitTabs: StoryObj<Props> = {
 		await userEvent.click(canvas.getByRole("tab", { name: "Explorer" }));
 
 		await waitFor(() => expect(
-			canvas.getByRole(
-				"button",
-				{
-					name: "Set filter"
-				}
-			)
-		).toBeInTheDocument(),
+			canvas.getAllByTestId("explorer-searchbar")
+		).toHaveLength(3),
 		{
 			timeout: 3000
 		});
