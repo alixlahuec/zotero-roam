@@ -6,6 +6,8 @@ import { cleanLibraryPDF } from "./helpers";
 import { ListWrapper } from "Components/DataList";
 import { samplePDF } from "Mocks/zotero";
 
+import "../_index.sass";
+
 
 type Props = ComponentProps<typeof PDFElement>;
 

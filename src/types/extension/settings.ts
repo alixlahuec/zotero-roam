@@ -201,7 +201,7 @@ export interface SettingsSciteBadge {
 export type SettingsShortcuts = Record<string, string>;
 
 /** The typemap to be used for mapping Zotero item types & display names */
-export type SettingsTypemap = Record<ZoteroAPI.ItemTop["data"]["itemType"],string>;
+export type SettingsTypemap = Record<ZoteroAPI.ItemTop["data"]["itemType"], string>;
 
 /** Settings for the WebImport feature */
 export interface SettingsWebImport {

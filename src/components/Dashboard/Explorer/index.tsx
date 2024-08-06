@@ -34,6 +34,10 @@ const TABS_LIST: TabConfig[] = [
 	{
 		show: TabsEnum.PDFS,
 		title: "PDFs"
+	},
+	{
+		show: TabsEnum.NOTES,
+		title: "Notes"
 	}
 ];
 
@@ -73,6 +77,7 @@ function ExplorerTabs({ itemList, onClose }: ExplorerTabsProps){
 			{TABS_LIST.map((config) => (
 				<Tab key={config.show} id={config.show}
 					panel={<TabContents itemList={itemList} onClose={onClose} show={config.show} />}
+					panelClassName="zr-explorer-tabpanel"
 					title={config.title} />
 			))}
 		</Tabs>

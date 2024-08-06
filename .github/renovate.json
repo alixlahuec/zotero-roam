@@ -23,6 +23,7 @@
 			"@blueprintjs/core",
 			"@blueprintjs/datetime",
 			"@blueprintjs/select",
+			"chrono-node",
 			"react",
 			"react-dom",
 			"idb"
