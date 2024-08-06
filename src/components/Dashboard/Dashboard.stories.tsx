@@ -3,6 +3,9 @@ import { Meta, StoryObj } from "@storybook/react";
 import { userEvent, waitFor, within, expect } from "@storybook/test";
 
 import Dashboard from ".";
+import { http, HttpResponse } from "msw";
+import { zotero } from "Mocks/zotero/common";
+import { items, sampleAnnot, sampleImageAnnot, sampleNote, sampleOlderNote, samplePDF } from "Mocks/zotero";
 
 
 type Props = ComponentProps<typeof Dashboard>;
@@ -14,6 +17,12 @@ export default {
 		onClose: () => {}
 	},
 	parameters: {
+		msw: [
+			http.get(zotero(":libraryType/:libraryID/items"), async ({ params }) => {
+				const { libraryType, libraryID } = params;
+				return HttpResponse.json([...items, sampleAnnot, sampleImageAnnot, sampleNote, sampleOlderNote, samplePDF].filter(it => `${it.library.id}` === libraryID && it.library.type + "s" === libraryType));
+			})
+		],
 		userSettings: {
 			annotations: {},
 			autocomplete: {},
