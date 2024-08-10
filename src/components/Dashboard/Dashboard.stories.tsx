@@ -63,12 +63,19 @@ export const VisitTabs: StoryObj<Props> = {
 
 		await waitFor(() => expect(
 			canvas.getAllByTestId("explorer-searchbar")
-		).toHaveLength(3),
+		).toHaveLength(1),
 		{
 			timeout: 3000
 		});
 
 		await userEvent.click(canvas.getByRole("tab", { name: "PDFs" }));
+
+		await waitFor(() => expect(
+			canvas.getAllByTestId("explorer-searchbar")
+		).toHaveLength(1),
+			{
+				timeout: 3000
+			});
 
 	}
 };
