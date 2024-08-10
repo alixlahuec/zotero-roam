@@ -72,7 +72,7 @@ function ExplorerTabs({ itemList, onClose }: ExplorerTabsProps){
 			className={CustomClasses.TABS_MINIMAL} 
 			id="explorer-lists" 
 			onChange={selectTab}
-			renderActiveTabPanelOnly={false}
+			renderActiveTabPanelOnly={true}
 			selectedTabId={activeTab} >
 			{TABS_LIST.map((config) => (
 				<Tab key={config.show} id={config.show}
