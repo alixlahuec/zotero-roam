@@ -14,6 +14,13 @@ jobs:
       RUN_STORYBOOK: "!contains(github.ref, 'renovate/') || contains(github.ref, 'renovate/storybook')"
 
     steps:
+      - name: Dump job env
+        env:
+          storybook_var: $RUN_STORYBOOK
+        run: |
+          echo "$RUN_STORYBOOK"
+          echo "${{ fromJSON($RUN_STORYBOOK) }}"
+
       - name: Checkout code
         uses: actions/checkout@v2
         with:
