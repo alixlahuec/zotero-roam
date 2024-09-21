@@ -83,7 +83,7 @@
         "eslint-plugin-storybook": "^0.8.0",
         "eslint-plugin-vitest": "^0.5.4",
         "fake-indexeddb": "^4.0.2",
-        "msw": "^2.3.4",
+        "msw": "^2.4.9",
         "msw-storybook-addon": "^2.0.3",
         "release-it": "^17.6.0",
         "sass": "^1.77.8",
