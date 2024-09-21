@@ -83,6 +83,13 @@ export default defineConfig(({ command, mode }) => {
 				preserveEntrySignatures: "allow-extension"
 			}
 		},
+		css: {
+			preprocessorOptions: {
+				scss: {
+					api: "modern"
+				}
+			}
+		},
 		resolve: {
 			alias: {
 				"@clients": resolve("src", "clients"),
