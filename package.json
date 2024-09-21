@@ -65,7 +65,7 @@
         "@storybook/react-vite": "^8.3.2",
         "@storybook/test": "^8.3.2",
         "@storybook/test-runner": "^0.19.1",
-        "@swc/core": "^1.7.0",
+        "@swc/core": "^1.7.26",
         "@testing-library/react": "^12.1.5",
         "@testing-library/react-hooks": "^8.0.1",
         "@typescript-eslint/eslint-plugin": "^7.18.0",
