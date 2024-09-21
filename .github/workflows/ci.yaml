@@ -17,7 +17,7 @@ jobs:
       - name: Dump job env
         run: |
           echo "$env.RUN_STORYBOOK"
-          echo "${{ fromJSON($env.RUN_STORYBOOK) }}"
+          echo "${{ fromJSON(env.RUN_STORYBOOK) }}"
 
       - name: Checkout code
         uses: actions/checkout@v2
