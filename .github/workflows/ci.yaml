@@ -12,14 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ref matching 1
-        if: "!contains(github.ref, 'renovate/') || contains(github.ref, 'renovate/storybook')"
-        run: echo "Storybook tests should run"
-
-      - name: Ref matching 2
-        if: "contains(github.ref, 'renovate/') && !contains(github.ref, 'renovate/storybook')"
-        run: echo "Storybook tests should not run"
-
       - name: Checkout code
         uses: actions/checkout@v2
         with:
