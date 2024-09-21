@@ -12,6 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          echo "$GITHUB_BASE_REF"
+          echo "$GITHUB_HEAD_REF"
+          echo "$GITHUB_REF"
+          echo "$GITHUB_REF_NAME"
+
       - name: Checkout code
         uses: actions/checkout@v2
         with:
