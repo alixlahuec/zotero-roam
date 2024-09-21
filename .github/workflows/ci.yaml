@@ -11,7 +11,7 @@ jobs:
     name: Lint, test, and build
     runs-on: ubuntu-latest
     env:
-      RUN_STORYBOOK: "!contains(github.ref, 'renovate/') || contains(github.ref, 'renovate/storybook')"
+      RUN_STORYBOOK: ${{ !contains(github.ref, 'renovate/') || contains(github.ref, 'renovate/storybook') }}
 
     steps:
       - name: Dump job env
