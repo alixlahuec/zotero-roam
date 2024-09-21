@@ -9,6 +9,7 @@ import { parseDateInThePast, parseDateRangeInThePast } from "../helpers";
 import { ZCleanItemTop } from "Types/transforms";
 
 
+/** Custom hook for returning query search filters for top-level Zotero items. */
 const useItemFilters = () => {
 	const [typemap] = useTypemapSettings();
 

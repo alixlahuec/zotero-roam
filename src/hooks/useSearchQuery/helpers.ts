@@ -43,6 +43,7 @@ const computeCursorPosition = (
 		remainingIter -= term.length;
 	}
 
+	// istanbul ignore next
 	throw new Error("Cursor position could not be determined");
 };
 

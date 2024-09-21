@@ -12,7 +12,7 @@ import { ZCleanItemTop } from "Types/transforms";
 
 
 const { typemap } = setupInitialSettings({});
-const mockItem = (...args) => mock<ZCleanItemTop>(...args);
+const mockItem = mock<ZCleanItemTop>;
 
 const wrapper: WrapperComponent<{ children: ReactChildren }> = ({ children }) => {
 	return <TypemapProvider init={typemap} updater={vi.fn()}>{children}</TypemapProvider>;
@@ -192,8 +192,8 @@ describe("useItemFilters", async () => {
 		const cases = [
 			{ item: mockItem({ inGraph: false }), query: "true", expected: false },
 			{ item: mockItem({ inGraph: false }), query: "false", expected: true },
-			{ item: mockItem({ inGraph: true }), query: "true", expected: true },
-			{ item: mockItem({ inGraph: true }), query: "false", expected: false }
+			{ item: mockItem({ inGraph: "abc" }), query: "true", expected: true },
+			{ item: mockItem({ inGraph: "def" }), query: "false", expected: false }
 		];
 
 		test.each(cases)(

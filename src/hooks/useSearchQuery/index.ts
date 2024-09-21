@@ -13,6 +13,7 @@ type UseSearchProps<T extends Record<string, any> = Record<string, any>> = {
 	setCursorPosition: (pos: number) => void
 };
 
+/** Custom hook for handling complex text filters-based search against a list of items. */
 const useSearchQuery = <T extends Record<string, any> = Record<string ,any>>(
 	{ cursorPosition, filters, handleQueryChange, query, search_field, setCursorPosition }: UseSearchProps<T>
 ) => {

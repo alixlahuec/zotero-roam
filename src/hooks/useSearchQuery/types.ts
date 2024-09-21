@@ -12,6 +12,7 @@ export type QueryFilter<T extends Record<string, any> = Record<string, any>> = {
 	value: string,
 	/** The fixed suggestions to present when the user selects the filter. */
 	presets: Preset[],
+	/** The predicate to apply against an item. */
 	evaluate: (query: string, item: T) => boolean
 }
 
