@@ -37,7 +37,7 @@ jobs:
 
       - name: Upload test reports
         uses: dorny/test-reporter@v1
-        if: ${{ env.RUN_STORYBOOK }} && (success() || failure())
+        if: ${{ fromJSON(env.RUN_STORYBOOK) }} && (success() || failure())
         with:
           name: Tests
           path: reports/tests-junit.xml
@@ -61,7 +61,7 @@ jobs:
       - name: Storybook CI
         id: chromatic
         uses: chromaui/action@v1
-        if: ${{ env.RUN_STORYBOOK }}
+        if: ${{ fromJSON(env.RUN_STORYBOOK) }}
         with:
           buildScriptName: "build-storybook"
           exitOnceUploaded: true
@@ -70,7 +70,7 @@ jobs:
           exitZeroOnChanges: true
 
       - name: Storybook tests
-        if: ${{ env.RUN_STORYBOOK }}
+        if: ${{ fromJSON(env.RUN_STORYBOOK) }}
         run: npm run ci:test-storybook
         env:
           TARGET_URL: "${{ steps.chromatic.outputs.storybookUrl }}"
@@ -79,7 +79,7 @@ jobs:
 
       - name: Upload test reports
         uses: dorny/test-reporter@v1
-        if: ${{ env.RUN_STORYBOOK }}
+        if: ${{ fromJSON(env.RUN_STORYBOOK) }}
         with:
           name: Storybook
           path: reports/storybook-junit.xml
@@ -87,7 +87,7 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
-        if: ${{ env.RUN_STORYBOOK }}
+        if: ${{ fromJSON(env.RUN_STORYBOOK) }}
         with:
           directory: ./coverage/
           verbose: true
