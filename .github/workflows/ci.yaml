@@ -15,8 +15,6 @@ jobs:
 
     steps:
       - name: Dump job env
-        env:
-          storybook_var: $RUN_STORYBOOK
         run: |
           echo "$RUN_STORYBOOK"
           echo "${{ fromJSON($RUN_STORYBOOK) }}"
