@@ -73,7 +73,7 @@
         "@vitejs/plugin-react-swc": "^3.7.0",
         "@vitest/coverage-istanbul": "^2.0.4",
         "auto-changelog": "^2.5.0",
-        "axe-playwright": "^2.0.1",
+        "axe-playwright": "^2.0.2",
         "chromatic": "^11.10.2",
         "eslint": "^8.57.0",
         "eslint-import-resolver-alias": "^1.1.2",
