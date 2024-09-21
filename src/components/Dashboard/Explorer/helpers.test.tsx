@@ -19,8 +19,8 @@ describe("parseDateInThePast", () => {
 		{ query: "today", expected: new Date(2021, 3, 6, 0, 0, 0) },
 		{ query: "last 2 days", expected: new Date(2021, 3, 4, 0, 0, 0) },
 		{ query: "last 2 weeks", expected: new Date(2021, 2, 23, 0, 0, 0)},
+		{ query: "Monday", expected: new Date(2021, 3, 5, 0, 0, 0) },
 		{ query: "this week", expected: new Date(2021, 3, 4, 0, 0, 0) },
-		{ query: "this Monday", expected: new Date(2021, 3, 5, 0, 0, 0) },
 		{ query: "this month", expected: new Date(2021, 3, 1, 0, 0, 0) },
 		{ query: "this year", expected: new Date(2021, 0, 1, 0, 0, 0) }
 	];
@@ -51,13 +51,12 @@ describe("parseDateRangeInThePast", () => {
 		{ query: "Jan 2019", expected: [new Date(2019, 0, 1, 0, 0, 0), currentDatetime] },
 		{ query: "last 2 days", expected: [new Date(2021, 3, 4, 0, 0, 0), currentDatetime] },
 		{ query: "last 2 weeks", expected: [new Date(2021, 2, 23, 0, 0, 0), currentDatetime] },
+		{ query: "Monday", expected: [new Date(2021, 3, 5, 0, 0, 0), currentDatetime] },
 		{ query: "this week", expected: [new Date(2021, 3, 4, 0, 0, 0), currentDatetime] },
-		{ query: "this Monday", expected: [new Date(2021, 3, 5, 0, 0, 0), currentDatetime] },
 		{ query: "this month", expected: [new Date(2021, 3, 1, 0, 0, 0), currentDatetime] },
 		{ query: "this year", expected: [new Date(2021, 0, 1, 0, 0, 0), currentDatetime] },
 		{ query: "Feb 2nd - today", expected: [new Date(2021, 1, 2, 0, 0, 0), new Date(2021, 3, 7, 0, 0, 0)] },
-		// this doesn't work well because chrono is confident that the current time should be used in the start date
-		{ query: "Feb 2nd - now", expected: [new Date(2021, 1, 2, 22, 14, 0), currentDatetime] },
+		{ query: "Feb 2nd - now", expected: [new Date(2021, 1, 2, 0, 0, 0), currentDatetime] },
 	];
 
 	test.each(cases)(
