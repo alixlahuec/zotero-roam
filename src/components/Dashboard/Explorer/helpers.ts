@@ -59,7 +59,5 @@ export const parseDateRangeInThePast = (query: string) => {
 		}
 	}
 
-	console.log({ parsedStart, parsedEnd , startDate, endDate });
-
 	return [startDate, endDate] as const;
 }

@@ -125,8 +125,8 @@ describe("useItemFilters", async () => {
 			{ item: mockItem({ raw: { data: { dateAdded: "2022-12-31T00:00" } } }), query: "this year", expected: true },
 			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-19T00:00" } } }), query: "last 2 weeks", expected: false },
 			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-18T00:00" } } }), query: "last 2 weeks", expected: true },
-			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-31T00:00" } } }), query: "this Monday", expected: false },
-			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-30T00:00" } } }), query: "this Monday", expected: true },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-31T00:00" } } }), query: "Monday", expected: false },
+			{ item: mockItem({ raw: { data: { dateAdded: "2023-07-30T00:00" } } }), query: "Monday", expected: true },
 			{ item: mockItem({ raw: { data: { dateAdded: "2020-03-01T00:00" } } }), query: "bad input", expected: false }
 		];
 

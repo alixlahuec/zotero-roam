@@ -85,7 +85,7 @@ export default defineConfig(({ command, mode }) => {
 		},
 		css: {
 			preprocessorOptions: {
-				scss: {
+				sass: {
 					api: "modern"
 				}
 			}
