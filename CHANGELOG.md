@@ -1,6 +1,15 @@
 ## Changelog
 
-### [0.7.21](https://github.com/alixlahuec/zotero-roam/compare/0.7.20...0.7.21) - 
+### [0.7.22](https://github.com/alixlahuec/zotero-roam/compare/0.7.21...0.7.22) - 
+
+#### Features
+
+-  add feature requests board ([`#483`](https://github.com/alixlahuec/zotero-roam/pull/483))
+#### Bug Fixes
+
+-  update URLs for web links ([`#561`](https://github.com/alixlahuec/zotero-roam/pull/561))
+
+### [0.7.21](https://github.com/alixlahuec/zotero-roam/compare/0.7.20...0.7.21) -  2023-09-30 
 
 #### Bug Fixes
 
