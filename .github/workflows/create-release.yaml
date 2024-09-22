@@ -1,4 +1,4 @@
-name: Make new release (latest)
+name: Cut latest release
 on: workflow_dispatch
 jobs:
   createReleasePR:
@@ -10,37 +10,25 @@ jobs:
 
     steps:
       # Setup release branch
-      - name: Delete existing branch
-        uses: dawidd6/action-delete-branch@v3
+      - uses: peterjgrainger/action-create-branch@v3
         with:
-          github_token: ${{ env.GITHUB_TOKEN }}
-          branches: ${{ env.RELEASE_BRANCH }}
-        continue-on-error: true
+          branch: refs/heads/${{ env.RELEASE_BRANCH }}
 
-      - name: Create release branch
-        uses: peterjgrainger/action-create-branch@v2.2.0
-        with:
-          branch: ${{ env.RELEASE_BRANCH }}
-
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ env.RELEASE_BRANCH }}
 
       # Push commit from release-it: version bump, changelog, build
-      - uses: actions/setup-node@v2
-
-      - name: NPM authentication
-        run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-
-      - name: git config
-        run: |
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+      - run: |
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      - name: Install packages
-        run: npm ci
+      - run: npm ci
 
       - name: Get next version
         id: version
@@ -63,37 +51,14 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "$changelog" >> $GITHUB_STEP_SUMMARY
 
-      - name: Bump version, build
-        run: |
-          npm run version-release:latest
-
-      - name: Update changelog
-        run: |
+      - run: npm run version-release:latest
+      - run: |
           npx auto-changelog -p --config dev/.auto-changelog
           git add CHANGELOG.md
           git commit -m "📝 Update CHANGELOG"
           git push origin ${{ env.RELEASE_BRANCH }} --progress --porcelain
         continue-on-error: true
 
-      # Create PR for release branch
-      - name: Create Pull Request
-        id: cpr
-        uses: repo-sync/pull-request@v2
-        with:
-          destination_branch: "main"
-          source_branch: ${{ env.RELEASE_BRANCH }}
-          github_token: ${{ env.GITHUB_TOKEN }}
-          pr_draft: false
-          pr_label: release
-          pr_title: "chore(release): v${{ steps.version.outputs.next }}"
-          pr_body: |
-            🤖 **Preparing to release as [latest]**
-
-            ${{ steps.changelog.outputs.changelog }}
-
-      - name: PR summary
-        run: |
-          echo "### PR Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Link:** [PR ${{steps.open-pr.outputs.pr_number}}](${{steps.cpr.outputs.pr_url}})" >> $GITHUB_STEP_SUMMARY
-          echo "**Changed files:** ${{steps.open-pr.outputs.has_changed_files}}" >> $GITHUB_STEP_SUMMARY
+      # Create the release PR
+      - run: |
+          gh pr create --base "main" --head "${{ env.RELEASE_BRANCH }}" --label "release" --title "chore(release): v${{ steps.version.outputs.next }}" --body "🤖 **Preparing to release as [beta]**\n\n${{ steps.changelog.outputs.changelog }}"
