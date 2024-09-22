@@ -1,4 +1,4 @@
-name: Automate tasks for commits to dist branches
+name: CI (distribution branch)
 on:
   push:
     branches:
@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
@@ -33,7 +33,7 @@ jobs:
 
       - name: Storybook CI
         id: chromatic
-        uses: chromaui/action@v1
+        uses: chromaui/action@v11
         with:
           buildScriptName: "build-storybook"
           exitOnceUploaded: true
@@ -57,7 +57,7 @@ jobs:
           reporter: jest-junit
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           directory: ./coverage/
           verbose: true
@@ -71,20 +71,17 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
       - run: npm ci
-      - name: Configure NPM
-        run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-      
-      - name: Configure Git
-        run: |
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+      - run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
       - run: |
-          echo "GitHub ref is ${{ github.ref }}"
-          echo "GitHub ref name is ${{ github.ref_name }}"
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: Publish release @beta
         if: ${{ github.ref_name == 'beta' && contains(github.event.head_commit.message, '-beta.') }}
