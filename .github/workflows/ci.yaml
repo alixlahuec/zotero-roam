@@ -48,10 +48,10 @@ jobs:
 
       - name: Vite build (prod)
         run: npm run build:prod
-      
+
       - name: Vite build (Roam Depot)
         run: npm run build:roam
-      
+
       - name: Vite build (sandbox)
         run: npm run build:sandbox
 
