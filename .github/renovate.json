@@ -14,10 +14,6 @@
   "prConcurrentLimit": 1,
   "packageRules": [
 	{
-		"matchDepTypes": ["action"],
-		"enabled": false
-	},
-	{
 		"matchUpdateTypes": ["major"],
 		"matchDepNames": [
 			"@blueprintjs/core",
