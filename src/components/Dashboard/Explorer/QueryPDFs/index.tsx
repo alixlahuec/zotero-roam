@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import { NonIdealState, Spinner } from "@blueprintjs/core";
+import { Spinner } from "@blueprintjs/core";
 
-import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
+import QueryBar from "../QueryBar";
 import PDFElement from "./PDFElement";
 
-import { usePagination } from "@hooks";
-
 import { cleanLibraryPDF, identifyPDFConnections } from "./helpers";
+import { pdfFilters } from "./filters";
 
-import { CustomClasses } from "../../../../constants";
 import { ZCleanItemPDF, ZLibraryContents } from "Types/transforms";
 
 
@@ -30,44 +28,14 @@ function cleanLibraryData_PDF(itemList: ZLibraryContents): Promise<ZCleanItemPDF
 }
 
 
-const itemsPerPage = 20;
-
-type QueryPDFsListProps = {
-	items: ZCleanItemPDF[]
+const renderItem = (item: ZCleanItemPDF) => {
+	return <PDFElement key={item.key} item={item} />;
 };
-
-function QueryPDFsList({ items }: QueryPDFsListProps){
-	const { currentPage, pageLimits, setCurrentPage } = usePagination({ itemsPerPage });
-
-	useEffect(() => {
-		setCurrentPage(1);
-	}, [items, setCurrentPage]);
-
-	return <div className="zr-query-builder">
-		<div className="zr-querypdfs--datalist">
-			{items.length == 0
-				? <NonIdealState className={CustomClasses.TEXT_AUXILIARY} description="No items to display" />
-				: <ListWrapper>
-					{items
-						.slice(...pageLimits)
-						.map((el, i) => <PDFElement key={[el.key, i].join("-")} item={el} />)}
-				</ListWrapper>}
-		</div>
-		<Toolbar>
-			<Pagination
-				arrows="first" 
-				currentPage={currentPage} 
-				itemsPerPage={itemsPerPage} 
-				nbItems={items.length} 
-				setCurrentPage={setCurrentPage} 
-			/>
-		</Toolbar>
-	</div>;
-}
 
 
 function QueryPDFs({ itemList }) {
 	const [items, setItems] = useState<ZCleanItemPDF[] | null>(null);
+	const [query, setQuery] = useState("");
 
 	useEffect(() => {
 		if(itemList){
@@ -80,7 +48,7 @@ function QueryPDFs({ itemList }) {
 
 	return items == null
 		? <Spinner size={15} />
-		: <QueryPDFsList items={items} />;
+		: <QueryBar filters={pdfFilters} items={items} onQueryChange={setQuery} query={query} renderItem={renderItem} search_field="title" />;
 }
 
 
