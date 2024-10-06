@@ -11,6 +11,7 @@
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:storybook/recommended",
+        "plugin:vitest/recommended",
 		"plugin:@typescript-eslint/recommended"
     ],
     "globals": {
@@ -21,7 +22,7 @@
         {
           "files": ["tests/**"],
           "plugins": ["vitest"],
-          "extends": ["plugin:vitest/legacy-recommended"],
+          "extends": ["plugin:vitest/recommended"],
           "rules": { "vitest/prefer-expect-assertions": "off" }
         },
 		{
@@ -51,7 +52,7 @@
     },
     "plugins": [
         "react",
-        "vitest",
+        "@vitest",
         "import",
 		"@typescript-eslint"
     ],
