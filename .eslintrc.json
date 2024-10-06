@@ -10,7 +10,8 @@
         "plugin:import/recommended",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
-        "plugin:storybook/recommended",
+        // TODO: re-enable once eslint-plugin-storybook is reinstalled
+        // "plugin:storybook/recommended",
 		"plugin:@typescript-eslint/recommended"
     ],
     "globals": {
