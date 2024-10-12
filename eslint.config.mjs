@@ -38,9 +38,9 @@ export default [
 		},
 		languageOptions: {
 			globals: {
-                // TODO: Reenable when updating globals is possible
-                // This is needed to fix: "Global AudioWorkletGlobalScope has leading or trailing whitespace"
-                // https://github.com/sindresorhus/globals/pull/184
+				// TODO: Reenable when updating globals is possible
+				// This is needed to fix: "Global AudioWorkletGlobalScope has leading or trailing whitespace"
+				// https://github.com/sindresorhus/globals/pull/184
 				// ...globals.browser,
 				...globals.node,
 				PACKAGE_VERSION: "readonly"
