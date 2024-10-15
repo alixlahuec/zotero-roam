@@ -4,7 +4,8 @@ import { QueryList, QueryListProps } from "@blueprintjs/select";
 
 import { ListWrapper, Pagination, Toolbar } from "Components/DataList";
 
-import { QueryFilter, SearchSuggestion, usePagination, useSearchQuery } from "@hooks";
+import { usePagination } from "@hooks";
+import { QueryFilter, SearchSuggestion, useSearchQuery } from "@services/search";
 
 import { CustomClasses } from "../../../../constants";
 

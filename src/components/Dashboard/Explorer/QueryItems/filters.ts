@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { useTypemapSettings } from "Components/UserSettings";
 
-import { QueryFilter } from "@hooks";
+import { QueryFilter, evaluateBoolean, filterWithPastDate, filterWithQuery } from "@services/search";
 
 import { searchEngine } from "../../../../utils";
 import { parseDateInThePast, parseDateRangeInThePast } from "../helpers";
@@ -30,10 +30,7 @@ const useItemFilters = () => {
 				{ label: "Yes", value: "true" },
 				{ label: "No", value: "false" },
 			],
-			evaluate: (query, item) => {
-				const boolCheck = query == "true" ? true : false;
-				return Boolean(item.abstract) === boolCheck;
-			}
+			evaluate: evaluateBoolean(item => item.abstract),
 		},
 		{
 			label: "Citekey exists",
@@ -42,10 +39,7 @@ const useItemFilters = () => {
 				{ label: "Yes", value: "true" },
 				{ label: "No", value: "false" },
 			],
-			evaluate: (query, item) => {
-				const boolCheck = query == "true" ? true : false;
-				return Boolean(item.raw.has_citekey) === boolCheck;
-			}
+			evaluate: evaluateBoolean(item => item.raw.has_citekey)
 		},
 		{
 			label: "DOI exists",
@@ -54,10 +48,7 @@ const useItemFilters = () => {
 				{ label: "Yes", value: "true" },
 				{ label: "No", value: "false" },
 			],
-			evaluate: (query, item) => {
-				const boolCheck = query == "true" ? true : false;
-				return Boolean(item.raw.data.DOI) === boolCheck;
-			}
+			evaluate: evaluateBoolean(item => item.raw.data.DOI)
 		},
 		{
 			label: "Item added before",
@@ -67,34 +58,26 @@ const useItemFilters = () => {
 				{ label: "This week", value: "\"this week\"" },
 				{ label: "This year", value: "\"this year\"" }
 			],
-			evaluate: (query, item) => {
-				const queryDate = parseDateInThePast(query);
-				if (queryDate === null) return false
-
-				return new Date(item.raw.data.dateAdded) < queryDate;
-			}
+			filter: filterWithPastDate(
+				item => new Date(item.raw.data.dateAdded),
+				{ compare: "before" },
+			)
 		},
 
 		{
 			label: "Item added between",
 			value: "addedBetween",
 			presets: [],
-			evaluate: (query, item) => {
-				const queryDateRange = parseDateRangeInThePast(query);
-				if (queryDateRange === null) return false
-
-				const itemDateAdded = new Date(item.raw.data.dateAdded);
-				return queryDateRange[0] < itemDateAdded && itemDateAdded < queryDateRange[1];
-			}
+			filter: filterWithPastDate(
+				item => new Date(item.raw.data.dateAdded),
+				{ compare: "between" }
+			),
 		},
 		{
 			label: "Item type matches",
 			value: "type",
 			presets: Object.entries(typemap).map(([itemType, label]) => ({ label, value: itemType })),
-			// TODO: support OR query
-			evaluate: (query, item) => {
-				return item.itemType === query;
-			}
+			filter: filterWithQuery((term, item) => item.itemType === term),
 		},
 		{
 			label: "Item has linked notes",
@@ -103,10 +86,7 @@ const useItemFilters = () => {
 				{ label: "Yes", value: "true" },
 				{ label: "No", value: "false" },
 			],
-			evaluate: (query, item) => {
-				const boolCheck = query == "true" ? true : false;
-				return (item.children.notes.length > 0) === boolCheck;
-			}
+			evaluate: evaluateBoolean(item => item.children.notes.length > 0)
 		},
 		{
 			label: "Item has linked PDFs",
@@ -115,10 +95,7 @@ const useItemFilters = () => {
 				{ label: "Yes", value: "true" },
 				{ label: "No", value: "false" },
 			],
-			evaluate: (query, item) => {
-				const boolCheck = query == "true" ? true : false;
-				return (item.children.pdfs.length > 0) === boolCheck;
-			}
+			evaluate: evaluateBoolean(item => item.children.pdfs.length > 0)
 		},
 		{
 			label: "Roam page exists",
@@ -127,19 +104,13 @@ const useItemFilters = () => {
 				{ label: "Yes", value: "true" },
 				{ label: "No", value: "false" },
 			],
-			evaluate: (query, item) => {
-				const boolCheck = query == "true" ? true : false;
-				return Boolean(item.inGraph) === boolCheck;
-			}
+			evaluate: evaluateBoolean(item => item.inGraph)
 		},
 		{
 			label: "Tags include",
 			value: "tags",
 			presets: [],
-			evaluate: (query, item) => {
-				// TODO: support complex matching (AND/OR, negative)
-				return searchEngine(query, item.tags, { match: "exact" });
-			}
+			filter: filterWithQuery((term, item) => item.tags.includes(term))
 		}
 	], [typemap]);
 	return { filters };

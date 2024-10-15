@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react-hooks";
 
-import { QueryFilter, useSearchQuery } from ".";
+import { filterHasEvaluate, QueryFilter, useSearchQuery } from ".";
 
 
 type Item = {
@@ -235,7 +235,7 @@ describe("useSearchQuery", () => {
 		];
 
 		it("matches items with filters", async () => {
-			const filterEvaluateSpy = vi.spyOn(filters[1], "evaluate");
+			const filterEvaluateSpy = filterHasEvaluate(filters[1]) ? vi.spyOn(filters[1], "evaluate") : vi.spyOn(filters[1], "filter");
 
 			const { result, waitFor } = renderHook(() => useSearchQuery({ cursorPosition: 0, query: "roam:true", filters, handleQueryChange, setCursorPosition }));
 

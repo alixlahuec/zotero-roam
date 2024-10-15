@@ -1,11 +1,17 @@
 import { parse as chronoParse } from "chrono-node";
 
 
+export const equalsBoolean = (query: string, value: any): boolean => {
+	const boolCheck = query == "true" ? true : false;
+	return Boolean(value) === boolCheck;
+}
+
+
 export const parseDateInThePast = (query: string) => {
 	const result = chronoParse(query, undefined, { forwardDate: false });
 
 	if (!result.length) return null
-	
+
 	const refTime = result[0].refDate;
 	const parsedDate = result[0].start;
 	const date = parsedDate.date();
@@ -26,7 +32,7 @@ export const parseDateRangeInThePast = (query: string) => {
 	const result = chronoParse(query, undefined, { forwardDate: false });
 
 	if (!result.length) return null
-	
+
 	const refTime = result[0].refDate;
 
 	const parsedStart = result[0].start;

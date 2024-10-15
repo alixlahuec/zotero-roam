@@ -1,10 +1,8 @@
-import { FilterTerm, QueryFilter, SearchSuggestion, SearchTerm } from "./types";
+import { filterHasEvaluate, FilterTerm, QueryFilter, SearchSuggestion, SearchTerm } from "./types";
 
-import { searchEngine } from "../../utils";
+import { searchEngine } from "../../../utils";
 import { AsBoolean } from "Types/helpers";
 
-
-// TODO: create helpers for configuring filters with common patterns (multiple values, ranges, AND/OR like I did with Smartblocks queries)
 
 const FILTER_REGEX = new RegExp(/^(?: *)([^ ]+):([^ "]+|"[^:]+")(?: *)$/);
 const INCOMPLETE_FILTER_REGEX = new RegExp(/^[^ ]+:(?:"[^"]*)?$/g);
@@ -147,7 +145,7 @@ const parseSearchTerms = <T extends Record<string, any> = Record<string, any>>(t
 /** Executes an ordered set of query terms against a list of items. */
 const runSearch = <T extends Record<string, any> = Record<string, any>>(
 	terms: SearchTerm<T>[], items: T[], search_field: keyof T | undefined
-) => {
+): T[] => {
 	return terms.reduce((filteredItems, term) => {
 		// Skip falsy terms
 		// This is needed to ignore empty queries and the trailing term for non-empty queries
@@ -166,7 +164,12 @@ const runSearch = <T extends Record<string, any> = Record<string, any>>(
 		}
 
 		// Filters
-		return filteredItems.filter(item => term.filter.evaluate(term.query, item));
+		const { filter, query } = term
+		if (filterHasEvaluate(filter)) {
+			return filteredItems.filter(item => filter.evaluate(query, item));
+		} else {
+			return filter.filter(query, filteredItems)
+		}
 	}, items)
 };
 
