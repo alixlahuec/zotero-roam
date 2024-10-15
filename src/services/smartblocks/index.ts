@@ -1,5 +1,5 @@
-import { Query } from "@services/matcher";
 import { makeDNP } from "@services/roam";
+import { Query } from "@services/search";
 
 import { getLocalLink, getWebLink, parseDOI } from "../../utils";
 
