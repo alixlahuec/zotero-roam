@@ -1,42 +1,10 @@
-import Matcher, { StableMatcher } from ".";
+import { Query } from ".";
 
-
-describe("Matcher", () => {
-	const props = ["systems", "culture", "PKM"];
-	const matcher = new Matcher((q) => props.includes(q))
-
-	const cases = [
-		{ query: "systems", expectation: true },
-		{ query: "software", expectation: false },
-		{ query: "-TODO", expectation: true },
-		{ query: "systems&software", expectation: false },
-		{ query: "(systems&software)", expectation: false },
-		{ query: "software|TODO", expectation: false },
-		{ query: "(software|TODO)", expectation: false },
-		{ query: "PKM&culture", expectation: true },
-		{ query: "(PKM&culture)", expectation: true },
-		{ query: "TODO&(systems|culture)", expectation: false },
-		{ query: "history|(systems&culture)", expectation: true },
-		// Ambiguous negations are supported but should be avoided
-		{ query: "-systems&TODO", expectation: true },
-		// Explicit parentheses are preferred
-		{ query: "-(systems&TODO)", expectation: true },
-		{ query: "(-systems)&TODO", expectation: false}
-	] as const;
-
-	test.each(cases)(
-		"query: $query | expect: $expectation",
-		({ query, expectation }) => {
-			expect(matcher.run(query)).toBe(expectation)
-		}
-	)
-});
-
-describe("StableMatcher", () => {
+describe("Query", () => {
 	describe("_parse()", () => {
-		const matcher = new StableMatcher("");
+		const matcher = new Query("");
 
-		it("parses single-term queries", () => {
+		it("handles single-term queries", () => {
 			expect(matcher._parse("TODO")).toEqual({
 				input: "TODO",
 				parsedComponents: {
@@ -74,7 +42,7 @@ describe("StableMatcher", () => {
 			});
 		});
 
-		describe("parses operator queries", () => {
+		describe("handles operator queries", () => {
 			it.each([
 				{ query: "history|sociology", operator: "OR" },
 				{ query: "-history|sociology", operator: "OR", reverse: true },
@@ -147,7 +115,7 @@ describe("StableMatcher", () => {
 			)
 		});
 
-		describe("parses multi-level queries", () => {
+		describe("handles multi-level queries", () => {
 			it.each([
 				{
 					query: "(history|sociology)&TODO",
@@ -345,7 +313,7 @@ describe("StableMatcher", () => {
 		test.each(cases)(
 			"query: $query | expect: $expectation",
 			({ query, expectation }) => {
-				const matcher = new StableMatcher(query)
+				const matcher = new Query(query)
 				expect(matcher.match(predicate)).toBe(expectation)
 			}
 		)
