@@ -1,7 +1,8 @@
-import { QueryFilter } from "@hooks";
+import { QueryFilter } from "@services/search";
 
 import { searchEngine } from "../../../../utils";
 import { ZCleanItemPDF } from "Types/transforms";
+import { evaluateBoolean, filterWithQuery } from "@services/search";
 
 export const pdfFilters: QueryFilter<ZCleanItemPDF>[] = [
 	{
@@ -11,18 +12,12 @@ export const pdfFilters: QueryFilter<ZCleanItemPDF>[] = [
 			{ label: "Yes", value: "true" },
 			{ label: "No", value: "false" },
 		],
-		evaluate: (query, item) => {
-			const boolCheck = query === "true" ? true : false;
-			return (item.annotations.length > 0) === boolCheck;
-		}
+		evaluate: evaluateBoolean(item => item.annotations.length > 0)
 	},
 	{
 		label: "Tags include",
 		value: "tags",
 		presets: [],
-		evaluate: (query, item) => {
-			// TODO: support complex matching (AND/OR, negative)
-			return searchEngine(query, item.tags, { match: "exact" });
-		}
+		filter: filterWithQuery((term, item) => item.tags.includes(term))
 	}
 ];
