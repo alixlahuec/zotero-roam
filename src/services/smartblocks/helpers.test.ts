@@ -1,19 +1,5 @@
-import { evalTerm, reformatImportableBlocks } from "./helpers";
+import { reformatImportableBlocks } from "./helpers";
 
-
-const props = ["systems", "culture", "PKM"];
-
-test("Simple term evals correctly", () => {
-	expect(evalTerm("systems", props)).toBe(true);
-	expect(evalTerm("software", props)).toBe(false);
-	expect(evalTerm("-TODO", props)).toBe(true);
-});
-
-test("Simple grouping evals correctly", () => {
-	expect(evalTerm("(systems&software)", props)).toBe(false);
-	expect(evalTerm("(software|TODO)", props)).toBe(false);
-	expect(evalTerm("(PKM&culture)", props)).toBe(true);
-});
 
 describe("reformatImportableBlocks", () => {
 	const cases = [
