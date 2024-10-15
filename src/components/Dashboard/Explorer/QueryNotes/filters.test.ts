@@ -1,6 +1,6 @@
 import { mock } from "vitest-mock-extended";
 
-import { QueryFilter } from "@hooks";
+import { QueryFilter } from "@services/search";
 
 import { noteFilters } from "./filters";
 import { ZItemAnnotation, ZItemNote } from "Types/transforms";

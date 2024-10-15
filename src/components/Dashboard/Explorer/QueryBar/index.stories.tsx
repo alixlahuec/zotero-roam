@@ -5,7 +5,7 @@ import { expect, userEvent, waitFor, within } from "@storybook/test";
 import { ListItem } from "Components/DataList";
 import QueryBar from "."
 
-import { QueryFilter } from "@hooks";
+import { QueryFilter } from "@services/search";
 
 
 type Props = ComponentProps<typeof QueryBar>;

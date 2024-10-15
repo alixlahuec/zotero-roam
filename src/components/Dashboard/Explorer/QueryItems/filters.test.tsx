@@ -4,7 +4,7 @@ import { mock } from "vitest-mock-extended";
 
 import { TypemapProvider } from "Components/UserSettings";
 
-import { QueryFilter } from "@hooks";
+import { QueryFilter } from "@services/search";
 
 import { useItemFilters } from "./filters";
 import { setupInitialSettings } from "../../../../setup";
