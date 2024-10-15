@@ -1,8 +1,9 @@
 import { makeDNP } from "@services/roam";
+import { Query } from "@services/search";
 
 import { getLocalLink, getWebLink, parseDOI } from "../../utils";
 
-import { processQuery, reformatImportableBlocks } from "./helpers";
+import { reformatImportableBlocks } from "./helpers";
 import { SBConfig, SmartblocksPlugin } from "./types";
 
 
@@ -14,8 +15,9 @@ const sbCommands = () => {
 		"ZOTERORANDOMCITEKEY": {
 			help: "Returns one or more Zotero citekeys, with optional tag query",
 			handler: (_context: SmartblocksPlugin.CommandContext) => (nb = "1", query = "") => {
+				const matcher = new Query(query)
 				return window.zoteroRoam.getItems("items")
-					.filter(it => processQuery(query, it.data.tags.map(t => t.tag)))
+					.filter(it => matcher.match((q) => it.data.tags.map(t => t.tag).includes(q)))
 					.map(it => "@" + it.key)
 					.sort(() => 0.5 - Math.random())
 					.slice(0, Number(nb) || 1);
