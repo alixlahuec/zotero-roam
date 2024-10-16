@@ -40,9 +40,9 @@ const makeNote = ({ key, library, data, note, numChildren = 0, parentItem, versi
 };
 
 export const sampleNote = makeNote({
-	key: "A12BCDEF",
+	key: "A34BCDEF",
 	library: userLibrary,
-	note: "<div style=\"background-color: Yellow\">Annotations</div><p>\"After all, argues Balthasar, \"in a world without beauty... the good also loses its attractiveness, self-evidence why it must be carried out.\" Why not prefer evil over good? \"Why not investigate Satan's depth?\"  Why desire the beatific vision? Accordingly, Balthasar seeks to rectify the given imbalance by embarking on an \"archeology of alienated beauty\"  in dialogue with thinkers such as Irenaeus, Augustine, Pseudo-Dionysius, Dante, Hopkins, Solovyev, and others.\" (<a href=\"zotero://open-pdf/library/items/A12BCDEF?page=1\">Smith 2003:1</a>)</p>",
+	note: "<div style=\"background-color: Yellow\">Annotations</div><p>\"After all, argues Balthasar, \"in a world without beauty... the good also loses its attractiveness, self-evidence why it must be carried out.\" Why not prefer evil over good? \"Why not investigate Satan's depth?\"  Why desire the beatific vision? Accordingly, Balthasar seeks to rectify the given imbalance by embarking on an \"archeology of alienated beauty\"  in dialogue with thinkers such as Irenaeus, Augustine, Pseudo-Dionysius, Dante, Hopkins, Solovyev, and others.\" (<a href=\"zotero://open-pdf/library/items/A34BCDEF?page=1\">Smith 2003:1</a>)</p>",
 	parentItem: "P34QRSTU",
 	data: {
 		tags: [{ tag: "toRead" }]

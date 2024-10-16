@@ -41,5 +41,19 @@ export const A11Y_RULES: ConfigOptions["rules"] = [
 		// Blueprint's Tabs component allows arbitrary children,
 		// which doesn't enforce restrictions on their `role`
 		selector: "[role]:not(.bp3-tab-list)"
+	},
+	{
+		id: "aria-allowed-attr",
+		// Blueprint's MenuItem renders the target inside a li wrapper,
+		// which means aria-* props cannot be set on the wrapper.
+		// See https://github.com/palantir/blueprint/blob/60a6da84e5798999516caecdee80f39f30578ef0/packages/core/src/components/menu/menuItem.tsx#L178
+		selector: "*:not(.bp3-menu-item)[aria-selected]"
+	},
+	{
+		id: "aria-required-parent",
+		// Blueprint's MenuItem renders the target inside a li wrapper,
+		// which means aria-* props cannot be set on the wrapper.
+		// See https://github.com/palantir/blueprint/blob/60a6da84e5798999516caecdee80f39f30578ef0/packages/core/src/components/menu/menuItem.tsx#L178
+		selector: "*:not(.bp3-menu-item)[aria-selected]"
 	}
 ];
