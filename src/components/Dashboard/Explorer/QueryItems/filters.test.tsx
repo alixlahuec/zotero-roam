@@ -4,7 +4,7 @@ import { mock } from "vitest-mock-extended";
 
 import { TypemapProvider } from "Components/UserSettings";
 
-import { QueryFilter } from "@services/search";
+import { filterHasEvaluate, QueryFilter } from "@services/search";
 
 import { useItemFilters } from "./filters";
 import { setupInitialSettings } from "../../../../setup";
@@ -17,6 +17,14 @@ const mockItem = mock<ZCleanItemTop>;
 const wrapper: WrapperComponent<{ children: ReactChildren }> = ({ children }) => {
 	return <TypemapProvider init={typemap} updater={vi.fn()}>{children}</TypemapProvider>;
 };
+
+const assertFilterResult = (filter: QueryFilter, { query, item, expected }: { query: string, item: any, expected: boolean }) => {
+	if (filterHasEvaluate(filter)) {
+		expect(filter.evaluate(query, item)).toEqual(expected);
+	} else {
+		expect(Boolean(filter.filter(query, [item]))).toEqual(expected);
+	}
+}
 
 describe("useItemFilters", async () => {
 	const { result, waitFor } = renderHook(() => useItemFilters(), { wrapper });
@@ -32,7 +40,7 @@ describe("useItemFilters", async () => {
 	});
 
 	describe("abstract", () => {
-		const { evaluate } = filtersMap["abstract"];
+		const filter = filtersMap["abstract"];
 		const cases = [
 			{ item: mockItem({ abstract: "" }), query: "text", expected: false },
 			{ item: mockItem({ abstract: "text" }), query: "string", expected: false },
@@ -43,13 +51,13 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%#",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});
 
 	describe("hasAbstract", () => {
-		const { evaluate } = filtersMap["hasAbstract"];
+		const filter = filtersMap["hasAbstract"];
 		const cases = [
 			{ item: mockItem({ abstract: "" }), query: "true", expected: false },
 			{ item: mockItem({ abstract: "" }), query: "false", expected: true },
@@ -60,13 +68,13 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%#",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});
 
 	describe("hasCitekey", () => {
-		const { evaluate } = filtersMap["hasCitekey"];
+		const filter = filtersMap["hasCitekey"];
 		const cases = [
 			{ item: mockItem({ raw: { has_citekey: true } }), query: "true", expected: true },
 			{ item: mockItem({ raw: { has_citekey: true } }), query: "false", expected: false },
@@ -77,13 +85,13 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%#",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});
 
 	describe("hasDOI", () => {
-		const { evaluate } = filtersMap["hasDOI"];
+		const filter = filtersMap["hasDOI"];
 		const cases = [
 			{ item: mockItem({ raw: { data: { DOI: null } } }), query: "true", expected: false },
 			{ item: mockItem({ raw: { data: { DOI: null } } }), query: "false", expected: true },
@@ -98,13 +106,13 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%#",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});
 
 	describe("addedBefore", () => {
-		const { evaluate } = filtersMap["addedBefore"];
+		const filter = filtersMap["addedBefore"];
 
 		beforeAll(() => {
 			vi.useFakeTimers()
@@ -133,13 +141,13 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%# - $query, $item.raw.data.dateAdded",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});
 
 	describe("type", () => {
-		const { evaluate } = filtersMap["type"];
+		const filter = filtersMap["type"];
 		const cases = [
 			{ item: mockItem({ itemType: "book" }), query: "article", expected: false },
 			{ item: mockItem({ itemType: "book" }), query: "book", expected: true }
@@ -148,13 +156,13 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%#",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});
 
 	describe("hasNotes", () => {
-		const { evaluate } = filtersMap["hasNotes"];
+		const filter = filtersMap["hasNotes"];
 		const cases = [
 			{ item: mockItem({ children: { notes: [] } }), query: "true", expected: false },
 			{ item: mockItem({ children: { notes: [] } }), query: "false", expected: true },
@@ -165,13 +173,13 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%#",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});
 
 	describe("hasPDFs", () => {
-		const { evaluate } = filtersMap["hasPDFs"];
+		const filter = filtersMap["hasPDFs"];
 		const cases = [
 			{ item: mockItem({ children: { pdfs: [] } }), query: "true", expected: false },
 			{ item: mockItem({ children: { pdfs: [] } }), query: "false", expected: true },
@@ -182,13 +190,13 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%#",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});
 
 	describe("inRoam", () => {
-		const { evaluate } = filtersMap["inRoam"];
+		const filter = filtersMap["inRoam"];
 		const cases = [
 			{ item: mockItem({ inGraph: false }), query: "true", expected: false },
 			{ item: mockItem({ inGraph: false }), query: "false", expected: true },
@@ -199,13 +207,13 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%#",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});
 
 	describe("tags", () => {
-		const { evaluate } = filtersMap["tags"];
+		const filter = filtersMap["tags"];
 		const cases = [
 			{ item: mockItem({ tags: [] }), query: "systems", expected: false },
 			{ item: mockItem({ tags: ["todo"] }), query: "systems", expected: false },
@@ -216,7 +224,7 @@ describe("useItemFilters", async () => {
 		test.each(cases)(
 			"%#",
 			({ item, query, expected }) => {
-				expect(evaluate(query, item)).toEqual(expected);
+				assertFilterResult(filter, { query, item, expected })
 			}
 		)
 	});

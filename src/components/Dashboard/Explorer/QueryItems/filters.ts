@@ -5,7 +5,6 @@ import { useTypemapSettings } from "Components/UserSettings";
 import { QueryFilter, evaluateBoolean, filterWithPastDate, filterWithQuery } from "@services/search";
 
 import { searchEngine } from "../../../../utils";
-import { parseDateInThePast, parseDateRangeInThePast } from "../helpers";
 import { ZCleanItemTop } from "Types/transforms";
 
 
