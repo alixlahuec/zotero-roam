@@ -3,6 +3,9 @@ import { Meta, StoryObj } from "@storybook/react";
 import { userEvent, waitFor, within, expect } from "@storybook/test";
 
 import Dashboard from ".";
+import { http, HttpResponse } from "msw";
+import { zotero } from "Mocks/zotero/common";
+import { items, sampleAnnot, sampleImageAnnot, sampleNote, sampleOlderNote, samplePDF } from "Mocks/zotero";
 
 
 type Props = ComponentProps<typeof Dashboard>;
@@ -59,18 +62,20 @@ export const VisitTabs: StoryObj<Props> = {
 		await userEvent.click(canvas.getByRole("tab", { name: "Explorer" }));
 
 		await waitFor(() => expect(
-			canvas.getByRole(
-				"button",
-				{
-					name: "Set filter"
-				}
-			)
-		).toBeInTheDocument(),
+			canvas.getAllByTestId("explorer-searchbar")
+		).toHaveLength(1),
 		{
 			timeout: 3000
 		});
 
 		await userEvent.click(canvas.getByRole("tab", { name: "PDFs" }));
+
+		await waitFor(() => expect(
+			canvas.getAllByTestId("explorer-searchbar")
+		).toHaveLength(1),
+			{
+				timeout: 3000
+			});
 
 	}
 };

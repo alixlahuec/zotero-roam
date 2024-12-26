@@ -1,4 +1,6 @@
 import { AsBoolean } from "Types/helpers";
+import { EvaluateFn, FilterFn } from "./useSearchQuery";
+import { equalsBoolean, parseDateInThePast, parseDateRangeInThePast } from "./helpers";
 
 
 type Predicate = (query: string) => boolean
@@ -104,4 +106,87 @@ class Query{
 
 }
 
-export { Query };
+
+/**
+ * Helper to construct boolean query filters.
+ * @param cb A callback that returns the value to compare to a Boolean.
+ * @example
+ * ```
+ * const myFilter = {
+ * 	...,
+ * 	evaluate: evaluateBoolean(item => item.abstract)
+ * }
+ * ```
+ */
+const evaluateBoolean = <T extends Record<string, any> = Record<string, any>>(cb: (item: T) => any): EvaluateFn<T> => {
+	return (query: string, item: T) => equalsBoolean(query, cb(item))
+}
+
+
+/**
+ * Helper to construct date filters.
+ * @param cb A callback that returns the value to compare to the date/date range from the query.
+ * @param opts Additional filter options.
+ * @example
+ * ```
+ * const myFilter = {
+ * 	...,
+ * 	filter: filterWithPastDate(item => item.data.dateAdded)
+ * }
+ * ```
+ * @example With date range:
+ * ```
+ * const myFilter = {
+ * 	...,
+ * 	filter: filterWithPastDate(item => item.data.dateAdded, { compare: "between" })
+ * }
+ * ```
+ */
+const filterWithPastDate = <T extends Record<string, any> = Record<string, any>>(cb: (item: T) => Date, { compare = "before" }: { compare?: "before" | "after" | "between" }): FilterFn<T> => {
+	return (query: string, items: T[]) => {
+		switch (compare) {
+			case "between": {
+				const queryDate = parseDateRangeInThePast(query);
+				if (queryDate === null) return items
+				const [start, end] = queryDate;
+				return items.filter(i => {
+					const refDate = cb(i);
+					return start < refDate && refDate > end;
+				});
+			}
+			case "after": {
+				const queryDate = parseDateInThePast(query);
+				if (queryDate === null) return items
+				return items.filter(i => cb(i) > queryDate);
+			}
+			case "before":
+			default: {
+				const queryDate = parseDateInThePast(query);
+				if (queryDate === null) return items
+				return items.filter(i => cb(i) < queryDate);
+			}
+		}
+	}
+}
+
+
+/**
+ * Helper to construct complex search query filters.
+ * @param cb The predicate to use for checking a query term against an item. This has the same signature as `evaluate`.
+ * @example
+ * ```
+ * const myFilter = {
+ * 	...,
+ * 	filter: filterWithQuery((term, item) => item.data.tags.includes(term))
+ * }
+ * ```
+ */
+const filterWithQuery = <T extends Record<string, any> = Record<string, any>>(cb: EvaluateFn<T>): FilterFn<T> => {
+	return (query: string, items: T[]) => {
+		const matcher = new Query(query);
+		return items.filter((i) => matcher.match((q) => cb(q, i)));
+	}
+}
+
+export { Query, evaluateBoolean, filterWithPastDate, filterWithQuery };
+export * from "./useSearchQuery";
