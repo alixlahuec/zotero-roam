@@ -88,7 +88,7 @@
         "globals": "^15.11.0",
         "msw": "^2.4.10",
         "msw-storybook-addon": "^2.0.3",
-        "release-it": "^17.8.2",
+        "release-it": "^17.11.0",
         "sass": "^1.79.4",
         "storybook": "^8.4.7",
         "storybook-mock-date-decorator": "^2.0.6",
