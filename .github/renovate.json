@@ -1,61 +1,69 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
-  "baseBranches": ["beta"],
-  "rangeStrategy": "bump",
-  "schedule": "every weekend",
-  "automergeSchedule": [
-	"at any time"
-  ],
-  "platformAutomerge": true,
-  "timezone": "America/Toronto",
-  "prConcurrentLimit": 1,
-  "packageRules": [
-	{
-		"matchUpdateTypes": ["major"],
-		"matchDepNames": [
-			"@blueprintjs/core",
-			"@blueprintjs/datetime",
-			"@blueprintjs/select",
-			"react",
-			"react-dom",
-			"idb"
-		],
-		"enabled": false
-	},
-	{
-		"matchDepNames": [
-			"scite-badge"
-		],
-		"enabled": false
-	},
-	{
-		"groupName": "Storybook Core",
-		"matchDepNames": [
-			"@storybook/addon-a11y",
-			"@storybook/addon-actions",
-			"@storybook/addon-controls",
-			"@storybook/addon-essentials",
-			"@storybook/addon-interactions",
-			"@storybook/addon-links",
-			"@storybook/builder-vite",
-			"@storybook/cli",
-			"@storybook/react",
-			"@storybook/react-vite",
-			"@storybook/test",
-			"storybook"
-		]
-	},
-	{
-		"groupName": "typescript-eslint",
-		"matchPackagePrefixes": ["@typescript-eslint"],
-		"automerge": true
-	},
-	{
-		"matchPackagePrefixes": ["eslint"],
-		"automerge": true
-	}
-  ]
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"config:recommended"
+	],
+	"baseBranches": [
+		"beta"
+	],
+	"rangeStrategy": "bump",
+	"schedule": "every weekend",
+	"automergeSchedule": [
+		"at any time"
+	],
+	"platformAutomerge": true,
+	"timezone": "America/Toronto",
+	"prConcurrentLimit": 1,
+	"packageRules": [
+		{
+			"matchUpdateTypes": [
+				"major"
+			],
+			"matchDepNames": [
+				"@blueprintjs/core",
+				"@blueprintjs/datetime",
+				"@blueprintjs/select",
+				"react",
+				"react-dom",
+				"idb"
+			],
+			"enabled": false
+		},
+		{
+			"matchDepNames": [
+				"scite-badge"
+			],
+			"enabled": false
+		},
+		{
+			"groupName": "Storybook Core",
+			"matchDepNames": [
+				"@storybook/addon-a11y",
+				"@storybook/addon-actions",
+				"@storybook/addon-controls",
+				"@storybook/addon-essentials",
+				"@storybook/addon-interactions",
+				"@storybook/addon-links",
+				"@storybook/builder-vite",
+				"@storybook/cli",
+				"@storybook/react",
+				"@storybook/react-vite",
+				"@storybook/test",
+				"storybook"
+			]
+		},
+		{
+			"groupName": "typescript-eslint",
+			"automerge": true,
+			"matchPackageNames": [
+				"@typescript-eslint{/,}**"
+			]
+		},
+		{
+			"automerge": true,
+			"matchPackageNames": [
+				"eslint{/,}**"
+			]
+		}
+	]
 }
