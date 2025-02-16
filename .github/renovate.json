@@ -53,6 +53,13 @@
 			]
 		},
 		{
+			"groupName": "Vitest",
+			"matchDepNames": [
+				"@vitest/coverage-istanbul",
+				"vitest"
+			]
+		},
+		{
 			"groupName": "typescript-eslint",
 			"automerge": true,
 			"matchPackageNames": [
