@@ -90,7 +90,7 @@
         "msw": "^2.7.0",
         "msw-storybook-addon": "^2.0.4",
         "release-it": "^18.1.2",
-        "sass": "^1.79.4",
+        "sass": "^1.86.0",
         "storybook": "^8.4.7",
         "storybook-mock-date-decorator": "^2.0.6",
         "typescript": "^5.7.3",
