@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { checkA11y, configureAxe,/* getViolations,*/ injectAxe } from "axe-playwright";
 import { AxeOptions } from "axe-playwright/dist/types";
-import { TestRunnerConfig } from "@storybook/test-runner";
+import { TestRunnerConfig, getStoryContext } from "@storybook/test-runner";
 import { A11Y_RULES } from "./a11y-rules";
 
 
@@ -19,9 +19,14 @@ const a11yConfig: TestRunnerConfig = {
 	async preVisit(page, _context) {
 		await injectAxe(page);
 	},
-	async postVisit(page, _context) {
+	async postVisit(page, context) {
+		const storyContext = await getStoryContext(page, context)
+
 		await configureAxe(page, {
-			rules: A11Y_RULES
+			rules: [
+				...A11Y_RULES,
+				...(storyContext.parameters?.a11y?.config?.rules || []),
+			]
 		});
 
 		const config: AxeOptions = {

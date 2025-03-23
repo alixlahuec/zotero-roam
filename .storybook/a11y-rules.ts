@@ -1,7 +1,7 @@
 import { ConfigOptions } from "axe-playwright/dist/types";
 
 
-export const A11Y_RULES: ConfigOptions["rules"] = [
+export const A11Y_RULES: NonNullable<ConfigOptions["rules"]> = [
 	{
 		id: "color-contrast",
 		// axe-playwright currently generates inconsistent results for color contrast.

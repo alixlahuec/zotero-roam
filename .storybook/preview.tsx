@@ -52,6 +52,11 @@ const preview: Preview = {
 		withRoamCitekeys,
 		mockDateDecorator
 	],
+	globals: {
+		a11y: {
+			manual: true
+		}
+	},
 	globalTypes: {
 		theme: {
 			name: "Theme",
